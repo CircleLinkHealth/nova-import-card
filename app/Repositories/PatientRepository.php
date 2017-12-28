@@ -1,25 +1,38 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/07/2017
- * Time: 12:32 PM
- */
 
 namespace App\Repositories;
 
 
-use App\User;
+use App\Exceptions\InvalidArgumentException;
 use App\Patient;
-use Prettus\Repository\Contracts\RepositoryInterface;
-use Prettus\Repository\Criteria\RequestCriteria;
-use Prettus\Repository\Eloquent\BaseRepository;
+use App\PatientMonthlySummary;
+use App\User;
+use Carbon\Carbon;
 
 class PatientRepository
 {
-    public function model()
+    /**
+     * Set a patient's ccm_status to paused.
+     *
+     * @param $user
+     *
+     * @return bool
+     */
+    public function pause($user)
     {
-        return app(Patient::class);
+        if (is_a($user, User::class)) {
+            $userId = $user->id;
+        }
+
+        if (is_numeric($user)) {
+            $userId = $user;
+        }
+
+        if ( ! isset($userId)) {
+            throw new InvalidArgumentException();
+        }
+
+        return Patient::where('user_id', $userId)->update(['ccm_status' => 'paused']);
     }
 
     public function storeCcdProblem(User $patient, array $args)
@@ -30,7 +43,9 @@ class PatientRepository
 
         $newProblem = $patient->ccdProblems()->updateOrCreate([
             'name'           => $args['name'],
-            'cpm_problem_id' => empty($args['cpm_problem_id']) ? null : $args['cpm_problem_id'],
+            'cpm_problem_id' => empty($args['cpm_problem_id'])
+                ? null
+                : $args['cpm_problem_id'],
             'billable'       => $args['billable'] ?? null,
         ]);
 
@@ -46,5 +61,57 @@ class PatientRepository
         }
 
         return $newProblem;
+    }
+
+    /**
+     * Updates the patient's call info based on the status of the last call
+     *
+     * @param Patient $patient
+     * @param $successfulLastCall
+     *
+     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function updateCallLogs(
+        Patient $patient,
+        bool $successfulLastCall
+    ) {
+
+        // get record for month
+        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
+                                       ->where('month_year', $day_start)
+                                       ->first();
+
+        // set increment var
+        $successful_call_increment = 0;
+        if ($successfulLastCall) {
+            $successful_call_increment = 1;
+            // reset call attempts back to 0
+            $patient->no_call_attempts_since_last_success = 0;
+        } else {
+            $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
+
+            if ($patient->no_call_attempts_since_last_success == 5) {
+                $patient->ccm_status = 'paused';
+            }
+        }
+        $patient->save();
+
+        // Determine whether to add to record or not
+        if (!$record) {
+            $record = new PatientMonthlySummary;
+            $record->patient_id = $patient->user_id;
+            $record->ccm_time = 0;
+            $record->month_year = $day_start;
+            $record->no_of_calls = 1;
+            $record->no_of_successful_calls = $successful_call_increment;
+            $record->save();
+        } else {
+            $record->no_of_calls = $record->no_of_calls + 1;
+            $record->no_of_successful_calls = ($record->no_of_successful_calls + $successful_call_increment);
+            $record->save();
+        }
+
+        return $record;
     }
 }

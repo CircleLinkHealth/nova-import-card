@@ -14,9 +14,9 @@ use App\Facades\StringManipulation;
 use App\Nurse;
 use App\NurseContactWindow;
 use App\Patient;
-use App\PatientMonthlySummary;
 use App\PatientContactWindow;
 use App\Practice;
+use App\Repositories\PatientRepository;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -38,8 +38,8 @@ trait UserHelpers
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
-        $lastName = $faker->lastName;
-        $email = $faker->email;
+        $lastName  = $faker->lastName;
+        $email     = $faker->email;
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
         $roles = [
@@ -67,7 +67,7 @@ trait UserHelpers
 
             //provider Info
             'prefix'            => 'Dr',
-            'suffix'     => 'MD',
+            'suffix'            => 'MD',
             'npi_number'        => 1234567890,
             'specialty'         => 'Unit Tester',
 
@@ -97,8 +97,8 @@ trait UserHelpers
         //check that the roles were created
         foreach ($roles as $role) {
             $this->assertDatabaseHas('practice_role_user', [
-                'user_id' => $user->id,
-                'role_id' => $role,
+                'user_id'    => $user->id,
+                'role_id'    => $role,
                 'program_id' => $practiceId,
             ]);
         }
@@ -197,6 +197,6 @@ trait UserHelpers
     public function makePatientMonthlyRecord(Patient $patient)
     {
 
-        return PatientMonthlySummary::updateCallInfoForPatient($patient, true);
+        return (app(PatientRepository::class))->updateCallLogs($patient, true);
     }
 }

@@ -57,7 +57,7 @@ class CallController extends Controller
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
-        if (!$patient) {
+        if ( ! $patient) {
             return response(json_encode([
                 'errors' => ['could not find patient'],
                 'code'   => 406,
@@ -74,22 +74,22 @@ class CallController extends Controller
             }
         }
 
-        $call = new Call;
+        $call                 = new Call;
         $call->inbound_cpm_id = $input['inbound_cpm_id'];
         if (empty($input['outbound_cpm_id'])) {
             $call->outbound_cpm_id = null;
         } else {
             $call->outbound_cpm_id = $input['outbound_cpm_id'];
         }
-        $call->scheduled_date = $input['scheduled_date'];
-        $call->window_start = $input['window_start'];
-        $call->window_end = $input['window_end'];
-        $call->attempt_note = $input['attempt_note'];
-        $call->note_id = null;
+        $call->scheduled_date  = $input['scheduled_date'];
+        $call->window_start    = $input['window_start'];
+        $call->window_end      = $input['window_end'];
+        $call->attempt_note    = $input['attempt_note'];
+        $call->note_id         = null;
         $call->is_cpm_outbound = 1;
-        $call->service = 'phone';
-        $call->status = 'scheduled';
-        $call->scheduler = auth()->user()->id;
+        $call->service         = 'phone';
+        $call->status          = 'scheduled';
+        $call->scheduler       = auth()->user()->id;
         $call->save();
 
         return response("successfully created call ", 201);
@@ -101,7 +101,7 @@ class CallController extends Controller
         $input = $request->all();
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
-        $window_end = Carbon::parse($input['window_end'])->format('H:i');
+        $window_end   = Carbon::parse($input['window_end'])->format('H:i');
 
         //If the suggested date doesn't match the one in the input,
         //the scheduler has changed the date, mark it.
@@ -128,7 +128,7 @@ class CallController extends Controller
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
         ])
-            ->with('messages', ['Successfully Created Note']);
+                         ->with('messages', ['Successfully Created Note']);
     }
 
     public function show($id)
@@ -156,21 +156,21 @@ class CallController extends Controller
         if (empty($data['callId'])) {
             return response("missing required params", 401);
         }
-        if (!Auth::user()) {
+        if ( ! Auth::user()) {
             return response("missing required scheduler user", 401);
         }
 
         // find call
         $call = Call::find($data['callId']);
-        if (!$call) {
+        if ( ! $call) {
             return response("could not locate call " . $data['callId'], 401);
         }
 
         // for null outbound_cpm_id
         if ($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned')) {
             $call->scheduler = Auth::user()->id;
-            $col = $data['columnName'];
-            $call->$col = null;
+            $col             = $data['columnName'];
+            $call->$col      = null;
         } else {
             if ($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text')) {
                 $call->attempt_note = '';
@@ -186,8 +186,8 @@ class CallController extends Controller
                     }
                 } else {
                     $call->scheduler = Auth::user()->id;
-                    $col = $data['columnName'];
-                    $call->$col = $data['value'];
+                    $col             = $data['columnName'];
+                    $call->$col      = $data['value'];
                 }
             }
         }

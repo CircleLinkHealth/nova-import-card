@@ -1,8 +1,11 @@
 <?php namespace App\Console;
 
-use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Console\Commands\RescheduleMissedCalls;
+use App\Console\Commands\SyncFamilialCalls;
+use App\Console\Commands\TuneScheduledCalls;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -18,40 +21,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
-            $handled = (new ReschedulerHandler())->handle();
-
-            if ( ! empty($handled)) {
-                $message = "The CPMbot just rescheduled some calls.\n";
-
-                foreach ($handled as $call) {
-                    $message = "We just fixed call: {$call->id}. \n";
-                }
-
-                sendSlackMessage('#background-tasks', $message);
-            }
-        })->dailyAt('00:05');
-
-        //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('00:20');
+        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-        //syncs families.
-        $schedule->call(function () {
-            (new SchedulerService())->syncFamilialCalls();
-        })->dailyAt('00:30');
+        $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-        })->everyMinute();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute();
 
         $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
                  ->weeklyOn(1, '10:00');

@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\App;
 class CareplanAssessment extends \App\BaseModel
 {
 
-    public function load($object)
+    public function process($object)
     {   
         foreach (get_object_vars($object) as $key => $value) {
             if ($key != '_token') $this->$key = $value;

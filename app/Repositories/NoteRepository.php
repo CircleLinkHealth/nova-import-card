@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Note;
 
-class PatientRepository
+class NoteRepository
 {
     public function model()
     {
