@@ -517,7 +517,7 @@ class ReportsController extends Controller
             $assessment->unload();
         }
 
-        $approver = $assessment->approver()->first();
+        $approver = $assessment ? $assessment->approver()->first() : null;
 
         return view(
             'wpUsers.patient.careplan.assessment',
