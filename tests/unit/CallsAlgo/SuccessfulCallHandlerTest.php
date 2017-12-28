@@ -10,7 +10,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class SuccessfulCallHandler extends TestCase
+class SuccessfulCallHandlerTest extends TestCase
 {
     use DatabaseTransactions,
         UserHelpers;
