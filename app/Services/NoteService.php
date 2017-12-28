@@ -9,12 +9,22 @@ use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
+use App\Repositories\NoteRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
 
 class NoteService
 {
+    private $noteRepo;
+
+    public function __constructor(NoteRepository $noteRepo) {
+        $this->noteRepo = $noteRepo;
+    }
+
+    public function repo() {
+        return $this->noteRepo;
+    }
 
     public function storeNote($input)
     {
