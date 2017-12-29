@@ -120,6 +120,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'middleware' => ['patientProgramSecurity']
             ], function () {
             Route::get('{userId}', 'PatientController@getPatient');
+            Route::get('{userId}/biometrics', 'PatientController@getBiometrics');
             Route::get('{userId}/problems', 'PatientController@getProblems');
             Route::post('{userId}/problems', 'PatientController@addCpmProblem');
             Route::delete('{userId}/problems/cpm/{cpmId}', 'PatientController@removeCpmProblem');
