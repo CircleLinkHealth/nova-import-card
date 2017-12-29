@@ -95,11 +95,14 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.total.ccm.time',
         ]);
 
+        Route::group(['prefix' => 'allergies'], function () {
+            Route::get('', 'ProblemController@ccdAllergies');
+            Route::get('search', 'ProblemController@searchCcdAllergies');
+        });
+
         Route::group(['prefix' => 'problems'], function () {
             Route::get('cpm', 'ProblemController@cpmProblems');
             Route::get('ccd', 'ProblemController@ccdProblems');
-            Route::get('ccd/allergies', 'ProblemController@ccdAllergies');
-            Route::get('ccd/allergies/search', 'ProblemController@searchCcdAllergies');
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
             Route::resource('', 'ProblemController');
