@@ -3,16 +3,19 @@
 use App\User;
 use App\Patient;
 use App\Repositories\PatientRepository;
+use App\Services\CCD\CcdAllergyService;
 use App\Repositories\UserRepositoryEloquent;
 
 class PatientService
 {
     private $patientRepo;
     private $userRepo;
+    private $allergyRepo;
 
-    public function __construct(PatientRepository $patientRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(PatientRepository $patientRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo) {
         $this->patientRepo = $patientRepo;
         $this->userRepo = $userRepo;
+        $this->allergyService = $allergyService;
     }
 
     function mapTypeFn ($type) {
@@ -51,5 +54,9 @@ class PatientService
                 'code' => $p->icd_10_code
             ];
         })->toArray();
+    }
+
+    public function getCcdAllergies($userId) {
+        return $this->allergyService->patientAllergies($userId);
     }
 }

@@ -24,6 +24,8 @@ class CcdAllergyService
         $allergy = [
             'id'    => $a->id,
             'name'  => $a->allergen_name,
+            'created_at' => $a->created_at->format('c'),
+            'updated_at' => $a->updated_at->format('c'),
             'patients' => $this->repo()->patientIds($a->allergen_name)->map(function ($patient) {
                 return $patient->patient_id;
             })
@@ -43,5 +45,11 @@ class CcdAllergyService
         $allergy = $this->repo()->model()->find($id);
         if ($allergy) return $this->setupAllergy($allergy);
         else return null;
+    }
+    
+    public function patientAllergies($userId) {
+        return $this->repo()->patientAllergies($userId)->map(function ($a) {
+            return $this->setupAllergy($a);
+        });
     }
 }

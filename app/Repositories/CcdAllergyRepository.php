@@ -23,4 +23,8 @@ class CcdAllergyRepository
     public function allergies() {
         return $this->model()->groupBy('allergen_name')->paginate(30);
     }
+    
+    public function patientAllergies($userId) {
+        return $this->model()->where([ 'patient_id' => $userId ])->get();
+    }
 }

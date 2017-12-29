@@ -57,6 +57,11 @@ class PatientController extends Controller
     {
         return response()->json($this->patientService->getCcdProblems($userId));
     }
+    
+    public function getCcdAllergies($userId)
+    {
+        return response()->json($this->patientService->getCcdAllergies($userId));
+    }
 
     public function addCpmProblem($userId, Request $request) {
         $cpmProblemId = $request->input('cpmProblemId');
