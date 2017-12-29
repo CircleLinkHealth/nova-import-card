@@ -1502,3 +1502,5 @@ Route::group([
 
     Route::get('/call', 'TwilioController@makeCall');
 });
+
+Route::impersonate();
