@@ -10,18 +10,32 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use App\User;
+use App\Repositories\CpmBiometricRepository;
 use App\Repositories\CpmBiometricUserRepository;
 
 class CpmBiometricService implements CpmModel
 {
+    private $biometricRepo;
     private $biometricUserRepo;
 
-    public function __construct(CpmBiometricUserRepository $biometricUserRepo) {
+    public function __construct(CpmBiometricRepository $biometricRepo, CpmBiometricUserRepository $biometricUserRepo) {
+        $this->biometricRepo = $biometricRepo;
         $this->biometricUserRepo = $biometricUserRepo;
     }
 
     public function repo() {
-        return $this->biometricUserRepo;
+        return $this->biometricRepo;
+    }
+
+    public function biometrics() {
+        return $this->repo()->biometrics()->map(function ($b) {
+            $b['patients'] = $this->biometricUserRepo->patients($b->id)->count();
+            return $b;
+        });
+    }
+
+    public function patientBiometrics($userId) {
+        return $this->biometricUserRepo->patientBiometrics($userId);
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

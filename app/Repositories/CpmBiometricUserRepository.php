@@ -18,6 +18,10 @@ class CpmBiometricUserRepository
         return app(CpmBiometricUser::class);
     }
 
+    public function patients($biometricId) {
+        return $this->model()->where([ 'cpm_biometric_id' => $biometricId ]);
+    }
+
     public function patientBiometrics($userId) {
         return $this->model()->where([ 'patient_id' => $userId ])->get()->map(function ($bu) {
             $biometric = $bu->biometric()->first();

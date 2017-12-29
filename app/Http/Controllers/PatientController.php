@@ -68,7 +68,7 @@ class PatientController extends Controller
     
     public function getBiometrics($userId)
     {
-        return response()->json($this->biometricUserService->repo()->patientBiometrics($userId));
+        return response()->json($this->biometricUserService->patientBiometrics($userId));
     }
 
     public function addCpmProblem($userId, Request $request) {

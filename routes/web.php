@@ -94,6 +94,10 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'API\ActivityController@ccmTime',
             'as'   => 'get.total.ccm.time',
         ]);
+        
+        Route::group(['prefix' => 'biometrics'], function () {
+            Route::resource('', 'BiometricController');
+        });
 
         Route::group(['prefix' => 'allergies'], function () {
             Route::get('', 'ProblemController@ccdAllergies');
