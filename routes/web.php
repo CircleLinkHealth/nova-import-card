@@ -96,7 +96,9 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
         
         Route::group(['prefix' => 'biometrics'], function () {
-            Route::resource('', 'BiometricController');
+            Route::get('', 'BiometricController@index');
+            Route::get('{biometricId}', 'BiometricController@show');
+            Route::get('{biometricId}/patients', 'BiometricController@patients');
         });
 
         Route::group(['prefix' => 'allergies'], function () {

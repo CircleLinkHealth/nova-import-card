@@ -33,6 +33,18 @@ class CpmBiometricService implements CpmModel
             return $b;
         });
     }
+    
+    public function biometric($biometricId) {
+        $biometric = $this->biometricUserRepo->model()->find($biometricId);
+        $biometric['patients'] = $this->biometricUserRepo->patients($biometricId)->count();
+        return $biometric;
+    }
+    
+    public function biometricPatients($biometricId) {
+        return $this->biometricUserRepo->patients($biometricId)->get([ 'patient_id' ])->map(function ($u) {
+            return $u->patient_id;
+        });
+    }
 
     public function patientBiometrics($userId) {
         return $this->biometricUserRepo->patientBiometrics($userId);

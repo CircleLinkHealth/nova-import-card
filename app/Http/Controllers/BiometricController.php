@@ -25,4 +25,12 @@ class BiometricController extends Controller
     public function index() {
         return response()->json($this->biometricService->biometrics());
     }
+    
+    public function show($biometricId) {
+        return response()->json($this->biometricService->biometric($biometricId));
+    }
+    
+    public function patients($biometricId) {
+        return response()->json($this->biometricService->biometricPatients($biometricId));
+    }
 }
