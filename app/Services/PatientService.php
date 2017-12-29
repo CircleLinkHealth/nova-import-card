@@ -29,12 +29,14 @@ class PatientService
     public function getCpmProblems($userId) {
         $user = $this->userRepo->with(['patientInfo'])->find($userId);
         $patient = $user->patientInfo;
-        return $user->cpmProblems()->with(['user'])->get()->map(function ($p) use ($user) {
+        return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
                 'code' => $p->default_icd_10_code,
-                'instructions' => $p->user->where('patient_id', $user->id)->first()->instruction()->get()
+                'instructions' => array_filter($p->user->where('patient_id', $user->id)->values()->map(function ($u) {
+                    return $u->instruction()->first();
+                })->toArray())
             ];
         })->toArray();
     }
