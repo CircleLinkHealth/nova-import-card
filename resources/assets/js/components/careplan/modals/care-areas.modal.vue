@@ -22,8 +22,9 @@
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <textarea class="form-control" v-model="newInstruction" placeholder="Add New Instruction"></textarea>
                     <div class="text-right top-20">
-                        <loader v-if="loaders.addInstruction"></loader>
-                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addInstruction" :disabled="!newInstruction || newInstruction.length === 0" />
+                        <loader v-if="loaders.addInstruction || loaders.removeProblem"></loader>
+                        <input type="button" class="btn btn-secondary btn-danger" value="Remove" @click="removeProblem" title="remove this cpm problem" />
+                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addInstruction" title="add this instruction for this cpm problem" :disabled="!newInstruction || newInstruction.length === 0" />
                     </div>
                     <ol class="list-group">
                         <li class="list-group-item" v-for="(instruction, index) in selectedProblem.instructions" :key="index">{{instruction.name}}</li>
@@ -60,7 +61,9 @@
                 cpmProblems: [],
                 selectedCpmProblemId: null,
                 loaders: {
-                    addInstruction: null
+                    addInstruction: null,
+                    addProblem: null,
+                    removeProblem: null
                 }
             }
         },
@@ -106,6 +109,20 @@
                     })
                 }
             },
+            removeProblem() {
+                if (this.selectedProblem) {
+                    this.loaders.removeProblem = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}`)).then(response => {
+                        console.error('care-areas:remove-problems', response.data)
+                        this.loaders.removeProblem = false
+                        this.selectedProblem = null
+                        Event.$emit('care-areas:problems', response.data)
+                    }).catch(err => {
+                        console.error('care-areas:remove-problems', err)
+                        this.loaders.removeProblem = false
+                    })
+                }
+            },
             getCpmProblems(page = 1) {
                 if (page === 1) {
                     this.cpmProblems = []
@@ -136,10 +153,14 @@
     }
 
     .btn.btn-secondary {
-        background: #ddd;
+        background-color: #ddd;
         padding: 10 20 10 20;
         margin-right: 15px; 
         margin-bottom: 5px;
+    }
+
+    .btn.btn-danger {
+        background-color: #d9534f;
     }
 
     .btn.btn-secondary.selected {

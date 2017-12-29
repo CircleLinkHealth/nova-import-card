@@ -40,4 +40,12 @@ class CpmProblemUserRepository
         }
         return $cpmProblemUser;
     }
+
+    public function remove($patientId, $cpmProblemId) {
+        $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->get();
+        $cpmProblemUsers->map(function ($u) {
+            $u->instruction()->delete();
+            $u->delete();
+        });
+    }
 }
