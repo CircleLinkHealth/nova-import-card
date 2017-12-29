@@ -99,6 +99,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('cpm', 'ProblemController@cpmProblems');
             Route::get('ccd', 'ProblemController@ccdProblems');
             Route::get('ccd/allergies', 'ProblemController@ccdAllergies');
+            Route::get('ccd/allergies/search', 'ProblemController@searchCcdAllergies');
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
             Route::resource('', 'ProblemController');

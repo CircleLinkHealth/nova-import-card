@@ -56,6 +56,15 @@ class ProblemController extends Controller
         return response()->json($this->allergyService->allergies());
     }
     
+    public function searchCcdAllergies(Request $request) {
+        $term = $request->input('term');
+        if ($term) {
+            $terms = explode(',', $term);
+            return response()->json($this->allergyService->searchAllergies($terms));
+        }
+        else return $this->badRequest('missing parameter: "term"');
+    }
+    
     public function cpmProblem($cpmId) {
         $cpmProblem = $this->cpmProblemService->problem($cpmId);
         if ($cpmProblem) return response()->json($cpmProblem);
