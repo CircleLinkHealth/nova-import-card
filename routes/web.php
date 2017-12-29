@@ -125,7 +125,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('{userId}/problems/cpm/{cpmId}', 'PatientController@removeCpmProblem');
             Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
             Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
-            Route::get('{userId}/problems/ccd/allergies', 'PatientController@getCcdAllergies');
+            Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');
             Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
 
