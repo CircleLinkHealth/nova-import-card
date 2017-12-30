@@ -13,7 +13,7 @@
         var timeTrackerInfo = {
             "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',
             "providerId": '{{Auth::user()->id}}',
-            "totalTime": ((monthlyTime) => {
+            "totalTime": (function (monthlyTime) {
                             if (monthlyTime) {
                                 const split = monthlyTime.split(':');
                                 const seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
