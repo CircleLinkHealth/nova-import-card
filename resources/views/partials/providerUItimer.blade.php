@@ -15,8 +15,8 @@
             "providerId": '{{Auth::user()->id}}',
             "totalTime": (function (monthlyTime) {
                             if (monthlyTime) {
-                                const split = monthlyTime.split(':');
-                                const seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
+                                var split = monthlyTime.split(':');
+                                var seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
                                 return seconds +
                                         (minutes * 60) + 
                                         (hours * 60 * 60);
