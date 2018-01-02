@@ -75,7 +75,7 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
+        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::createFromFormat('M, Y', $request['date']));
 
         return ApprovableBillablePatient::collection($data);
     }
