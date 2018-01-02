@@ -158,6 +158,9 @@ if (isset($patient) && ! empty($patient)) {
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
+                <health-goals ref="healthGoals" patient-id="{{$patient->id}}">
+
+                </health-goals>
                 @if($biometrics)
                     <div class="patient-info__subareas">
                         <div class="row">
