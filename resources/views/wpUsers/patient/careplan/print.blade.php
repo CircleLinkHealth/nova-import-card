@@ -159,41 +159,30 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
                 <health-goals ref="healthGoals" patient-id="{{$patient->id}}">
+                    @if($biometrics)
+                        <ul class="subareas__list">
+                            <li class="subareas__item subareas__item--wide col-sm-12">
+                                @foreach(array_reverse($biometrics) as $key => $value)
+                                    @if ($key == 'Blood Pressure')
 
+                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Regulate') ? 'keep under' :  'to' }} {{$value['target']}}</div>
+                                        <div class="col-xs-3 print-row">
+                                            from {{$value['starting']}}</div>
+
+                                    @else
+
+                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
+                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
+                                        <div class="col-xs-3 print-row">
+                                            from {{$value['starting']}}</div>
+
+                                    @endif
+                                @endforeach
+                            </li>
+                        </ul>
+                    @endif
                 </health-goals>
-                @if($biometrics)
-                    <div class="patient-info__subareas">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
-                                    Goals</h2>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <ul class="subareas__list">
-                                <li class="subareas__item subareas__item--wide col-sm-12">
-                                    @foreach(array_reverse($biometrics) as $key => $value)
-                                        @if ($key == 'Blood Pressure')
-
-                                            <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                            <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Regulate') ? 'keep under' :  'to' }} {{$value['target']}}</div>
-                                            <div class="col-xs-3 print-row">
-                                                from {{$value['starting']}}</div>
-
-                                        @else
-
-                                            <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                            <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
-                                            <div class="col-xs-3 print-row">
-                                                from {{$value['starting']}}</div>
-
-                                        @endif
-                                    @endforeach
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                @endif
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->

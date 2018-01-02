@@ -9,10 +9,17 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="goals.length === 0"></slot>
-                <div class="text-center" v-if="!goals || goals.length === 0">No Health Goals at this time</div>
+                <slot v-if="goals.length === 0">
+                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
+                </slot>
+                
                 <ul class="subareas__list" v-if="goals && goals.length > 0">
-                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row' v-for="(goal, index) in goals" :key="index">{{goal.name}}</li>
+                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals" :key="index">
+                        <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
+                        <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
+                        <div class="col-xs-3 print-row">
+                            from {{goal.start() || 'N/A'}} {{goal.unit}}</div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -39,9 +46,33 @@
             }
         },
         methods: {
-            getgoals() {
+            setupGoal(goal) {
+                goal.created_at = new Date(goal.created_at)
+                goal.updated_at = new Date(goal.updated_at)
+                if (goal.info) {
+                    goal.info.created_at = new Date(goal.info.created_at)
+                    goal.info.updated_at = new Date(goal.info.updated_at)
+                    goal.start = () => Number(goal.info.starting.split('/')[0] || '0')
+                    goal.end = () => Number(goal.info.target.split('/')[0] || '0')
+                    
+                    if (goal.start() > goal.end()) {
+                        goal.info.verb = 'Decrease'
+                    }
+                    else {
+                        if ((goal.name === 'Blood Pressure' && goal.start() < 90) || (goal.start() > 0 && goal.start() < goal.end())) {
+                            goal.info.verb = 'Increase'
+                        }
+                        else {
+                            goal.info.verb = 'Regulate'
+                        }
+                    }
+                }
+                return goal
+            },
+            getGoals() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/biometrics`)).then(response => {
-                    console.log('health-goals:get-goals', response.data)
+                    this.goals = response.data.map(this.setupGoal)
+                    console.log('health-goals:get-goals', this.goals)
                 }).catch(err => {
                     console.error('health-goals:get-goals', err)
                 })
@@ -51,7 +82,7 @@
             }
         },
         mounted() {
-            this.getgoals()
+            this.getGoals()
 
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
@@ -61,5 +92,7 @@
 </script>
 
 <style>
-    
+    li.top-20 {
+        margin-top: 20px;
+    }
 </style>
