@@ -75,7 +75,7 @@ class PatientController extends Controller
         $cpmProblemId = $request->input('cpmProblemId');
         if ($userId && $cpmProblemId) {
             $this->cpmProblemUserService->addProblemToPatient($userId, $cpmProblemId);
-            return $this->patientService->getCpmProblems($userId);
+            return $this->getCpmProblems($userId);
         }
         return $this->badRequest('"userId" and "cpmProblemId" are important');
     }
@@ -83,7 +83,7 @@ class PatientController extends Controller
     public function removeCpmProblem($userId, $cpmId) {
         if ($userId && $cpmId) {
             $this->cpmProblemUserService->removeProblemFromPatient($userId, $cpmId);
-            return $this->patientService->getCpmProblems($userId);
+            return $this->getCpmProblems($userId);
         }
         return $this->badRequest('"userId" and "cpmId" are important');
     }

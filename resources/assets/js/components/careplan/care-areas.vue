@@ -49,7 +49,7 @@
                 return problem
             },
             getProblems() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems`)).then(response => {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/cpm`)).then(response => {
                     console.log('care-areas:get-problems', response.data)
                     this.problems = response.data.map(this.setupProblem)
                 }).catch(err => {
