@@ -114,35 +114,26 @@ class PatientMonthlySummary extends \App\BaseModel
         $userId,
         $ccmTime
     ) {
-        // get record for month
-        $day_start = Carbon::now()->startOfMonth()->toDateString();
-        $record = PatientMonthlySummary::where('patient_id', $userId)
-                                       ->where('month_year', $day_start)
-                                       ->first();
+        $dayStart = Carbon::now()->startOfMonth()->toDateString();
 
-        //Detemine whether to add to record or not
-        if (!$record) {
-            $day_start = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::updateOrCreate([
+            'patient_id' => $userId,
+            'month_year' => $dayStart
+        ], [
+            'ccm_time' => $ccmTime
+        ]);
+
+        if (!$record->problem_1 || !$record->problem_2) {
             $existingRecord = PatientMonthlySummary::where('patient_id', $userId)
-                                           ->orderBy('id', 'DESC')
-                                           ->first();
-
-            $record = new PatientMonthlySummary;
-            $record->patient_id = $userId;
-            $record->ccm_time = $ccmTime;
-            $record->month_year = $day_start;
-            $record->no_of_calls = 0;
-            $record->no_of_successful_calls = 0;
+                                                   ->where('id', '!=', $record->id)
+                                                   ->orderBy('id', 'DESC')
+                                                   ->first();
 
             if ($existingRecord) {
-                $record->problem_1 = $existingRecord->problem_1;
-                $record->problem_2 = $existingRecord->problem_2;
+                if ($existingRecord->problem_1 && !$record->problem_1) $record->problem_1 = $existingRecord->problem_1;
+                if ($existingRecord->problem_2 && !$record->problem_2) $record->problem_2 = $existingRecord->problem_2;
+                $record->save();
             }
-
-            $record->save();
-        } else {
-            $record->ccm_time = $ccmTime;
-            $record->save();
         }
 
         return $record;
