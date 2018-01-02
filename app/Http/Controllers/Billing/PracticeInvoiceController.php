@@ -27,6 +27,7 @@ class PracticeInvoiceController extends Controller
      * PracticeInvoiceController constructor.
      *
      * @param ApproveBillablePatientsService $service
+     * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
      */
     public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
     {
