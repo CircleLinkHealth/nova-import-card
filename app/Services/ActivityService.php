@@ -33,6 +33,7 @@ class ActivityService
         }
 
         $acts = $this->repo->totalCCMTime($userIds, $monthYear)
+                           ->get()
                            ->pluck('total_time', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
