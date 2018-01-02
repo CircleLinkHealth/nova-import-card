@@ -183,9 +183,9 @@ class NoteService
 
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
-        $patientRecord = $patient
-            ->monthlySummaries
-            ->where('month_year', $date_index)->first();
+        $patientRecord = PatientMonthlySummary::where('patient_id', $patient->user_id)
+            ->where('month_year', $date_index)
+            ->first();
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
