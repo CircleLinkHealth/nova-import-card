@@ -2,8 +2,8 @@
     <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="btn-group" role="group" aria-label="We are managing">
+                <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
+                    <div class="btn-group" :class="{ 'problem-buttons': problems.length > 20 }" role="group" aria-label="We are managing">
                         <input type="button" class="btn btn-secondary" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problems" :key="index" :value="problem.name" @click="select(index)" />
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
@@ -26,9 +26,13 @@
                         <input type="button" class="btn btn-secondary btn-danger" value="Remove" @click="removeProblem" title="remove this cpm problem" />
                         <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addInstruction" title="add this instruction for this cpm problem" :disabled="!newInstruction || newInstruction.length === 0" />
                     </div>
-                    <ol class="list-group">
-                        <li class="list-group-item" v-for="(instruction, index) in selectedProblem.instructions" :key="index">{{instruction.name}}</li>
-                    </ol>
+                    <div class="instructions">
+                         <div v-for="(instruction, index) in selectedProblem.instructions" :key="index">
+                            <ol class="list-group" v-for="instructionChunk in instruction.name.split('\n')" :key="instructionChunk">
+                                <li class="list-group-item" v-if="instructionChunk">{{instructionChunk}}</li>
+                            </ol>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
@@ -87,7 +91,7 @@
                 if (this.newInstruction && this.newInstruction.length > 0) {
                     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('care-areas:add-instruction-to-problem', response.data)
-                        this.selectedProblem.instructions.push(instruction)
+                        this.selectedProblem.instructions.unshift(instruction)
                         this.newInstruction = ''
                         this.loaders.addInstruction = false
                     }).catch(err => {
@@ -184,4 +188,16 @@
         font-size: 14px;
     }
 
+    .problem-container {
+        overflow-x: scroll;
+    }
+
+    .problem-buttons {
+        width: 2000px;
+    }
+
+    .modal-care-areas .instructions {
+        overflow-y: scroll;
+        max-height: 300px;
+    }
 </style>

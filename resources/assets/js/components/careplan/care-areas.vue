@@ -39,10 +39,19 @@
             }
         },
         methods: {
+            setupDates(obj) {
+                obj.created_at = new Date(obj.created_at)
+                obj.updated_at = new Date(obj.updated_at)
+                return obj
+            },
+            setupProblem(problem) {
+                problem.instructions = (problem.instructions || []).map(this.setupDates).sort((a, b) => b.id - a.id)
+                return problem
+            },
             getProblems() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems`)).then(response => {
                     console.log('care-areas:get-problems', response.data)
-                    this.problems = response.data
+                    this.problems = response.data.map(this.setupProblem)
                 }).catch(err => {
                     console.error('care-areas:get-problems', err)
                 })
@@ -55,7 +64,7 @@
             this.getProblems()
 
             Event.$on('care-areas:problems', (problems) => {
-                this.problems = problems
+                this.problems = problems.map(this.setupProblem)
             })
         }
     }
