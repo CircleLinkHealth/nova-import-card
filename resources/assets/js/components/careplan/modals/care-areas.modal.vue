@@ -2,6 +2,13 @@
     <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
         <template scope="props">
             <div class="row">
+                <div class="col-sm-12">
+                    <div class="text-right">
+                        <loader v-if="loaders.addInstruction || loaders.removeProblem"></loader>
+                        <input type="button" class="btn btn-secondary btn-danger problem-remove" value="x" 
+                            v-if="selectedProblem" @click="removeProblem" title="remove this cpm problem" />
+                    </div>
+                </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 20 }" role="group" aria-label="We are managing">
                         <input type="button" class="btn btn-secondary" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
@@ -20,16 +27,23 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <textarea class="form-control" v-model="newInstruction" placeholder="Add New Instruction"></textarea>
-                    <div class="text-right top-20">
-                        <loader v-if="loaders.addInstruction || loaders.removeProblem"></loader>
-                        <input type="button" class="btn btn-secondary btn-danger" value="Remove" @click="removeProblem" title="remove this cpm problem" />
-                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addInstruction" title="add this instruction for this cpm problem" :disabled="!newInstruction || newInstruction.length === 0" />
+                    <div class="row top-20">
+                        <div class="col-sm-11">
+                            <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" />
+                        </div>
+                        <div class="col-sm-1">
+                            <loader v-if="loaders.addInstruction"></loader>
+                            <input type="button" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                @click="addInstruction" title="add this instruction for this cpm problem" 
+                                :disabled="!newInstruction || newInstruction.length === 0" />
+                        </div>
                     </div>
-                    <div class="instructions">
+                    <div class="instructions top-20">
                          <div v-for="(instruction, index) in selectedProblem.instructions" :key="index">
-                            <ol class="list-group" v-for="instructionChunk in instruction.name.split('\n')" :key="instructionChunk">
-                                <li class="list-group-item" v-if="instructionChunk">{{instructionChunk}}</li>
+                            <ol class="list-group" v-for="(instructionChunk, chunkIndex) in instruction.name.split('\n')" 
+                                @click="selectInstruction(index)" :key="chunkIndex">
+                                <li class="list-group-item" v-if="instructionChunk"
+                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id }">{{instructionChunk}}</li>
                             </ol>
                         </div>
                     </div>
@@ -62,6 +76,7 @@
             return {
                 newInstruction: '',
                 selectedProblem: null,
+                selectedInstruction: null,
                 cpmProblems: [],
                 selectedCpmProblemId: null,
                 loaders: {
@@ -114,7 +129,7 @@
                 }
             },
             removeProblem() {
-                if (this.selectedProblem) {
+                if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}`)).then(response => {
                         console.error('care-areas:remove-problems', response.data)
@@ -143,6 +158,9 @@
                 }).catch(err => {
                     console.error('care-areas:get-cpm-problems', err)
                 })
+            },
+            selectInstruction(index) {
+                this.selectedInstruction = this.selectedProblem.instructions[index]
             }
         },
         mounted() {
@@ -167,7 +185,7 @@
         background-color: #d9534f;
     }
 
-    .btn.btn-secondary.selected {
+    .btn.btn-secondary.selected, .list-group-item.selected {
         background: #47beab;
         color: white;
     }
@@ -199,5 +217,16 @@
     .modal-care-areas .instructions {
         overflow-y: scroll;
         max-height: 300px;
+    }
+
+    .modal-care-areas .instruction-add {
+        padding: 5 20 5 20;
+        margin-top: 2px;
+        margin-left: -25px;
+    }
+
+    .modal-care-areas .problem-remove {
+        margin: 0 -15 5 0;
+        padding: 2 7 2 7;
     }
 </style>
