@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $care_item_id
  * @property string $name
  * @property int|null $type
+ * @property string $unit
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \App\Models\CPM\Biometrics\CpmBloodPressure|\App\Models\CPM\Biometrics\CpmBloodSugar|\App\Models\CPM\Biometrics\CpmSmoking|\App\Models\CPM\Biometrics\CpmWeight $info
