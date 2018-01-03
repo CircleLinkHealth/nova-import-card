@@ -27,6 +27,7 @@ class PracticeInvoiceController extends Controller
      * PracticeInvoiceController constructor.
      *
      * @param ApproveBillablePatientsService $service
+     * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
      */
     public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
     {
@@ -74,7 +75,7 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::parse($request['date']));
+        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::createFromFormat('M, Y', $request['date']));
 
         return ApprovableBillablePatient::collection($data);
     }
@@ -293,9 +294,9 @@ class PracticeInvoiceController extends Controller
             if ($practice->invoice_recipients != '') {
                 $recipients = explode(', ', $practice->invoice_recipients);
 
-                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->toArray());
+                $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {
-                $recipients = $practice->getInvoiceRecipients();
+                $recipients = $practice->getInvoiceRecipients()->pluck('email')->all();
             }
 
             if (count($recipients) > 0) {

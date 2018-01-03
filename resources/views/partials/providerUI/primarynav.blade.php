@@ -80,6 +80,12 @@
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
 
+                        @impersonating
+                        <li>
+                            <a href="{{ route('impersonate.leave') }}">Leave impersonation</a>
+                        </li>
+                        @endImpersonating
+
                         @if(auth()->user()->hasRole(['care-center']))
                             <li>
                                 <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">

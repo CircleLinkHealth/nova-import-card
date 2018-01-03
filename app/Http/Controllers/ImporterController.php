@@ -103,7 +103,13 @@ class ImporterController extends Controller
                 ->map(function ($summary) {
                     $summary['flag'] = false;
 
-                    $providers = $summary->medicalRecord()->providers()->where([
+                    $mr = $summary->medicalRecord();
+
+                    if (!$mr) {
+                        return false;
+                    }
+
+                    $providers = $mr->providers()->where([
                         ['first_name', '!=', null],
                         ['last_name', '!=', null],
                         ['ml_ignore', '=', false],
@@ -116,7 +122,8 @@ class ImporterController extends Controller
                     }
 
                     return $summary;
-                })->values();
+                })->filter()
+                  ->values();
     }
 
     public function records() {
