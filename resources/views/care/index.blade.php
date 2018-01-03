@@ -6,8 +6,20 @@
 @section('content')
     @push('styles')
         <style type="text/css">
+            .container {
+                width: 620px !important;
+            }
+
             .color-red {
                 color: red;
+            }
+
+            .color-orange {
+                color: #fa0;
+            }
+
+            .color-green {
+                color: #5cb85c;
             }
 
             .top-20 {
@@ -38,9 +50,9 @@
 
     <div class="main-form-block main-form-horizontal col-md-12">
         <h3 class="main-form-primary-horizontal text-center">
-            Enrollment and Advanced Care Planning for Personalized Care (CCM)
+            Enrollment to Personalized Care (CCM)
         </h3>
-        <h4 class="color-red text-center">
+        <h4 class="color-orange text-center">
             Reimbursement code G0506
         </h4>
         <h4 class="color-green top-20 text-center">
