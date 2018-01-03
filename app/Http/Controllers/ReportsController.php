@@ -159,6 +159,10 @@ class ReportsController extends Controller
                                   ->orderBy('performed_at', 'desc');
                             },
                         ])
+                        ->whereHas('patientSummaries', function ($q) use ($time){
+                            $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                              ->where('ccm_time', '<', 1200);
+                        })
                         ->get();
 
         $u20_patients = [];
