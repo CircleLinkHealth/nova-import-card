@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 
@@ -228,8 +229,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         CerberusSiteUserTrait,
         HasApiTokens,
         HasEmrDirectAddress,
+        Impersonate,
         Notifiable,
         SoftDeletes;
+
+
 
     use \Venturecraft\Revisionable\RevisionableTrait;
     public $rules = [
@@ -2724,6 +2728,23 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->where('month_year', Carbon::now()->startOfMonth())
                    ->first()
                    ->is_ccm_complex ?? false;
+    }
+
+    /**
+     * Returns whether the user is an administrator
+     *
+     * @return bool
+     */
+    public function isAdmin() {
+        return $this->hasRole('administrator');
+    }
+
+    /**
+     * @return bool
+     */
+    public function canImpersonate()
+    {
+        return $this->isAdmin();
     }
 
     public function name() {

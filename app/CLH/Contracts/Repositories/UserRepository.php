@@ -23,7 +23,7 @@ interface UserRepository
     );
 
     public function saveAndGetPractice(
-        User $wpUser,
+        User $user,
         ParameterBag $params
     );
 

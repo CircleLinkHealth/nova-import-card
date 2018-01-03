@@ -116,20 +116,22 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $practiceId = $this->saveAndGetPractice($user, $params);
-        // support for both single or array or roles
-        if (!empty($params->get('role'))) {
-            $user->detachRolesForSite([], $practiceId);
-            $user->attachRoleForSite($params->get('role'), $practiceId);
-        }
+        $practices = $this->saveAndGetPractice($user, $params);
 
-        if (!empty($params->get('roles'))) {
-            $user->detachRolesForSite([], $practiceId);
-            // support if one role is passed in as a string
-            if (!is_array($params->get('roles'))) {
-                $user->attachRoleForSite($params->get('roles'), $practiceId);
-            } else {
-                $user->attachRolesForSite($params->get('roles'), $practiceId);
+        foreach ($practices as $practiceId) {
+            if (!empty($params->get('role'))) {
+                $user->detachRolesForSite([], $practiceId);
+                $user->attachRoleForSite($params->get('role'), $practiceId);
+            }
+
+            if (!empty($params->get('roles'))) {
+                $user->detachRolesForSite([], $practiceId);
+                // support if one role is passed in as a string
+                if (!is_array($params->get('roles'))) {
+                    $user->attachRoleForSite($params->get('roles'), $practiceId);
+                } else {
+                    $user->attachRolesForSite($params->get('roles'), $practiceId);
+                }
             }
         }
 
@@ -159,14 +161,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     }
 
     public function saveAndGetPractice(
-        User $wpUser,
+        User $user,
         ParameterBag $params
     ) {
         // get selected programs
         $userPrograms = [];
         if ($params->get('programs')) {
             $userPrograms = $params->get('programs');
+            $user->practices()->sync($userPrograms);
         }
+
         if ($params->get('program_id')) {
             if (!in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
@@ -179,10 +183,10 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // set primary program
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->save();
+        $user->program_id = $params->get('program_id');
+        $user->save();
 
-        return $params->get('program_id');
+        return $userPrograms;
     }
 
     public function saveOrUpdatePhoneNumbers(

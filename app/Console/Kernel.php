@@ -1,9 +1,14 @@
 <?php namespace App\Console;
 
+use App\Console\Commands\Athena\GetAppointments;
+use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
+use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use App\Services\Calls\SchedulerService;
@@ -44,18 +49,18 @@ class Kernel extends ConsoleKernel
         $schedule->command('nurseSchedule:export')
                  ->hourly();
 
-        $schedule->command('athena:getAppointments')
+        $schedule->command(GetAppointments::class)
                  ->dailyAt('23:00');
 
-        $schedule->command('athena:getCcds')
+        $schedule->command(GetCcds::class)
                  ->everyThirtyMinutes();
 
-        $schedule->command('nurses:emailDailyReport')
+        $schedule->command(EmailRNDailyReport::class)
                  ->weekdays()
                  ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command('ccm_time:reset')
+        $schedule->command(ResetCcmTime::class)
                  ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
@@ -65,7 +70,7 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
-        $schedule->command('report:nurseInvoices')
+        $schedule->command(QueueGenerateNurseInvoices::class)
                  ->dailyAt('04:00')
                  ->withoutOverlapping();
 

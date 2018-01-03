@@ -31,6 +31,12 @@ class ProviderUITimerComposer extends ServiceProvider
             $pieces     = explode("?", $requestUri);
             $urlShort   = $pieces[0];
 
+            $manager = app('impersonate');
+
+            if ($manager->isImpersonating()) {
+                $disableTimeTracking = true;
+            }
+
             $enableTimeTracking = ! isset($disableTimeTracking);
 
             // disable if login

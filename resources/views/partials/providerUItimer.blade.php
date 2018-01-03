@@ -1,12 +1,13 @@
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
-@push('prescripts')
-    <?php 
-        if (isset($patient)) {
-            $patientId = $patient->id;
-        }
+@if ($enableTimeTracking)
+    @push('prescripts')
+    <?php
+    if (isset($patient)) {
+        $patientId = $patient->id;
+    }
 
-        $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+    $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
     ?>
     <script>
 
@@ -29,17 +30,16 @@
             "urlFull": '{{Request::url()}}',
             "urlShort": '{{$urlShort}}',
             "ipAddr": '{{$ipAddr}}',
-            "activity": (document.getElementById('activityName') || { value: '' }).value,
+            "activity": (document.getElementById('activityName') || {value: ''}).value,
             "title": '{{$title}}',
             "submitUrl": '{{route("api.pagetracking")}}',
             "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
             "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0
         }
     </script>
-@endpush
+    @endpush
 
-@if ($enableTimeTracking)
     @push('scripts')
-        <script></script>
+    <script></script>
     @endpush
 @endif
