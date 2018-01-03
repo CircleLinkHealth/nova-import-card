@@ -44,7 +44,7 @@ class CpmMiscService implements CpmModel
             return true;
         }
 
-        $instructionService = new CpmInstructionService();
+        $instructionService = app(CpmInstructionService::class);
 
         //otherwise attach/detach each one
         foreach ($cptMiscsIds as $cptMiscId) {

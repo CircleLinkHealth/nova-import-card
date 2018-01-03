@@ -56,7 +56,7 @@ class CpmProblemService implements CpmModel
     {
         $user->cpmProblems()->sync($ids);
 
-        $instructionService = new CpmInstructionService();
+        $instructionService = app(CpmInstructionService::class);
 
         foreach ($ids as $problemId) {
             $relationship = 'cpmProblems';
