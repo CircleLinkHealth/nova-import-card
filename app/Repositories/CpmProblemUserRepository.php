@@ -23,9 +23,9 @@ class CpmProblemUserRepository
     }
 
     public function create($patientId, $cpmProblemId, $instructionId) {
-        $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ]);
+        $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->orderBy('id', 'desc');
         $cpmProblemUser = $cpmProblemUsers->first();
-        if ($cpmProblemUser) {
+        if ($cpmProblemUser && !$cpmProblemUser->cpm_instruction_id) {
             $cpmProblemUsers->update([
                 'cpm_instruction_id' => $instructionId
             ]);
@@ -39,5 +39,13 @@ class CpmProblemUserRepository
             $cpmProblemUser->save();
         }
         return $cpmProblemUser;
+    }
+
+    public function remove($patientId, $cpmProblemId) {
+        $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->get();
+        $cpmProblemUsers->map(function ($u) {
+            $u->instruction()->delete();
+            $u->delete();
+        });
     }
 }

@@ -17,16 +17,16 @@ class CareplanAssessments extends Migration
             $table->increments('id');
             $table->integer('careplan_id')->unsigned();
             $table->integer('provider_approver_id')->unsigned();
-            $table->string('alcohol_misuse_counseling');
-            $table->string('diabetes_screening_interval');
-            $table->string('diabetes_screening_last_and_next_date');
-            $table->json('diabetes_screening_risk');
-            $table->string('eye_screening_last_and_next_date');
-            $table->string('key_treatment');
-            $table->json('patient_functional_assistance_areas');
-            $table->json('patient_psychosocial_areas_to_watch');
-            $table->string('risk');
-            $table->json('risk_factors');
+            $table->string('alcohol_misuse_counseling', 4294960);
+            $table->string('diabetes_screening_interval', 4294960);
+            $table->string('diabetes_screening_last_and_next_date', 4294960);
+            $table->string('diabetes_screening_risk', 4294960);
+            $table->string('eye_screening_last_and_next_date', 4294960);
+            $table->string('key_treatment', 4294960);
+            $table->string('patient_functional_assistance_areas', 4294960);
+            $table->string('patient_psychosocial_areas_to_watch', 4294960);
+            $table->string('risk', 4294960);
+            $table->string('risk_factors', 4294960);
             $table->string('tobacco_misuse_counseling');
             $table->timestamps();
         });
@@ -44,6 +44,6 @@ class CareplanAssessments extends Migration
      */
     public function down()
     {
-        //Schema::drop('careplan_assessments');
+        Schema::drop('careplan_assessments');
     }
 }

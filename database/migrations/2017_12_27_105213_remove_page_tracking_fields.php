@@ -27,7 +27,8 @@ class RemovePageTrackingFields extends Migration
     public function down()
     {
         Schema::table('lv_page_timer', function (Blueprint $table) {
-            //
+            $table->string('actual_start_time');
+            $table->string('actual_end_time');
         });
     }
 }

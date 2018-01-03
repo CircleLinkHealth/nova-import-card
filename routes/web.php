@@ -94,6 +94,17 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'API\ActivityController@ccmTime',
             'as'   => 'get.total.ccm.time',
         ]);
+        
+        Route::group(['prefix' => 'biometrics'], function () {
+            Route::get('', 'BiometricController@index');
+            Route::get('{biometricId}', 'BiometricController@show');
+            Route::get('{biometricId}/patients', 'BiometricController@patients');
+        });
+
+        Route::group(['prefix' => 'allergies'], function () {
+            Route::get('', 'ProblemController@ccdAllergies');
+            Route::get('search', 'ProblemController@searchCcdAllergies');
+        });
 
         Route::group(['prefix' => 'problems'], function () {
             Route::get('cpm', 'ProblemController@cpmProblems');
@@ -115,10 +126,13 @@ Route::group(['middleware' => 'auth'], function () {
                 'middleware' => ['patientProgramSecurity']
             ], function () {
             Route::get('{userId}', 'PatientController@getPatient');
+            Route::get('{userId}/biometrics', 'PatientController@getBiometrics');
             Route::get('{userId}/problems', 'PatientController@getProblems');
             Route::post('{userId}/problems', 'PatientController@addCpmProblem');
+            Route::delete('{userId}/problems/cpm/{cpmId}', 'PatientController@removeCpmProblem');
             Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
             Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
+            Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');
             Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
 

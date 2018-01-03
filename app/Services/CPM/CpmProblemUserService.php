@@ -50,4 +50,8 @@ class CpmProblemUserService
     public function addProblemToPatient($patientId, $cpmProblemId) {
         return $this->repo()->create($patientId, $cpmProblemId, null);
     }
+    
+    public function removeProblemFromPatient($patientId, $cpmProblemId) {
+        return $this->repo()->remove($patientId, $cpmProblemId);
+    }
 }

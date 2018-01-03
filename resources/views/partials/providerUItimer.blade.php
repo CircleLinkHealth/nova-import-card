@@ -14,16 +14,16 @@
         var timeTrackerInfo = {
             "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',
             "providerId": '{{Auth::user()->id}}',
-            "totalTime": ((monthlyTime) => {
-                if (monthlyTime) {
-                    const split = monthlyTime.split(':');
-                    const seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
-                    return seconds +
-                        (minutes * 60) +
-                        (hours * 60 * 60);
-                }
-                return 0;
-            })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
+            "totalTime": (function (monthlyTime) {
+                            if (monthlyTime) {
+                                var split = monthlyTime.split(':');
+                                var seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
+                                return seconds +
+                                        (minutes * 60) + 
+                                        (hours * 60 * 60);
+                            }
+                            return 0;
+                        })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
             "monthlyTime": document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null,
             "wsUrl": "{{ env('WS_URL') }}",
             "programId": '{{$patientProgramId}}',
@@ -38,7 +38,6 @@
         }
     </script>
     @endpush
-
 
     @push('scripts')
     <script></script>

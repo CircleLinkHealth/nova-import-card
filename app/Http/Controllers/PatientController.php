@@ -7,6 +7,7 @@ use App\User;
 use App\Patient;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemUserService;
+use App\Services\CPM\CpmBiometricService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -19,14 +20,16 @@ class PatientController extends Controller
 {
     private $patientService;
     private $cpmProblemUserService;
+    private $biometricUserService;
     /**
      * CpmProblemController constructor.
      *
      */
-    public function __construct(PatientService $patientService, CpmProblemUserService $cpmProblemUserService)
+    public function __construct(PatientService $patientService, CpmProblemUserService $cpmProblemUserService, CpmBiometricService $biometricUserService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
+        $this->biometricUserService = $biometricUserService;
     }
 
     /**
@@ -57,13 +60,31 @@ class PatientController extends Controller
     {
         return response()->json($this->patientService->getCcdProblems($userId));
     }
+    
+    public function getCcdAllergies($userId)
+    {
+        return response()->json($this->patientService->getCcdAllergies($userId));
+    }
+    
+    public function getBiometrics($userId)
+    {
+        return response()->json($this->biometricUserService->patientBiometrics($userId));
+    }
 
     public function addCpmProblem($userId, Request $request) {
         $cpmProblemId = $request->input('cpmProblemId');
         if ($userId && $cpmProblemId) {
             $this->cpmProblemUserService->addProblemToPatient($userId, $cpmProblemId);
-            return $this->patientService->getCpmProblems($userId);
+            return $this->getCpmProblems($userId);
         }
         return $this->badRequest('"userId" and "cpmProblemId" are important');
+    }
+    
+    public function removeCpmProblem($userId, $cpmId) {
+        if ($userId && $cpmId) {
+            $this->cpmProblemUserService->removeProblemFromPatient($userId, $cpmId);
+            return $this->getCpmProblems($userId);
+        }
+        return $this->badRequest('"userId" and "cpmId" are important');
     }
 }

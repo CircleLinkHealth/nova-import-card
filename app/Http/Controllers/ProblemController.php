@@ -9,6 +9,7 @@ use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CCD\CcdProblemService;
+use App\Services\CCD\CcdAllergyService;
 use App\Services\PatientService;
 use App\Models\ProblemCode;
 use Carbon\Carbon;
@@ -21,16 +22,19 @@ class ProblemController extends Controller
     private $patientService;
     private $cpmProblemService;
     private $ccdProblemService;
+    private $allergyService;
 
     /**
      * ProblemController constructor.
      *
      */
-    public function __construct(CpmProblemService $cpmProblemService, CcdProblemService $ccdProblemService, PatientService $patientService)
+    public function __construct(CpmProblemService $cpmProblemService, CcdProblemService $ccdProblemService, 
+                                    PatientService $patientService, CcdAllergyService $allergyService)
     {
         $this->cpmProblemService = $cpmProblemService;
         $this->ccdProblemService = $ccdProblemService;
         $this->patientService = $patientService;
+        $this->allergyService = $allergyService;
     }
 
     public function index() {
@@ -46,6 +50,19 @@ class ProblemController extends Controller
 
     public function ccdProblems() {
         return response()->json($this->ccdProblemService->problems());
+    }
+    
+    public function ccdAllergies() {
+        return response()->json($this->allergyService->allergies());
+    }
+    
+    public function searchCcdAllergies(Request $request) {
+        $term = $request->input('term');
+        if ($term) {
+            $terms = explode(',', $term);
+            return response()->json($this->allergyService->searchAllergies($terms));
+        }
+        else return $this->badRequest('missing parameter: "term"');
     }
     
     public function cpmProblem($cpmId) {
