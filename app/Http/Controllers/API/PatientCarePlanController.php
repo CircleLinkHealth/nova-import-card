@@ -23,6 +23,12 @@ class PatientCarePlanController extends Controller
             ->where('user_id', '=', $patientId)
             ->first();
 
+        if (!$cp) {
+            return response()->json([
+                'message' => 'Careplan not found.'
+            ], 404);
+        }
+
         foreach ($cp->pdfs as $pdf) {
             $pdf->url = route('download.pdf.careplan', ['fileName' => $pdf->filename]);
             $pdf->label = "CarePlan uploaded on {$pdf->created_at->format('m/d/Y')} at {$pdf->created_at->format('g:i:s A T')}";
