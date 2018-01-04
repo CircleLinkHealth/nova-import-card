@@ -119,7 +119,7 @@ class Call extends \App\BaseModel
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->monthlySummaries()->where('month_year', $day_start)->first();
+        $record = $user->patientSummaries->where('month_year', $day_start)->first();
         if (!$record) {
             return 0;
         }
