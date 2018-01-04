@@ -133,7 +133,11 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
     {
         $user = (new CCDImporterRepository())->createRandomUser($this->demographics, $this);
 
-        $user->attachRoleForSite(2, $this->practice_id);
+        try {
+            $user->attachRoleForSite(2, $this->practice_id);
+        } catch (\Exception $e) {
+            \Log::critical($e);
+        }
 
         $this->patient_id = $user->id;
         $this->save();
