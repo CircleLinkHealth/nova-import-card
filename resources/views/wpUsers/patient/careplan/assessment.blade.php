@@ -128,7 +128,7 @@
                 $skipBtn.click(function () {
                     $.showConfirmModal({
                         title: 'Are you sure you want to skip?',
-                        body: 'Advanced care planning by MD during visit is needed to bill the G0506 code.',
+                        body: 'Advanced care planning by MD during OR after visit is needed to bill the G0506 code.',
                         confirmText: 'Skip',
                         cancelText: 'Go Back',
                         neverShow: true

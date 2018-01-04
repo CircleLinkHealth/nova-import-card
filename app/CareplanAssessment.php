@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\App;
  * @property int $provider_approver_id
  * @property string $alcohol_misuse_counseling
  * @property string $diabetes_screening_interval
- * @property string $diabetes_screening_last_and_next_date
+ * @property \Carbon\Carbon $diabetes_screening_last_date
+ * @property \Carbon\Carbon $diabetes_screening_next_date
  * @property array|string|null $diabetes_screening_risk
- * @property string $eye_screening_last_and_next_date
+ * @property string $eye_screening_last_date
+ * @property string $eye_screening_next_date
  * @property string $key_treatment
  * @property array|string|null $patient_functional_assistance_areas
  * @property array|string|null $patient_psychosocial_areas_to_watch

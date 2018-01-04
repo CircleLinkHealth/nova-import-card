@@ -41,7 +41,7 @@ class CareplanAssessmentController extends Controller
             //return response()->json($assessment);
             $this->assessmentService->save($assessment);
             $this->noteService->createAssessmentNote($assessment);
-            return redirect()->route('patient.careplan.print', [ 'patientId' => $assessment->careplan_id ]);
+            return redirect()->route('patient.careplan.print', [ 'patientId' => $assessment->careplan_id, 'recentSubmission' => true ]);
         }
     }
 }

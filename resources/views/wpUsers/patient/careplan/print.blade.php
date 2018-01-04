@@ -65,6 +65,14 @@ if (isset($patient) && ! empty($patient)) {
                                                href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Skipped:
                                                 Print This Page</a>
                                         </div>
+                                    @elseif ($recentSubmission)
+                                        <div class="text-right">
+                                            <a class="btn btn-success btn-lg inline-block" aria-label="..."
+                                            role="button"
+                                            href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
+                                                Print This Page</a>
+                                        </div>
+                                        
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="buttons">
@@ -432,49 +440,38 @@ if (isset($patient) && ! empty($patient)) {
             </section>
         </div>
         @include('partials.confirm-modal')
-
-        <!--@if ($patient->isCcmEligible() && !$skippedAssessment)
+        
+        @if ($recentSubmission)
             @push('scripts')
-            <script type="text/html" name="ccm-enrollment-details">
-                <ul>
-                    <li>Program is a way for me / MD to follow-up between office visits</li>
-                    <li>You will receive a personalized care manager (registered nurse) to check-in and keep us
-                        connected / answer Questions
-                    </li>
-                    <li>Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover
-                        the co-pay (~8/mo.)
-                    </li>
-                    <li>You can quit anytime, just give us a call</li>
-                </ul>
-                <style>
-                    #confirm-modal ul {
-                        margin-bottom: 30px;
-                    }
+                <script type="text/html" name="ccm-enrollment-submission">
+                    <ol type="1">
+                        <li>You must go over careplan with patient, then print it and hand to patient</li>
+                        <li>To edit plan, click "Edit Care Plan" top center button.</li>
+                    </ol>
+                    <style>
+                        #confirm-modal ul {
+                            margin-bottom: 30px;
+                        }
 
-                    #confirm-modal li {
-                        list-style-type: circle;
-                        line-height: 30px;
-                        margin-bottom: 10px;
-                        font-size: 18px;
-                    }
-                </style>
-            </script>
-            <script>
-                $.showConfirmModal({
-                    title: 'CCM Enrollment Talking Points For {{$patient->display_name}}, DOB: {{optional($patient->patient_info)->birth_date}}',
-                    body: document.querySelector('[name="ccm-enrollment-details"]').innerHTML,
-                    confirmText: 'Patient Consented',
-                    cancelText: 'Did Not Consent'
-                }).then((patientHasConsented) => {
-                    if (patientHasConsented) {
-                        location.href = '{{asset("manage-patients/" . $patient->id . "/view-careplan/assessment")}}';
-                    }
-                    else {
-                        location.href = '{{asset("manage-patients/dashboard")}}'
-                    }
-                })
-            </script>
+                        #confirm-modal li {
+                            list-style-type: circle;
+                            line-height: 30px;
+                            margin-bottom: 10px;
+                            font-size: 18px;
+                        }
+                    </style>
+                </script>
+                <script>
+                    $.showConfirmModal({
+                        title: 'Remember:',
+                        body: document.querySelector('[name="ccm-enrollment-submission"]').innerHTML,
+                        confirmText: 'Got it',
+                        noCancel: true
+                    }).then((patientHasConsented) => {
+                        
+                    })
+                </script>
             @endpush
-        @endif-->
+        @endif
     @endif
 @stop

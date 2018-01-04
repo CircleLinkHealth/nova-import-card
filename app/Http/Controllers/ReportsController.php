@@ -573,6 +573,8 @@ class ReportsController extends Controller
 
         $skippedAssessment = $request->has('skippedAssessment');
 
+        $recentSubmission = $request->input('recentSubmission') ?? false;
+
         return view(
             'wpUsers.patient.careplan.print',
             [
@@ -590,6 +592,7 @@ class ReportsController extends Controller
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
+                'recentSubmission'        => $recentSubmission
             ]
         );
     }
