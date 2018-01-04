@@ -2,16 +2,19 @@
 
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
 
 class ActivityService
 {
+    protected $callRepo;
     protected $repo;
 
-    public function __construct(ActivityRepository $repo)
+    public function __construct(ActivityRepository $repo, CallRepository $callRepo)
     {
-        $this->repo = $repo;
+        $this->repo     = $repo;
+        $this->callRepo = $callRepo;
     }
 
     /**
@@ -28,7 +31,9 @@ class ActivityService
             $monthYear = Carbon::now();
         }
 
-        if (!is_array($userIds)) {
+        $monthYear = $monthYear->startOfMonth();
+
+        if ( ! is_array($userIds)) {
             $userIds = [$userIds];
         }
 
@@ -37,13 +42,26 @@ class ActivityService
                            ->pluck('total_time', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
-            $info = Patient::updateOrCreate([
-                'user_id' => $id,
+            $summary = PatientMonthlySummary::updateOrCreate([
+                'patient_id' => $id,
+                'month_year' => $monthYear->toDateString(),
             ], [
-                'cur_month_activity_time' => $ccmTime,
+                'ccm_time' => $ccmTime,
             ]);
 
-            (new PatientMonthlySummary())->updateCCMInfoForPatient($id, $ccmTime);
+            if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
+                $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
+                $summary->save();
+            }
+
+            if ($monthYear->eq(Carbon::now()->startOfMonth())) {
+                $info = Patient::updateOrCreate([
+                    'user_id' => $id,
+                ], [
+                    'cur_month_activity_time' => $ccmTime,
+                ]);
+            }
         }
     }
 

@@ -30,6 +30,10 @@ class PatientSummaryEloquentRepository
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
         if (!$this->lacksProblems($summary)) {
+            $summary->approved = ! ($summary->rejected == 1);
+
+            $summary->save();
+
             return $summary;
         }
 
