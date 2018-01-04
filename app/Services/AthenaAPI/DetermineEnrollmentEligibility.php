@@ -10,6 +10,8 @@ class DetermineEnrollmentEligibility
 {
     protected $api;
 
+    protected $athenaEhrId = 2;
+
     public function __construct(Calls $api)
     {
         $this->api = $api;
@@ -45,6 +47,7 @@ class DetermineEnrollmentEligibility
                 }
 
                 $target = TargetPatient::updateOrCreate([
+                    'ehr_id'            => $this->athenaEhrId,
                     'ehr_patient_id'    => $ehrPatientId,
                     'ehr_practice_id'   => $ehrPracticeId,
                     'ehr_department_id' => $departmentId,
