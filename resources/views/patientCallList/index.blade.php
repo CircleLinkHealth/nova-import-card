@@ -170,9 +170,9 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}
+                                                            @if($call->inboundUser)                                                                             {{ $call->inboundUser->patientSummaries->first()->no_of_calls ?? 0 }}
                                                             (
-                                                            <span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>
+                                                            <span style="color:green;">{{ $call->inboundUser->patientSummaries->first()->no_of_successful_calls ?? 0 }}</span>
                                                             )
                                                             @endif
                                                         </td>
