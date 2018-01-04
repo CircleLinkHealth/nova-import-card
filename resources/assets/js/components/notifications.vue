@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import EventBus from '../../admin/time-tracker/comps/event-bus'
+    import EventBus from '../admin/time-tracker/comps/event-bus'
 
     export default {
         name: 'notifications',

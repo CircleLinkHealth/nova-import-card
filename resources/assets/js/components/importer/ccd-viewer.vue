@@ -78,7 +78,7 @@
     import LoaderComponent from '../loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
-    import NotificationComponent from './notifications'
+    import NotificationComponent from '../notifications'
 
     export default {
         name: 'ccd-viewer',
