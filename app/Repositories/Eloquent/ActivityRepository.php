@@ -35,6 +35,7 @@ class ActivityRepository
         return Activity::selectRaw('sum(duration) as total_time, patient_id')
                        ->whereIn('patient_id', $userIds)
                        ->where('performed_at', '>=', $monthYear->startOfMonth())
-                       ->where('performed_at', '<=', $monthYear->copy()->endOfMonth());
+                       ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
+                       ->groupBy('patient_id');
     }
 }
