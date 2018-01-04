@@ -3,7 +3,10 @@
         <div class="form-group" v-for="(question, pIndex) in questions" :key="pIndex">
             <div class="question-text">{{pIndex + 1}}. {{question.text}}<span class="required" v-if="!!question.required">*</span></div>
             <div class="question-reply" v-if="!question.options">
-                <input v-if="!question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here">
+                <input v-if="!question.multi && !question.type" type="text" :value="answers[question.name]" :name="question.name" 
+                    :required="!!question.required" placeholder="Enter text here">
+                <input v-if="!question.multi && question.type === 'date'" type="date" class="form-control" :value="answers[question.name]" :name="question.name" 
+                    :required="!!question.required">
                 <textarea v-if="question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here"></textarea>
             </div>
             <div class="question-option" v-for="(option, index) in question.options" :key="index">
@@ -13,10 +16,13 @@
                         :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
                     <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" 
                         :checked="answers[question.name] ? answers[question.name].indexOf((option && option.constructor.name === 'Object') ? option.text : option) >= 0 : false" 
-                        :value="(option && option.constructor.name === 'Object') ? option.value : option"
-                        @change="toggleChecked($event, question.name, ((option && option.constructor.name === 'Object') ? option.value : option))"> 
+                        :value="(option && option.constructor.name === 'Object') ? option.text : option"
+                        @change="toggleChecked($event, question.name, ((option && option.constructor.name === 'Object') ? option.text : option))"> 
                     <span>{{(option && option.constructor.name === 'Object') ? option.text : option}}</span>
-                    <input class="width-200" v-if="question.selected === option.text && !!option.editable" v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
+                    <input class="width-200" v-if="!!option.editable && !question.multi && (question.selected === option.text)" 
+                        v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
+                    <input class="width-200" v-if="!!option.editable && !!question.multi && ((answers[question.name] || []).indexOf(option.text) >= 0)" 
+                        v-model="question.other" type="text" :name="question.name + ('[' + index + ']')" :required="!!question.required" placeholder="Enter text here">
                 </label>
             </div>
         </div>
@@ -40,12 +46,13 @@
         },
         methods: {
             toggleChecked(e, name, value) {
-                if (e.target.checked && Array.isArray(this.answers[name])) {
-                    if (this.answers[name].indexOf(value) < 0) this.answers[name].push(value)
+                if (Array.isArray(this.answers[name])) {
+                    if (e.target.checked && this.answers[name].indexOf(value) < 0) this.answers[name].push(value)
                     else {
                         this.answers[name].splice(this.answers[name].indexOf(value), 1)
                     }
                 }
+                this.$forceUpdate()
             }
         },
         mounted() {
