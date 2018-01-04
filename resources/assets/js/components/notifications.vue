@@ -1,7 +1,12 @@
 <template>
     <div class="row">
         <div class="col-sm-12" v-for="(note, index) in notes" :key="index">
-            <div class="alert alert-success">
+            <div class="alert" :class="{ 
+                                    'alert-success': note.type === 'success', 
+                                    'alert-warning': ['warning', 'warn'].includes(note.type), 
+                                    'alert-info': note.type === 'info', 
+                                    'alert-danger': ['error', 'danger'].includes(note.type)
+                                }">
                 <slot :note="note">
                     {{note.text}}
                 </slot>
@@ -29,6 +34,7 @@
                     const id = ((this.notes.map(note => note.id)[this.notes.length - 1] || 0) + 1)
                     const newNote = {
                         id,
+                        type: note.type || 'success',
                         close: () => {
                             this.notes.splice(this.notes.findIndex(note => note.id === id), 1)
                         }
