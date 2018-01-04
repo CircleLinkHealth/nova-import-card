@@ -16,7 +16,7 @@ class RecalculateCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:recalculate';
+    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for ins YYYY-MM-DD}';
 
     /**
      * The console command description.
@@ -55,7 +55,13 @@ class RecalculateCcmTime extends Command
             ->pluck('id')
             ->all();
 
-        $this->service->processMonthlyActivityTime($userIds);
+        $date = $this->argument('dateString') ?? null;
+
+        if ($date) {
+            $date = Carbon::parse($date);
+        }
+
+        $this->service->processMonthlyActivityTime($userIds, $date);
 
         $this->info('CCM Time recalculated!');
     }
