@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
-                        <loader v-if="loaders.addInstruction || loaders.removeProblem"></loader>
+                        <loader v-if="loaders.removeProblem"></loader>
                         <input type="button" class="btn btn-secondary btn-danger problem-remove" value="x" 
                             v-if="selectedProblem" @click="removeProblem" title="remove this cpm problem" />
                     </div>
@@ -28,22 +28,27 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <div class="row top-20">
-                        <div class="col-sm-11">
-                            <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" />
-                        </div>
-                        <div class="col-sm-1">
-                            <loader v-if="loaders.addInstruction"></loader>
-                            <input type="button" class="btn btn-secondary right-0 instruction-add selected" value="+" 
-                                @click="addInstruction" title="add this instruction for this cpm problem" 
-                                :disabled="!newInstruction || newInstruction.length === 0" />
-                        </div>
+                        <form @submit="addInstruction">
+                            <div class="col-sm-11">
+                                <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" required />
+                            </div>
+                            <div class="col-sm-1">
+                                <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                    title="add this instruction for this cpm problem" 
+                                    :disabled="!newInstruction || newInstruction.length === 0" />
+                            </div>
+                        </form>
                     </div>
                     <div class="instructions top-20">
                          <div v-for="(instruction, index) in selectedProblem.instructions" :key="index">
                             <ol class="list-group" v-for="(instructionChunk, chunkIndex) in instruction.name.split('\n')" 
                                 @click="selectInstruction(index)" :key="chunkIndex">
                                 <li class="list-group-item" v-if="instructionChunk"
-                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id }">{{instructionChunk}}</li>
+                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id, disabled: (selectedInstruction && selectedInstruction.id === instruction.id)  && loaders.removeInstruction }">
+                                    {{instructionChunk}}
+                                    <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeInstructionFromProblem(index)" v-if="chunkIndex === 0" />
+                                </li>
                             </ol>
                         </div>
                     </div>
@@ -82,7 +87,8 @@
                 loaders: {
                     addInstruction: null,
                     addProblem: null,
-                    removeProblem: null
+                    removeProblem: null,
+                    removeInstruction: null
                 }
             }
         },
@@ -90,7 +96,8 @@
             select(index) {
                 this.selectedProblem = (index >= 0) ? this.problems[index] : null
             },
-            addInstruction() {
+            addInstruction(e) {
+                e.preventDefault()
                 if (this.newInstruction && this.newInstruction.length > 0) {
                     this.loaders.addInstruction = true
                     return this.axios.post(rootUrl(`api/problems/instructions`), { name: this.newInstruction }).then(response => {
@@ -160,7 +167,23 @@
                 })
             },
             selectInstruction(index) {
-                this.selectedInstruction = this.selectedProblem.instructions[index]
+                if (!this.loaders.removeInstruction) {
+                    this.selectedInstruction = this.selectedProblem.instructions[index]
+                }
+            },
+            removeInstructionFromProblem(index) {
+                if (this.selectedInstruction && this.selectedProblem && confirm('Are you sure you want to delete this instruction?')) {
+                    this.loaders.removeInstruction = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions/${this.selectedInstruction.id}`)).then((response) => {
+                        console.log('care-areas:remove-instruction', response.data)
+                        this.loaders.removeInstruction = false
+                        this.selectedProblem.instructions.splice(index, 1)
+                        this.selectedInstruction = null
+                    }).catch(err => {
+                        console.error('care-areas:remove-instruction', err)
+                        this.loaders.removeInstruction = false
+                    })
+                }
             }
         },
         mounted() {
@@ -188,6 +211,10 @@
     .btn.btn-secondary.selected, .list-group-item.selected {
         background: #47beab;
         color: white;
+    }
+
+    .list-group-item.disabled {
+        background: #ddd;
     }
 
     .top-20 {
@@ -228,5 +255,33 @@
     .modal-care-areas .problem-remove {
         margin: 0 -15 5 0;
         padding: 2 7 2 7;
+    }
+
+    .absolute {
+        position: absolute;
+    }
+
+    .loader.absolute {
+        z-index: 1;
+        right: -20px;
+        height: 25px;
+        width: 25px;
+        top: 5px;
+    }
+
+    .list-group-item .delete {
+        right: 4px;
+        top: 9px;
+        border-radius: 25px;
+        background: white;
+        color: #47beab;
+        border-color: #47beab;
+        padding: 2px 7px;
+        font-size: 12px;
+        display: none;
+    }
+
+    .list-group-item.selected:first-of-type .delete {
+        display: inline-block;
     }
 </style>

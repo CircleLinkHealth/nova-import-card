@@ -71,6 +71,10 @@ class PatientController extends Controller
         return response()->json($this->biometricUserService->patientBiometrics($userId));
     }
 
+    public function addBiometric($userId, $biometricId) {
+        
+    }
+
     public function addCpmProblem($userId, Request $request) {
         $cpmProblemId = $request->input('cpmProblemId');
         if ($userId && $cpmProblemId) {

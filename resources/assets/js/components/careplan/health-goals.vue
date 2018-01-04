@@ -1,0 +1,98 @@
+<template>
+    <div class="patient-info__subareas">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health Goals
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                </h2>
+            </div>
+        </div>
+        <div class="row gutter">
+            <div class="col-xs-12">
+                <slot v-if="goals.length === 0">
+                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
+                </slot>
+                
+                <ul class="subareas__list" v-if="goals && goals.length > 0">
+                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals" :key="index">
+                        <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
+                        <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
+                        <div class="col-xs-3 print-row">
+                            from {{goal.start() || 'N/A'}} {{goal.unit}}</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <health-goals-modal ref="healthGoalsModal" :patient-id="patientId" :goals="goals"></health-goals-modal>
+    </div>
+</template>
+
+<script>
+    import { rootUrl } from '../../app.config'
+    import { Event } from 'vue-tables-2'
+    import HealthGoalsModal from './modals/health-goals.modal'
+
+    export default {
+        name: 'care-areas',
+        props: [
+            'patient-id'
+        ],
+        components: {
+            'health-goals-modal': HealthGoalsModal
+        },
+        data() {
+            return {
+                goals: []
+            }
+        },
+        methods: {
+            setupGoal(goal) {
+                goal.created_at = new Date(goal.created_at)
+                goal.updated_at = new Date(goal.updated_at)
+                if (goal.info) {
+                    goal.info.created_at = new Date(goal.info.created_at)
+                    goal.info.updated_at = new Date(goal.info.updated_at)
+                    goal.start = () => Number(goal.info.starting.split('/')[0] || '0')
+                    goal.end = () => Number(goal.info.target.split('/')[0] || '0')
+                    
+                    if (goal.start() > goal.end()) {
+                        goal.info.verb = 'Decrease'
+                    }
+                    else {
+                        if ((goal.name === 'Blood Pressure' && goal.start() < 90) || (goal.start() > 0 && goal.start() < goal.end())) {
+                            goal.info.verb = 'Increase'
+                        }
+                        else {
+                            goal.info.verb = 'Regulate'
+                        }
+                    }
+                }
+                return goal
+            },
+            getGoals() {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/biometrics`)).then(response => {
+                    this.goals = response.data.map(this.setupGoal)
+                    console.log('health-goals:get-goals', this.goals)
+                }).catch(err => {
+                    console.error('health-goals:get-goals', err)
+                })
+            },
+            showModal() {
+                Event.$emit('modal-health-goals:show')
+            }
+        },
+        mounted() {
+            this.getGoals()
+
+            Event.$on('health-goals:goals', (goals) => {
+                this.goals = goals
+            })
+        }
+    }
+</script>
+
+<style>
+    li.top-20 {
+        margin-top: 20px;
+    }
+</style>

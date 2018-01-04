@@ -2025,7 +2025,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function service()
     {
-        return new UserService();
+        return app(UserService::class);
     }
 
     public function emailSettings()

@@ -3957,16 +3957,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.16",
+            "version": "v0.8.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "d4c8eab0683dc056f2ca54ca67f5388527c068b1"
+                "reference": "5069b70e8c4ea492c2b5939b6eddc78bfe41cfec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/d4c8eab0683dc056f2ca54ca67f5388527c068b1",
-                "reference": "d4c8eab0683dc056f2ca54ca67f5388527c068b1",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/5069b70e8c4ea492c2b5939b6eddc78bfe41cfec",
+                "reference": "5069b70e8c4ea492c2b5939b6eddc78bfe41cfec",
                 "shasum": ""
             },
             "require": {
@@ -4025,7 +4025,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-12-10T21:49:27+00:00"
+            "time": "2017-12-28T16:14:16+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -8300,16 +8300,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.8.0",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "1646b270f84d6bdfd41acfe16e9eb9eab2d8c2f9"
+                "reference": "b749ea737d7218ff407a15ba9a3c7ad500485ce7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/1646b270f84d6bdfd41acfe16e9eb9eab2d8c2f9",
-                "reference": "1646b270f84d6bdfd41acfe16e9eb9eab2d8c2f9",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/b749ea737d7218ff407a15ba9a3c7ad500485ce7",
+                "reference": "b749ea737d7218ff407a15ba9a3c7ad500485ce7",
                 "shasum": ""
             },
             "type": "library",
@@ -8353,7 +8353,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2017-12-23T08:03:30+00:00"
+            "time": "2017-12-30T07:39:49+00:00"
         },
         {
             "name": "symfony/class-loader",

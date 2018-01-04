@@ -123,8 +123,8 @@ class ProblemInstructionController extends Controller
 
         try {
             $patient = $this->userService->repo()->find($patientId);
-            $problem = $this->cpmProblemService->repo()->find($cpmProblemId);
-            $instruction = $this->cpmInstructionService->repo()->find($instructionId);
+            $problem = $this->cpmProblemService->repo()->model()->find($cpmProblemId);
+            $instruction = $this->cpmInstructionService->repo()->model()->find($instructionId);
     
             if ($patient && $problem && $instruction) {
                 $this->cpmProblemUserService->removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId);
