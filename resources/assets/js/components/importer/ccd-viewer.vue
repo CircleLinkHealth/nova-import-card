@@ -62,6 +62,7 @@
             </template>
         </v-client-table>
         <error-modal ref="errorModal"></error-modal>
+        <notifications></notifications>
     </div>
 </template>
 
@@ -72,6 +73,7 @@
     import LoaderComponent from '../loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
+    import NotificationComponent from './notifications'
 
     export default {
         name: 'ccd-viewer',
@@ -79,7 +81,8 @@
             'text-editable': TextEditable,
             'loader': LoaderComponent,
             'error-modal': ErrorModal,
-            'error-modal-button': ErrorModalButton
+            'error-modal-button': ErrorModalButton,
+            'notifications': NotificationComponent
         },
         data() {
             return {
@@ -349,6 +352,12 @@
                 if (this.tableData.length > 0) this.changePractice(this.tableData[0].id, this.tableData[0].Practice)
                 EventBus.$emit('vdropzone:remove-all-files')
             })
+
+            EventBus.$emit('notifications:create', 'Hello World')
+
+            setTimeout(() => {
+                EventBus.$emit('notifications:create', 'Hello Africa')
+            }, 1000)
         }
     }
 </script>
