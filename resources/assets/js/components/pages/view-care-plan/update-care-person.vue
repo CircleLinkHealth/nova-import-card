@@ -58,6 +58,7 @@
                                                        name="first_name"
                                                        class="form-control input-md"
                                                        placeholder="First"
+                                                       disabled
                                                        required
                                                        v-model="formData.user.first_name">
                                             </div>
@@ -82,6 +83,7 @@
                                                        name="last_name"
                                                        class="form-control input-md"
                                                        placeholder="Last"
+                                                       disabled
                                                        required
                                                        v-model="formData.user.last_name">
                                             </div>
