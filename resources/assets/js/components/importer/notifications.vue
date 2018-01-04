@@ -2,7 +2,10 @@
     <div class="row">
         <div class="col-sm-12" v-for="(note, index) in notes" :key="index">
             <div class="alert alert-success">
-                {{note.text}}
+                <slot :note="note">
+                    {{note.text}}
+                </slot>
+                
                 <span class="close" @click="note.close()">x</span>
             </div>
         </div>
@@ -22,19 +25,31 @@
         },
         mounted() {
             EventBus.$on('notifications:create', (note) => {
-                if (typeof(note) === 'string') {
+                if (note) {
                     const id = ((this.notes.map(note => note.id)[this.notes.length - 1] || 0) + 1)
                     const newNote = {
                         id,
-                        text: note,
                         close: () => {
                             this.notes.splice(this.notes.findIndex(note => note.id === id), 1)
                         }
                     }
-                    newNote.timeout = setTimeout(() => {
-                        newNote.close()
-                    }, 2000)
+                    if (typeof(note) === 'string') {
+                        newNote.text = note
+                    }
+                    else if (note.constructor.name === 'Object') {
+                        Object.assign(newNote, note)
+                    }
+                    else {
+                        newNote.data = note
+                    }
+                    if (!note.noTimeout) {
+                        newNote.timeout = setTimeout(() => {
+                            newNote.close()
+                        }, note.interval || 15000)
+                    }
+                    
                     this.notes.push(newNote)
+                    console.log('notifications:create', newNote)
                 }
             })
         }
