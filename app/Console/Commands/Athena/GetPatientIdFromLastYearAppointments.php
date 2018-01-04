@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
+use App\TargetPatient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -46,7 +47,9 @@ class GetPatientIdFromLastYearAppointments extends Command
     {
         $athenaPracticeId = $this->argument('athenaPracticeId');
 
-        if (!$athenaPracticeId) return;
+        if ( ! $athenaPracticeId) {
+            return;
+        }
 
         $endDate   = Carbon::today();
         $startDate = $endDate->copy()->subYear();
@@ -56,6 +59,6 @@ class GetPatientIdFromLastYearAppointments extends Command
                 "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n");
         }
 
-        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate);
+        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, true);
     }
 }

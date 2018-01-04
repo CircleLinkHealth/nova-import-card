@@ -20,7 +20,8 @@ class DetermineEnrollmentEligibility
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
         Carbon $startDate,
-        Carbon $endDate
+        Carbon $endDate,
+        $offset = false
     ) {
         $start = $startDate->format('m/d/Y');
         $end   = $endDate->format('m/d/Y');
@@ -28,7 +29,16 @@ class DetermineEnrollmentEligibility
         $departments = $this->api->getDepartmentIds($ehrPracticeId);
 
         foreach ($departments['departments'] as $department) {
-            $response = $this->api->getBookedAppointments($ehrPracticeId, $start, $end, $department['departmentid']);
+            $offsetBy = 0;
+
+            if ($offset) {
+                $offsetBy = TargetPatient::where('ehr_practice_id', $ehrPracticeId)
+                                       ->where('ehr_department_id', $department['departmentid'])
+                                       ->count();
+            }
+
+            $response = $this->api->getBookedAppointments($ehrPracticeId, $start, $end, $department['departmentid'],
+                $offsetBy);
 
             if ( ! isset($response['appointments'])) {
                 return;
