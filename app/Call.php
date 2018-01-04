@@ -147,10 +147,9 @@ class Call extends \App\BaseModel
      * @param $builder
      * @param Carbon $monthYear
      *
-     * @return mixed
      */
     public function scopeOfMonth($builder, Carbon $monthYear) {
-        return $builder->whereBetween('called_date', [
+        $builder->whereBetween('called_date', [
             $monthYear->startOfMonth()->toDateString(),
             $monthYear->copy()->endOfMonth()->toDateString(),
         ]);
@@ -162,13 +161,12 @@ class Call extends \App\BaseModel
      * @param $builder
      * @param $status
      *
-     * @return mixed
      */
     public function scopeOfStatus($builder, $status) {
-        if (is_array($status)) {
+        if (!is_array($status)) {
             $status = [$status];
         }
 
-        return $builder->whereIn('status', $status);
+        $builder->whereIn('status', $status);
     }
 }
