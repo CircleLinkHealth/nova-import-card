@@ -28,7 +28,9 @@ class ActivityService
             $monthYear = Carbon::now();
         }
 
-        if (!is_array($userIds)) {
+        $monthYear = $monthYear->startOfMonth();
+
+        if ( ! is_array($userIds)) {
             $userIds = [$userIds];
         }
 
@@ -37,13 +39,20 @@ class ActivityService
                            ->pluck('total_time', 'patient_id');
 
         foreach ($acts as $id => $ccmTime) {
-            $info = Patient::updateOrCreate([
-                'user_id' => $id,
+            $summary = PatientMonthlySummary::updateOrCreate([
+                'patient_id' => $id,
+                'month_year' => $monthYear->toDateString(),
             ], [
-                'cur_month_activity_time' => $ccmTime,
+                'ccm_time' => $ccmTime,
             ]);
 
-            (new PatientMonthlySummary())->updateCCMInfoForPatient($id, $ccmTime);
+            if ($monthYear->eq(Carbon::now()->startOfMonth())) {
+                $info = Patient::updateOrCreate([
+                    'user_id' => $id,
+                ], [
+                    'cur_month_activity_time' => $ccmTime,
+                ]);
+            }
         }
     }
 
