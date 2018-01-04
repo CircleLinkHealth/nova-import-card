@@ -9,8 +9,12 @@
             <div class="question-option" v-for="(option, index) in question.options" :key="index">
                 <label>
                     <span v-if="question.other" class="circle"></span>
-                    <input type="radio" v-if="!question.multi && !question.other" v-model="question.selected" :name="question.name" :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
-                    <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" :checked="answers[question.name] ? answers[question.name].indexOf((option && option.constructor.name === 'Object') ? option.text : option) >= 0 : false" :value="(option && option.constructor.name === 'Object') ? option.value : option"> 
+                    <input type="radio" v-if="!question.multi && !question.other" v-model="question.selected" :name="question.name" 
+                        :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
+                    <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" 
+                        :checked="answers[question.name] ? answers[question.name].indexOf((option && option.constructor.name === 'Object') ? option.text : option) >= 0 : false" 
+                        :value="(option && option.constructor.name === 'Object') ? option.value : option"
+                        @change="toggleChecked($event, question.name, ((option && option.constructor.name === 'Object') ? option.value : option))"> 
                     <span>{{(option && option.constructor.name === 'Object') ? option.text : option}}</span>
                     <input class="width-200" v-if="question.selected === option.text && !!option.editable" v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
                 </label>
@@ -34,6 +38,16 @@
                 answers: window.answers || {}
             }
         },
+        methods: {
+            toggleChecked(e, name, value) {
+                if (e.target.checked && Array.isArray(this.answers[name])) {
+                    if (this.answers[name].indexOf(value) < 0) this.answers[name].push(value)
+                    else {
+                        this.answers[name].splice(this.answers[name].indexOf(value), 1)
+                    }
+                }
+            }
+        },
         mounted() {
             if (!this.questions || !Array.isArray(this.questions)) {
                 throw new Error('[questions] prop value must be an array')
@@ -44,7 +58,7 @@
                         question.selected = this.answers[question.name]
                     }
                     else {
-                        
+                        this.answers[question.name] = this.answers[question.name] || []
                     }
                 }
             })
