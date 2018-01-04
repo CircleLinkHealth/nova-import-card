@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeCareAmbassadorId extends Migration
+class ChangeCareAmbassadorIdForeign extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +14,14 @@ class ChangeCareAmbassadorId extends Migration
     public function up()
     {
         Schema::table('enrollees', function (Blueprint $table) {
-            $table->dropForeign(['care_ambassador_id']);
+            $table->dropForeign(['care_ambassador_user_id']);
 
-            $table->renameColumn('care_ambassador_id', 'care_ambassador_user_id');
+            $table->renameColumn('care_ambassador_user_id', 'care_ambassador_id');
 
-            $table->foreign('care_ambassador_user_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade');
+            $table->foreign('care_ambassador_id')
+                  ->references('id')
+                  ->on('care_ambassadors')
+                  ->onUpdate('cascade');
         });
     }
 
