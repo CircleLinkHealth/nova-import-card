@@ -140,4 +140,35 @@ class Call extends \App\BaseModel
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
+
+    /**
+     * Scope for calls for the given month
+     *
+     * @param $builder
+     * @param Carbon $monthYear
+     *
+     * @return mixed
+     */
+    public function scopeOfMonth($builder, Carbon $monthYear) {
+        return $builder->whereBetween('called_date', [
+            $monthYear->startOfMonth()->toDateString(),
+            $monthYear->copy()->endOfMonth()->toDateString(),
+        ]);
+    }
+
+    /**
+     * Scope for status
+     *
+     * @param $builder
+     * @param $status
+     *
+     * @return mixed
+     */
+    public function scopeOfStatus($builder, $status) {
+        if (is_array($status)) {
+            $status = [$status];
+        }
+
+        return $builder->whereIn('status', $status);
+    }
 }

@@ -2,16 +2,19 @@
 
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
 use Carbon\Carbon;
 
 class ActivityService
 {
+    protected $callRepo;
     protected $repo;
 
-    public function __construct(ActivityRepository $repo)
+    public function __construct(ActivityRepository $repo, CallRepository $callRepo)
     {
-        $this->repo = $repo;
+        $this->repo     = $repo;
+        $this->callRepo = $callRepo;
     }
 
     /**
@@ -45,6 +48,12 @@ class ActivityService
             ], [
                 'ccm_time' => $ccmTime,
             ]);
+
+            if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
+                $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
+                $summary->save();
+            }
 
             if ($monthYear->eq(Carbon::now()->startOfMonth())) {
                 $info = Patient::updateOrCreate([
