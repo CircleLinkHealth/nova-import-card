@@ -14,20 +14,21 @@ class PatientCallListController extends Controller
      */
     public function index(Request $request)
     {
-        $calls = Call::where('outbound_cpm_id', '=', \Auth::user()->id)
-                     ->with([
-                         'inboundUser.patientSummaries' => function ($q) {
-                             $q->orderBy('id', 'desc');
-                         },
-                     ]);
+        $calls = Call::where('outbound_cpm_id', '=', \Auth::user()->id);
 
-        $date = 'All';
-        if ($request->input('date')) {
-            if (strtolower($request->input('date')) != 'all') {
-                $date = Carbon::parse($request->input('date'))->toDateString();
-                $calls->where('scheduled_date', '=', $date);
-            }
+        $dateFilter = 'All';
+        $date = Carbon::now();
+        if (strtolower($request->input('date')) != 'all') {
+            $date = $dateFilter = Carbon::parse($request->input('date'));
+            $calls->where('scheduled_date', '=', $date->toDateString());
         }
+
+        $calls->with([
+            'inboundUser.patientSummaries' => function ($q) use ($date) {
+                $q->where('month_year', $date->startOfMonth()->toDateString())
+                  ->orderBy('id', 'desc');
+            },
+        ]);
 
         // filter status
         $filterStatus = 'scheduled';
@@ -47,7 +48,7 @@ class PatientCallListController extends Controller
 
         return view('patientCallList.index', compact([
             'calls',
-            'date',
+            'dateFilter',
             'filterStatus',
         ]));
     }

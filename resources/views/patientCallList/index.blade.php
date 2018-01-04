@@ -55,9 +55,10 @@
                                                 <label for="date" class="col-sm-1 control-label">Date: </label>
                                                 <div class="col-sm-4">
                                                     <input id="date" class="form-control pull-right" name="date"
-                                                           type="input"
-                                                           value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"
-                                                           data-field="date" data-format="yyyy-MM-dd"/><span
+                                                           type="text"
+                                                           placeholder="yyyy-mm-dd"
+                                                           value="{{ (old('date') ? old('date') : ($dateFilter ? $dateFilter : '')) }}"
+                                                           data-field="date" data-format="yyyy-mm-dd"/><span
                                                             class="help-block">{{ $errors->first('date') }}</span>
                                                 </div>
                                                 <label for="filterStatus"
