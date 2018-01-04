@@ -18,6 +18,21 @@ class PatientSummaryEloquentRepository
     }
 
     /**
+     * Determine whether a summary should be approved
+     *
+     * @param User $patient
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    public function shouldApprove(User $patient, PatientMonthlySummary $summary) {
+        return !$this->lacksProblems($summary)
+               && $summary->no_of_successful_calls > 1
+               && $patient->patientInfo->ccm_status == 'enrolled'
+               && $summary->rejected != 1;
+    }
+
+    /**
      * Attach 2 billable problems to the given PatientMonthlySummary, and returns a new summary.
      * NOTE: The summary is not persisted to the DB. You will have to call `->save()` on `$summary` this function will
      * return.
@@ -30,9 +45,11 @@ class PatientSummaryEloquentRepository
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
         if (!$this->lacksProblems($summary)) {
-            $summary->approved = ! ($summary->rejected == 1);
+            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
+                $summary->approved = true;
 
-            $summary->save();
+                $summary->save();
+            }
 
             return $summary;
         }
@@ -62,7 +79,7 @@ class PatientSummaryEloquentRepository
 
         $lacksProblems = $this->lacksProblems($summary);
 
-        $summary->approved = ! ($lacksProblems || $summary->rejected == 1);
+        $summary->approved = $this->shouldApprove($patient, $summary);
 
         $summary->save();
 
