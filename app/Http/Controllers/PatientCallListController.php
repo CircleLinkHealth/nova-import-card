@@ -18,7 +18,7 @@ class PatientCallListController extends Controller
 
         $dateFilter = 'All';
         $date = Carbon::now();
-        if (strtolower($request->input('date')) != 'all') {
+        if ($request->has('date') && strtolower($request->input('date')) != 'all') {
             $date = $dateFilter = Carbon::parse($request->input('date'));
             $calls->where('scheduled_date', '=', $date->toDateString());
         }
