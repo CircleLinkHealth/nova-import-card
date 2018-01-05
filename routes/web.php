@@ -150,6 +150,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
             Route::get('{userId}/symptoms', 'PatientController@getSymptoms');
             Route::post('{userId}/symptoms', 'PatientController@addSymptom');
+            Route::delete('{userId}/symptoms/{symptomId}', 'PatientController@removeSymptom');
             Route::get('{userId}/medication', 'PatientController@getMedication');
             Route::get('{userId}/medication/groups', 'PatientController@getMedicationGroups');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');

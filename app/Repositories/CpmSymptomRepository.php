@@ -38,6 +38,19 @@ class CpmSymptomRepository
             return $symptomUser;
          }
     }
+    
+    public function removeSymptomFromPatient($symptomId, $userId) {
+        if ($this->patientHasSymptom($userId, $symptomId)) {
+            CpmSymptomUser::where([ 
+                'patient_id' => $userId,
+                'cpm_symptom_id' => $symptomId
+             ])->delete();
+             return [
+                 'message' => 'successful'
+             ];
+        }
+        return null;
+    }
 
     public function patientSymptoms($userId) {
         return CpmSymptomUser::where([ 'patient_id' => $userId ])->with('cpmSymptom')->get()->map(function ($u) {
