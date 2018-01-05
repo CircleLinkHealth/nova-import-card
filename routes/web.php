@@ -105,6 +105,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('', 'ProblemController@ccdAllergies');
             Route::get('search', 'ProblemController@searchCcdAllergies');
         });
+        
+        Route::group(['prefix' => 'medication'], function () {
+            Route::get('search', 'MedicationController@search');
+            Route::resource('', 'MedicationController');
+
+            Route::group(['prefix' => 'groups'], function () {
+                Route::get('{id}', 'MedicationGroupController@show');
+                Route::resource('', 'MedicationGroupController');
+            });
+        });
 
         Route::group(['prefix' => 'problems'], function () {
             Route::get('cpm', 'ProblemController@cpmProblems');

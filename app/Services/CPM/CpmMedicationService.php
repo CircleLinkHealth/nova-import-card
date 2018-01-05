@@ -22,4 +22,12 @@ class CpmMedicationService
     public function repo() {
         return $this->medicationRepo;
     }
+
+    public function medications() {
+        return $this->repo()->model()->paginate();
+    }
+
+    public function search($terms) {
+        return $this->repo()->search($terms);
+    }
 }
