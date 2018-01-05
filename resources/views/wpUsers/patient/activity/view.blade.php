@@ -4,10 +4,6 @@
 @section('activity', 'Patient Activity')
 
 @section('content')
-    <?php
-    $userTime = \Carbon\Carbon::parse($activity['performed_at']);
-    $userTime = null; //$userTime->format('Y-m-d\TH:i');
-    ?>
     <div class="col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
         @include('errors.errors')
     </div>
@@ -73,10 +69,9 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <div class="form-group">
-                                                <input readonly name="performed_at" type="datetime-local"
-                                                       class="selectpicker form-control" data-width="95px" data-size="10" list
-                                                       max="{{$userTime}}"
-                                                       value="{{$userTime}}">
+                                                <input readonly name="performed_at" type="text"
+                                                       class="form-control" data-width="95px" data-size="10" list
+                                                       value="{{$activity['performed_at']}}">
                                             </div>
                                         </div>
                                     </div>
