@@ -61,8 +61,8 @@ class ActivityController extends Controller
 
         $acts = DB::table('lv_activities')
                   ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
-                  ->where('created_at', '>=', $start)
-                  ->where('created_at', '<=', $end)
+                  ->where('performed_at', '>=', $start)
+                  ->where('performed_at', '<=', $end)
                   ->where('patient_id', $patientId)
                   ->where(function ($q) {
                       $q->where('logged_from', 'activity')
