@@ -30,4 +30,10 @@ class CpmMedicationRepository
         else $query = $query->orWhere('name', 'LIKE', '%'.$terms.'%');
         return $query->groupBy('name')->get();
     }
+    
+    public function patientMedication($userId) {
+        return $this->model()->where([
+            'patient_id' => $userId
+        ])->paginate();
+    }
 }
