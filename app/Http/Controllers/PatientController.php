@@ -127,4 +127,13 @@ class PatientController extends Controller
         }
         return $this->badRequest('"userId" is important');
     }
+
+    public function addSymptom($userId, Request $request) {
+        $symptomId = $request->input('symptomId');
+        if ($symptomId) {
+            return $this->symptomService->repo()->addSymptomToPatient($symptomId, $userId);
+        }
+        else return $this->badRequest('"symptomId" is important');
+        
+    }
 }
