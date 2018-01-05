@@ -16,4 +16,8 @@ class CpmSymptomRepository
     public function count() {
         return $this->model()->count();
     }
+
+    public function symptoms() {
+        return $this->model()->paginate();
+    }
 }

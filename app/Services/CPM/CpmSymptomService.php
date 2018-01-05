@@ -24,6 +24,10 @@ class CpmSymptomService implements CpmModel
         return $this->symptomRepo;
     }
 
+    public function symptoms() {
+        return $this->repo()->symptoms();
+    }
+
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmSymptoms()->sync($ids);
