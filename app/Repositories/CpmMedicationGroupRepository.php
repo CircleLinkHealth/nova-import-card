@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\User;
 use App\Patient;
+use App\Models\CCD\Medication;
 use App\Models\CPM\CpmMedicationGroup;
 
 class CpmMedicationGroupRepository
@@ -40,5 +41,13 @@ class CpmMedicationGroupRepository
         else {
             return null;
         }
+    }
+
+    public function patientGroups($userId) {
+        return array_values(Medication::where([
+            'patient_id' => $userId
+        ])->groupBy('medication_group_id')->with(['cpmMedicationGroup'])->get()->map(function ($m) {
+            return $m->cpmMedicationGroup;
+        })->filter()->toArray());
     }
 }

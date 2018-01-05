@@ -8,6 +8,7 @@ use App\Patient;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
+use App\Services\CPM\CpmMedicationGroupService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -21,15 +22,21 @@ class PatientController extends Controller
     private $patientService;
     private $cpmProblemUserService;
     private $biometricUserService;
+    private $medicationGroupService;
+
     /**
      * CpmProblemController constructor.
      *
      */
-    public function __construct(PatientService $patientService, CpmProblemUserService $cpmProblemUserService, CpmBiometricService $biometricUserService)
+    public function __construct(PatientService $patientService, 
+                                CpmProblemUserService $cpmProblemUserService, 
+                                CpmBiometricService $biometricUserService,
+                                CpmMedicationGroupService $medicationGroupService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
         $this->biometricUserService = $biometricUserService;
+        $this->medicationGroupService = $medicationGroupService;
     }
 
     /**
@@ -91,4 +98,11 @@ class PatientController extends Controller
         }
         return $this->badRequest('"userId" and "cpmId" are important');
     }
+
+    public function getMedicationGroups($userId) {
+        if ($userId) {
+            return $this->medicationGroupService->repo()->patientGroups($userId);
+        }
+        return $this->badRequest('"userid" is important');
+    } 
 }
