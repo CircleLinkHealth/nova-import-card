@@ -214,6 +214,15 @@ class Calls
         return $this->response($response);
     }
 
+    public function getBillingProviderName($practiceId, $providerId){
+
+        $response = $this->api->GET("$practiceId/providers/$providerId", [
+            'showallproviderids' => true
+        ]);
+
+        return $this->response($response);
+    }
+
 
     /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
