@@ -8,6 +8,9 @@ use App\Patient;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
+use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmMedicationGroupService;
+use App\Services\CPM\CpmSymptomService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -21,15 +24,27 @@ class PatientController extends Controller
     private $patientService;
     private $cpmProblemUserService;
     private $biometricUserService;
+    private $medicationService;
+    private $medicationGroupService;
+    private $symptomService;
+
     /**
      * CpmProblemController constructor.
      *
      */
-    public function __construct(PatientService $patientService, CpmProblemUserService $cpmProblemUserService, CpmBiometricService $biometricUserService)
+    public function __construct(PatientService $patientService, 
+                                CpmProblemUserService $cpmProblemUserService, 
+                                CpmBiometricService $biometricUserService,
+                                CpmMedicationService $medicationService,
+                                CpmMedicationGroupService $medicationGroupService,
+                                CpmSymptomService $symptomService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
         $this->biometricUserService = $biometricUserService;
+        $this->medicationService = $medicationService;
+        $this->medicationGroupService = $medicationGroupService;
+        $this->symptomService = $symptomService;
     }
 
     /**
@@ -90,5 +105,26 @@ class PatientController extends Controller
             return $this->getCpmProblems($userId);
         }
         return $this->badRequest('"userId" and "cpmId" are important');
+    }
+    
+    public function getMedication($userId) {
+        if ($userId) {
+            return $this->medicationService->repo()->patientMedication($userId);
+        }
+        return $this->badRequest('"userid" is important');
+    } 
+
+    public function getMedicationGroups($userId) {
+        if ($userId) {
+            return $this->medicationGroupService->repo()->patientGroups($userId);
+        }
+        return $this->badRequest('"userid" is important');
+    }
+
+    public function getSymptoms($userId) {
+        if ($userId) {
+            return $this->symptomService->repo()->patientSymptoms($userId);
+        }
+        return $this->badRequest('"userId" is important');
     }
 }

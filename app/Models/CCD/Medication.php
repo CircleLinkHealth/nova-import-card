@@ -74,7 +74,7 @@ class Medication extends \App\BaseModel
      */
     public function cpmMedicationGroup()
     {
-        return $this->belongsTo(CpmMedicationGroup::class);
+        return $this->belongsTo(CpmMedicationGroup::class, 'medication_group_id');
     }
 
     /**

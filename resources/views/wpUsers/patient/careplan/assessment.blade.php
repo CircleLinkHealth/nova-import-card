@@ -54,7 +54,7 @@
             <div class="patient-info__main">
                 <div class="row">
                     <div class="col-xs-12 top-20">
-                        <h1 class="color-blue">G0506 Template Form for MD</h1>
+                        <h1 class="color-blue">G0506 Assessment for MD</h1>
                         @if ($assessment) 
                             <h4 class="text-right">Approved on {{Carbon::parse($assessment->updated_at)->format('d/m/Y')}} at 
                                 {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{$approver->display_name}}</h4>

@@ -5,6 +5,7 @@ use App\CarePlanItem;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmSymptomService;
+use App\Models\CPM\CpmSymptomUser;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptomUser[] $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmSymptom whereId($value)
@@ -53,6 +55,11 @@ class CpmSymptom extends \App\BaseModel implements Serviceable
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_symptoms_users', 'patient_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(CpmSymptomUser::class);
     }
 
     /**
