@@ -10,9 +10,19 @@ namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
 use App\User;
+use App\Repositories\CpmSymptomRepository;
 
 class CpmSymptomService implements CpmModel
 {
+    private $symptomRepo;
+
+    public function __construct(CpmSymptomRepository $symptomRepo) {
+        $this->symptomRepo = $symptomRepo;
+    }
+
+    public function repo() {
+        return $this->symptomRepo;
+    }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
