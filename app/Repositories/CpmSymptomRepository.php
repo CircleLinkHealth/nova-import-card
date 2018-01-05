@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\User;
 use App\Patient;
 use App\Models\CPM\CpmSymptom;
+use App\Models\CPM\CpmSymptomUser;
 
 class CpmSymptomRepository
 {
@@ -19,5 +20,11 @@ class CpmSymptomRepository
 
     public function symptoms() {
         return $this->model()->paginate();
+    }
+
+    public function patientSymptoms($userId) {
+        return CpmSymptomUser::where([ 'patient_id' => $userId ])->with('cpmSymptom')->get()->map(function ($u) {
+            return $u->cpmSymptom;
+        });
     }
 }

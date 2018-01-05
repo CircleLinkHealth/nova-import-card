@@ -10,6 +10,7 @@ use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMedicationGroupService;
+use App\Services\CPM\CpmSymptomService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -25,6 +26,7 @@ class PatientController extends Controller
     private $biometricUserService;
     private $medicationService;
     private $medicationGroupService;
+    private $symptomService;
 
     /**
      * CpmProblemController constructor.
@@ -34,13 +36,15 @@ class PatientController extends Controller
                                 CpmProblemUserService $cpmProblemUserService, 
                                 CpmBiometricService $biometricUserService,
                                 CpmMedicationService $medicationService,
-                                CpmMedicationGroupService $medicationGroupService)
+                                CpmMedicationGroupService $medicationGroupService,
+                                CpmSymptomService $symptomService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
         $this->biometricUserService = $biometricUserService;
         $this->medicationService = $medicationService;
         $this->medicationGroupService = $medicationGroupService;
+        $this->symptomService = $symptomService;
     }
 
     /**
@@ -115,5 +119,12 @@ class PatientController extends Controller
             return $this->medicationGroupService->repo()->patientGroups($userId);
         }
         return $this->badRequest('"userid" is important');
-    } 
+    }
+
+    public function getSymptoms($userId) {
+        if ($userId) {
+            return $this->symptomService->repo()->patientSymptoms($userId);
+        }
+        return $this->badRequest('"userId" is important');
+    }
 }

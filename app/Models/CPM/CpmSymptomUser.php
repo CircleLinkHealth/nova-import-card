@@ -1,8 +1,8 @@
 <?php namespace App\Models\CPM;
 
 use App\User;
-use App\CPM\CpmSymptom;
-use App\CPM\CpmInstruction;
+use App\Models\CPM\CpmSymptom;
+use App\Models\CPM\CpmInstruction;
 use App\Contracts\Serviceable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +29,7 @@ class CpmSymptomUser extends \App\BaseModel
     use Instructable;
 
     protected $guarded = [];
+    protected $table = 'cpm_symptoms_users';
 
     public function cpmSymptom()
     {
