@@ -55,9 +55,10 @@
                                                 <label for="date" class="col-sm-1 control-label">Date: </label>
                                                 <div class="col-sm-4">
                                                     <input id="date" class="form-control pull-right" name="date"
-                                                           type="input"
-                                                           value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"
-                                                           data-field="date" data-format="yyyy-MM-dd"/><span
+                                                           type="text"
+                                                           placeholder="yyyy-mm-dd"
+                                                           value="{{ (old('date') ? old('date') : ($dateFilter ? $dateFilter : '')) }}"
+                                                           data-field="date" data-format="yyyy-mm-dd"/><span
                                                             class="help-block">{{ $errors->first('date') }}</span>
                                                 </div>
                                                 <label for="filterStatus"
@@ -170,9 +171,9 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}
+                                                            @if($call->inboundUser)                                                                             {{ $call->inboundUser->patientSummaries->first()->no_of_calls ?? 0 }}
                                                             (
-                                                            <span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>
+                                                            <span style="color:green;">{{ $call->inboundUser->patientSummaries->first()->no_of_successful_calls ?? 0 }}</span>
                                                             )
                                                             @endif
                                                         </td>

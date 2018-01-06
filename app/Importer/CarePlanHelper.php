@@ -278,7 +278,7 @@ class CarePlanHelper
             ?: $this->importedMedicalRecord->practice_id;
 
         if ($practiceId) {
-            $this->user->attachPractice($practiceId);
+            $this->user->attachPractice($practiceId, false, false, 2);
         }
 
         return $this;
