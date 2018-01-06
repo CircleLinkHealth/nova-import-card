@@ -36,4 +36,20 @@ class CpmMedicationRepository
             'patient_id' => $userId
         ])->paginate();
     }
+
+    public function addMedicationToPatient(Medication $medication) {
+        $medication->save();
+        return $medication;
+    }
+    
+    public function removeMedicationFromPatient($medicationId, $userId) {
+        $this->model()->where([
+            'patient_id' => $userId,
+            'id' => $medicationId
+        ])->delete();
+        
+        return [
+            'message' => 'success'
+        ];
+    }
 }
