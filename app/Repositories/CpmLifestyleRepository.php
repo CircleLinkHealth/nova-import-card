@@ -15,4 +15,8 @@ class CpmLifestyleRepository
     public function count() {
         return $this->model()->count();
     }
+    
+    public function lifestyles() {
+        return $this->model()->paginate();
+    }
 }

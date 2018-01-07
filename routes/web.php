@@ -110,6 +110,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'SymptomController');
         });
         
+        Route::group(['prefix' => 'lifestyles'], function () {
+            Route::resource('', 'LifestyleController');
+        });
+        
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
             Route::resource('', 'MedicationController');
