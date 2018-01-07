@@ -17,7 +17,19 @@ class CpmMiscRepository
         return $this->model()->count();
     }
     
-    public function misc() {
-        return $this->model()->paginate();
+    function setupMisc($misc) {
+        $misc['patients'] = $misc->users()->count();
+        return $misc;
+    }
+    
+    public function misc($id = null) {
+        if ($id) {
+            $misc = $this->model()->with('carePlanTemplates')->find($id);
+            if ($misc) return $this->setupMisc($misc);
+            else return null;
+        }
+        else {
+            return $this->model()->get()->map([$this, 'setupMisc']);
+        }
     }
 }

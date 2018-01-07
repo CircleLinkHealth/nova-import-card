@@ -27,6 +27,8 @@ class CpmMiscUser extends \App\BaseModel
     
     use Instructable;
 
+    protected $table = 'cpm_miscs_users';
+
     public function cpmInstruction()
     {
         return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id');

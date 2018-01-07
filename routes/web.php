@@ -116,6 +116,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'LifestyleController');
         });
         
+        Route::group(['prefix' => 'misc'], function () {
+            Route::get('{id}', 'MiscController@show');
+            Route::get('{id}/patients', 'MiscController@patients');
+            Route::resource('', 'MiscController');
+        });
+        
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
             Route::resource('', 'MedicationController');
