@@ -16,4 +16,10 @@ class CpmMiscUserRepository
     public function count() {
         return $this->model()->count();
     }
+    
+    public function miscPatients($miscId) {
+        return $this->model()->where([ 'cpm_misc_id' => $miscId ])->get(['patient_id'])->map(function ($m) {
+            return $m->patient_id;
+        });
+    }
 }

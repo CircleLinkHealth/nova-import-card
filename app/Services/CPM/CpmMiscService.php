@@ -27,6 +27,10 @@ class CpmMiscService implements CpmModel
         return $this->cpmMiscRepo;
     }
 
+    public function miscPatients($miscId) {
+        return $this->cpmMiscUserRepo->miscPatients($miscId);
+    }
+
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
         if (!is_int($page)) {
