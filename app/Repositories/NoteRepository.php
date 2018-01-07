@@ -10,4 +10,8 @@ class NoteRepository
     {
         return app(Note::class);
     }
+    
+    public function count() {
+        return $this->model()->count();
+    }
 }
