@@ -14,4 +14,10 @@ class NoteRepository
     public function count() {
         return $this->model()->count();
     }
+
+    public function patientNotes($userId) {
+        return $this->model()->where([
+            'patient_id' => $userId
+        ])->paginate();
+    }
 }

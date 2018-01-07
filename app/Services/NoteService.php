@@ -19,12 +19,16 @@ class NoteService
 {
     private $noteRepo;
 
-    public function __constructor(NoteRepository $noteRepo) {
+    public function __construct(NoteRepository $noteRepo) {
         $this->noteRepo = $noteRepo;
     }
 
     public function repo() {
         return $this->noteRepo;
+    }
+
+    public function patientNotes($userId) {
+        return $this->noteRepo->patientNotes($userId);
     }
 
     public function storeNote($input)

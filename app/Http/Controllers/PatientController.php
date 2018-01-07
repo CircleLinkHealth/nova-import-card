@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AppConfig;
 use App\User;
 use App\Patient;
+use App\Services\NoteService;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
@@ -31,6 +32,7 @@ class PatientController extends Controller
     private $symptomService;
     private $lifestyleService;
     private $miscService;
+    private $noteService;
 
     /**
      * CpmProblemController constructor.
@@ -43,7 +45,8 @@ class PatientController extends Controller
                                 CpmMedicationGroupService $medicationGroupService,
                                 CpmSymptomService $symptomService,
                                 CpmLifestyleService $lifestyleService,
-                                CpmMiscService $miscService)
+                                CpmMiscService $miscService,
+                                NoteService $noteService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -53,6 +56,7 @@ class PatientController extends Controller
         $this->symptomService = $symptomService;
         $this->lifestyleService = $lifestyleService;
         $this->miscService = $miscService;
+        $this->noteService = $noteService;
     }
 
     /**
@@ -220,5 +224,12 @@ class PatientController extends Controller
             return $this->miscService->removeMiscFromPatient($miscId, $userId);
         }
         else return $this->badRequest('"miscId" and "userId" are important');
+    }
+
+    public function getNotes($userId) {
+        if ($userId) {
+            return $this->noteService->patientNotes($userId);
+        }
+        else return $this->badRequest('"userId" is important');
     }
 }
