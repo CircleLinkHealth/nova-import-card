@@ -27,8 +27,8 @@ class CpmLifestyleService implements CpmModel
         return $this->lifestyleRepo;
     }
 
-    public function lifestyles() {
-        return $this->repo()->lifestyles();
+    public function lifestylePatients($lifestyleId) {
+        return $this->lifestyleUserRepo->lifestylePatients($lifestyleId);
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

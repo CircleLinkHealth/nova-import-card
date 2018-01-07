@@ -4,6 +4,7 @@ use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
+use App\Models\CPM\CpmLifestyleUser;
 use App\Services\CPM\CpmLifestyleService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmLifestyleUser[] $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereId($value)
@@ -53,6 +55,11 @@ class CpmLifestyle extends \App\BaseModel implements Serviceable
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_lifestyles_users', 'patient_id');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(CpmLifestyleUser::class);
     }
 
     /**

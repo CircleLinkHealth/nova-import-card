@@ -27,6 +27,16 @@ class LifestyleController extends Controller
      */
     public function index()
     {
-        return response()->json($this->lifestyleService->lifestyles());
+        return response()->json($this->lifestyleService->repo()->lifestyles());
+    }
+
+    public function show($id)
+    {
+        return response()->json($this->lifestyleService->repo()->lifestyle($id));
+    }
+    
+    public function patients($id)
+    {
+        return response()->json($this->lifestyleService->lifestylePatients($id));
     }
 }

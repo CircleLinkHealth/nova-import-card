@@ -15,8 +15,19 @@ class CpmLifestyleRepository
     public function count() {
         return $this->model()->count();
     }
+
+    function setupLifestyle($lifestyle) {
+        $lifestyle['patients'] = $lifestyle->users()->count();
+        return $lifestyle;
+    }
     
     public function lifestyles() {
-        return $this->model()->paginate();
+        $lifestyles = $this->model()->paginate();
+        $lifestyles->getCollection()->transform([$this, 'setupLifestyle']);
+        return $lifestyles;
+    }
+    
+    public function lifestyle($id) {
+        return $this->setupLifestyle($this->model()->with(['carePlanTemplates'])->find($id));
     }
 }

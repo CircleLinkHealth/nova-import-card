@@ -15,4 +15,10 @@ class CpmLifestyleUserRepository
     public function count() {
         return $this->model()->count();
     }
+    
+    public function lifestylePatients($lifestyleId) {
+        return $this->model()->where([ 'cpm_lifestyle_id' => $lifestyleId ])->get(['patient_id'])->map(function ($l) {
+            return $l->patient_id;
+        });
+    }
 }

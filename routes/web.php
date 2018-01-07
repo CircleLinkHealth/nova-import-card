@@ -111,6 +111,8 @@ Route::group(['middleware' => 'auth'], function () {
         });
         
         Route::group(['prefix' => 'lifestyles'], function () {
+            Route::get('{id}', 'LifestyleController@show');
+            Route::get('{id}/patients', 'LifestyleController@patients');
             Route::resource('', 'LifestyleController');
         });
         

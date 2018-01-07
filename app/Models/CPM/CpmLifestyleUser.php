@@ -24,12 +24,14 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmLifestyle whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class CpmLifestyle extends \App\BaseModel
+class CpmLifestyleUser extends \App\BaseModel
 {
     
     use Instructable;
 
     protected $guarded = [];
+
+    protected $table = 'cpm_lifestyles_users';
 
     public function cpmInstruction()
     {
