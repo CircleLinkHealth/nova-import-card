@@ -29,4 +29,26 @@ class CpmLifestyleUserRepository
             return $u->cpmLifestyle;
         });
     }
+
+    public function patientHasLifestyle($userId, $lifestyleId) {
+        return !!$this->model()->where([ 'patient_id' => $userId, 'cpm_lifestyle_id' => $lifestyleId ])->first();
+    }
+
+    public function addLifestyleToPatient($lifestyleId, $userId) {
+        if (!$this->patientHasLifestyle($userId, $lifestyleId)) {
+            $lifestyleUser = new CpmLifestyleUser();
+            $lifestyleUser->patient_id = $userId;
+            $lifestyleUser->cpm_lifestyle_id = $lifestyleId;
+            $lifestyleUser->save();
+            return $lifestyleUser;
+        }
+        else return $this->model()->where([ 'patient_id' => $userId, 'cpm_lifestyle_id' => $lifestyleId ])->first();
+    }
+    
+    public function removeLifestyleFromPatient($lifestyleId, $userId) {
+        $this->model()->where([ 'patient_id' => $userId, 'cpm_lifestyle_id' => $lifestyleId ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
 }

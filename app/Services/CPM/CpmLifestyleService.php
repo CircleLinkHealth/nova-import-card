@@ -35,6 +35,17 @@ class CpmLifestyleService implements CpmModel
         return $this->lifestyleUserRepo->patientLifestyles($userId);
     }
 
+    public function addLifestyleToPatient($lifestyleId, $userId) {
+        if ($this->repo()->exists($lifestyleId)) {
+            return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
+        }
+        else throw new Exception('lifestyle with id "' . $lifestyleId . '" does not exist');
+    }
+
+    public function removeLifestyleFromPatient($lifestyleId, $userId) {
+        return $this->lifestyleUserRepo->removeLifestyleFromPatient($lifestyleId, $userId);
+    }
+
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmLifestyles()->sync($ids);

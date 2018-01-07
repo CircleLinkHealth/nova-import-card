@@ -180,4 +180,19 @@ class PatientController extends Controller
         }
         else return $this->badRequest('"userId" is important');
     }
+
+    public function addLifestyle($userId, Request $request) {
+        $lifestyleId = $request->input('lifestyleId');
+        if ($userId && $lifestyleId) {
+            return $this->lifestyleService->addLifestyleToPatient($lifestyleId, $userId);
+        }
+        else return $this->badRequest('"lifestyleId" and "userId" are important');
+    }
+    
+    public function removeLifestyle($userId, $lifestyleId) {
+        if ($userId && $lifestyleId) {
+            return $this->lifestyleService->removeLifestyleFromPatient($lifestyleId, $userId);
+        }
+        else return $this->badRequest('"lifestyleId" and "userId" are important');
+    }
 }

@@ -30,4 +30,8 @@ class CpmLifestyleRepository
     public function lifestyle($id) {
         return $this->setupLifestyle($this->model()->with(['carePlanTemplates'])->find($id));
     }
+
+    public function exists($id) {
+        return !!$this->model()->find($id);
+    }
 }
