@@ -8,11 +8,25 @@
 
 namespace App\Services\CPM;
 
+use App\Repositories\CpmMiscRepository;
+use App\Repositories\CpmMiscUserRepository;
 use App\Contracts\Services\CpmModel;
 use App\User;
 
 class CpmMiscService implements CpmModel
 {
+    private $cpmMiscRepo;
+    private $cpmMiscUserRepo;
+
+    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo) {
+        $this->cpmMiscRepo = $cpmMiscRepo;
+        $this->cpmMiscUserRepo = $cpmMiscUserRepo;
+    }
+
+    public function repo() {
+        return $this->cpmMiscRepo;
+    }
+
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
         if (!is_int($page)) {
