@@ -32,4 +32,8 @@ class CpmMiscRepository
             return $this->model()->get()->map([$this, 'setupMisc']);
         }
     }
+
+    public function exists($id) {
+        return !!$this->model()->find($id);
+    }
 }

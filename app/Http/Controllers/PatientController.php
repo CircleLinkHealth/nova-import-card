@@ -12,6 +12,7 @@ use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmSymptomService;
 use App\Services\CPM\CpmLifestyleService;
+use App\Services\CPM\CpmMiscService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -29,6 +30,7 @@ class PatientController extends Controller
     private $medicationGroupService;
     private $symptomService;
     private $lifestyleService;
+    private $miscService;
 
     /**
      * CpmProblemController constructor.
@@ -40,7 +42,8 @@ class PatientController extends Controller
                                 CpmMedicationService $medicationService,
                                 CpmMedicationGroupService $medicationGroupService,
                                 CpmSymptomService $symptomService,
-                                CpmLifestyleService $lifestyleService)
+                                CpmLifestyleService $lifestyleService,
+                                CpmMiscService $miscService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -49,6 +52,7 @@ class PatientController extends Controller
         $this->medicationGroupService = $medicationGroupService;
         $this->symptomService = $symptomService;
         $this->lifestyleService = $lifestyleService;
+        $this->miscService = $miscService;
     }
 
     /**
@@ -194,5 +198,27 @@ class PatientController extends Controller
             return $this->lifestyleService->removeLifestyleFromPatient($lifestyleId, $userId);
         }
         else return $this->badRequest('"lifestyleId" and "userId" are important');
+    }
+    
+    public function getMisc($userId) {
+        if ($userId) {
+            return $this->miscService->patientMisc($userId);
+        }
+        else return $this->badRequest('"userId" is important');
+    }
+
+    public function addMisc($userId, Request $request) {
+        $miscId = $request->input('miscId');
+        if ($userId && $miscId) {
+            return $this->miscService->addMiscToPatient($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId" and "userId" are important');
+    }
+    
+    public function removeMisc($userId, $miscId) {
+        if ($userId && $miscId) {
+            return $this->miscService->removeMiscFromPatient($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId" and "userId" are important');
     }
 }
