@@ -21,4 +21,12 @@ class CpmLifestyleUserRepository
             return $l->patient_id;
         });
     }
+
+    public function patientLifestyles($userId) {
+        return $this->model()->where([ 'patient_id' => $userId ])->with(['cpmLifestyle', 'cpmInstruction'])->get()->map(function ($u) {
+            $lifestyle = $u->cpmLifestyle;
+            $lifestyle['instruction'] = $u->cpmInstruction;
+            return $u->cpmLifestyle;
+        });
+    }
 }

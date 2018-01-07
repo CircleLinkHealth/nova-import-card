@@ -11,6 +11,7 @@ use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmSymptomService;
+use App\Services\CPM\CpmLifestyleService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -27,6 +28,7 @@ class PatientController extends Controller
     private $medicationService;
     private $medicationGroupService;
     private $symptomService;
+    private $lifestyleService;
 
     /**
      * CpmProblemController constructor.
@@ -37,7 +39,8 @@ class PatientController extends Controller
                                 CpmBiometricService $biometricUserService,
                                 CpmMedicationService $medicationService,
                                 CpmMedicationGroupService $medicationGroupService,
-                                CpmSymptomService $symptomService)
+                                CpmSymptomService $symptomService,
+                                CpmLifestyleService $lifestyleService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -45,6 +48,7 @@ class PatientController extends Controller
         $this->medicationService = $medicationService;
         $this->medicationGroupService = $medicationGroupService;
         $this->symptomService = $symptomService;
+        $this->lifestyleService = $lifestyleService;
     }
 
     /**
@@ -168,5 +172,12 @@ class PatientController extends Controller
             return $result ? response()->json($result) : $this->notFound('provided patient does not have the symptom in question');
         }
         else return $this->badRequest('"symptomId" and "userId" are important');
+    }
+
+    public function getLifestyles($userId) {
+        if ($userId) {
+            return $this->lifestyleService->patientLifestyles($userId);
+        }
+        else return $this->badRequest('"userId" is important');
     }
 }

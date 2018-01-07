@@ -35,16 +35,16 @@ class CpmLifestyleUser extends \App\BaseModel
 
     public function cpmInstruction()
     {
-        return $this->hasOne(CpmInstruction::class, 'cpm_instruction_id');
+        return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id');
     }
 
     public function cpmLifestyle()
     {
-        return $this->hasOne(CpmLifestyle::class, 'cpm_lifestyle_id');
+        return $this->belongsTo(CpmLifestyle::class, 'cpm_lifestyle_id');
     }
     
     public function user()
     {
-        return $this->hasOne(User::class, 'patient_id');
+        return $this->belongsTo(User::class, 'patient_id');
     }
 }
