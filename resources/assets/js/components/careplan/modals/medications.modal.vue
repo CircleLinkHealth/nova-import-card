@@ -6,16 +6,46 @@
                     <div class="text-right">
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <div class="btn-group" role="group">
+                <div class="col-sm-12 pad-top-10" :class="{ 'medication-container': isExtendedView }">
+                    <div class="btn-group" role="group" :class="{ 'medication-buttons': isExtendedView }">
                         <button class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
                                 v-for="(medication, index) in medications" :key="index" @click="select(index)">
-                            {{medication.name}}
+                            {{medication.title()}}
                             <span class="delete" title="remove this cpm medication" @click="removeMedication">x</span>
                             <loader class="absolute" v-if="loaders.removeMedication && selectedMedication && (selectedMedication.id === medication.id)"></loader>
                         </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMedication || !selectedMedication.id }" value="+" @click="select(-1)" />
                     </div>
+                </div>
+                <div class="col-sm-12" v-if="selectedMedication">
+                    <form @submit="editMedication">
+                        <div class="form-group">
+                            <div class="top-20">
+                                <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="selectedMedication.name" required />
+                            </div>
+                            <div class="top-20">
+                                <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig" required></textarea>
+                            </div>
+                            <div class="top-20 text-right">
+                                <button class="btn btn-secondary selected">Edit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-12" v-if="!selectedMedication">
+                    <form @submit="addMedication">
+                        <div class="form-group">
+                            <div class="top-20">
+                                <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newMedication.name" required />
+                            </div>
+                            <div class="top-20">
+                                <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig" required></textarea>
+                            </div>
+                            <div class="top-20 text-right">
+                                <button class="btn btn-secondary selected">Create</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </template>
@@ -37,12 +67,19 @@
             'modal': Modal
         },
         computed: {
+            isExtendedView() {
+                return this.medications.length > 12
+            }
         },
         data() {
             return {
+                newMedication: {
+                    name: null,
+                    sig: null
+                },
                 selectedMedication: null,
                 loaders: {
-
+                    removeMedication: null
                 }
             }
         },
@@ -51,6 +88,26 @@
                 this.selectedMedication = (index >= 0) ? this.medications[index] : null
             },
             removeMedication() {
+                if (this.selectedMedication && confirm('Are you sure you want to remove this medication?')) {
+                    const medicationId = this.selectedMedication.id
+                    this.loaders.removeMedication = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`)).then(response => {
+                        console.log('medication:remove-medication', response.data)
+                        this.loaders.removeMedication = false
+                        this.selectedMedication = null
+                        Event.$emit('medication:remove', medicationId)
+                    }).catch(err => {
+                        console.error('care-areas:remove-medication', err)
+                        this.loaders.removeMedication = false
+                    })
+                }
+            },
+            editMedication(e) {
+                e.preventDefault()
+
+            },
+            addMedication(e) {
+                e.preventDefault()
 
             }
         },
@@ -61,6 +118,13 @@
 </script>
 
 <style>
+    .medication-container {
+        overflow-x: scroll;
+    }
+
+    .medication-buttons {
+        width: 2000px;
+    }
 
     .medication-button span.delete {
         width: 20px;
@@ -84,5 +148,13 @@
     button.medication-button div.loader.absolute {
         right: -13px;
         top: 15px;
+    }
+
+    .pad-top-10 {
+        padding-top: 10px;
+    }
+
+    input.color-black {
+        color: black;
     }
 </style>

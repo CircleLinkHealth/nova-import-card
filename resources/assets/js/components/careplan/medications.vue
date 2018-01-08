@@ -63,6 +63,8 @@
                 return obj
             },
             setupMedication(medication) {
+                medication.title = () => (medication.name || (medication.sig ? medication.sig.split('\n')[0] : 'No Title'))
+                medication.name = medication.name || ''
                 return medication
             },
             getMedications(page) {
@@ -94,8 +96,8 @@
         mounted() {
             this.getMedications()
             this.getMedicationGroups()
-            Event.$on('medications:medications', (medication) => {
-                this.medications = medications.map(this.setupMedication)
+            Event.$on('medication:remove', (id) => {
+                this.medications = this.medications.filter((medication) => medication.id != id)
             })
         }
     }
