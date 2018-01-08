@@ -37,6 +37,10 @@ class CpmMedicationRepository
         ])->paginate();
     }
 
+    public function exists($id) {
+        return !!$this->model()->find($id);
+    }
+
     public function addMedicationToPatient(Medication $medication) {
         $medication->save();
         return $medication;
@@ -51,5 +55,19 @@ class CpmMedicationRepository
         return [
             'message' => 'success'
         ];
+    }
+
+    public function editPatientMedication(Medication $medication) {
+        if (!$medication->id) {
+            throw new Exception('"id" is important');
+        }
+        else {
+            $medications = $this->model()->where([ 'id' => $medication->id ]);
+            $medications->update([
+                'name' => $medication->name,
+                'sig' => $medication->sig
+            ]);
+            return $medications->first();
+        }
     }
 }

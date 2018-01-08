@@ -165,6 +165,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('{userId}/symptoms/{symptomId}', 'PatientController@removeSymptom');
             Route::get('{userId}/medication', 'PatientController@getMedication');
             Route::post('{userId}/medication', 'PatientController@addMedication');
+            Route::put('{userId}/medication/{id}', 'PatientController@editMedication');
             Route::delete('{userId}/medication/{medicationId}', 'PatientController@removeMedication');
             Route::get('{userId}/medication/groups', 'PatientController@getMedicationGroups');
             Route::get('{userId}/lifestyles', 'PatientController@getLifestyles');
