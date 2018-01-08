@@ -27,7 +27,6 @@ class PatientInfo extends Resource
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
 
-            'monthly_summaries' => PatientMonthlySummary::collection($this->whenLoaded('monthlySummaries')),
             'contact_windows'   => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
         ];
     }

@@ -91,7 +91,7 @@ class CallRepository
                                    $q->latest();
                                },
                                'inboundUser.patientInfo.contactWindows',
-                               'inboundUser.patientInfo.monthlySummaries' => function ($q) use ($month) {
+                               'inboundUser.patientSummaries' => function ($q) use ($month) {
                                    $q->where('month_year', '=', $month->format('Y-m-d'));
                                },
                                'inboundUser.primaryPractice'              => function ($q) {
