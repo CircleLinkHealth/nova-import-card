@@ -11,24 +11,65 @@ use App\PatientMonthlySummary;
 use App\User;
 use App\CareplanAssessment;
 use App\Repositories\NoteRepository;
+use App\CLH\Repositories\UserRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
+use Exception;
 
 class NoteService
 {
     private $noteRepo;
+    private $userRepo;
 
-    public function __construct(NoteRepository $noteRepo) {
+    public function __construct(NoteRepository $noteRepo, UserRepository $userRepo) {
         $this->noteRepo = $noteRepo;
+        $this->userRepo = $userRepo;
     }
 
     public function repo() {
         return $this->noteRepo;
     }
 
-    public function patientNotes($userId) {
-        return $this->noteRepo->patientNotes($userId);
+    public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon) {
+        if ($userId && $authorId && $body) {
+            if (!$this->userRepo->exists($userId)) {
+                throw new Exception('user with id "' . $userId . '" does not exist');
+            }
+            else if (!$this->userRepo->exists($authorId)) {
+                throw new Exception('user with id "' . $authorId . '" does not exist');
+            }
+            else {
+                $note = new Note();
+                $note->patient_id = $userId;
+                $note->author_id = $authorId;
+                $note->body = $body;
+                $note->type = $type;
+                $note->isTCM = $isTCM;
+                $note->did_medication_recon = $did_medication_recon;
+                return $this->repo()->add($note);
+            }
+        }
+        else throw new Exception('invalid parameters');
+    }
+
+    public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon) {
+        if (!$id) throw new Exception('$id is required');
+        else {
+            $note = $this->repo()->model()->find($id);
+            if ($note->patient_id != $userId) throw new Exception('Note with id "' . $id . '" does not belong to patient with id "' . $userId . '"');
+            else if ($note->author_id != $authorId) throw new Exception('Attempt to edit note blocked because note does not belong to author');
+            else {
+                $note = new Note();
+                $note->id = $id;
+                $note->patient_id = $userId;
+                $note->author_id = $authorId;
+                $note->body = $body;
+                $note->isTCM = $isTCM;
+                $note->did_medication_recon = $did_medication_recon;
+                return $this->repo()->edit($note);
+            }
+        }
     }
 
     public function storeNote($input)

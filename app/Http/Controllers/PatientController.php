@@ -228,8 +228,31 @@ class PatientController extends Controller
 
     public function getNotes($userId) {
         if ($userId) {
-            return $this->noteService->patientNotes($userId);
+            return $this->noteService->repo()->patientNotes($userId);
         }
         else return $this->badRequest('"userId" is important');
+    }
+    
+    public function addNote($userId, Request $request) {
+        $body = $request->input('body');
+        $author_id = auth()->user()->id;
+        $type = $request->input('type');
+        $isTCM = $request->input('isTCM') ?? 0;
+        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
+        if ($userId && $body && $author_id) {
+            return $this->noteService->add($userId, $author_id, $body, $type, $isTCM, $did_medication_recon);
+        }
+        else return $this->badRequest('"userId" and "body" and "author_id" are important');
+    }
+    
+    public function editNote($userId, $id, Request $request) {
+        $body = $request->input('body');
+        $author_id = auth()->user()->id;
+        $isTCM = $request->input('isTCM') ?? 0;
+        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
+        if ($userId && $id && $author_id) {
+            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
+        }
+        else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
     }
 }
