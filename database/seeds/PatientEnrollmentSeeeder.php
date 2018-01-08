@@ -56,7 +56,7 @@ class PatientEnrollmentSeeeder extends Seeder
     */
     function createPatientThatEnrolledAndProviderPerformsAssessmentAndPrints() {
         $id = 337;
-        $provider_id = 618;
+        $provider_id = 322;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->get()->map(function ($c) use ($provider_id) {
             if ($c->assessment()->count() == 0) {
@@ -67,7 +67,7 @@ class PatientEnrollmentSeeeder extends Seeder
             }
         });
         $careplans->update([
-            'qa_approver_id' => 322,
+            'qa_approver_id' => $provider_id,
             'provider_approver_id' => $provider_id,
             'status' => $this->PROVIDER_APPROVED,
             'last_printed' => '2018-01-08 17:36:03'
@@ -80,7 +80,7 @@ class PatientEnrollmentSeeeder extends Seeder
     */
     function createPatientThatEnrolledAndProviderPerformsAssessmentAndForgetsToPrint() {
         $id = 342;
-        $provider_id = 618;
+        $provider_id = 322;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->get()->map(function ($c) use ($provider_id) {
             if ($c->assessment()->count() == 0) {
@@ -91,7 +91,7 @@ class PatientEnrollmentSeeeder extends Seeder
             }
         });
         $careplans->update([
-            'qa_approver_id' => 322,
+            'qa_approver_id' => $provider_id,
             'provider_approver_id' => $provider_id,
             'status' => $this->PROVIDER_APPROVED,
             'last_printed' => null
