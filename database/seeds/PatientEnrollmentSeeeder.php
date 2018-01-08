@@ -27,7 +27,7 @@ class PatientEnrollmentSeeeder extends Seeder
     * Test Case 1: Patient did NOT Enroll
     */
     function createPatientThatDidNotEnroll() {
-        $id = 855;
+        $id = 335;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->update([
             'provider_approver_id' => null,
@@ -39,7 +39,7 @@ class PatientEnrollmentSeeeder extends Seeder
     * Test Case 2: Patient enrolled and MD skips assessment
     */
     function createPatientThatEnrolledAndProviderSkippedAssessment() {
-        $id = 856;
+        $id = 336;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->get()->map(function ($c) {
             $c->assessment()->delete();
@@ -55,7 +55,7 @@ class PatientEnrollmentSeeeder extends Seeder
     * Test Case 2: Patient enrolled and MD performs assessment and prints care plan
     */
     function createPatientThatEnrolledAndProviderPerformsAssessmentAndPrints() {
-        $id = 857;
+        $id = 337;
         $provider_id = 618;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->get()->map(function ($c) use ($provider_id) {
@@ -67,6 +67,7 @@ class PatientEnrollmentSeeeder extends Seeder
             }
         });
         $careplans->update([
+            'qa_approver_id' => 322,
             'provider_approver_id' => $provider_id,
             'status' => $this->PROVIDER_APPROVED,
             'last_printed' => '2018-01-08 17:36:03'
@@ -78,12 +79,13 @@ class PatientEnrollmentSeeeder extends Seeder
     * Test Case 4: Patient enrolled and MD performs assessment and forgets to print care plan
     */
     function createPatientThatEnrolledAndProviderPerformsAssessmentAndForgetsToPrint() {
-        $id = 858;
+        $id = 342;
         $provider_id = 618;
         $careplans = CarePlan::where([ 'user_id' => $id ]);
         $careplans->get()->map(function ($c) use ($provider_id) {
             if ($c->assessment()->count() == 0) {
                 $c->assessment()->create([
+                    'qa_approver_id' => 322,
                     'provider_approver_id' => $provider_id,
                     'diabetes_screening_interval' => 'Every 6 months'
                 ]);
