@@ -403,7 +403,6 @@ class CarePlanHelper
                 'problem_import_id'  => $problem->id,
                 'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                 'name'               => $problem->name,
-                'activate'           => $problem->activate,
                 'cpm_problem_id'     => $problem->cpm_problem_id,
                 'patient_id'         => $this->user->id,
             ]);
