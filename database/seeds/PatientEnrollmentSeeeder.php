@@ -85,13 +85,13 @@ class PatientEnrollmentSeeeder extends Seeder
         $careplans->get()->map(function ($c) use ($provider_id) {
             if ($c->assessment()->count() == 0) {
                 $c->assessment()->create([
-                    'qa_approver_id' => 322,
                     'provider_approver_id' => $provider_id,
                     'diabetes_screening_interval' => 'Every 6 months'
                 ]);
             }
         });
         $careplans->update([
+            'qa_approver_id' => 322,
             'provider_approver_id' => $provider_id,
             'status' => $this->PROVIDER_APPROVED,
             'last_printed' => null
