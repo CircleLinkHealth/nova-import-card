@@ -39,6 +39,7 @@ class Calls
         $startDate,
         $endDate,
         $departmentId,
+        $offset = 0,
         $showInsurance = false,
         $limit = 1000,
         $showCancelled = false
@@ -53,6 +54,7 @@ class Calls
             'showinsurance' => $showInsurance,
             'limit'         => $limit,
             'showcancelled' => $showCancelled,
+            'offset'        => $offset,
         ]);
 
         return $this->response($response);
