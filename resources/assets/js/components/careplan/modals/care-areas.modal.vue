@@ -140,7 +140,7 @@
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}`)).then(response => {
-                        console.error('care-areas:remove-problems', response.data)
+                        console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
                         this.selectedProblem = null
                         Event.$emit('care-areas:problems', response.data)
