@@ -15,6 +15,13 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
+    public function model() {
+        return app(User::class);
+    }
+
+    public function exists($id) {
+        return !!$this->model()->find($id);
+    }
 
     public function createNewUser(
         User $user,

@@ -14,7 +14,10 @@
                 </slot>
                 
                 <ul class="subareas__list" v-if="problems && problems.length > 0">
-                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row' v-for="(problem, index) in problems" :key="index">{{problem.name}}</li>
+                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row' 
+                        v-for="(problem, index) in problems" :key="index">
+                        {{problem.name}}
+                    </li>
                 </ul>
             </div>
         </div>

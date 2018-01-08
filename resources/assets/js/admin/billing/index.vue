@@ -401,7 +401,7 @@
                 return this.tableData.filter(patient => patient.qa).length
             },
             practice() {
-                return this.practices.find(p => p.id === this.selectedPractice)
+                return this.practices.find(p => p.id == this.selectedPractice)
             }
         },
         mounted() {

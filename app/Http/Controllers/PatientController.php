@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\AppConfig;
 use App\User;
 use App\Patient;
+use App\Services\NoteService;
 use App\Services\PatientService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmSymptomService;
+use App\Services\CPM\CpmLifestyleService;
+use App\Services\CPM\CpmMiscService;
 use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
@@ -27,6 +30,9 @@ class PatientController extends Controller
     private $medicationService;
     private $medicationGroupService;
     private $symptomService;
+    private $lifestyleService;
+    private $miscService;
+    private $noteService;
 
     /**
      * CpmProblemController constructor.
@@ -37,7 +43,10 @@ class PatientController extends Controller
                                 CpmBiometricService $biometricUserService,
                                 CpmMedicationService $medicationService,
                                 CpmMedicationGroupService $medicationGroupService,
-                                CpmSymptomService $symptomService)
+                                CpmSymptomService $symptomService,
+                                CpmLifestyleService $lifestyleService,
+                                CpmMiscService $miscService,
+                                NoteService $noteService)
     {   
         $this->patientService = $patientService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -45,6 +54,9 @@ class PatientController extends Controller
         $this->medicationService = $medicationService;
         $this->medicationGroupService = $medicationGroupService;
         $this->symptomService = $symptomService;
+        $this->lifestyleService = $lifestyleService;
+        $this->miscService = $miscService;
+        $this->noteService = $noteService;
     }
 
     /**
@@ -112,7 +124,48 @@ class PatientController extends Controller
             return $this->medicationService->repo()->patientMedication($userId);
         }
         return $this->badRequest('"userid" is important');
-    } 
+    }
+
+    function retrieveMedication(Request $request) {
+        $medication = new \App\Models\CCD\Medication();
+        $medication->medication_import_id = $request->input('medication_import_id');
+        $medication->ccda_id = $request->input('ccda_id');
+        $medication->vendor_id = $request->input('vendor_id');
+        $medication->ccd_medication_log_id = $request->input('ccd_medication_log_id');
+        $medication->medication_group_id = $request->input('medication_group_id');
+        $medication->name = $request->input('name');
+        $medication->sig = $request->input('sig');
+        $medication->code = $request->input('code');
+        $medication->code_system = $request->input('code_system');
+        $medication->code_system_name = $request->input('code_system_name');
+        return $medication;
+    }
+
+    public function editMedication($userId, $id, Request $request) {
+        if ($userId) {
+            $medication = $this->retrieveMedication($request);
+            $medication->id = $id;
+            $medication->patient_id = $userId;
+            return $this->medicationService->editPatientMedication($medication);
+        }
+        return $this->badRequest('"userId" is important');
+    }
+
+    public function addMedication($userId, Request $request) {
+        if ($userId) {
+            $medication = $this->retrieveMedication($request);
+            $medication->patient_id = $userId;
+            return $this->medicationService->repo()->addMedicationToPatient($medication);
+        }
+        return $this->badRequest('"userId" is important');
+    }
+    
+    public function removeMedication($userId, $medicationId) {
+        if ($userId) {
+            return $this->medicationService->repo()->removeMedicationFromPatient($medicationId, $userId);
+        }
+        return $this->badRequest('"userId" is important');
+    }
 
     public function getMedicationGroups($userId) {
         if ($userId) {
@@ -126,5 +179,95 @@ class PatientController extends Controller
             return $this->symptomService->repo()->patientSymptoms($userId);
         }
         return $this->badRequest('"userId" is important');
+    }
+
+    public function addSymptom($userId, Request $request) {
+        $symptomId = $request->input('symptomId');
+        if ($userId && $symptomId) {
+            return $this->symptomService->repo()->addSymptomToPatient($symptomId, $userId);
+        }
+        else return $this->badRequest('"symptomId" and "userId" are important');
+    }
+    
+    public function removeSymptom($userId, $symptomId) {
+        if ($userId && $symptomId) {
+            $result = $this->symptomService->repo()->removeSymptomFromPatient($symptomId, $userId);
+            return $result ? response()->json($result) : $this->notFound('provided patient does not have the symptom in question');
+        }
+        else return $this->badRequest('"symptomId" and "userId" are important');
+    }
+
+    public function getLifestyles($userId) {
+        if ($userId) {
+            return $this->lifestyleService->patientLifestyles($userId);
+        }
+        else return $this->badRequest('"userId" is important');
+    }
+
+    public function addLifestyle($userId, Request $request) {
+        $lifestyleId = $request->input('lifestyleId');
+        if ($userId && $lifestyleId) {
+            return $this->lifestyleService->addLifestyleToPatient($lifestyleId, $userId);
+        }
+        else return $this->badRequest('"lifestyleId" and "userId" are important');
+    }
+    
+    public function removeLifestyle($userId, $lifestyleId) {
+        if ($userId && $lifestyleId) {
+            return $this->lifestyleService->removeLifestyleFromPatient($lifestyleId, $userId);
+        }
+        else return $this->badRequest('"lifestyleId" and "userId" are important');
+    }
+    
+    public function getMisc($userId) {
+        if ($userId) {
+            return $this->miscService->patientMisc($userId);
+        }
+        else return $this->badRequest('"userId" is important');
+    }
+
+    public function addMisc($userId, Request $request) {
+        $miscId = $request->input('miscId');
+        if ($userId && $miscId) {
+            return $this->miscService->addMiscToPatient($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId" and "userId" are important');
+    }
+    
+    public function removeMisc($userId, $miscId) {
+        if ($userId && $miscId) {
+            return $this->miscService->removeMiscFromPatient($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId" and "userId" are important');
+    }
+
+    public function getNotes($userId) {
+        if ($userId) {
+            return $this->noteService->repo()->patientNotes($userId);
+        }
+        else return $this->badRequest('"userId" is important');
+    }
+    
+    public function addNote($userId, Request $request) {
+        $body = $request->input('body');
+        $author_id = auth()->user()->id;
+        $type = $request->input('type');
+        $isTCM = $request->input('isTCM') ?? 0;
+        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
+        if ($userId && $body && $author_id) {
+            return $this->noteService->add($userId, $author_id, $body, $type, $isTCM, $did_medication_recon);
+        }
+        else return $this->badRequest('"userId" and "body" and "author_id" are important');
+    }
+    
+    public function editNote($userId, $id, Request $request) {
+        $body = $request->input('body');
+        $author_id = auth()->user()->id;
+        $isTCM = $request->input('isTCM') ?? 0;
+        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
+        if ($userId && $id && $author_id) {
+            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
+        }
+        else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
     }
 }

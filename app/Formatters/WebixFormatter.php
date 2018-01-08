@@ -353,7 +353,7 @@ class WebixFormatter implements ReportFormatter
 
         //Social Services
         if ($user->cpmMiscs->where('name', CpmMisc::SOCIAL_SERVICES)->first()) {
-            $careplanReport[$user->id]['social'] = (new CpmMiscService())->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['social'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::SOCIAL_SERVICES
             );
@@ -363,7 +363,7 @@ class WebixFormatter implements ReportFormatter
 
         //Other
         if ($user->cpmMiscs->where('name', CpmMisc::OTHER)->first()) {
-            $careplanReport[$user->id]['other'] = (new CpmMiscService())->getMiscWithInstructionsForUser(
+            $careplanReport[$user->id]['other'] = app(CpmMiscService::class)->getMiscWithInstructionsForUser(
                 $user,
                 CpmMisc::OTHER
             );
