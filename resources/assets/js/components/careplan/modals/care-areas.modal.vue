@@ -4,9 +4,6 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
-                        <loader v-if="loaders.removeProblem"></loader>
-                        <!-- <input type="button" class="btn btn-secondary btn-danger problem-remove" value="x" 
-                            v-if="selectedProblem" @click="removeProblem" title="remove this cpm problem" /> -->
                     </div>
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
@@ -15,6 +12,7 @@
                                 v-for="(problem, index) in problems" :key="index" @click="select(index)">
                             {{problem.name}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
+                            <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
                     </div>
@@ -305,5 +303,10 @@
 
     .problem-button.selected span.delete {
         display: inline-block;
+    }
+
+    button.problem-button div.loader.absolute {
+        right: -13px;
+        top: 15px;
     }
 </style>
