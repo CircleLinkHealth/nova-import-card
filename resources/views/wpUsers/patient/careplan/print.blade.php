@@ -222,42 +222,6 @@ if (isset($patient) && ! empty($patient)) {
                         </ul>
                     </div>
                 </medications>
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications <a
-                                        class="btn btn-primary"
-                                        href="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"><span
-                                            class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></h2>
-                        </div>
-                        <div class="col-xs-10">
-                            <ul><strong>Monitoring these Medications</strong><BR>
-                                @if(!empty($medications_monitor))
-                                    @if(is_array($medications_monitor))
-                                        @foreach($medications_monitor as $medi)
-                                            <li style="margin-top:14px;">{!! $medi !!}</li>
-                                        @endforeach
-                                    @else
-                                        {{$medications_monitor}}
-                                    @endif
-                                @endif
-                            </ul>
-                        </div>
-                        <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong><BR>
-                                @if(!empty($taking_medications))
-                                    @if(is_array($taking_medications))
-                                        @foreach($taking_medications as $medi)
-                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
-                                        @endforeach
-                                    @else
-                                        {{$taking_medications}}
-                                    @endif
-                                @endif
-                            </ul>
-                        </div>
-                    </div>
-                </div>
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
