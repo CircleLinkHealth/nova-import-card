@@ -27,6 +27,7 @@
                                 <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig" required></textarea>
                             </div>
                             <div class="top-20 text-right">
+                                <loader v-if="loaders.editMedication"></loader>
                                 <button class="btn btn-secondary selected">Edit</button>
                             </div>
                         </div>
@@ -81,13 +82,14 @@
                 selectedMedication: null,
                 loaders: {
                     addMedication: null,
-                    removeMedication: null
+                    removeMedication: null,
+                    editMedication: null
                 }
             }
         },
         methods: {
             select(index) {
-                this.selectedMedication = (index >= 0) ? this.medications[index] : null
+                this.selectedMedication = (index >= 0) ? Object.assign({}, this.medications[index]) : null
             },
             reset() {
                 this.newMedication.name = ''
@@ -110,7 +112,18 @@
             },
             editMedication(e) {
                 e.preventDefault()
-
+                this.loaders.editMedication = true
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`), { 
+                            name: this.selectedMedication.name, 
+                            sig: this.selectedMedication.sig 
+                    }).then(response => {
+                        console.log('medication:edit', response.data)
+                        this.loaders.editMedication = false
+                        Event.$emit('medication:edit', response.data)
+                    }).catch(err => {
+                        console.error('medication:edit', err)
+                        this.loaders.editMedication = false
+                    })
             },
             addMedication(e) {
                 e.preventDefault()

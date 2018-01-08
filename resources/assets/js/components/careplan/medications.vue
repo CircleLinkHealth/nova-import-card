@@ -104,6 +104,9 @@
             Event.$on('medication:add', (medication) => {
                 this.medications.push(this.setupMedication(medication))
             })
+            Event.$on('medication:edit', (medication) => {
+                this.medications = this.medications.map(m => (m.id != medication.id) ? m : this.setupMedication(medication))
+            })
         }
     }
 </script>
