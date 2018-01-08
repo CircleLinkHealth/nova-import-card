@@ -1,13 +1,112 @@
 <template>
-    
+    <div class="patient-info__subareas">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                </h2>
+            </div>
+        </div>
+        <slot v-if="medications.length === 0">
+            <div class="col-xs-12 text-center">
+                No Medications at this time
+            </div>
+        </slot>
+        <div class="row gutter" v-if="medications.length > 0">
+            <div class="col-xs-12" v-if="groups.length > 0">
+                <h3>Monitoring these Medications</h3>
+                <ul>
+                    <li class="top-20" v-for="(group, index) in groups" :key="index">{{group.name}}</li>
+                </ul>
+            </div>
+            
+            <div class="col-xs-12">
+                <h3>Taking these Medications</h3>
+                <ul v-if="medications.length">
+                    <li class="top-20" v-for="(medication, index) in medications" :key="index">
+                        <h4 v-if="medication.name">{{medication.name}}</h4>
+                        <h4 v-if="!medication.name">- {{medication.sig}}</h4>
+                        <ul class="font-18" v-if="medication.name">
+                            <li v-for="(sig, index) in medication.sig.split('\n')" class="list-square" :key="index">{{sig}}</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <medications-modal ref="medicationsModal" :patient-id="patientId" :medications="medications"></medications-modal>
+    </div>
 </template>
 
 <script>
+    import { rootUrl } from '../../app.config'
+    import { Event } from 'vue-tables-2'
+    import MedicationsModal from './modals/medications.modal'
+
     export default {
-        name: 'medications'
+        name: 'medications',
+        props: [
+            'patient-id'
+        ],
+        components: {
+            'medications-modal': MedicationsModal
+        },
+        data() {
+            return {
+                 medications: [],
+                 groups: []
+            }
+        },
+        methods: {
+            setupDates(obj) {
+                obj.created_at = new Date(obj.created_at)
+                obj.updated_at = new Date(obj.updated_at)
+                return obj
+            },
+            setupMedication(medication) {
+                return medication
+            },
+            getMedications(page) {
+                if (!page) {
+                    this.medications = []
+                    page = 1
+                }
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/medication?page=${page}`)).then(response => {
+                    const pagination = response.data
+                    console.log('medications:get-medications', pagination)
+                    this.medications = this.medications.concat(pagination.data.map(this.setupMedication))
+                    if (pagination.to < pagination.total) return this.getMedications(page + 1)
+                }).catch(err => {
+                    console.error('medications:get-medications', err)
+                })
+            },
+            getMedicationGroups() {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/medication/groups`)).then(response => {
+                    console.log('medications:get-medication-groups', response.data)
+                    this.groups = response.data || []
+                }).catch(err => {
+                    console.error('medications:get-medication-groups', err)
+                })
+            },
+            showModal() {
+                Event.$emit('modal-medications:show')
+            }
+        },
+        mounted() {
+            this.getMedications()
+            this.getMedicationGroups()
+            Event.$on('medications:medications', (medication) => {
+                this.medications = medications.map(this.setupMedication)
+            })
+        }
     }
 </script>
 
 <style>
-    
+    li.list-square {
+        list-style-type: square;
+    }
+
+    .font-18 {
+        font-size: 18px;
+    }
 </style>

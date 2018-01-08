@@ -50,6 +50,7 @@ import LoaderComponent from './components/loader'
 import PersistentTextArea from './components/persistent-textarea'
 import CareAreasComponent from './components/careplan/care-areas'
 import HealthGoalsComponent from './components/careplan/health-goals'
+import MedicationsComponent from './components/careplan/medications'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -75,6 +76,7 @@ Vue.component('loader', LoaderComponent)
 Vue.component('persistent-textarea', PersistentTextArea)
 Vue.component('care-areas', CareAreasComponent)
 Vue.component('health-goals', HealthGoalsComponent)
+Vue.component('medications', MedicationsComponent)
 
 const App = new Vue({
     el: '#app',
