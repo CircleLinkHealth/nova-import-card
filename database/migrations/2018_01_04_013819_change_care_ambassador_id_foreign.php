@@ -13,6 +13,10 @@ class ChangeCareAmbassadorIdForeign extends Migration
      */
     public function up()
     {
+        if (!Schema::hasColumn('enrollees', 'care_ambassador_user_id')) {
+            return;
+        }
+
         Schema::table('enrollees', function (Blueprint $table) {
             $table->dropForeign(['care_ambassador_user_id']);
 
