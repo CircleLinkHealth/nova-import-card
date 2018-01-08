@@ -5,14 +5,17 @@
                 <div class="col-sm-12">
                     <div class="text-right">
                         <loader v-if="loaders.removeProblem"></loader>
-                        <input type="button" class="btn btn-secondary btn-danger problem-remove" value="x" 
-                            v-if="selectedProblem" @click="removeProblem" title="remove this cpm problem" />
+                        <!-- <input type="button" class="btn btn-secondary btn-danger problem-remove" value="x" 
+                            v-if="selectedProblem" @click="removeProblem" title="remove this cpm problem" /> -->
                     </div>
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 20 }" role="group" aria-label="We are managing">
-                        <input type="button" class="btn btn-secondary" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
-                                v-for="(problem, index) in problems" :key="index" :value="problem.name" @click="select(index)" />
+                        <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
+                                v-for="(problem, index) in problems" :key="index" @click="select(index)">
+                            {{problem.name}}
+                            <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
+                        </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
                     </div>
                 </div>
@@ -282,6 +285,25 @@
     }
 
     .list-group-item.selected:first-of-type .delete {
+        display: inline-block;
+    }
+
+    .problem-button span.delete {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background-color: #FA0;
+        color: white;
+        padding: 1px 5px;
+        border-radius: 50%;
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .problem-button.selected span.delete {
         display: inline-block;
     }
 </style>
