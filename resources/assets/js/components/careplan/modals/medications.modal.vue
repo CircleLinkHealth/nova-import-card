@@ -42,6 +42,7 @@
                                 <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig" required></textarea>
                             </div>
                             <div class="top-20 text-right">
+                                <loader v-if="loaders.addMedication"></loader>
                                 <button class="btn btn-secondary selected">Create</button>
                             </div>
                         </div>
@@ -79,6 +80,7 @@
                 },
                 selectedMedication: null,
                 loaders: {
+                    addMedication: null,
                     removeMedication: null
                 }
             }
@@ -86,6 +88,10 @@
         methods: {
             select(index) {
                 this.selectedMedication = (index >= 0) ? this.medications[index] : null
+            },
+            reset() {
+                this.newMedication.name = ''
+                this.newMedication.sig = ''
             },
             removeMedication() {
                 if (this.selectedMedication && confirm('Are you sure you want to remove this medication?')) {
@@ -108,7 +114,19 @@
             },
             addMedication(e) {
                 e.preventDefault()
-
+                this.loaders.addMedication = true
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/medication`), { 
+                            name: this.newMedication.name, 
+                            sig: this.newMedication.sig 
+                    }).then(response => {
+                        console.log('medication:add', response.data)
+                        this.loaders.addMedication = false
+                        Event.$emit('medication:add', response.data)
+                        this.reset()
+                    }).catch(err => {
+                        console.error('medication:add', err)
+                        this.loaders.addMedication = false
+                    })
             }
         },
         mounted() {

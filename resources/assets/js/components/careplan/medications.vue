@@ -2,7 +2,8 @@
     <div class="patient-info__subareas">
         <div class="row">
             <div class="col-xs-12">
-                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications
+                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                    <a :href="url">Medications</a>
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
@@ -26,7 +27,7 @@
                     <li class="top-20" v-for="(medication, index) in medications" :key="index">
                         <h4 v-if="medication.name">{{medication.name}}</h4>
                         <h4 v-if="!medication.name">- {{medication.sig}}</h4>
-                        <ul class="font-18" v-if="medication.name">
+                        <ul class="font-18" v-if="medication.name && medication.sig">
                             <li v-for="(sig, index) in medication.sig.split('\n')" class="list-square" :key="index">{{sig}}</li>
                         </ul>
                     </li>
@@ -45,7 +46,8 @@
     export default {
         name: 'medications',
         props: [
-            'patient-id'
+            'patient-id',
+            'url'
         ],
         components: {
             'medications-modal': MedicationsModal
@@ -98,6 +100,9 @@
             this.getMedicationGroups()
             Event.$on('medication:remove', (id) => {
                 this.medications = this.medications.filter((medication) => medication.id != id)
+            })
+            Event.$on('medication:add', (medication) => {
+                this.medications.push(this.setupMedication(medication))
             })
         }
     }

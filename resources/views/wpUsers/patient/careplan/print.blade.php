@@ -194,7 +194,7 @@ if (isset($patient) && ! empty($patient)) {
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medications" patient-id="{{$patient->id}}">
+                <medications ref="medications" patient-id="{{$patient->id}}" url="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
                     <div class="col-xs-10">
                         <ul><strong>Monitoring these Medications</strong><BR>
                             @if(!empty($medications_monitor))
