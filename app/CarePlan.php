@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\App;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \App\CarePlanTemplate $carePlanTemplate
+ * @property-read \App\CareplanAssessment $assessment
  * @property-read \App\User $patient
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pdf[] $pdfs
  * @property-read \App\User|null $providerApproverUser
@@ -128,6 +129,10 @@ class CarePlan extends \App\BaseModel implements PdfReport
     public function providerApproverUser()
     {
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
+    }
+
+    public function assessment() {
+        return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
     /**

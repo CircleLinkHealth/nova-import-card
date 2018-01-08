@@ -62,6 +62,6 @@ class CareplanAssessment extends \App\BaseModel
     }
     
     public function patient() {
-        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
+        return $this->belongsTo(CarePlan::class, 'careplan_id');
     }
 }
