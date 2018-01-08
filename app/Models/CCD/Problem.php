@@ -17,14 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $problem_import_id
  * @property int|null $ccda_id
  * @property int $patient_id
- * @property int|null $vendor_id
  * @property int|null $ccd_problem_log_id
  * @property string|null $name
- * @property string|null $icd_10_code
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property int $activate
  * @property int|null $cpm_problem_id
  * @property string|null $deleted_at
  * @property \Carbon\Carbon $created_at
@@ -57,10 +51,8 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
 
     protected $fillable = [
         'ccda_id',
-        'vendor_id',
         'ccd_problem_log_id',
         'name',
-        'activate',
         'cpm_problem_id',
         'patient_id',
         'billable'
@@ -103,14 +95,6 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-    public function convertCode($from, $to)
-    {
-        return SnomedToCpmIcdMap::where($from, '=', $this->code)
-            ->whereNotNull($to)
-            ->where($to, '!=', '')
-            ->first()
-            ->{$to} ?? null;
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
