@@ -86,11 +86,11 @@ class DetermineTargetPatientEligibility extends Command
                                          'last_name' => $demos['lastname'],
                                          'home_phone' => $demos['homephone'],
                                          'cell_phone' => $demos['mobilephone'] ?? null,
-                                         'practice_id' => 8,
+                                         'practice_id' => $practice->id,
 
                                          //notRequired
                                          'address' => $demos['address1'],
-                                         'address_2' => $demos['address2'],
+                                         'address_2' => $demos['address2'] ?? null,
                                          'dob' => $demos['dob'],
                                          'state' => $demos['state'],
                                          'city' => $demos['city'],
