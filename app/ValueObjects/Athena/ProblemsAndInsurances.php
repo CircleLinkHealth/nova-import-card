@@ -46,6 +46,19 @@ class ProblemsAndInsurances
         $this->problems = $problems;
     }
 
+
+    public function getInsurancesForEligibilityCheck() {
+        $insurances = [];
+
+        foreach ($this->insurances as $insurance) {
+            $insurances[] = [
+                'type' => $insurance['insurancetype'] ?? $insurance['insuranceplanname'],
+            ];
+        }
+
+        return $insurances;
+    }
+
     /**
      * @return array
      */

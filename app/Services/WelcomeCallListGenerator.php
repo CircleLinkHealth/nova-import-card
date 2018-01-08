@@ -127,6 +127,8 @@ class WelcomeCallListGenerator
                 $problems = new Collection(explode(',', $row['problems']));
             } elseif (is_a($row['problems'], Collection::class)) {
                 $problems = $row['problems'];
+            } elseif (is_array($row['problems'])) {
+                $problems = collect($row['problems']);
             } else {
                 dd('Problems is not a string or collection.');
             }
@@ -249,49 +251,82 @@ class WelcomeCallListGenerator
         }
 
         $this->patientList = $this->patientList->reject(function ($row) {
-            $primary = strtolower($row['primary_insurance'] ?? null);
-            $secondary = strtolower($row['secondary_insurance'] ?? null);
-
-            //Change none to an empty string
-            if (str_contains($primary, 'none')) {
-                $primary = '';
-            }
-            if (str_contains($secondary, ['none', 'no secondary plan'])) {
-                $primary = '';
+            if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
+                return !$this->validateInsuranceWithPrimaryAndSecondary($row);
             }
 
-            //Keep the patient if they have medicaid
+            if (isset($record['insurances'])) {
+                return !$this->validateInsuranceWithCollection($row);
+            }
+        });
+
+        return $this;
+    }
+
+    private function validateInsuranceWithCollection($record) {
+        $eligibleInsurances = [];
+
+        foreach ($record['insurances'] as $insurance) {
+            if (str_contains($insurance['type'], [
+                    'medicare b',
+                    'medicare part b',
+                    'medicare',
+                ])
+            ) {
+                $eligibleInsurances[] = $insurance;
+            }
+        }
+
+        if (count($eligibleInsurances) < 2) {
+            $this->ineligiblePatients->push($record);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validateInsuranceWithPrimaryAndSecondary($record) {
+        $primary = strtolower($record['primary_insurance'] ?? null);
+        $secondary = strtolower($record['secondary_insurance'] ?? null);
+
+        //Change none to an empty string
+        if (str_contains($primary, 'none')) {
+            $primary = '';
+        }
+        if (str_contains($secondary, ['none', 'no secondary plan'])) {
+            $primary = '';
+        }
+
+        //Keep the patient if they have medicaid
 //            if (str_contains($primary, 'medicaid') || str_contains($secondary, 'medicaid')) {
 //                return false;
 //            }
 
-            //Keep the patient if they have medicare AND a secondary insurance
-            if (str_contains($primary, [
-                    'medicare b',
-                    'medicare part b',
-                    'medicare',
-                ]) && !empty($secondary)
-            ) {
-                return false;
-            }
-
-            //Or the reverse
-            if (str_contains($secondary, [
-                    'medicare b',
-                    'medicare part b',
-                    'medicare',
-                ]) && !empty($primary)
-            ) {
-                return false;
-            }
-
-            //Otherwise, remove the patient from the list
-            $this->ineligiblePatients->push($row);
-
+        //Keep the patient if they have medicare AND a secondary insurance
+        if (str_contains($primary, [
+                'medicare b',
+                'medicare part b',
+                'medicare',
+            ]) && !empty($secondary)
+        ) {
             return true;
-        });
+        }
 
-        return $this;
+        //Or the reverse
+        if (str_contains($secondary, [
+                'medicare b',
+                'medicare part b',
+                'medicare',
+            ]) && !empty($primary)
+        ) {
+            return true;
+        }
+
+        //Otherwise, remove the patient from the list
+        $this->ineligiblePatients->push($record);
+
+        return false;
     }
 
     /**

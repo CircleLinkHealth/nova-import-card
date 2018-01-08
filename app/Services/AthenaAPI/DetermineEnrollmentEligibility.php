@@ -17,6 +17,7 @@ class DetermineEnrollmentEligibility
         $this->api = $api;
     }
 
+
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
         Carbon $startDate,
@@ -89,5 +90,10 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
+    }
+
+    public function getDemographics($patientId, $practiceId)
+    {
+        return $this->api->getDemographics($patientId, $practiceId);
     }
 }
