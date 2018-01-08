@@ -15,6 +15,7 @@ use App\ValueObjects\Athena\ProblemsAndInsurances;
 class AthenaAPIAdapter
 {
     private $problemsAndInsurances;
+    private $eligiblePatientList;
 
     public function __construct(ProblemsAndInsurances $problemsAndInsurances)
     {
@@ -22,14 +23,27 @@ class AthenaAPIAdapter
     }
 
     public function isEligible() {
+        $patientList = collect();
+
         $patient = collect([
-            'problems' => $this->problemsAndInsurances->getProblems(),
-            'primary_insurance' => '',
-            'secondary_insurance' => '',
+            'problems' => $this->problemsAndInsurances->getProblemCodes(),
+            'insurances' => $this->problemsAndInsurances->getInsurancesForEligibilityCheck(),
         ]);
 
-        $check = new WelcomeCallListGenerator($patient, false, true, true, false);
+        $patientList->push($patient);
 
-        return $check->getPatientList()->count() > 0;
+        $check = new WelcomeCallListGenerator($patientList, false, true, true, false);
+
+        $this->eligiblePatientList = $check->getPatientList();
+
+        return $this->eligiblePatientList->count() > 0;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEligiblePatientList()
+    {
+        return $this->eligiblePatientList;
     }
 }

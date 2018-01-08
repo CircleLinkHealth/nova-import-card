@@ -30,7 +30,7 @@ class DetermineTargetPatientEligibility extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param DetermineEnrollmentEligibility $athenaApi
      */
     public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {
@@ -61,7 +61,13 @@ class DetermineTargetPatientEligibility extends Command
                                          return false;
                                      }
 
-                                     $demos = $this->api->getDemographics();
+                                     $demos = $this->service->getDemographics($patient->ehr_patient_id, $patient->ehr_practice_id);
+
+                                     try {
+                                         $demos = $demos[0];
+                                     } catch (\Exception $e) {
+                                         throw new \Exception('Get Demographics api call failed.', 500, $e);
+                                     }
 
                                      if ($demos['homephone'] or $demos['mobilephone']) {
                                          $patient->status = 'eligible';
@@ -70,15 +76,17 @@ class DetermineTargetPatientEligibility extends Command
                                          $patient->description = 'Homephone or mobile phone must be provided';
                                      }
 
-                                     $practice = Practice::where('external_id'. '=', $patient->ehr_practice_id )->first();
+                                     $practice = Practice::where('external_id', '=', $patient->ehr_practice_id )->first();
 
-                                     return Enrollee::create([
+                                     $insurances = $patientInfo->getInsurances();
+
+                                     $enrollee = Enrollee::create([
                                          //required
                                          'first_name' => $demos['firstname'],
                                          'last_name' => $demos['lastname'],
                                          'home_phone' => $demos['homephone'],
-                                         'cell_phone' => $demos['mobilephone'],
-                                         'practice_id' => $practice->id,
+                                         'cell_phone' => $demos['mobilephone'] ?? null,
+                                         'practice_id' => 8,
 
                                          //notRequired
                                          'address' => $demos['address1'],
@@ -88,7 +96,19 @@ class DetermineTargetPatientEligibility extends Command
                                          'city' => $demos['city'],
                                          'zip' => $demos['zip'],
 
+                                         'primary_insurance' => array_key_exists(0, $insurances) ? $insurances[0]['insurancetype'] . ': ' . $insurances[0]['insuranceplanname'] : '',
+                                         'secondary_insurance' => array_key_exists(1, $insurances) ? $insurances[1]['insurancetype'] . ': ' . $insurances[1]['insuranceplanname'] : '',
+                                         'tertiary_insurance' => array_key_exists(2, $insurances) ? $insurances[2]['insurancetype'] . ': ' . $insurances[2]['insuranceplanname'] : '',
+
+                                         'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
+                                         'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
                                      ]);
+
+                                     $patient->enrollee_id = $enrollee->id;
+
+                                     $patient->save();
+
+                                     return $enrollee;
                                  });
     }
 }

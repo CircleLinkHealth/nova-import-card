@@ -45,4 +45,48 @@ class ProblemsAndInsurances
     {
         $this->problems = $problems;
     }
+
+
+    public function getInsurancesForEligibilityCheck() {
+        $insurances = [];
+
+        foreach ($this->insurances as $insurance) {
+            $insurances[] = [
+                'type' => $insurance['insurancetype'] ?? $insurance['insuranceplanname'],
+            ];
+        }
+
+        return $insurances;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProblemCodes() {
+        $codes = [];
+
+        foreach ($this->getProblems() as $problem) {
+            if (!array_key_exists('events', $problem)) {
+                continue;
+            }
+
+            foreach ($problem['events'] as $event) {
+                if (!array_key_exists('diagnoses', $event)) {
+                    continue;
+                }
+
+                foreach ($event['diagnoses'] as $diagnosis) {
+                    if (!array_key_exists('code', $diagnosis)) {
+                        continue;
+                    }
+
+                    $codes[] = $diagnosis['code'];
+
+                    continue 3;
+                }
+            }
+        }
+
+        return $codes;
+    }
 }
