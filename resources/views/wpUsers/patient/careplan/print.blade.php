@@ -225,25 +225,15 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Watch out
-                                for:</h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <ul class="subareas__list">
-                                @foreach($symptoms as $s)
-                                    @if($symptoms)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
-                                    @endif
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <symptoms ref="symptoms" patient-id="{{$patient->id}}">
+                    <ul class="subareas__list">
+                        @foreach($symptoms as $s)
+                            @if($symptoms)
+                                <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </symptoms>
                 <!-- /SYMPTOMS -->
 
                 <!-- LIFESTYLES -->
