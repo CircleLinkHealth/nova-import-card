@@ -231,7 +231,13 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
-        $name = explode(',', $this->medicalRecord->provider_name);
+        $delimiter = ' ';
+
+        if (str_contains($this->medicalRecord->provider_name, ',')) {
+            $delimiter = ',';
+        }
+
+        $name = explode($delimiter, $this->medicalRecord->provider_name);
 
         $provider = ProviderLog::create(array_merge([
             'first_name' => trim($name[1]),
