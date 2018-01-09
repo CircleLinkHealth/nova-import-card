@@ -277,7 +277,7 @@ class WelcomeCallListGenerator
             }
         }
 
-        if (count($eligibleInsurances) < 2) {
+        if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
             return false;
