@@ -13,6 +13,10 @@
             "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
         },
         {
+            "type": "git",
+            "url": "git@github.com:michalisantoniou6/url-shortener.git"
+        },
+        {
             "type": "composer",
             "url": "https://packagist.org"
         },
@@ -43,6 +47,7 @@
         "league/fractal": "0.12.*",
         "maatwebsite/excel": "~2.1.0",
         "michalisantoniou6/laravel-cerberus": "dev-master",
+        "waavi/url-shortener": "1.0.x",
         "pda/pheanstalk": "~3.0",
         "phaxio/phaxio": "^1.0",
         "predis/predis": "^1.1",
