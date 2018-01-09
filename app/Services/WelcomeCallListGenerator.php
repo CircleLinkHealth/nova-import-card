@@ -250,13 +250,13 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $this->patientList = $this->patientList->reject(function ($row) {
+        $this->patientList = $this->patientList->reject(function ($record) {
             if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
-                return !$this->validateInsuranceWithPrimaryAndSecondary($row);
+                return !$this->validateInsuranceWithPrimaryAndSecondary($record);
             }
 
             if (isset($record['insurances'])) {
-                return !$this->validateInsuranceWithCollection($row);
+                return !$this->validateInsuranceWithCollection($record);
             }
         });
 
