@@ -7,6 +7,7 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
 use App\Services\Calls\ManagementService;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -17,10 +18,12 @@ use Yajra\Datatables\Datatables;
 class CallsController extends ApiController
 {
     private $service;
+    private $noteService;
 
-    public function __construct(ManagementService $service)
+    public function __construct(ManagementService $service, NoteService $noteService)
     {
         $this->service = $service;
+        $this->noteService = $noteService;
     }
 
     public function toBeDeprecatedIndex()
@@ -281,11 +284,11 @@ class CallsController extends ApiController
                                                  $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
                                              }
 
-                                             if ($note->mail->count() > 0) {
+                                             if ($this->noteService->getForwards($note)->count() > 0) {
                                                  $mailText = 'Forwarded: ';
-                                                 foreach ($note->mail as $mail) {
-                                                     if ($mail->receiverUser) {
-                                                         $mailText .= $mail->receiverUser->display_name . ', ';
+                                                 foreach ($this->noteService->getForwards($note) as $name => $forwardedAt) {
+                                                     if ($name) {
+                                                         $mailText .= $name . ', ';
                                                      }
                                                  }
                                                  $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="' . rtrim(
