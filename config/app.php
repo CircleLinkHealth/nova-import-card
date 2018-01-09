@@ -220,6 +220,7 @@ return [
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
         Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
     ],
 
     /*
@@ -284,6 +285,7 @@ return [
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
 ];
