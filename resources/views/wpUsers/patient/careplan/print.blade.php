@@ -155,7 +155,7 @@ if (isset($patient) && ! empty($patient)) {
                     </div>
                 </div>
                 <!-- CARE AREAS -->
-                <care-areas ref="careAreas" patient-id="{{$patient->id}}">
+                <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
                     <ul class="subareas__list">
                         @if($problemNames)
                             @foreach($problemNames as $prob)
@@ -166,7 +166,7 @@ if (isset($patient) && ! empty($patient)) {
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                <health-goals ref="healthGoals" patient-id="{{$patient->id}}">
+                <health-goals ref="healthGoalsComponent" patient-id="{{$patient->id}}">
                     @if($biometrics)
                         <ul class="subareas__list">
                             <li class="subareas__item subareas__item--wide col-sm-12">
@@ -194,7 +194,7 @@ if (isset($patient) && ! empty($patient)) {
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medications" patient-id="{{$patient->id}}" url="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
+                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" url="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
                     <div class="col-xs-10">
                         <ul><strong>Monitoring these Medications</strong><BR>
                             @if(!empty($medications_monitor))
@@ -225,7 +225,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
-                <symptoms ref="symptoms" patient-id="{{$patient->id}}">
+                <symptoms ref="symptomsComponent" patient-id="{{$patient->id}}">
                     <ul class="subareas__list">
                         @foreach($symptoms as $s)
                             @if($symptoms)
@@ -237,26 +237,15 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /SYMPTOMS -->
 
                 <!-- LIFESTYLES -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are Informing
-                                You
-                                About</h2>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <ul class="subareas__list">
-                                @if($lifestyle)
-                                    @foreach($lifestyle as $style)
-                                        <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
-                                    @endforeach
-                                @endif
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <lifestyles ref="lifestylesComponent" patient-id="{{$patient->id}}">
+                    <ul class="subareas__list">
+                        @if($lifestyle)
+                            @foreach($lifestyle as $style)
+                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
+                            @endforeach
+                        @endif
+                    </ul>
+                </lifestyles>
                 <!-- /LIFESTYLES -->
 
 

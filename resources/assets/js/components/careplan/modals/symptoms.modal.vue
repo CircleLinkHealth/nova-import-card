@@ -24,7 +24,7 @@
     import Modal from '../../../admin/common/modal'
 
     export default {
-        name: 'care-areas-modal',
+        name: 'symptoms-modal',
         props: {
             'patient-id': String,
             symptoms: Array
