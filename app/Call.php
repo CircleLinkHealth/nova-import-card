@@ -94,15 +94,9 @@ class Call extends \App\BaseModel
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
-
-        if (!$user->patientInfo) {
-            $user->patientInfo()->create([]);
-            return;
-        }
-
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->monthlySummaries()->where('month_year', $day_start)->first();
+        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $record = $user->patientSummaries->where('month_year', $day_start)->first();
         if (!$record) {
             return 0;
         }
@@ -112,13 +106,8 @@ class Call extends \App\BaseModel
     public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
     {
 
-        if (!$user->patientInfo) {
-            $user->patientInfo()->create([]);
-            return;
-        }
-
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
+        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
         $record = $user->patientSummaries->where('month_year', $day_start)->first();
         if (!$record) {
             return 0;
