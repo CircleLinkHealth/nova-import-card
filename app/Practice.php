@@ -266,4 +266,12 @@ class Practice extends \App\BaseModel
             ? $this->syncSettings(new Settings())
             : $this->settings->first();
     }
+
+    public function getWeeklyReportRecipientsArray() {
+        return array_map('trim', explode(',', $this->weekly_report_recipients));
+    }
+
+    public function getInvoiceRecipientsArray() {
+        return array_map('trim', explode(',', $this->invoice_recipients));
+    }
 }

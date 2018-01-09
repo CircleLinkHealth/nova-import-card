@@ -292,7 +292,7 @@ class PracticeInvoiceController extends Controller
 
 
             if ($practice->invoice_recipients != '') {
-                $recipients = explode(', ', $practice->invoice_recipients);
+                $recipients = $practice->getInvoiceRecipientsArray();
 
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {

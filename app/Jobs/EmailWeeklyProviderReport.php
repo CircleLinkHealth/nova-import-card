@@ -42,7 +42,7 @@ class EmailWeeklyProviderReport implements ShouldQueue
      */
     public function handle()
     {
-        $providers_for_practice = $this->practice->getProviders($this->practice->id);
+        $providers_for_practice = Practice::getProviders($this->practice->id);
 
         //handle providers
         foreach ($providers_for_practice as $provider) {
@@ -59,9 +59,6 @@ class EmailWeeklyProviderReport implements ShouldQueue
             $providerData['start'] = $this->startRange;
             $providerData['end'] = $this->endRange;
             $providerData['isEmail'] = true;
-
-
-            $subjectProvider = 'Dr. ' . $provider->last_name . '\'s CCM Weekly Summary';
 
             if ($this->tester) {
                 $this->tester->notify(new WeeklyProviderReport($providerData));

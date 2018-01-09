@@ -46,7 +46,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
             return;
         }
 
-        $organizationSummaryRecipients = explode(', ', trim($this->practice->weekly_report_recipients));
+        $organizationSummaryRecipients = $this->practice->getWeeklyReportRecipientsArray();
 
         if ($this->testerEmail) {
             $organizationSummaryRecipients = [$this->testerEmail];
