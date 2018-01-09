@@ -24,8 +24,10 @@ class CpmMiscUserRepository
     }
 
     public function patientMisc($userId) {
-        return $this->model()->where([ 'patient_id' => $userId ])->with(['cpmMisc'])->get()->map(function ($m) {
-            return $m->cpmMisc;
+        return $this->model()->where([ 'patient_id' => $userId ])->with(['cpmMisc', 'cpmInstruction'])->get()->map(function ($u) {
+            $misc = $u->cpmMisc;
+            $misc['instruction'] = $u->cpmInstruction;
+            return $misc;
         });
     }
     

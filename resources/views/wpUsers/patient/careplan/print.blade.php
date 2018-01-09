@@ -248,35 +248,31 @@ if (isset($patient) && ! empty($patient)) {
                 </lifestyles>
                 <!-- /LIFESTYLES -->
 
+                
 
-                <!-- INSTRUCTIONS -->
-                <div class="patient-info__subareas pb-before">
-                    <div class="row">
-                        <div class="col-xs-12 print-only">
-                            <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
-                                Plan
-                                Part 2</h1>
-                        </div>
 
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
-                                Plan</h2>
-                        </div>
+            <div class="patient-info__subareas pb-before">
+                <div class="row">
+                    <div class="col-xs-12 print-only">
+                        <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
+                            Plan
+                            Part 2</h1>
+                    </div>
 
-                        <div class="col-xs-12">
-                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
-                        </div>
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Follow these
-                                Instructions:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            <p></p>
-                        </div>
+                    <div class="col-xs-12">
+                        <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
+                            Plan</h2>
+                    </div>
+
+                    <div class="col-xs-12">
+                        <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
                     </div>
                 </div>
+            </div>
 
-                @include('partials.view-care-plan.followTheseInstructions')
+            <!-- INSTRUCTIONS -->
+            <instructions ref="instructionsComponent" patient-id="{{$patient->id}}"></instructions>
+            <!-- /INSTRUCTIONS -->
 
             <!-- OTHER INFORMATION -->
                 <div class="row pb-before">

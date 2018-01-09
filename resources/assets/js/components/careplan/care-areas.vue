@@ -57,6 +57,7 @@
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/cpm`)).then(response => {
                     console.log('care-areas:get-problems', response.data)
                     this.problems = response.data.map(this.setupProblem)
+                    Event.$emit('care-areas:problems', this.problems)
                 }).catch(err => {
                     console.error('care-areas:get-problems', err)
                 })
