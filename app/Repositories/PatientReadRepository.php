@@ -21,6 +21,11 @@ class PatientReadRepository
                            ->with('patientInfo');
     }
 
+    public function model()
+    {
+        return $this->user;
+    }
+
     /**
      * Scope for paused patients
      *
@@ -51,7 +56,15 @@ class PatientReadRepository
         return $this;
     }
 
-    public function fetch() {
-        return $this->user->get();
+    public function fetch($resetQuery = true)
+    {
+        $result = $this->user->get();
+
+        if ($resetQuery) {
+            $this->user = User::ofType('participant')
+                              ->with('patientInfo');
+        }
+
+        return $result;
     }
 }
