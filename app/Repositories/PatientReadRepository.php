@@ -28,9 +28,30 @@ class PatientReadRepository
      */
     public function paused()
     {
-        return $this->user
+        $this->user
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
             });
+
+        return $this;
+    }
+
+    /**
+     * Scope for patients whose paused letter was not printed yet
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function pausedLetterNotPrinted()
+    {
+        $this->user
+            ->whereHas('patientInfo', function ($q) {
+                $q->whereNull('paused_letter_printed_at');
+            });
+
+        return $this;
+    }
+
+    public function fetch() {
+        return $this->user->get();
     }
 }

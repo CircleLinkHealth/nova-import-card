@@ -737,7 +737,7 @@ class ReportsController extends Controller
 
     public function excelReportT2()
     {
-        $users = $this->patientReadRepository->paused()->get();
+        $users = $this->patientReadRepository->paused()->fetch();
 
         $date = date('Y-m-d H:i:s');
 
