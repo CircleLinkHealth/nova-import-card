@@ -837,4 +837,14 @@ if (!function_exists('showDiabetesBanner')) {
 
         return false;
     }
+
+
+ if (!function_exists('shortenUrl')){
+        function shortenUrl($url){
+
+            $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+
+            return $shortUrl;
+        }
+ }
 }

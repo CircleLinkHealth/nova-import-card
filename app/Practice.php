@@ -223,6 +223,10 @@ class Practice extends \App\BaseModel
         return $data;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function getAddress()
     {
 
@@ -230,6 +234,10 @@ class Practice extends \App\BaseModel
 
         if (is_null($primary)) {
             $primary = $this->locations()->first();
+        }
+
+        if (is_null($primary)){
+            throw new \Exception('This Practice does not have a location.', 500);
         }
 
         return [
