@@ -786,10 +786,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return true;
     }
 
+    public function getLastNameAttribute()
+    {
+        return ucfirst(strtolower($this->attributes['last_name']));
+    }
+
     public function getFullNameAttribute()
     {
-        $firstName = ucwords($this->first_name);
-        $lastName  = ucwords($this->last_name);
+        $firstName = ucwords(strtolower($this->first_name));
+        $lastName  = ucwords(strtolower($this->last_name));
 
         return "$firstName $lastName {$this->suffix}";
     }
@@ -1017,7 +1022,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         }
         $phoneNumber = $this->phoneNumbers->where('is_primary', 1)->first();
         if ($phoneNumber) {
-            return $phoneNumber->number;
+            return $phoneNumber->number_with_dashes;
         } else {
             return '';
         }
