@@ -55,9 +55,15 @@ class PracticeInvoice extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
+        if (isset($notifiable->id)) {
+            return [
+                'mail',
+                'database',
+            ];
+        }
+
         return [
             'mail',
-            'database',
         ];
     }
 
