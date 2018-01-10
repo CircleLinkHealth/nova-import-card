@@ -176,7 +176,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('{userId}/lifestyles', 'PatientController@addLifestyle');
             Route::delete('{userId}/lifestyles/{lifestyleId}', 'PatientController@removeLifestyle');
             Route::get('{userId}/misc', 'PatientController@getMisc');
+            Route::get('{userId}/misc/{miscTypeId}', 'PatientController@getMiscByType');
             Route::post('{userId}/misc', 'PatientController@addMisc');
+            Route::put('{userId}/misc/{miscId}', 'PatientController@editMisc');
             Route::delete('{userId}/misc/{miscId}', 'PatientController@removeMisc');
             Route::get('{userId}/notes', 'PatientController@getNotes');
             Route::post('{userId}/notes', 'PatientController@addNote');

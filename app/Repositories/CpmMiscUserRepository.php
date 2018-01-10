@@ -26,6 +26,9 @@ class CpmMiscUserRepository
     public function patientMisc($userId) {
         return $this->model()->where([ 'patient_id' => $userId ])->with(['cpmMisc', 'cpmInstruction'])->get()->map(function ($u) {
             $misc = $u->cpmMisc;
+            if ($u->cpmInstruction) {
+                $u->cpmInstruction['misc_user_id'] = $u->id;
+            }
             $misc['instruction'] = $u->cpmInstruction;
             return $misc;
         });
@@ -51,5 +54,14 @@ class CpmMiscUserRepository
         return [
             'message' => 'successful'
         ];
+    }
+    
+    public function editPatientMisc($userId, $miscId, $instructionId) {
+        if (!!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first()) {
+            $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->update([
+                'cpm_instruction_id' => $instructionId
+            ]);
+        }
+        return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first();
     }
 }

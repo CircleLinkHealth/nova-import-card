@@ -267,6 +267,13 @@ class PatientController extends Controller
         }
         else return $this->badRequest('"userId" is important');
     }
+    
+    public function getMiscByType($userId, $miscTypeId) {
+        if ($userId) {
+            return $this->miscService->patientMiscByType($userId, $miscTypeId);
+        }
+        else return $this->badRequest('"userId" is important');
+    }
 
     public function addMisc($userId, Request $request) {
         $miscId = $request->input('miscId');
@@ -274,6 +281,14 @@ class PatientController extends Controller
             return $this->miscService->addMiscToPatient($miscId, $userId);
         }
         else return $this->badRequest('"miscId" and "userId" are important');
+    }
+    
+    public function editMisc($userId, $miscId, Request $request) {
+        $instructionId = $request->input('instructionId');
+        if ($userId && $miscId && $instructionId) {
+            return $this->miscService->editPatientMisc($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
     
     public function removeMisc($userId, $miscId) {

@@ -34,6 +34,16 @@ class CpmMiscService implements CpmModel
     public function patientMisc($userId) {
         return $this->cpmMiscUserRepo->patientMisc($userId);
     }
+    
+    public function patientMiscByType($userId, $miscTypeId) {
+        return $this->cpmMiscUserRepo->patientMisc($userId)->filter(function ($item) use ($miscTypeId) {
+            return $item->id == $miscTypeId;
+        })->first();
+    }
+
+    public function editPatientMisc($userId, $miscId, $instructionId) {
+        return $this->cpmMiscUserRepo->editPatientMisc($userId, $miscId, $instructionId);
+    }
 
     public function addMiscToPatient($miscId, $userId) {
         if ($this->repo()->exists($miscId)) return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
