@@ -153,7 +153,7 @@
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
                                         template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                        size: 20, // the number of records per a page
+                                        size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
                                     on: {
