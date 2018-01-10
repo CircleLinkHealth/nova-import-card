@@ -276,17 +276,16 @@ class PatientCareplanController extends Controller
     }
 
     public function merge_pages(
-        $fileArray,
+        array $fileArray,
         $prefix = '',
         $storageDirectory = ''
     ) {
-        //$fileArray= array("name1.pdf","name2.pdf","name3.pdf","name4.pdf");
-
         $outputFileName = $prefix . "-merged.pdf";
         $outputName     = base_path($storageDirectory . $prefix . "-merged.pdf");
 
         $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
-//Add each pdf file to the end of the command
+
+        //Add each pdf file to the end of the command
         foreach ($fileArray as $file) {
             $cmd .= base_path($file) . " ";
         }

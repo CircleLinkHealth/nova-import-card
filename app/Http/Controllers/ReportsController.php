@@ -1119,7 +1119,9 @@ class ReportsController extends Controller
             throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
         }
 
-        $patients = $this->printPausedPatientLettersService->makePausedLettersPdf();
+        $userIdsToPrint = explode(',', $request['patientUserIds']);
+
+        $patients = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint);
 
         return view('patient.printPausedPatientsLetters', [
             'patients' => json_encode($patients),

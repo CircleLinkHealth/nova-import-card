@@ -47,7 +47,7 @@ class PrintPausedPatientLettersService
             });
     }
 
-    public function makePausedLettersPdf()
+    public function makePausedLettersPdf(array $userIdsToPrint)
     {
 
     }
