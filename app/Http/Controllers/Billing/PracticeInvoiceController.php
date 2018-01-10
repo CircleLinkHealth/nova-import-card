@@ -6,13 +6,16 @@ use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
+use App\Mail\PracticeInvoiceAndBillingReportSent;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
+use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -280,7 +283,7 @@ class PracticeInvoiceController extends Controller
             $data = (array)$value;
 
             $patientReport = $data['Patient Report'];
-            $invoice       = $data['Invoice'];
+            $invoicePath       = storage_path('/download/' . $data['Invoice']);
 
             $invoiceLink = route(
                 'monthly.billing.download',
@@ -289,7 +292,6 @@ class PracticeInvoiceController extends Controller
                     'practice' => $practice->id,
                 ]
             );
-
 
             if ($practice->invoice_recipients != '') {
                 $recipients = $practice->getInvoiceRecipientsArray();
@@ -301,17 +303,9 @@ class PracticeInvoiceController extends Controller
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-                    Mail::send('billing.practice.mail', ['link' => $invoiceLink], function ($m) use (
-                        $recipient,
-                        $invoice
-                    ) {
+                    $user = User::findByEmailOrForceFill($recipient)->first();
 
-                        $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
-
-                        $m->to($recipient)->subject('Your Invoice and Billing Report from CircleLink');
-
-                        $m->attach(storage_path('/download/' . $invoice));
-                    });
+                    $user->notify(new PracticeInvoice($invoiceLink, $invoicePath));
 
                     $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
