@@ -13,6 +13,7 @@ use App\Models\CPM\Biometrics\CpmWeight;
 use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
+use App\Repositories\PatientReadRepository;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -34,11 +35,12 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
 {
-    private $formatter;
+    private $patientReadRepository;
 
-    public function __construct(ReportFormatter $formatter)
+    public function __construct(ReportFormatter $formatter, PatientReadRepository $patientReadRepository)
     {
         $this->formatter = $formatter;
+        $this->patientReadRepository = $patientReadRepository;
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
@@ -81,9 +83,9 @@ class PatientCareplanController extends Controller
             if ($careplanStatus == 'provider_approved') {
                 $careplanStatus = $careplanStatusLink = 'Approved';
 
-                $approver = $patient->carePlan->providerApproverUser;
+                $approver = $patient->carePlan->provider_approver_name;
                 if ($approver) {
-                    $approverName         = $approver->fullName;
+                    $approverName         = $approver;
                     $carePlanProviderDate = $patient->carePlanProviderDate;
 
                     $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';

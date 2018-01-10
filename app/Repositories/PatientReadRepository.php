@@ -21,11 +21,16 @@ class PatientReadRepository
                            ->with('patientInfo');
     }
 
+    /**
+     * Scope for paused patients
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
     public function paused()
     {
         return $this->user
             ->whereHas('patientInfo', function ($q) {
-                $q->where('ccm_status', '=', 'paused');
+                $q->ccmStatus('paused');
             });
     }
 }
