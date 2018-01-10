@@ -445,6 +445,16 @@ class Patient extends \App\BaseModel
         return Nurse::where('user_id', $id)->first();
     }
 
+    /**
+     * Scope by ccm_status
+     *
+     * @param $builder
+     * @param $status
+     * @param string $operator
+     */
+    public function scopeCcmStatus($builder, $status, $operator = '=') {
+        $builder->where('ccm_status', $operator, $status);
+    }
 
     /**
      * Returns nurseInfos that have:
