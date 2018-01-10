@@ -267,7 +267,7 @@ class WelcomeCallListGenerator
         $eligibleInsurances = [];
 
         foreach ($record['insurances'] as $insurance) {
-            if (str_contains($insurance['type'], [
+            if (str_contains(strtolower($insurance['type']), [
                     'medicare b',
                     'medicare part b',
                     'medicare',
