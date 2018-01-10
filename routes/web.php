@@ -663,6 +663,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.athena.ccdas',
         ]);
 
+        Route::get('print/patients/letters/paused', [
+            'uses' => 'ReportsController@pausedPatientsLetterPrintList',
+            'as'   => 'get.print.paused.letters'
+        ]);
+
         /**
          * LOGGER
          */
