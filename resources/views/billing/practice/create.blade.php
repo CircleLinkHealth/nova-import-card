@@ -82,7 +82,7 @@
                                     <div class="col-md-2 control-label" >
                                         <button id="submit" name="submit" value="download"
                                                 class="btn btn-success">
-                                            Create Invoice(s) / Report(s) / QuickbookCSV
+                                            Create Invoice(s) / Report(s)
                                         </button>
                                     </div>
                                 </div>
