@@ -1108,10 +1108,21 @@ class ReportsController extends Controller
     {
         $patients = $this->printPausedPatientLettersService->getPausedPatients();
 
-        $patientJson = json_encode($patients);
+        return view('patient.printPausedPatientsLetters', [
+            'patients' => json_encode($patients),
+        ]);
+    }
 
-        return view('patient.printPausedPatientsLetters', compact([
-            'patientJson',
-        ]));
+    public function getPausedLettersFile(Request $request)
+    {
+        if (!$request->has('patientUserIds')) {
+            throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
+        }
+
+        $patients = $this->printPausedPatientLettersService->makePausedLettersPdf();
+
+        return view('patient.printPausedPatientsLetters', [
+            'patients' => json_encode($patients),
+        ]);
     }
 }

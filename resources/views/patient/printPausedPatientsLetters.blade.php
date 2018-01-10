@@ -1,39 +1,24 @@
 @extends('partials.providerUI')
 
-@section('title', 'Patient CarePlan Print List')
-@section('activity', 'Patient CarePlan Print List')
+@section('title', 'Print Paused Patients Letters')
+@section('activity', 'Print Paused Patients Letters')
 
 @section('content')
 
     <div class="container-fluid">
         <section class="main-form">
             <div class="row">
-                <div class="">
-                </div>
-            </div>
-            <div class="row">
                 <div class="main-form-container col-lg-10 col-lg-offset-1">
                     <div class="row">
-                        <div class="main-form-title">Print Paused Patients Letters</div>
+                        <div class="main-form-title">Print Paused Patients' Letters</div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="main-form-container col-lg-10 col-lg-offset-1">
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <h4 class="time-report__month"><?= date("F Y") ?></h4>
-                        </div>
-                        <div class="col-sm-10">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="main-form-container col-lg-10 col-lg-offset-1">
                     <div class="row" style="border-bottom: #50b2e2 3px solid;">
-                        @if($patientJson)
+                        @if($patients)
                             <div id="paused_patients_letters_container" class=""></div><br/>
                             <div id="paging_container"></div><br/>
                             @push('scripts')
@@ -174,11 +159,11 @@
                                     on: {
                                         onSelectChange: function () {
                                             var text = paused_patients_letters_table.getSelectedId(true).join();
-                                            var textmsg = "<a href='{!! URL::route('patients.careplan.multi')!!}?users=" + text + "&letter' class='btn btn-primary'>Print Selected</a>";
-                                            document.getElementById('print_list').innerHTML = textmsg + '\n<BR>';
+                                            var textmsg = "<a href='{!! route('get.paused.letters.file')!!}?patientUserIds=" + text + "' class='btn btn-primary'>Print Selected</a>";
+                                            document.getElementById('print_selected_btn_container').innerHTML = textmsg;
                                         }
                                     },
-                                    data: {!! $patientJson !!}
+                                    data: {!! $patients !!}
                                 });
                                 webix.event(window, "resize", function () {
                                     paused_patients_letters_table.adjust();
@@ -202,6 +187,8 @@
                                        style='margin:15px;'
                                        onclick="toExcel()">
                             @endif
+                            
+                            <span id="print_selected_btn_container"></span>
                         @else
                             <div style="text-align:center;margin:50px;">There are no patients to display</div>
                         @endif
@@ -210,5 +197,4 @@
             </div>
         </section>
     </div>
-    </form>
-@stop
+@endsection

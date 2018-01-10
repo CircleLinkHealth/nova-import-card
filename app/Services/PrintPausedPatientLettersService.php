@@ -21,6 +21,11 @@ class PrintPausedPatientLettersService
         $this->patientReadRepository = $patientReadRepository;
     }
 
+    /**
+     * Get paused patients whose letter has not been printed yet
+     *
+     * @return \Illuminate\Support\Collection|static
+     */
     public function getPausedPatients()
     {
         return $this->patientReadRepository
@@ -29,6 +34,7 @@ class PrintPausedPatientLettersService
             ->fetch()
             ->map(function ($patient) {
                 return [
+                    'id'           => $patient->id,
                     'patient_name' => $patient->fullName,
                     'first_name'   => $patient->first_name,
                     'last_name'    => $patient->last_name,
@@ -39,5 +45,10 @@ class PrintPausedPatientLettersService
                     'program_name' => $patient->primaryPracticeName,
                 ];
             });
+    }
+
+    public function makePausedLettersPdf()
+    {
+
     }
 }
