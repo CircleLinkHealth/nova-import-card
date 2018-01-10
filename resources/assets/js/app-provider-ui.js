@@ -54,6 +54,7 @@ import MedicationsComponent from './components/careplan/medications'
 import SymptomsComponent from './components/careplan/symptoms'
 import LifestylesComponent from './components/careplan/lifestyles'
 import InstructionsComponent from './components/careplan/instructions'
+import AllergiesComponent from './components/careplan/allergies'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -83,6 +84,7 @@ Vue.component('medications', MedicationsComponent)
 Vue.component('symptoms', SymptomsComponent)
 Vue.component('lifestyles', LifestylesComponent)
 Vue.component('instructions', InstructionsComponent)
+Vue.component('allergies', AllergiesComponent)
 
 const App = new Vue({
     el: '#app',

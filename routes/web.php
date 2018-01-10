@@ -159,7 +159,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('{userId}/problems/cpm/{cpmId}', 'PatientController@removeCpmProblem');
             Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
             Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
+            Route::post('{userId}/problems/ccd', 'PatientController@addCcdProblem');
+            Route::delete('{userId}/problems/ccd/{ccdId}', 'PatientController@removeCcdProblem');
             Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
+            Route::post('{userId}/allergies', 'PatientController@addCcdAllergies');
+            Route::delete('{userId}/allergies/{allergyId}', 'PatientController@deleteCcdAllergy');
             Route::get('{userId}/symptoms', 'PatientController@getSymptoms');
             Route::post('{userId}/symptoms', 'PatientController@addSymptom');
             Route::delete('{userId}/symptoms/{symptomId}', 'PatientController@removeSymptom');
@@ -172,7 +176,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('{userId}/lifestyles', 'PatientController@addLifestyle');
             Route::delete('{userId}/lifestyles/{lifestyleId}', 'PatientController@removeLifestyle');
             Route::get('{userId}/misc', 'PatientController@getMisc');
+            Route::get('{userId}/misc/{miscTypeId}', 'PatientController@getMiscByType');
             Route::post('{userId}/misc', 'PatientController@addMisc');
+            Route::put('{userId}/misc/{miscId}', 'PatientController@editMisc');
             Route::delete('{userId}/misc/{miscId}', 'PatientController@removeMisc');
             Route::get('{userId}/notes', 'PatientController@getNotes');
             Route::post('{userId}/notes', 'PatientController@addNote');

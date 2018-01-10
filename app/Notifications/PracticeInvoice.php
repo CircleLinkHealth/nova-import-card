@@ -74,7 +74,7 @@ class PracticeInvoice extends Notification implements ShouldQueue
      *
      * @return PracticeInvoiceMailable
      */
-    public function toMail(User $notifiable)
+    public function toMail($notifiable)
     {
         return (new PracticeInvoiceMailable($this->invoiceLink, $this->filePath))
             ->to($notifiable->email);
