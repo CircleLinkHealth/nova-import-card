@@ -4,7 +4,7 @@ use App\Activity;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
-use App\Repositories\PatientRepository;
+use App\Repositories\PatientWriteRepository;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
@@ -24,11 +24,11 @@ class NotesController extends Controller
     public function __construct(
         NoteService $noteService,
         ReportFormatter $formatter,
-        PatientRepository $patientRepository
+        PatientWriteRepository $patientWriteRepository
     ) {
         $this->service     = $noteService;
         $this->formatter   = $formatter;
-        $this->patientRepo = $patientRepository;
+        $this->patientRepo = $patientWriteRepository;
     }
 
     public function index(

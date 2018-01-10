@@ -8,7 +8,7 @@ use App\Family;
 use App\Note;
 use App\Nurse;
 use App\Patient;
-use App\Repositories\PatientRepository;
+use App\Repositories\PatientWriteRepository;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -16,16 +16,16 @@ use Illuminate\Support\Facades\Auth;
 
 class SchedulerService
 {
-    private $patientRepository;
+    private $patientWriteRepository;
 
     /**
      * SchedulerService constructor.
      *
-     * @param PatientRepository $patientRepository
+     * @param PatientWriteRepository $patientWriteRepository
      */
-    public function __construct(PatientRepository $patientRepository)
+    public function __construct(PatientWriteRepository $patientWriteRepository)
     {
-        $this->patientRepository = $patientRepository;
+        $this->patientWriteRepository = $patientWriteRepository;
     }
 
     /* Success is the call's status.
@@ -52,7 +52,7 @@ class SchedulerService
                 : 'not reached'
         );
 
-        $this->patientRepository->updateCallLogs($patient->patientInfo, $success);
+        $this->patientWriteRepository->updateCallLogs($patient->patientInfo, $success);
 
         //last attempt
         $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);

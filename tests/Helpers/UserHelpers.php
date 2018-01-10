@@ -16,7 +16,7 @@ use App\NurseContactWindow;
 use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
-use App\Repositories\PatientRepository;
+use App\Repositories\PatientWriteRepository;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
@@ -197,6 +197,6 @@ trait UserHelpers
     public function makePatientMonthlyRecord(Patient $patient)
     {
 
-        return (app(PatientRepository::class))->updateCallLogs($patient, true);
+        return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
 }

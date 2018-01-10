@@ -3,7 +3,7 @@
 namespace Tests\Unit\CallsAlgo;
 
 use App\PatientContactWindow;
-use App\Repositories\PatientRepository;
+use App\Repositories\PatientWriteRepository;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -31,7 +31,7 @@ class CallSchedulerTest extends TestCase
     {
         $patientInfo = factory(User::class)->create()->patientInfo()->create(['no_call_attempts_since_last_success' => 4]);
 
-        $patientSummary = $this->app->make(PatientRepository::class)->updateCallLogs($patientInfo, false);
+        $patientSummary = $this->app->make(PatientWriteRepository::class)->updateCallLogs($patientInfo, false);
 
         $this->assertDatabaseHas('patient_info', [
             'id'         => $patientInfo->id,

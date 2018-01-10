@@ -9,7 +9,7 @@ use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 
-class PatientRepository
+class PatientWriteRepository
 {
     /**
      * Set a patient's ccm_status to paused.

@@ -98,9 +98,7 @@
                         </div>
                         <div class="col-xs-4 text-right">
                             <br>
-                            <?php Carbon\Carbon::setLocale('es'); ?>
                             {{ Carbon\Carbon::now()->format('F d, Y') }}
-                            <?php Carbon\Carbon::setLocale('en'); ?>
                         </div>
                     </div>
 

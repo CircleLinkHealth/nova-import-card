@@ -2,7 +2,7 @@
 
 use App\User;
 use App\Patient;
-use App\Repositories\PatientRepository;
+use App\Repositories\PatientWriteRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Repositories\UserRepositoryEloquent;
 
@@ -12,7 +12,7 @@ class PatientService
     private $userRepo;
     private $allergyRepo;
 
-    public function __construct(PatientRepository $patientRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo) {
+    public function __construct(PatientWriteRepository $patientRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo) {
         $this->patientRepo = $patientRepo;
         $this->userRepo = $userRepo;
         $this->allergyService = $allergyService;
