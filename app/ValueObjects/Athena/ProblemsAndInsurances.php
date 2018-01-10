@@ -67,6 +67,8 @@ class ProblemsAndInsurances
 
         foreach ($this->getProblems() as $problem) {
             if (!array_key_exists('events', $problem)) {
+                $codes[] = $problem['code'];
+
                 continue;
             }
 
