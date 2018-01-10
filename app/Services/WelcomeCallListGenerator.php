@@ -483,7 +483,7 @@ class WelcomeCallListGenerator
         });
 
         if ($storeOnServer) {
-            $excel->store('xls', $path = false, $returnInfo = false);
+            $excel->store('xls', false, false);
         }
 
         if ($download) {

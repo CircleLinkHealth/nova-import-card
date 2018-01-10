@@ -68,14 +68,7 @@ class EmailWeeklyPracticeReport implements ShouldQueue
         $practiceData['isEmail'] = true;
 
         foreach ($organizationSummaryRecipients as $recipient) {
-            $user = User::where('email', $recipient)->first();
-
-            if (!$user) {
-                $user = (new User)->forceFill([
-                    'name' => $recipient,
-                    'email' => $recipient,
-                ]);
-            }
+            $user = User::findByEmailOrForceFill($recipient);
 
             $user->notify(new WeeklyPracticeReport($practiceData, $subjectPractice));
         }
