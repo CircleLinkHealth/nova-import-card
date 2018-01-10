@@ -287,21 +287,15 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- ALLERGIES -->
-                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}"></allergies>
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Allergies:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($allergies)
-                                <p><?= nl2br($allergies) ?></p>
-                            @else
-                                <p>No allergies at this time</p>
-                            @endif
-                        </div>
+                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}">
+                    <div class="col-xs-12">
+                        @if($allergies)
+                            <p><?= nl2br($allergies) ?></p>
+                        @else
+                            <p>No allergies at this time</p>
+                        @endif
                     </div>
-                </div>
+                </allergies>
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
