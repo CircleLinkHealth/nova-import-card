@@ -17,6 +17,8 @@ use App\Services\PracticeReportsService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 
 class PracticeInvoiceController extends Controller
@@ -309,9 +311,16 @@ class PracticeInvoiceController extends Controller
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-                    $user = User::findByEmailOrForceFill($recipient);
+                    $user = User::whereEmail($recipient)->first();
 
-                    $user->notify(new PracticeInvoice($invoiceLink, $invoicePath));
+                    $notification = new PracticeInvoice($invoiceLink, $invoicePath);
+
+                    if ($user) {
+                        $user->notify($notification);
+                    } else {
+                        Notification::route('mail', $recipient)
+                                    ->notify($notification);
+                    }
 
                     $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
