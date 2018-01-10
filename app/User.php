@@ -2746,17 +2746,4 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->isAdmin();
     }
-
-    public static function findByEmailOrForceFill($recipient) {
-        $user = User::where('email', $recipient)->first();
-
-        if (!$user) {
-            $user = (new User)->forceFill([
-                'name' => $recipient,
-                'email' => $recipient,
-            ]);
-        }
-
-        return $user;
-    }
 }
