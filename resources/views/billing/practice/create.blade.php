@@ -10,9 +10,9 @@
                 practices.select2()
 
                 //show selections in the order they were selected
-                practices.on('select2:select', function(e){
+                practices.on('select2:select', function (e) {
                     var id = e.params.data.id;
-                    var option = $(e.target).children('[value='+id+']');
+                    var option = $(e.target).children('[value=' + id + ']');
                     option.detach();
                     $(e.target).append(option).change();
                 });
@@ -46,17 +46,17 @@
                                 </div>
 
                                 <div class="form-group">
-
                                     <label class="col-md-2 control-label" for="invoice_no">
                                         Custom Invoice#<br></label>
                                     <div class="col-md-6">
-                                        <input class="form-control" value="{{$invoice_no}}" name="invoice_no" id="invoice_no">
+                                        <input class="form-control" value="{{$invoice_no}}" name="invoice_no"
+                                               id="invoice_no">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="date">Month</label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="date" id="date">
                                             @foreach($dates as $key => $val)
@@ -69,17 +69,22 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-md-2 control-label" for="format">Select Format</label>
-                                        <div class="col-md-4">
-                                        <select class="col-md-3 practices dropdown Valid form-control reloader" name="format" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="format">Select Format</label>
+                                    <div class="col-md-6">
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
+                                                name="format" required>
                                             <option value="pdf" selected>PDF</option>
                                             <option value="csv">CSV</option>
                                             <option value="xls">Excel</option>
                                         </select>
-                                        </div>
                                     </div>
-                                    <div class="col-md-2 control-label" >
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label">
                                         <button id="submit" name="submit" value="download"
                                                 class="btn btn-success">
                                             Create Invoice(s) / Report(s)
