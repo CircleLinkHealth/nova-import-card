@@ -58,7 +58,7 @@
             <div class="row address-height-print">
                 <div class="col-xs-12 sender-address-print">
                     <div class="row">
-                        <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
+                        <div class="col-xs-12 address"><strong>En nombre del</strong></div>
                         <div class="col-xs-7 address">
                             <div>
                                 @if($patient->billingProviderUser())
@@ -98,7 +98,9 @@
                         </div>
                         <div class="col-xs-4 text-right">
                             <br>
+                            <?php Carbon\Carbon::setLocale('es'); ?>
                             {{ Carbon\Carbon::now()->format('F d, Y') }}
+                            <?php Carbon\Carbon::setLocale('en'); ?>
                         </div>
                     </div>
 
@@ -110,61 +112,59 @@
     <div class="row gutter">
         <div class="col-xs-10 welcome-copy">
             <div class="row gutter">
-                Dear {{$patient->fullName}},
+                Estimada {{$patient->fullName}},
             </div>
             <div class="row gutter">
             </div>
             <div class="row gutter row">
-                Welcome to Dr. {{$patient->billingProviderUser()->fullName}}'s Personalized Care Management program!
+                Dr. {{$patient->billingProviderUser()->fullName}}, ¡Bienvenido a la Gestión de Atención Personalizada!
             </div>
             <br>
             <div class="row gutter">
-                As Dr. {{$patient->billingProviderUser()->last_name}} may have mentioned regarding this invite-only
-                program, personalized
-                care is an important part of staying healthy.
+                Como quizás le mencionó el Dr. {{$patient->billingProviderUser()->last_name}} con respecto a este
+                programa por invitación, la atención personalizada es una parte importante para mantenerse saludable.
             </div>
             <br>
             <div class="row gutter">
-                Benefits include:
+                Los beneficios incluyen:
             </div>
             <div class="row gutter"><br>
                 <ul type="disc row" style="list-style-type: disc;">
                     <li style="list-style-type: disc;margin: 15px 0;">
-                        Personalized care and support over the phone (registered nurse).
+                        Atención personalizada y apoyo por teléfono (enfermera registrada).
                     </li>
                     <li style="list-style-type: disc;margin: 15px 0;">
-                        Connection with your provider through updates shared with
+                        Conexión con su proveedor a través de actualizaciones compartidas con el
                         Dr. {{$patient->billingProviderUser()->last_name}}.
                     </li>
                     <li style="list-style-type: disc;margin: 15px 0;">
-                        Access to your care team from the comfort of your home, to help avoid frequent
-                        office visits and co-pays.
+                        Acceso a su equipo de atención médica desde la comodidad de su hogar, para ayudarle a evitarse
+                        las frecuentes visitas al consultorio y los copagos.
                     </li>
                 </ul>
             </div>
             <div class="row gutter">
-                Since we have been unable to reach you at {{$patient->primary_phone}}, and this program requires our
-                care
-                coaches to call periodically, can you please call us
-                at {{$patient->primaryPractice->number_with_dashes}}, whenever you are free,
-                to very quickly check in and, if necessary, give us a better phone number?
+                Puesto que no hemos podido contactarnos con usted al {{$patient->primary_phone}}, y este programa
+                requiere que nuestros entrenadores de atención le llamen periódicamente, por favor puede llamarnos
+                al {{$patient->primaryPractice->number_with_dashes}}, siempre que esté libre, para registrarse
+                rápidamente y, si fuera necesario, ¿Nos puede proporcione un número de teléfono mejor?
             </div>
             <div class="row gutter">
-                Remember, if you receive a call from {{$patient->primaryPractice->number_with_dashes}}, that is your
-                care team calling to check
-                in. Please save the phone number in your directory so you will know to answer the call.
+                Recuerde, si recibe una llamada de {{$patient->primaryPractice->number_with_dashes}}, es de su equipo de
+                atención médica quien llama para registrarse. Por favor, guarde el número de teléfono en su directorio
+                así sabrá que debe contestar la llamada.
             </div>
             <div class="row gutter text-bold text-center">
             </div>
             <div class="row gutter"><br><br>
             </div>
             <div class="row gutter">
-                Thanks so much. We are eager to have you benefit from this worthwhile program!
+                Muchas gracias. ¡Estamos deseosos de que se beneficie de este valioso programa!
             </div>
             <div class="row gutter">
             </div>
             <div class="row gutter">
-                <br>Best,<br><br><br>
+                <br>Mis mejores deseos,<br><br><br>
             </div>
             <div class="row gutter">
             </div>
