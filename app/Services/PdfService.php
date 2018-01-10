@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Contracts\HtmlToPdfService;
+use Carbon\Carbon;
 
 class PdfService
 {
@@ -20,25 +21,51 @@ class PdfService
         $this->htmlToPdfService = $htmlToPdfService->handler();
     }
 
+    /**
+     * Merge an array of files.
+     * NOTE: Each index in the array has to be a full path to a file
+     *
+     * @param array $filesWithFullPath
+     * @param null $outputFullPath
+     *
+     * @return null|string
+     */
     public function mergeFiles(
-        array $fileArray,
-        $prefix = '',
-        $storageDirectory = ''
+        array $filesWithFullPath,
+        $outputFullPath = null
     ) {
-        $outputFileName = $prefix . "-merged.pdf";
-        $outputName     = base_path($storageDirectory . $prefix . "-merged.pdf");
+        if ( ! $outputFullPath) {
+            $outputFullPath = $this->randomFileFullPath();
+        }
 
-        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
+        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputFullPath ";
 
         //Add each pdf file to the end of the command
-        foreach ($fileArray as $file) {
-            $cmd .= base_path($file) . " ";
+        foreach ($filesWithFullPath as $file) {
+            $cmd .= $file . " ";
         }
         $result = shell_exec($cmd);
 
-        return $outputFileName;
+        return $outputFullPath;
     }
 
+    /**
+     * Generate a random file full path
+     *
+     * @return string
+     */
+    private function randomFileFullPath()
+    {
+        return storage_path('pdfs') . str_random() . Carbon::now()->toDateTimeString() . '.pdf';
+    }
+
+    /**
+     * Count pages of a PDF
+     *
+     * @param $pdfFullPath
+     *
+     * @return false|int
+     */
     public function countPages($pdfFullPath)
     {
         $pdftext = file_get_contents($pdfFullPath);
@@ -47,8 +74,20 @@ class PdfService
         return $num;
     }
 
-    public function createPdf($view, array $args, $fileFullPath)
+    /**
+     * Create a PDF from a View
+     *
+     * @param $view
+     * @param array $args
+     * @param null $outputFullPath
+     *
+     * @return null|string
+     */
+    public function createPdfFromView($view, array $args, $outputFullPath = null)
     {
+        if ( ! $outputFullPath) {
+            $outputFullPath = $this->randomFileFullPath();
+        }
 //            leaving these here in case we need them
 //            $pdf->setOption('disable-javascript', false);
 //            $pdf->setOption('enable-javascript', true);
@@ -61,8 +100,28 @@ class PdfService
             ->setOption('margin-left', '25')
             ->setOption('margin-bottom', '15')
             ->setOption('margin-right', '0.75')
-            ->save($fileFullPath, true);
+            ->save($outputFullPath, true);
 
-        return $fileFullPath;
+        return $outputFullPath;
+    }
+
+    /**
+     * Create a blank page
+     *
+     * @return string
+     */
+    public function blankPage()
+    {
+        $blankPagePath = storage_path('pdfs/blank_page.pdf');
+
+        if (file_exists($blankPagePath)) {
+            return $blankPagePath;
+        }
+
+        $pdf = $this->htmlToPdfService
+            ->loadHTML('<div></div>')
+            ->save($blankPagePath, true);
+
+        return $blankPagePath;
     }
 }
