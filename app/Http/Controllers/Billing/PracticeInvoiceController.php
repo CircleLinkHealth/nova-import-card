@@ -6,7 +6,6 @@ use App\AppConfig;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
-use App\Mail\PracticeInvoiceAndBillingReportSent;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
