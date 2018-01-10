@@ -13,6 +13,7 @@ use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
+use App\Services\PracticeReportsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -22,17 +23,21 @@ class PracticeInvoiceController extends Controller
 {
     private $patientSummaryDBRepository;
     private $service;
+    private $practiceReportsService;
 
     /**
      * PracticeInvoiceController constructor.
      *
      * @param ApproveBillablePatientsService $service
      * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
+     * @param PracticeReportsService $practiceReportsService
      */
-    public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
+    public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository, PracticeReportsService $practiceReportsService)
     {
         $this->service = $service;
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;
+        $this->practiceReportsService = $practiceReportsService;
+
     }
 
     /**
@@ -148,23 +153,22 @@ class PracticeInvoiceController extends Controller
 
         $invoices = [];
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
-
-        $num->config_value = $request->input('invoice_no');
-
-        $num->save();
-
         $date = Carbon::parse($request->input('date'));
 
-        foreach ($request->input('practices') as $practiceId) {
-            $practice = Practice::find($practiceId);
+        if ($request['format'] == 'pdf') {
 
-            $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
+            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
 
-            $invoices[$practice->display_name] = $data;
+            return view('billing.practice.list', compact(['invoices']));
+
+        } elseif ($request['format'] == 'csv' or 'xls') {
+
+            $invoices = $this->practiceReportsService->getQuickbooksReport($request['practices'], $request['format'], $date);
+
+            return response()->download($invoices['full'], $invoices['file'], [
+                'Content-Length: ' . filesize($invoices['full']),
+            ]);
         }
-
-        return view('billing.practice.list', compact(['invoices']));
     }
 
     public function storeProblem(Request $request)

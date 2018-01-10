@@ -27,31 +27,48 @@ class PracticeInvoiceGenerator
 
     public function generatePdf($withItemized = true)
     {
-
-        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
-
         $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
 
-        $pdfInvoice->save(storage_path("download/$invoiceName.pdf"), true);
+        $pdfInvoicePath = $this->makeInvoicePdf($invoiceName);
 
         $data = [
             'Invoice' => $invoiceName . '.pdf',
         ];
 
         if ($withItemized) {
-            $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
 
-            $itemizedName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $reportName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $pdfPatientReportPath = $this->makePatientReportPdf($reportName);
 
-            $pdfItemized->save(storage_path("download/$itemizedName.pdf"), true);
-
-            $data['Patient Report'] = $itemizedName . '.pdf';
+            $data['Patient Report'] = $reportName . '.pdf';
         }
 
         $data['practiceId'] = $this->practice->id;
 
         return $data;
     }
+
+
+    public function makeInvoicePdf($reportName) {
+
+        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
+        $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);
+
+        return storage_path("download/$reportName.pdf");
+    }
+
+
+
+    public function makePatientReportPdf($reportName) {
+
+        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
+        $pdfItemized->save(storage_path("download/$reportName.pdf"), true);
+
+        return storage_path("download/$reportName.pdf");
+    }
+
+
+
 
     public function getInvoiceData()
     {

@@ -69,10 +69,20 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="col-md-2 control-label" for="format">Select Format</label>
+                                        <div class="col-md-4">
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader" name="format" required>
+                                            <option value="pdf" selected>PDF</option>
+                                            <option value="csv">CSV</option>
+                                            <option value="xls">Excel</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 control-label" >
                                         <button id="submit" name="submit" value="download"
                                                 class="btn btn-success">
-                                            Create Invoice(s) / Report(s)
+                                            Create Invoice(s) / Report(s) / QuickbookCSV
                                         </button>
                                     </div>
                                 </div>
