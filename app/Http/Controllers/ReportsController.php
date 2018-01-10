@@ -1106,6 +1106,12 @@ class ReportsController extends Controller
 
     public function pausedPatientsLetterPrintList()
     {
-        return $this->printPausedPatientLettersService->getPausedPatients();
+        $patients = $this->printPausedPatientLettersService->getPausedPatients();
+
+        $patientJson = json_encode($patients);
+
+        return view('patient.printPausedPatientsLetters', compact([
+            'patientJson',
+        ]));
     }
 }
