@@ -21,16 +21,19 @@ class CcdAllergyService
     }
     
     function setupAllergy($a) {
-        $allergy = [
-            'id'    => $a->id,
-            'name'  => $a->allergen_name,
-            'created_at' => $a->created_at->format('c'),
-            'updated_at' => $a->updated_at->format('c'),
-            'patients' => $this->repo()->patientIds($a->allergen_name)->map(function ($patient) {
-                return $patient->patient_id;
-            })
-        ];
-        return $allergy;
+        if ($a) {
+            $allergy = [
+                'id'    => $a->id,
+                'name'  => $a->allergen_name,
+                'created_at' => $a->created_at->format('c'),
+                'updated_at' => $a->updated_at->format('c'),
+                'patients' => $this->repo()->patientIds($a->allergen_name)->map(function ($patient) {
+                    return $patient->patient_id;
+                })
+            ];
+            return $allergy;
+        }
+        return null;
     }
 
     public function allergies() {
@@ -62,5 +65,14 @@ class CcdAllergyService
                 'updated_at' => $a->updated_at->format('c')
             ];
         });
+    }
+
+    public function addPatientAllergy($userId, $name) {
+        if (!$this->repo()->patientAllergyExists($userId, $name)) return $this->setupAllergy($this->repo()->addPatientAllergy($userId, $name));
+        return null;
+    }
+    
+    public function deletePatientAllergy($userId, $allergyId) {
+        return $this->repo()->deletePatientAllergy($userId, $allergyId);
     }
 }

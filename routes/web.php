@@ -160,6 +160,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
             Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
             Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
+            Route::post('{userId}/allergies', 'PatientController@addCcdAllergies');
+            Route::delete('{userId}/allergies/{allergyId}', 'PatientController@deleteCcdAllergy');
             Route::get('{userId}/symptoms', 'PatientController@getSymptoms');
             Route::post('{userId}/symptoms', 'PatientController@addSymptom');
             Route::delete('{userId}/symptoms/{symptomId}', 'PatientController@removeSymptom');

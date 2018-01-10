@@ -28,6 +28,25 @@ class CcdAllergyRepository
         return $this->model()->where([ 'patient_id' => $userId ])->get();
     }
 
+    public function patientAllergyExists($userId, $name) {
+        return !!$this->model()->where([ 'patient_id' => $userId, 'allergen_name' => $name ])->first();
+    }
+    
+    public function addPatientAllergy($userId, $name) {
+        $allergy = new Allergy();
+        $allergy->patient_id = $userId;
+        $allergy->allergen_name = $name;
+        $allergy->save();
+        return $allergy;
+    }
+    
+    public function deletePatientAllergy($userId, $allergyId) {
+        $this->model()->where([ 'patient_id' => $userId, 'id' => $allergyId ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
+
     public function searchAllergies($terms) {
         $query = $this->model();
         if (is_array($terms)) {

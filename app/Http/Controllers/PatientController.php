@@ -7,6 +7,7 @@ use App\User;
 use App\Patient;
 use App\Services\NoteService;
 use App\Services\PatientService;
+use App\Services\CCD\CcdAllergyService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmMedicationService;
@@ -25,6 +26,7 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     private $patientService;
+    private $allergyService;
     private $cpmProblemUserService;
     private $biometricUserService;
     private $medicationService;
@@ -39,6 +41,7 @@ class PatientController extends Controller
      *
      */
     public function __construct(PatientService $patientService, 
+                                CcdAllergyService $allergyService,
                                 CpmProblemUserService $cpmProblemUserService, 
                                 CpmBiometricService $biometricUserService,
                                 CpmMedicationService $medicationService,
@@ -49,6 +52,7 @@ class PatientController extends Controller
                                 NoteService $noteService)
     {   
         $this->patientService = $patientService;
+        $this->allergyService = $allergyService;
         $this->cpmProblemUserService = $cpmProblemUserService;
         $this->biometricUserService = $biometricUserService;
         $this->medicationService = $medicationService;
@@ -91,6 +95,23 @@ class PatientController extends Controller
     public function getCcdAllergies($userId)
     {
         return response()->json($this->patientService->getCcdAllergies($userId));
+    }
+    
+    public function addCcdAllergies($userId, Request $request)
+    {
+        $name = $request->input('name');
+        if ($name) {
+            return response()->json($this->allergyService->addPatientAllergy($userId, $name));
+        }
+        else return $this->badRequest('"name" is important');
+    }
+    
+    public function deleteCcdAllergy($userId, $allergyId)
+    {
+        if ($userId && $allergyId) {
+            return response()->json($this->allergyService->deletePatientAllergy($userId, $allergyId));
+        }
+        else return $this->badRequest('"userId" and "allergyId" are important');
     }
     
     public function getBiometrics($userId)

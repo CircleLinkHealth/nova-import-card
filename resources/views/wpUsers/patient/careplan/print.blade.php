@@ -287,6 +287,7 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
 
                 <!-- ALLERGIES -->
+                <allergies ref="allergiesComponent" patient-id="{{$patient->id}}"></allergies>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
@@ -296,7 +297,7 @@ if (isset($patient) && ! empty($patient)) {
                             @if($allergies)
                                 <p><?= nl2br($allergies) ?></p>
                             @else
-                                <p>No instructions at this time</p>
+                                <p>No allergies at this time</p>
                             @endif
                         </div>
                     </div>
