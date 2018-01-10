@@ -156,34 +156,16 @@ class PatientCareplanController extends Controller
 
         $users         = explode(',', $request['users']);
 
-        //Save Printed Careplan as Meta
-        foreach ($users as $user_id) {
-            $user = User::find($user_id);
-            if ($user) {
-                $user->careplan_last_printed = Carbon::now();
-                $user->save();
-            }
-        }
+        CarePlan::whereIn('user_id', $users)
+            ->update([
+                'last_printed' => Carbon::now()->toDateTimeString()
+            ]);
 
-        // vars
         $storageDirectory = 'storage/pdfs/careplans/';
         $datetimePrefix   = date('Y-m-dH:i:s');
         $pageFileNames    = [];
 
-        try {
-            // first create blank page
-            $pdf = App::make('snappy.pdf.wrapper');
-            $pdf->loadView('wpUsers.patient.careplan.print', [
-                'patient' => false,
-                'isPdf'   => true,
-            ]);
-
-            $fileNameBlankPage         = $storageDirectory . $datetimePrefix . '-0-PDFblank.pdf';
-            $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
-            $pdf->save($fileNameWithPathBlankPage, true);
-        } catch (\Exception $e) {
-            \Log::critical($e);
-        }
+        $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
         // create pdf for each user
         $p = 1;
@@ -196,6 +178,8 @@ class PatientCareplanController extends Controller
             if (empty($careplan)) {
                 return false;
             }
+
+            $fileNameWithPath = base_path($storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf');
             try {
                 //HTML render to help us with debugging
                 if ($request->filled('render') && $request->input('render') == 'html') {
@@ -208,10 +192,7 @@ class PatientCareplanController extends Controller
                     ]);
                 }
 
-                $fileName         = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
-                $fileNameWithPath = base_path($fileName);
-
-                $fileNameWithPath = $this->pdfService->createPdf('wpUsers.patient.multiview', [
+                $fileNameWithPath = $this->pdfService->createPdfFromView('wpUsers.patient.multiview', [
                     'careplans'    => [$user_id => $careplan],
                     'isPdf'        => true,
                     'letter'       => $letter,
@@ -225,36 +206,27 @@ class PatientCareplanController extends Controller
 
             // append blank page if needed
             if ((count($users) > 1) && $pageCount % 2 != 0) {
-                $fileName         = $storageDirectory . $this->pdfService->mergeFiles([
-                        $fileName,
-                        $fileNameBlankPage,
-                    ], $prefix, $storageDirectory);
-                $fileNameWithPath = base_path($fileName);
+                $fileNameWithPath         = $this->pdfService->mergeFiles([
+                        $fileNameWithPath,
+                        $fileNameWithPathBlankPage,
+                    ], base_path($storageDirectory . $prefix . "-merged.pdf"));
             }
 
             // add to array
-            $pageFileNames[] = $fileName;
+            $pageFileNames[] = $fileNameWithPath;
 
             $p++;
         }
 
         // merge to final file
-        $mergedFileName         = $this->pdfService->mergeFiles($pageFileNames, $datetimePrefix, $storageDirectory);
-        $mergedFileNameWithPath = $storageDirectory . $this->pdfService->mergeFiles(
-                $pageFileNames,
-                $datetimePrefix,
-                $storageDirectory
-            );
+        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, base_path($storageDirectory . $datetimePrefix . "-merged.pdf"));
 
-        return response(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+        return response(file_get_contents($mergedFileNameWithPath), 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $mergedFileName . '"',
+            'Content-Disposition' => 'inline; filename="' . $mergedFileNameWithPath . '"',
         ]);
     }
 
-
-
-    
 
     /**
      * Display patient add/edit
