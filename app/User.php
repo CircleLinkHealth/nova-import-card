@@ -712,9 +712,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->display_name            = $this->fullName;
     }
 
-    public function getLastNameAttribute()
+    public function getLastNameAttribute($value)
     {
-        return ucfirst(strtolower($this->last_name ?? ''));
+        return ucfirst(strtolower($value));
     }
 
     public function getFullNameAttribute()
