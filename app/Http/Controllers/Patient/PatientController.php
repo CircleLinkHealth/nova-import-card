@@ -85,7 +85,6 @@ class PatientController extends Controller
                   ->orderBy('obs_date', 'desc')
                   ->take(100);
             },
-            'patientInfo.monthlySummaries',
         ])
                       ->where('id', $patientId)
                       ->first();

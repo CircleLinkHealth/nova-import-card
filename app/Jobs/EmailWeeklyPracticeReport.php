@@ -10,7 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
@@ -29,9 +29,9 @@ class EmailWeeklyPracticeReport implements ShouldQueue
      */
     public function __construct(Practice $practice, $startRange, $endRange, $testerEmail)
     {
-        $this->practice = $practice;
-        $this->startRange = $startRange;
-        $this->endRange = $endRange;
+        $this->practice    = $practice;
+        $this->startRange  = $startRange;
+        $this->endRange    = $endRange;
         $this->testerEmail = $testerEmail;
     }
 
@@ -42,11 +42,11 @@ class EmailWeeklyPracticeReport implements ShouldQueue
      */
     public function handle()
     {
-        if (!$this->practice->weekly_report_recipients) {
+        if ( ! $this->practice->weekly_report_recipients) {
             return;
         }
 
-        $organizationSummaryRecipients = explode(', ', trim($this->practice->weekly_report_recipients));
+        $organizationSummaryRecipients = $this->practice->getWeeklyReportRecipientsArray();
 
         if ($this->testerEmail) {
             $organizationSummaryRecipients = [$this->testerEmail];
@@ -62,22 +62,22 @@ class EmailWeeklyPracticeReport implements ShouldQueue
             $this->endRange->copy()
         ))->data(true);
 
-        $practiceData['name'] = $this->practice->display_name;
-        $practiceData['start'] = $this->startRange;
-        $practiceData['end'] = $this->endRange;
+        $practiceData['name']    = $this->practice->display_name;
+        $practiceData['start']   = $this->startRange;
+        $practiceData['end']     = $this->endRange;
         $practiceData['isEmail'] = true;
 
         foreach ($organizationSummaryRecipients as $recipient) {
-            $user = User::where('email', $recipient)->first();
+            $user = User::whereEmail($recipient)->first();
 
-            if (!$user) {
-                $user = (new User)->forceFill([
-                    'name' => $recipient,
-                    'email' => $recipient,
-                ]);
+            $notification = new WeeklyPracticeReport($practiceData, $subjectPractice);
+
+            if ($user) {
+                $user->notify($notification);
+            } else {
+                Notification::route('mail', $recipient)
+                            ->notify($notification);
             }
-
-            $user->notify(new WeeklyPracticeReport($practiceData, $subjectPractice));
         }
     }
 }

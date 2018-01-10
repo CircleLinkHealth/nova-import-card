@@ -98,11 +98,6 @@ class PatientMonthlySummary extends \App\BaseModel
         return $record;
     }
 
-    public function patientInfo()
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id');

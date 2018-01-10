@@ -3,36 +3,46 @@
 namespace App\Http\Controllers\Billing;
 
 use App\AppConfig;
-use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
+use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
+use App\Services\PracticeReportsService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 
 class PracticeInvoiceController extends Controller
 {
     private $patientSummaryDBRepository;
     private $service;
+    private $practiceReportsService;
 
     /**
      * PracticeInvoiceController constructor.
      *
      * @param ApproveBillablePatientsService $service
      * @param PatientSummaryEloquentRepository $patientSummaryDBRepository
+     * @param PracticeReportsService $practiceReportsService
      */
-    public function __construct(ApproveBillablePatientsService $service, PatientSummaryEloquentRepository $patientSummaryDBRepository)
-    {
-        $this->service = $service;
+    public function __construct(
+        ApproveBillablePatientsService $service,
+        PatientSummaryEloquentRepository $patientSummaryDBRepository,
+        PracticeReportsService $practiceReportsService
+    ) {
+        $this->service                    = $service;
         $this->patientSummaryDBRepository = $patientSummaryDBRepository;
+        $this->practiceReportsService     = $practiceReportsService;
+
     }
 
     /**
@@ -75,7 +85,8 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::createFromFormat('M, Y', $request['date']));
+        $data = $this->service->patientsToApprove($request['practice_id'],
+            Carbon::createFromFormat('M, Y', $request['date']));
 
         return ApprovableBillablePatient::collection($data);
     }
@@ -148,23 +159,23 @@ class PracticeInvoiceController extends Controller
 
         $invoices = [];
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
-
-        $num->config_value = $request->input('invoice_no');
-
-        $num->save();
-
         $date = Carbon::parse($request->input('date'));
 
-        foreach ($request->input('practices') as $practiceId) {
-            $practice = Practice::find($practiceId);
+        if ($request['format'] == 'pdf') {
 
-            $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
+            $invoices = $this->practiceReportsService->getPdfInvoiceAndPatientReport($request['practices'], $date);
 
-            $invoices[$practice->display_name] = $data;
+            return view('billing.practice.list', compact(['invoices']));
+
+        } elseif ($request['format'] == 'csv' or 'xls') {
+
+            $invoices = $this->practiceReportsService->getQuickbooksReport($request['practices'], $request['format'],
+                $date);
+
+            return response()->download($invoices['full'], $invoices['file'], [
+                'Content-Length: ' . filesize($invoices['full']),
+            ]);
         }
-
-        return view('billing.practice.list', compact(['invoices']));
     }
 
     public function storeProblem(Request $request)
@@ -280,7 +291,7 @@ class PracticeInvoiceController extends Controller
             $data = (array)$value;
 
             $patientReport = $data['Patient Report'];
-            $invoice       = $data['Invoice'];
+            $invoicePath   = storage_path('/download/' . $data['Invoice']);
 
             $invoiceLink = route(
                 'monthly.billing.download',
@@ -290,9 +301,8 @@ class PracticeInvoiceController extends Controller
                 ]
             );
 
-
             if ($practice->invoice_recipients != '') {
-                $recipients = explode(', ', $practice->invoice_recipients);
+                $recipients = $practice->getInvoiceRecipientsArray();
 
                 $recipients = array_merge($recipients, $practice->getInvoiceRecipients()->pluck('email')->all());
             } else {
@@ -301,17 +311,16 @@ class PracticeInvoiceController extends Controller
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-                    Mail::send('billing.practice.mail', ['link' => $invoiceLink], function ($m) use (
-                        $recipient,
-                        $invoice
-                    ) {
+                    $user = User::whereEmail($recipient)->first();
 
-                        $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
+                    $notification = new PracticeInvoice($invoiceLink, $invoicePath);
 
-                        $m->to($recipient)->subject('Your Invoice and Billing Report from CircleLink');
-
-                        $m->attach(storage_path('/download/' . $invoice));
-                    });
+                    if ($user) {
+                        $user->notify($notification);
+                    } else {
+                        Notification::route('mail', $recipient)
+                                    ->notify($notification);
+                    }
 
                     $logger .= "Sent report for $practice->name to $recipient <br />";
                 }
