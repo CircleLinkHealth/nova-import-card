@@ -23,6 +23,6 @@ class PrintPausedPatientLettersService
     public function getPausedPatients() {
         return $this->patientReadRepository
             ->paused()
-            ;
+            ->get();
     }
 }

@@ -1106,6 +1106,6 @@ class ReportsController extends Controller
 
     public function pausedPatientsLetterPrintList()
     {
-        $this->printPausedPatientLettersService->getPausedPatients();
+        return $this->printPausedPatientLettersService->getPausedPatients();
     }
 }

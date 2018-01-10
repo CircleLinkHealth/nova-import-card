@@ -28,10 +28,4 @@ class PatientReadRepository
                 $q->where('ccm_status', '=', 'paused');
             });
     }
-
-    public function ofPractice($practiceId)
-    {
-        return $this->user
-            ->ofPractice($practiceId);
-    }
 }

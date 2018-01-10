@@ -123,6 +123,7 @@ class Patient extends \App\BaseModel
     protected $dates = [
         'date_withdrawn',
         'date_paused',
+        'paused_letter_printed_at',
     ];
 
     /**
