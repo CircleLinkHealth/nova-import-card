@@ -31,4 +31,26 @@ class CcdProblemRepository
     public function problems() {
         return $this->model()->groupBy('name')->orderBy('id')->paginate(30);
     }
+
+    public function patientCcdExists($userId, $name) {
+        return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
+    }
+
+    public function addPatientCcdProblem($userId, $name) {
+        if (!$this->patientCcdExists($userId, $name)) {
+            $problem = new Problem();
+            $problem->patient_id = $userId;
+            $problem->name = $name;
+            $problem->save();
+            return $problem;
+        }
+        return $this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
+    }
+
+    public function removePatientCcdProblem($userId, $ccdId) {
+        $this->model()->where([ 'patient_id' => $userId, 'id' => $ccdId ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
 }

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                    <a :href="url">Allergies</a>
+                    Allergies
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
@@ -15,10 +15,9 @@
         </slot>
         <div class="row gutter">
             <div class="col-xs-12">
-                <ul class="subareas__list" v-if="allergies && allergies.length > 0">
-                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row' 
-                        v-for="(allergy, index) in allergies" :key="index">
-                        {{allergy.name}}
+                <ul v-if="allergies && allergies.length > 0">
+                    <li v-for="(allergy, index) in allergies" :key="index">
+                        <p>{{allergy.name}}</p>
                     </li>
                 </ul>
             </div>
