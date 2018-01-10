@@ -24,12 +24,18 @@ class CpmMiscUserRepository
     }
 
     public function patientMisc($userId) {
-        return $this->model()->where([ 'patient_id' => $userId ])->with(['cpmMisc', 'cpmInstruction'])->get()->map(function ($u) {
+        return $this->model()->where([ 'patient_id' => $userId ])->groupBy('cpm_misc_id')->with(['cpmMisc'])->get()->map(function ($u) use ($userId) {
             $misc = $u->cpmMisc;
-            if ($u->cpmInstruction) {
-                $u->cpmInstruction['misc_user_id'] = $u->id;
-            }
-            $misc['instruction'] = $u->cpmInstruction;
+            $misc['instructions'] = $this->model()
+                                            ->where([ 'patient_id' => $userId, 'cpm_misc_id' => $misc->id ])
+                                            ->with('cpmInstruction')->get()->map(function ($cu) {
+                                                if ($cu->cpmInstruction) {
+                                                    $cu->cpmInstruction['misc_user_id'] = $cu->id;
+                                                }
+                                                return $cu->cpmInstruction;
+                                            })->filter(function ($i) {
+                                                return !!$i;
+                                            });
             return $misc;
         });
     }
