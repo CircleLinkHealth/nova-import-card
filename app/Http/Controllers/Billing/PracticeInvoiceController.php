@@ -303,7 +303,7 @@ class PracticeInvoiceController extends Controller
 
             if (count($recipients) > 0) {
                 foreach ($recipients as $recipient) {
-                    $user = User::findByEmailOrForceFill($recipient)->first();
+                    $user = User::findByEmailOrForceFill($recipient);
 
                     $user->notify(new PracticeInvoice($invoiceLink, $invoicePath));
 
