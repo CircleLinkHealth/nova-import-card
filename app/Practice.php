@@ -272,6 +272,6 @@ class Practice extends \App\BaseModel
     }
 
     public function getInvoiceRecipientsArray() {
-        return array_map('trim', explode(',', $this->invoice_recipients));
+        return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
     }
 }
