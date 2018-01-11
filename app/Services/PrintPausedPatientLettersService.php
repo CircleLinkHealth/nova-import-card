@@ -59,15 +59,9 @@ class PrintPausedPatientLettersService
             ->whereIn('id', $userIdsToPrint)
             ->get()
             ->map(function ($user) {
-                $lang = $user->patientInfo->preferred_contact_language;
-                $view = 'patient.letters.en.paused';
-
-                if ($lang == 'ES') {
-                    $view = 'patient.letters.es.paused';
-                }
-
-                $fullPathToPdf = $this->pdfService->createPdfFromView($view, [
+                $fullPathToPdf = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
                     'patient' => $user,
+                    'lang' => strtolower($user->patientInfo->preferred_contact_language)
                 ]);
 
                 return $fullPathToPdf;

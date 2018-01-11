@@ -90,6 +90,10 @@ class PdfService
         if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
         }
+
+        if (!array_key_exists('isPdf', $args)) {
+            $args['isPdf'] = true;
+        }
 //            leaving these here in case we need them
 //            $pdf->setOption('disable-javascript', false);
 //            $pdf->setOption('enable-javascript', true);
