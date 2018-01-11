@@ -21,7 +21,7 @@
                     <form @submit="addMisc">
                         <div class="form-group">
                             <div class="top-20">
-                                <select class="form-control color-black" v-model="newMisc.id" required>
+                                <select class="form-control color-black" v-model="newMisc.id" :class="{ error: patientHasSelectedMisc }" required>
                                     <option :value="null">Select an item</option>
                                     <option v-for="(misc, index) in miscs" :key="index" :value="misc.id">{{misc.name}}</option>
                                 </select>
@@ -31,7 +31,7 @@
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMisc"></loader>
-                                <button class="btn btn-secondary selected">Create</button>
+                                <button class="btn btn-secondary selected" :disabled="cantCreateMisc">Create</button>
                             </div>
                         </div>
                     </form>
@@ -65,6 +65,14 @@
                     addMisc: null,
                     removeMisc: null
                 }
+            }
+        },
+        computed: {
+            cantCreateMisc() {
+                return !this.newMisc.id || this.patientHasSelectedMisc
+            },
+            patientHasSelectedMisc() {
+                return !!this.selectedMiscs.find(misc => misc.id == this.newMisc.id)
             }
         },
         methods: {
