@@ -307,18 +307,15 @@ class Patient extends \App\BaseModel
     {
         $statusBefore                   = $this->ccm_status;
         $this->attributes['ccm_status'] = $value;
-        // update date tracking
+
         if ($statusBefore !== $value) {
             if ($value == 'paused') {
-                $this->attributes['date_paused'] = date("Y-m-d H:i:s");
+                $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             };
             if ($value == 'withdrawn') {
-                $this->attributes['date_withdrawn'] = date("Y-m-d H:i:s");
+                $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             };
         }
-        $this->save();
-
-        return true;
     }
 
 

@@ -43,5 +43,9 @@ class PatientObserver
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
+
+        if ($patient->isDirty('date_paused')) {
+            $patient->paused_letter_printed_at = null;
+        }
     }
 }
