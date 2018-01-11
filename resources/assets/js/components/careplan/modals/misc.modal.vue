@@ -26,9 +26,6 @@
                                     <option v-for="(misc, index) in miscs" :key="index" :value="misc.id">{{misc.name}}</option>
                                 </select>
                             </div>
-                            <div class="top-20">
-                                <input type="text" class="form-control color-black" placeholder="Enter an Instruction" v-model="newMisc.instruction" required />
-                            </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMisc"></loader>
                                 <button class="btn btn-secondary selected" :disabled="cantCreateMisc">Create</button>
@@ -82,8 +79,7 @@
         data() {
             return {
                 newMisc: {
-                    id: null,
-                    instruction: ''
+                    id: null
                 },
                 newInstruction: '',
                 selectedInstruction: null,
@@ -132,6 +128,16 @@
             },
             addMisc(e) {
                 e.preventDefault()
+                this.loaders.addMisc = true
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc`), { miscId: this.newMisc.id }).then(response => {
+                    console.log('misc:add', response.data)
+                    Event.$emit('misc:select', this.miscs.find(misc => misc.id == this.newMisc.id))
+                    this.newMisc.id = null
+                    this.loaders.addMisc = false
+                }).catch(err => {
+                    console.error('misc:remove', err)
+                    this.loaders.addMisc = false
+                })
             },
             removeMisc(e) {
                 if (this.selectedMisc && confirm('Are you sure you want to remove this misc?')) {
