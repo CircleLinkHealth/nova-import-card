@@ -114,4 +114,22 @@ class PatientWriteRepository
 
         return $record;
     }
+
+    /**
+     * @param array $userIdsToPrint
+     * @param Carbon|null $dateTime
+     *
+     * @return bool
+     */
+    public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)
+    {
+        if (!$dateTime) {
+            $dateTime = Carbon::now();
+        }
+
+        return Patient::whereIn('user_id', $userIdsToPrint)
+            ->update([
+                'paused_letter_printed_at' => $dateTime->toDateTimeString(),
+            ]);
+    }
 }

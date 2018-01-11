@@ -10,15 +10,20 @@ namespace App\Services;
 
 
 use App\Repositories\PatientReadRepository;
+use App\Repositories\PatientWriteRepository;
 use Carbon\Carbon;
 
 class PrintPausedPatientLettersService
 {
     private $patientReadRepository;
+    private $patientWriteRepository;
+    private $pdfService;
 
-    public function __construct(PatientReadRepository $patientReadRepository)
+    public function __construct(PatientReadRepository $patientReadRepository, PdfService $pdfService, PatientWriteRepository $patientWriteRepository)
     {
         $this->patientReadRepository = $patientReadRepository;
+        $this->patientWriteRepository = $patientWriteRepository;
+        $this->pdfService            = $pdfService;
     }
 
     /**
@@ -49,6 +54,27 @@ class PrintPausedPatientLettersService
 
     public function makePausedLettersPdf(array $userIdsToPrint)
     {
+        $files = $this->patientReadRepository
+            ->model()
+            ->whereIn('id', $userIdsToPrint)
+            ->get()
+            ->map(function ($user) {
+                $lang = $user->patientInfo->preferred_contact_language;
+                $view = 'patient.letters.en.paused';
 
+                if ($lang == 'ES') {
+                    $view = 'patient.letters.es.paused';
+                }
+
+                $fullPathToPdf = $this->pdfService->createPdfFromView($view, [
+                    'patient' => $user,
+                ]);
+
+                return $fullPathToPdf;
+            });
+
+        $this->patientWriteRepository->updatePausedLetterPrintedDate($userIdsToPrint);
+
+        return $this->pdfService->mergeFiles($files->all());
     }
 }
