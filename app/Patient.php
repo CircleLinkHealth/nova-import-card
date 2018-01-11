@@ -316,6 +316,7 @@ class Patient extends \App\BaseModel
                 $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             };
         }
+        $this->save();
     }
 
 

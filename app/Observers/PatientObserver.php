@@ -43,7 +43,15 @@ class PatientObserver
         if ($patient->isDirty('consent_date')) {
             $this->sendPatientConsentedNote($patient);
         }
+    }
 
+    /**
+     * Listen to the Patient updated event.
+     *
+     * @param Patient $patient
+     */
+    public function updating(Patient $patient)
+    {
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
         }
