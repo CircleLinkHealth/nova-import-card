@@ -13,11 +13,11 @@ class CreateChargeableServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('chargeble_services', function (Blueprint $table) {
+        Schema::create('chargeable_services', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code');
-            $table->text('description');
-            $table->unsignedInteger('charge');
+            $table->text('description')->nullable();
+            $table->decimal('amount', 8, 2)->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateChargeableServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('billable_services');
+        Schema::dropIfExists('chargeable_services');
     }
 }

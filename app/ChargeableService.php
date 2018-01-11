@@ -14,10 +14,12 @@ class ChargeableService extends Model
     ];
 
     public function practices(){
-        return $this->morphedByMany(Practice::class, 'taggable');
+        return $this->morphedByMany(Practice::class, 'chargeable')
+            ->withTimestamps();
     }
 
     public function providers(){
-        return $this->morphedByMany(User::class, 'taggable');
+        return $this->morphedByMany(User::class, 'chargeable')
+            ->withTimestamps();
     }
 }

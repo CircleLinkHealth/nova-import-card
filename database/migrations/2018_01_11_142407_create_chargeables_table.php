@@ -19,6 +19,7 @@ class CreateChargeablesTable extends Migration
             $table->string('chargeable_type');
             $table->timestamps();
 
+            $table->unique(['chargeable_service_id', 'chargeable_id']);
         });
     }
 
@@ -29,6 +30,6 @@ class CreateChargeablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('practice_service');
+        Schema::dropIfExists('chargeables');
     }
 }
