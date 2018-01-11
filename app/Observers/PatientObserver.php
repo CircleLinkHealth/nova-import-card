@@ -14,11 +14,9 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
-        if ( ! $patient->consent_date) {
-            return;
+        if ($patient->consent_date) {
+            $this->sendPatientConsentedNote($patient);
         }
-
-        $this->sendPatientConsentedNote($patient);
     }
 
     public function sendPatientConsentedNote(Patient $patient)
@@ -42,10 +40,8 @@ class PatientObserver
      */
     public function updated(Patient $patient)
     {
-        if ( ! $patient->isDirty('consent_date')) {
-            return;
+        if ($patient->isDirty('consent_date')) {
+            $this->sendPatientConsentedNote($patient);
         }
-
-        $this->sendPatientConsentedNote($patient);
     }
 }
