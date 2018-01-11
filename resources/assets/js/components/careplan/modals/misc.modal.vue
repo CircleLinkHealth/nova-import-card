@@ -142,7 +142,29 @@
 
             },
             addInstruction(e) {
-
+                e.preventDefault()
+                if (this.newInstruction && this.newInstruction.length > 0) {
+                    this.loaders.addInstruction = true
+                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: this.newInstruction }).then(response => {
+                        console.log('misc:add-instruction', response.data)
+                        return this.addInstructionToMisc(response.data)
+                    }).catch(err => {
+                        console.error('misc:add-instruction', err)
+                        this.loaders.addInstruction = false
+                    })
+                }
+            },
+            addInstructionToMisc(instruction) {
+               return this.axios.put(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}`), { instructionId: instruction.id }).then(response => {
+                        console.log('misc:add-instruction', response.data)
+                        this.selectedMisc.instructions.unshift(instruction)
+                        this.newInstruction = ''
+                        this.loaders.addInstruction = false
+                        Event.$emit('misc:change', this.selectedMisc)
+                    }).catch(err => {
+                        console.error('misc:add-instruction', err)
+                        this.loaders.addInstruction = false
+                    })
             }
         },
         mounted() {

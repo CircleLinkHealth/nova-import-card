@@ -30,6 +30,8 @@
     import { Event } from 'vue-tables-2'
     import MiscModal from './modals/misc.modal'
 
+    const MISC_ID = 5
+
     export default {
         name: 'social-services',
         props: [
@@ -54,7 +56,7 @@
                 return socialService
             },
             getSocialService() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/5`)).then(response => {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
                     console.log('social-services:get-social-service', response.data)
                     this.socialService = this.setupSocialService(response.data)
                     if (this.socialService) Event.$emit('misc:select', this.socialService)
@@ -68,6 +70,12 @@
         },
         mounted() {
             this.getSocialService()
+
+            Event.$on('misc:change', (misc) => {
+                if (misc && misc.id === ((this.socialService || {}).id || MISC_ID)) {
+                    this.socialService = misc
+                }
+            })
         }
     }
 </script>

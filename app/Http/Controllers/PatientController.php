@@ -286,7 +286,7 @@ class PatientController extends Controller
     public function editMisc($userId, $miscId, Request $request) {
         $instructionId = $request->input('instructionId');
         if ($userId && $miscId && $instructionId) {
-            return $this->miscService->editPatientMisc($miscId, $userId);
+            return $this->miscService->editPatientMisc($miscId, $userId, $instructionId);
         }
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
