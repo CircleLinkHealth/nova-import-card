@@ -283,7 +283,14 @@ class PatientController extends Controller
         else return $this->badRequest('"miscId" and "userId" are important');
     }
     
-    public function editMisc($userId, $miscId, Request $request) {
+    public function removeMisc($userId, $miscId) {
+        if ($userId && $miscId) {
+            return $this->miscService->removeMiscFromPatient($miscId, $userId);
+        }
+        else return $this->badRequest('"miscId" and "userId" are important');
+    }
+    
+    public function addInstructionToMisc($userId, $miscId, Request $request) {
         $instructionId = $request->input('instructionId');
         if ($userId && $miscId && $instructionId) {
             return $this->miscService->editPatientMisc($miscId, $userId, $instructionId);
@@ -291,11 +298,11 @@ class PatientController extends Controller
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
     
-    public function removeMisc($userId, $miscId) {
-        if ($userId && $miscId) {
-            return $this->miscService->removeMiscFromPatient($miscId, $userId);
+    public function removeInstructionFromMisc($userId, $miscId, $instructionId) {
+        if ($userId && $miscId && $instructionId) {
+            return $this->miscService->removeInstructionFromPatientMisc($miscId, $userId, $instructionId);
         }
-        else return $this->badRequest('"miscId" and "userId" are important');
+        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
 
     public function getNotes($userId) {

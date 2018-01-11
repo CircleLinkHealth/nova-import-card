@@ -139,7 +139,19 @@
                 }
             },
             removeInstructionFromProblem(index) {
-
+                if (this.selectedInstruction && this.selectedMisc && confirm('Are you sure you want to delete this instruction?')) {
+                    this.loaders.removeInstruction = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions/${this.selectedInstruction.id}`)).then((response) => {
+                        console.log('misc:remove-instruction', response.data)
+                        this.loaders.removeInstruction = false
+                        this.selectedMisc.instructions.splice(index, 1)
+                        this.selectedInstruction = null
+                        Event.$emit('misc:change', this.selectedMisc)
+                    }).catch(err => {
+                        console.error('misc:remove-instruction', err)
+                        this.loaders.removeInstruction = false
+                    })
+                }
             },
             addInstruction(e) {
                 e.preventDefault()
@@ -155,7 +167,7 @@
                 }
             },
             addInstructionToMisc(instruction) {
-               return this.axios.put(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}`), { instructionId: instruction.id }).then(response => {
+               return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('misc:add-instruction', response.data)
                         this.selectedMisc.instructions.unshift(instruction)
                         this.newInstruction = ''

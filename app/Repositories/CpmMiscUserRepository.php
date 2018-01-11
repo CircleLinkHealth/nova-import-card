@@ -63,6 +63,13 @@ class CpmMiscUserRepository
         ];
     }
     
+    public function removeInstructionFromPatientMisc($miscId, $userId, $instructionId) {
+        $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
+    
     public function editPatientMisc($userId, $miscId, $instructionId) {
         $miscUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
         if (!$miscUser) {

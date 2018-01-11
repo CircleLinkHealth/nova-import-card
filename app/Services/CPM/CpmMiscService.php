@@ -53,6 +53,10 @@ class CpmMiscService implements CpmModel
     public function removeMiscFromPatient($miscId, $userId) {
         return $this->cpmMiscUserRepo->removeMiscFromPatient($miscId, $userId);
     }
+    
+    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId) {
+        return $this->cpmMiscUserRepo->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
+    }
 
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
