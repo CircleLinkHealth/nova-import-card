@@ -40,19 +40,20 @@ class CpmMiscUserRepository
         });
     }
     
-    public function patientHasMisc($userId, $miscId) {
-        return !!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first();
+    public function patientHasMisc($userId, $miscId, $instructionId = null) {
+        return !!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
     }
 
-    public function addMiscToPatient($miscId, $userId) {
+    public function addMiscToPatient($miscId, $userId, $instructionId = null) {
         if (!$this->patientHasMisc($userId, $miscId)) {
             $miscUser = new CpmMiscUser();
             $miscUser->patient_id = $userId;
             $miscUser->cpm_misc_id = $miscId;
+            $miscUser->cpm_instruction_id = $instructionId;
             $miscUser->save();
             return $miscUser;
         }
-        else return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first();
+        else return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
     }
 
     public function removeMiscFromPatient($miscId, $userId) {
@@ -63,11 +64,10 @@ class CpmMiscUserRepository
     }
     
     public function editPatientMisc($userId, $miscId, $instructionId) {
-        if (!!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first()) {
-            $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->update([
-                'cpm_instruction_id' => $instructionId
-            ]);
+        $miscUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
+        if (!$miscUser) {
+            return $this->addMiscToPatient($userId, $miscId, $instructionId);
         }
-        return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->first();
+        return $miscUser;
     }
 }
