@@ -76,6 +76,12 @@
                     this.socialService = misc
                 }
             })
+
+            Event.$on('misc:remove', (id) => {
+                if (id && id === ((this.socialService || {}).id || MISC_ID)) {
+                    this.socialService = null
+                }
+            })
         }
     }
 </script>

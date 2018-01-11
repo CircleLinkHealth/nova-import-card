@@ -135,7 +135,18 @@
             },
             removeMisc(e) {
                 if (this.selectedMisc && confirm('Are you sure you want to remove this misc?')) {
-                    
+                    const miscId = this.selectedMisc.id
+                    this.loaders.removeMisc = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}`)).then(response => {
+                        console.log('misc:remove', response.data)
+                        this.loaders.removeMisc = false
+                        this.selectedMisc = null
+                        this.selectedMiscs.splice(this.selectedMiscs.findIndex(misc => misc.id == miscId), 1)
+                        Event.$emit('misc:remove', miscId)
+                    }).catch(err => {
+                        console.error('misc:remove', err)
+                        this.loaders.removeMisc = false
+                    })
                 }
             },
             removeInstructionFromProblem(index) {
