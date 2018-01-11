@@ -384,21 +384,13 @@ if (isset($patient) && ! empty($patient)) {
             <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Other
-                                Notes:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($other)
-                                <p><?= nl2br($other) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <others ref="othersComponent" patient-id="{{$patient->id}}">
+                    @if($other)
+                        <p><?= nl2br($other) ?></p>
+                    @else
+                        <p>No instructions at this time</p>
+                    @endif
+                </others>
                 <!-- /OTHER NOTES -->
                 <!-- /OTHER INFORMATION -->
             </section>
