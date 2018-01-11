@@ -299,23 +299,14 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}"></social-services>
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
+                    @if($social)
+                        <p><?= nl2br($social) ?></p>
+                    @else
+                        <p>No instructions at this time</p>
+                    @endif
+                </social-services>
                 <misc-modal ref="miscModal" :patient-id="{{$patient->id}}"></misc-modal>
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Social
-                                Services:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($social)
-                                <p><?= nl2br($social) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
