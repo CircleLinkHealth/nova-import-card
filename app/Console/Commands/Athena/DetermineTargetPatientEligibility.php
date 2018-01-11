@@ -78,6 +78,10 @@ class DetermineTargetPatientEligibility extends Command
 
                                      $practice = Practice::where('external_id', '=', $patient->ehr_practice_id )->first();
 
+                                     if (!$practice) {
+                                         throw new \Exception("Practice with AthenaId $patient->ehr_practice_id was not found.", 500);
+                                     }
+
                                      $insurances = $patientInfo->getInsurances();
 
                                      $enrollee = Enrollee::create([
