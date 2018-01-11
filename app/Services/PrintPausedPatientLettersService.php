@@ -59,10 +59,16 @@ class PrintPausedPatientLettersService
             ->whereIn('id', $userIdsToPrint)
             ->get()
             ->map(function ($user) {
-                $fullPathToPdf = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
+                $lang = strtolower($user->patientInfo->preferred_contact_language);
+
+                $fullPathToLetter = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
                     'patient' => $user,
-                    'lang' => strtolower($user->patientInfo->preferred_contact_language)
+                    'lang' => $lang
                 ]);
+
+                $pathToFlyer = storage_path("flyers/pdfs/paused/$lang.pdf");
+
+                $fullPathToPdf = $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
 
                 return $fullPathToPdf;
             });

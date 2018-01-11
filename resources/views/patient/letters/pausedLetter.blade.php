@@ -55,9 +55,5 @@
 </style>
 
 @section('content')
-    @if(strtolower($lang) == 'es')
-        @include('patient.letters.es.paused', ['patient' => $patient])
-    @else
-        @include('patient.letters.en.paused', ['patient' => $patient])
-    @endif
+    @include("patient.letters.$lang.paused", ['patient' => $patient])
 @endsection
