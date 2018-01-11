@@ -36,6 +36,33 @@
                         </div>
                     </form>
                 </div>
+                <div class="col-sm-12 top-20" v-if="selectedMisc">
+                    <div class="row top-20">
+                        <form @submit="addInstruction">
+                            <div class="col-sm-11">
+                                <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" required />
+                            </div>
+                            <div class="col-sm-1">
+                                <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                    title="add this instruction for this cpm problem" 
+                                    :disabled="!newInstruction || newInstruction.length === 0" />
+                            </div>
+                        </form>
+                    </div>
+                    <div class="instructions top-20">
+                         <div v-for="(instruction, index) in selectedMisc.instructions" :key="index">
+                            <ol class="list-group" v-for="(instructionChunk, chunkIndex) in instruction.name.split('\n')" 
+                                @click="selectInstruction(index)" :key="chunkIndex">
+                                <li class="list-group-item pointer" v-if="instructionChunk"
+                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id, disabled: (selectedInstruction && selectedInstruction.id === instruction.id)  && loaders.removeInstruction }">
+                                    {{instructionChunk}}
+                                    <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeInstructionFromProblem(index)" v-if="chunkIndex === 0" />
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
             </div>
         </template>
     </modal>
@@ -58,12 +85,16 @@
                     id: null,
                     instruction: ''
                 },
+                newInstruction: '',
+                selectedInstruction: null,
                 selectedMisc: null,
                 selectedMiscs: [],
                 miscs: [],
                 loaders: {
                     addMisc: null,
-                    removeMisc: null
+                    removeMisc: null,
+                    addInstruction: null,
+                    removeInstruction: null
                 }
             }
         },
@@ -78,6 +109,11 @@
         methods: {
             select(index) {
                 this.selectedMisc = (index >= 0) ? Object.assign({}, this.selectedMiscs[index]) : null
+            },
+            selectInstruction(index) {
+                if (!this.loaders.removeInstruction) {
+                    this.selectedInstruction = this.selectedMisc.instructions[index]
+                }
             },
             reset() {
                 this.newMisc.name = ''
@@ -101,6 +137,12 @@
                 if (this.selectedMisc && confirm('Are you sure you want to remove this misc?')) {
                     
                 }
+            },
+            removeInstructionFromProblem(index) {
+
+            },
+            addInstruction(e) {
+
             }
         },
         mounted() {
