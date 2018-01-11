@@ -38,11 +38,11 @@ class PdfService
             $outputFullPath = $this->randomFileFullPath();
         }
 
-        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputFullPath ";
+        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=\"$outputFullPath\" ";
 
         //Add each pdf file to the end of the command
         foreach ($filesWithFullPath as $file) {
-            $cmd .= $file . " ";
+            $cmd .= '"' . $file . '" ';
         }
         $result = shell_exec($cmd);
 
@@ -56,7 +56,9 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        return storage_path('pdfs') . str_random() . Carbon::now()->toDateTimeString() . '.pdf';
+        $name = str_random() . Carbon::now()->toAtomString();
+
+        return storage_path("pdfs/$name.pdf") ;
     }
 
     /**
