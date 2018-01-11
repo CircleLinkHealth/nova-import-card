@@ -45,7 +45,7 @@ class CpmMiscUserRepository
     }
 
     public function addMiscToPatient($miscId, $userId, $instructionId = null) {
-        if (!$this->patientHasMisc($userId, $miscId)) {
+        if (!$this->patientHasMisc($userId, $miscId, $instructionId)) {
             $miscUser = new CpmMiscUser();
             $miscUser->patient_id = $userId;
             $miscUser->cpm_misc_id = $miscId;
@@ -71,10 +71,18 @@ class CpmMiscUserRepository
     }
     
     public function editPatientMisc($userId, $miscId, $instructionId) {
-        $miscUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
-        if (!$miscUser) {
-            return $this->addMiscToPatient($userId, $miscId, $instructionId);
+        if (!!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => null ])->first()) {
+            $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => null ])->update([
+                'cpm_instruction_id' => $instructionId
+            ]);
+            return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
         }
-        return $miscUser;
+        else {
+            $miscUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
+            if (!$miscUser) {
+                return $this->addMiscToPatient($userId, $miscId, $instructionId);
+            }
+            return $miscUser;
+        }
     }
 }
