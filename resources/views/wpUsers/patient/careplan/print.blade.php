@@ -300,6 +300,7 @@ if (isset($patient) && ! empty($patient)) {
 
                 <!-- SOCIALSERVICES -->
                 <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}"></social-services>
+                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}"></misc-modal>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">

@@ -8,21 +8,20 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="socialService.instructions.length === 0">
+        <slot v-if="!socialService || socialService.instructions.length === 0">
             <div class="col-xs-12 text-center">
                 No Instructions at this time
             </div>
         </slot>
         <div class="row gutter">
             <div class="col-xs-12">
-                <ul v-if="socialService.instructions.length > 0">
+                <ul v-if="socialService && socialService.instructions.length > 0">
                     <li v-for="(instruction, index) in socialService.instructions" :key="index" v-if="instruction.name">
                         <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
                     </li>
                 </ul>
             </div>
         </div>
-        <misc-modal ref="instructionsModal" :patient-id="patientId"></misc-modal>
     </div>
 </template>
 
@@ -49,12 +48,16 @@
         },
         methods: {
             setupSocialService(socialService) {
+                if (socialService) {
+                    socialService.instructions = socialService.instructions || []
+                }
                 return socialService
             },
             getSocialService() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/7`)).then(response => {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/5`)).then(response => {
                     console.log('social-services:get-social-service', response.data)
                     this.socialService = this.setupSocialService(response.data)
+                    if (this.socialService) Event.$emit('misc:select', this.socialService)
                 }).catch(err => {
                     console.error('social-services:get-social-service', err)
                 })

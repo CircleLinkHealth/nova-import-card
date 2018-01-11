@@ -1,5 +1,5 @@
 <template>
-    <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -8,13 +8,33 @@
                 </div>
                 <div class="col-sm-12 pad-top-10">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-secondary misc-button" :class="{ selected: selectedMisc && (selectedMisc.id === misc.id) }" 
-                                v-for="(misc, index) in miscs" :key="index" @click="select(index)">
+                        <button class="btn btn-secondary misc-button" :class="{ selected: selectedMisc && selectedMisc.id == misc.id }"
+                                v-for="(misc, index) in selectedMiscs" :key="index" @click="select(index)">
                             {{misc.name}}
                             <span class="delete" title="remove this cpm misc" @click="removeMisc">x</span>
                             <loader class="absolute" v-if="loaders.removeMisc && selectedMisc && (selectedMisc.id === misc.id)"></loader>
                         </button>
+                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMisc }" value="+" @click="select(-1)" />
                     </div>
+                </div>
+                <div class="col-sm-12" v-if="!selectedMisc">
+                    <form @submit="addMisc">
+                        <div class="form-group">
+                            <div class="top-20">
+                                <select class="form-control color-black" v-model="newMisc.id" required>
+                                    <option :value="null">Select an item</option>
+                                    <option v-for="(misc, index) in miscs" :key="index" :value="misc.id">{{misc.name}}</option>
+                                </select>
+                            </div>
+                            <div class="top-20">
+                                <input type="text" class="form-control color-black" placeholder="Enter an Instruction" v-model="newMisc.instruction" required />
+                            </div>
+                            <div class="top-20 text-right">
+                                <loader v-if="loaders.addMisc"></loader>
+                                <button class="btn btn-secondary selected">Create</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </template>
@@ -28,15 +48,18 @@
 
     export default {
         name: 'misc-modal',
-        props: {
-            'patient-id': String
-        },
+        props: ['patient-id'],
         components: {
             'modal': Modal
         },
         data() {
             return {
+                newMisc: {
+                    id: null,
+                    instruction: ''
+                },
                 selectedMisc: null,
+                selectedMiscs: [],
                 miscs: [],
                 loaders: {
                     addMisc: null,
@@ -46,10 +69,22 @@
         },
         methods: {
             select(index) {
-                this.selectedMisc = (index >= 0) ? Object.assign({}, this.miscs[index]) : null
+                this.selectedMisc = (index >= 0) ? Object.assign({}, this.selectedMiscs[index]) : null
             },
             reset() {
                 this.newMisc.name = ''
+            },
+            setupMisc(misc) {
+                misc.instructions = []
+                return misc
+            },
+            getMisc() {
+                return this.axios.get(rootUrl('api/misc')).then(response => {
+                    console.log('misc:get-misc', response.data)
+                    this.miscs = response.data.map(this.setupMisc)
+                }).catch(err => {
+                    console.error('misc:get-misc', err)
+                })
             },
             addMisc(e) {
                 e.preventDefault()
@@ -61,18 +96,20 @@
             }
         },
         mounted() {
-            
+            this.getMisc()
+
+            Event.$on('misc:select', (misc) => {
+                if (misc && !this.selectedMiscs.find(m => m.id == misc.id)) {
+                    this.selectedMiscs.push(misc)
+                }
+            })
         }
     }
 </script>
 
 <style>
-    .misc-container {
-        overflow-x: scroll;
-    }
-
-    .misc-buttons {
-        width: 2000px;
+    .modal-misc .modal-container {
+        width: 700px;
     }
 
     .misc-button span.delete {
