@@ -131,6 +131,10 @@ class Practice extends \App\BaseModel
         });
     }
 
+    public function chargeableServices(){
+        return $this->morphToMany(  ChargeableService::class, 'taggable');
+    }
+
     public function getCountOfUserTypeAtPractice($role)
     {
 

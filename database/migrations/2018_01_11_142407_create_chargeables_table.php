@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBillableServicesTable extends Migration
+class CreateChargeablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateBillableServicesTable extends Migration
      */
     public function up()
     {
-        Schema::create('billable_services', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('chargeables', function (Blueprint $table) {
+            $table->unsignedInteger('chargeable_service_id');
+            $table->unsignedInteger('chargeable_id');
+            $table->string('chargeable_type');
             $table->timestamps();
+
         });
     }
 
@@ -26,6 +29,6 @@ class CreateBillableServicesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('billable_services');
+        Schema::dropIfExists('practice_service');
     }
 }
