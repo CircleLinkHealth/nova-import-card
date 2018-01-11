@@ -299,6 +299,7 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}"></social-services>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
