@@ -6,6 +6,7 @@ use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use App\TargetPatient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Psr\Log\InvalidArgumentException;
 
 class GetPatientIdFromLastYearAppointments extends Command
 {
@@ -14,7 +15,9 @@ class GetPatientIdFromLastYearAppointments extends Command
      *
      * @var string
      */
-    protected $signature = 'athena:getPatientIdFromLastYearAppointments {athenaPracticeId : The Athena EHR practice id. `external_id` on table `practices`}';
+    protected $signature = 'athena:getPatientIdFromLastYearAppointments {athenaPracticeId : The Athena EHR practice id. `external_id` on table `practices`}
+                                                                        {from? : From date yyyy-mm-dd}
+                                                                        {to? : To date yyyy-mm-dd}';
 
     /**
      * The console command description.
@@ -53,6 +56,18 @@ class GetPatientIdFromLastYearAppointments extends Command
 
         $endDate   = Carbon::today();
         $startDate = $endDate->copy()->subYear();
+
+        if ($this->argument('from')) {
+            $startDate = Carbon::parse($this->argument('from'));
+        }
+
+        if ($this->argument('to')) {
+            $endDate = Carbon::parse($this->argument('to'));
+        }
+
+        if ($startDate->greaterThan($endDate)) {
+            throw new InvalidArgumentException("Start date cannot be greater than end date.", 422);
+        }
 
         if (app()->environment('worker')) {
             sendSlackMessage('#background-tasks',
