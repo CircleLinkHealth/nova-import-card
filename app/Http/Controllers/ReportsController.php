@@ -1121,10 +1121,8 @@ class ReportsController extends Controller
 
         $userIdsToPrint = explode(',', $request['patientUserIds']);
 
-        $patients = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint);
+        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint);
 
-        return view('patient.printPausedPatientsLetters', [
-            'patients' => json_encode($patients),
-        ]);
+        return response()->file($fullPathToFile);
     }
 }
