@@ -14,21 +14,21 @@
                             </h4>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <select2 class="form-control" v-model="newAppointment.providerId">
-                                <option :value="null">Select a Provider</option>
-                                <option v-for="provider in providers" :key="provider.id" :value="provider.id">{{provider.user.display_name}}</option>
-                            </select2>
+                            <v-select class="form-control" v-model="newAppointment.provider" :options="providers"></v-select>
                         </div>
-                        <div class="col-sm-6 col-md-4">
-                            <input type="date" class="form-control" v-model="newAppointment.date" />
+                        <div class="col-sm-6 col-md-3">
+                            <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" />
                         </div>
                         <div class="col-sm-6 col-md-4">
                             <input type="time" class="form-control" v-model="newAppointment.time" />
                         </div>
+                        <div class="col-sm-6 col-md-1 text-right">
+                            <input type="button" class="btn btn-secondary selected" value="Add" />
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-12" v-if="futureAppointments.length > 0">
-                    <h4>Upcoming</h4>
+                    <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="index">
                         <li class="list-group-item pointer" @click="select(appointment)"
                         :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
@@ -38,7 +38,7 @@
                     </ol>
                 </div>
                 <div class="col-sm-12" v-if="pastAppointments.length > 0">
-                    <h4>Past</h4>
+                    <h4>Past Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="index">
                         <li class="list-group-item pointer" @click="select(appointment)"
                         :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
@@ -57,7 +57,7 @@
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import moment from 'moment'
-    import Select2Component from '../../src/select2'
+    import VueSelect from 'vue-select'
     import AppointmentRender from '../renders/appointment.render'
 
     export default {
@@ -69,7 +69,7 @@
         components: {
             'appointment': AppointmentRender,
             'modal': Modal,
-            'select2': Select2Component
+            'v-select': VueSelect
         },
         computed: {
             pastAppointments() {
@@ -82,7 +82,7 @@
         data() {
             return {
                 newAppointment: {
-                    providerId: null,
+                    provider: null,
                     date: moment(new Date()).format('YYYY-MM-DD'),
                     time: moment(new Date()).format('HH:mm:ss')
                 },
@@ -110,12 +110,10 @@
                 this.selectedAppointment = appointment
             },
             getProviders() {
-                this.pagination.index++
                 this.loaders.getProviders = true
-                this.axios.get(rootUrl(`api/providers?page=${this.pagination.index}`)).then(response => {
-                    const pagination = response.data
-                    console.log('appointments-modal:get-providers', pagination)
-                    this.providers = this.providers.concat(pagination.data)
+                this.axios.get(rootUrl(`api/providers/list`)).then(response => {
+                    this.providers = response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1)
+                    console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {
                     console.error('appointments-modal:get-providers', err)
@@ -172,5 +170,13 @@
 
     input.color-black {
         color: black;
+    }
+
+    .modal-appointments .dropdown-toggle.clearfix {
+        border: none !important;
+    }
+
+    .modal-appointments .dropdown.v-select.form-control {
+        padding: 0;
     }
 </style>
