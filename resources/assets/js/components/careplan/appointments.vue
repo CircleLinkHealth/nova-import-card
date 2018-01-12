@@ -18,12 +18,7 @@
                 <h3>Upcoming</h3>
                 <ul v-if="appointments.length">
                     <li class="top-20" v-for="(appointment, index) in futureAppointments" :key="index">
-                        <p>- {{appointment.type}}<span v-if="appointment.provider().specialty">,</span> <strong v-if="appointment.provider().specialty">({{appointment.provider().specialty}})</strong> on {{appointment.datetime}}
-                            <span v-if="appointment.provider().user.display_name">with <strong>{{appointment.provider().user.display_name}};</strong> </span>
-                                <span v-if="appointment.provider().user.address">A: {{appointment.provider().user.address}}</span> 
-                                <span v-if="appointment.provider().location().phone">P: {{appointment.provider().location().phone}}</span>
-                            
-                        </p>
+                        <appointment :appointment="appointment"></appointment>
                     </li>
                 </ul>
             </div>
@@ -31,17 +26,12 @@
                 <h3>Past</h3>
                 <ul v-if="appointments.length">
                     <li class="top-20" v-for="(appointment, index) in pastAppointments" :key="index">
-                         <p>- {{appointment.type}}<span v-if="appointment.provider().specialty">,</span> <strong v-if="appointment.provider().specialty">({{appointment.provider().specialty}})</strong> on {{appointment.datetime}}
-                            <span v-if="appointment.provider().user.display_name">with <strong>{{appointment.provider().user.display_name}};</strong> </span>
-                                <span v-if="appointment.provider().user.address">A: {{appointment.provider().user.address}}</span> 
-                                <span v-if="appointment.provider().location().phone">P: {{appointment.provider().location().phone}}</span>
-                            
-                        </p>
+                        <appointment :appointment="appointment"></appointment>
                     </li>
                 </ul>
             </div>
         </div>
-        <!-- <appointments-modal ref="appointmentsModal" :patient-id="patientId" :appointments="appointments"></appointments-modal> -->
+        <appointments-modal ref="appointmentsModal" :patient-id="patientId" :appointments="appointments"></appointments-modal>
     </div>
 </template>
 
@@ -50,6 +40,8 @@
     import { Event } from 'vue-tables-2'
     import moment from 'moment'
     import VueCache from '../../util/vue-cache'
+    import AppointmentsModal from './modals/appointments.modal'
+    import AppointmentRender from './renders/appointment.render'
 
     export default {
         name: 'appointments',
@@ -59,7 +51,8 @@
             'url'
         ],
         components: {
-            //'appointments-modal': AppointmentsModal
+            'appointment': AppointmentRender,
+            'appointments-modal': AppointmentsModal
         },
         data() {
             return {
