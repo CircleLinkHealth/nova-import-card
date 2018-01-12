@@ -27,6 +27,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-12" :class="{ 'appointment-container': pagination.pages().length > 20 }">
+                    <div class="btn-group" :class="{ 'appointment-buttons': pagination.pages() > 20 }" role="group" aria-label="Appointments">
+                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }" 
+                                v-for="(page, index) in pagination.pages()" :key="index" @click="pagination.select(index)">
+                            {{page}}
+                        </button>
+                    </div>
+                </div>
                 <div class="col-sm-12" v-if="futureAppointments.length > 0">
                     <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="index">
@@ -73,10 +81,13 @@
         },
         computed: {
             pastAppointments() {
-                return this.appointments.filter(appointment => appointment.at <= new Date())
+                return this.paginatedAppointments.filter(appointment => appointment.at <= new Date())
             },
             futureAppointments() {
-                return this.appointments.filter(appointment => appointment.at > new Date())
+                return this.paginatedAppointments.filter(appointment => appointment.at > new Date())
+            },
+            paginatedAppointments() {
+                return this.appointments.slice(this.pagination.start(), this.pagination.start() + this.pagination.limit)
             }
         },
         data() {
@@ -94,8 +105,17 @@
                 },
                 providers: [],
                 pagination: {
-                    index: 0,
-                    limit: 5
+                    index: 1,
+                    limit: 5,
+                    total: () => this.appointments.length,
+                    start: () => (this.pagination.index - 1) * this.pagination.limit,
+                    select: (index) => {
+                        this.pagination.index = index + 1
+                    },
+                    pages: () => {
+                        return '0'.repeat(Math.ceil(this.pagination.total() / this.pagination.limit)).split('').map((a, i) => i + 1)
+                    },
+                    selected: (index) => (this.pagination.index === (index + 1))
                 }
             }
         },

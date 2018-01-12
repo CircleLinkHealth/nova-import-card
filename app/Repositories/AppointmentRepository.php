@@ -30,7 +30,7 @@ class AppointmentRepository
     }
 
     public function patientAppointments($userId) {
-        return $this->model()->where([ 'patient_id' => $userId ])->orderBy('id', 'desc')->paginate();
+        return $this->model()->where([ 'patient_id' => $userId ])->orderBy('id', 'desc')->paginate(5);
     }
 
     public function create(Appointment $appointment) {
