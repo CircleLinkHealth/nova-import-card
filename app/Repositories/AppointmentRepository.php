@@ -22,10 +22,14 @@ class AppointmentRepository
     }
 
     public function appointments() {
-        return $this->model()->paginate();
+        return $this->model()->orderBy('id', 'desc')->paginate();
     }
 
     public function appointment($id) {
         return $this->model()->findOrFail($id);
+    }
+
+    public function patientAppointments($userId) {
+        return $this->model()->where([ 'patient_id' => $userId ])->orderBy('id', 'desc')->paginate();
     }
 }

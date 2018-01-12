@@ -7,6 +7,7 @@ use App\User;
 use App\Patient;
 use App\Services\NoteService;
 use App\Services\PatientService;
+use App\Services\AppointmentService;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
 use App\Services\CPM\CpmProblemUserService;
@@ -27,6 +28,7 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     private $patientService;
+    private $appointmentService;
     private $allergyService;
     private $ccdProblemService;
     private $cpmProblemUserService;
@@ -43,6 +45,7 @@ class PatientController extends Controller
      *
      */
     public function __construct(PatientService $patientService, 
+                                AppointmentService $appointmentService,
                                 CcdAllergyService $allergyService,
                                 CcdProblemService $ccdProblemService,
                                 CpmProblemUserService $cpmProblemUserService, 
@@ -55,6 +58,7 @@ class PatientController extends Controller
                                 NoteService $noteService)
     {   
         $this->patientService = $patientService;
+        $this->appointmentService = $appointmentService;
         $this->allergyService = $allergyService;
         $this->ccdProblemService = $ccdProblemService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -333,5 +337,17 @@ class PatientController extends Controller
             return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
         }
         else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
+    }
+
+    public function addAppointment($userId, \App\Appointment $appointment) {
+        return response()->json($appointment);
+    }
+
+    public function getAppointments($userId) {
+        return response()->json($this->appointmentService->repo()->patientAppointments($userId));
+    }
+
+    public function removeAppointment($userId, $id) {
+
     }
 }

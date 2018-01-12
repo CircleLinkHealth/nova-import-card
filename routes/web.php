@@ -152,31 +152,72 @@ Route::group(['middleware' => 'auth'], function () {
             });
         });
         
+        /** 
+        * ~/api/patients/...
+        */
         Route::group([
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
-            Route::get('{userId}', 'PatientController@getPatient');
-            Route::get('{userId}/biometrics', 'PatientController@getBiometrics');
-            Route::post('{userId}/biometrics/{biometricId}', 'PatientController@addBiometric');
-            Route::get('{userId}/problems', 'PatientController@getProblems');
-            Route::post('{userId}/problems', 'PatientController@addCpmProblem');
-            Route::delete('{userId}/problems/cpm/{cpmId}', 'PatientController@removeCpmProblem');
-            Route::get('{userId}/problems/cpm', 'PatientController@getCpmProblems');
-            Route::get('{userId}/problems/ccd', 'PatientController@getCcdProblems');
-            Route::post('{userId}/problems/ccd', 'PatientController@addCcdProblem');
-            Route::delete('{userId}/problems/ccd/{ccdId}', 'PatientController@removeCcdProblem');
-            Route::get('{userId}/allergies', 'PatientController@getCcdAllergies');
-            Route::post('{userId}/allergies', 'PatientController@addCcdAllergies');
-            Route::delete('{userId}/allergies/{allergyId}', 'PatientController@deleteCcdAllergy');
-            Route::get('{userId}/symptoms', 'PatientController@getSymptoms');
-            Route::post('{userId}/symptoms', 'PatientController@addSymptom');
-            Route::delete('{userId}/symptoms/{symptomId}', 'PatientController@removeSymptom');
-            Route::get('{userId}/medication', 'PatientController@getMedication');
-            Route::post('{userId}/medication', 'PatientController@addMedication');
-            Route::put('{userId}/medication/{id}', 'PatientController@editMedication');
-            Route::delete('{userId}/medication/{medicationId}', 'PatientController@removeMedication');
-            Route::get('{userId}/medication/groups', 'PatientController@getMedicationGroups');
+            Route::group([ 
+                'prefix' => '{userId}'
+            ], function () {
+                Route::get('', 'PatientController@getPatient');
+
+                Route::group([
+                    'prefix' => 'biometrics'
+                ], function () {
+                    Route::get('', 'PatientController@getBiometrics');
+                    Route::post('{biometricId}', 'PatientController@addBiometric');
+                });
+                
+                Route::group([
+                    'prefix' => 'problems'
+                ], function () {
+                    Route::get('', 'PatientController@getProblems');
+                    Route::post('', 'PatientController@addCpmProblem');
+                    Route::get('cpm', 'PatientController@getCpmProblems');
+                    Route::delete('cpm/{cpmId}', 'PatientController@removeCpmProblem');
+                    Route::get('ccd', 'PatientController@getCcdProblems');
+                    Route::post('ccd', 'PatientController@addCcdProblem');
+                    Route::delete('ccd/{ccdId}', 'PatientController@removeCcdProblem');
+                });
+                
+                Route::group([
+                    'prefix' => 'allergies'
+                ], function () {
+                    Route::get('', 'PatientController@getCcdAllergies');
+                    Route::post('', 'PatientController@addCcdAllergies');
+                    Route::delete('{allergyId}', 'PatientController@deleteCcdAllergy');
+                });
+                
+                Route::group([
+                    'prefix' => 'symptoms'
+                ], function () {
+                    Route::get('', 'PatientController@getSymptoms');
+                    Route::post('', 'PatientController@addSymptom');
+                    Route::delete('{symptomId}', 'PatientController@removeSymptom');
+                });
+                
+                Route::group([
+                    'prefix' => 'medication'
+                ], function () {
+                    Route::get('', 'PatientController@getMedication');
+                    Route::post('', 'PatientController@addMedication');
+                    Route::put('{id}', 'PatientController@editMedication');
+                    Route::delete('{medicationId}', 'PatientController@removeMedication');
+                    Route::get('groups', 'PatientController@getMedicationGroups');
+                });
+                
+                Route::group([
+                    'prefix' => 'appointments'
+                ], function () {
+                    Route::get('', 'PatientController@getAppointments');
+                    Route::post('', 'PatientController@addAppointment');
+                    Route::delete('{id}', 'PatientController@removeAppointment');
+                });
+            });
+            
             Route::get('{userId}/lifestyles', 'PatientController@getLifestyles');
             Route::post('{userId}/lifestyles', 'PatientController@addLifestyle');
             Route::delete('{userId}/lifestyles/{lifestyleId}', 'PatientController@removeLifestyle');
