@@ -14,22 +14,30 @@
             </div>
         </slot>
         <div class="row gutter" v-if="appointments.length > 0">
-            <div class="col-xs-12">
+            <div class="col-xs-12" v-if="futureAppointments.length > 0">
                 <h3>Future</h3>
                 <ul v-if="appointments.length">
                     <li class="top-20" v-for="(appointment, index) in futureAppointments" :key="index">
-                        <p>- {{appointment.type}}, <strong>{{appointment.provider().specialty}}</strong> on {{appointment.date}} at {{appointment.type}} with 
-                            {{appointment.provider().display_name}}; A: {{appointment.provider().location.name}} P: {{appointment.provider().location.phone}}
+                        <p>- {{appointment.type}}<span v-if="appointment.provider().specialty">,</span> <strong v-if="appointment.provider().specialty">({{appointment.provider().specialty}})</strong> on {{appointment.datetime}}
+                            <span v-if="appointment.provider().user.display_name">with <strong>{{appointment.provider().user.display_name}};</strong> </span>
+                                <span v-if="appointment.provider().user.address">A: {{appointment.provider().user.address}}</span> 
+                                <span v-if="appointment.provider().location().phone">P: {{appointment.provider().location().phone}}</span>
+                            
                         </p>
                     </li>
                 </ul>
             </div>
-            <div class="col-xs-12">
+            <div class="col-xs-12" v-if="pastAppointments.length > 0">
                 <h3>Past</h3>
                 <ul v-if="appointments.length">
-                    <p>- {{appointment.type}}, <strong>{{appointment.provider().specialty}}</strong> on {{appointment.date}} at {{appointment.type}} with 
-                        {{appointment.provider().display_name}}; A: {{appointment.provider().location.name}} P: {{appointment.provider().location.phone}}
-                    </p>
+                    <li class="top-20" v-for="(appointment, index) in pastAppointments" :key="index">
+                         <p>- {{appointment.type}}<span v-if="appointment.provider().specialty">,</span> <strong v-if="appointment.provider().specialty">({{appointment.provider().specialty}})</strong> on {{appointment.datetime}}
+                            <span v-if="appointment.provider().user.display_name">with <strong>{{appointment.provider().user.display_name}};</strong> </span>
+                                <span v-if="appointment.provider().user.address">A: {{appointment.provider().user.address}}</span> 
+                                <span v-if="appointment.provider().location().phone">P: {{appointment.provider().location().phone}}</span>
+                            
+                        </p>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -40,10 +48,12 @@
 <script>
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
-    //import AppointmentsModal from './modals/appointments.modal'
+    import moment from 'moment'
+    import VueCache from '../../util/vue-cache'
 
     export default {
         name: 'appointments',
+        mixins: [VueCache],
         props: [
             'patient-id',
             'url'
@@ -53,8 +63,7 @@
         },
         data() {
             return {
-                 appointments: [],
-                 groups: []
+                 appointments: []
             }
         },
         computed: {
@@ -67,9 +76,21 @@
         },
         methods: {
             setupAppointment(appointment) {
+                const dt = moment(new Date(appointment.date + ' ' + appointment.time))
                 appointment.at = new Date(appointment.date + ' ' + appointment.time)
+                appointment.datetime = dt.format('YYYY-MM-DD') + ' at ' + dt.format('h:mm A')
                 appointment.created_at = new Date(appointment.created_at)
                 appointment.updated_at = new Date(appointment.updated_at)
+                appointment.provider = () => ({ user: {}, location: () => ({}) })
+
+                /** A product of the VueCache mixin */
+                this.cache().get(rootUrl(`api/providers/${appointment.provider_id}`)).then(provider => {
+                    if (provider) {
+                        provider.location = () => ((provider.user || {}).locations || [])[0] || {}
+                        appointment.provider = () => provider
+                    }
+                })
+
                 return appointment
             },
             getAppointments(page) {

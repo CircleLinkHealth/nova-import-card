@@ -25,7 +25,7 @@ class ProviderInfoRepository
     }
 
     public function provider($id) {
-        $provider = $this->model()->findOrFail($id);
+        $provider = $this->model()->where([ 'user_id' => $id ])->firstOrFail();
         $providerUser = $provider->user()->first();
         $provider['user'] = [
             'id' => $providerUser->id,
