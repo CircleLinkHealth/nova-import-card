@@ -120,7 +120,7 @@
                                         {
                                             id: "link",
                                             header: ["Link to Letter"],
-                                            template: "<a href='{!! $url !!}#id#' target='_blank'>View Letter</a>",
+                                            template: "<a href='{!! $url !!}#id#&view' target='_blank'>View Letter</a>",
                                             width: 200,
                                         },
                                         {

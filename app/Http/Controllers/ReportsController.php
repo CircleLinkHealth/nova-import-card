@@ -1125,9 +1125,11 @@ class ReportsController extends Controller
             throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
         }
 
+        $viewOnly = $request->has('view');
+
         $userIdsToPrint = explode(',', $request['patientUserIds']);
 
-        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint);
+        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint, $viewOnly);
 
         return response()->file($fullPathToFile);
     }
