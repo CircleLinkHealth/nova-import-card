@@ -122,6 +122,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'MiscController');
         });
         
+        Route::group(['prefix' => 'appointments'], function () {
+            Route::resource('', 'API\AppointmentController');
+        });
+        
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
             Route::resource('', 'MedicationController');
