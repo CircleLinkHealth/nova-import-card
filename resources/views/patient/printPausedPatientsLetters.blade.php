@@ -119,8 +119,8 @@
                                         },
                                         {
                                             id: "link",
-                                            header: ["Link to Letter"],
-                                            template: "<a href='{!! $url !!}#id#&view' target='_blank'>View Letter</a>",
+                                            header: ["Link to Preview Letter"],
+                                            template: "<a href='{!! $url !!}#id#&view' target='_blank'>Preview Letter</a>",
                                             width: 200,
                                         },
                                         {
