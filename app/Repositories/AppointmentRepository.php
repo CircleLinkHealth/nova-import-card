@@ -32,4 +32,20 @@ class AppointmentRepository
     public function patientAppointments($userId) {
         return $this->model()->where([ 'patient_id' => $userId ])->orderBy('id', 'desc')->paginate();
     }
+
+    public function create(Appointment $appointment) {
+        $appointment->save();
+        return $appointment;
+    }
+
+    public function belongsToUser($id, $userId) {
+        return !!$this->model()->where([ 'id' => $id, 'patient_id' => $userId ])->first();
+    }
+
+    public function remove($id) {
+        $this->model()->where([ 'id' => $id ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
 }

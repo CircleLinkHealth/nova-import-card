@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\AppConfig;
 use App\User;
 use App\Patient;
+use App\Appointment;
 use App\Services\NoteService;
 use App\Services\PatientService;
 use App\Services\AppointmentService;
@@ -339,8 +340,17 @@ class PatientController extends Controller
         else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
     }
 
-    public function addAppointment($userId, \App\Appointment $appointment) {
-        return response()->json($appointment);
+    public function addAppointment($userId, Request $request) {
+        $appointment = new Appointment();
+        $appointment->comment = $request->input('comment');
+        $appointment->patient_id = $userId;
+        $appointment->author_id = auth()->user()->id;
+        $appointment->type = $request->input('type');
+        $appointment->provider_id = $request->input('provider_id');
+        if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
+            return response()->json($this->appointmentService->repo()->create($appointment));
+        }
+        else return $this->badRequest('"userId", "author_id", "type", "comment" and "provider_id" are is important');
     }
 
     public function getAppointments($userId) {
@@ -348,6 +358,6 @@ class PatientController extends Controller
     }
 
     public function removeAppointment($userId, $id) {
-
+        return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
     }
 }
