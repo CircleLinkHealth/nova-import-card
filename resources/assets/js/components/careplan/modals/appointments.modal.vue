@@ -27,14 +27,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12" :class="{ 'appointment-container': pagination.pages().length > 20 }">
-                    <div class="btn-group" :class="{ 'appointment-buttons': pagination.pages() > 20 }" role="group" aria-label="Appointments">
-                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }" 
-                                v-for="(page, index) in pagination.pages()" :key="index" @click="pagination.select(index)">
-                            {{page}}
-                        </button>
-                    </div>
-                </div>
                 <div class="col-sm-12" v-if="futureAppointments.length > 0">
                     <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="index">
@@ -54,6 +46,14 @@
                             <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeAppointment(index)" />
                         </li>
                     </ol>
+                </div>
+                <div class="col-sm-12" :class="{ 'appointment-container': pagination.pages().length > 20 }">
+                    <div class="btn-group" :class="{ 'appointment-buttons': pagination.pages() > 20 }" role="group" aria-label="Appointments">
+                        <button class="btn btn-secondary appointment-button" :class="{ selected: pagination.selected(index) }" 
+                                v-for="(page, index) in pagination.pages()" :key="index" @click="pagination.select(index)">
+                            {{page}}
+                        </button>
+                    </div>
                 </div>
             </div>
         </template>
