@@ -14,16 +14,22 @@
                             </h4>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <v-select class="form-control" v-model="newAppointment.provider" :options="providers"></v-select>
+                            <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
                         </div>
                         <div class="col-sm-6 col-md-3">
-                            <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" />
+                            <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" required />
                         </div>
                         <div class="col-sm-6 col-md-4">
-                            <input type="time" class="form-control" v-model="newAppointment.time" />
+                            <input type="time" class="form-control" v-model="newAppointment.time" required />
                         </div>
                         <div class="col-sm-6 col-md-1 text-right">
                             <input type="button" class="btn btn-secondary selected" value="Add" />
+                        </div>
+                        <div class="col-sm-4 text-right">
+                            <input type="text" class="form-control" v-model="newAppointment.type" placeholder="Reason" required />
+                        </div>
+                        <div class="col-sm-7 text-right">
+                            <textarea class="form-control" v-model="newAppointment.comment" placeholder="Comment" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -95,7 +101,9 @@
                 newAppointment: {
                     provider: null,
                     date: moment(new Date()).format('YYYY-MM-DD'),
-                    time: moment(new Date()).format('HH:mm:ss')
+                    time: moment(new Date()).format('HH:mm:ss'),
+                    type: null,
+                    comment: null
                 },
                 selectedAppointment: null,
                 loaders: {
@@ -103,7 +111,7 @@
                     removeAppointment: null,
                     getProviders: null
                 },
-                providers: [],
+                providers: [{ label: 'Select a Provider', value: null }],
                 pagination: {
                     index: 1,
                     limit: 5,
@@ -131,8 +139,9 @@
             },
             getProviders() {
                 this.loaders.getProviders = true
+                this.newAppointment.provider = this.providers[0]
                 this.axios.get(rootUrl(`api/providers/list`)).then(response => {
-                    this.providers = response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1)
+                    this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1))
                     console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {
