@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasSettings;
 use Carbon\Carbon;
@@ -280,6 +281,15 @@ class Practice extends \App\BaseModel
     }
 
     public function getInvoiceRecipientsArray() {
-        return array_map('trim', explode(',', $this->invoice_recipients));
+        return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
+    }
+
+    /**
+     * Get phone number in this format xxx-xxx-xxxx
+     *
+     * @return string
+     */
+    public function getNumberWithDashesAttribute() {
+        return (new StringManipulation())->formatPhoneNumber($this->outgoing_phone_number);
     }
 }

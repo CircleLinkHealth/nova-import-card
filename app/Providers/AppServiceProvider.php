@@ -1,5 +1,6 @@
 <?php namespace App\Providers;
 
+use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -21,6 +22,7 @@ use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
 use App\Services\NoteService;
+use App\Services\SnappyPdfWrapper;
 use App\Services\UserService;
 use App\Services\PatientService;
 use App\Services\CareplanService;
@@ -63,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
+        $this->app->bind(HtmlToPdfService::class, function() {
+            return $this->app->make(SnappyPdfWrapper::class);
+        });
 
         if ($this->app->environment('local', 'testing', 'staging')) {
             $this->app->register(DuskServiceProvider::class);

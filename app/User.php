@@ -700,96 +700,27 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return Practice::find($this->primaryProgramId())->display_name;
     }
 
-    public function getUserConfigByKey($key)
-    {
-        $userConfig = $this->userConfig();
-
-        return (isset($userConfig[$key]))
-            ? $userConfig[$key]
-            : '';
-    }
-
-    public function setUserAttributeByKey(
-        $key,
-        $value
-    ) {
-        $func      = create_function('$c', 'return strtoupper($c[1]);');
-        $attribute = preg_replace_callback('/_([a-z])/', $func, $key);
-
-        // these are now on User model, no longer remote attributes:
-        if ($key === 'firstName' || $key == 'lastName') {
-            return true;
-        }
-
-        // hack overrides and depreciated keys, @todo fix these
-        if ($attribute == 'careplanProviderDate') {
-            $attribute = 'careplanProviderApproverDate';
-        } else {
-            if ($attribute == 'mrnNumber') {
-                $attribute = 'mrn';
-            } else {
-                if ($attribute == 'studyPhoneNumber') {
-                    $attribute = 'phone';
-                } else {
-                    if ($attribute == 'billingProvider') {
-                        $attribute = 'billingProviderID';
-                    } else {
-                        if ($attribute == 'leadContact') {
-                            $attribute = 'leadContactID';
-                        } else {
-                            if ($attribute == 'programId') {
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // serialize any arrays
-        if (is_array($value)) {
-            $value = serialize($value);
-        }
-
-        // get before for debug
-        $before = $this->$attribute;
-        if (is_array($before)) {
-            $before = serialize($before);
-        }
-
-        // call save attribute
-        $this->$attribute = $value;
-        $this->save();
-
-        // get after for debug
-        $after = $this->$attribute;
-        if (is_array($after)) {
-            $after = serialize($after);
-        }
-
-        return true;
-    }
-
     public function setFirstNameAttribute($value)
     {
         $this->attributes['first_name'] = ucwords($value);
         $this->display_name             = $this->fullName;
-
-        return true;
     }
 
     public function setLastNameAttribute($value)
     {
         $this->attributes['last_name'] = $value;
         $this->display_name            = $this->fullName;
+    }
 
-        return true;
+    public function getLastNameAttribute($value)
+    {
+        return ucfirst(strtolower($value));
     }
 
     public function getFullNameAttribute()
     {
-        $firstName = ucwords($this->first_name);
-        $lastName  = ucwords($this->last_name);
+        $firstName = ucwords(strtolower($this->first_name));
+        $lastName  = ucwords(strtolower($this->last_name));
 
         return "$firstName $lastName {$this->suffix}";
     }
@@ -1017,7 +948,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         }
         $phoneNumber = $this->phoneNumbers->where('is_primary', 1)->first();
         if ($phoneNumber) {
-            return $phoneNumber->number;
+            return $phoneNumber->number_with_dashes;
         } else {
             return '';
         }

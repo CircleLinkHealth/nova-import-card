@@ -181,4 +181,17 @@ class CarePlan extends \App\BaseModel implements PdfReport
     {
         return $this->morphMany(Pdf::class, 'pdfable');
     }
+
+    /**
+     * Get the name of the provider who approved this care plan
+     *
+     * @return string
+     */
+    public function getProviderApproverNameAttribute() {
+        $approver = $this->providerApproverUser;
+
+        return $approver
+            ? $approver->fullName
+            : '';
+    }
 }
