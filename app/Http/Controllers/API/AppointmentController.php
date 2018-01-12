@@ -19,4 +19,8 @@ class AppointmentController extends ApiController
     public function index() {
         return response()->json($this->appointmentService->appointments());
     }
+
+    public function show($id) {
+        return response()->json($this->appointmentService->repo()->appointment($id));
+    }
 }

@@ -24,4 +24,8 @@ class AppointmentRepository
     public function appointments() {
         return $this->model()->paginate();
     }
+
+    public function appointment($id) {
+        return $this->model()->findOrFail($id);
+    }
 }

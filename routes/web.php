@@ -123,6 +123,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
         
         Route::group(['prefix' => 'appointments'], function () {
+            Route::get('{id}', 'API\AppointmentController@show');
             Route::resource('', 'API\AppointmentController');
         });
         
