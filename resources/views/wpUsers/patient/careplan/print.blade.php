@@ -325,7 +325,7 @@ if (isset($patient) && ! empty($patient)) {
 
                 <!-- Appointments -->
                 @if(isset($appointments['upcoming'] ) || isset($appointments['past'] ))
-
+                    <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}"></appointments>
                     <div class="patient-info__subareas">
                         <div class="row">
                             <div class="col-xs-12">
