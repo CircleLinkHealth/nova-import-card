@@ -1114,9 +1114,9 @@ class ReportsController extends Controller
             $patients = $pausedPatients->toJson();
         }
 
-        return view('patient.printPausedPatientsLetters', [
-            'patients' => $patients,
-        ]);
+        $url = route('get.paused.letters.file') . '?patientUserIds=';
+
+        return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
     }
 
     public function getPausedLettersFile(Request $request)
