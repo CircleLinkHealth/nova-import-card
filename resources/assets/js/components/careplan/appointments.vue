@@ -15,7 +15,7 @@
         </slot>
         <div class="row gutter" v-if="appointments.length > 0">
             <div class="col-xs-12" v-if="futureAppointments.length > 0">
-                <h3>Future</h3>
+                <h3>Upcoming</h3>
                 <ul v-if="appointments.length">
                     <li class="top-20" v-for="(appointment, index) in futureAppointments" :key="index">
                         <p>- {{appointment.type}}<span v-if="appointment.provider().specialty">,</span> <strong v-if="appointment.provider().specialty">({{appointment.provider().specialty}})</strong> on {{appointment.datetime}}
