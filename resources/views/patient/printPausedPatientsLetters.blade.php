@@ -119,7 +119,7 @@
                                         },
                                         {
                                             id: "link",
-                                            header: ["Link to CarePlan"],
+                                            header: ["Link to Letter"],
                                             template: "<a href='{!! $url !!}#id#' target='_blank'>View Letter</a>",
                                             width: 200,
                                         },
