@@ -20,6 +20,19 @@ class ProviderInfoRepository
         return !!$this->model()->find($id);
     }
 
+    public function list() {
+        $providers = $this->model()->orderBy('id', 'desc')->with([ 'user' ])->get()->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'user_id' => $p->user_id,
+                'specialty' => $p->specialty,
+                'name' => optional($p->user)->display_name,
+                'address' => optional($p->user)->address
+            ];
+        });
+        return $providers;
+    }
+
     public function providers() {
         $providers = $this->model()->orderBy('id', 'desc')->paginate();
         $providers->getCollection()->transform(function ($p) {

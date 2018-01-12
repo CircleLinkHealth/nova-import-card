@@ -128,6 +128,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
         
         Route::group(['prefix' => 'providers'], function () {
+            Route::get('list', 'ProviderController@list');
             Route::get('{id}', 'ProviderController@show');
             Route::resource('', 'ProviderController');
         });

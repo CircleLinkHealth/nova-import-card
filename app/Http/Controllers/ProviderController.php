@@ -18,6 +18,10 @@ class ProviderController extends Controller
     public function index() {
         return $this->providerInfoService->providers();
     }
+
+    public function list() {
+        return $this->providerInfoService->repo()->list();
+    }
     
     public function show($id) {
         return $this->providerInfoService->repo()->provider($id);
