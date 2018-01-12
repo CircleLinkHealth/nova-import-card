@@ -44,8 +44,8 @@ class PrintPausedPatientLettersService
                     'first_name'   => $patient->first_name,
                     'last_name'    => $patient->last_name,
                     'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
-                    'reg_date'     => Carbon::parse($patient->registration_date)->format('m/d/Y'),
-                    'paused_date'  => $patient->date_paused->format('m/d/Y'),
+                    'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
+                    'paused_date'  => optional($patient->date_paused)->format('m/d/Y'),
                     'provider'     => $patient->billingProviderName,
                     'program_name' => $patient->primaryPracticeName,
                 ];
