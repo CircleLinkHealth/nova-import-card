@@ -66,7 +66,7 @@ class PrintPausedPatientLettersService
                     'lang' => $lang
                 ]);
 
-                $pathToFlyer = storage_path("flyers/pdfs/paused/$lang.pdf");
+                $pathToFlyer = public_path("assets/pdf/flyers/paused/$lang.pdf");
 
                 $fullPathToPdf = $this->pdfService->mergeFiles([$fullPathToLetter, $pathToFlyer]);
 
