@@ -27,7 +27,7 @@ The most frequently used `Roles` of the application are:
 
 - `App\User` hasOne `App\Patient`
     
-    Patients don't have login access to CPM, but they are the application's main concert.  
+    Patients don't have login access to CPM, but they are the application's main concern.  
     
     A patient will have `practice_role_user:role_id = 2`, which is the id of role `participant`, which is used for patients. The `User` will also have one `Patient` model, which is responsible for domain logic that concerns patients only. Common functionality should go on the user model.
 

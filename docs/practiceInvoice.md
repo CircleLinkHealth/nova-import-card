@@ -47,6 +47,7 @@ This method is called when a POST request from `cpm-web/resources/views/billing/
 
 
 ###PracticeInvoiceGenerator
+Takes an instance of the model Practice which is assigned to the property `practice`, and a Carbon item for `month`.
 
 #####generatePdf()
 
@@ -55,3 +56,8 @@ This method is called when a POST request from `cpm-web/resources/views/billing/
 #####makePatientReportPdf()
 
 #####getInvoiceData()
+
+Counts all the instances of the User model with role `'participant'`, which also have a relationship with the `PatientMonthlySummary` class in which `'month_year'` matches the $month attribute,
+`'ccm_time'` is `>=` than 1200 and `'approved'` equals `true`, and stores them as $billable.
+ 
+ It then uses this value as well as the data contained in the $practice attribute to return an array of values[used where].
