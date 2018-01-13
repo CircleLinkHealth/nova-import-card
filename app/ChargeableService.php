@@ -10,7 +10,7 @@ class ChargeableService extends Model
     protected $fillable = [
         'code',
         'description',
-        'charge'
+        'amount'
     ];
 
     public function practices(){

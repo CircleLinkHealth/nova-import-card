@@ -9,7 +9,7 @@
 ## User Roles
 There are a few different kinds of users that consume, and/or are consumed by the application. **All types of users have a `User` model, which functions as the base**. `Users can have many Roles for many Practices`. These are stored on table `practice_role_user`, by saving a `user_id`, `practice_id`, `role_id`. Depending on the `User`'s `Role`, the `User` may also have additional relationships with other Models (eg. User->Patient, User->Nurse, User->ProviderInfo). The idea here is to isolate role specific functionality to separate models. 
 
-The most frequently used `Roles` of the application are 
+The most frequently used `Roles` of the application are:
     
     - Administrator => Only people who work for CLH. This role can see and do all.
     - Provider => Someone who is licensed to offer care (eg. A `Medical Doctor`). These are the Doctors that work at the Practices who utilize our service.

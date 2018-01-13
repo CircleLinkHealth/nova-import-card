@@ -3,6 +3,25 @@
 ## Tips:
 - To make the creation of pdf and excel sheets possible(ghostscript), the files: `wkhtmltopdf` and `wkhtmltopdf-amd64` must be placed in the folder `cpm-web[project directory]/vendor/h4cc/wkhtmltopdf-amd64/bin`, and then run `brew install ghostscript`.
 
+##ChargeableService Model
+Represents the services that practices and/or providers are charged.
+Its properties are: `code` (e.g. CPT99490), `description` and `amount` (currency).
+
+ChargeableService shares a **Many to Many Polymorhpic Relationship** to the `Practice` and `User`(Provider) models:
+
+    - practices()->morphedByMany(Practice::class, 'chargeable')
+    - providers()->morphedByMany(User::class, 'chargeable')
+    
+Similarly, the inverse of the relationship:
+
+    - App\User->chargeableServices()->morphToMany(ChargeableService::class, 'chargeable')
+    - App\Practice->chargeableServices()->morphToMany(ChargeableService::class, 'chargeable')
+    
+Intermediate table: `chargeables`. 
+
+A ChargeableService can be charged to either a Practice or a Provider, or both.
+         
+
 
 ## PracticeInvoiceController
 
