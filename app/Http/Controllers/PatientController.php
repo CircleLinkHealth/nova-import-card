@@ -347,6 +347,8 @@ class PatientController extends Controller
         $appointment->author_id = auth()->user()->id;
         $appointment->type = $request->input('type');
         $appointment->provider_id = $request->input('provider_id');
+        $appointment->date = $request->input('date');
+        $appointment->time = $request->input('time');
         if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }

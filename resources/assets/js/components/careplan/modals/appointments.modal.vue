@@ -6,36 +6,39 @@
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12" v-if="!pagination.index">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h4>
-                                Create Appointment
-                                <loader v-if="loaders.getProviders"></loader>
-                            </h4>
+                    <form @submit="addAppointment">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4>
+                                    Create Appointment
+                                    <loader v-if="loaders.getProviders"></loader>
+                                </h4>
+                            </div>
+                            <div class="col-sm-12 top-20">
+                                <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
+                            </div>
+                            <div class="col-sm-4 top-20">
+                                <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" required />
+                            </div>
+                            <div class="col-sm-4 top-20">
+                                <input type="time" class="form-control" v-model="newAppointment.time" required />
+                            </div>
+                            <div class="col-sm-4 top-20">
+                                <input type="text" class="form-control" v-model="newAppointment.type" placeholder="Reason" required />
+                            </div>
+                            <div class="col-sm-12 top-20">
+                                <textarea class="form-control" v-model="newAppointment.comment" placeholder="Comment" required></textarea>
+                            </div>
+                            <div class="col-sm-12 top-20 text-right">
+                                <loader v-if="loaders.addAppointment"></loader>
+                                <button class="btn btn-secondary selected">Add</button>
+                            </div>
                         </div>
-                        <div class="col-sm-12 top-20">
-                            <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
-                        </div>
-                        <div class="col-sm-4 top-20">
-                            <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" required />
-                        </div>
-                        <div class="col-sm-4 top-20">
-                            <input type="time" class="form-control" v-model="newAppointment.time" required />
-                        </div>
-                        <div class="col-sm-4 top-20">
-                            <input type="text" class="form-control" v-model="newAppointment.type" placeholder="Reason" required />
-                        </div>
-                        <div class="col-sm-12 top-20">
-                            <textarea class="form-control" v-model="newAppointment.comment" placeholder="Comment" required></textarea>
-                        </div>
-                        <div class="col-sm-12 top-20 text-right">
-                            <input type="button" class="btn btn-secondary selected" value="Add" />
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="col-sm-12" v-if="pagination.index && futureAppointments.length > 0">
                     <h4>Upcoming Appointments</h4>
-                    <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="index">
+                    <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
                         :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
@@ -45,7 +48,7 @@
                 </div>
                 <div class="col-sm-12" v-if="pagination.index && pastAppointments.length > 0">
                     <h4>Past Appointments</h4>
-                    <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="index">
+                    <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="appointment.id">
                         <li class="list-group-item pointer" @click="select(appointment)"
                         :class="{ selected: selectedAppointment && selectedAppointment.id === appointment.id, disabled: (selectedAppointment && selectedAppointment.id === appointment.id)  && loaders.removeAppointment }">
                             <appointment :appointment="appointment"></appointment>
@@ -102,7 +105,7 @@
                 newAppointment: {
                     provider: null,
                     date: moment(new Date()).format('YYYY-MM-DD'),
-                    time: moment(new Date()).format('HH:mm:ss'),
+                    time: '09:00:00',
                     type: null,
                     comment: null
                 },
@@ -129,11 +132,31 @@
             }
         },
         methods: {
+            reset() {
+                this.newAppointment = {
+                    provider: null,
+                    date: moment(new Date()).format('YYYY-MM-DD'),
+                    time: '09:00:00',
+                    type: null,
+                    comment: null
+                }
+            },
             removeAppointment(index) {
 
             },
             addAppointment(e) {
-
+                e.preventDefault()
+                this.loaders.addAppointment = true
+                this.newAppointment.provider_id = this.newAppointment.provider.value
+                this.axios.post(rootUrl(`api/patients/${this.patientId}/appointments`), this.newAppointment).then(response => {
+                    console.log('appointments-modal:add', response.data)
+                    Event.$emit('appointments:add', response.data)
+                    this.loaders.addAppointment = false
+                    this.reset()
+                }).catch(err => {
+                    console.error('appointments-modal:add', err)
+                    this.loaders.addAppointment = false
+                })
             },
             select(appointment) {
                 this.selectedAppointment = appointment
@@ -142,7 +165,7 @@
                 this.loaders.getProviders = true
                 this.newAppointment.provider = this.providers[0]
                 this.axios.get(rootUrl(`api/providers/list`)).then(response => {
-                    this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1))
+                    this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.user_id })).sort((a, b) => a.label > b.label ? 1 : -1))
                     console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {
