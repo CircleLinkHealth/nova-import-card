@@ -47,7 +47,7 @@ This method is called when a POST request from `cpm-web/resources/views/billing/
 
 
 ###PracticeInvoiceGenerator
-Takes an instance of the model Practice which is assigned to the property `practice`, and a Carbon item for `month`.
+Takes an instance of the model Practice which is assigned to the attribute `$practice`, and a Carbon item for `$month`.
 
 #####generatePdf()
 
