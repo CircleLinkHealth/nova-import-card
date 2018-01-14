@@ -1,0 +1,97 @@
+<template>
+    <div class="patient-info__subareas">
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
+                    Other Notes
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
+                </h2>
+            </div>
+        </div>
+        <slot v-if="!other || other.instructions.length === 0">
+            <div class="col-xs-12 text-center">
+                No Instructions at this time
+            </div>
+        </slot>
+        <div class="row gutter">
+            <div class="col-xs-12">
+                <ul v-if="other && other.instructions.length > 0">
+                    <li v-for="(instruction, index) in other.instructions" :key="index" v-if="instruction.name">
+                        <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import { rootUrl } from '../../app.config'
+    import { Event } from 'vue-tables-2'
+    import MiscModal from './modals/misc.modal'
+
+    const MISC_ID = 7
+
+    export default {
+        name: 'others',
+        props: [
+            'patient-id',
+            'url'
+        ],
+        components: {
+            'misc-modal': MiscModal
+        },
+        data() {
+            return {
+                 other: {
+                     instructions: []
+                 }
+            }
+        },
+        methods: {
+            setupOther(other) {
+                if (other) {
+                    other.instructions = other.instructions || []
+                }
+                return other
+            },
+            getOther() {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc/${MISC_ID}`)).then(response => {
+                    console.log('others:get-other', response.data)
+                    this.other = this.setupOther(response.data)
+                    if (this.other) Event.$emit('misc:select', this.other)
+                }).catch(err => {
+                    console.error('others:get-other', err)
+                })
+            },
+            showModal() {
+                Event.$emit('modal-misc:show')
+            }
+        },
+        mounted() {
+            this.getOther()
+
+            Event.$on('misc:change', (misc) => {
+                if (misc && misc.id === ((this.other || {}).id || MISC_ID)) {
+                    this.other = misc
+                }
+            })
+
+            Event.$on('misc:remove', (id) => {
+                if (id && id === ((this.other || {}).id || MISC_ID)) {
+                    this.other = null
+                }
+            })
+        }
+    }
+</script>
+
+<style>
+    li.list-square {
+        list-style-type: square;
+    }
+
+    .font-18 {
+        font-size: 18px;
+    }
+</style>

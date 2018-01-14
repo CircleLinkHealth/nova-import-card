@@ -1114,9 +1114,9 @@ class ReportsController extends Controller
             $patients = $pausedPatients->toJson();
         }
 
-        return view('patient.printPausedPatientsLetters', [
-            'patients' => $patients,
-        ]);
+        $url = route('get.paused.letters.file') . '?patientUserIds=';
+
+        return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
     }
 
     public function getPausedLettersFile(Request $request)
@@ -1125,9 +1125,11 @@ class ReportsController extends Controller
             throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
         }
 
+        $viewOnly = $request->has('view');
+
         $userIdsToPrint = explode(',', $request['patientUserIds']);
 
-        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint);
+        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint, $viewOnly);
 
         return response()->file($fullPathToFile);
     }

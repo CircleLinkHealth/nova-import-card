@@ -299,21 +299,14 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /ALLERGIES -->
 
                 <!-- SOCIALSERVICES -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Social
-                                Services:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($social)
-                                <p><?= nl2br($social) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <social-services ref="socialServicesComponent" patient-id="{{$patient->id}}">
+                    @if($social)
+                        <p><?= nl2br($social) ?></p>
+                    @else
+                        <p>No instructions at this time</p>
+                    @endif
+                </social-services>
+                <misc-modal ref="miscModal" :patient-id="{{$patient->id}}"></misc-modal>
                 <!-- /SOCIAL AND OTHER SERVICES -->
 
                 <!-- CARE TEAM -->
@@ -332,71 +325,53 @@ if (isset($patient) && ! empty($patient)) {
 
                 <!-- Appointments -->
                 @if(isset($appointments['upcoming'] ) || isset($appointments['past'] ))
+                    <appointments ref="appointmentsComponent" patient-id="{{$patient->id}}">
+                        @if(isset($appointments['upcoming'] ))
+                            <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                Upcoming: </h3>
+                            <ul style="line-height: 30px">
+                                @foreach($appointments['upcoming'] as $upcoming)
+                                    <li style="list-style: dash">
 
-                    <div class="patient-info__subareas">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                                    Appointments</h2>
-                            </div>
-                            <div class="col-xs-12">
+                                        - {{$upcoming['type']}}
+                                        <strong>{{$upcoming['specialty']}} </strong>
+                                        on {{$upcoming['date']}}
+                                        at {{$upcoming['time']}} with
+                                        <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
 
-                                @if(isset($appointments['upcoming'] ))
-                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
-                                        Upcoming: </h3>
-                                    <ul style="line-height: 30px">
-                                        @foreach($appointments['upcoming'] as $upcoming)
-                                            <li style="list-style: dash">
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                        @if(isset($appointments['past'] ))
+                            <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                Past:</h3>
+                            <ul style="line-height: 30px">
+                                @foreach($appointments['past'] as $past)
+                                    <li style="list-style: dash">
 
-                                                - {{$upcoming['type']}}
-                                                <strong>{{$upcoming['specialty']}} </strong>
-                                                on {{$upcoming['date']}}
-                                                at {{$upcoming['time']}} with
-                                                <strong>{{$upcoming['name']}}</strong>; {{$upcoming['address']}} {{$upcoming['phone']}}
+                                        - {{$past['type']}}
+                                        <strong>{{$past['specialty']}} </strong>
+                                        on {{$past['date']}}
+                                        at {{$past['time']}} with
+                                        <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
 
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                                @if(isset($appointments['past'] ))
-                                    <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
-                                        Past:</h3>
-                                    <ul style="line-height: 30px">
-                                        @foreach($appointments['past'] as $past)
-                                            <li style="list-style: dash">
-
-                                                - {{$past['type']}}
-                                                <strong>{{$past['specialty']}} </strong>
-                                                on {{$past['date']}}
-                                                at {{$past['time']}} with
-                                                <strong>{{$past['name']}}</strong>; {{$past['address']}} {{$past['phone']}}
-
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-            @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </appointments>
+                @endif
             <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
-                <div class="patient-info__subareas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Other
-                                Notes:</h2>
-                        </div>
-                        <div class="col-xs-12">
-                            @if($other)
-                                <p><?= nl2br($other) ?></p>
-                            @else
-                                <p>No instructions at this time</p>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                <others ref="othersComponent" patient-id="{{$patient->id}}">
+                    @if($other)
+                        <p><?= nl2br($other) ?></p>
+                    @else
+                        <p>No instructions at this time</p>
+                    @endif
+                </others>
                 <!-- /OTHER NOTES -->
                 <!-- /OTHER INFORMATION -->
             </section>

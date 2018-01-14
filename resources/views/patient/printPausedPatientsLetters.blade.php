@@ -102,7 +102,7 @@
                                         {
                                             id: "first_name",
                                             header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                                            template: "#first_name# #last_name#",
+                                            template: "<a href='#link#' target='_blank'>#first_name# #last_name#</a>",
                                             width: 200,
                                             sort: 'string',
                                             adjust: true,
@@ -111,7 +111,7 @@
                                         {
                                             id: "last_name",
                                             header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                                            template: "#last_name#, #first_name#",
+                                            template: "<a href='#link#' target='_blank'>#last_name#, #first_name#</a>",
                                             width: 200,
                                             sort: 'string',
                                             adjust: true,
@@ -119,8 +119,8 @@
                                         },
                                         {
                                             id: "link",
-                                            header: ["Link to CarePlan"],
-                                            template: "<a href='#link#' target='_blank'>View Careplan</a>",
+                                            header: ["Link to Preview Letter"],
+                                            template: "<a href='{!! $url !!}#id#&view' target='_blank'>Preview Letter</a>",
                                             width: 200,
                                         },
                                         {
@@ -159,7 +159,7 @@
                                     on: {
                                         onSelectChange: function () {
                                             var text = paused_patients_letters_table.getSelectedId(true).join();
-                                            var textmsg = "<a href='{!! route('get.paused.letters.file')!!}?patientUserIds=" + text + "' class='btn btn-primary'>Print Selected</a>";
+                                            var textmsg = "<a href='{!! $url !!}" + text + "' class='btn btn-primary'>Print Selected</a>";
                                             document.getElementById('print_selected_btn_container').innerHTML = textmsg;
                                         }
                                     },

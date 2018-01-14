@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\AppConfig;
 use App\User;
 use App\Patient;
+use App\Appointment;
 use App\Services\NoteService;
 use App\Services\PatientService;
+use App\Services\AppointmentService;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
 use App\Services\CPM\CpmProblemUserService;
@@ -27,6 +29,7 @@ use Illuminate\Http\Request;
 class PatientController extends Controller
 {
     private $patientService;
+    private $appointmentService;
     private $allergyService;
     private $ccdProblemService;
     private $cpmProblemUserService;
@@ -43,6 +46,7 @@ class PatientController extends Controller
      *
      */
     public function __construct(PatientService $patientService, 
+                                AppointmentService $appointmentService,
                                 CcdAllergyService $allergyService,
                                 CcdProblemService $ccdProblemService,
                                 CpmProblemUserService $cpmProblemUserService, 
@@ -55,6 +59,7 @@ class PatientController extends Controller
                                 NoteService $noteService)
     {   
         $this->patientService = $patientService;
+        $this->appointmentService = $appointmentService;
         $this->allergyService = $allergyService;
         $this->ccdProblemService = $ccdProblemService;
         $this->cpmProblemUserService = $cpmProblemUserService;
@@ -283,19 +288,26 @@ class PatientController extends Controller
         else return $this->badRequest('"miscId" and "userId" are important');
     }
     
-    public function editMisc($userId, $miscId, Request $request) {
-        $instructionId = $request->input('instructionId');
-        if ($userId && $miscId && $instructionId) {
-            return $this->miscService->editPatientMisc($miscId, $userId);
-        }
-        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
-    }
-    
     public function removeMisc($userId, $miscId) {
         if ($userId && $miscId) {
             return $this->miscService->removeMiscFromPatient($miscId, $userId);
         }
         else return $this->badRequest('"miscId" and "userId" are important');
+    }
+    
+    public function addInstructionToMisc($userId, $miscId, Request $request) {
+        $instructionId = $request->input('instructionId');
+        if ($userId && $miscId && $instructionId) {
+            return $this->miscService->editPatientMisc($miscId, $userId, $instructionId);
+        }
+        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
+    }
+    
+    public function removeInstructionFromMisc($userId, $miscId, $instructionId) {
+        if ($userId && $miscId && $instructionId) {
+            return $this->miscService->removeInstructionFromPatientMisc($miscId, $userId, $instructionId);
+        }
+        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
 
     public function getNotes($userId) {
@@ -326,5 +338,26 @@ class PatientController extends Controller
             return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
         }
         else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
+    }
+
+    public function addAppointment($userId, Request $request) {
+        $appointment = new Appointment();
+        $appointment->comment = $request->input('comment');
+        $appointment->patient_id = $userId;
+        $appointment->author_id = auth()->user()->id;
+        $appointment->type = $request->input('type');
+        $appointment->provider_id = $request->input('provider_id');
+        if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
+            return response()->json($this->appointmentService->repo()->create($appointment));
+        }
+        else return $this->badRequest('"userId", "author_id", "type", "comment" and "provider_id" are is important');
+    }
+
+    public function getAppointments($userId) {
+        return response()->json($this->appointmentService->repo()->patientAppointments($userId));
+    }
+
+    public function removeAppointment($userId, $id) {
+        return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
     }
 }
