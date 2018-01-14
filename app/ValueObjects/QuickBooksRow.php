@@ -8,8 +8,11 @@
 
 namespace App\ValueObjects;
 
-
-class Row
+/**
+ * This value object refers to the row created by the makeRow() method in the PracticeReportsService class,
+ * when creating a Quickbook Report.
+ */
+class QuickBooksRow
 {
     protected $refNumber;
     protected $customer;
@@ -30,7 +33,6 @@ class Row
     {
 
     }
-
 
 
     /**
