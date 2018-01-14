@@ -5,7 +5,7 @@
         </template>
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-12" v-if="!pagination.index">
                     <div class="row">
                         <div class="col-sm-12">
                             <h4>
@@ -13,27 +13,27 @@
                                 <loader v-if="loaders.getProviders"></loader>
                             </h4>
                         </div>
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 top-20">
                             <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
                         </div>
-                        <div class="col-sm-6 col-md-3">
+                        <div class="col-sm-4 top-20">
                             <input type="date" class="form-control" v-model="newAppointment.date" :min="newAppointment.date" required />
                         </div>
-                        <div class="col-sm-6 col-md-4">
+                        <div class="col-sm-4 top-20">
                             <input type="time" class="form-control" v-model="newAppointment.time" required />
                         </div>
-                        <div class="col-sm-6 col-md-1 text-right">
-                            <input type="button" class="btn btn-secondary selected" value="Add" />
-                        </div>
-                        <div class="col-sm-4 text-right">
+                        <div class="col-sm-4 top-20">
                             <input type="text" class="form-control" v-model="newAppointment.type" placeholder="Reason" required />
                         </div>
-                        <div class="col-sm-7 text-right">
+                        <div class="col-sm-12 top-20">
                             <textarea class="form-control" v-model="newAppointment.comment" placeholder="Comment" required></textarea>
+                        </div>
+                        <div class="col-sm-12 top-20 text-right">
+                            <input type="button" class="btn btn-secondary selected" value="Add" />
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12" v-if="futureAppointments.length > 0">
+                <div class="col-sm-12" v-if="pagination.index && futureAppointments.length > 0">
                     <h4>Upcoming Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in futureAppointments" :key="index">
                         <li class="list-group-item pointer" @click="select(appointment)"
@@ -43,7 +43,7 @@
                         </li>
                     </ol>
                 </div>
-                <div class="col-sm-12" v-if="pastAppointments.length > 0">
+                <div class="col-sm-12" v-if="pagination.index && pastAppointments.length > 0">
                     <h4>Past Appointments</h4>
                     <ol class="list-group" v-for="(appointment, index) in pastAppointments" :key="index">
                         <li class="list-group-item pointer" @click="select(appointment)"
@@ -60,6 +60,7 @@
                             {{page}}
                         </button>
                     </div>
+                    <input type="button" class="btn btn-secondary" :class="{ selected: !pagination.index }" value="+" @click="pagination.select(-1)" />
                 </div>
             </div>
         </template>
