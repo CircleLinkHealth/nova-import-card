@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Billing\Practices\PracticeInvoiceGenerator;
+use App\ChargeableService;
 use App\Practice;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,6 +19,7 @@ class PracticeReportsService
     /**
      * @param array $practices
      * @param Carbon $date
+     *
      * @return array
      */
     public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date)
@@ -57,7 +59,7 @@ class PracticeReportsService
                 $sheet->fromArray($rows);
             });
         })
-            ->store($format, false, true);
+                    ->store($format, false, true);
     }
 
     private function makeRow(Practice $practice, Carbon $date)
@@ -72,6 +74,14 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
+        //defaults to CPT99490 if practice doesnt have a chargeableService
+        if ($data['practice']->active()) {
+            $chargeableService = $data['practice']->chargeableServices()->first();
+        } else {
+            $chargeableService = ChargeableService::where('id', 1)->get();
+        }
+
+
         return [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
@@ -81,7 +91,7 @@ class PracticeReportsService
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
             'PT.Billing Report:'    => (string)$link,
-            'Line Item'             => 'CPT 99490',
+            'Line Item'             => $chargeableService->code,
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => 'CCM Services over 20 minutes',
             'LineUnitPrice'         => (string)$data['practice']->clh_pppm,
