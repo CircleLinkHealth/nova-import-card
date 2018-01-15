@@ -20,12 +20,15 @@
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
                     <div class="row top-20">
                         <form @submit="addProblem">
-                            <div class="col-sm-11">
+                            <div class="col-sm-12">
                                 <input class="form-control" v-model="newProblem.name" placeholder="Add New Problem" required />
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-12 top-20">
+                                <v-select class="form-control" v-model="newProblem.problem" :options="cpmProblemsForSelect"></v-select>
+                            </div>
+                            <div class="col-sm-12 text-right top-20">
                                 <loader class="absolute" v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="+" 
                                     title="add this problem" :disabled="newProblem.name.length === 0" />
                             </div>
                         </form>
@@ -40,20 +43,31 @@
     import { rootUrl } from '../../../app.config'
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
+    import VueSelect from 'vue-select'
+
 
     export default {
         name: 'full-conditions-modal',
         props: {
             'patient-id': String,
-            problems: Array
+            problems: Array,
+            cpmProblems: Array
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'v-select': VueSelect
+        },
+        computed: {
+            cpmProblemsForSelect() {
+                return [{ label: 'Select a CPM Problem', value: null }].concat(this.cpmProblems.map(p => ({ label: p.name, value: p.id })))
+            }
         },
         data() {
             return {
                 newProblem: {
-                    name: ''
+                    name: '',
+                    problem: null,
+                    problem_id: null
                 },
                 selectedProblem: null,
                 loaders: {
@@ -84,7 +98,7 @@
             addProblem(e) {
                 e.preventDefault();
                 this.loaders.addProblem = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { name: this.newProblem.name }).then(response => {
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { name: this.newProblem.name, cpm_problem_id: this.newProblem.problem.value }).then(response => {
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
                     Event.$emit('full-conditions:add', response.data)
@@ -95,7 +109,7 @@
             }
         },
         mounted() {
-
+            this.newProblem.problem = this.cpmProblemsForSelect[0]
         }
     }
 </script>
@@ -166,6 +180,14 @@
         padding: 2 7 2 7;
     }
 
+    .modal-full-conditions .dropdown-toggle.clearfix {
+        border: none !important;
+    }
+
+    .modal-full-conditions .dropdown.v-select.form-control {
+        padding: 0;
+    }
+
     .absolute {
         position: absolute;
     }
@@ -216,5 +238,9 @@
     button.problem-button div.loader.absolute {
         right: -13px;
         top: 15px;
+    }
+
+    input[type="submit"].margin-0 {
+        margin: 0px;
     }
 </style>
