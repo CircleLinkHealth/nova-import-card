@@ -51,17 +51,17 @@
                                 class="material-icons left">call_end</i>Hang Up</a>
                 </div>
                 <div v-else style="text-align: center">
-                    @if($enrollee->home_phone != '')
+                    @if($enrollee->home_phone_e164 != '')
                         <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Home</a>
                     @endif
-                    @if($enrollee->cell_phone != '')
+                    @if($enrollee->cell_phone_e164 != '')
                         <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Cell</a>
                     @endif
-                    @if($enrollee->other_phone != '')
+                    @if($enrollee->other_phone_e164 != '')
                         <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Other</a>
@@ -149,9 +149,9 @@
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
                 practice_phone: '{{ $enrollee->practice->outgoing_phone_number}}',
-                home_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->home_phone) ?? 'N/A' }}',
-                cell_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->cell_phone) ?? 'N/A' }}',
-                other_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->other_phone) ?? 'N/A' }}',
+                home_phone: '{{ $enrollee->home_phone_e164 }}',
+                cell_phone: '{{ $enrollee->cell_phone_e164 }}',
+                other_phone: '{{ $enrollee->other_phone_e164 }}',
                 address: '{{ $enrollee->address ?? 'N/A' }}',
                 address_2: '{{ $enrollee->address_2 ?? 'N/A' }}',
                 state: '{{ $enrollee->state ?? 'N/A' }}',
@@ -327,12 +327,10 @@
                 },
 
                 call(phone, type) {
-
-                    this.callStatus = "Calling " + type + "...";
+                    this.callStatus = "Calling " + type + "..." + phone;
                     Materialize.toast(this.callStatus, 3000);
                     Twilio.Device.connect({"phoneNumber": phone});
                     this.onCall = true;
-
                 },
 
                 hangUp() {
