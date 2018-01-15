@@ -3,7 +3,7 @@
         <div class="form-group" v-for="(question, pIndex) in questions" :key="pIndex">
             <div class="question-text">{{pIndex + 1}}. {{question.text}}<span class="required" v-if="!!question.required">*</span></div>
             <div class="question-reply" v-if="!question.options">
-                <input v-if="!question.multi && !question.type" type="text" :value="answers[question.name]" :name="question.name" 
+                <input v-if="!question.multi && !question.type" class="color-black" type="text" :value="answers[question.name]" :name="question.name" 
                     :required="!!question.required" placeholder="Enter text here">
                 <input v-if="!question.multi && question.type === 'date'" type="date" class="form-control" :value="answers[question.name]" :name="question.name" 
                     :required="!!question.required">
@@ -92,5 +92,9 @@
         width: 15px;
         height: 15px;
         display: inline-block;
+    }
+
+    input.color-black {
+        color: black !important;
     }
 </style>
