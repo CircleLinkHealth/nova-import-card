@@ -84,7 +84,7 @@
 
     @yield('content')
 
-    @if(isset($patient) && showDiabetesBanner($patient) && !isset($isPdf))
+    @if(isset($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $patient->isCcmEligible()) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 

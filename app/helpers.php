@@ -823,9 +823,9 @@ if (!function_exists('validProblemName')) {
 }
 
 if (!function_exists('showDiabetesBanner')) {
-    function showDiabetesBanner($patient)
+    function showDiabetesBanner($patient, $noShow = null)
     {
-        if ($patient
+        if (!$noShow && $patient
             && is_a($patient, User::class)
             && $patient->hasProblem('Diabetes')
             && !$patient->hasProblem('Diabetes Type 1')
