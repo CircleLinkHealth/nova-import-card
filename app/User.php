@@ -2681,4 +2681,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function name() {
         return $this->display_name ?? ($this->first_name . $this->last_name);
     }
+
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'name' => $this->name(),
+            'address' => $this->address,
+            'city' => $this->city,
+            'state' => $this->state,
+            'specialty' => $this->specialty,
+            'program_id' => $this->program_id
+        ];
+    }
 }

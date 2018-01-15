@@ -149,6 +149,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
             Route::resource('', 'ProblemController');
+            
+            Route::group(['prefix' => 'codes'], function () {
+                Route::get('{id}', 'ProblemCodeController@show');
+                Route::delete('{id}', 'ProblemCodeController@remove');
+                Route::resource('', 'ProblemCodeController');
+            });
 
             Route::group(['prefix' => 'instructions'], function () {
                 Route::get('search', 'ProblemInstructionController@search');
@@ -221,6 +227,14 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::get('', 'PatientController@getAppointments');
                     Route::post('', 'PatientController@addAppointment');
                     Route::delete('{id}', 'PatientController@removeAppointment');
+                });
+                
+                Route::group([
+                    'prefix' => 'providers'
+                ], function () {
+                    Route::get('', 'PatientController@getProviders');
+                    Route::post('', 'PatientController@addProvider');
+                    Route::delete('{id}', 'PatientController@removeProvider');
                 });
             });
             

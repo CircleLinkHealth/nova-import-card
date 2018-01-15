@@ -9,18 +9,22 @@
 namespace App\Services\CCD;
 
 use App\User;
+use App\Models\ProblemCode;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
+use App\Repositories\ProblemCodeRepository;
 use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
 {
     private $problemRepo;
     private $userRepo;
+    private $problemCodeRepo;
 
-    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo, ProblemCodeRepository $problemCodeRepo) {
         $this->problemRepo = $problemRepo;
         $this->userRepo = $userRepo;
+        $this->problemCodeRepo = $problemCodeRepo;
     }
 
     public function repo() {
@@ -32,9 +36,7 @@ class CcdProblemService
             'id'    => $p->id,
             'name'  => $p->name,
             'cpm_id'  => $p->cpm_problem_id,
-            'patients' => $this->repo()->patientIds($p->name)->map(function ($patient) {
-                return $patient->patient_id;
-            })
+            'codes' => $p->codes()->get()
         ];
         return $problem;
     }
@@ -51,5 +53,11 @@ class CcdProblemService
         $problem = $this->repo()->model()->find($id);
         if ($problem) return $this->setupProblem($problem);
         else return null;
+    }
+
+    public function getPatientProblems($userId) {
+        $user = $this->userRepo->model()->findOrFail($userId);
+        
+        return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
     }
 }

@@ -8,6 +8,7 @@ use App\Patient;
 use App\Appointment;
 use App\Services\NoteService;
 use App\Services\PatientService;
+use App\Services\ProviderInfoService;
 use App\Services\AppointmentService;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -30,6 +31,7 @@ class PatientController extends Controller
 {
     private $patientService;
     private $appointmentService;
+    private $providerService;
     private $allergyService;
     private $ccdProblemService;
     private $cpmProblemUserService;
@@ -46,6 +48,7 @@ class PatientController extends Controller
      *
      */
     public function __construct(PatientService $patientService, 
+                                ProviderInfoService $providerService,
                                 AppointmentService $appointmentService,
                                 CcdAllergyService $allergyService,
                                 CcdProblemService $ccdProblemService,
@@ -59,6 +62,7 @@ class PatientController extends Controller
                                 NoteService $noteService)
     {   
         $this->patientService = $patientService;
+        $this->providerService = $providerService;
         $this->appointmentService = $appointmentService;
         $this->allergyService = $allergyService;
         $this->ccdProblemService = $ccdProblemService;
@@ -86,19 +90,25 @@ class PatientController extends Controller
     
     public function getProblems($userId)
     {
-        $cpmProblems = array_map($this->patientService->mapTypeFn('cpm'), $this->patientService->getCpmProblems($userId));
-        $ccdProblems = array_map($this->patientService->mapTypeFn('ccd'), $this->patientService->getCcdProblems($userId));
-        return response()->json(array_merge($cpmProblems, $ccdProblems));
+        $cpmProblems = $this->cpmProblemUserService->getPatientProblems($userId)->map(function ($p) {
+            $p['type'] = 'cpm';
+            return $p;
+        });
+        $ccdProblems = $this->ccdProblemService->getPatientProblems($userId)->map(function ($p) {
+            $p['type'] = 'ccd';
+            return $p;
+        });
+        return response()->json($cpmProblems->concat($ccdProblems));
     }
     
     public function getCpmProblems($userId)
     {
-        return response()->json($this->patientService->getCpmProblems($userId));
+        return response()->json($this->cpmProblemUserService->getPatientProblems($userId));
     }
     
     public function getCcdProblems($userId)
     {
-        return response()->json($this->patientService->getCcdProblems($userId));
+        return response()->json($this->ccdProblemService->getPatientProblems($userId));
     }
     
     public function removeCcdProblem($userId, $ccdId)
@@ -112,8 +122,9 @@ class PatientController extends Controller
     public function addCcdProblem($userId, Request $request)
     {
         $name = $request->input('name');
+        $cpm_problem_id = $request->input('cpm_problem_id');
         if ($userId && $name) {
-            return response()->json($this->ccdProblemService->repo()->addPatientCcdProblem($userId, $name));
+            return response()->json($this->ccdProblemService->repo()->addPatientCcdProblem($userId, $name, $cpm_problem_id));
         }
         else return $this->badRequest('"userId" and "name" are important');
     }
@@ -347,6 +358,8 @@ class PatientController extends Controller
         $appointment->author_id = auth()->user()->id;
         $appointment->type = $request->input('type');
         $appointment->provider_id = $request->input('provider_id');
+        $appointment->date = $request->input('date');
+        $appointment->time = $request->input('time');
         if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }
@@ -359,5 +372,18 @@ class PatientController extends Controller
 
     public function removeAppointment($userId, $id) {
         return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
+    }
+
+    public function getProviders($userId) {
+        return response()->json($this->providerService->getPatientProviders($userId));
+    }
+
+    public function addProvider($userId, Request $request) {
+        $provider_id = $request->input('provider_id');
+        throw new Exception('Not Implemented Yet');
+    }
+    
+    public function removeProvider($userId, $provider_id) {
+        throw new Exception('Not Implemented Yet');
     }
 }

@@ -37,7 +37,7 @@
                 </ul>
             </div>
         </div>
-        <full-conditions-modal :patient-id="patientId" :problems="ccdProblems"></full-conditions-modal>
+        <full-conditions-modal ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
     </div>
 </template>
 
