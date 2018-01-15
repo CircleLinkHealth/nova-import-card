@@ -9,6 +9,7 @@
 namespace App\Services\CCD;
 
 use App\User;
+use App\Models\ProblemCode;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
@@ -58,9 +59,5 @@ class CcdProblemService
         $user = $this->userRepo->model()->findOrFail($userId);
         
         return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
-    }
-
-    public function addProblemCode($id) {
-        
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\ProblemCode;
+use App\Models\ProblemCode;
 use Illuminate\Support\Facades\DB;
 
 class ProblemCodeRepository
@@ -14,5 +14,12 @@ class ProblemCodeRepository
 
     public function count() {
         return $this->model->select('name', DB::raw('count(*) as total'))->groupBy('name')->pluck('total')->count();
+    }
+
+    public function exists($problem_id, $code_system_id) {
+        return !!$this->model()->where([
+            'problem_code_system_id' => $code_system_id,
+            'problem_id' => $problem_id
+        ])->first();
     }
 }

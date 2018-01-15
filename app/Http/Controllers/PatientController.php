@@ -124,7 +124,7 @@ class PatientController extends Controller
         $name = $request->input('name');
         $cpm_problem_id = $request->input('cpm_problem_id');
         if ($userId && $name) {
-            return response()->json($this->ccdProblemService->repo()->addPatientCcdProblem($userId, $name, $cpm_problem_id);
+            return response()->json($this->ccdProblemService->repo()->addPatientCcdProblem($userId, $name, $cpm_problem_id));
         }
         else return $this->badRequest('"userId" and "name" are important');
     }

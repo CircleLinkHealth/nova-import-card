@@ -32,6 +32,10 @@ class CcdProblemRepository
         return $this->model()->groupBy('name')->orderBy('id')->paginate(30);
     }
 
+    public function problem($id) {
+        return $this->model()->findOrFail($id);
+    }
+
     public function patientCcdExists($userId, $name) {
         return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
     }

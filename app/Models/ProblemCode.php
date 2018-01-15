@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\ProblemCodeSystem;
 use App\Models\CCD\Problem;
 use App\Scopes\Imported;
 use App\Scopes\WithNonImported;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
  * @property-read \App\Models\CCD\Problem $problem
+ * @property-read \App\ProblemCodeSystem $system
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
  * @method static bool|null restore()
@@ -56,6 +58,23 @@ class ProblemCode extends \App\BaseModel
     public function problem()
     {
         return $this->belongsTo(Problem::class, 'problem_id');
+    }
+
+    public function system() {
+        return $this->belongsTo(ProblemCodeSystem::class, 'problem_code_system_id');
+    }
+
+    public function resolve() {
+        if ($this->isSnomed()) {
+            $this->code_system_oid = $this->SNOMED_CODE;
+        }
+        else if ($this->isIcd9()) {
+            $this->code_system_oid = $this->ICD9_CODE;
+        }
+        else if ($this->isIcd10()) {
+            $this->code_system_oid = $this->ICD10_CODE;
+        }
+        return $this;
     }
 
     public function isSnomed()
