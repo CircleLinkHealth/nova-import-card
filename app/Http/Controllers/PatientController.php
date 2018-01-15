@@ -370,4 +370,13 @@ class PatientController extends Controller
     public function getProviders($userId) {
         return response()->json($this->providerService->getPatientProviders($userId));
     }
+
+    public function addProvider($userId, Request $request) {
+        $provider_id = $request->input('provider_id');
+        throw new Exception('Not Implemented Yet');
+    }
+    
+    public function removeProvider($userId, $provider_id) {
+        throw new Exception('Not Implemented Yet');
+    }
 }
