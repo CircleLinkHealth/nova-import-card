@@ -26,11 +26,11 @@ class PatientService
     }
 
     public function getPatientByUserId($userId) {
-        return $this->userRepo->with(['patientInfo'])->find($userId)->patientInfo;
+        return $this->userRepo->model()->with(['patientInfo'])->find($userId)->patientInfo;
     }
 
     public function getCpmProblems($userId) {
-        $user = $this->userRepo->find($userId);
+        $user = $this->userRepo->model()->find($userId);
 
         return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
             return [
@@ -45,7 +45,7 @@ class PatientService
     }
     
     public function getCcdProblems($userId) {
-        $user = $this->userRepo->find($userId);
+        $user = $this->userRepo->model()->find($userId);
 
         return $user->ccdProblems()->get()->map(function ($p) {
             return [
