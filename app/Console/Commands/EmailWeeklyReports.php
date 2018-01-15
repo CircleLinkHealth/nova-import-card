@@ -46,10 +46,10 @@ class EmailWeeklyReports extends Command
      */
     public function handle()
     {
-        $tester = null;
+        $testerEmail = null;
 
         if ($this->argument('testerUserId')) {
-            $tester = User::findOrFail($this->argument('testerUserId'));
+            $testerEmail = User::findOrFail($this->argument('testerUserId'))->email;
         }
 
         if ($this->argument('practiceId')) {
@@ -60,10 +60,10 @@ class EmailWeeklyReports extends Command
         $endRange = Carbon::now()->endOfDay();
 
         if (isset($onlyForPractice)) {
-            dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $tester));
+            dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $testerEmail));
 
             if ($this->option('provider')) {
-                dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $tester));
+                dispatch(new EmailWeeklyProviderReport($onlyForPractice, $startRange, $endRange, $testerEmail));
             }
 
             return;
@@ -71,11 +71,11 @@ class EmailWeeklyReports extends Command
 
         foreach ($this->activePractices as $practice) {
             if ($practice->settings->first() && $practice->settings->first()->email_weekly_report && $this->option('provider')) {
-                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $tester));
+                dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $testerEmail));
             }
 
             if ($this->option('practice')) {
-                dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $tester));
+                dispatch(new EmailWeeklyPracticeReport($practice, $startRange, $endRange, $testerEmail));
             }
         }
     }
