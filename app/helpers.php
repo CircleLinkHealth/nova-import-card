@@ -837,14 +837,19 @@ if (!function_exists('showDiabetesBanner')) {
 
         return false;
     }
+}
 
-
- if (!function_exists('shortenUrl')){
-        function shortenUrl($url){
-
-            $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
-
-            return $shortUrl;
-        }
- }
+if (!function_exists('shortenUrl')){
+    /**
+     * Create a short URL
+     *
+     * @param $url
+     *
+     * @return string
+     * @throws \Waavi\UrlShortener\InvalidResponseException
+     */
+    function shortenUrl($url){
+        $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+        return $shortUrl;
+    }
 }
