@@ -95,7 +95,7 @@
                     const pagination = response.data
                     console.log('appointments:get-appointments', pagination)
                     this.appointments = this.appointments.concat(pagination.data.map(this.setupAppointment))
-                    this.appointments = this.appointments.sort((a, b) => a.at > b.at ? 1 : -1)
+                    this.appointments.sort((a, b) => a.at < b.at ? 1 : -1)
                     if (pagination.to < pagination.total) return this.getAppointments(page + 1)
                 }).catch(err => {
                     console.error('appointments:get-appointments', err)
