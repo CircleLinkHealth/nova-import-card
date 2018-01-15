@@ -32,7 +32,7 @@
         }
 
         .enrollment-script {
-            font-size: 24px;
+            font-size: 20px;
         }
 
     </style>
@@ -310,6 +310,11 @@
                 },
 
                 isValidPhoneNumber(string) {
+                    //return true if string is empty
+                    if (string.length === 0) {
+                        return true
+                    }
+
                     let matchNumbers = string.match(/\d+-?/g)
 
                     if (matchNumbers === null) {
