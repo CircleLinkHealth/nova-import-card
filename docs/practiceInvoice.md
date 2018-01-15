@@ -21,7 +21,9 @@ Intermediate table: `chargeables`.
 
 A ChargeableService can be charged to either a Practice or a Provider, or both.
          
+##QuickBooksRow Value Item
 
+##QuickBooksRow Resource
 
 ## PracticeInvoiceController
 
@@ -35,6 +37,7 @@ This method is called when a POST request from `cpm-web/resources/views/billing/
 
 
 ###PracticeReportsService
+Provides the main functions needed by PracticeInvoiceController to either produce PDF or Quickbooks.
 
 #####getPdfInvoiceAndPatientReport()
 
@@ -43,11 +46,19 @@ This method is called when a POST request from `cpm-web/resources/views/billing/
 #####makeQuickbookReport()
 
 #####makeRow()
+Receives an instance of the model Practice which is assigned to the attribute `$practice` and a Carbon item for `$date`.
+
+It then creates a new instance of the class PracticeInvoiceGenerator, passing in $practice and $date, and uses it to `makePatientReportPdf()` (to get file path and create a shortened download link to be placed in the QuickBooksRow in the column `'PT.Billing Report:'`)
+and to `getInvoiceData()` to be used in the rest of the QuickBooksRow columns.
+
+Finally it calls on the `chargeableServices()` relationship of the Practice to retrieve the `ChargeableService` code, to be used in the QuickBooksRow column `'Line Item'`.
+
+Returns a complete row [array at the moment soon to be refactored to Value Object], to be used in [].
 
 
 
 ###PracticeInvoiceGenerator
-Takes an instance of the model Practice which is assigned to the attribute `$practice`, and a Carbon item for `$month`.
+Receives an instance of the model Practice which is assigned to the attribute `$practice`, and a Carbon item for `$month`.
 
 #####generatePdf()
 

@@ -74,13 +74,12 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
-        //defaults to CPT99490 if practice doesnt have a chargeableService
+        //defaults to CPT99490 if practice doesnt have a chargeableService, until further notice
         if ($data['practice']->active()) {
             $chargeableService = $data['practice']->chargeableServices()->first();
         } else {
             $chargeableService = ChargeableService::where('id', 1)->get();
         }
-
 
         return [
             'RefNumber'             => (string)$data['invoice_num'],
