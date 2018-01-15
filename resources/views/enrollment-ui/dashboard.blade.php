@@ -31,6 +31,10 @@
             color: red;
         }
 
+        .enrollment-script {
+            font-size: 24px;
+        }
+
     </style>
 
     <div id="enrollment_calls">
@@ -88,20 +92,22 @@
                     </blockquote>
                 @endif
 
-                @if($enrollee->has_copay)
-                    @if($enrollee->lang == 'ES')
-                        @include('enrollment-ui.script.es-has-co-pay')
-                    @else
-                        @include('enrollment-ui.script.en-has-co-pay')
+                <div class="enrollment-script">
+                    @if($enrollee->has_copay)
+                        @if($enrollee->lang == 'ES')
+                            @include('enrollment-ui.script.es-has-co-pay')
+                        @else
+                            @include('enrollment-ui.script.en-has-co-pay')
 
-                    @endif
-                @else
-                    @if($enrollee->lang == 'ES')
-                        @include('enrollment-ui.script.es-no-co-pay')
+                        @endif
                     @else
-                        @include('enrollment-ui.script.en-no-co-pay')
+                        @if($enrollee->lang == 'ES')
+                            @include('enrollment-ui.script.es-no-co-pay')
+                        @else
+                            @include('enrollment-ui.script.en-no-co-pay')
+                        @endif
                     @endif
-                @endif
+                </div>
             </div>
 
             <div style="padding: 10px; margin-bottom: 15px"></div>
