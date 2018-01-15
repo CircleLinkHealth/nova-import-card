@@ -53,8 +53,8 @@ class Kernel extends ConsoleKernel
             (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
 
-        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-                 ->weeklyOn(1, '10:00');
+//        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+//                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
                  ->weekdays()
