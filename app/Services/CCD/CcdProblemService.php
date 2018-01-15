@@ -31,7 +31,8 @@ class CcdProblemService
         $problem = [
             'id'    => $p->id,
             'name'  => $p->name,
-            'cpm_id'  => $p->cpm_problem_id
+            'cpm_id'  => $p->cpm_problem_id,
+            'codes' => $p->codes()->get()
         ];
         return $problem;
     }
