@@ -145,12 +145,10 @@ class ProviderReportable implements Reportable
      */
     public function totalBilledPatientsCount(Carbon $month = null)
     {
-        $q = PatientMonthlySummary::whereHas('patientInfo', function ($q) {
-            $q->whereHas('user', function ($k) {
-                $k->whereHas('careTeamMembers', function ($q) {
-                    $q->whereType(CarePerson::BILLING_PROVIDER)
-                      ->whereMemberUserId($this->provider->id);
-                });
+        $q = PatientMonthlySummary::whereHas('patient', function ($q) {
+            $q->whereHas('careTeamMembers', function ($q) {
+                $q->whereType(CarePerson::BILLING_PROVIDER)
+                  ->whereMemberUserId($this->provider->id);
             });
         })
                                   ->where('ccm_time', '>', 1199);
