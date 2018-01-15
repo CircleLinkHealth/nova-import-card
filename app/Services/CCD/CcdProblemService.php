@@ -11,16 +11,19 @@ namespace App\Services\CCD;
 use App\User;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
+use App\Repositories\ProblemCodeRepository;
 use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
 {
     private $problemRepo;
     private $userRepo;
+    private $problemCodeRepo;
 
-    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo, ProblemCodeRepository $problemCodeRepo) {
         $this->problemRepo = $problemRepo;
         $this->userRepo = $userRepo;
+        $this->problemCodeRepo = $problemCodeRepo;
     }
 
     public function repo() {
@@ -55,5 +58,9 @@ class CcdProblemService
         $user = $this->userRepo->model()->findOrFail($userId);
         
         return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
+    }
+
+    public function addProblemCode($id) {
+        
     }
 }

@@ -36,11 +36,12 @@ class CcdProblemRepository
         return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
     }
 
-    public function addPatientCcdProblem($userId, $name) {
+    public function addPatientCcdProblem($userId, $name, $problemCode = null) {
         if (!$this->patientCcdExists($userId, $name)) {
             $problem = new Problem();
             $problem->patient_id = $userId;
             $problem->name = $name;
+            $problem->cpm_problem_id = $problemCode;
             $problem->save();
             return $problem;
         }
