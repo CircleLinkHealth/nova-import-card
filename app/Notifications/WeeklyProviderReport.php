@@ -2,12 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Mail\WeeklyProviderReport as WeeklyProviderReportMailable;
-use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class WeeklyProviderReport extends Notification
 {
@@ -29,7 +26,8 @@ class WeeklyProviderReport extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -37,24 +35,28 @@ class WeeklyProviderReport extends Notification
         return [
             'mail',
             'database',
-            ];
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
-     * @return WeeklyProviderReportMailable
+     * @param  mixed $notifiable
+     *
+     * @return MailMessage
      */
     public function toMail($notifiable)
     {
-        return new WeeklyProviderReportMailable($notifiable, $this->data);
+        return (new MailMessage())->view('sales.by-provider.report', ['data' => $this->data])
+                                  ->from('notifications@careplanmanager.com', 'CircleLink Health')
+                                  ->subject('Dr. ' . $this->data['name'] . '\'s CCM Weekly Summary');
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param  mixed $notifiable
+     *
      * @return array
      */
     public function toArray($notifiable)

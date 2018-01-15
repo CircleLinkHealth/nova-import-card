@@ -20,19 +20,22 @@ class EmailWeeklyPracticeReport implements ShouldQueue
     protected $practice;
     protected $startRange;
     protected $endRange;
-    protected $testerEmail;
+    protected $tester;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param Practice $practice
+     * @param $startRange
+     * @param $endRange
+     * @param User|null $tester
      */
-    public function __construct(Practice $practice, $startRange, $endRange, $testerEmail)
+    public function __construct(Practice $practice, $startRange, $endRange, User $tester = null)
     {
-        $this->practice    = $practice;
-        $this->startRange  = $startRange;
-        $this->endRange    = $endRange;
-        $this->testerEmail = $testerEmail;
+        $this->practice   = $practice;
+        $this->startRange = $startRange;
+        $this->endRange   = $endRange;
+        $this->tester     = $tester;
     }
 
     /**
@@ -47,10 +50,6 @@ class EmailWeeklyPracticeReport implements ShouldQueue
         }
 
         $organizationSummaryRecipients = $this->practice->getWeeklyReportRecipientsArray();
-
-        if ($this->testerEmail) {
-            $organizationSummaryRecipients = [$this->testerEmail];
-        }
 
         $subjectPractice = $this->practice->display_name . '\'s CCM Weekly Summary';
 
@@ -67,10 +66,16 @@ class EmailWeeklyPracticeReport implements ShouldQueue
         $practiceData['end']     = $this->endRange;
         $practiceData['isEmail'] = true;
 
+        $notification = new WeeklyPracticeReport($practiceData, $subjectPractice);
+
+        if ($this->tester) {
+            $this->tester->notify($notification);
+
+            return;
+        }
+
         foreach ($organizationSummaryRecipients as $recipient) {
             $user = User::whereEmail($recipient)->first();
-
-            $notification = new WeeklyPracticeReport($practiceData, $subjectPractice);
 
             if ($user) {
                 $user->notify($notification);
