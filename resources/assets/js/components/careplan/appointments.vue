@@ -75,6 +75,7 @@
                 appointment.created_at = new Date(appointment.created_at)
                 appointment.updated_at = new Date(appointment.updated_at)
                 appointment.provider = () => ({ user: {}, location: () => ({}) })
+                appointment.isPending = () => (appointment.at > new Date())
 
                 /** A product of the VueCache mixin */
                 this.cache().get(rootUrl(`api/providers/${appointment.provider_id}`)).then(provider => {
@@ -111,6 +112,10 @@
             Event.$on('appointments:add', (appointment) => {
                 if (appointment) this.appointments.push(this.setupAppointment(appointment))
                 this.appointments = this.appointments.sort((a, b) => a.at < b.at ? 1 : -1)
+            })
+
+            Event.$on('appointments:remove', (id) => {
+                this.appointments.splice(this.appointments.findIndex(appointment => appointment.id === id), 1)
             })
         }
     }
