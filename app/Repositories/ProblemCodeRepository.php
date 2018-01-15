@@ -22,4 +22,11 @@ class ProblemCodeRepository
             'problem_id' => $problem_id
         ])->first();
     }
+    
+    public function remove($id) {
+        $this->model()->where([ 'id' => $id ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
 }

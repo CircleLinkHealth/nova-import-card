@@ -42,4 +42,8 @@ class ProblemCodeController extends Controller
         $problemCode->code = $request->code;
         return response()->json($this->problemCodeService->add($problemCode));
     }
+
+    public function remove($id) {
+        return response()->json($this->problemCodeService->repo()->remove($id));
+    }
 }

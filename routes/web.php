@@ -152,6 +152,7 @@ Route::group(['middleware' => 'auth'], function () {
             
             Route::group(['prefix' => 'codes'], function () {
                 Route::get('{id}', 'ProblemCodeController@show');
+                Route::delete('{id}', 'ProblemCodeController@remove');
                 Route::resource('', 'ProblemCodeController');
             });
 
