@@ -159,7 +159,6 @@
                 zip: '{{ $enrollee->zip ?? 'N/A' }}',
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
-                phone_regex: /^\d{3}-\d{3}-\d{4}$/,
                 disableHome: false,
                 disableCell: false,
                 disableOther: false,
@@ -190,7 +189,7 @@
 
                     }
 
-                    if (this.other_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.other_phone)) {
 
                         return 'Other Phone Valid!';
 
@@ -200,10 +199,10 @@
 
                 },
                 other_is_valid: function () {
-                    return this.other_phone.match(this.phone_regex);
+                    return this.validatePhone(this.other_phone)
                 },
                 other_is_invalid: function () {
-                    return !this.other_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.other_phone)
                 },
 
                 //other phone computer vars
@@ -215,7 +214,7 @@
 
                     }
 
-                    if (this.home_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.home_phone)) {
 
                         return 'Home Phone Valid!';
 
@@ -225,10 +224,10 @@
 
                 },
                 home_is_valid: function () {
-                    return this.home_phone.match(this.phone_regex);
+                    return this.validatePhone(this.home_phone)
                 },
                 home_is_invalid: function () {
-                    return !this.home_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.home_phone)
                 },
 
                 //other phone computer vars
@@ -240,7 +239,7 @@
 
                     }
 
-                    if (this.cell_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.cell_phone)) {
 
                         return 'Cell Phone Valid!';
 
@@ -250,12 +249,11 @@
 
                 },
                 cell_is_valid: function () {
-                    return this.cell_phone.match(this.phone_regex);
+                    return this.validatePhone(this.cell_phone)
                 },
                 cell_is_invalid: function () {
-                    return !this.cell_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.cell_phone)
                 },
-
             },
 
             mounted: function () {
@@ -296,12 +294,10 @@
             },
 
             methods: {
+                validatePhone(value) {
+                    let isValid = this.isValidPhoneNumber(value)
 
-                validatePhone(VAL, name){
-
-                    console.log(name);
-
-                    if (VAL.match(this.phone_regex)) {
+                    if (isValid) {
                         this.isValid = true;
                         this.disableHome = true;
                         return true;
@@ -311,10 +307,21 @@
                         this.disableHome = true;
                         return false;
                     }
-
                 },
 
-                call(phone, type){
+                isValidPhoneNumber(string) {
+                    let matchNumbers = string.match(/\d+-?/g)
+
+                    if (matchNumbers === null) {
+                        return false
+                    }
+
+                    matchNumbers = matchNumbers.join('')
+
+                    return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
+                },
+
+                call(phone, type) {
 
                     this.callStatus = "Calling " + type + "...";
                     Materialize.toast(this.callStatus, 3000);
@@ -323,7 +330,7 @@
 
                 },
 
-                hangUp(){
+                hangUp() {
                     Twilio.Device.disconnectAll();
                     this.callStatus = "Ended Call";
                     Materialize.toast(this.callStatus, 3000);
