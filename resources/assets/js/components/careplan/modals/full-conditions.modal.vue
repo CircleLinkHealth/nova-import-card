@@ -34,6 +34,23 @@
                         </form>
                     </div>
                 </div>
+                <div class="col-sm-12 top-20" v-if="selectedProblem">
+                    <div class="row top-20">
+                        <form @submit="editProblem">
+                            <div class="col-sm-12">
+                                <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
+                            </div>
+                            <div class="col-sm-12 top-20">
+                                <v-select class="form-control" v-model="selectedProblem.cpm_id" :options="cpmProblemsForSelect"></v-select>
+                            </div>
+                            <div class="col-sm-12 text-right top-20">
+                                <loader class="absolute" v-if="loaders.editProblem"></loader>
+                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit" 
+                                    title="Edit this problem" :disabled="newProblem.name.length === 0" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </template>
     </modal>
@@ -106,6 +123,9 @@
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false
                 })
+            },
+            editProblem(e) {
+                e.preventDefault()
             }
         },
         mounted() {
