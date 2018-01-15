@@ -105,7 +105,7 @@ class LoginController extends Controller
     {
         $agent = new Agent();
 
-        if ( ! $agent->isChrome()) {
+        if ( ! $agent->isIE()) {
             return true;
         }
 
