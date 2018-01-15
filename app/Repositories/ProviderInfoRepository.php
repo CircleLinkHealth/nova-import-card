@@ -33,29 +33,8 @@ class ProviderInfoRepository
         return $providers;
     }
 
-    public function providers() {
-        $providers = $this->model()->orderBy('id', 'desc')->paginate();
-        $providers->getCollection()->transform(function ($p) {
-            $providerUser = $p->user()->first();
-            $p['user'] = [
-                'id' => $providerUser->id,
-                'program_id' => $providerUser->program_id,
-                'display_name' => $providerUser->display_name,
-                'address' => $providerUser->address,
-                'status' => $providerUser->status,
-                'locations' => $providerUser->locations()->get(),
-                'created_at' => $providerUser->created_at->format('c'),
-                'updated_at' => $providerUser->updated_at->format('c')
-            ];
-            return $p;
-        });
-        return $providers;
-    }
-
-    public function provider($id) {
-        $provider = $this->model()->where([ 'user_id' => $id ])->firstOrFail();
-        $providerUser = $provider->user()->first();
-        $provider['user'] = [
+    public function setupProviderUser($providerUser) {
+        return [
             'id' => $providerUser->id,
             'program_id' => $providerUser->program_id,
             'display_name' => $providerUser->display_name,
@@ -65,6 +44,22 @@ class ProviderInfoRepository
             'created_at' => $providerUser->created_at->format('c'),
             'updated_at' => $providerUser->updated_at->format('c')
         ];
+    }
+
+    public function providers() {
+        $providers = $this->model()->orderBy('id', 'desc')->paginate();
+        $providers->getCollection()->transform(function ($p) {
+            $providerUser = $p->user()->first();
+            $p['user'] = $this->setupProviderUser($providerUser);
+            return $p;
+        });
+        return $providers;
+    }
+
+    public function provider($id) {
+        $provider = $this->model()->where([ 'user_id' => $id ])->firstOrFail();
+        $providerUser = $provider->user()->first();
+        $p['user'] = $this->setupProviderUser($providerUser);
         return $provider;
     }
 

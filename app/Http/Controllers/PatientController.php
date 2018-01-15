@@ -8,6 +8,7 @@ use App\Patient;
 use App\Appointment;
 use App\Services\NoteService;
 use App\Services\PatientService;
+use App\Services\ProviderInfoService;
 use App\Services\AppointmentService;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CCD\CcdProblemService;
@@ -30,6 +31,7 @@ class PatientController extends Controller
 {
     private $patientService;
     private $appointmentService;
+    private $providerService;
     private $allergyService;
     private $ccdProblemService;
     private $cpmProblemUserService;
@@ -46,6 +48,7 @@ class PatientController extends Controller
      *
      */
     public function __construct(PatientService $patientService, 
+                                ProviderInfoService $providerService,
                                 AppointmentService $appointmentService,
                                 CcdAllergyService $allergyService,
                                 CcdProblemService $ccdProblemService,
@@ -59,6 +62,7 @@ class PatientController extends Controller
                                 NoteService $noteService)
     {   
         $this->patientService = $patientService;
+        $this->providerService = $providerService;
         $this->appointmentService = $appointmentService;
         $this->allergyService = $allergyService;
         $this->ccdProblemService = $ccdProblemService;
@@ -361,5 +365,9 @@ class PatientController extends Controller
 
     public function removeAppointment($userId, $id) {
         return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
+    }
+
+    public function getProviders($userId) {
+        return response()->json($this->providerService->getPatientProviders($userId));
     }
 }

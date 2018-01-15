@@ -222,6 +222,14 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::post('', 'PatientController@addAppointment');
                     Route::delete('{id}', 'PatientController@removeAppointment');
                 });
+                
+                Route::group([
+                    'prefix' => 'providers'
+                ], function () {
+                    Route::get('', 'PatientController@getProviders');
+                    Route::post('', 'PatientController@addProvider');
+                    Route::delete('{id}', 'PatientController@removeProvider');
+                });
             });
             
             Route::get('{userId}/lifestyles', 'PatientController@getLifestyles');
