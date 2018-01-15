@@ -164,7 +164,7 @@
             getProviders() {
                 this.loaders.getProviders = true
                 this.newAppointment.provider = this.providers[0]
-                this.axios.get(rootUrl(`api/providers/list`)).then(response => {
+                this.axios.get(rootUrl(`api/patients/${this.patientId}/providers`)).then(response => {
                     this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.user_id })).sort((a, b) => a.label > b.label ? 1 : -1))
                     console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
