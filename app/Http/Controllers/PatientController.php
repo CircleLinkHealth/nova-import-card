@@ -91,7 +91,7 @@ class PatientController extends Controller
     public function getProblems($userId)
     {
         $cpmProblems = array_map($this->patientService->mapTypeFn('cpm'), $this->patientService->getCpmProblems($userId));
-        $ccdProblems = array_map($this->patientService->mapTypeFn('ccd'), $this->patientService->getCcdProblems($userId));
+        $ccdProblems = array_map($this->patientService->mapTypeFn('ccd'), $this->ccdProblemService->getPatientProblems($userId));
         return response()->json(array_merge($cpmProblems, $ccdProblems));
     }
     
@@ -102,7 +102,7 @@ class PatientController extends Controller
     
     public function getCcdProblems($userId)
     {
-        return response()->json($this->patientService->getCcdProblems($userId));
+        return response()->json($this->ccdProblemService->getPatientProblems($userId));
     }
     
     public function removeCcdProblem($userId, $ccdId)

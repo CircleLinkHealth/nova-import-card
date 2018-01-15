@@ -49,6 +49,10 @@ class ProblemCode extends \App\BaseModel
         'code',
     ];
 
+    public $SNOMED_CODE = '2.16.840.1.113883.6.96';
+    public $ICD9_CODE = '2.16.840.1.113883.6.103';
+    public $ICD10_CODE = '2.16.840.1.113883.6.3';
+
     public function problem()
     {
         return $this->belongsTo(Problem::class, 'problem_id');

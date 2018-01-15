@@ -31,10 +31,7 @@ class CcdProblemService
         $problem = [
             'id'    => $p->id,
             'name'  => $p->name,
-            'cpm_id'  => $p->cpm_problem_id,
-            'patients' => $this->repo()->patientIds($p->name)->map(function ($patient) {
-                return $patient->patient_id;
-            })
+            'cpm_id'  => $p->cpm_problem_id
         ];
         return $problem;
     }
@@ -51,5 +48,11 @@ class CcdProblemService
         $problem = $this->repo()->model()->find($id);
         if ($problem) return $this->setupProblem($problem);
         else return null;
+    }
+
+    public function getPatientProblems($userId) {
+        $user = $this->userRepo->model()->findOrFail($userId);
+        
+        return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
     }
 }
