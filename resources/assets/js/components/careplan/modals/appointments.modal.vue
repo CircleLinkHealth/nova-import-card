@@ -153,6 +153,8 @@
                     Event.$emit('appointments:add', response.data)
                     this.loaders.addAppointment = false
                     this.reset()
+                    this.pagination.select(0)
+                    this.select(this.appointments[0])
                 }).catch(err => {
                     console.error('appointments-modal:add', err)
                     this.loaders.addAppointment = false
@@ -165,7 +167,7 @@
                 this.loaders.getProviders = true
                 this.newAppointment.provider = this.providers[0]
                 this.axios.get(rootUrl(`api/patients/${this.patientId}/providers`)).then(response => {
-                    this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.user_id })).sort((a, b) => a.label > b.label ? 1 : -1))
+                    this.providers = this.providers.concat(response.data.map(provider => ({ label: (provider.name || '').trim(), value: provider.id })).sort((a, b) => a.label > b.label ? 1 : -1))
                     console.log('appointments-modal:get-providers', this.providers)
                     this.loaders.getProviders = false
                 }).catch(err => {

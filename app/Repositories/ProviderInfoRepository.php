@@ -59,7 +59,7 @@ class ProviderInfoRepository
     public function provider($id) {
         $provider = $this->model()->where([ 'user_id' => $id ])->firstOrFail();
         $providerUser = $provider->user()->first();
-        $p['user'] = $this->setupProviderUser($providerUser);
+        $provider['user'] = $this->setupProviderUser($providerUser);
         return $provider;
     }
 
