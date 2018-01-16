@@ -27,6 +27,14 @@ Get Nurses with CredentialedState and ContactWindows, that can call the patient 
 
 <br>
 
+##### `GET /api/nurses?search={search_term}`
+Search for a Nurse by first name. 
+<br> Returns Nurses whose full name contains the search term.
+<br>example: `/api/nurses?search=Nurse%20Raphael`
+<br> relationships: `users` 
+
+<br>
+
 ##### `GET /api/nurses?states` - Get all Nurses with CredentialedState.
 ###### `GET /api/nurses?states=NJ,NY` - Get all Nurses licenced both in NJ and NY. 
 ###### `GET /api/nurses?statesOr=CA,TX` - Get all Nurses licenced in CA or TX.
