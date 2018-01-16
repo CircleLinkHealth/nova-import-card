@@ -180,7 +180,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'prefix' => 'biometrics'
                 ], function () {
                     Route::get('', 'PatientController@getBiometrics');
-                    Route::post('{biometricId}', 'PatientController@addBiometric');
+                    Route::post('', 'PatientController@addBiometric');
                 });
                 
                 Route::group([
