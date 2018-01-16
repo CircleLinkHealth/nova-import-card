@@ -2,7 +2,7 @@
 
 ### Endpoints
 
-##### `GET /api/admin/calls` - Get all Scheduled Calls for all Practices.
+##### `GET /api/admin/calls?scheduled` - Get all Scheduled Calls for all Practices.
 Only Administrators can perform this action.
 
 <br>

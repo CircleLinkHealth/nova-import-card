@@ -185,7 +185,7 @@
         },
         next() {
           if (!this.$nextPromise) {
-            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
+            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?scheduled&page=' + this.page)).then((result) => result.data).then(result => {
                 console.log(result)
               if (result) {
                 const calls = result.data;
