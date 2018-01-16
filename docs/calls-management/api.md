@@ -8,4 +8,6 @@ This page describes the internal api endpoints for managing outgoing patient cal
 
 #### Resources
 
+- [Call](../api/internal/resources/Call.md)
 - [Nurse](../api/internal/resources/Nurse.md)
+- [Patient](../api/internal/resources/Patient.md)
