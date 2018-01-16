@@ -165,14 +165,8 @@ class Call extends \App\BaseModel
      * Scope for Scheduled calls for the given month
      *
      * @param $builder
-     * @param Carbon $monthYear
-     *
      */
-    public function scopeScheduled($builder, Carbon $monthYear = null) {
-        if ( ! $monthYear) {
-            $monthYear = Carbon::now()->startOfMonth();
-        }
-
+    public function scopeScheduled($builder) {
         $builder->where('status', '=', 'scheduled')
                 ->whereHas('inboundUser')
                 ->with([
@@ -181,8 +175,8 @@ class Call extends \App\BaseModel
                         $q->latest();
                     },
                     'inboundUser.patientInfo.contactWindows',
-                    'inboundUser.patientSummaries' => function ($q) use ($monthYear) {
-                        $q->where('month_year', '=', $monthYear->format('Y-m-d'));
+                    'inboundUser.patientSummaries' => function ($q) {
+                        $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
                     },
                     'inboundUser.primaryPractice',
                     'outboundUser.nurseInfo',

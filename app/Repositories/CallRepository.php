@@ -75,8 +75,8 @@ class CallRepository
                    ->whereDoesntHave('inboundScheduledCalls');
     }
 
-    public function scheduledCalls(Carbon $month = null)
+    public function scheduledCalls()
     {
-        return $this->model->scheduled($month);
+        return $this->model->scheduled();
     }
 }
