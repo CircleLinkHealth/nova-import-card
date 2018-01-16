@@ -2,7 +2,7 @@
 
 **All Query String Filters return an instance of `App\Http\Resources\Call`**
 
-**Query String Filters are chainable and can be found at `App\Filters\CallFilters`**
+**Query String Filters are chainable and can be found at `App\Filters\ScheduledCallFilters`**
 
 
 <br>Example of how to chain filters: 

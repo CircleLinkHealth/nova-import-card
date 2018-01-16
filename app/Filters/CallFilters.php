@@ -2,12 +2,11 @@
 /**
  * Created by PhpStorm.
  * User: michalis
- * Date: 01/16/2018
- * Time: 11:18 PM
+ * Date: 01/17/2018
+ * Time: 12:44 AM
  */
 
 namespace App\Filters;
-
 
 use App\Repositories\CallRepository;
 use Illuminate\Http\Request;
@@ -19,17 +18,13 @@ class CallFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function globalFilters(): array
-    {
-        return [];
-    }
-
     /**
      * Scope for scheduled calls
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scheduled() {
+    public function scheduled()
+    {
         return $this->builder->scheduled();
     }
 
@@ -40,7 +35,8 @@ class CallFilters extends QueryFilters
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function caller($term) {
+    public function caller($term)
+    {
         return $this->builder
             ->whereHas('outboundUser', function ($q) use ($term) {
                 $q->where('display_name', 'like', "%$term%");
@@ -54,10 +50,31 @@ class CallFilters extends QueryFilters
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function patientId($id) {
+    public function patientId($id)
+    {
         return $this->builder
             ->whereHas('inboundUser', function ($q) use ($id) {
                 $q->where('id', '=', $id);
             });
+    }
+
+    /**
+     * Scope for calls by patient name.
+     *
+     * @param $name
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function patientName($name)
+    {
+        return $this->builder
+            ->whereHas('inboundUser', function ($q) use ($name) {
+                $q->where('display_name', 'like', "%$name%");
+            });
+    }
+
+    public function globalFilters(): array
+    {
+        return [];
     }
 }
