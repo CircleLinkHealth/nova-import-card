@@ -124,7 +124,17 @@ class PatientController extends Controller
         $name = $request->input('name');
         $cpm_problem_id = $request->input('cpm_problem_id');
         if ($userId && $name) {
-            return response()->json($this->ccdProblemService->repo()->addPatientCcdProblem($userId, $name, $cpm_problem_id));
+            return response()->json($this->ccdProblemService->addPatientCcdProblem($userId, $name, $cpm_problem_id));
+        }
+        else return $this->badRequest('"userId" and "name" are important');
+    }
+    
+    public function editCcdProblem($userId, $ccdId, Request $request)
+    {
+        $name = $request->input('name');
+        $cpm_problem_id = $request->input('cpm_problem_id');
+        if ($cpm_problem_id && $name) {
+            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id));
         }
         else return $this->badRequest('"userId" and "name" are important');
     }
@@ -156,8 +166,57 @@ class PatientController extends Controller
         return response()->json($this->biometricUserService->patientBiometrics($userId));
     }
 
-    public function addBiometric($userId, $biometricId) {
-        
+    public function addBiometric($userId, Request $request) {
+        $biometricId = $request->input('biometric_id');
+        $starting = $request->input('starting');
+        $target = $request->input('target');
+        $systolic_high_alert = $request->input('systolic_high_alert');
+        $systolic_low_alert = $request->input('systolic_low_alert');
+        $diastolic_high_alert = $request->input('diastolic_high_alert');
+        $diastolic_low_alert = $request->input('diastolic_low_alert');
+        $high_alert = $request->input('high_alert');
+        $low_alert = $request->input('low_alert');
+        $starting_a1c = $request->input('starting_a1c');
+        $monitor_changes_for_chf = $request->input('monitor_changes_for_chf');
+        $result = null;
+        if ($biometricId) {
+            switch ($biometricId) {
+                case 1:
+                    $result = $this->biometricUserService->addPatientWeight($userId, $biometricId, [
+                        'starting' => $starting,
+                        'target' => $target,
+                        'monitor_changes_for_chf' => $monitor_changes_for_chf
+                    ]);
+                    break;
+                case 2:
+                    $result = $this->biometricUserService->addPatientBloodPressure($userId, $biometricId, [
+                        'starting' => $starting,
+                        'target' => $target,
+                        'diastolic_high_alert' => $diastolic_high_alert,
+                        'diastolic_low_alert' => $diastolic_low_alert,
+                        'systolic_high_alert' => $systolic_high_alert,
+                        'systolic_low_alert' => $systolic_low_alert
+                    ]);
+                    break;
+                case 3:
+                    $result = $this->biometricUserService->addPatientBloodSugar($userId, $biometricId, [
+                        'starting' => $starting,
+                        'target' => $target,
+                        'high_alert' => $high_alert,
+                        'low_alert' => $low_alert,
+                        'starting_a1c' => $starting_a1c
+                    ]);
+                    break;
+                default:
+                    $result = $this->biometricUserService->addPatientSmoking($userId, $biometricId, [
+                        'starting' => $starting,
+                        'target' => $target
+                    ]);
+                    break;
+            }
+        }
+        else return $this->badRequest('"biometric_id" is important');
+        return response()->json($result);
     }
 
     public function addCpmProblem($userId, Request $request) {
@@ -321,9 +380,10 @@ class PatientController extends Controller
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
 
-    public function getNotes($userId) {
+    public function getNotes($userId, Request $request) {
         if ($userId) {
-            return $this->noteService->repo()->patientNotes($userId);
+            $type = $request->input('type');
+            return $this->noteService->repo()->patientNotes($userId, $type);
         }
         else return $this->badRequest('"userId" is important');
     }

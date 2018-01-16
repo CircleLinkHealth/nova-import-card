@@ -12,6 +12,14 @@
                 <slot v-if="goals.length === 0">
                     <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 </slot>
+                <div class="row">
+                    <div :class="{ 'col-sm-12': !loaders.editNote, 'col-sm-11': loaders.editNote }">
+                        <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note" @change="editNote"></textarea>
+                    </div>
+                    <div class="col-sm-1" v-if="loaders.editNote">
+                        <loader></loader>
+                    </div>
+                </div>
                 
                 <ul class="subareas__list" v-if="goals && goals.length > 0">
                     <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals" :key="index">
@@ -31,6 +39,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import HealthGoalsModal from './modals/health-goals.modal'
+    import NoteTypes from '../../constants/note.types'
 
     export default {
         name: 'care-areas',
@@ -42,7 +51,15 @@
         },
         data() {
             return {
-                goals: []
+                goals: [],
+                note: {
+                    id: null,
+                    body: null,
+                    type: NoteTypes.Biometrics
+                },
+                loaders: {
+                    editNote: null
+                }
             }
         },
         methods: {
@@ -52,6 +69,7 @@
                 if (goal.info) {
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
+                    goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
                     goal.start = () => Number(goal.info.starting.split('/')[0] || '0')
                     goal.end = () => Number(goal.info.target.split('/')[0] || '0')
                     
@@ -79,13 +97,49 @@
             },
             showModal() {
                 Event.$emit('modal-health-goals:show')
+            },
+            getNote() {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/notes?type=${NoteTypes.Biometrics}`)).then(response => {
+                    this.note = ((response.data || {}).data || [])[0] || this.note
+                    console.log('health-goals:notes', this.note)
+                }).catch(err => {
+                    console.error('health-goals:notes', err)
+                })
+            },
+            editNote(e) {
+                e.preventDefault()
+                if (e.target.value != '') {
+                    this.loaders.editNote = true
+                    let $promise = null
+                    if (this.note.id) {
+                        $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
+                    }
+                    else {
+                        $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
+                    }
+                    return $promise.then(response => {
+                        console.log('health-goals:note-add', response.data)
+                        Event.$emit('health-goals:note-add', response.data)
+                        this.note = response.data
+                        this.loaders.editNote = false
+                    }).catch(err => {
+                        console.error('health-goals:note-add', err)
+                        this.loaders.editNote = false
+                    })
+                }
             }
         },
         mounted() {
             this.getGoals()
-
+            this.getNote()
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
+            })
+
+            Event.$on('health-goals:add', (info) => {
+                const index = this.goals.findIndex(g => (g.info || {}).id == info.id)
+                this.goals[index].info = info
+                this.goals[index] = this.setupGoal(this.goals[index])
             })
         }
     }
@@ -94,5 +148,11 @@
 <style>
     li.top-20 {
         margin-top: 20px;
+    }
+
+    .free-note {
+        border: none;
+        background-color: transparent;
+        box-shadow: none;
     }
 </style>
