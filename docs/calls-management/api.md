@@ -1,6 +1,7 @@
 # Calls Management API
 
-This page describes the internal api endpoints for managing outgoing patient calls. Use this page to see available endpoints, and the tables they return info from. All endpoints return json.
+This page describes the internal api endpoints for managing outgoing patient calls. Use this page to see available endpoints, and the tables they return info from. 
+<br>**All endpoints return json.**
 
 ### base uri: `/api`
 #### production base uri: `https://careplanmanager.com/api`
@@ -9,7 +10,7 @@ This page describes the internal api endpoints for managing outgoing patient cal
 
 The term `Nurse` refers to a `NurseInfo` model with a relationship with `User`
 
-**All nurse endpoints return a collection of, or single json representation of `App\Http\Resources\NurseInfo`**
+**All nurse endpoints return a collection of, or single `App\Http\Resources\NurseInfo`**
 
 <br>
 
