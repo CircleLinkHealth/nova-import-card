@@ -27,7 +27,7 @@ class CallFilters extends QueryFilters
     /**
      * Scope for scheduled calls
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scheduled() {
         return $this->builder->scheduled();
@@ -38,12 +38,26 @@ class CallFilters extends QueryFilters
      *
      * @param $term
      *
-     * @return $this
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function caller($term) {
         return $this->builder
             ->whereHas('outboundUser', function ($q) use ($term) {
                 $q->where('display_name', 'like', "%$term%");
+            });
+    }
+
+    /**
+     * Scope for calls by patient id.
+     *
+     * @param $id
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function patientId($id) {
+        return $this->builder
+            ->whereHas('inboundUser', function ($q) use ($id) {
+                $q->where('id', '=', $id);
             });
     }
 }

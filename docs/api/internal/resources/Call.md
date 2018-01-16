@@ -2,7 +2,7 @@
 
 **All Query String Filters return an instance of `App\Http\Resources\Call`**
 
-**Query String Filters can be found at `App\Filters\CallFilters`**
+**Query String Filters are chainable and can be found at `App\Filters\CallFilters`**
 
 ### Endpoints
 
@@ -13,6 +13,11 @@ Only Administrators can perform this action.
 
 ##### `GET /api/admin/calls?caller={search_term}` - Get all Calls assigned to callers whose name contains the search term.
 ###### `GET /api/admin/calls?scheduled&caller=Sue` - Get all Scheduled Calls assigned to callers whose name contains the search term 'Sue'.
+Only Administrators can perform this action.
+
+<br>
+
+##### `GET /api/admin/calls?patientId={patient_user_id}` - Get all Calls for the patient using a user_id.
 Only Administrators can perform this action.
 
 <br>
