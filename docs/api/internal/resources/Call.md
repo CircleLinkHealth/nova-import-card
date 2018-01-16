@@ -4,6 +4,12 @@
 
 **Query String Filters are chainable and can be found at `App\Filters\CallFilters`**
 
+
+<br>Example of how to chain filters: 
+<br>`GET /api/admin/calls?scheduled&caller=Sue` 
+<br>Returns all Scheduled Calls assigned to callers whose name contains the search term 'Sue'.
+
+
 ### Endpoints
 
 ##### `GET /api/admin/calls?scheduled` - Get all Scheduled Calls for all Practices.
@@ -12,8 +18,8 @@ Only Administrators can perform this action.
 <br>
 
 ##### `GET /api/admin/calls?caller={search_term}` - Get all Calls assigned to callers whose name contains the search term.
-###### `GET /api/admin/calls?scheduled&caller=Sue` - Get all Scheduled Calls assigned to callers whose name contains the search term 'Sue'.
 Only Administrators can perform this action.
+<br>
 
 <br>
 
