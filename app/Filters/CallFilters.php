@@ -32,4 +32,18 @@ class CallFilters extends QueryFilters
     public function scheduled() {
         return $this->builder->scheduled();
     }
+
+    /**
+     * Scope for calls by Caller name.
+     *
+     * @param $term
+     *
+     * @return $this
+     */
+    public function caller($term) {
+        return $this->builder
+            ->whereHas('outboundUser', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+    }
 }
