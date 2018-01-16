@@ -20,8 +20,16 @@ base table: `nurse_info`
 
 <br>
 
-### Nurse Filters
+### Nurse Query String Filters
+
+Filters are chainable. This is an example of a request for 3 different filters _canCallPatient_, _states_, and _windows_: `GET /api/nurses?canCallPatient=1234&states&windows`
+
 #### `GET /api/nurses?canCallPatient={user_id}`
 Get Nurses with CredentialedState and ContactWindows 
+<br> base table: `nurse_info`
+<br> relationships: `users`, `nurse_contact_window`, `nurse_info_state`, `holidays` 
+
+#### `GET /api/nurses?states&windows`
+Get all Nurses with CredentialedState and ContactWindows 
 <br> base table: `nurse_info`
 <br> relationships: `users`, `nurse_contact_window`, `nurse_info_state`, `holidays` 
