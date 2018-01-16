@@ -31,6 +31,10 @@
             color: red;
         }
 
+        .enrollment-script {
+            font-size: 20px;
+        }
+
     </style>
 
     <div id="enrollment_calls">
@@ -47,17 +51,17 @@
                                 class="material-icons left">call_end</i>Hang Up</a>
                 </div>
                 <div v-else style="text-align: center">
-                    @if($enrollee->home_phone != '')
+                    @if($enrollee->home_phone_e164 != '')
                         <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Home</a>
                     @endif
-                    @if($enrollee->cell_phone != '')
+                    @if($enrollee->cell_phone_e164 != '')
                         <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Cell</a>
                     @endif
-                    @if($enrollee->other_phone != '')
+                    @if($enrollee->other_phone_e164 != '')
                         <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn"
                            style="background: #4caf50"><i
                                     class="material-icons left">phone</i>Other</a>
@@ -88,20 +92,22 @@
                     </blockquote>
                 @endif
 
-                @if($enrollee->has_copay)
-                    @if($enrollee->lang == 'ES')
-                        @include('enrollment-ui.script.es-has-co-pay')
-                    @else
-                        @include('enrollment-ui.script.en-has-co-pay')
+                <div class="enrollment-script">
+                    @if($enrollee->has_copay)
+                        @if($enrollee->lang == 'ES')
+                            @include('enrollment-ui.script.es-has-co-pay')
+                        @else
+                            @include('enrollment-ui.script.en-has-co-pay')
 
-                    @endif
-                @else
-                    @if($enrollee->lang == 'ES')
-                        @include('enrollment-ui.script.es-no-co-pay')
+                        @endif
                     @else
-                        @include('enrollment-ui.script.en-no-co-pay')
+                        @if($enrollee->lang == 'ES')
+                            @include('enrollment-ui.script.es-no-co-pay')
+                        @else
+                            @include('enrollment-ui.script.en-no-co-pay')
+                        @endif
                     @endif
-                @endif
+                </div>
             </div>
 
             <div style="padding: 10px; margin-bottom: 15px"></div>
@@ -126,7 +132,7 @@
     <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
     <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-    <script src="{{ asset('js/browser-calls.js', !app()->environment() == 'local') }}"></script>
+    <script src="{{ asset('js/browser-calls.js', app()->environment() != 'local') }}"></script>
 
     <script>
 
@@ -143,9 +149,9 @@
                 provider_name: '{{ $enrollee->providerFullName }}',
                 practice_name: '{{ $enrollee->practiceName }}',
                 practice_phone: '{{ $enrollee->practice->outgoing_phone_number}}',
-                home_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->home_phone) ?? 'N/A' }}',
-                cell_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->cell_phone) ?? 'N/A' }}',
-                other_phone: '{{ (new App\CLH\Helpers\StringManipulation())->formatPhoneNumberE164($enrollee->other_phone) ?? 'N/A' }}',
+                home_phone: '{{ $enrollee->home_phone_e164 }}',
+                cell_phone: '{{ $enrollee->cell_phone_e164 }}',
+                other_phone: '{{ $enrollee->other_phone_e164 }}',
                 address: '{{ $enrollee->address ?? 'N/A' }}',
                 address_2: '{{ $enrollee->address_2 ?? 'N/A' }}',
                 state: '{{ $enrollee->state ?? 'N/A' }}',
@@ -153,7 +159,6 @@
                 zip: '{{ $enrollee->zip ?? 'N/A' }}',
                 email: '{{ $enrollee->email ?? 'N/A' }}',
                 dob: '{{ $enrollee->dob ?? 'N/A' }}',
-                phone_regex: /^\d{3}-\d{3}-\d{4}$/,
                 disableHome: false,
                 disableCell: false,
                 disableOther: false,
@@ -184,7 +189,7 @@
 
                     }
 
-                    if (this.other_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.other_phone)) {
 
                         return 'Other Phone Valid!';
 
@@ -194,10 +199,10 @@
 
                 },
                 other_is_valid: function () {
-                    return this.other_phone.match(this.phone_regex);
+                    return this.validatePhone(this.other_phone)
                 },
                 other_is_invalid: function () {
-                    return !this.other_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.other_phone)
                 },
 
                 //other phone computer vars
@@ -209,7 +214,7 @@
 
                     }
 
-                    if (this.home_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.home_phone)) {
 
                         return 'Home Phone Valid!';
 
@@ -219,10 +224,10 @@
 
                 },
                 home_is_valid: function () {
-                    return this.home_phone.match(this.phone_regex);
+                    return this.validatePhone(this.home_phone)
                 },
                 home_is_invalid: function () {
-                    return !this.home_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.home_phone)
                 },
 
                 //other phone computer vars
@@ -234,7 +239,7 @@
 
                     }
 
-                    if (this.cell_phone.match(this.phone_regex)) {
+                    if (this.validatePhone(this.cell_phone)) {
 
                         return 'Cell Phone Valid!';
 
@@ -244,12 +249,11 @@
 
                 },
                 cell_is_valid: function () {
-                    return this.cell_phone.match(this.phone_regex);
+                    return this.validatePhone(this.cell_phone)
                 },
                 cell_is_invalid: function () {
-                    return !this.cell_phone.match(this.phone_regex);
+                    return !this.validatePhone(this.cell_phone)
                 },
-
             },
 
             mounted: function () {
@@ -290,12 +294,10 @@
             },
 
             methods: {
+                validatePhone(value) {
+                    let isValid = this.isValidPhoneNumber(value)
 
-                validatePhone(VAL, name){
-
-                    console.log(name);
-
-                    if (VAL.match(this.phone_regex)) {
+                    if (isValid) {
                         this.isValid = true;
                         this.disableHome = true;
                         return true;
@@ -305,19 +307,33 @@
                         this.disableHome = true;
                         return false;
                     }
-
                 },
 
-                call(phone, type){
+                isValidPhoneNumber(string) {
+                    //return true if string is empty
+                    if (string.length === 0) {
+                        return true
+                    }
 
-                    this.callStatus = "Calling " + type + "...";
+                    let matchNumbers = string.match(/\d+-?/g)
+
+                    if (matchNumbers === null) {
+                        return false
+                    }
+
+                    matchNumbers = matchNumbers.join('')
+
+                    return !(matchNumbers === null || matchNumbers.length < 10 || string.match(/[a-z]/i));
+                },
+
+                call(phone, type) {
+                    this.callStatus = "Calling " + type + "..." + phone;
                     Materialize.toast(this.callStatus, 3000);
                     Twilio.Device.connect({"phoneNumber": phone});
                     this.onCall = true;
-
                 },
 
-                hangUp(){
+                hangUp() {
                     Twilio.Device.disconnectAll();
                     this.callStatus = "Ended Call";
                     Materialize.toast(this.callStatus, 3000);
