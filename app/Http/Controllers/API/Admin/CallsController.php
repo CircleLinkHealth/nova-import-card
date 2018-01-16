@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
+use App\Filters\CallFilters;
 use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
@@ -340,9 +341,10 @@ class CallsController extends ApiController
      *   )
      * @return \Illuminate\Http\Response
      */
-    public function index(ScheduledCallFilters $filters)
+    public function index(CallFilters $filters)
     {
-        $calls = Call::filter($filters)->paginate(15);
+        $calls = Call::filter($filters)
+                     ->paginate(15);
 
         return CallResource::collection($calls);
     }

@@ -73,6 +73,24 @@ class CallFilters extends QueryFilters
             });
     }
 
+    /**
+     * Scope for calls by scheduled date.
+     *
+     * @param $date
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \Exception
+     */
+    public function scheduledDate($date)
+    {
+        if ( ! preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date)) {
+            throw new \Exception("Invalid Date");
+        }
+
+        return $this->builder
+            ->where('scheduled_date', '=', $date);
+    }
+
     public function globalFilters(): array
     {
         return [];

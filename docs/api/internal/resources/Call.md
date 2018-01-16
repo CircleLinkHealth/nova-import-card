@@ -17,6 +17,12 @@ Only Administrators can perform this action.
 
 <br>
 
+##### `GET /api/admin/calls?scheduledDate=2018-01-24` - Get all Scheduled Calls for a given day.
+The date must be in format "YYYY-MM-DD"
+Only Administrators can perform this action.
+
+<br>
+
 ##### `GET /api/admin/calls?caller={search_term}` - Get all Calls assigned to callers whose name contains the search term.
 Only Administrators can perform this action.
 <br>
