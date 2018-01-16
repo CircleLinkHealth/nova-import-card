@@ -32,13 +32,16 @@ class CcdProblemService
     }
         
     function setupProblem($p) {
-        $problem = [
-            'id'    => $p->id,
-            'name'  => $p->name,
-            'cpm_id'  => $p->cpm_problem_id,
-            'codes' => $p->codes()->get()
-        ];
-        return $problem;
+        if ($p) {
+            $problem = [
+                'id'    => $p->id,
+                'name'  => $p->name,
+                'cpm_id'  => $p->cpm_problem_id,
+                'codes' => $p->codes()->get()
+            ];
+            return $problem;
+        }
+        return $p;
     }
 
     public function problems() {
@@ -59,5 +62,13 @@ class CcdProblemService
         $user = $this->userRepo->model()->findOrFail($userId);
         
         return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
+    }
+    
+    public function addPatientCcdProblem($userId, $name, $problemCode = null) {
+        return $this->setupProblem($this->repo()->addPatientCcdProblem($userId, $name, $problemCode));
+    }
+
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
+        return $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode));
     }
 }

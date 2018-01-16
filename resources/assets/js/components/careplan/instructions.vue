@@ -88,12 +88,22 @@
             })
 
             Event.$on('full-conditions:add', (ccdProblem) => {
-                if (ccdProblem) this.ccdProblems.push(ccdProblem)
+                if (ccdProblem) this.ccdProblems.push(this.setupCcdProblem(ccdProblem))
             })
 
             Event.$on('full-conditions:remove', (id) => {
                 const index = this.ccdProblems.findIndex(problem => problem.id === id)
                 this.ccdProblems.splice(index, 1)
+            })
+
+            Event.$on('full-conditions:edit', (ccdProblem) => {
+                if (ccdProblem) {
+                    const existingProblem = this.ccdProblems.find(p => p.id == ccdProblem.id)
+                    if (existingProblem) {
+                        existingProblem.name = ccdProblem.name
+                        existingProblem.cpm_id = ccdProblem.cpm_id
+                    }
+                }
             })
 
             Event.$on('full-conditions:add-code', (code) => {

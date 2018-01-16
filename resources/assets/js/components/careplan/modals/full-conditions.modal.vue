@@ -43,12 +43,13 @@
                                             <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
                                         </div>
                                         <div class="col-sm-5">
-                                            <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" :options="cpmProblemsForSelect"></v-select>
+                                            <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
+                                                :options="cpmProblemsForSelect" required></v-select>
                                         </div>
                                         <div class="col-sm-2 text-right">
                                             <loader class="absolute" v-if="loaders.editProblem"></loader>
                                             <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit" 
-                                                title="Edit this problem" :disabled="newProblem.name.length === 0" />
+                                                title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
                                         </div>
                                     </div>
                                 </form>
@@ -184,6 +185,15 @@
             },
             editProblem(e) {
                 e.preventDefault()
+                this.loaders.editProblem = true
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { name: this.selectedProblem.name, cpm_problem_id: this.selectedProblem.cpm.value }).then(response => {
+                    console.log('full-conditions:edit', response.data)
+                    this.loaders.editProblem = false
+                    Event.$emit('full-conditions:edit', response.data)
+                }).catch(err => {
+                    console.error('full-conditions:edit', err)
+                    this.loaders.editProblem = false
+                })
             },
             getSystemCodes() {
                 return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
