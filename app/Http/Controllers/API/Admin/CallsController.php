@@ -342,7 +342,7 @@ class CallsController extends ApiController
      */
     public function index(CallFilters $filters)
     {
-        $calls = Call::filter($filters)->paginate(30);
+        $calls = Call::filter($filters)->paginate(15);
 
         return CallResource::collection($calls);
     }
