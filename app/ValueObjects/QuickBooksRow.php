@@ -29,8 +29,26 @@ class QuickBooksRow
     protected $msg;
 
 
-    public function __construct()
+    /**
+     * QuickBooksRow constructor.
+     *
+     * @param array $array
+     */
+    public function __construct(array $array)
     {
+        $this->refNumber             = $array['refNumber'];
+        $this->customer              = $array['customer'];
+        $this->txnDate               = $array['txnDate'];
+        $this->allowOnlineACHPayment = $array['allowOnlineACHPayment'];
+        $this->salesTerm             = $array['salesTerm'];
+        $this->toBePrinted           = $array['toBePrinted'];
+        $this->toBeEmailed           = $array['toBeEmailed'];
+        $this->ptBillingReport       = $array['ptBillingReport'];
+        $this->lineItem              = $array['lineItem'];
+        $this->lineQty               = $array['lineQty'];
+        $this->lineDesc              = $array['lineDesc'];
+        $this->lineUnitPrice         = $array['lineUnitPrice'];
+        $this->msg                   = $array['msg'];
 
     }
 
