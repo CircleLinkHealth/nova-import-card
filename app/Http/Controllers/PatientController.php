@@ -380,9 +380,10 @@ class PatientController extends Controller
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }
 
-    public function getNotes($userId) {
+    public function getNotes($userId, Request $request) {
         if ($userId) {
-            return $this->noteService->repo()->patientNotes($userId);
+            $type = $request->input('type');
+            return $this->noteService->repo()->patientNotes($userId, $type);
         }
         else return $this->badRequest('"userId" is important');
     }
