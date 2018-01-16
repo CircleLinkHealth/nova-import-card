@@ -61,10 +61,19 @@
             }
         },
         methods: {
+            setupCcdProblem(problem) {
+                problem.newCode = {
+                    code: null,
+                    problem_code_system_id: null,
+                    selectedCode: 'Select a Code'
+                }
+                problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
+                return problem
+            },
             getCcdProblems() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/ccd`)).then(response => {
                     console.log('instructions:ccd', response.data)
-                    this.ccdProblems = response.data
+                    this.ccdProblems = response.data.map(this.setupCcdProblem)
                 }).catch(err => console.error('instructions:ccd', err))
             },
             showFullConditionsModal() {
@@ -85,6 +94,22 @@
             Event.$on('full-conditions:remove', (id) => {
                 const index = this.ccdProblems.findIndex(problem => problem.id === id)
                 this.ccdProblems.splice(index, 1)
+            })
+
+            Event.$on('full-conditions:add-code', (code) => {
+                const problem = this.ccdProblems.find(p => p.id === code.problem_id);
+                if (problem) {
+                    problem.codes.push(code)
+                }
+            })
+
+            Event.$on('full-conditions:remove-code', (problem_id, id) => {
+                const problem = this.ccdProblems.find(problem => problem.id === problem_id)
+                if (problem) {
+                    const index = problem.codes.findIndex(c => c.id == id)
+                    problem.codes.splice(index, 1)
+                }
+                
             })
         }
     }
