@@ -117,6 +117,7 @@
                         this.selectedProblem.instructions.unshift(instruction)
                         this.newInstruction = ''
                         this.loaders.addInstruction = false
+                        Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
                         console.error('care-areas:add-instruction-to-problem', err)
                         this.loaders.addInstruction = false
@@ -180,6 +181,7 @@
                         this.loaders.removeInstruction = false
                         this.selectedProblem.instructions.splice(index, 1)
                         this.selectedInstruction = null
+                        Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
                         console.error('care-areas:remove-instruction', err)
                         this.loaders.removeInstruction = false
