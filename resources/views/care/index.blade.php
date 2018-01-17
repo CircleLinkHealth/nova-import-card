@@ -45,6 +45,10 @@
                 text-indent: 20px;
                 margin-bottom: 30px;
             }
+
+            .points ul {
+                list-style: disc !important;
+            }
         </style>
     @endpush
 
@@ -65,33 +69,35 @@
                     <h4>
                         Check-ins and care between visits:
                     </h4>
-                    <p>
-                        Program is a way for me / MD to follow-up between office visits
-                    </p>
+                    <ul>
+                        <li>Program is a way for me / MD to follow-up between office visits</li>
+                    </ul>
                 </li>
                 <li>
                     <h4>
                         Personalized care manager for Qs:
                     </h4>
-                    <p>
-                        A personalized care manager (registered nurse) will answer questions and keep us connected
-                    </p>
+                    <ul>
+                        <li>A personalized care manager (registered nurse) will answer questions and keep us connected</li>
+                    </ul>
                 </li>
                 <li>
                     <h4>
                         You're covered!
                     </h4>
-                    <p>
-                        Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover the co-pay (~$8/mo.)
-                    </p>
+                    <ul>
+                        <li>Medicare covers the program and if you have supplemental insurance or Medicaid, it should cover the co-pay (~$8/mo.)</li>
+                    </ul>
                 </li>
                 <li>
                     <h4>
                         You can quit anytime, just call
                     </h4>
-                    <p>
-                        
-                    </p>
+                </li>
+                <li>
+                    <h4>
+                        You can only be on the program with 1 Dr. at a time
+                    </h4>
                 </li>
             </ul>
         </div>
