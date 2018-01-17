@@ -17,7 +17,7 @@
             <div class="col-xs-12" v-if="groups.length > 0">
                 <h3>Monitoring these Medications</h3>
                 <ul>
-                    <li class="top-20" v-for="(group, index) in groups" :key="index">{{group.name}}</li>
+                    <li class="top-20" v-for="(group, index) in patientGroups" :key="index">{{group.name}}</li>
                 </ul>
             </div>
             
@@ -34,7 +34,7 @@
                 </ul>
             </div>
         </div>
-        <medications-modal ref="medicationsModal" :patient-id="patientId" :medications="medications"></medications-modal>
+        <medications-modal ref="medicationsModal" :patient-id="patientId" :medications="medications" :groups="groups"></medications-modal>
     </div>
 </template>
 
@@ -52,6 +52,11 @@
         components: {
             'medications-modal': MedicationsModal
         },
+        computed: {
+            patientGroups() {
+                return this.medications.map(m => this.groups.find(g => g.id == m.medication_group_id)).filter(Boolean)
+            }
+        },
         data() {
             return {
                  medications: [],
@@ -67,6 +72,7 @@
             setupMedication(medication) {
                 medication.title = () => (medication.name || (medication.sig ? medication.sig.split('\n')[0] : 'No Title'))
                 medication.name = medication.name || ''
+                medication.group = (this.groups.find(g => g.id == medication.medication_group_id) || {}).name || 'Select a Medication Type'
                 return medication
             },
             getMedications(page) {
@@ -84,7 +90,7 @@
                 })
             },
             getMedicationGroups() {
-                return this.axios.get(rootUrl(`api/patients/${this.patientId}/medication/groups`)).then(response => {
+                return this.axios.get(rootUrl(`api/medication/groups`)).then(response => {
                     console.log('medications:get-medication-groups', response.data)
                     this.groups = response.data || []
                 }).catch(err => {
@@ -96,8 +102,8 @@
             }
         },
         mounted() {
-            this.getMedications()
-            this.getMedicationGroups()
+            this.getMedicationGroups().then(() => this.getMedications())
+            
             Event.$on('medication:remove', (id) => {
                 this.medications = this.medications.filter((medication) => medication.id != id)
             })

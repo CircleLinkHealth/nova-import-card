@@ -1,5 +1,5 @@
 <template>
-    <modal name="medications" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="medications" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-medications">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -24,6 +24,9 @@
                                 <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="selectedMedication.name" required />
                             </div>
                             <div class="top-20">
+                                <v-select class="form-control" v-model="selectedMedication.group" :value="selectedMedication.medication_group_id" :options="groupsForSelect"></v-select>
+                            </div>
+                            <div class="top-20">
                                 <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig" required></textarea>
                             </div>
                             <div class="top-20 text-right">
@@ -38,6 +41,9 @@
                         <div class="form-group">
                             <div class="top-20">
                                 <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newMedication.name" required />
+                            </div>
+                            <div class="top-20">
+                                <v-select class="form-control" v-model="newMedication.group" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
                                 <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig" required></textarea>
@@ -58,26 +64,34 @@
     import { rootUrl } from '../../../app.config'
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
+    import VueSelect from 'vue-select'
 
     export default {
         name: 'care-areas-modal',
         props: {
             'patient-id': String,
-            medications: Array
+            medications: Array,
+            groups: Array
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'v-select': VueSelect
         },
         computed: {
             isExtendedView() {
                 return this.medications.length > 12
+            },
+            groupsForSelect() {
+                return this.groups.map(group => ({ label: group.name, value: group.id }))
             }
         },
         data() {
             return {
                 newMedication: {
                     name: null,
-                    sig: null
+                    sig: null,
+                    group: 'Select a Medication Type',
+                    medication_group_id: null
                 },
                 selectedMedication: null,
                 loaders: {
@@ -130,7 +144,8 @@
                 this.loaders.addMedication = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/medication`), { 
                             name: this.newMedication.name, 
-                            sig: this.newMedication.sig 
+                            sig: this.newMedication.sig,
+                            medication_group_id: (this.newMedication.group || {}).value
                     }).then(response => {
                         console.log('medication:add', response.data)
                         this.loaders.addMedication = false
@@ -149,6 +164,10 @@
 </script>
 
 <style>
+    .modal-medications .modal-container {
+        width: 700px;
+    }
+
     .medication-container {
         overflow-x: scroll;
     }
@@ -187,5 +206,13 @@
 
     input.color-black {
         color: black;
+    }
+
+    .modal-medications .dropdown-toggle.clearfix {
+        border: none !important;
+    }
+
+    .modal-medications .dropdown.v-select.form-control {
+        padding: 0;
     }
 </style>
