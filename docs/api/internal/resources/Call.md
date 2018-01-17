@@ -17,9 +17,15 @@ Only Administrators can perform this action.
 
 <br>
 
-##### `GET /api/admin/calls?scheduledDate=2018-01-24` - Get all Scheduled Calls for a given day.
+##### `GET /api/admin/calls?scheduledDate=2018-01-24` - Filter Calls by date scheduled.
 The date must be in format "YYYY-MM-DD"
 Only Administrators can perform this action.
+
+<br>
+
+##### `GET /api/admin/calls?lastCallDate=2018-01-24` - Filter Calls by the date the patient was attempted to be called last.
+The date must be in format "YYYY-MM-DD".
+Only Administrators can perform this action. 
 
 <br>
 

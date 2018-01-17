@@ -853,3 +853,23 @@ if (!function_exists('shortenUrl')){
         return $shortUrl;
     }
 }
+
+if (!function_exists('validateYYYYMMDDDateString')){
+    /**
+     * Validate that the given date string has format YYYY-MM-DD
+     *
+     * @param $date
+     *
+     * @return bool
+     * @throws Exception
+     */
+    function validateYYYYMMDDDateString($date, $throwException = true){
+        $isValid = (bool) preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
+
+        if (!$isValid && $throwException) {
+            throw new \Exception("Invalid Date");
+        }
+
+        return $isValid;
+    }
+}

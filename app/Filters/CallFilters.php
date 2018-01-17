@@ -83,12 +83,27 @@ class CallFilters extends QueryFilters
      */
     public function scheduledDate($date)
     {
-        if ( ! preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date)) {
-            throw new \Exception("Invalid Date");
-        }
+        validateYYYYMMDDDateString($date);
 
         return $this->builder
-            ->where('scheduled_date', '=', $date);
+            ->whereScheduledDate($date);
+    }
+
+    /**
+     * Scope for calls by the date the patient was last called.
+     *
+     * @param $date
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \Exception
+     */
+    public function lastCallDate($date) {
+        validateYYYYMMDDDateString($date);
+
+        return $this->builder
+            ->whereHas('inboundUser.patientInfo', function ($q) use ($date) {
+                $q->whereLastContactTime($date);
+            });
     }
 
     public function globalFilters(): array
