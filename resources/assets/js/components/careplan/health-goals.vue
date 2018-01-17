@@ -15,7 +15,7 @@
                 <div class="row">
                     <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <form @submit="editNote">
-                            <input class="form-control free-note " v-model="note.body" placeholder="Enter Note" @change="editNote" />
+                            <input class="form-control free-note " v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote" />
                         </form>
                     </div>
                     <div class="col-sm-1" v-if="loaders.editNote || loaders.getNote">
