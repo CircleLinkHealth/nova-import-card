@@ -161,8 +161,12 @@ if (isset($patient) && ! empty($patient)) {
                             @foreach($problemNames as $prob)
                                 <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
                             @endforeach
+                            
                         @endif
                     </ul>
+                    @if (optional($problemNames)->count() == 0)
+                        <div class="text-center">No Problems at this time</div>
+                    @endif
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
