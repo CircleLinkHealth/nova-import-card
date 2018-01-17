@@ -9,9 +9,6 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="goals.length === 0">
-                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
-                </slot>
                 <div class="row">
                     <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <form @submit="editNote">
@@ -22,9 +19,13 @@
                         <loader></loader>
                     </div>
                 </div>
+
+                <slot v-if="goals.length === 0">
+                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
+                </slot>
                 
                 <ul class="subareas__list" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals" :key="index">
+                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals.filter(g => g.info.created_at)" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -53,6 +54,7 @@
         },
         data() {
             return {
+                baseGoals: [],
                 goals: [],
                 note: {
                     id: null,
@@ -73,8 +75,8 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => Number(goal.info.starting.split('/')[0] || '0')
-                    goal.end = () => Number(goal.info.target.split('/')[0] || '0')
+                    goal.start = () => Number((goal.info.starting || '').split('/')[0] || '0')
+                    goal.end = () => Number((goal.info.target || '').split('/')[0] || '0')
                     
                     if (goal.start() > goal.end()) {
                         goal.info.verb = 'Decrease'
@@ -88,12 +90,42 @@
                         }
                     }
                 }
+                else {
+                    goal.info = {
+                        starting: 0,
+                        target: 0
+                    }
+                    if (goal.type === 0) {
+                        goal.info.monitor_changes_for_chf = 0
+                    }
+                    else if (goal.type === 1) {
+                        goal.info.systolic_high_alert = 0
+                        goal.info.systolic_low_alert = 0
+                        goal.info.diastolic_high_alert = 0
+                        goal.info.diastolic_low_alert = 0
+                    }
+                    else if (goal.type === 2) {
+                        goal.info.high_alert = 0
+                        goal.info.low_alert = 0
+                        goal.info.starting_a1c = 0
+                    }
+                }
                 return goal
+            },
+            getBaseGoals() {
+                return this.axios.get(rootUrl(`api/biometrics`)).then(response => {
+                    this.baseGoals = response.data
+                    console.log('health-goals:get-base-goals', this.baseGoals)
+                    return this.baseGoals
+                }).catch(err => {
+                    console.error('health-goals:get-base-goals', err)
+                })
             },
             getGoals() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/biometrics`)).then(response => {
-                    this.goals = response.data.map(this.setupGoal)
-                    console.log('health-goals:get-goals', this.goals)
+                    const goals = response.data.map(this.setupGoal)
+                    console.log('health-goals:get-goals', goals)
+                    return goals
                 }).catch(err => {
                     console.error('health-goals:get-goals', err)
                 })
@@ -136,16 +168,26 @@
             }
         },
         mounted() {
-            this.getGoals()
+            this.getBaseGoals().then(baseGoals => {
+                this.getGoals().then(goals => {
+                    this.goals = baseGoals.map(baseGoal => {
+                        return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
+                    })
+                })
+            })
+            
             this.getNote()
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
             })
 
-            Event.$on('health-goals:add', (info) => {
-                const index = this.goals.findIndex(g => (g.info || {}).id == info.id)
-                this.goals[index].info = info
-                this.goals[index] = this.setupGoal(this.goals[index])
+            Event.$on('health-goals:add', (id, info) => {
+                const index = this.goals.findIndex(g => g.id == id)
+                if (index >= 0) {
+                    this.goals[index].info = info
+                    this.goals[index] = this.setupGoal(this.goals[index])
+                    this.$forceUpdate()
+                }
             })
         }
     }

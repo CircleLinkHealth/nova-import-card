@@ -60,7 +60,7 @@
                             </div>
                             <div class="col-sm-6 text-right" :class="{ 'col-sm-12': selectedGoal.id % 2 === 0 }">
                                 <loader v-if="loaders.addGoal"></loader>
-                                <button class="btn btn-secondary selected btn-submit">Edit {{selectedGoal.name}}</button>
+                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Edit' : 'Add'}} {{selectedGoal.name}}</button>
                             </div>
                         </div>
                     </form>
@@ -102,7 +102,7 @@
         },
         methods: {
             select(index) {
-                this.selectedGoal = (index >= 0) ? this.goals[index] : null
+                if (!this.loaders.addGoal) this.selectedGoal = (index >= 0) ? this.goals[index] : null
             },
             addGoal(e) {
                 e.preventDefault()
@@ -112,7 +112,7 @@
 
                 }, this.selectedGoal.info)).then(response => {
                     console.log('health-goals:add', response.data)
-                    Event.$emit('health-goals:add', response.data)
+                    Event.$emit('health-goals:add', this.selectedGoal.id, response.data)
                     this.loaders.addGoal = false
                 }).catch(err => {
                     console.error('health-goals:add', err)

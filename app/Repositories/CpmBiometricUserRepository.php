@@ -91,10 +91,10 @@ class CpmBiometricUserRepository
     }
 
     public function exists($userId, $biometricId) {
-        return $this->model()->where([
+        return !!$this->model()->where([
             'patient_id' => $userId,
             'cpm_biometric_id' => $biometricId
-        ]);
+        ])->first();
     }
 
     public function addPatientBloodPressure($userId, $biometricId, $biometric) {
