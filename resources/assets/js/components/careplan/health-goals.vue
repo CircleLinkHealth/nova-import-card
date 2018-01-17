@@ -13,10 +13,10 @@
                     <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 </slot>
                 <div class="row">
-                    <div :class="{ 'col-sm-12': !loaders.editNote, 'col-sm-11': loaders.editNote }">
+                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note" @change="editNote"></textarea>
                     </div>
-                    <div class="col-sm-1" v-if="loaders.editNote">
+                    <div class="col-sm-1" v-if="loaders.editNote || loaders.getNote">
                         <loader></loader>
                     </div>
                 </div>
@@ -58,7 +58,8 @@
                     type: NoteTypes.Biometrics
                 },
                 loaders: {
-                    editNote: null
+                    editNote: null,
+                    getNote: null
                 }
             }
         },
@@ -99,11 +100,14 @@
                 Event.$emit('modal-health-goals:show')
             },
             getNote() {
+                this.loaders.getNote = true
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/notes?type=${NoteTypes.Biometrics}`)).then(response => {
                     this.note = ((response.data || {}).data || [])[0] || this.note
                     console.log('health-goals:notes', this.note)
+                    this.loaders.getNote = false
                 }).catch(err => {
                     console.error('health-goals:notes', err)
+                    this.loaders.getNote = false
                 })
             },
             editNote(e) {
