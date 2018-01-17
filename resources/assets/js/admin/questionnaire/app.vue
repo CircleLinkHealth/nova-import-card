@@ -3,15 +3,15 @@
         <div class="form-group" v-for="(question, pIndex) in questions" :key="pIndex">
             <div class="question-text">{{pIndex + 1}}. {{question.text}}<span class="required" v-if="!!question.required">*</span></div>
             <div class="question-reply" v-if="!question.options">
-                <input v-if="!question.multi && !question.type" type="text" :value="answers[question.name]" :name="question.name" 
-                    :required="!!question.required" placeholder="Enter text here">
+                <input v-if="!question.multi && !question.type" class="color-black" type="text" :value="answers[question.name]" :name="question.name" 
+                    :required="!!question.required" placeholder="Enter text here" @change="setAnswer($event, question.name)">
                 <input v-if="!question.multi && question.type === 'date'" type="date" class="form-control" :value="answers[question.name]" :name="question.name" 
-                    :required="!!question.required">
-                <textarea v-if="question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here"></textarea>
+                    :required="!!question.required" @change="setAnswer($event, question.name)">
+                <textarea v-if="question.multi" type="text" :value="answers[question.name]" :name="question.name" :required="!!question.required" placeholder="Enter text here" @change="setAnswer($event, question.name)"></textarea>
             </div>
             <div class="question-option" v-for="(option, index) in question.options" :key="index">
                 <label>
-                    <span v-if="question.other" class="circle"></span>
+                    <span v-if="!question.multi && question.other" class="circle"></span>
                     <input type="radio" v-if="!question.multi && !question.other" v-model="question.selected" :name="question.name" 
                         :required="!!question.required" :value="(option && option.constructor.name === 'Object') ? option.text : option"> 
                     <input type="checkbox" v-if="question.multi" :name="question.name + ('[' + index + ']')" :required="!!question.required" 
@@ -19,9 +19,9 @@
                         :value="(option && option.constructor.name === 'Object') ? option.text : option"
                         @change="toggleChecked($event, question.name, ((option && option.constructor.name === 'Object') ? option.text : option))"> 
                     <span>{{(option && option.constructor.name === 'Object') ? option.text : option}}</span>
-                    <input class="width-200" v-if="!!option.editable && !question.multi && (question.selected === option.text)" 
+                    <input class="width-200 color-black" v-if="!!option.editable && !question.multi && (question.selected === option.text)" 
                         v-model="question.other" type="text" :name="question.name" :required="!!question.required" placeholder="Enter text here">
-                    <input class="width-200" v-if="!!option.editable && !!question.multi && ((answers[question.name] || []).indexOf(option.text) >= 0)" 
+                    <input class="width-200 color-black" v-if="!!option.editable && !!question.multi && ((answers[question.name] || []).indexOf(option.text) >= 0)" 
                         v-model="question.other" type="text" :name="question.name + ('[' + index + ']')" :required="!!question.required" placeholder="Enter text here">
                 </label>
             </div>
@@ -53,6 +53,9 @@
                     }
                 }
                 this.$forceUpdate()
+            },
+            setAnswer(e, name) {
+                this.answers[name] = e.target.value
             }
         },
         mounted() {
@@ -92,5 +95,9 @@
         width: 15px;
         height: 15px;
         display: inline-block;
+    }
+
+    input.color-black {
+        color: black !important;
     }
 </style>

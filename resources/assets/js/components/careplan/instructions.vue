@@ -13,11 +13,26 @@
             </div>
         </slot>
         <div class="row gutter" v-if="cpmProblems.length > 0">
-            <div class="col-xs-12" v-for="(problem, index) in cpmProblems" :key="index">
+            <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
-                <ul v-if="problem.instructions">
+                <ul>
                     <li v-for="(instruction, index) in problem.instructions" :key="index" v-if="instruction.name">
                         <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row gutter" v-if="ccdProblems">
+            <div class="col-xs-12">
+                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">We are managing:
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
+                </h3>
+                <p v-if="cpmProblems.length === 0">
+                    No Problems at this time
+                </p>
+                <ul>
+                    <li v-for="(problem, index) in cpmProblems" :key="index">
+                        <p>{{problem.name}}</p>
                     </li>
                 </ul>
             </div>
@@ -37,7 +52,7 @@
                 </ul>
             </div>
         </div>
-        <full-conditions-modal :patient-id="patientId" :problems="ccdProblems"></full-conditions-modal>
+        <full-conditions-modal ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
     </div>
 </template>
 
@@ -60,31 +75,74 @@
                  ccdProblems: []
             }
         },
+        computed: {
+            cpmProblemsWithInstructions() {
+                return this.cpmProblems.filter(problem => problem.instructions && problem.instructions.length > 0)
+            }
+        },
         methods: {
+            setupCcdProblem(problem) {
+                problem.newCode = {
+                    code: null,
+                    problem_code_system_id: null,
+                    selectedCode: 'Select a Code'
+                }
+                problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
+                return problem
+            },
             getCcdProblems() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/ccd`)).then(response => {
                     console.log('instructions:ccd', response.data)
-                    this.ccdProblems = response.data
+                    this.ccdProblems = response.data.map(this.setupCcdProblem)
                 }).catch(err => console.error('instructions:ccd', err))
             },
             showFullConditionsModal() {
                 Event.$emit('modal-full-conditions:show')
+            },
+            showCareAreasModal() {
+                Event.$emit('modal-care-areas:show')
             }
         },
         mounted() {
             this.getCcdProblems()
 
             Event.$on('care-areas:problems', (problems) => {
-                this.cpmProblems = problems.filter(problem => problem.instructions && problem.instructions.length > 0)
+                this.cpmProblems = problems
             })
 
             Event.$on('full-conditions:add', (ccdProblem) => {
-                if (ccdProblem) this.ccdProblems.push(ccdProblem)
+                if (ccdProblem) this.ccdProblems.push(this.setupCcdProblem(ccdProblem))
             })
 
             Event.$on('full-conditions:remove', (id) => {
                 const index = this.ccdProblems.findIndex(problem => problem.id === id)
                 this.ccdProblems.splice(index, 1)
+            })
+
+            Event.$on('full-conditions:edit', (ccdProblem) => {
+                if (ccdProblem) {
+                    const existingProblem = this.ccdProblems.find(p => p.id == ccdProblem.id)
+                    if (existingProblem) {
+                        existingProblem.name = ccdProblem.name
+                        existingProblem.cpm_id = ccdProblem.cpm_id
+                    }
+                }
+            })
+
+            Event.$on('full-conditions:add-code', (code) => {
+                const problem = this.ccdProblems.find(p => p.id === code.problem_id);
+                if (problem) {
+                    problem.codes.push(code)
+                }
+            })
+
+            Event.$on('full-conditions:remove-code', (problem_id, id) => {
+                const problem = this.ccdProblems.find(problem => problem.id === problem_id)
+                if (problem) {
+                    const index = problem.codes.findIndex(c => c.id == id)
+                    problem.codes.splice(index, 1)
+                }
+                
             })
         }
     }

@@ -49,6 +49,22 @@ class CpmBiometricService implements CpmModel
     public function patientBiometrics($userId) {
         return $this->biometricUserRepo->patientBiometrics($userId);
     }
+    
+    public function addPatientBloodPressure($userId, $biometricId, $biometric) {
+        return $this->biometricUserRepo->addPatientBloodPressure($userId, $biometricId, $biometric);
+    }
+    
+    public function addPatientBloodSugar($userId, $biometricId, $biometric) {
+        return $this->biometricUserRepo->addPatientBloodSugar($userId, $biometricId, $biometric);
+    }
+    
+    public function addPatientSmoking($userId, $biometricId, $biometric) {
+        return $this->biometricUserRepo->addPatientSmoking($userId, $biometricId, $biometric);
+    }
+
+    public function addPatientWeight($userId, $biometricId, $biometric) {
+        return $this->biometricUserRepo->addPatientWeight($userId, $biometricId, $biometric);
+    }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {

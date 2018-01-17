@@ -12,12 +12,32 @@ namespace App\Repositories;
 use App\User;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmBiometricUser;
+use App\Models\CPM\Biometrics\CpmBloodPressure;
+use App\Models\CPM\Biometrics\CpmBloodSugar;
+use App\Models\CPM\Biometrics\CpmSmoking;
+use App\Models\CPM\Biometrics\CpmWeight;
 
 class CpmBiometricUserRepository
 {
     public function model()
     {
         return app(CpmBiometricUser::class);
+    }
+
+    public function pressure() {
+        return app(CpmBloodPressure::class);
+    }
+    
+    public function sugar() {
+        return app(CpmBloodSugar::class);
+    }
+    
+    public function smoking() {
+        return app(CpmSmoking::class);
+    }
+    
+    public function weight() {
+        return app(CpmWeight::class);
     }
 
     public function patients($biometricId) {
@@ -68,5 +88,56 @@ class CpmBiometricUserRepository
                 return $this->setupBiometricUser($biometricUser);
             }
         }
+    }
+
+    public function exists($userId, $biometricId) {
+        return !!$this->model()->where([
+            'patient_id' => $userId,
+            'cpm_biometric_id' => $biometricId
+        ])->first();
+    }
+
+    public function addPatientBloodPressure($userId, $biometricId, $biometric) {
+        if (!$this->exists($userId, $biometricId)) {
+            $this->addPatientBiometric($userId, $biometricId);
+        }
+        $biometric['patient_id'] = $userId;
+        $pressure = $this->pressure()->firstOrCreate(['patient_id' => $userId]);
+        $pressure->save();
+        $pressure->update($biometric);
+        return $pressure;
+    }
+    
+    public function addPatientBloodSugar($userId, $biometricId, $biometric) {
+        if (!$this->exists($userId, $biometricId)) {
+            $this->addPatientBiometric($userId, $biometricId);
+        }
+        $biometric['patient_id'] = $userId;
+        $pressure = $this->sugar()->firstOrCreate(['patient_id' => $userId]);
+        $pressure->save();
+        $pressure->update($biometric);
+        return $pressure;
+    }
+    
+    public function addPatientSmoking($userId, $biometricId, $biometric) {
+        if (!$this->exists($userId, $biometricId)) {
+            $this->addPatientBiometric($userId, $biometricId);
+        }
+        $biometric['patient_id'] = $userId;
+        $pressure = $this->smoking()->firstOrCreate(['patient_id' => $userId]);
+        $pressure->save();
+        $pressure->update($biometric);
+        return $pressure;
+    }
+    
+    public function addPatientWeight($userId, $biometricId, $biometric) {
+        if (!$this->exists($userId, $biometricId)) {
+            $this->addPatientBiometric($userId, $biometricId);
+        }
+        $biometric['patient_id'] = $userId;
+        $pressure = $this->weight()->firstOrCreate(['patient_id' => $userId]);
+        $pressure->save();
+        $pressure->update($biometric);
+        return $pressure;
     }
 }

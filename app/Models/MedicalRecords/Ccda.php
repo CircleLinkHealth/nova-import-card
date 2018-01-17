@@ -184,7 +184,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
         ]);
 
-        $response = $client->request('POST', '/ccda/parse', [
+        $response = $client->request('POST', '/api/parser', [
             'headers' => ['Content-Type' => 'text/xml'],
             'body'    => $xml,
         ]);

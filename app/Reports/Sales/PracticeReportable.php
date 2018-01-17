@@ -145,10 +145,8 @@ class PracticeReportable implements Reportable
      */
     public function totalBilledPatientsCount(Carbon $month = null)
     {
-        $q = PatientMonthlySummary::whereHas('patientInfo', function ($q) {
-            $q->whereHas('user', function ($k) {
-                $k->whereProgramId($this->practice->id);
-            });
+        $q = PatientMonthlySummary::whereHas('patient', function ($q) {
+                $q->whereProgramId($this->practice->id);
         })
                                   ->where('ccm_time', '>', 1199);
 

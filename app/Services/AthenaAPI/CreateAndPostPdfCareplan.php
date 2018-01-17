@@ -40,6 +40,10 @@ class CreateAndPostPdfCareplan
 
         $departments = $this->api->getDepartmentIds($practiceId);
 
+        if (!array_key_exists('departments', $departments)) {
+            return false;
+        }
+
         foreach ($departments['departments'] as $department) {
             $response = $this->api->getBookedAppointments($practiceId, $start, $end, $department['departmentid']);
             $this->logPatientIdsFromAppointments($response, $practiceId);

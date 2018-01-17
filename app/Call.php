@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Filters\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,7 +54,8 @@ use Illuminate\Database\Eloquent\Model;
 class Call extends \App\BaseModel
 {
 
-    use \Venturecraft\Revisionable\RevisionableTrait;
+    use Filterable,
+        \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'calls';
 
@@ -157,5 +159,28 @@ class Call extends \App\BaseModel
         }
 
         $builder->whereIn('status', $status);
+    }
+
+    /**
+     * Scope for Scheduled calls for the given month
+     *
+     * @param $builder
+     */
+    public function scopeScheduled($builder) {
+        $builder->where('status', '=', 'scheduled')
+                ->whereHas('inboundUser')
+                ->with([
+                    'inboundUser.billingProvider.user',
+                    'inboundUser.notes'                        => function ($q) {
+                        $q->latest();
+                    },
+                    'inboundUser.patientInfo.contactWindows',
+                    'inboundUser.patientSummaries' => function ($q) {
+                        $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
+                    },
+                    'inboundUser.primaryPractice',
+                    'outboundUser.nurseInfo',
+                    'note',
+                ]);
     }
 }

@@ -80,11 +80,11 @@
                     this.loaders.patients = true
                     this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
-                        this.patients = (response.data || []).map(patient => {
+                        this.patients = (response.data.data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
                         })
-                        console.log('unscheduled-patients-get-patients', response.data)
+                        console.log('unscheduled-patients-get-patients', response.data.data)
                     }).catch(err => {
                         this.loaders.patients = false
                         this.errors.patients = err.message

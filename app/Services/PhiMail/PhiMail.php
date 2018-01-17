@@ -215,9 +215,8 @@ class PhiMail implements DirectMail
                     // written to files.
 
                     if (str_contains($showRes->mimeType, 'plain')) {
-                        // ... do something with text parts ...
-//                        Log::critical('The plain text part of the mail');
-//                        Log::critical($showRes->data);
+                        Log::info('The plain text part of the mail');
+                        Log::info($showRes->data);
                         self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
                     } elseif (str_contains($showRes->mimeType, 'xml')) {
                         //save ccd to file
@@ -240,7 +239,7 @@ class PhiMail implements DirectMail
                 // retrieved and processed.:log
                 $this->connector->acknowledgeMessage();
 
-//                Log::critical('Number of Attachments: ' . $message->numAttachments);
+                Log::info('Number of Attachments: ' . $message->numAttachments);
 
                 if ($message->numAttachments > 0) {
                     $this->notifyAdmins($message->numAttachments);
@@ -252,13 +251,10 @@ class PhiMail implements DirectMail
                     sendSlackMessage('#background-tasks', $message);
                 }
 
-//                Log::critical('***************');
             }
         } catch (\Exception $e) {
             $this->handleException($e);
         }
-
-        echo '===END===';
     }
 
     private function writeDataFile(

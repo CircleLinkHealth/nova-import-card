@@ -20,10 +20,16 @@ class NoteRepository
         return !!$this->model()->find($id);
     }
 
-    public function patientNotes($userId) {
-        return $this->model()->orderBy('id', 'desc')->where([
+    public function patientNotes($userId, $type = null) {
+        $query = $this->model()->orderBy('id', 'desc')->where([
             'patient_id' => $userId
-        ])->paginate();
+        ]);
+        if ($type) {
+            $query = $query->where([
+                'type' => $type
+            ]);
+        }
+        return $query->paginate();
     }
 
     public function add(Note $note) {

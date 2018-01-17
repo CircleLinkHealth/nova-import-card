@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-sm-1">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
                                     title="add this instruction for this cpm problem" 
                                     :disabled="!newInstruction || newInstruction.length === 0" />
                             </div>
@@ -117,6 +117,7 @@
                         this.selectedProblem.instructions.unshift(instruction)
                         this.newInstruction = ''
                         this.loaders.addInstruction = false
+                        Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
                         console.error('care-areas:add-instruction-to-problem', err)
                         this.loaders.addInstruction = false
@@ -180,6 +181,7 @@
                         this.loaders.removeInstruction = false
                         this.selectedProblem.instructions.splice(index, 1)
                         this.selectedInstruction = null
+                        Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
                         console.error('care-areas:remove-instruction', err)
                         this.loaders.removeInstruction = false
@@ -251,6 +253,8 @@
         padding: 5 20 5 20;
         margin-top: 2px;
         margin-left: -25px;
+        font-size: 11px;
+        line-height: 1;
     }
 
     .modal-care-areas .problem-remove {

@@ -823,9 +823,9 @@ if (!function_exists('validProblemName')) {
 }
 
 if (!function_exists('showDiabetesBanner')) {
-    function showDiabetesBanner($patient)
+    function showDiabetesBanner($patient, $noShow = null)
     {
-        if ($patient
+        if (!$noShow && $patient
             && is_a($patient, User::class)
             && $patient->hasProblem('Diabetes')
             && !$patient->hasProblem('Diabetes Type 1')
@@ -837,14 +837,39 @@ if (!function_exists('showDiabetesBanner')) {
 
         return false;
     }
+}
 
+if (!function_exists('shortenUrl')){
+    /**
+     * Create a short URL
+     *
+     * @param $url
+     *
+     * @return string
+     * @throws \Waavi\UrlShortener\InvalidResponseException
+     */
+    function shortenUrl($url){
+        $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+        return $shortUrl;
+    }
+}
 
- if (!function_exists('shortenUrl')){
-        function shortenUrl($url){
+if (!function_exists('validateYYYYMMDDDateString')){
+    /**
+     * Validate that the given date string has format YYYY-MM-DD
+     *
+     * @param $date
+     *
+     * @return bool
+     * @throws Exception
+     */
+    function validateYYYYMMDDDateString($date, $throwException = true){
+        $isValid = (bool) preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
 
-            $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
-
-            return $shortUrl;
+        if (!$isValid && $throwException) {
+            throw new \Exception("Invalid Date");
         }
- }
+
+        return $isValid;
+    }
 }

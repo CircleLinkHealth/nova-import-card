@@ -98,7 +98,7 @@ class ProblemInstructionController extends Controller
         $instructionId = $request->input('instructionId');
 
         try {
-            $patient = $this->userService->repo()->find($patientId);
+            $patient = $this->userService->repo()->model()->find($patientId);
             $problem = $this->cpmProblemService->repo()->model()->find($cpmProblemId);
             $instruction = $this->cpmInstructionService->repo()->model()->find($instructionId);
     
@@ -122,7 +122,7 @@ class ProblemInstructionController extends Controller
         $instructionId = $request->route()->instructionId;
 
         try {
-            $patient = $this->userService->repo()->find($patientId);
+            $patient = $this->userService->repo()->model()->find($patientId);
             $problem = $this->cpmProblemService->repo()->model()->find($cpmProblemId);
             $instruction = $this->cpmInstructionService->repo()->model()->find($instructionId);
     

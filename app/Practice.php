@@ -124,6 +124,10 @@ class Practice extends \App\BaseModel
             $q->whereName('participant');
         });
     }
+
+    public function providers() {
+        return Practice::getProviders($this->id);
+    }
     
     public function nurses() {
         return $this->users()->whereHas('roles', function ($q) {

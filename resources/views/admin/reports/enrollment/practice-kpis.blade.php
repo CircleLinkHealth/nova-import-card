@@ -133,8 +133,6 @@
                     $('#practice_kpis').DataTable().ajax.reload();
                 });
 
-                $.fn.dataTable.ext.errMode = 'none';
-
                 $('#practice_kpis')
                     .on('error.dt', function (e, settings, techNote, message) {
                         console.log('An error has been reported by DataTables: ', message);
@@ -144,6 +142,6 @@
             </script>
             <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
         @endpush
+    </div>
 
-
-@stop
+@endsection

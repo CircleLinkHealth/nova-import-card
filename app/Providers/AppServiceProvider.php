@@ -20,15 +20,9 @@ use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
+use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
-use App\Services\NoteService;
 use App\Services\SnappyPdfWrapper;
-use App\Services\UserService;
-use App\Services\PatientService;
-use App\Services\CareplanService;
-use App\Services\CareplanAssessmentService;
-use App\Services\CPM\CpmProblemService;
-use App\Services\CCD\CcdProblemService;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -65,7 +59,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
-        $this->app->bind(HtmlToPdfService::class, function() {
+        $this->app->bind(HtmlToPdfService::class, function () {
             return $this->app->make(SnappyPdfWrapper::class);
         });
 
@@ -123,7 +117,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             UserRepository::class,
-            UserRepositoryEloquent::class
+            PrettusUserRepositoryEloquent::class
         );
 
         $this->app->bind(

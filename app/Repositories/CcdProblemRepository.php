@@ -32,19 +32,34 @@ class CcdProblemRepository
         return $this->model()->groupBy('name')->orderBy('id')->paginate(30);
     }
 
+    public function problem($id) {
+        return $this->model()->findOrFail($id);
+    }
+
     public function patientCcdExists($userId, $name) {
         return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
     }
 
-    public function addPatientCcdProblem($userId, $name) {
+    public function addPatientCcdProblem($userId, $name, $problemCode = null) {
         if (!$this->patientCcdExists($userId, $name)) {
             $problem = new Problem();
             $problem->patient_id = $userId;
             $problem->name = $name;
+            $problem->cpm_problem_id = $problemCode;
             $problem->save();
             return $problem;
         }
         return $this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
+    }
+    
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
+        if ($this->patientCcdExists($userId, $name)) {
+            $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId])->update([
+                'name' => $name,
+                'cpm_problem_id' => $problemCode
+            ]);
+        }
+        return $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId ])->first();
     }
 
     public function removePatientCcdProblem($userId, $ccdId) {

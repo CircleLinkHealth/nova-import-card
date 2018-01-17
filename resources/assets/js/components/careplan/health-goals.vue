@@ -9,12 +9,23 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
+                <div class="row">
+                    <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
+                        <form @submit="editNote">
+                            <input class="form-control free-note " v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote" />
+                        </form>
+                    </div>
+                    <div class="col-sm-1" v-if="loaders.editNote || loaders.getNote">
+                        <loader></loader>
+                    </div>
+                </div>
+
                 <slot v-if="goals.length === 0">
                     <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 </slot>
                 
                 <ul class="subareas__list" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals" :key="index">
+                    <li class='subareas__item subareas__item--wide row top-20' v-for="(goal, index) in goals.filter(g => g.info.created_at)" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -31,6 +42,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import HealthGoalsModal from './modals/health-goals.modal'
+    import NoteTypes from '../../constants/note.types'
 
     export default {
         name: 'care-areas',
@@ -42,7 +54,17 @@
         },
         data() {
             return {
-                goals: []
+                baseGoals: [],
+                goals: [],
+                note: {
+                    id: null,
+                    body: null,
+                    type: NoteTypes.Biometrics
+                },
+                loaders: {
+                    editNote: null,
+                    getNote: null
+                }
             }
         },
         methods: {
@@ -52,8 +74,9 @@
                 if (goal.info) {
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
-                    goal.start = () => Number(goal.info.starting.split('/')[0] || '0')
-                    goal.end = () => Number(goal.info.target.split('/')[0] || '0')
+                    goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
+                    goal.start = () => Number((goal.info.starting || '').split('/')[0] || '0')
+                    goal.end = () => Number((goal.info.target || '').split('/')[0] || '0')
                     
                     if (goal.start() > goal.end()) {
                         goal.info.verb = 'Decrease'
@@ -67,25 +90,104 @@
                         }
                     }
                 }
+                else {
+                    goal.info = {
+                        starting: 0,
+                        target: 0
+                    }
+                    if (goal.type === 0) {
+                        goal.info.monitor_changes_for_chf = 0
+                    }
+                    else if (goal.type === 1) {
+                        goal.info.systolic_high_alert = 0
+                        goal.info.systolic_low_alert = 0
+                        goal.info.diastolic_high_alert = 0
+                        goal.info.diastolic_low_alert = 0
+                    }
+                    else if (goal.type === 2) {
+                        goal.info.high_alert = 0
+                        goal.info.low_alert = 0
+                        goal.info.starting_a1c = 0
+                    }
+                }
                 return goal
+            },
+            getBaseGoals() {
+                return this.axios.get(rootUrl(`api/biometrics`)).then(response => {
+                    this.baseGoals = response.data
+                    console.log('health-goals:get-base-goals', this.baseGoals)
+                    return this.baseGoals
+                }).catch(err => {
+                    console.error('health-goals:get-base-goals', err)
+                })
             },
             getGoals() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/biometrics`)).then(response => {
-                    this.goals = response.data.map(this.setupGoal)
-                    console.log('health-goals:get-goals', this.goals)
+                    const goals = response.data.map(this.setupGoal)
+                    console.log('health-goals:get-goals', goals)
+                    return goals
                 }).catch(err => {
                     console.error('health-goals:get-goals', err)
                 })
             },
             showModal() {
                 Event.$emit('modal-health-goals:show')
+            },
+            getNote() {
+                this.loaders.getNote = true
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/notes?type=${NoteTypes.Biometrics}`)).then(response => {
+                    this.note = ((response.data || {}).data || [])[0] || this.note
+                    console.log('health-goals:notes', this.note)
+                    this.loaders.getNote = false
+                }).catch(err => {
+                    console.error('health-goals:notes', err)
+                    this.loaders.getNote = false
+                })
+            },
+            editNote(e) {
+                e.preventDefault()
+                if (e.target.value != '') {
+                    this.loaders.editNote = true
+                    let $promise = null
+                    if (this.note.id) {
+                        $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
+                    }
+                    else {
+                        $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
+                    }
+                    return $promise.then(response => {
+                        console.log('health-goals:note-add', response.data)
+                        Event.$emit('health-goals:note-add', response.data)
+                        this.note = response.data
+                        this.loaders.editNote = false
+                    }).catch(err => {
+                        console.error('health-goals:note-add', err)
+                        this.loaders.editNote = false
+                    })
+                }
             }
         },
         mounted() {
-            this.getGoals()
-
+            this.getBaseGoals().then(baseGoals => {
+                this.getGoals().then(goals => {
+                    this.goals = baseGoals.map(baseGoal => {
+                        return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
+                    })
+                })
+            })
+            
+            this.getNote()
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
+            })
+
+            Event.$on('health-goals:add', (id, info) => {
+                const index = this.goals.findIndex(g => g.id == id)
+                if (index >= 0) {
+                    this.goals[index].info = info
+                    this.goals[index] = this.setupGoal(this.goals[index])
+                    this.$forceUpdate()
+                }
             })
         }
     }
@@ -94,5 +196,13 @@
 <style>
     li.top-20 {
         margin-top: 20px;
+    }
+
+    .free-note {
+        border: none;
+        font-size: 26px;
+        color: black;
+        background-color: transparent;
+        box-shadow: none;
     }
 </style>

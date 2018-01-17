@@ -66,6 +66,8 @@
             },
             showModal() {
                 Event.$emit('modal-misc:show')
+
+                setTimeout(() => Event.$emit('misc:page', 'Other'), 5)
             }
         },
         mounted() {
