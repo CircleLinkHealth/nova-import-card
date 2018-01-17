@@ -104,6 +104,8 @@
             },
             showModal() {
                 Event.$emit('modal-appointments:show')
+
+                setTimeout(() => Event.$emit('misc:page', 'Appointments'), 5)
             }
         },
         mounted() {

@@ -21,8 +21,11 @@
                     <form @submit="addMisc">
                         <div class="form-group">
                             <div class="top-20">
+                                <div class="font-14">
+                                    <notifications></notifications>
+                                </div>
                                 <select class="form-control color-black" v-model="newMisc.id" :class="{ error: patientHasSelectedMisc }" required>
-                                    <option :value="null">Select an item</option>
+                                    <option :value="null">Select a Service</option>
                                     <option v-for="(misc, index) in miscs" :key="index" :value="misc.id">{{misc.name}}</option>
                                 </select>
                             </div>
@@ -60,6 +63,7 @@
                         </div>
                     </div>
                 </div>
+                
             </div>
         </template>
     </modal>
@@ -69,12 +73,15 @@
     import { rootUrl } from '../../../app.config'
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
+    import EventBus from '../../../admin/time-tracker/comps/event-bus'
+    import NotificationsComponent from '../../notifications'
 
     export default {
         name: 'misc-modal',
         props: ['patient-id'],
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'notifications': NotificationsComponent
         },
         data() {
             return {
@@ -118,10 +125,18 @@
                 misc.instructions = []
                 return misc
             },
+            getSelectedMisc() {
+                return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc`)).then(response => {
+                    console.log('misc:get-selected-misc', response.data)
+                    this.selectedMiscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List')
+                }).catch(err => {
+                    console.error('misc:get-selected-misc', err)
+                })
+            },
             getMisc() {
                 return this.axios.get(rootUrl('api/misc')).then(response => {
                     console.log('misc:get-misc', response.data)
-                    this.miscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies')
+                    this.miscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List')
                 }).catch(err => {
                     console.error('misc:get-misc', err)
                 })
@@ -133,6 +148,7 @@
                     console.log('misc:add', response.data)
                     Event.$emit('misc:select', this.miscs.find(misc => misc.id == this.newMisc.id))
                     this.newMisc.id = null
+                    this.select(this.selectedMiscs.length - 1)
                     this.loaders.addMisc = false
                 }).catch(err => {
                     console.error('misc:remove', err)
@@ -198,11 +214,24 @@
         },
         mounted() {
             this.getMisc()
+            this.getSelectedMisc()
 
             Event.$on('misc:select', (misc) => {
                 if (misc && !this.selectedMiscs.find(m => m.id == misc.id)) {
                     this.selectedMiscs.push(misc)
                 }
+            })
+
+            Event.$on('misc:page', (page) => {
+                const index = this.selectedMiscs.findIndex(misc => misc.name === page)
+                this.select(index)
+                if (index < 0) {
+                    EventBus.$emit('notifications:create', {
+                        type: 'error',
+                        text: 'Sorry, the "' + page + '" service does not exist for this patient yet. Try creating it.'
+                    })
+                }
+                console.log(page, index)
             })
         }
     }
@@ -243,5 +272,9 @@
 
     input.color-black {
         color: black;
+    }
+
+    .font-14 {
+        font-size: 14px
     }
 </style>
