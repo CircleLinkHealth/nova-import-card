@@ -29,6 +29,12 @@ Only Administrators can perform this action.
 
 <br>
 
+##### `GET /api/admin/calls?attemptsSinceLastSuccess=0` - Filter Calls by the number of call attempts since last success.
+To filter for successful calls, use set `attemptsSinceLastSuccess=0`.
+Only Administrators can perform this action. 
+
+<br>
+
 ##### `GET /api/admin/calls?caller={search_term}` - Get all Calls assigned to callers whose name contains the search term.
 Only Administrators can perform this action.
 <br>

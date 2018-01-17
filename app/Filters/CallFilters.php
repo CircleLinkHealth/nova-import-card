@@ -106,6 +106,23 @@ class CallFilters extends QueryFilters
             });
     }
 
+    /**
+     * @param $noCallAttemptsSinceLastSuccess
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @throws \Exception
+     */
+    public function attemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess) {
+        if (!is_numeric($noCallAttemptsSinceLastSuccess)) {
+            throw new \Exception("noCallAttemptsSinceLastSuccess must be a numeric value.");
+        }
+
+        return $this->builder
+            ->whereHas('inboundUser.patientInfo', function ($q) use ($noCallAttemptsSinceLastSuccess) {
+                $q->whereNoCallAttemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess);
+            });
+    }
+
     public function globalFilters(): array
     {
         return [];
