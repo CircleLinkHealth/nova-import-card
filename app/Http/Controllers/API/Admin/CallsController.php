@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
+use App\Filters\CallFilters;
+use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\User;
 use App\Services\Calls\ManagementService;
 use App\Services\NoteService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
 
@@ -22,7 +23,7 @@ class CallsController extends ApiController
 
     public function __construct(ManagementService $service, NoteService $noteService)
     {
-        $this->service = $service;
+        $this->service     = $service;
         $this->noteService = $noteService;
     }
 
@@ -326,49 +327,34 @@ class CallsController extends ApiController
                          ->make(true);
     }
 
-    /**    
-     *   @SWG\GET(
+    /**
+     * @SWG\GET(
      *     path="/admin/calls",
      *     tags={"calls"},
      *     summary="Get Calls Info",
      *     description="Display a listing of calls",
      *     @SWG\Header(header="X-Requested-With", type="String", default="XMLHttpRequest"),
      *     @SWG\Response(
-     *         response="default", 
+     *         response="default",
      *         description="A listing of calls"
      *     )
-     *   )   
+     *   )
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(CallFilters $filters)
     {
-        $calls = $this->service->getScheduledCalls()->paginate(30);
+        $calls = Call::filter($filters)
+                     ->paginate(15);
 
         return CallResource::collection($calls);
     }
 
-    public function patientsWithoutScheduledCalls($practiceId) {
+    public function patientsWithoutScheduledCalls($practiceId)
+    {
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
-            ->get([
-                'id',
-                'first_name',
-                'last_name',
-                'suffix',
-                'city',
-                'state'
-            ])->map(function ($patient) {
-                return [
-                    'id' =>  $patient->id,
-                    'first_name' =>  $patient->first_name,
-                    'last_name' =>  $patient->last_name,
-                    'suffix' =>  $patient->suffix,
-                    'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
-                    'city' =>  $patient->city,
-                    'state' =>  $patient->state
-                ];
-            })->toArray();
+                                  ->get();
 
-        return response()->json($patients);
+        return User::collection($patients);
     }
 
     /**
@@ -385,7 +371,7 @@ class CallsController extends ApiController
             $ids = explode(',', $ids);
         }
 
-        if (! is_array($ids)) {
+        if ( ! is_array($ids)) {
             $ids = [$ids];
         }
 
