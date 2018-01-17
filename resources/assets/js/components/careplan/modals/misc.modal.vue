@@ -121,7 +121,7 @@
             getMisc() {
                 return this.axios.get(rootUrl('api/misc')).then(response => {
                     console.log('misc:get-misc', response.data)
-                    this.miscs = response.data.map(this.setupMisc)
+                    this.miscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies')
                 }).catch(err => {
                     console.error('misc:get-misc', err)
                 })
