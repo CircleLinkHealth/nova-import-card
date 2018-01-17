@@ -11,10 +11,8 @@ namespace App\Services;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\ChargeableService;
 use App\Practice;
-use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Resources\QuickBooksRow as QuickBooksRowResource;
 
 class PracticeReportsService
 {
@@ -79,11 +77,10 @@ class PracticeReportsService
         if ($data['practice']->active()) {
             $chargeableService = $data['practice']->chargeableServices()->first();
         } else {
-            $chargeableService = ChargeableService::where('id', 1)->get();
+            $chargeableService = ChargeableService::where('id', 1)->first();
         }
 
-        //$rowData =
-            return [
+        return [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
             'TxnDate'               => (string)$data['invoice_date'],
@@ -114,10 +111,6 @@ class PracticeReportsService
                                         Account Name: Circle Link Health
                                         Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902"',
         ];
-
-        //$row = new QuickBooksRow($rowData);
-
-        //return $row;
 
 
     }
