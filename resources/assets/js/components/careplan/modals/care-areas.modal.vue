@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-sm-1">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
                                     title="add this instruction for this cpm problem" 
                                     :disabled="!newInstruction || newInstruction.length === 0" />
                             </div>
@@ -251,6 +251,8 @@
         padding: 5 20 5 20;
         margin-top: 2px;
         margin-left: -25px;
+        font-size: 11px;
+        line-height: 1;
     }
 
     .modal-care-areas .problem-remove {
