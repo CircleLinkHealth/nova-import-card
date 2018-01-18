@@ -4,6 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Follow these instructions
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -18,21 +19,6 @@
                 <ul>
                     <li v-for="(instruction, index) in problem.instructions" :key="index" v-if="instruction.name">
                         <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="row gutter" v-if="ccdProblems">
-            <div class="col-xs-12">
-                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">We are managing:
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
-                </h3>
-                <p v-if="cpmProblems.length === 0">
-                    No Problems at this time
-                </p>
-                <ul>
-                    <li v-for="(problem, index) in cpmProblems" :key="index">
-                        <p>{{problem.name}}</p>
                     </li>
                 </ul>
             </div>
