@@ -101,8 +101,8 @@ class PracticeReportsService
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => (string)$chargeableService->description,
             'LineUnitPrice'         => (string)$lineUnitPrice,
-            'Msg'                   => '"Thank you for your business. Check Payments: CircleLink Health Shippan Landing Workpoint 290 Harbor Drive, Stamford, CT 06902 ACH Payments: JPMorgan Chase Bank Routing Number (ABA): 02110361 Account Number: 693139136
-            Account Name: CircleLink Health Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 Wire Payments: JPMorgan Chase Bank Routing Number (ABA): 021000021 Account Number: 693139136 Account Name: Circle Link Health
+            'Msg'                   => '"Thank you for your business. Check Payments: CircleLink Health Shippan Landing Workpoint 290 Harbor Drive, Stamford, CT 06902, ACH Payments: JPMorgan Chase Bank Routing Number (ABA): 02110361, Account Number: 693139136
+            Account Name: CircleLink Health, Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 Wire Payments: JPMorgan Chase Bank Routing Number (ABA): 021000021 Account Number: 693139136 Account Name: Circle Link Health
             Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902"',
         ];
 
