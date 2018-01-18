@@ -65,8 +65,6 @@ class LoginController extends Controller
         $this->usernameOrEmail($request);
         $loginResponse = $this->traitLogin($request);
 
-        $this->storeBrowserCompatibilityCheckPreference($request);
-
         if ( ! $this->validateBrowserCompatibility()) {
             $this->sendInvalidBrowserResponse();
         }
@@ -99,20 +97,6 @@ class LoginController extends Controller
     }
 
     /**
-     * @param Request $request
-     */
-    protected function storeBrowserCompatibilityCheckPreference(Request $request)
-    {
-        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
-            return;
-        }
-
-        auth()->user()->update([
-            'skip_browser_checks' => $request->input('doNotShowAgain'),
-        ]);
-    }
-
-    /**
      * Check whether the user is using a supported browser.
      *
      * @return bool
@@ -125,7 +109,7 @@ class LoginController extends Controller
 
         $agent = new Agent();
 
-        if ($agent->isIE()) {
+        if ($agent->isChrome()) {
             return false;
         }
 
@@ -153,5 +137,21 @@ class LoginController extends Controller
         }
 
         throw ValidationException::withMessages($messages);
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function storeBrowserCompatibilityCheckPreference(Request $request)
+    {
+        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
+            return;
+        }
+
+        auth()->user()->update([
+            'skip_browser_checks' => $request->input('doNotShowAgain', false),
+        ]);
+
+        return response()->redirectTo($this->redirectPath());
     }
 }

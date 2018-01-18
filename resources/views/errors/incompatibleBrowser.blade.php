@@ -1,4 +1,4 @@
-<form method="POST" action="{{ url('/auth/login') }}">
+<form method="POST" action="{{ route('store.browser.compatibility.check.preference') }}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
     @if($errors->has('invalid-browser') || $errors->has('invalid-browser-force-switch'))
@@ -6,12 +6,12 @@
             @if(!$errors->has('invalid-browser-force-switch'))
                 <div class="col-md-12">
                     <div class="radio">
-                        <input id="doNotShowAgain" type="checkbox" name="doNotShowAgain">
+                        <input id="doNotShowAgain" type="checkbox" name="doNotShowAgain" value="1">
                         <label for="doNotShowAgain">Don't show this again <span> </span></label>
                     </div>
                 </div>
 
-                <a href="{{route('patients.dashboard')}}" class="btn btn-warning btn-lg">Continue</a>&nbsp;&nbsp;&nbsp;
+                <button type="submit" class="btn btn-warning btn-lg">Continue</button>&nbsp;&nbsp;&nbsp;
                 &nbsp;&nbsp;&nbsp;&nbsp;
             @endif
 
