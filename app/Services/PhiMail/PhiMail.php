@@ -226,13 +226,13 @@ class PhiMail implements DirectMail
 
                     // Display the list of attachments and associated info. This info is only
                     // included with message part 0.
-//                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
-//                        Log::critical("Attachment " . ($k + 1)
-//                            . ": " . $showRes->attachmentInfo[$k]->mimeType
-//                            . " fn:" . $showRes->attachmentInfo[$k]->filename
-//                            . " Desc:" . $showRes->attachmentInfo[$k]->description
-//                            . "\n");
-//                    }
+                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
+                        Log::info("Attachment " . ($k + 1)
+                            . ": " . $showRes->attachmentInfo[$k]->mimeType
+                            . " fn:" . $showRes->attachmentInfo[$k]->filename
+                            . " Desc:" . $showRes->attachmentInfo[$k]->description
+                            . "\n");
+                    }
                 }
                 // This signals the server that the message can be safely removed from the queue
                 // and should only be sent after all required parts of the message have been
