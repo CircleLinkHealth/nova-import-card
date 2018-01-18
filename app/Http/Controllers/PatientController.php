@@ -23,12 +23,36 @@ use App\Http\Controllers\Controller;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
+
+use App\Http\Controllers\Patient\Traits\ProviderInfoTraits;
+use App\Http\Controllers\Patient\Traits\AppointmentTraits;
+use App\Http\Controllers\Patient\Traits\AllergyTraits;
+use App\Http\Controllers\Patient\Traits\CcdProblemTraits;
+use App\Http\Controllers\Patient\Traits\CpmProblemUserTraits;
+use App\Http\Controllers\Patient\Traits\BiometricUserTraits;
+use App\Http\Controllers\Patient\Traits\MedicationTraits;
+use App\Http\Controllers\Patient\Traits\SymptomTraits;
+use App\Http\Controllers\Patient\Traits\LifestyleTraits;
+use App\Http\Controllers\Patient\Traits\NoteTraits;
+use App\Http\Controllers\Patient\Traits\MiscTraits;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 
 class PatientController extends Controller
 {
+    use ProviderInfoTraits;
+    use AppointmentTraits;
+    use AllergyTraits;
+    use CcdProblemTraits;
+    use CpmProblemUserTraits;
+    use BiometricUserTraits;
+    use MedicationTraits;
+    use SymptomTraits;
+    use LifestyleTraits;
+    use NoteTraits;
+    use MiscTraits;
+
     private $patientService;
     private $appointmentService;
     private $providerService;
@@ -86,364 +110,5 @@ class PatientController extends Controller
 
     public function getPatient($userId) {
         return response()->json($this->patientService->getPatientByUserId($userId));
-    }
-    
-    public function getProblems($userId)
-    {
-        $cpmProblems = $this->cpmProblemUserService->getPatientProblems($userId)->map(function ($p) {
-            $p['type'] = 'cpm';
-            return $p;
-        });
-        $ccdProblems = $this->ccdProblemService->getPatientProblems($userId)->map(function ($p) {
-            $p['type'] = 'ccd';
-            return $p;
-        });
-        return response()->json($cpmProblems->concat($ccdProblems));
-    }
-    
-    public function getCpmProblems($userId)
-    {
-        return response()->json($this->cpmProblemUserService->getPatientProblems($userId));
-    }
-    
-    public function getCcdProblems($userId)
-    {
-        return response()->json($this->ccdProblemService->getPatientProblems($userId));
-    }
-    
-    public function removeCcdProblem($userId, $ccdId)
-    {
-        if ($userId && $ccdId) {
-            return response()->json($this->ccdProblemService->repo()->removePatientCcdProblem($userId, $ccdId));
-        }
-        else return $this->badRequest('"userId" and "ccdId" are important');
-    }
-    
-    public function addCcdProblem($userId, Request $request)
-    {
-        $name = $request->input('name');
-        $cpm_problem_id = $request->input('cpm_problem_id');
-        if ($userId && $name) {
-            return response()->json($this->ccdProblemService->addPatientCcdProblem($userId, $name, $cpm_problem_id));
-        }
-        else return $this->badRequest('"userId" and "name" are important');
-    }
-    
-    public function editCcdProblem($userId, $ccdId, Request $request)
-    {
-        $name = $request->input('name');
-        $cpm_problem_id = $request->input('cpm_problem_id');
-        if ($cpm_problem_id && $name) {
-            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id));
-        }
-        else return $this->badRequest('"userId" and "name" are important');
-    }
-    
-    public function getCcdAllergies($userId)
-    {
-        return response()->json($this->patientService->getCcdAllergies($userId));
-    }
-    
-    public function addCcdAllergies($userId, Request $request)
-    {
-        $name = $request->input('name');
-        if ($name) {
-            return response()->json($this->allergyService->addPatientAllergy($userId, $name));
-        }
-        else return $this->badRequest('"name" is important');
-    }
-    
-    public function deleteCcdAllergy($userId, $allergyId)
-    {
-        if ($userId && $allergyId) {
-            return response()->json($this->allergyService->deletePatientAllergy($userId, $allergyId));
-        }
-        else return $this->badRequest('"userId" and "allergyId" are important');
-    }
-    
-    public function getBiometrics($userId)
-    {
-        return response()->json($this->biometricUserService->patientBiometrics($userId));
-    }
-
-    public function addBiometric($userId, Request $request) {
-        $biometricId = $request->input('biometric_id');
-        $starting = $request->input('starting');
-        $target = $request->input('target');
-        $systolic_high_alert = $request->input('systolic_high_alert');
-        $systolic_low_alert = $request->input('systolic_low_alert');
-        $diastolic_high_alert = $request->input('diastolic_high_alert');
-        $diastolic_low_alert = $request->input('diastolic_low_alert');
-        $high_alert = $request->input('high_alert');
-        $low_alert = $request->input('low_alert');
-        $starting_a1c = $request->input('starting_a1c');
-        $monitor_changes_for_chf = $request->input('monitor_changes_for_chf');
-        $result = null;
-        if ($biometricId) {
-            switch ($biometricId) {
-                case 1:
-                    $result = $this->biometricUserService->addPatientWeight($userId, $biometricId, [
-                        'starting' => $starting,
-                        'target' => $target,
-                        'monitor_changes_for_chf' => $monitor_changes_for_chf
-                    ]);
-                    break;
-                case 2:
-                    $result = $this->biometricUserService->addPatientBloodPressure($userId, $biometricId, [
-                        'starting' => $starting,
-                        'target' => $target,
-                        'diastolic_high_alert' => $diastolic_high_alert,
-                        'diastolic_low_alert' => $diastolic_low_alert,
-                        'systolic_high_alert' => $systolic_high_alert,
-                        'systolic_low_alert' => $systolic_low_alert
-                    ]);
-                    break;
-                case 3:
-                    $result = $this->biometricUserService->addPatientBloodSugar($userId, $biometricId, [
-                        'starting' => $starting,
-                        'target' => $target,
-                        'high_alert' => $high_alert,
-                        'low_alert' => $low_alert,
-                        'starting_a1c' => $starting_a1c
-                    ]);
-                    break;
-                default:
-                    $result = $this->biometricUserService->addPatientSmoking($userId, $biometricId, [
-                        'starting' => $starting,
-                        'target' => $target
-                    ]);
-                    break;
-            }
-        }
-        else return $this->badRequest('"biometric_id" is important');
-        return response()->json($result);
-    }
-
-    public function addCpmProblem($userId, Request $request) {
-        $cpmProblemId = $request->input('cpmProblemId');
-        if ($userId && $cpmProblemId) {
-            $this->cpmProblemUserService->addProblemToPatient($userId, $cpmProblemId);
-            return $this->getCpmProblems($userId);
-        }
-        return $this->badRequest('"userId" and "cpmProblemId" are important');
-    }
-    
-    public function removeCpmProblem($userId, $cpmId) {
-        if ($userId && $cpmId) {
-            $this->cpmProblemUserService->removeProblemFromPatient($userId, $cpmId);
-            return $this->getCpmProblems($userId);
-        }
-        return $this->badRequest('"userId" and "cpmId" are important');
-    }
-    
-    public function getMedication($userId) {
-        if ($userId) {
-            return $this->medicationService->repo()->patientMedication($userId);
-        }
-        return $this->badRequest('"userid" is important');
-    }
-
-    function retrieveMedication(Request $request) {
-        $medication = new \App\Models\CCD\Medication();
-        $medication->medication_import_id = $request->input('medication_import_id');
-        $medication->ccda_id = $request->input('ccda_id');
-        $medication->vendor_id = $request->input('vendor_id');
-        $medication->ccd_medication_log_id = $request->input('ccd_medication_log_id');
-        $medication->medication_group_id = $request->input('medication_group_id');
-        $medication->name = $request->input('name');
-        $medication->sig = $request->input('sig');
-        $medication->code = $request->input('code');
-        $medication->code_system = $request->input('code_system');
-        $medication->code_system_name = $request->input('code_system_name');
-        return $medication;
-    }
-
-    public function editMedication($userId, $id, Request $request) {
-        if ($userId) {
-            $medication = $this->retrieveMedication($request);
-            $medication->id = $id;
-            $medication->patient_id = $userId;
-            return $this->medicationService->editPatientMedication($medication);
-        }
-        return $this->badRequest('"userId" is important');
-    }
-
-    public function addMedication($userId, Request $request) {
-        if ($userId) {
-            $medication = $this->retrieveMedication($request);
-            $medication->patient_id = $userId;
-            return $this->medicationService->repo()->addMedicationToPatient($medication);
-        }
-        return $this->badRequest('"userId" is important');
-    }
-    
-    public function removeMedication($userId, $medicationId) {
-        if ($userId) {
-            return $this->medicationService->repo()->removeMedicationFromPatient($medicationId, $userId);
-        }
-        return $this->badRequest('"userId" is important');
-    }
-
-    public function getMedicationGroups($userId) {
-        if ($userId) {
-            return $this->medicationGroupService->repo()->patientGroups($userId);
-        }
-        return $this->badRequest('"userid" is important');
-    }
-
-    public function getSymptoms($userId) {
-        if ($userId) {
-            return $this->symptomService->repo()->patientSymptoms($userId);
-        }
-        return $this->badRequest('"userId" is important');
-    }
-
-    public function addSymptom($userId, Request $request) {
-        $symptomId = $request->input('symptomId');
-        if ($userId && $symptomId) {
-            return $this->symptomService->repo()->addSymptomToPatient($symptomId, $userId);
-        }
-        else return $this->badRequest('"symptomId" and "userId" are important');
-    }
-    
-    public function removeSymptom($userId, $symptomId) {
-        if ($userId && $symptomId) {
-            $result = $this->symptomService->repo()->removeSymptomFromPatient($symptomId, $userId);
-            return $result ? response()->json($result) : $this->notFound('provided patient does not have the symptom in question');
-        }
-        else return $this->badRequest('"symptomId" and "userId" are important');
-    }
-
-    public function getLifestyles($userId) {
-        if ($userId) {
-            return $this->lifestyleService->patientLifestyles($userId);
-        }
-        else return $this->badRequest('"userId" is important');
-    }
-
-    public function addLifestyle($userId, Request $request) {
-        $lifestyleId = $request->input('lifestyleId');
-        if ($userId && $lifestyleId) {
-            return $this->lifestyleService->addLifestyleToPatient($lifestyleId, $userId);
-        }
-        else return $this->badRequest('"lifestyleId" and "userId" are important');
-    }
-    
-    public function removeLifestyle($userId, $lifestyleId) {
-        if ($userId && $lifestyleId) {
-            return $this->lifestyleService->removeLifestyleFromPatient($lifestyleId, $userId);
-        }
-        else return $this->badRequest('"lifestyleId" and "userId" are important');
-    }
-    
-    public function getMisc($userId) {
-        if ($userId) {
-            return $this->miscService->patientMisc($userId);
-        }
-        else return $this->badRequest('"userId" is important');
-    }
-    
-    public function getMiscByType($userId, $miscTypeId) {
-        if ($userId) {
-            return $this->miscService->patientMiscByType($userId, $miscTypeId);
-        }
-        else return $this->badRequest('"userId" is important');
-    }
-
-    public function addMisc($userId, Request $request) {
-        $miscId = $request->input('miscId');
-        if ($userId && $miscId) {
-            return $this->miscService->addMiscToPatient($miscId, $userId);
-        }
-        else return $this->badRequest('"miscId" and "userId" are important');
-    }
-    
-    public function removeMisc($userId, $miscId) {
-        if ($userId && $miscId) {
-            return $this->miscService->removeMiscFromPatient($miscId, $userId);
-        }
-        else return $this->badRequest('"miscId" and "userId" are important');
-    }
-    
-    public function addInstructionToMisc($userId, $miscId, Request $request) {
-        $instructionId = $request->input('instructionId');
-        if ($userId && $miscId && $instructionId) {
-            return $this->miscService->editPatientMisc($miscId, $userId, $instructionId);
-        }
-        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
-    }
-    
-    public function removeInstructionFromMisc($userId, $miscId, $instructionId) {
-        if ($userId && $miscId && $instructionId) {
-            return $this->miscService->removeInstructionFromPatientMisc($miscId, $userId, $instructionId);
-        }
-        else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
-    }
-
-    public function getNotes($userId, Request $request) {
-        if ($userId) {
-            $type = $request->input('type');
-            return $this->noteService->repo()->patientNotes($userId, $type);
-        }
-        else return $this->badRequest('"userId" is important');
-    }
-    
-    public function addNote($userId, Request $request) {
-        $body = $request->input('body');
-        $author_id = auth()->user()->id;
-        $type = $request->input('type');
-        $isTCM = $request->input('isTCM') ?? 0;
-        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
-        if ($userId && $body && $author_id) {
-            return $this->noteService->add($userId, $author_id, $body, $type, $isTCM, $did_medication_recon);
-        }
-        else return $this->badRequest('"userId" and "body" and "author_id" are important');
-    }
-    
-    public function editNote($userId, $id, Request $request) {
-        $body = $request->input('body');
-        $author_id = auth()->user()->id;
-        $isTCM = $request->input('isTCM') ?? 0;
-        $did_medication_recon = $request->input('did_medication_recon') ?? 0;
-        if ($userId && $id && $author_id) {
-            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
-        }
-        else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
-    }
-
-    public function addAppointment($userId, Request $request) {
-        $appointment = new Appointment();
-        $appointment->comment = $request->input('comment');
-        $appointment->patient_id = $userId;
-        $appointment->author_id = auth()->user()->id;
-        $appointment->type = $request->input('type');
-        $appointment->provider_id = $request->input('provider_id');
-        $appointment->date = $request->input('date');
-        $appointment->time = $request->input('time');
-        if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
-            return response()->json($this->appointmentService->repo()->create($appointment));
-        }
-        else return $this->badRequest('"userId", "author_id", "type", "comment" and "provider_id" are is important');
-    }
-
-    public function getAppointments($userId) {
-        return response()->json($this->appointmentService->repo()->patientAppointments($userId));
-    }
-
-    public function removeAppointment($userId, $id) {
-        return response()->json($this->appointmentService->removePatientAppointment($userId, $id));
-    }
-
-    public function getProviders($userId) {
-        return response()->json($this->providerService->getPatientProviders($userId));
-    }
-
-    public function addProvider($userId, Request $request) {
-        $provider_id = $request->input('provider_id');
-        throw new Exception('Not Implemented Yet');
-    }
-    
-    public function removeProvider($userId, $provider_id) {
-        throw new Exception('Not Implemented Yet');
     }
 }

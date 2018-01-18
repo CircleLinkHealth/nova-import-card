@@ -79,7 +79,7 @@ class LoginController extends Controller
      *
      * @return bool
      */
-    public function usernameOrEmail(Request $request)
+    protected function usernameOrEmail(Request $request)
     {
         if ( ! $request->filled('email')) {
             return false;
@@ -101,24 +101,31 @@ class LoginController extends Controller
      *
      * @return bool
      */
-    public function validateBrowserCompatibility()
+    protected function validateBrowserCompatibility()
     {
-        $agent = new Agent();
-
-        if ( ! $agent->isIE()) {
+        if (auth()->check() && auth()->user()->skip_browser_checks) {
             return true;
         }
 
-        return false;
+        $agent = new Agent();
+
+        if ($agent->isIE()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendInvalidBrowserResponse()
+    protected function sendInvalidBrowserResponse()
     {
         $messages = [
-            'invalid-browser' => "I'm sorry, you may be using a version of IE that we don't support. We recommend you use Chrome. If you must use IE, please use IE11 or later.",
+            'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
+            We recommend you use Chrome. 
+            <br>If you must use IE, please use IE11 or later.
+            <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
         ];
 
         if (auth()->user()->hasRole('care-center')) {
@@ -130,5 +137,21 @@ class LoginController extends Controller
         }
 
         throw ValidationException::withMessages($messages);
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function storeBrowserCompatibilityCheckPreference(Request $request)
+    {
+        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
+            return;
+        }
+
+        auth()->user()->update([
+            'skip_browser_checks' => $request->input('doNotShowAgain', false),
+        ]);
+
+        return response()->redirectTo($this->redirectPath());
     }
 }

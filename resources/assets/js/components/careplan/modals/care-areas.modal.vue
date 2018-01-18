@@ -1,5 +1,5 @@
 <template>
-    <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="care-areas" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
                     <select class="form-control" v-model="selectedCpmProblemId" :class="{ error: patientHasSelectedProblem }">
-                        <option :value="null">Select a problem</option>
+                        <option :value="null">Add condition for Care Management</option>
                         <option v-for="(problem, index) in cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
                     </select>
                     <div class="text-right top-20">
@@ -28,33 +28,24 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row top-20">
+                    <div class="row instructions top-20">
                         <form @submit="addInstruction">
-                            <div class="col-sm-11">
-                                <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" required />
+                            <div class="col-sm-12">
+                                <textarea class="form-control free-note height-200" v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-12 text-right top-20">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                 <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
                                     title="add this instruction for this cpm problem" 
-                                    :disabled="!newInstruction || newInstruction.length === 0" />
+                                    :disabled="!selectedProblem.instruction.name" />
                             </div>
                         </form>
                     </div>
-                    <div class="instructions top-20">
-                         <div v-for="(instruction, index) in selectedProblem.instructions" :key="index">
-                            <ol class="list-group" v-for="(instructionChunk, chunkIndex) in instruction.name.split('\n')" 
-                                @click="selectInstruction(index)" :key="chunkIndex">
-                                <li class="list-group-item" v-if="instructionChunk"
-                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id, disabled: (selectedInstruction && selectedInstruction.id === instruction.id)  && loaders.removeInstruction }">
-                                    {{instructionChunk}}
-                                    <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeInstructionFromProblem(index)" v-if="chunkIndex === 0" />
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
                 </div>
             </div>
+        </template>
+        <template slot="footer">
+            <label class="label label-success font-14 pointer bg-gray" @click="switchToFullConditionsModal">Switch to Non-Care Management Conditions</label>
         </template>
     </modal>
 </template>
@@ -80,7 +71,6 @@
         },
         data() {
             return {
-                newInstruction: '',
                 selectedProblem: null,
                 selectedInstruction: null,
                 cpmProblems: [],
@@ -99,9 +89,9 @@
             },
             addInstruction(e) {
                 e.preventDefault()
-                if (this.newInstruction && this.newInstruction.length > 0) {
+                if (((this.selectedProblem || {}).instruction || {}).name) {
                     this.loaders.addInstruction = true
-                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: this.newInstruction }).then(response => {
+                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: ((this.selectedProblem || {}).instruction || {}).name }).then(response => {
                         console.log('care-areas:add-instruction', response.data)
                         return this.addInstructionToProblem(response.data)
                     }).catch(err => {
@@ -111,11 +101,10 @@
                 }
             },
             addInstructionToProblem(instruction) {
-                if (this.newInstruction && this.newInstruction.length > 0) {
+                if (((this.selectedProblem || {}).instruction || {}).name) {
                     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('care-areas:add-instruction-to-problem', response.data)
-                        this.selectedProblem.instructions.unshift(instruction)
-                        this.newInstruction = ''
+                        this.selectedProblem.instruction = instruction
                         this.loaders.addInstruction = false
                         Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
@@ -187,6 +176,10 @@
                         this.loaders.removeInstruction = false
                     })
                 }
+            },
+            switchToFullConditionsModal() {
+                Event.$emit('modal-care-areas:hide')
+                Event.$emit('modal-full-conditions:show')
             }
         },
         mounted() {
@@ -198,6 +191,10 @@
 <style>
     .modal-care-areas .modal-container {
         width: 700px;
+    }
+
+    .modal-care-areas .modal-footer {
+        padding: 0px;
     }
 
     .btn.btn-secondary {
@@ -312,5 +309,15 @@
     button.problem-button div.loader.absolute {
         right: -13px;
         top: 15px;
+    }
+
+    .bg-gray {
+        background-color: #ddd;
+        color: black;
+    }
+
+    .height-200 {
+        height: 200px !important;
+        width: 100% !important;
     }
 </style>

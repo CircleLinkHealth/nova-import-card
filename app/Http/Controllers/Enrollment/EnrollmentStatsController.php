@@ -95,13 +95,11 @@ class EnrollmentStatsController extends Controller
 
     public function makeAmbassadorStats()
     {
-
         return view('admin.reports.enrollment.ambassador-kpis');
     }
 
     public function practiceStats(Request $request)
     {
-
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {

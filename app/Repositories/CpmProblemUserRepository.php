@@ -23,6 +23,8 @@ class CpmProblemUserRepository
     }
 
     public function create($patientId, $cpmProblemId, $instructionId) {
+        $this->remove($patientId, $cpmProblemId);
+        
         $cpmProblemUsers = CpmProblemUser::where([ 'cpm_problem_id' => $cpmProblemId, 'patient_id' => $patientId ])->orderBy('id', 'desc');
         $cpmProblemUser = $cpmProblemUsers->first();
         if ($cpmProblemUser && !$cpmProblemUser->cpm_instruction_id) {

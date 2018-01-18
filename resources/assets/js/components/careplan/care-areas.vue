@@ -50,7 +50,9 @@
                 return obj
             },
             setupProblem(problem) {
-                problem.instructions = (problem.instructions || []).map(this.setupDates).sort((a, b) => b.id - a.id)
+                problem.instruction = this.setupDates(problem.instruction || {
+                    name: null
+                })
                 return problem
             },
             getProblems() {

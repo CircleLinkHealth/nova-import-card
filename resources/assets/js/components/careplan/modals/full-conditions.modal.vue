@@ -1,5 +1,5 @@
 <template>
-    <modal name="full-conditions" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-full-conditions">
+    <modal name="full-conditions" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-full-conditions">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -100,6 +100,9 @@
                     </div>
                 </div>
             </div>
+        </template>
+        <template slot="footer">
+            <label class="label label-success font-14 pointer bg-gray" @click="switchToCareAreasModal">Switch to Care Management Conditions</label>
         </template>
     </modal>
 </template>
@@ -229,6 +232,10 @@
                     console.error('full-conditions:remove-code', err)
                     this.loaders.removeCode = false
                 })
+            },
+            switchToCareAreasModal() {
+                Event.$emit('modal-full-conditions:hide')
+                Event.$emit('modal-care-areas:show')
             }
         },
         mounted() {
@@ -241,6 +248,10 @@
 <style>
     .modal-full-conditions .modal-container {
         width: 700px;
+    }
+
+    .modal-full-conditions .modal-footer {
+        padding: 0px;
     }
 
     .btn.btn-secondary {
@@ -374,5 +385,10 @@
 
     ul.font-16 {
         font-size: 16px;
+    }
+
+    .bg-gray {
+        background-color: #ddd;
+        color: black;
     }
 </style>
