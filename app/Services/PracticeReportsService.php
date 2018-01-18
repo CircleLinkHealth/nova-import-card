@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\ChargeableService;
 use App\Practice;
+use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -44,7 +45,8 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            $data[] = $this->makeRow($practice, $date);
+            $row = $this->makeRow($practice, $date);
+            $data[] = $row->toArray();
         }
 
         return $this->makeQuickbookReport($data, $format, $date);
@@ -81,14 +83,13 @@ class PracticeReportsService
         }
 
         //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
-        if ($data['practice']->clh_pppm){
+        if ($data['practice']->clh_pppm) {
             $lineUnitPrice = $data['practice']->clh_pppm;
         } else {
             $lineUnitPrice = $chargeableService->amount;
         }
 
-
-        return [
+        $rowData = [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
             'TxnDate'               => (string)$data['invoice_date'],
@@ -105,6 +106,11 @@ class PracticeReportsService
             Account Name: CircleLink Health, Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 Wire Payments: JPMorgan Chase Bank Routing Number (ABA): 021000021 Account Number: 693139136 Account Name: Circle Link Health
             Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902"',
         ];
+
+        $quickBooksRow = new QuickBooksRow($rowData);
+
+        return $quickBooksRow;
+
 
 
     }

@@ -15,7 +15,7 @@ class AttachDataToChargeableServicesTable extends Migration
     {
         $service = ChargeableService::updateOrCreate([
             'code'        => 'CPT99490',
-            'description' => 'CCCM Services over 20 mins (1 month).',
+            'description' => 'CCM Services over 20 mins (1 month).',
             'amount'      => 29,
         ]);
 

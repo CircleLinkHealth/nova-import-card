@@ -36,19 +36,38 @@ class QuickBooksRow
      */
     public function __construct(array $array)
     {
-        $this->refNumber             = $array['refNumber'];
-        $this->customer              = $array['customer'];
-        $this->txnDate               = $array['txnDate'];
-        $this->allowOnlineACHPayment = $array['allowOnlineACHPayment'];
-        $this->salesTerm             = $array['salesTerm'];
-        $this->toBePrinted           = $array['toBePrinted'];
-        $this->toBeEmailed           = $array['toBeEmailed'];
-        $this->ptBillingReport       = $array['ptBillingReport'];
-        $this->lineItem              = $array['lineItem'];
-        $this->lineQty               = $array['lineQty'];
-        $this->lineDesc              = $array['lineDesc'];
-        $this->lineUnitPrice         = $array['lineUnitPrice'];
-        $this->msg                   = $array['msg'];
+        $this->refNumber             = $array['RefNumber'];
+        $this->customer              = $array['Customer'];
+        $this->txnDate               = $array['TxnDate'];
+        $this->allowOnlineACHPayment = $array['AllowOnlineACHPayment'];
+        $this->salesTerm             = $array['SalesTerm'];
+        $this->toBePrinted           = $array['ToBePrinted'];
+        $this->toBeEmailed           = $array['ToBeEmailed'];
+        $this->ptBillingReport       = $array['PT.Billing Report:'];
+        $this->lineItem              = $array['Line Item'];
+        $this->lineQty               = $array['LineQty'];
+        $this->lineDesc              = $array['LineDesc'];
+        $this->lineUnitPrice         = $array['LineUnitPrice'];
+        $this->msg                   = $array['Msg'];
+
+    }
+
+    public function toArray(){
+        return [
+            'refNumber'             => $this->refNumber,
+            'customer'              => $this->customer,
+            'txnDate'               => $this->txnDate,
+            'allowOnlineACHPayment' => $this->allowOnlineACHPayment,
+            'salesTerm'             => $this->salesTerm,
+            'toBePrinted'           => $this->toBePrinted,
+            'toBeEmailed'           => $this->toBeEmailed,
+            'ptBilling Report'      => $this->ptBillingReport,
+            'lineItem'              => $this->lineItem,
+            'lineQty'               => $this->lineQty,
+            'lineDesc'              => $this->lineDesc,
+            'lineUnitPrice'         => $this->lineUnitPrice,
+            'msg'                   => $this->msg,
+        ];
 
     }
 
