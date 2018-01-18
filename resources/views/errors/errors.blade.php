@@ -9,16 +9,7 @@
         </div>
 
         <div class="row" style="margin-bottom: 5%;">
-            @if($errors->has('invalid-browser') || $errors->has('invalid-browser-force-switch'))
-                <div class="col-md-12 text-center">
-                    @if(!$errors->has('invalid-browser-force-switch'))
-                        <a href="{{route('patients.dashboard')}}" class="btn btn-warning btn-lg">Continue</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    @endif
-
-                    <a href="https://www.google.com/chrome/browser/desktop/index.html" class="btn btn-success btn-lg">Download
-                        Chrome</a>
-                </div>
-            @endif
+            @include('errors.incompatibleBrowser')
         </div>
     @endif
 @endif

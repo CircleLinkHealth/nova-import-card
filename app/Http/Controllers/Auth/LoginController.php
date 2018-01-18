@@ -65,6 +65,8 @@ class LoginController extends Controller
         $this->usernameOrEmail($request);
         $loginResponse = $this->traitLogin($request);
 
+        $this->storeBrowserCompatibilityCheckPreference($request);
+
         if ( ! $this->validateBrowserCompatibility()) {
             $this->sendInvalidBrowserResponse();
         }
@@ -79,7 +81,7 @@ class LoginController extends Controller
      *
      * @return bool
      */
-    public function usernameOrEmail(Request $request)
+    protected function usernameOrEmail(Request $request)
     {
         if ( ! $request->filled('email')) {
             return false;
@@ -97,26 +99,43 @@ class LoginController extends Controller
     }
 
     /**
+     * @param Request $request
+     */
+    protected function storeBrowserCompatibilityCheckPreference(Request $request)
+    {
+        if ( ! auth()->check() || auth()->user()->hasRole('care-center')) {
+            return;
+        }
+
+        auth()->user()->update([
+            'skip_browser_checks' => $request->input('doNotShowAgain'),
+        ]);
+    }
+
+    /**
      * Check whether the user is using a supported browser.
      *
      * @return bool
      */
-    public function validateBrowserCompatibility()
+    protected function validateBrowserCompatibility()
     {
-        $agent = new Agent();
-
-        if ( ! $agent->isIE()) {
+        if (auth()->check() && auth()->user()->skip_browser_checks) {
             return true;
         }
 
-        return false;
+        $agent = new Agent();
+
+        if ($agent->isIE()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
-     * @return void
-     * @throws ValidationException
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function sendInvalidBrowserResponse()
+    protected function sendInvalidBrowserResponse()
     {
         $messages = [
             'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
