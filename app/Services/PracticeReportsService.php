@@ -80,6 +80,14 @@ class PracticeReportsService
             $chargeableService = ChargeableService::where('id', 1)->first();
         }
 
+        //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
+        if ($data['practice']->clh_pppm){
+            $lineUnitPrice = $data['practice']->clh_pppm;
+        } else {
+            $lineUnitPrice = $chargeableService->amount;
+        }
+
+
         return [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
@@ -89,10 +97,10 @@ class PracticeReportsService
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
             'PT.Billing Report:'    => (string)$link,
-            'Line Item'             => $chargeableService->code,
+            'Line Item'             => (string)$chargeableService->code,
             'LineQty'               => (string)$data['billable'],
-            'LineDesc'              => 'CCM Services over 20 minutes',
-            'LineUnitPrice'         => (string)$data['practice']->clh_pppm,
+            'LineDesc'              => (string)$chargeableService->description,
+            'LineUnitPrice'         => (string)$lineUnitPrice,
             'Msg'                   => '"Thank you for your business. Check Payments: CircleLink Health Shippan Landing Workpoint 290 Harbor Drive, Stamford, CT 06902 ACH Payments: JPMorgan Chase Bank Routing Number (ABA): 02110361 Account Number: 693139136
             Account Name: CircleLink Health Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 Wire Payments: JPMorgan Chase Bank Routing Number (ABA): 021000021 Account Number: 693139136 Account Name: Circle Link Health
             Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902"',
