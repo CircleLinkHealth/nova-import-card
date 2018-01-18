@@ -1,17 +1,21 @@
 <?php namespace App\Services;
 
+use App\Note;
 use App\CareplanAssessment;
 use App\Repositories\CareplanRepository;
 use App\Repositories\CareplanAssessmentRepository;
+use App\Repositories\NoteRepository;
 
 class CareplanAssessmentService
 {
     private $assessmentRepo;
     private $careplanRepo;
+    private $noteRepo;
 
-    public function __construct(CareplanAssessmentRepository $assessmentRepo, CareplanRepository $careplanRepo) {
+    public function __construct(CareplanAssessmentRepository $assessmentRepo, CareplanRepository $careplanRepo, NoteRepository $noteRepo) {
         $this->assessmentRepo = $assessmentRepo;
         $this->careplanRepo = $careplanRepo;
+        $this->noteRepo = $noteRepo;
     }
 
     public function repo() {
@@ -20,6 +24,15 @@ class CareplanAssessmentService
 
     function exists($careplanId) {
         return $this->repo()->model()->where([ 'careplan_id' => $careplanId ])->first(['id']) != null;
+    }
+
+    function createKeyTreatmentGoalsNote(CareplanAssessment $assessment) {
+        $note = new Note();
+        $note->patient_id = $assessment->careplan_id;
+        $note->author_id = $assessment->provider_approver_id;
+        $note->body = $assessment->key_treatment;
+        $note->type = 'Biometrics';
+        return $this->noteRepo->addOrEdit($note);
     }
 
     public function save(CareplanAssessment $assessment) {
@@ -47,6 +60,7 @@ class CareplanAssessmentService
                     'tobacco_misuse_counseling' => $assessment->tobacco_misuse_counseling
                 ]);
                 $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
+                $this->createKeyTreatmentGoalsNote($assessment);
                 return $savedAssessments->first();
             }
         }
