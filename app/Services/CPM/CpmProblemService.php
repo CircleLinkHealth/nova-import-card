@@ -37,12 +37,12 @@ class CpmProblemService implements CpmModel
         return $problems;
     }
 
-    function setupProblem($p) {
+    public function setupProblem($p) {
         return [
             'id'   => $p->id,
             'name' => $p->name,
             'code' => $p->default_icd_10_code,
-            'instructions' => $p->instructions()->get()
+            'instruction' => $p->instruction()
         ];
     }
 
