@@ -16,7 +16,7 @@ class AddSkipBrowserChecksCheckbox extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('skip_browser_checks')
                 ->after('id')
-                ->comment('Skip compatible browser chacks when the user logs in')
+                ->comment('Skip compatible browser checks when the user logs in')
                 ->default(false);
         });
     }
