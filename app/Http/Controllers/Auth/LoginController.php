@@ -113,12 +113,16 @@ class LoginController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
+     * @throws ValidationException
      */
     public function sendInvalidBrowserResponse()
     {
         $messages = [
-            'invalid-browser' => "I'm sorry, you may be using a version of IE that we don't support. We recommend you use Chrome. If you must use IE, please use IE11 or later.",
+            'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
+            We recommend you use Chrome. 
+            <br>If you must use IE, please use IE11 or later.
+            <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
         ];
 
         if (auth()->user()->hasRole('care-center')) {
