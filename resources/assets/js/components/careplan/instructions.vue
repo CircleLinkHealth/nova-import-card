@@ -4,6 +4,7 @@
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
                     Follow these instructions
+                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
                 </h2>
             </div>
         </div>
@@ -22,22 +23,7 @@
                 </ul>
             </div>
         </div>
-        <div class="row gutter" v-if="ccdProblems">
-            <div class="col-xs-12">
-                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">We are managing:
-                    <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
-                </h3>
-                <p v-if="cpmProblems.length === 0">
-                    No Problems at this time
-                </p>
-                <ul>
-                    <li v-for="(problem, index) in cpmProblems" :key="index">
-                        <p>{{problem.name}}</p>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="row gutter" v-if="ccdProblems">
+        <!-- <div class="row gutter" v-if="ccdProblems">
             <div class="col-xs-12">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">Full Conditions List:
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showFullConditionsModal" aria-hidden="true"></span>
@@ -51,7 +37,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> -->
         <full-conditions-modal ref="fullConditionsModal" :patient-id="patientId" :cpm-problems="cpmProblems" :problems="ccdProblems"></full-conditions-modal>
     </div>
 </template>

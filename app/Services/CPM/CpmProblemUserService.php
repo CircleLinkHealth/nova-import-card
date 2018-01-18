@@ -8,17 +8,20 @@
 
 namespace App\Services\CPM;
 
+use App\Services\CPM\CpmProblemService;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CpmProblemUserRepository;
 
 class CpmProblemUserService
 {
+    private $cpmProblemService;
     private $cpmProblemUserRepo;
     private $userRepo;
 
-    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, UserRepositoryEloquent $userRepo) {
+    public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, UserRepositoryEloquent $userRepo, CpmProblemService $cpmProblemService) {
         $this->cpmProblemUserRepo = $cpmProblemUserRepo;
         $this->userRepo = $userRepo;
+        $this->cpmProblemService = $cpmProblemService;
     }
 
     public function repo() {
@@ -48,7 +51,11 @@ class CpmProblemUserService
     }
 
     public function addProblemToPatient($patientId, $cpmProblemId) {
-        return $this->repo()->create($patientId, $cpmProblemId, null);
+        $problemUser = $this->repo()->create($patientId, $cpmProblemId, null);
+        if ($problemUser) {
+            return $this->cpmProblemService->setupProblem($problemUser->problems()->first());
+        }
+        else return $problemUser;
     }
     
     public function removeProblemFromPatient($patientId, $cpmProblemId) {
@@ -59,13 +66,16 @@ class CpmProblemUserService
         $user = $this->userRepo->model()->find($userId);
         
         return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
+
+            $instructions = $p->user->where('patient_id', $user->id)->values()->map(function ($u) {
+                return $u->instruction()->orderBy('id', 'desc')->first();
+            });
+            if ($instructions->count() == 0) $instructions->push($p->instruction());
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
                 'code' => $p->default_icd_10_code,
-                'instructions' => array_filter($p->user->where('patient_id', $user->id)->values()->map(function ($u) {
-                    return $u->instruction()->first();
-                })->toArray())
+                'instruction' => $instructions->last()
             ];
         });
     }

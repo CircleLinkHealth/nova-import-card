@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $cpm_problem_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Models\CPM\CpmInstruction $instruction
  * @mixin \Eloquent
  */
 class CpmProblemUser extends \App\BaseModel

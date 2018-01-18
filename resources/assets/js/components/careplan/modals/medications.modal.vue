@@ -27,11 +27,11 @@
                                 <v-select class="form-control" v-model="selectedMedication.group" :value="selectedMedication.medication_group_id" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
-                                <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig" required></textarea>
+                                <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig"></textarea>
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.editMedication"></loader>
-                                <button class="btn btn-secondary selected">Edit</button>
+                                <button class="btn btn-secondary selected">Save</button>
                             </div>
                         </div>
                     </form>
@@ -46,7 +46,7 @@
                                 <v-select class="form-control" v-model="newMedication.group" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
-                                <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig" required></textarea>
+                                <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig"></textarea>
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addMedication"></loader>

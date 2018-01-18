@@ -270,6 +270,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      * @var array
      */
     protected $fillable = [
+        'skip_browser_checks',
         'username',
         'password',
         'email',

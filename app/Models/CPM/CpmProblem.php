@@ -128,8 +128,12 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
     }
 
+    public function instruction() {
+        return $this->cpmInstructions()->first();
+    }
+
     public function instructions() {
-        return $this->user()->whereNotNull('cpm_instruction_id')->groupBy('cpm_instruction_id');
+        return $this->user()->whereNotNull('cpm_instruction_id')->with(['instruction'])->groupBy('cpm_instruction_id');
     }
 
     /**
