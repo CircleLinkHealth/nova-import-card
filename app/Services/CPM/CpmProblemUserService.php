@@ -68,17 +68,14 @@ class CpmProblemUserService
         return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
 
             $instructions = $p->user->where('patient_id', $user->id)->values()->map(function ($u) {
-                return $u->instruction()->first();
+                return $u->instruction()->orderBy('id', 'desc')->first();
             });
-            $instructions->push($p->instruction());
-            $instructions = $instructions->filter();
+            if ($instructions->count() == 0) $instructions->push($p->instruction());
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
                 'code' => $p->default_icd_10_code,
-                'instructions' => $instructions->groupBy('id')->map(function ($i) {
-                    return $i->first();
-                })->values()
+                'instruction' => $instructions->last()
             ];
         });
     }
