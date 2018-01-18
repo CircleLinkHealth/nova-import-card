@@ -22,22 +22,22 @@ class CareplanAssessmentService
         return $this->assessmentRepo;
     }
 
-    function exists($careplanId) {
-        return $this->repo()->model()->where([ 'careplan_id' => $careplanId ])->first(['id']) != null;
+    function exists($careplanId, $approverId) {
+        return !!$this->repo()->model()->where([ 'careplan_id' => $careplanId, 'provider_approver_id' => $approverId ])->first();
     }
 
-    function createKeyTreatmentGoalsNote(CareplanAssessment $assessment) {
+    function createAssessmentNote(CareplanAssessment $assessment, $body, $type) {
         $note = new Note();
         $note->patient_id = $assessment->careplan_id;
         $note->author_id = $assessment->provider_approver_id;
-        $note->body = $assessment->key_treatment;
-        $note->type = 'Biometrics';
+        $note->body = $body;
+        $note->type = $type;
         return $this->noteRepo->addOrEdit($note);
     }
 
     public function save(CareplanAssessment $assessment) {
         if ($assessment) {
-            if (!$this->exists($assessment->careplan_id)) {
+            if (!$this->exists($assessment->careplan_id, $assessment->provider_approver_id)) {
                 $assessment->save();
                 return $assessment;
             }
@@ -60,7 +60,8 @@ class CareplanAssessmentService
                     'tobacco_misuse_counseling' => $assessment->tobacco_misuse_counseling
                 ]);
                 $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
-                $this->createKeyTreatmentGoalsNote($assessment);
+                $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
+                $this->createAssessmentNote($assessment, $assessment->toString(), 'Enrollment');
                 return $savedAssessments->first();
             }
         }
