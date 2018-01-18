@@ -1,5 +1,5 @@
 <template>
-    <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="care-areas" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
                     <select class="form-control" v-model="selectedCpmProblemId" :class="{ error: patientHasSelectedProblem }">
-                        <option :value="null">Select a problem</option>
+                        <option :value="null">Add condition for Care Management</option>
                         <option v-for="(problem, index) in cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
                     </select>
                     <div class="text-right top-20">
@@ -55,6 +55,9 @@
                     </div>
                 </div>
             </div>
+        </template>
+        <template slot="footer">
+            <label class="label label-success font-14 pointer bg-gray" @click="switchToFullConditionsModal">Switch to Non-Care Management Conditions</label>
         </template>
     </modal>
 </template>
@@ -187,6 +190,10 @@
                         this.loaders.removeInstruction = false
                     })
                 }
+            },
+            switchToFullConditionsModal() {
+                Event.$emit('modal-care-areas:hide')
+                Event.$emit('modal-full-conditions:show')
             }
         },
         mounted() {
@@ -198,6 +205,10 @@
 <style>
     .modal-care-areas .modal-container {
         width: 700px;
+    }
+
+    .modal-care-areas .modal-footer {
+        padding: 0px;
     }
 
     .btn.btn-secondary {
@@ -312,5 +323,10 @@
     button.problem-button div.loader.absolute {
         right: -13px;
         top: 15px;
+    }
+
+    .bg-gray {
+        background-color: #ddd;
+        color: black;
     }
 </style>
