@@ -19,24 +19,26 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
                     <div class="row">
-                        <div class="col-sm-6">
-                            <label class="btn btn-secondary full-width" :class="{ selected: newProblem.is_monitored }">
-                                <input type="radio" :value="true" v-model="newProblem.is_monitored" /> For Care Management
-                            </label>
-                        </div>
-                        <div class="col-sm-6">
-                            <label class="btn btn-secondary full-width" :class="{ selected: !newProblem.is_monitored }">
-                                <input type="radio" :value="false" v-model="newProblem.is_monitored" /> Other Condition
-                            </label>
-                        </div>
-                        <div class="col-sm-12">
-                            <v-complete placeholder="Enter a Condition" v-model="newProblem.name" :value="newProblem.name" :suggestions="cpmProblemsForAutoComplete"  :class="{ error: patientHasSelectedProblem }">
-                            </v-complete>
-                            <div class="text-right top-20">
-                                <loader v-if="loaders.addProblem"></loader>
-                                <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addCpmProblem" :disabled="!patientHasSelectedProblem" />
+                        <form @submit="addCcdProblem">
+                            <div class="col-sm-12">
+                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="7"
+                                :suggestions="cpmProblemsForAutoComplete">
+                                </v-complete>
                             </div>
-                        </div>
+                            <div class="col-sm-6 font-14 top-20">
+                                <label><input type="radio" :value="true" v-model="newProblem.is_monitored" /> For Care Management</label>
+                            </div>
+                            <div class="col-sm-6 font-14 top-20">
+                                <label><input type="radio" :value="false" v-model="newProblem.is_monitored" /> Other Condition</label>
+                            </div>
+                            <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
+                                <input class="form-control" v-model="newProblem.icd10" placeholder="ICD10 Code" required />
+                            </div>
+                            <div class="col-sm-12 text-right top-20">
+                                <loader v-if="loaders.addProblem"></loader>
+                                <input type="submit" class="btn btn-secondary right-0 selected" value="Save" />
+                            </div>
+                        </form>
                     </div>
                     
                 </div>
@@ -176,7 +178,7 @@
                     name: '',
                     problem: '',
                     problem_id: null,
-                    is_monitored: 0
+                    is_monitored: true
                 },
                 selectedCpmProblemId: null,
                 loaders: {
@@ -270,6 +272,9 @@
                 if (!this.loaders.removeInstruction) {
                     this.selectedInstruction = this.selectedProblem.instructions[index]
                 }
+            },
+            addCcdProblem(e) {
+                e.preventDefault()
             },
             editCcdProblem(e) {
                 e.preventDefault()
@@ -480,5 +485,13 @@
 
     .padding-0 {
         padding: 0px !important;
+    }
+
+    .dropdown-menu {
+        background-color: white;
+    }
+
+    .modal-care-areas input[type="radio"] {
+        display:inline;
     }
 </style>
