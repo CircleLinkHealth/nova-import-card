@@ -16,12 +16,12 @@
         <div class="row gutter" v-if="medications.length > 0">
             <div class="col-xs-12">
                 <ul v-if="medications.length">
-                    <li class="top-20" v-for="(medication, index) in medications" :key="index">
+                    <li class="top-10" v-for="(medication, index) in medications" :key="index">
                         <h4 v-if="medication.name">{{medication.name}} 
-                            <label class="label label-primary" v-if="medication.group().name">{{medication.group().name}}</label>
+                            <label class="label label-secondary" v-if="medication.group().name">{{medication.group().name}}</label>
                         </h4>
                         <h4 v-if="!medication.name">- {{medication.sig}}
-                            <label class="label label-success" v-if="medication.group().name">{{medication.group().name}}</label>
+                            <label class="label label-primary" v-if="medication.group().name">{{medication.group().name}}</label>
                         </h4>
                         <ul class="font-18" v-if="medication.name && medication.sig">
                             <li v-for="(sig, index) in medication.sig.split('\n')" class="list-square" :key="index">{{sig}}</li>
@@ -121,5 +121,17 @@
 
     .font-18 {
         font-size: 18px;
+    }
+
+    .top-10 {
+        margin-top: 10px;
+    }
+
+    .label-primary {
+        background-color: #109ace;
+    }
+
+    .label-secondary {
+        background-color: #47beab;
     }
 </style>
