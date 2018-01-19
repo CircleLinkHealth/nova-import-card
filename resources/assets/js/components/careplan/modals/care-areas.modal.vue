@@ -22,7 +22,7 @@
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="7"
-                                :suggestions="cpmProblemsForAutoComplete">
+                                :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Save" />
+                                <input type="submit" class="btn btn-secondary right-0 selected" value="Save" :disabled="patientHasSelectedProblem" />
                             </div>
                         </form>
                     </div>
@@ -153,7 +153,7 @@
         },
         computed: {
             patientHasSelectedProblem() {
-                return this.problems.map(problem => problem.id).indexOf(this.selectedCpmProblemId) >= 0
+                return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
@@ -493,5 +493,9 @@
 
     .modal-care-areas input[type="radio"] {
         display:inline;
+    }
+
+    .v-complete.error {
+        border: 1px solid red;
     }
 </style>
