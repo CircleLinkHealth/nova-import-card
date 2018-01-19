@@ -11,7 +11,7 @@
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problems" :key="index" @click="select(index)">
                             {{problem.name}}
-                            <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
+                            <span class="delete" title="remove this cpm problem" @click="removeCpmProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
@@ -24,7 +24,7 @@
                     </select>
                     <div class="text-right top-20">
                         <loader v-if="loaders.addProblem"></loader>
-                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addProblem" :disabled="!selectedCpmProblemId || patientHasSelectedProblem" />
+                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addCpmProblem" :disabled="!selectedCpmProblemId || patientHasSelectedProblem" />
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
@@ -134,7 +134,7 @@
                     })
                 }
             },
-            addProblem() {
+            addCpmProblem() {
                 if (this.selectedCpmProblemId) {
                     this.loaders.addProblem = true
                     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.selectedCpmProblemId }).then(response => {
@@ -147,7 +147,7 @@
                     })
                 }
             },
-            removeProblem() {
+            removeCpmProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}`)).then(response => {
@@ -181,21 +181,6 @@
             selectInstruction(index) {
                 if (!this.loaders.removeInstruction) {
                     this.selectedInstruction = this.selectedProblem.instructions[index]
-                }
-            },
-            removeInstructionFromProblem(index) {
-                if (this.selectedInstruction && this.selectedProblem && confirm('Are you sure you want to delete this instruction?')) {
-                    this.loaders.removeInstruction = true
-                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions/${this.selectedInstruction.id}`)).then((response) => {
-                        console.log('care-areas:remove-instruction', response.data)
-                        this.loaders.removeInstruction = false
-                        this.selectedProblem.instructions.splice(index, 1)
-                        this.selectedInstruction = null
-                        Event.$emit('care-areas:problems', this.problems)
-                    }).catch(err => {
-                        console.error('care-areas:remove-instruction', err)
-                        this.loaders.removeInstruction = false
-                    })
                 }
             },
             switchToFullConditionsModal() {
