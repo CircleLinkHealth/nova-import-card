@@ -34,7 +34,7 @@
                                 <textarea class="form-control free-note height-200" v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                             </div>
                             <div class="col-sm-12 text-right top-20">
-                                <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                <loader v-if="loaders.addInstruction"></loader>
                                 <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
                                     title="add this instruction for this cpm problem" 
                                     :disabled="!selectedProblem.instruction.name" />
