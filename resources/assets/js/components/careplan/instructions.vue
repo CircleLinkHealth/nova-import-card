@@ -76,6 +76,7 @@
                 problem.instruction = {}
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
+                problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
                 return problem
             },
             getCcdProblems() {
@@ -119,17 +120,20 @@
             })
 
             Event.$on('full-conditions:add-code', (code) => {
-                const problem = this.ccdProblems.find(p => p.id === code.problem_id);
-                if (problem) {
-                    problem.codes.push(code)
+                const index = this.ccdProblems.findIndex(p => p.id === code.problem_id);
+                if (index >= 0) {
+                    this.ccdProblems[index].codes.push(code)
+                    this.ccdProblems[index] = this.setupCcdProblem(this.ccdProblems[index])
                 }
             })
 
             Event.$on('full-conditions:remove-code', (problem_id, id) => {
-                const problem = this.ccdProblems.find(problem => problem.id === problem_id)
-                if (problem) {
-                    const index = problem.codes.findIndex(c => c.id == id)
-                    problem.codes.splice(index, 1)
+                const index = this.ccdProblems.findIndex(problem => problem.id === problem_id)
+                if (index >= 0) {
+                    const codeIndex = this.ccdProblems[index].codes.findIndex(c => c.id == id)
+                    this.ccdProblems[index].codes.splice(codeIndex, 1)
+
+                    this.ccdProblems[index] = this.setupCcdProblem(this.ccdProblems[index])
                 }
                 
             })

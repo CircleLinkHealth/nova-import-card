@@ -1,5 +1,5 @@
 <template>
-    <modal name="care-areas" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
+    <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
         <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
@@ -72,7 +72,10 @@
                                             <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
                                         </label>
                                     </div>
-                                    <div class="col-sm-6 top-20 text-right">
+                                    <div class="col-sm-6 top-20" v-if="selectedProblem.is_monitored">
+                                        <input class="form-control" v-model="selectedProblem.icd10" placeholder="ICD10 Code" required />
+                                    </div>
+                                    <div class="col-sm-6 top-20 text-right" :class="{ 'col-sm-12' : selectedProblem.is_monitored }">
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
                                         <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
                                             title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
@@ -126,9 +129,6 @@
                     </div>
                 </div>
             </div>
-        </template>
-        <template slot="footer">
-            <label class="label label-success font-14 pointer bg-gray" @click="switchToFullConditionsModal">Switch to Non-Care Management Conditions</label>
         </template>
     </modal>
 </template>
@@ -198,6 +198,12 @@
             select(index) {
                 this.selectedProblem = (index >= 0) ? this.problems[index] : null
             },
+            reset () {
+                this.newProblem.name = ''
+                this.newProblem.problem = ''
+                this.newProblem.is_monitored = true
+                this.newProblem.icd10 = null
+            },
             addInstruction(e) {
                 e.preventDefault()
                 if (((this.selectedProblem || {}).instruction || {}).name) {
@@ -217,7 +223,6 @@
                         console.log('care-areas:add-instruction-to-problem', response.data)
                         this.selectedProblem.instruction = instruction
                         this.loaders.addInstruction = false
-                        Event.$emit('care-areas:problems', this.problems)
                     }).catch(err => {
                         console.error('care-areas:add-instruction-to-problem', err)
                         this.loaders.addInstruction = false
@@ -240,11 +245,12 @@
             removeCpmProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
-                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}`)).then(response => {
+                    const url = `api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}`
+                    return this.axios.delete(rootUrl(url)).then(response => {
                         console.log('care-areas:remove-problems', response.data)
                         this.loaders.removeProblem = false
+                        Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         this.selectedProblem = null
-                        Event.$emit('care-areas:problems', response.data)
                     }).catch(err => {
                         console.error('care-areas:remove-problems', err)
                         this.loaders.removeProblem = false
@@ -285,6 +291,8 @@
                     console.log('full-conditions:add', response.data)
                     this.loaders.addProblem = false
                     Event.$emit('full-conditions:add', response.data)
+                    this.reset()
+                    this.selectedProblem = response.data
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false

@@ -95,6 +95,25 @@
             Event.$on('care-areas:ccd-problems', (problems) => {
                 this.ccdProblems = problems
             })
+
+            Event.$on('care-areas:add', (problem) => {
+                if (problem) {
+                    if (problem.type == 'cpm') {
+                        this.cpmProblems.push(problem)
+                    }
+                    else if (problem.type == 'ccd') {
+                        this.ccdProblems.push(problem)
+                    }
+                }
+            })
+
+            Event.$on('care-areas:remove-cpm-problem', (id) => {
+                this.cpmProblems = this.cpmProblems.filter(problem => problem.id != id)
+            })
+
+            Event.$on('care-areas:remove-ccd-problem', (id) => {
+                this.ccdProblems = this.ccdProblems.filter(problem => problem.id != id)
+            })
         }
     }
 </script>
