@@ -199,31 +199,21 @@ if (isset($patient) && ! empty($patient)) {
 
                 <!-- MEDICATIONS -->
                 <medications ref="medicationsComponent" patient-id="{{$patient->id}}" url="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
+                    
                     <div class="col-xs-10">
-                        <ul><strong>Monitoring these Medications</strong><BR>
-                            @if(!empty($medications_monitor))
-                                @if(is_array($medications_monitor))
-                                    @foreach($medications_monitor as $medi)
-                                        <li style="margin-top:14px;">{!! $medi !!}</li>
-                                    @endforeach
-                                @else
-                                    {{$medications_monitor}}
-                                @endif
-                            @endif
-                        </ul>
-                    </div>
-                    <div class="col-xs-10">
-                        <ul><strong>Taking these Medications</strong><BR>
                             @if(!empty($taking_medications))
                                 @if(is_array($taking_medications))
-                                    @foreach($taking_medications as $medi)
-                                        <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
-                                    @endforeach
+                                    <ul>
+                                        @foreach($taking_medications as $medi)
+                                            <li class='top-10'>
+                                                <h4>{!! $medi !!}</h4>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 @else
                                     {{$taking_medications}}
                                 @endif
                             @endif
-                        </ul>
                     </div>
                 </medications>
                 <!-- /MEDICATIONS -->
