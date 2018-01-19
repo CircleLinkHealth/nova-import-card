@@ -45,6 +45,20 @@ class CpmBiometricUserRepository
     }
 
     public function removePatientBiometric($userId, $biometricId) {
+        switch ($biometricId) {
+            case 1:
+                $this->weight()->where([ 'patient_id' => $userId ])->delete();
+                break;
+            case 2:
+                $this->pressure()->where([ 'patient_id' => $userId ])->delete();
+                break;
+            case 3:
+                $this->sugar()->where([ 'patient_id' => $userId ])->delete();
+                break;
+            case 4:
+                $this->smoking()->where([ 'patient_id' => $userId ])->delete();
+                break;
+        }
         $this->model()->where([
             'patient_id' => $userId,
             'cpm_biometric_id' => $biometricId
