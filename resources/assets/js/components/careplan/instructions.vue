@@ -74,6 +74,7 @@
                     selectedCode: 'Select a Code'
                 }
                 problem.instruction = {}
+                problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 return problem
             },

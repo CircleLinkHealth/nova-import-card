@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row instructions top-20">
+                    <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
                                 <textarea class="form-control free-note height-200" v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
@@ -40,6 +40,26 @@
                                     :disabled="!selectedProblem.instruction.name" />
                             </div>
                         </form>
+                    </div>
+                     <div class="row instructions top-20" v-if="selectedProblem.type == 'ccd'">
+                        <div class="col-sm-12">
+                            <form @submit="editProblem">
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
+                                            :options="cpmProblemsForSelect" required></v-select>
+                                    </div>
+                                    <div class="col-sm-2 text-right">
+                                        <loader class="absolute" v-if="loaders.editProblem"></loader>
+                                        <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit" 
+                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -78,6 +98,7 @@
                 loaders: {
                     addInstruction: null,
                     addProblem: null,
+                    editProblem: null,
                     removeProblem: null,
                     removeInstruction: null
                 }
@@ -93,14 +114,14 @@
                     this.loaders.addInstruction = true
                     return this.axios.post(rootUrl(`api/problems/instructions`), { name: ((this.selectedProblem || {}).instruction || {}).name }).then(response => {
                         console.log('care-areas:add-instruction', response.data)
-                        return this.addInstructionToProblem(response.data)
+                        return this.addInstructionToCpmProblem(response.data)
                     }).catch(err => {
                         console.error('care-areas:add-instruction', err)
                         this.loaders.addInstruction = false
                     })
                 }
             },
-            addInstructionToProblem(instruction) {
+            addInstructionToCpmProblem(instruction) {
                 if (((this.selectedProblem || {}).instruction || {}).name) {
                     return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('care-areas:add-instruction-to-problem', response.data)
