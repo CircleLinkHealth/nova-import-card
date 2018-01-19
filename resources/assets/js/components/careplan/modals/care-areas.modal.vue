@@ -18,14 +18,27 @@
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
-                    <select class="form-control" v-model="selectedCpmProblemId" :class="{ error: patientHasSelectedProblem }">
-                        <option :value="null">Add condition for Care Management</option>
-                        <option v-for="(problem, index) in cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
-                    </select>
-                    <div class="text-right top-20">
-                        <loader v-if="loaders.addProblem"></loader>
-                        <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addCpmProblem" :disabled="!selectedCpmProblemId || patientHasSelectedProblem" />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="btn btn-secondary full-width" :class="{ selected: newProblem.is_monitored }">
+                                <input type="radio" :value="true" v-model="newProblem.is_monitored" /> For Care Management
+                            </label>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="btn btn-secondary full-width" :class="{ selected: !newProblem.is_monitored }">
+                                <input type="radio" :value="false" v-model="newProblem.is_monitored" /> Other Condition
+                            </label>
+                        </div>
+                        <div class="col-sm-12">
+                            <v-complete placeholder="Enter a Condition" v-model="newProblem.name" :value="newProblem.name" :suggestions="cpmProblemsForAutoComplete"  :class="{ error: patientHasSelectedProblem }">
+                            </v-complete>
+                            <div class="text-right top-20">
+                                <loader v-if="loaders.addProblem"></loader>
+                                <input type="button" class="btn btn-secondary right-0 selected" value="Add" @click="addCpmProblem" :disabled="!patientHasSelectedProblem" />
+                            </div>
+                        </div>
                     </div>
+                    
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                     <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
@@ -123,6 +136,7 @@
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
+    import VueComplete from 'v-complete'
 
     export default {
         name: 'care-areas-modal',
@@ -132,7 +146,8 @@
         },
         components: {
             'modal': Modal,
-            'v-select': VueSelect
+            'v-select': VueSelect,
+            'v-complete': VueComplete
         },
         computed: {
             patientHasSelectedProblem() {
@@ -140,6 +155,9 @@
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
+            },
+            cpmProblemsForAutoComplete() {
+                return this.cpmProblems.map(p => ({ name: p.name, id: p.id }))
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -153,6 +171,13 @@
                 selectedProblem: null,
                 selectedInstruction: null,
                 cpmProblems: [],
+                newCpmProblem: null,
+                newProblem: {
+                    name: '',
+                    problem: '',
+                    problem_id: null,
+                    is_monitored: 0
+                },
                 selectedCpmProblemId: null,
                 loaders: {
                     addInstruction: null,
@@ -198,9 +223,9 @@
                 }
             },
             addCpmProblem() {
-                if (this.selectedCpmProblemId) {
+                if (this.newCpmProblem && this.newCpmProblem.value) {
                     this.loaders.addProblem = true
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.selectedCpmProblemId }).then(response => {
+                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.newCpmProblem.value }).then(response => {
                         console.log('care-areas:add-problem', response.data)
                         this.loaders.addProblem = false
                         Event.$emit('care-areas:problems', response.data)
@@ -296,6 +321,9 @@
                     console.error('full-conditions:remove-code', err)
                     this.loaders.removeCode = false
                 })
+            },
+            getProblemAutoCompleteTemplate(item) {
+                return (item || {}).name
             }
         },
         mounted() {
@@ -444,5 +472,13 @@
 
     .modal-care-areas .dropdown.v-select.form-control {
         padding: 0;
+    }
+
+    .margin-0 {
+        margin: 0px !important;
+    }
+
+    .padding-0 {
+        padding: 0px !important;
     }
 </style>

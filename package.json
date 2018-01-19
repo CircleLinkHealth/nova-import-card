@@ -31,6 +31,7 @@
     ]
   },
   "dependencies": {
+    "autocomplete-vue": "^1.0.3",
     "axios": "^0.16.2",
     "bootstrap-sass": "^3.3.7",
     "bower": "^1.8.2",
@@ -46,6 +47,8 @@
     "moment": "^2.19.1",
     "node-excel-export": "^1.4.2",
     "select2": "^4.0.3",
+    "v-autocomplete": "^1.8.1",
+    "v-complete": "github:mykeels/v-complete",
     "velocity-animate": "^1.5.0",
     "vue": "^2.4.1",
     "vue-axios": "^2.0.2",
