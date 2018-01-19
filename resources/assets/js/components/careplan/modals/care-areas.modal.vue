@@ -6,8 +6,8 @@
                     <div class="text-right">
                     </div>
                 </div>
-                <div class="col-sm-12" :class="{ 'problem-container': problems.length > 20 }">
-                    <div class="btn-group" :class="{ 'problem-buttons': problems.length > 20 }" role="group" aria-label="We are managing">
+                <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
+                    <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problems" :key="index" @click="select(index)">
                             {{problem.name}}
@@ -41,24 +41,72 @@
                             </div>
                         </form>
                     </div>
-                     <div class="row instructions top-20" v-if="selectedProblem.type == 'ccd'">
+                     <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
                         <div class="col-sm-12">
-                            <form @submit="editProblem">
+                            <form @submit="editCcdProblem">
                                 <div class="row">
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-6">
                                         <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
-                                            :options="cpmProblemsForSelect" required></v-select>
+                                            :options="cpmProblemsForSelect"></v-select>
                                     </div>
-                                    <div class="col-sm-2 text-right">
+                                    <div class="col-sm-6 top-20 font-14">
+                                        <label>
+                                            <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6 top-20 text-right">
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                        <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Edit" 
+                                        <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
                                             title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
                                     </div>
                                 </div>
                             </form>
+                        </div>
+                        <div class="col-sm-12">
+                            <h4>
+                                Problem Codes
+                            </h4>
+                        </div>
+                        <div class="col-sm-12 top-20">
+                            <ul class="list-group font-16 border-bottom">
+                                <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
+                                    <div class="col-sm-5">
+                                        <p>
+                                            {{code.code_system_name}}
+                                        </p>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <p>{{code.code}}</p>
+                                    </div>
+                                    <div class="col-sm-2 text-right">
+                                        <loader class="absolute" v-if="loaders.removeCode"></loader>
+                                        <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                    </div>
+                                </li>
+                                <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
+                                    <center>No Codes Yet</center>
+                                </li>
+                            </ul>
+                            <div class="row">
+                                <form @submit="addCode">
+                                    <div class="col-sm-5">
+                                        <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
+                                            :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
+                                    </div>
+                                    <div class="col-sm-2 text-right">
+                                        <loader class="absolute" v-if="loaders.addCode"></loader>
+                                        <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
+                                            :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
+                                    </div>
+                                </form>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -74,6 +122,7 @@
     import { rootUrl } from '../../../app.config'
     import { Event } from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
+    import VueSelect from 'vue-select'
 
     export default {
         name: 'care-areas-modal',
@@ -82,11 +131,21 @@
             problems: Array
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'v-select': VueSelect
         },
         computed: {
             patientHasSelectedProblem() {
                 return this.problems.map(problem => problem.id).indexOf(this.selectedCpmProblemId) >= 0
+            },
+            cpmProblemsForSelect() {
+                return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
+            },
+            codeHasBeenSelectedBefore() {
+                return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
+            },
+            codesForSelect() {
+                return this.codes.map(p => ({ label: p.name, value: p.id }))
             }
         },
         data() {
@@ -100,8 +159,12 @@
                     addProblem: null,
                     editProblem: null,
                     removeProblem: null,
-                    removeInstruction: null
-                }
+                    removeInstruction: null,
+                    addCode: null,
+                    removeCode: null,
+                    editCode: null
+                },
+                codes: []
             }
         },
         methods: {
@@ -183,13 +246,61 @@
                     this.selectedInstruction = this.selectedProblem.instructions[index]
                 }
             },
+            editCcdProblem(e) {
+                e.preventDefault()
+                this.loaders.editProblem = true
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { name: this.selectedProblem.name, cpm_problem_id: this.selectedProblem.cpm.value }).then(response => {
+                    console.log('full-conditions:edit', response.data)
+                    this.loaders.editProblem = false
+                    Event.$emit('full-conditions:edit', response.data)
+                }).catch(err => {
+                    console.error('full-conditions:edit', err)
+                    this.loaders.editProblem = false
+                })
+            },
             switchToFullConditionsModal() {
                 Event.$emit('modal-care-areas:hide')
                 Event.$emit('modal-full-conditions:show')
+            },
+            getSystemCodes() {
+                return this.axios.get(rootUrl(`api/problems/codes`)).then(response => {
+                    console.log('full-conditions:get-system-codes', response.data)
+                    this.codes = response.data
+                }).catch(err => {
+                    console.error('full-conditions:get-system-codes', err)
+                })
+            },
+            addCode(e) {
+                e.preventDefault()
+                this.loaders.addCode = true
+                return this.axios.post(rootUrl(`api/problems/codes`), { 
+                                problem_id: this.selectedProblem.id, 
+                                problem_code_system_id: this.selectedProblem.newCode.selectedCode.value,
+                                code: this.selectedProblem.newCode.code 
+                            }).then(response => {
+                    console.log('full-conditions:add-code', response.data)
+                    this.loaders.addCode = false
+                    Event.$emit('full-conditions:add-code', response.data)
+                }).catch(err => {
+                    console.error('full-conditions:add-code', err)
+                    this.loaders.addCode = false
+                })
+            },
+            removeCode(problem_id, id) {
+                this.loaders.removeCode = true
+                return this.axios.delete(rootUrl(`api/problems/codes/${id}`)).then(response => {
+                    console.log('full-conditions:remove-code', response.data)
+                    this.loaders.removeCode = false
+                    Event.$emit('full-conditions:remove-code', problem_id, id)
+                }).catch(err => {
+                    console.error('full-conditions:remove-code', err)
+                    this.loaders.removeCode = false
+                })
             }
         },
         mounted() {
-            this.getCpmProblems();
+            this.getCpmProblems()
+            this.getSystemCodes()
         }
     }
 </script>
@@ -325,5 +436,13 @@
     .height-200 {
         height: 200px !important;
         width: 100% !important;
+    }
+
+    .modal-care-areas .dropdown-toggle.clearfix {
+        border: none !important;
+    }
+
+    .modal-care-areas .dropdown.v-select.form-control {
+        padding: 0;
     }
 </style>
