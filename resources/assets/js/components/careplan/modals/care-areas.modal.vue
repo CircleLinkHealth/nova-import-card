@@ -177,8 +177,8 @@
                 newProblem: {
                     name: '',
                     problem: '',
-                    problem_id: null,
-                    is_monitored: true
+                    is_monitored: true,
+                    icd10: null
                 },
                 selectedCpmProblemId: null,
                 loaders: {
@@ -275,6 +275,20 @@
             },
             addCcdProblem(e) {
                 e.preventDefault()
+                this.loaders.addProblem = true
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
+                                    name: this.newProblem.name, 
+                                    cpm_problem_id: (this.newProblem.problem || {}).value,
+                                    is_monitored: this.newProblem.is_monitored,
+                                    icd10: this.newProblem.icd10
+                                }).then(response => {
+                    console.log('full-conditions:add', response.data)
+                    this.loaders.addProblem = false
+                    Event.$emit('full-conditions:add', response.data)
+                }).catch(err => {
+                    console.error('full-conditions:add', err)
+                    this.loaders.addProblem = false
+                })
             },
             editCcdProblem(e) {
                 e.preventDefault()

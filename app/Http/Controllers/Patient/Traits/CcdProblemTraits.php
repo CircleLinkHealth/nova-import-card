@@ -21,12 +21,14 @@ trait CcdProblemTraits
     
     public function addCcdProblem($userId, Request $request)
     {
-        $name = $request->input('name');
-        $cpm_problem_id = $request->input('cpm_problem_id');
-        if ($userId && $name) {
-            return response()->json($this->ccdProblemService->addPatientCcdProblem($userId, $name, $cpm_problem_id));
-        }
-        else return $this->badRequest('"userId" and "name" are important');
+        $ccdProblem = [ 
+                        'name' => $request->input('name'),
+                        'cpm_problem_id' => $request->input('cpm_problem_id'),
+                        'userId' => $userId,
+                        'is_monitored' => $request->input('is_monitored'),
+                        'icd10' => $request->input('icd10')
+                    ];
+        return response()->json($this->ccdProblemService->addPatientCcdProblem($ccdProblem));
     }
     
     public function editCcdProblem($userId, $ccdId, Request $request)

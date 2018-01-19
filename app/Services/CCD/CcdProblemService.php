@@ -65,8 +65,27 @@ class CcdProblemService
         return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
     }
     
-    public function addPatientCcdProblem($userId, $name, $problemCode = null) {
-        return $this->setupProblem($this->repo()->addPatientCcdProblem($userId, $name, $problemCode));
+    public function addPatientCcdProblem($ccdProblem) {
+        if ($ccdProblem) {
+            if ($ccdProblem['userId'] && $ccdProblem['name']) {
+
+                $problem = $this->setupProblem($this->repo()->addPatientCcdProblem($ccdProblem));
+
+                if ($problem && $ccdProblem['icd10']) {
+                    $problemCode = new ProblemCode();
+                    $problemCode->problem_id = $problem['id'];
+                    $problemCode->problem_code_system_id = 2;
+                    $problemCode->code = $ccdProblem['icd10'];
+                    $this->problemCodeRepo->service()->add($problemCode);
+
+                    return $this->problem($problem['id']);
+                }
+                else return $problem;
+
+            }
+            throw new Exception('$ccdProblem needs "userId" and "name" parameters');
+        }
+        throw new Exception('$ccdProblem should not be null');
     }
 
     public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
