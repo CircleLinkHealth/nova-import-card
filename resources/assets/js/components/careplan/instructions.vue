@@ -73,6 +73,7 @@
                     problem_code_system_id: null,
                     selectedCode: 'Select a Code'
                 }
+                problem.instruction = {}
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 return problem
             },
@@ -80,6 +81,7 @@
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/ccd`)).then(response => {
                     console.log('instructions:ccd', response.data)
                     this.ccdProblems = response.data.map(this.setupCcdProblem)
+                    Event.$emit('care-areas:ccd-problems', this.ccdProblems)
                 }).catch(err => console.error('instructions:ccd', err))
             },
             showFullConditionsModal() {
