@@ -111,10 +111,9 @@
 
             Event.$on('full-conditions:edit', (ccdProblem) => {
                 if (ccdProblem) {
-                    const existingProblem = this.ccdProblems.find(p => p.id == ccdProblem.id)
-                    if (existingProblem) {
-                        existingProblem.name = ccdProblem.name
-                        existingProblem.cpm_id = ccdProblem.cpm_id
+                    const index = this.ccdProblems.findIndex(p => p.id == ccdProblem.id)
+                    if (index >= 0) {
+                        this.ccdProblems[index] = this.setupCcdProblem(ccdProblem)
                     }
                 }
             })

@@ -25,7 +25,7 @@
                 
                 <ul class="font-18 row">
                     <li class='top-10 col-sm-6' 
-                        v-for="(problem, index) in ccdProblems" :key="index">
+                        v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
                     </li>
                 </ul>
@@ -57,6 +57,9 @@
         computed: {
             problems() {
                 return [ ...this.cpmProblems, ...this.ccdProblems ]
+            },
+            ccdProblemsForListing() {
+                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cpm => cpm.name == problem.name))
             }
         },
         methods: {

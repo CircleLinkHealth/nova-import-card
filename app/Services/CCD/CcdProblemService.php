@@ -88,7 +88,18 @@ class CcdProblemService
         throw new Exception('$ccdProblem should not be null');
     }
 
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
-        return $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode));
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null, $icd10 = null) {
+        $problem = $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode, $is_monitored));
+
+        if ($icd10) {
+            $problemCode = new ProblemCode();
+            $problemCode->problem_id = $problem['id'];
+            $problemCode->problem_code_system_id = 2;
+            $problemCode->code = $icd10;
+            $this->problemCodeRepo->service()->add($problemCode);
+            
+            return $this->problem($problem['id']);
+        }
+        return $problem;
     }
 }

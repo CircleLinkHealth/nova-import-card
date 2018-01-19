@@ -78,7 +78,7 @@
                                     <div class="col-sm-6 top-20 text-right" :class="{ 'col-sm-12' : selectedProblem.is_monitored }">
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
                                         <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || !(selectedProblem.cpm || {}).value" />
+                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0" />
                                     </div>
                                 </div>
                             </form>
@@ -301,7 +301,12 @@
             editCcdProblem(e) {
                 e.preventDefault()
                 this.loaders.editProblem = true
-                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { name: this.selectedProblem.name, cpm_problem_id: this.selectedProblem.cpm.value }).then(response => {
+                return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
+                        name: this.selectedProblem.name, 
+                        cpm_problem_id: (this.selectedProblem.cpm || {}).value,
+                        is_monitored: this.selectedProblem.is_monitored,
+                        icd10: this.selectedProblem.icd10
+                    }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('full-conditions:edit', response.data)

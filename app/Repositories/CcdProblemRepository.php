@@ -62,11 +62,12 @@ class CcdProblemRepository
         return $this->model()->where([ 'patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name'] ])->first();
     }
     
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null) {
         if ($this->patientCcdExists($userId, $name)) {
             $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId])->update([
                 'name' => $name,
-                'cpm_problem_id' => $problemCode
+                'cpm_problem_id' => $problemCode,
+                'is_monitored' => $is_monitored
             ]);
         }
         return $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId ])->first();
