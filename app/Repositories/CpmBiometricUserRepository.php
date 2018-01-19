@@ -44,6 +44,16 @@ class CpmBiometricUserRepository
         return $this->model()->where([ 'cpm_biometric_id' => $biometricId ]);
     }
 
+    public function removePatientBiometric($userId, $biometricId) {
+        $this->model()->where([
+            'patient_id' => $userId,
+            'cpm_biometric_id' => $biometricId
+        ])->delete();
+        return [
+            'message' => 'successful'
+        ];
+    }
+
     public function setupBiometricUser($bu) {
         $biometric = $bu->biometric()->first();
         switch ($biometric->type) {

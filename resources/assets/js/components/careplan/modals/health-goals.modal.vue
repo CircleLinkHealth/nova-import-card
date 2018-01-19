@@ -4,8 +4,12 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group" role="group">
-                        <input type="button" class="btn btn-secondary" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id) }" 
-                            v-for="(goal, index) in goals" :key="index" :value="goal.name" @click="select(index)" />
+                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id) }" 
+                            v-for="(goal, index) in goals" :key="index" @click="select(index)">
+                            {{goal.name}}
+                            <span class="delete" title="remove this goal" @click="removeGoal">x</span>
+                            <loader class="absolute" v-if="loaders.removeGoal && selectedGoal && (selectedGoal.id === goal.id)"></loader>
+                        </button>
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedGoal">
@@ -91,7 +95,8 @@
                 selectedBiometricId: null,
                 loaders: {
                     getBiometrics: null,
-                    addGoal: null
+                    addGoal: null,
+                    removeGoal: null
                 }
             }
         },
@@ -119,6 +124,20 @@
                     this.loaders.addGoal = false
                 })
             },
+            removeGoal(e) {
+                e.preventDefault()
+                if (this.selectedGoal && confirm('Are you sure you want to remove this goal?')) {
+                    this.loaders.removeGoal = true
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/biometrics/${this.selectedGoal.id}`)).then(response => {
+                        console.log('health-goals:remove', response.data)
+                        Event.$emit('health-goals:remove', this.selectedGoal.id)
+                        this.loaders.removeGoal = false
+                    }).catch(err => {
+                        console.error('health-goals:add', err)
+                        this.loaders.removeGoal = false
+                    })
+                }
+            },
             editGoal(e) {
                 e.preventDefault()
             }
@@ -140,5 +159,29 @@
 
     input[type='checkbox'] {
         display: inline !important;
+    }
+
+    .goal-button span.delete {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        background-color: #FA0;
+        color: white;
+        padding: 1px 5px;
+        border-radius: 50%;
+        position: absolute;
+        top: -8px;
+        right: -10px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .goal-button.selected span.delete {
+        display: inline-block;
+    }
+
+    button.goal-button div.loader.absolute {
+        right: -13px;
+        top: 15px;
     }
 </style>

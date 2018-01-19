@@ -189,6 +189,15 @@
                     this.$forceUpdate()
                 }
             })
+
+            Event.$on('health-goals:remove', (id) => {
+                const index = this.goals.findIndex(g => g.id == id)
+                if (index >= 0) {
+                    this.goals[index].info = null
+                    this.goals[index] = this.setupGoal(this.goals[index])
+                    this.$forceUpdate()
+                }
+            })
         }
     }
 </script>

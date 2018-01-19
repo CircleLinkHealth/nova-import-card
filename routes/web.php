@@ -185,6 +185,7 @@ Route::group(['middleware' => 'auth'], function () {
                 ], function () {
                     Route::get('', 'PatientController@getBiometrics');
                     Route::post('', 'PatientController@addBiometric');
+                    Route::delete('{id}', 'PatientController@removeBiometric');
                 });
                 
                 Route::group([
