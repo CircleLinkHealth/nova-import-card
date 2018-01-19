@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Enrollment;
 use App\CareAmbassador;
 use App\CareAmbassadorLog;
 use App\Enrollee;
+use App\Http\Controllers\Controller;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Yajra\Datatables\Facades\Datatables;
 use Illuminate\Support\Facades\Log;
+use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentStatsController extends Controller
 {
@@ -24,10 +24,10 @@ class EnrollmentStatsController extends Controller
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
             $start = Carbon::parse($input['start_date'])->toDateString();
-            $end = Carbon::parse($input['end_date'])->toDateString();
+            $end   = Carbon::parse($input['end_date'])->toDateString();
         } else {
             $start = Carbon::now()->subWeek()->toDateString();
-            $end = Carbon::now()->toDateString();
+            $end   = Carbon::now()->toDateString();
         }
 
         $careAmbassadors = User::whereHas('roles', function ($q) {
@@ -41,8 +41,8 @@ class EnrollmentStatsController extends Controller
             $ambassador = User::find($ambassadorUser)->careAmbassador;
 
             $base = CareAmbassadorLog::where('enroller_id', $ambassador->id)
-                ->where('day', '>=', $start)
-                ->where('day', '<=', $end);
+                                     ->where('day', '>=', $start)
+                                     ->where('day', '<=', $end);
 
             $hourCost = $ambassador->hourly_rate ?? 'Not Set';
 
@@ -52,41 +52,41 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['total_hours'] = secondsToHHMM($base->sum('total_time_in_system'));
 
-            $data[$ambassador->id]['no_enrolled'] = $base->sum('no_enrolled');
+            $data[$ambassador->id]['no_enrolled']         = $base->sum('no_enrolled');
             $data[$ambassador->id]['mins_per_enrollment'] =
                 ($base->sum('no_enrolled') != 0)
                     ?
-                    round(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
+                    number_format(($base->sum('total_time_in_system') / 60) / $base->sum('no_enrolled'), 2)
                     : 0;
 
             $data[$ambassador->id]['total_calls'] = $base->sum('total_calls');
 
 
             if ($base->sum('total_calls') != 0 && $base->sum('no_enrolled') != 0 && $hourCost != 'Not Set') {
-                $data[$ambassador->id]['earnings'] = '$' . round(
-                    $hourCost * ($base->sum('total_time_in_system') / 3600),
-                    2
-                );
+                $data[$ambassador->id]['earnings'] = '$' . number_format(
+                        $hourCost * ($base->sum('total_time_in_system') / 3600),
+                        2
+                    );
 
-                $data[$ambassador->id]['calls_per_hour'] = round(
+                $data[$ambassador->id]['calls_per_hour'] = number_format(
                     $base->sum('total_calls') / $base->sum('total_time_in_system') / 3600,
                     2
                 );
 
-                $data[$ambassador->id]['conversion'] = round(
-                    ($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
-                    2
-                ) . '%';
+                $data[$ambassador->id]['conversion'] = number_format(
+                                                           ($base->sum('no_enrolled') / $base->sum('total_calls')) * 100,
+                                                           2
+                                                       ) . '%';
 
-                $data[$ambassador->id]['per_cost'] = '$' . round(
-                    (($base->sum('total_time_in_system') / 3600) * $hourCost) / $base->sum('no_enrolled'),
-                    2
-                );
+                $data[$ambassador->id]['per_cost'] = '$' . number_format(
+                        (($base->sum('total_time_in_system') / 3600) * $hourCost) / $base->sum('no_enrolled'),
+                        2
+                    );
             } else {
-                $data[$ambassador->id]['earnings'] = 'N/A';
-                $data[$ambassador->id]['conversion'] = 'N/A';
+                $data[$ambassador->id]['earnings']       = 'N/A';
+                $data[$ambassador->id]['conversion']     = 'N/A';
                 $data[$ambassador->id]['calls_per_hour'] = 'N/A';
-                $data[$ambassador->id]['per_cost'] = 'N/A';
+                $data[$ambassador->id]['per_cost']       = 'N/A';
             }
         }
 
@@ -95,21 +95,19 @@ class EnrollmentStatsController extends Controller
 
     public function makeAmbassadorStats()
     {
-
         return view('admin.reports.enrollment.ambassador-kpis');
     }
 
     public function practiceStats(Request $request)
     {
-
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
             $start = Carbon::parse($input['start_date'])->toDateTimeString();
-            $end = Carbon::parse($input['end_date'])->endOfDay()->toDateTimeString();
+            $end   = Carbon::parse($input['end_date'])->endOfDay()->toDateTimeString();
         } else {
             $start = Carbon::now()->subWeek()->toDateTimeString();
-            $end = Carbon::now()->toDateTimeString();
+            $end   = Carbon::now()->toDateTimeString();
         }
 
         $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id');
@@ -127,8 +125,8 @@ class EnrollmentStatsController extends Controller
                     ->where('last_attempt_at', '>=', $start)
                     ->where('last_attempt_at', '<=', $end)->where(function ($q) {
                         $q->where('status', 'utc')
-                            ->orWhere('status', 'consented')
-                            ->orWhere('status', 'rejected');
+                          ->orWhere('status', 'consented')
+                          ->orWhere('status', 'rejected');
                     })
                     ->count();
 
@@ -169,14 +167,14 @@ class EnrollmentStatsController extends Controller
 
             foreach ($enrollers as $enrollerId => $time) {
                 if ($enrollerId != null) {
-                    $enroller = CareAmbassador::find($enrollerId);
-                    $data[$practice->id]['total_cost'] += $enroller->hourly_rate * round($time / 3600, 2);
+                    $enroller                          = CareAmbassador::find($enrollerId);
+                    $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
                 }
             }
 
             if ($data[$practice->id]['unique_patients_called'] > 0 && $data[$practice->id]['consented'] > 0) {
                 $data[$practice->id]['conversion'] =
-                    round(
+                    number_format(
                         $data[$practice->id]['consented'] / $data[$practice->id]['unique_patients_called'] * 100,
                         2
                     ) . '%';
@@ -185,19 +183,16 @@ class EnrollmentStatsController extends Controller
             }
 
             if ($data[$practice->id]['total_cost'] > 0 && $data[$practice->id]['consented'] > 0) {
-                $data[$practice->id]['acq_cost'] = $data[$practice->id]['total_cost'] / $data[$practice->id]['consented'];
+                $data[$practice->id]['acq_cost'] = '$' . number_format($data[$practice->id]['total_cost'] / $data[$practice->id]['consented'],
+                        2);
             } else {
                 $data[$practice->id]['acq_cost'] = 'N/A';
             }
 
-            if ($data[$practice->id]['total_cost'] > 0 && $total_time > 0) {
-                $data[$practice->id]['labor_rate'] = round(
-                    $data[$practice->id]['total_cost'] / ($total_time / 3600),
-                    2
-                );
-            } else {
-                $data[$practice->id]['labor_rate'] = 'N/A';
-            }
+
+            $data[$practice->id]['labor_rate'] = '$' . number_format($enroller->hourly_rate, 2);
+            $data[$practice->id]['total_cost'] = '$' . $data[$practice->id]['total_cost'];
+
         }
 
         return Datatables::collection(collect($data))->make(true);

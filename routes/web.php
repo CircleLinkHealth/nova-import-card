@@ -36,6 +36,10 @@ Route::get('/', 'WelcomeController@index');
 Route::get('home', 'WelcomeController@index');
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::post('browser-check', [
+    'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
+    'as' => 'store.browser.compatibility.check.preference'
+]);
 
 Route::group([
     'prefix'     => 'auth',
