@@ -113,7 +113,11 @@
                 if (ccdProblem) {
                     const index = this.ccdProblems.findIndex(p => p.id == ccdProblem.id)
                     if (index >= 0) {
-                        this.ccdProblems[index] = this.setupCcdProblem(ccdProblem)
+                        const problem = this.setupCcdProblem(ccdProblem)
+                        this.ccdProblems[index].name = problem.name
+                        this.ccdProblems[index].is_monitored = problem.is_monitored
+                        this.ccdProblems[index].cpm_id = problem.cpm_id
+                        this.ccdProblems[index].codes = problem.codes
                     }
                 }
             })
