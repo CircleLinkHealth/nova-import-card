@@ -14,8 +14,12 @@
                 </slot>
                 
                 <ul class="subareas__list" v-if="cpmProblems && cpmProblems.length > 0">
-                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row' 
+                    <li class='subareas__item inline-block col-sm-6 font-18 print-row' 
                         v-for="(problem, index) in cpmProblems" :key="index">
+                        {{problem.name}}
+                    </li>
+                    <li class='subareas__item inline-block col-sm-6 font-18 print-row' 
+                        v-for="(problem, index) in ccdMonitoredProblems" :key="index">
                         {{problem.name}}
                     </li>
                 </ul>
@@ -58,8 +62,11 @@
             problems() {
                 return [ ...this.cpmProblems, ...this.ccdProblems ]
             },
+            ccdMonitoredProblems() {
+                return this.ccdProblems.filter(problem => problem.is_monitored)
+            },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)))
+                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)))
             }
         },
         methods: {
