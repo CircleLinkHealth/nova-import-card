@@ -45,8 +45,12 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            $row = $this->makeRow($practice, $date);
-            $data[] = $row->toArray();
+            $chargeableServices = $this->getChargeableServices($practice);
+
+            foreach ($chargeableServices as $service) {
+                $row    = $this->makeRow($practice, $date, $service);
+                $data[] = $row->toArray();
+            }
         }
 
         return $this->makeQuickbookReport($data, $format, $date);
@@ -63,7 +67,21 @@ class PracticeReportsService
                     ->store($format, false, true);
     }
 
-    private function makeRow(Practice $practice, Carbon $date)
+    private function getChargeableServices(Practice $practice)
+    {
+
+        $chargeableServices = $practice->chargeableServices()->get();
+
+        //defaults to CPT99490 if practice doesnt have a chargeableService, until further notice
+        if ( ! $chargeableServices) {
+            $chargeableServices = ChargeableService::where('id', 1)->get();
+        }
+
+        return $chargeableServices;
+
+    }
+
+    private function makeRow(Practice $practice, Carbon $date, ChargeableService $chargeableService)
     {
         $generator = new PracticeInvoiceGenerator($practice, $date);
 
@@ -74,13 +92,6 @@ class PracticeReportsService
         $link = shortenUrl(linkToDownloadFile($pathToPatientReport, true));
 
         $data = $generator->getInvoiceData();
-
-        //defaults to CPT99490 if practice doesnt have a chargeableService, until further notice
-        if ($data['practice']->active()) {
-            $chargeableService = $data['practice']->chargeableServices()->first();
-        } else {
-            $chargeableService = ChargeableService::where('id', 1)->first();
-        }
 
         //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
         if ($data['practice']->clh_pppm) {
@@ -110,7 +121,6 @@ class PracticeReportsService
         $quickBooksRow = new QuickBooksRow($rowData);
 
         return $quickBooksRow;
-
 
 
     }
