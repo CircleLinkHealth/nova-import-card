@@ -11,6 +11,7 @@ namespace App\Services;
 use App\Billing\Practices\PracticeInvoiceGenerator;
 use App\ChargeableService;
 use App\Practice;
+use App\User;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -38,6 +39,13 @@ class PracticeReportsService
         return $invoices;
     }
 
+    /**
+     * @param $practices
+     * @param $format
+     * @param Carbon $date
+     *
+     * @return mixed
+     */
     public function getQuickbooksReport($practices, $format, Carbon $date)
     {
         $data = [];
@@ -45,11 +53,27 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            $chargeableServices = $this->getChargeableServices($practice);
+            if ($practice->cpmSettings()->bill_to == 'practice') {
 
-            foreach ($chargeableServices as $service) {
-                $row    = $this->makeRow($practice, $date, $service);
-                $data[] = $row->toArray();
+                $chargeableServices = $this->getChargeableServices($practice);
+
+                foreach ($chargeableServices as $service) {
+                    $row    = $this->makeRow($practice, $date, $service);
+                    $data[] = $row->toArray();
+                }
+            } else {
+                $providers = $practice->providers();
+
+                foreach ($providers as $provider) {
+
+                    $chargeableServices = $this->getChargeableServices($provider);
+
+                    foreach ($chargeableServices as $service) {
+                        $row    = $this->makeRow($practice, $date, $service, $provider);
+                        $data[] = $row->toArray();
+
+                    }
+                }
             }
         }
 
@@ -57,6 +81,13 @@ class PracticeReportsService
 
     }
 
+    /**
+     * @param $rows
+     * @param $format
+     * @param Carbon $date
+     *
+     * @return mixed
+     */
     private function makeQuickbookReport($rows, $format, Carbon $date)
     {
         return Excel::create("Billable Patients Report - $date", function ($excel) use ($rows) {
@@ -67,10 +98,15 @@ class PracticeReportsService
                     ->store($format, false, true);
     }
 
-    private function getChargeableServices(Practice $practice)
+    /**
+     *
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    private function getChargeableServices($chargeable)
     {
 
-        $chargeableServices = $practice->chargeableServices()->get();
+        $chargeableServices = $chargeable->chargeableServices()->get();
 
         //defaults to CPT99490 if practice doesnt have a chargeableService, until further notice
         if ( ! $chargeableServices) {
@@ -81,8 +117,21 @@ class PracticeReportsService
 
     }
 
-    private function makeRow(Practice $practice, Carbon $date, ChargeableService $chargeableService)
-    {
+    /**
+     * @param Practice $practice
+     * @param Carbon $date
+     * @param ChargeableService $chargeableService
+     *
+     * @return QuickBooksRow
+     * @throws \Exception
+     * @throws \Waavi\UrlShortener\InvalidResponseException
+     */
+    private function makeRow(
+        Practice $practice,
+        Carbon $date,
+        ChargeableService $chargeableService,
+        User $provider = null
+    ) {
         $generator = new PracticeInvoiceGenerator($practice, $date);
 
         $reportName = str_random() . '-' . $date->toDateTimeString();
@@ -109,7 +158,7 @@ class PracticeReportsService
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
             'PT.Billing Report:'    => (string)$link,
-            'Line Item'             => (string)$chargeableService->code,
+            'Line Item'             => (string)$chargeableService->code . '-' . $provider->display_name,
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => (string)$chargeableService->description,
             'LineUnitPrice'         => (string)$lineUnitPrice,

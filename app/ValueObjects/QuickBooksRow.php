@@ -52,21 +52,22 @@ class QuickBooksRow
 
     }
 
-    public function toArray(){
+    public function toArray()
+    {
         return [
-            'refNumber'             => $this->refNumber,
-            'customer'              => $this->customer,
-            'txnDate'               => $this->txnDate,
-            'allowOnlineACHPayment' => $this->allowOnlineACHPayment,
-            'salesTerm'             => $this->salesTerm,
-            'toBePrinted'           => $this->toBePrinted,
-            'toBeEmailed'           => $this->toBeEmailed,
-            'ptBilling Report'      => $this->ptBillingReport,
-            'lineItem'              => $this->lineItem,
-            'lineQty'               => $this->lineQty,
-            'lineDesc'              => $this->lineDesc,
-            'lineUnitPrice'         => $this->lineUnitPrice,
-            'msg'                   => $this->msg,
+            'RefNumber'             => $this->refNumber,
+            'Customer'              => $this->customer,
+            'TxnDate'               => $this->txnDate,
+            'AllowOnlineACHPayment' => $this->allowOnlineACHPayment,
+            'SalesTerm'             => $this->salesTerm,
+            'ToBePrinted'           => $this->toBePrinted,
+            'ToBeEmailed'           => $this->toBeEmailed,
+            'PT.Billing Report:'    => $this->ptBillingReport,
+            'LineItem'              => $this->lineItem,
+            'LineQty'               => $this->lineQty,
+            'LineDesc'              => $this->lineDesc,
+            'LineUnitPrice'         => $this->lineUnitPrice,
+            'Msg'                   => $this->msg,
         ];
 
     }
