@@ -59,7 +59,7 @@
                 return [ ...this.cpmProblems, ...this.ccdProblems ]
             },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cpm => cpm.name == problem.name))
+                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)))
             }
         },
         methods: {
