@@ -23,7 +23,6 @@ A ChargeableService can be charged to either a Practice or a Provider, or both.
          
 ##QuickBooksRow Value Item
 
-##QuickBooksRow Resource
 
 ## PracticeInvoiceController
 
