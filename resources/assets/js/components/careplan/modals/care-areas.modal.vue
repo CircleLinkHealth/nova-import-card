@@ -43,7 +43,7 @@
                     
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
+                    <div class="row instructions top-20">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
                                 <textarea class="form-control free-note height-200" v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
@@ -51,7 +51,7 @@
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addInstruction"></loader>
                                 <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
-                                    title="add this instruction for this cpm problem" 
+                                    title="add this instruction for this problem" 
                                     :disabled="!selectedProblem.instruction.name" />
                             </div>
                         </form>
@@ -219,7 +219,7 @@
             },
             addInstructionToCpmProblem(instruction) {
                 if (((this.selectedProblem || {}).instruction || {}).name) {
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/cpm/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
+                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('care-areas:add-instruction-to-problem', response.data)
                         this.selectedProblem.instruction = instruction
                         this.loaders.addInstruction = false

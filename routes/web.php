@@ -257,7 +257,9 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('{userId}/notes', 'PatientController@addNote');
             Route::put('{userId}/notes/{id}', 'PatientController@editNote');
             Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');
+            Route::post('{patientId}/problems/ccd/{problemId}/instructions', 'ProblemInstructionController@addInstructionToCcdProblem');
             Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
+            Route::delete('{patientId}/problems/ccd/{problemId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionFromCcdProblem');
             
             Route::resource('', 'PatientController');
         });

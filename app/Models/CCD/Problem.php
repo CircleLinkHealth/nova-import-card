@@ -79,12 +79,9 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->belongsTo(CpmProblem::class);
     }
     
-    /**
-    * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    */
     public function cpmInstruction()
     {
-        return $this->hasOne(CpmInstruction::class, 'cpm_instruction_id');
+        return $this->hasOne(CpmInstruction::class, 'id', 'cpm_instruction_id');
     }
 
     /**

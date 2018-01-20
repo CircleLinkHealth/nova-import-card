@@ -38,7 +38,8 @@ class CcdProblemService
                 'name'  => $p->name,
                 'cpm_id'  => $p->cpm_problem_id,
                 'codes' => $p->codes()->get(),
-                'is_monitored' => $p->is_monitored
+                'is_monitored' => $p->is_monitored,
+                'instruction' => $p->cpmInstruction()->first()
             ];
             return $problem;
         }
