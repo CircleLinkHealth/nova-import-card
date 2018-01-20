@@ -37,8 +37,9 @@ trait CcdProblemTraits
         $cpm_problem_id = $request->input('cpm_problem_id');
         $is_monitored = $request->input('is_monitored');
         $icd10 = $request->input('icd10');
+        $instruction = $request->input('instruction');
         if ($name) {
-            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id, $is_monitored, $icd10));
+            return response()->json($this->ccdProblemService->editPatientCcdProblem($userId, $ccdId, $name, $cpm_problem_id, $is_monitored, $icd10, $instruction));
         }
         else return $this->badRequest('"userId" and "name" are important');
     }

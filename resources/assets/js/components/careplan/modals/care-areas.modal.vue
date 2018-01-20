@@ -43,16 +43,16 @@
                     
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row instructions top-20">
+                    <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
-                                <textarea class="form-control free-note height-200" v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
+                                <textarea class="form-control free-note height-200" 
+                                    v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addInstruction"></loader>
                                 <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
-                                    title="add this instruction for this problem" 
-                                    :disabled="!selectedProblem.instruction.name" />
+                                    title="add this instruction for this problem" />
                             </div>
                         </form>
                     </div>
@@ -67,13 +67,15 @@
                                         <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
                                             :options="cpmProblemsForSelect"></v-select>
                                     </div>
-                                    <div class="col-sm-6 top-20 font-14">
+                                    <div class="col-sm-8 top-20" v-if="selectedProblem.is_monitored">
+                                        <textarea class="form-control"
+                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
+                                        <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                    </div>
+                                    <div class="col-sm-4 top-20 font-14">
                                         <label>
                                             <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
                                         </label>
-                                    </div>
-                                    <div class="col-sm-6 top-20" v-if="selectedProblem.is_monitored">
-                                        <input class="form-control" v-model="selectedProblem.icd10" placeholder="ICD10 Code" required />
                                     </div>
                                     <div class="col-sm-6 top-20 text-right" :class="{ 'col-sm-12' : selectedProblem.is_monitored }">
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
@@ -305,7 +307,8 @@
                         name: this.selectedProblem.name, 
                         cpm_problem_id: (this.selectedProblem.cpm || {}).value,
                         is_monitored: this.selectedProblem.is_monitored,
-                        icd10: this.selectedProblem.icd10
+                        icd10: this.selectedProblem.icd10,
+                        instruction: this.selectedProblem.instruction.name
                     }).then(response => {
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false

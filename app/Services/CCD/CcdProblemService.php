@@ -13,6 +13,7 @@ use App\Models\ProblemCode;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
+use App\Services\CPM\CpmInstructionService;
 use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
@@ -20,11 +21,14 @@ class CcdProblemService
     private $problemRepo;
     private $userRepo;
     private $problemCodeRepo;
+    private $instructionService;
 
-    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo, ProblemCodeRepository $problemCodeRepo) {
+    public function __construct(CcdProblemRepository $problemRepo, UserRepositoryEloquent $userRepo, 
+                                ProblemCodeRepository $problemCodeRepo, CpmInstructionService $instructionService) {
         $this->problemRepo = $problemRepo;
         $this->userRepo = $userRepo;
         $this->problemCodeRepo = $problemCodeRepo;
+        $this->instructionService = $instructionService;
     }
 
     public function repo() {
@@ -89,8 +93,17 @@ class CcdProblemService
         throw new Exception('$ccdProblem should not be null');
     }
 
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null, $icd10 = null) {
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null, $icd10 = null, $instruction = null) {
         $problem = $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode, $is_monitored));
+
+        if ($instruction) {
+            $instructionData = $this->instructionService->create($instruction);
+            $this->repo()->model()->where([
+                'id' => $problem['id']
+            ])->update([
+                'cpm_instruction_id' => $instructionData->id
+            ]);
+        }
 
         if ($icd10) {
             $problemCode = new ProblemCode();
