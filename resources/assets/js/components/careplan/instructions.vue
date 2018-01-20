@@ -16,11 +16,7 @@
         <div class="row gutter" v-if="cpmProblems.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
-                <ul>
-                    <li v-for="(instruction, index) in problem.instructions" :key="index" v-if="instruction.name">
-                        <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
-                    </li>
-                </ul>
+                <p v-for="(instruction, index) in problem.instruction.name.split('\n')" :key="index">{{instruction}}</p>
             </div>
         </div>
         <!-- <div class="row gutter" v-if="ccdProblems">
@@ -63,7 +59,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instructions && problem.instructions.length > 0)
+                return this.cpmProblems.filter(problem => problem.instruction)
             }
         },
         methods: {
