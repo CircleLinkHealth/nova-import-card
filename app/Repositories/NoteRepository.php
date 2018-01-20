@@ -32,6 +32,26 @@ class NoteRepository
         return $query->paginate();
     }
 
+    public function addOrEdit(Note $note) {
+        if ($note && $note->patient_id && $note->author_id && $note->body && $note->type) {
+            $savedNote = $this->model()->firstOrCreate([
+                'patient_id' => $note->patient_id,
+                'author_id' => $note->author_id,
+                'type' => $note->type
+            ]);
+            $savedNote->update([
+                'body' => $note->body,
+                'isTCM' => $note->isTCM,
+                'logger_id' => $note->logger_id,
+                'did_medication_recon' => $note->did_medication_recon,
+                'performed_at' => $note->performed_at
+            ]);
+            $savedNote->save();
+            return $savedNote;
+        }
+        return $note;
+    }
+
     public function add(Note $note) {
         if ($note && $note->patient_id && $note->author_id && $note->body && $note->type) {
             $note->save();

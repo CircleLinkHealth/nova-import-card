@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\UserService;
 use App\Services\CPM\CpmProblemService;
+use App\Services\CCD\CcdProblemService;
 use App\Services\CPM\CpmProblemUserService;
 use App\Services\CPM\CpmInstructionService;
 
@@ -31,12 +32,13 @@ class ProblemInstructionController extends Controller
      *
      */
     public function __construct(CpmInstructionService $cpmInstructionService, CpmProblemService $cpmProblemService, 
-                    CpmProblemUserService $cpmProblemUserService, UserService $userService)
+                    CpmProblemUserService $cpmProblemUserService, UserService $userService, CcdProblemService $ccdProblemService)
     {
         $this->userService = $userService;
         $this->cpmInstructionService = $cpmInstructionService;
         $this->cpmProblemService = $cpmProblemService;
         $this->cpmProblemUserService = $cpmProblemUserService;
+        $this->ccdProblemService = $ccdProblemService;
     }
 
     /** returns paginated list of cpm-instructions */
@@ -115,6 +117,31 @@ class ProblemInstructionController extends Controller
             return $this->error($ex);
         }
     }
+    
+    public function addInstructionToCcdProblem($patientId, $problemId, Request $request) {
+        $instructionId = $request->input('instructionId');
+
+        try {
+            $patient = $this->userService->repo()->model()->find($patientId);
+            $problem = $this->ccdProblemService->repo()->model()->where([ 'id' => $problemId ]);
+            $instruction = $this->cpmInstructionService->repo()->model()->find($instructionId);
+    
+            if ($patient && ($problem->count() > 0) && $instruction) {
+                $problem->update([
+                    'cpm_instruction_id' => $instructionId
+                ]);
+                return response()->json($this->ccdProblemService->problem($problemId));
+            }
+            else {
+                if (!$patient) return $this->notFound('patient not found');
+                else if (!$problem) return $this->notFound('cpm problem not found');
+                else return $this->notFound('instruction not found');
+            }
+        }
+        catch (Exception $ex) {
+            return $this->error($ex);
+        }
+    }
 
     public function removeInstructionProblem(Request $request) {
         $patientId = $request->route()->patientId;
@@ -131,6 +158,29 @@ class ProblemInstructionController extends Controller
                 return response()->json([
                     'message' => 'success'
                 ]);
+            }
+            else {
+                if (!$patient) return $this->notFound('patient not found');
+                else if (!$problem) return $this->notFound('cpm problem not found');
+                else return $this->notFound('instruction not found');
+            }
+        }
+        catch (Exception $ex) {
+            return $this->error($x);
+        }
+    }
+    
+    public function removeInstructionFromCcdProblem($patientId, $problemId, $instructionId) {
+        try {
+            $patient = $this->userService->repo()->model()->find($patientId);
+            $problem = $this->ccdProblemService->repo()->model()->where(['id', $problemId ]);
+            $instruction = $this->cpmInstructionService->repo()->model()->where(['id', $instructionId]);
+    
+            if ($patient && ($problem->count() > 0) && ($instruction->count() > 0)) {
+                $problem->update([
+                    'cpm_instruction_id' => null
+                ]);
+                return response()->json($this->ccdProblemService->problem($problemId));
             }
             else {
                 if (!$patient) return $this->notFound('patient not found');

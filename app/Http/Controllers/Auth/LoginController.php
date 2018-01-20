@@ -123,7 +123,7 @@ class LoginController extends Controller
     {
         $messages = [
             'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
-            We recommend you use Chrome. 
+            Please use Chrome browser instead. 
             <br>If you must use IE, please use IE11 or later.
             <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
         ];

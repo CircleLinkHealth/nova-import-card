@@ -3,6 +3,7 @@
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmInstruction;
 use App\Models\ProblemCode;
 use App\Scopes\Imported;
 use App\Scopes\WithNonImported;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $ccd_problem_log_id
  * @property string|null $name
  * @property int|null $cpm_problem_id
+ * @property int|null $cpm_instruction_id
  * @property string|null $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -27,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProblemCode[] $codes
  * @property-read \App\Models\CPM\CpmProblem|null $cpmProblem
  * @property-read \App\User $patient
+ * @property-read \App\Models\CPM\CpmInstruction $cpmInstruction
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
@@ -74,6 +77,11 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     public function cpmProblem()
     {
         return $this->belongsTo(CpmProblem::class);
+    }
+    
+    public function cpmInstruction()
+    {
+        return $this->hasOne(CpmInstruction::class, 'id', 'cpm_instruction_id');
     }
 
     /**

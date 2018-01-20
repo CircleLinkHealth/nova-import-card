@@ -24,7 +24,7 @@
                                 <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="selectedMedication.name" required />
                             </div>
                             <div class="top-20">
-                                <v-select class="form-control" v-model="selectedMedication.group" :value="selectedMedication.medication_group_id" :options="groupsForSelect"></v-select>
+                                <v-select class="form-control" v-model="selectedMedication.groupName" :value="selectedMedication.medication_group_id" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
                                 <textarea class="form-control" placeholder="Enter a description" v-model="selectedMedication.sig"></textarea>
@@ -43,7 +43,7 @@
                                 <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newMedication.name" required />
                             </div>
                             <div class="top-20">
-                                <v-select class="form-control" v-model="newMedication.group" :options="groupsForSelect"></v-select>
+                                <v-select class="form-control" v-model="newMedication.groupName" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
                                 <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig"></textarea>
@@ -103,7 +103,7 @@
         },
         methods: {
             select(index) {
-                this.selectedMedication = (index >= 0) ? Object.assign({}, this.medications[index]) : null
+                this.selectedMedication = (index >= 0) ? this.medications[index] : null
             },
             reset() {
                 this.newMedication.name = ''
@@ -129,7 +129,8 @@
                 this.loaders.editMedication = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`), { 
                             name: this.selectedMedication.name, 
-                            sig: this.selectedMedication.sig 
+                            sig: this.selectedMedication.sig,
+                            medication_group_id: (this.selectedMedication.groupName || {}).value 
                     }).then(response => {
                         console.log('medication:edit', response.data)
                         this.loaders.editMedication = false

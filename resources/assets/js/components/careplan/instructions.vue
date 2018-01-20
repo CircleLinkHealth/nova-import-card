@@ -16,11 +16,7 @@
         <div class="row gutter" v-if="cpmProblems.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
-                <ul>
-                    <li v-for="(instruction, index) in problem.instructions" :key="index" v-if="instruction.name">
-                        <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
-                    </li>
-                </ul>
+                <p v-for="(instruction, index) in problem.instruction.name.split('\n')" :key="index">{{instruction}}</p>
             </div>
         </div>
         <!-- <div class="row gutter" v-if="ccdProblems">
@@ -63,7 +59,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instructions && problem.instructions.length > 0)
+                return this.cpmProblems.filter(problem => problem.instruction)
             }
         },
         methods: {
@@ -73,13 +69,17 @@
                     problem_code_system_id: null,
                     selectedCode: 'Select a Code'
                 }
+                problem.instruction = problem.instruction || {}
+                problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
+                problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
                 return problem
             },
             getCcdProblems() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/problems/ccd`)).then(response => {
                     console.log('instructions:ccd', response.data)
                     this.ccdProblems = response.data.map(this.setupCcdProblem)
+                    Event.$emit('care-areas:ccd-problems', this.ccdProblems)
                 }).catch(err => console.error('instructions:ccd', err))
             },
             showFullConditionsModal() {
@@ -107,26 +107,32 @@
 
             Event.$on('full-conditions:edit', (ccdProblem) => {
                 if (ccdProblem) {
-                    const existingProblem = this.ccdProblems.find(p => p.id == ccdProblem.id)
-                    if (existingProblem) {
-                        existingProblem.name = ccdProblem.name
-                        existingProblem.cpm_id = ccdProblem.cpm_id
+                    const index = this.ccdProblems.findIndex(p => p.id == ccdProblem.id)
+                    if (index >= 0) {
+                        const problem = this.setupCcdProblem(ccdProblem)
+                        this.ccdProblems[index].name = problem.name
+                        this.ccdProblems[index].is_monitored = problem.is_monitored
+                        this.ccdProblems[index].cpm_id = problem.cpm_id
+                        this.ccdProblems[index].codes = problem.codes
                     }
                 }
             })
 
             Event.$on('full-conditions:add-code', (code) => {
-                const problem = this.ccdProblems.find(p => p.id === code.problem_id);
-                if (problem) {
-                    problem.codes.push(code)
+                const index = this.ccdProblems.findIndex(p => p.id === code.problem_id);
+                if (index >= 0) {
+                    this.ccdProblems[index].codes.push(code)
+                    this.ccdProblems[index] = this.setupCcdProblem(this.ccdProblems[index])
                 }
             })
 
             Event.$on('full-conditions:remove-code', (problem_id, id) => {
-                const problem = this.ccdProblems.find(problem => problem.id === problem_id)
-                if (problem) {
-                    const index = problem.codes.findIndex(c => c.id == id)
-                    problem.codes.splice(index, 1)
+                const index = this.ccdProblems.findIndex(problem => problem.id === problem_id)
+                if (index >= 0) {
+                    const codeIndex = this.ccdProblems[index].codes.findIndex(c => c.id == id)
+                    this.ccdProblems[index].codes.splice(codeIndex, 1)
+
+                    this.ccdProblems[index] = this.setupCcdProblem(this.ccdProblems[index])
                 }
                 
             })

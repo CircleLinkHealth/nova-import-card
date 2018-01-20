@@ -66,6 +66,10 @@ class CpmBiometricService implements CpmModel
         return $this->biometricUserRepo->addPatientWeight($userId, $biometricId, $biometric);
     }
 
+    public function removePatientBiometric($userId, $biometricId) {
+        return $this->biometricUserRepo->removePatientBiometric($userId, $biometricId);
+    }
+
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         return $user->cpmBiometrics()->sync($ids);

@@ -14,19 +14,15 @@
             </div>
         </slot>
         <div class="row gutter" v-if="medications.length > 0">
-            <div class="col-xs-12" v-if="groups.length > 0">
-                <h3>Monitoring these Medications</h3>
-                <ul>
-                    <li class="top-20" v-for="(group, index) in patientGroups" :key="index">{{group.name}}</li>
-                </ul>
-            </div>
-            
             <div class="col-xs-12">
-                <h3>Taking these Medications</h3>
                 <ul v-if="medications.length">
-                    <li class="top-20" v-for="(medication, index) in medications" :key="index">
-                        <h4 v-if="medication.name">{{medication.name}}</h4>
-                        <h4 v-if="!medication.name">- {{medication.sig}}</h4>
+                    <li class="top-10" v-for="(medication, index) in medications" :key="index">
+                        <h4 v-if="medication.name">{{medication.name}} 
+                            <label class="label label-secondary" v-if="medication.group().name">{{medication.group().name}}</label>
+                        </h4>
+                        <h4 v-if="!medication.name">- {{medication.sig}}
+                            <label class="label label-primary" v-if="medication.group().name">{{medication.group().name}}</label>
+                        </h4>
                         <ul class="font-18" v-if="medication.name && medication.sig">
                             <li v-for="(sig, index) in medication.sig.split('\n')" class="list-square" :key="index">{{sig}}</li>
                         </ul>
@@ -72,7 +68,8 @@
             setupMedication(medication) {
                 medication.title = () => (medication.name || (medication.sig ? medication.sig.split('\n')[0] : 'No Title'))
                 medication.name = medication.name || ''
-                medication.group = (this.groups.find(g => g.id == medication.medication_group_id) || {}).name || 'Select a Medication Type'
+                medication.group = () => (this.groups.find(g => g.id == medication.medication_group_id) || {})
+                medication.groupName = (this.groups.find(g => g.id == medication.medication_group_id) || {}).name || 'Select a Medication Type'
                 return medication
             },
             getMedications(page) {
@@ -124,5 +121,17 @@
 
     .font-18 {
         font-size: 18px;
+    }
+
+    .top-10 {
+        margin-top: 10px;
+    }
+
+    .label-primary {
+        background-color: #109ace;
+    }
+
+    .label-secondary {
+        background-color: #47beab;
     }
 </style>

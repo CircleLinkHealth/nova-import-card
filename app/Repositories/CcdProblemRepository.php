@@ -40,23 +40,34 @@ class CcdProblemRepository
         return !!$this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
     }
 
-    public function addPatientCcdProblem($userId, $name, $problemCode = null) {
-        if (!$this->patientCcdExists($userId, $name)) {
+    /**
+    * @param {[
+    *    userId,
+    *    name,
+    *    is_monitored,
+    *    cpm_problem_id,
+    *    icd10
+    * ]} $ccdProblem
+    */
+    public function addPatientCcdProblem($ccdProblem) {
+        if (!$this->patientCcdExists($ccdProblem['userId'], $ccdProblem['name'])) {
             $problem = new Problem();
-            $problem->patient_id = $userId;
-            $problem->name = $name;
-            $problem->cpm_problem_id = $problemCode;
+            $problem->patient_id = $ccdProblem['userId'];
+            $problem->name = $ccdProblem['name'];
+            $problem->cpm_problem_id = $ccdProblem['cpm_problem_id'];
+            $problem->is_monitored = $ccdProblem['is_monitored'];
             $problem->save();
             return $problem;
         }
-        return $this->model()->where([ 'patient_id' => $userId, 'name' => $name ])->first();
+        return $this->model()->where([ 'patient_id' => $ccdProblem['userId'], 'name' => $ccdProblem['name'] ])->first();
     }
     
-    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null) {
+    public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null) {
         if ($this->patientCcdExists($userId, $name)) {
             $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId])->update([
                 'name' => $name,
-                'cpm_problem_id' => $problemCode
+                'cpm_problem_id' => $problemCode,
+                'is_monitored' => $is_monitored
             ]);
         }
         return $this->model()->where([ 'id' => $ccdId, 'patient_id' => $userId ])->first();
