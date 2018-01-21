@@ -142,6 +142,8 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
+        $providerName = '';
+
         if ($provider){
             $providerName = '-'. $provider->display_name;
         }
