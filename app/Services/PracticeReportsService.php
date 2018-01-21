@@ -142,6 +142,10 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
+        if ($provider){
+            $providerName = '-'. $provider->display_name;
+        }
+
         //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
         if ($data['practice']->clh_pppm) {
             $lineUnitPrice = $data['practice']->clh_pppm;
@@ -158,7 +162,7 @@ class PracticeReportsService
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
             'PT.Billing Report:'    => (string)$link,
-            'Line Item'             => (string)$chargeableService->code . '-' . $provider->display_name,
+            'Line Item'             => (string)$chargeableService->code . $providerName,
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => (string)$chargeableService->description,
             'LineUnitPrice'         => (string)$lineUnitPrice,
