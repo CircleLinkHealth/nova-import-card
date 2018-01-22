@@ -21,7 +21,7 @@
                     <div class="row">
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
-                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="7"
+                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
                                 :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.3">
                                 </v-complete>
                             </div>
@@ -36,7 +36,7 @@
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Save" :disabled="patientHasSelectedProblem" />
+                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition" :disabled="patientHasSelectedProblem" />
                             </div>
                         </form>
                     </div>
