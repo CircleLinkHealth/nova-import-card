@@ -22,7 +22,7 @@
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="7"
-                                :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }">
+                                :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.3">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
