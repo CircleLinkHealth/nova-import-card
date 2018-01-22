@@ -3,15 +3,16 @@
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
-use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueGenerateNurseInvoices;
+use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -94,11 +95,15 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
 
-        $schedule->command('send:audit-reports')
+        $schedule->command(QueueSendAuditReports::class)
                  ->monthlyOn(1, '02:00');
 
-        $schedule->command('emrDirect:checkInbox')
+        $schedule->command(CheckEmrDirectInbox::class)
                  ->everyFiveMinutes()
+                 ->withoutOverlapping();
+
+        $schedule->command(DeleteProcessedFiles::class)
+                 ->everyThirtyMinutes()
                  ->withoutOverlapping();
     }
 
