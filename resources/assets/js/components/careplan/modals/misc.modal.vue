@@ -2,21 +2,6 @@
     <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="text-right">
-                    </div>
-                </div>
-                <div class="col-sm-12 pad-top-10">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-secondary misc-button" :class="{ selected: selectedMisc && selectedMisc.id == misc.id }"
-                                v-for="(misc, index) in selectedMiscs" :key="index" @click="select(index)">
-                            {{misc.name}}
-                            <span class="delete" title="remove this cpm misc" @click="removeMisc">x</span>
-                            <loader class="absolute" v-if="loaders.removeMisc && selectedMisc && (selectedMisc.id === misc.id)"></loader>
-                        </button>
-                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMisc }" value="+" @click="select(-1)" />
-                    </div>
-                </div>
                 <div class="col-sm-12" v-if="!selectedMisc">
                     <form @submit="addMisc">
                         <div class="form-group">
@@ -90,8 +75,8 @@
                 },
                 newInstruction: '',
                 selectedInstruction: null,
-                selectedMisc: null,
                 selectedMiscs: [],
+                selectedMiscName: null,
                 miscs: [],
                 loaders: {
                     addMisc: null,
@@ -107,11 +92,14 @@
             },
             patientHasSelectedMisc() {
                 return !!this.selectedMiscs.find(misc => misc.id == this.newMisc.id)
+            },
+            selectedMisc() {
+                return this.selectedMiscs.find(misc => misc.name == this.selectedMiscName)
             }
         },
         methods: {
-            select(index) {
-                this.selectedMisc = (index >= 0) ? Object.assign({}, this.selectedMiscs[index]) : null
+            select(name) {
+                this.selectedMiscName = name
             },
             selectInstruction(index) {
                 if (!this.loaders.removeInstruction) {
@@ -128,7 +116,7 @@
             getSelectedMisc() {
                 return this.axios.get(rootUrl(`api/patients/${this.patientId}/misc`)).then(response => {
                     console.log('misc:get-selected-misc', response.data)
-                    this.selectedMiscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List')
+                    this.selectedMiscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List' && misc.name != 'Appointments')
                 }).catch(err => {
                     console.error('misc:get-selected-misc', err)
                 })
@@ -136,17 +124,18 @@
             getMisc() {
                 return this.axios.get(rootUrl('api/misc')).then(response => {
                     console.log('misc:get-misc', response.data)
-                    this.miscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List')
+                    this.miscs = response.data.map(this.setupMisc).filter(misc => misc.name != 'Allergies' && misc.name != 'Medication List' && misc.name != 'Full Conditions List' && misc.name != 'Appointments')
                 }).catch(err => {
                     console.error('misc:get-misc', err)
                 })
             },
-            addMisc(e) {
-                e.preventDefault()
+            addMisc(e, miscId) {
+                if (e) e.preventDefault()
                 this.loaders.addMisc = true
-                return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc`), { miscId: this.newMisc.id }).then(response => {
+                miscId = miscId || this.newMisc.id
+                return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc`), { miscId }).then(response => {
                     console.log('misc:add', response.data)
-                    Event.$emit('misc:select', this.miscs.find(misc => misc.id == this.newMisc.id))
+                    Event.$emit('misc:select', this.miscs.find(misc => misc.id == miscId))
                     this.newMisc.id = null
                     this.select(this.selectedMiscs.length - 1)
                     this.loaders.addMisc = false
@@ -162,7 +151,7 @@
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}`)).then(response => {
                         console.log('misc:remove', response.data)
                         this.loaders.removeMisc = false
-                        this.selectedMisc = null
+                        this.selectedMiscName = null
                         this.selectedMiscs.splice(this.selectedMiscs.findIndex(misc => misc.id == miscId), 1)
                         Event.$emit('misc:remove', miscId)
                     }).catch(err => {
@@ -213,8 +202,11 @@
             }
         },
         mounted() {
-            this.getMisc()
-            this.getSelectedMisc()
+            Promise.all([this.getMisc(), this.getSelectedMisc()]).then(() => {
+                this.miscs.filter(m => !this.selectedMiscs.find(sm => sm.id == m.id)).forEach(misc => {
+                    this.addMisc(null, misc.id)
+                })
+            })
 
             Event.$on('misc:select', (misc) => {
                 if (misc && !this.selectedMiscs.find(m => m.id == misc.id)) {
@@ -223,15 +215,7 @@
             })
 
             Event.$on('misc:page', (page) => {
-                const index = this.selectedMiscs.findIndex(misc => misc.name === page)
-                this.select(index)
-                if (index < 0) {
-                    EventBus.$emit('notifications:create', {
-                        type: 'error',
-                        text: 'Sorry, the "' + page + '" service does not exist for this patient yet. Try creating it.'
-                    })
-                }
-                console.log(page, index)
+                this.selectedMiscName = page
             })
         }
     }
