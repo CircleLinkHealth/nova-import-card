@@ -274,10 +274,10 @@ if (isset($patient) && ! empty($patient)) {
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
                             Part 3</h1>
                     </div>
-                    <div class="col-xs-12">
+                    {{--  <div class="col-xs-12">
                         <h1 class="patient-summary__title--secondary patient-summary--careplan"><p>Other information</p>
                         </h1>
-                    </div>
+                    </div>  --}}
                 </div>
 
                 <!-- ALLERGIES -->
