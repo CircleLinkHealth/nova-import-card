@@ -90,6 +90,8 @@ class Zip extends BaseProcessable
 
             $this->getFile()->move($dir, $fileName);
 
+            \Storage::disk('storage')->setVisibility("$relDir/$fileName",'public');
+
             $this->setFile("$dir/$fileName");
 
             $this->relativeDirectory = $relDir;

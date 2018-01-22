@@ -48,6 +48,7 @@ class Csv extends BaseProcessable
             $date     = Carbon::now()->toDateString();
 
             $this->getFile()->move(storage_path($date), $fileName);
+            \Storage::disk('storage')->setVisibility("$date/$fileName",'public');
 
             $this->setFile(storage_path("$date/$fileName"));
         }
