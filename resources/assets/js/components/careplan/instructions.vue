@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                    Follow these instructions
+                    Follow These Instructions
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
                 </h2>
             </div>
