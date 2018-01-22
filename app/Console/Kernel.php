@@ -2,7 +2,9 @@
 
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
-use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\DeleteProcessedFiles;
+use App\Console\Commands\QueueSendAuditReports;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -108,11 +110,15 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
 
-        $schedule->command('send:audit-reports')
+        $schedule->command(QueueSendAuditReports::class)
                  ->monthlyOn(1, '02:00');
 
-        $schedule->command('emrDirect:checkInbox')
+        $schedule->command(CheckEmrDirectInbox::class)
                  ->everyFiveMinutes()
+                 ->withoutOverlapping();
+
+        $schedule->command(DeleteProcessedFiles::class)
+                 ->everyThirtyMinutes()
                  ->withoutOverlapping();
     }
 
