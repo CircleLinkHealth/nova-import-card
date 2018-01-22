@@ -52,6 +52,11 @@ return [
             'root'   => storage_path('app'),
         ],
 
+        'storage' => [
+            'driver' => 'local',
+            'root'   => storage_path(),
+        ],
+
         'cloud' => [
             'driver' => 's3',
             'key'    => env('S3_CPM_STORAGE_KEY'),
