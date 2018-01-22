@@ -75,8 +75,8 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => Number((goal.info.starting || '').split('/')[0] || '0')
-                    goal.end = () => Number((goal.info.target || '').split('/')[0] || '0')
+                    goal.start = () => Number((goal.info.starting || '') || '0')
+                    goal.end = () => Number((goal.info.target || '') || '0')
                     
                     if (goal.start() > goal.end()) {
                         goal.info.verb = 'Decrease'
