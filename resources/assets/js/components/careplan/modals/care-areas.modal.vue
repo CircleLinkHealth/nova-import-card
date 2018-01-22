@@ -9,12 +9,12 @@
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
-                                v-for="(problem, index) in problems" :key="index" @click="select(index)">
+                                v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name}}
                             <span class="delete" title="remove this cpm problem" @click="removeCpmProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
-                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
+                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
@@ -61,7 +61,9 @@
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
+                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" 
+                                            :class="{ error: patientHasSelectedProblem }" 
+                                            :title="patientHasSelectedProblem ? 'Problem with this name already exists' : null" required />
                                     </div>
                                     <div class="col-sm-6">
                                         <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
@@ -80,7 +82,7 @@
                                     <div class="col-sm-6 top-20 text-right" :class="{ 'col-sm-12' : selectedProblem.is_monitored }">
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
                                         <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0" />
+                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
                                     </div>
                                 </div>
                             </form>
@@ -154,8 +156,12 @@
             'v-complete': VueComplete
         },
         computed: {
+            problemsForListing() {
+                return this.problems.distinct((p) => p.name)
+            },
             patientHasSelectedProblem() {
-                return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
+                if (!this.selectedProblem) return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
+                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
@@ -197,8 +203,8 @@
             }
         },
         methods: {
-            select(index) {
-                this.selectedProblem = (index >= 0) ? this.problems[index] : null
+            select(problem) {
+                this.selectedProblem = problem
             },
             reset () {
                 this.newProblem.name = ''
@@ -405,7 +411,7 @@
         margin-right: 0px;
     }
 
-    select.error, select.error:focus {
+    input.error, input.error:focus, select.error, select.error:focus {
         border: 1px solid red;
     }
 
@@ -527,5 +533,9 @@
 
     .v-complete.error {
         border: 1px solid red;
+    }
+
+    input.warning {
+        border: 1px solid #fa0;
     }
 </style>

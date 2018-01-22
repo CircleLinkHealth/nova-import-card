@@ -15,7 +15,7 @@
                 
                 <ul class="subareas__list font-22" v-if="cpmProblems && cpmProblems.length > 0">
                     <li class='subareas__item inline-block col-sm-6 print-row' 
-                        v-for="(problem, index) in cpmProblems" :key="index">
+                        v-for="(problem, index) in cpmProblemsForListing" :key="index">
                         {{problem.name}}
                     </li>
                     <li class='subareas__item inline-block col-sm-6 print-row' 
@@ -62,11 +62,14 @@
             problems() {
                 return [ ...this.cpmProblems, ...this.ccdProblems ]
             },
+            cpmProblemsForListing() {
+                return this.cpmProblems.distinct(p => p.name)
+            },
             ccdMonitoredProblems() {
                 return this.ccdProblems.filter(problem => problem.is_monitored)
             },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)))
+                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id))).distinct(p => p.name)
             }
         },
         methods: {

@@ -1,6 +1,7 @@
 require('./bootstrap');
 
 import 'es6-string-polyfills'
+import './prototypes/array.prototype'
 
 import Vue from 'vue'
 import axios from './bootstrap-axios'
