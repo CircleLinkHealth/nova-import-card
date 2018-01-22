@@ -43,7 +43,7 @@
                                 <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newMedication.name" required />
                             </div>
                             <div class="top-20">
-                                <v-select class="form-control" v-model="newMedication.groupName" :options="groupsForSelect"></v-select>
+                                <v-select class="form-control" v-model="newMedication.group" :options="groupsForSelect"></v-select>
                             </div>
                             <div class="top-20">
                                 <textarea class="form-control" placeholder="Enter a description" v-model="newMedication.sig"></textarea>
