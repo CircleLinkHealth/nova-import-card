@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\CareplanAssessment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,14 +12,24 @@ class SendAssessmentNotification extends Notification
 {
     use Queueable;
 
+    private $attachment;
+    private $patient;
+    private $approver;
+    private $practice;
+    private $channels = ['mail', 'database'];
+    public $pathToPdf;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(CareplanAssessment $assessment)
     {
-        //
+        $this->attachment = $assessment;
+        $this->patient = $assessment->patient()->first();
+        $this->approver = $assessment->approver()->first();
+        if ($this->approver) $this->practice = $this->approver->practices()->first();
     }
 
     /**
@@ -29,7 +40,7 @@ class SendAssessmentNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return $this->channels;
     }
 
     /**
@@ -41,9 +52,11 @@ class SendAssessmentNotification extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->from('notifications@careplanmanager.com', 'CircleLink Health')
+                    ->subject('New Patient Assessment')
+                    ->view('email.assessment-created', [
+                        'assessment' => $this->attachment
+                    ]);
     }
 
     /**
@@ -55,7 +68,36 @@ class SendAssessmentNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'channels' => $this->channels,
+            'sender_id'    => auth()->user()->id,
+            'sender_type'  => SendAssessmentNotification::class,
+            'sender_email' => auth()->user()->email,
+
+            'receiver_type'  => $notifiable->id,
+            'receiver_id'    => get_class($notifiable),
+            'receiver_email' => $notifiable->email,
+
+            'pathToPdf' => $this->toPdf(),
+            'assessment' => $this->attachment
         ];
+    }
+
+    public function toFax($notifiable) {
+        if ( ! $notifiable || ! $notifiable->fax) {
+            return false;
+        }
+        return $this->toPdf();
+    }
+
+    public function toPdf() {
+        if ( ! file_exists($this->pathToPdf)) {
+            $this->pathToPdf = $this->attachment->toPdf();
+        }
+        return $this->pathToPdf;
+    }
+    
+    public function getAttachment()
+    {
+        return $this->attachment;
     }
 }

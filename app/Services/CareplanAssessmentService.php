@@ -5,6 +5,7 @@ use App\CareplanAssessment;
 use App\Repositories\CareplanRepository;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
+use App\Notifications\SendAssessmentNotification;
 
 class CareplanAssessmentService
 {
@@ -35,10 +36,22 @@ class CareplanAssessmentService
         return $this->noteRepo->addOrEdit($note);
     }
 
+    function after(CareplanAssessment $assessment) {
+        $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
+
+        $this->createAssessmentNote($assessment, $assessment->toString(), 'Enrollment');
+
+        $practice = $assessment->approver()->first()->practices()->first();
+        $practice->notify(new SendAssessmentNotification($assessment));
+
+        $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
+    }
+
     public function save(CareplanAssessment $assessment) {
         if ($assessment) {
             if (!$this->exists($assessment->careplan_id, $assessment->provider_approver_id)) {
                 $assessment->save();
+                $this->after($assessment);
                 return $assessment;
             }
             else {
@@ -59,9 +72,9 @@ class CareplanAssessmentService
                     'risk_factors' => $assessment->risk_factors,
                     'tobacco_misuse_counseling' => $assessment->tobacco_misuse_counseling
                 ]);
-                $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
-                $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
-                $this->createAssessmentNote($assessment, $assessment->toString(), 'Enrollment');
+
+                $this->after($assessment);
+
                 return $savedAssessments->first();
             }
         }

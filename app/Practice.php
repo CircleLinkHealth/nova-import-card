@@ -5,6 +5,7 @@ use App\Models\Ehr;
 use App\Traits\HasSettings;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * App\Practice
@@ -74,7 +75,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Practice extends \App\BaseModel
 {
     use HasSettings,
-        SoftDeletes;
+        SoftDeletes,
+        Notifiable;
 
     protected $fillable = [
         'name',
