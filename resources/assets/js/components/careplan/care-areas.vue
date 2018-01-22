@@ -13,7 +13,7 @@
                     <div class="text-center">No Problems at this time</div>
                 </slot>
                 
-                <ul class="subareas__list font-22" v-if="cpmProblems && cpmProblems.length > 0">
+                <ul class="subareas__list" v-if="cpmProblems && cpmProblems.length > 0">
                     <li class='subareas__item inline-block col-sm-6 print-row' 
                         v-for="(problem, index) in cpmProblemsForListing" :key="index">
                         {{problem.name}}
@@ -27,7 +27,7 @@
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
                 <h2 class="color-blue">Other Conditions</h2>
                 
-                <ul class="font-22 row">
+                <ul class="row">
                     <li class='top-10 col-sm-6' 
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
