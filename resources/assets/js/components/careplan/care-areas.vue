@@ -9,8 +9,8 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="cpmProblems.length === 0">
-                    <div class="text-center" v-if="!cpmProblems || cpmProblems.length === 0">No Problems at this time</div>
+                <slot v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">
+                    <div class="text-center">No Problems at this time</div>
                 </slot>
                 
                 <ul class="subareas__list font-22" v-if="cpmProblems && cpmProblems.length > 0">
@@ -24,7 +24,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-xs-12" v-if="ccdProblems && ccdProblems.length > 0">
+            <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
                 <h2 class="color-blue">Other Conditions</h2>
                 
                 <ul class="font-22 row">
