@@ -50,16 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.51.0",
+            "version": "3.52.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a932a76e110dc2c65c216de21a1aa65e151d21ef"
+                "reference": "1bc98d7f1f4b6ffb3c54d6a854d5ee5b7137e220"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a932a76e110dc2c65c216de21a1aa65e151d21ef",
-                "reference": "a932a76e110dc2c65c216de21a1aa65e151d21ef",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1bc98d7f1f4b6ffb3c54d6a854d5ee5b7137e220",
+                "reference": "1bc98d7f1f4b6ffb3c54d6a854d5ee5b7137e220",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-01-19T20:32:42+00:00"
+            "time": "2018-01-22T22:20:45+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1895,16 +1895,16 @@
         },
         {
             "name": "knplabs/knp-snappy",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/snappy.git",
-                "reference": "68590ef3aa94425b1c0019cc28ce471729f51fcb"
+                "reference": "144c4ecd1ccaeda936bf832b93079efc490e6850"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/68590ef3aa94425b1c0019cc28ce471729f51fcb",
-                "reference": "68590ef3aa94425b1c0019cc28ce471729f51fcb",
+                "url": "https://api.github.com/repos/KnpLabs/snappy/zipball/144c4ecd1ccaeda936bf832b93079efc490e6850",
+                "reference": "144c4ecd1ccaeda936bf832b93079efc490e6850",
                 "shasum": ""
             },
             "require": {
@@ -1957,7 +1957,7 @@
                 "thumbnail",
                 "wkhtmltopdf"
             ],
-            "time": "2017-12-03T23:18:18+00:00"
+            "time": "2018-01-22T19:40:51+00:00"
         },
         {
             "name": "lab404/laravel-impersonate",
