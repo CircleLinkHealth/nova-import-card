@@ -1531,6 +1531,7 @@ Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}
 
     return $contents->where('type', '=', 'file')
         ->where('mimetype', '=', 'text/xml')
+        ->take(3000)
         ->map(function ($file) use ($practice, $dir, $filterLastEncounter, $filterInsurance, $filterProblems, $processedDir){
             $rawData = Storage::cloud()->get($file['path']);
 
