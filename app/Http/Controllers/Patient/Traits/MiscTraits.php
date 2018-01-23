@@ -38,7 +38,7 @@ trait MiscTraits
     public function addInstructionToMisc($userId, $miscId, Request $request) {
         $instructionId = $request->input('instructionId');
         if ($userId && $miscId && $instructionId) {
-            return $this->miscService->editPatientMisc($miscId, $userId, $instructionId);
+            return $this->miscService->editPatientMisc($userId, $miscId, $instructionId);
         }
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }

@@ -2,53 +2,21 @@
     <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12" v-if="!selectedMisc">
-                    <form @submit="addMisc">
-                        <div class="form-group">
-                            <div class="top-20">
-                                <div class="font-14">
-                                    <notifications></notifications>
-                                </div>
-                                <select class="form-control color-black" v-model="newMisc.id" :class="{ error: patientHasSelectedMisc }" required>
-                                    <option :value="null">Select a Service</option>
-                                    <option v-for="(misc, index) in miscs" :key="index" :value="misc.id">{{misc.name}}</option>
-                                </select>
-                            </div>
-                            <div class="top-20 text-right">
-                                <loader v-if="loaders.addMisc"></loader>
-                                <button class="btn btn-secondary selected" :disabled="cantCreateMisc">Create</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
                 <div class="col-sm-12 top-20" v-if="selectedMisc">
                     <div class="row top-20">
                         <form @submit="addInstruction">
-                            <div class="col-sm-11">
-                                <input class="form-control" v-model="newInstruction" placeholder="Add New Instruction" required />
+                            <div class="col-sm-12">
+                                <textarea class="form-control height-200" v-model="newInstruction" placeholder="Add New Instruction" required></textarea>
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-12 top-20 text-right">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="+" 
+                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected margin-0" value="Save" 
                                     title="add this instruction for this cpm problem" 
                                     :disabled="!newInstruction || newInstruction.length === 0" />
                             </div>
                         </form>
                     </div>
-                    <div class="instructions top-20">
-                         <div v-for="(instruction, index) in selectedMisc.instructions" :key="index">
-                            <ol class="list-group" v-for="(instructionChunk, chunkIndex) in instruction.name.split('\n')" 
-                                @click="selectInstruction(index)" :key="chunkIndex">
-                                <li class="list-group-item pointer" v-if="instructionChunk"
-                                :class="{ selected: selectedInstruction && selectedInstruction.id === instruction.id, disabled: (selectedInstruction && selectedInstruction.id === instruction.id)  && loaders.removeInstruction }">
-                                    {{instructionChunk}}
-                                    <input type="button" class="btn btn-danger absolute delete" value="x" @click="removeInstructionFromProblem(index)" v-if="chunkIndex === 0" />
-                                </li>
-                            </ol>
-                        </div>
-                    </div>
                 </div>
-                
             </div>
         </template>
     </modal>
@@ -94,7 +62,11 @@
                 return !!this.selectedMiscs.find(misc => misc.id == this.newMisc.id)
             },
             selectedMisc() {
-                return this.selectedMiscs.find(misc => misc.name == this.selectedMiscName)
+                const selected = this.selectedMiscs.find(misc => misc.name == this.selectedMiscName)
+                if (selected && selected.instructions) {
+                    this.newInstruction = (selected.instructions[0] || {}).name
+                }
+                return selected
             }
         },
         methods: {
@@ -110,7 +82,7 @@
                 this.newMisc.name = ''
             },
             setupMisc(misc) {
-                misc.instructions = []
+                misc.instructions = (misc.instructions || []).slice(0, 1)
                 return misc
             },
             getSelectedMisc() {
@@ -191,8 +163,7 @@
             addInstructionToMisc(instruction) {
                return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('misc:add-instruction', response.data)
-                        this.selectedMisc.instructions.unshift(instruction)
-                        this.newInstruction = ''
+                        this.selectedMisc.instructions[0] = instruction
                         this.loaders.addInstruction = false
                         Event.$emit('misc:change', this.selectedMisc)
                     }).catch(err => {
