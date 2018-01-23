@@ -1516,12 +1516,27 @@ Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}
     $recursive = false; // Get subdirectories also?
     $contents = collect(Storage::cloud()->listContents($dir, $recursive));
 
+    $processedDir = $contents->where('type', '=', 'dir')
+        ->where('filename', '=', 'processed')
+        ->first();
+
+    if (!$processedDir) {
+        \Storage::cloud()->makeDirectory("$dir/processed");
+
+        $processedDir = collect(Storage::cloud()->listContents($dir, $recursive))
+                                 ->where('type', '=', 'dir')
+                                 ->where('filename', '=', 'processed')
+                                 ->first();
+    }
+
     return $contents->where('type', '=', 'file')
         ->where('mimetype', '=', 'text/xml')
-        ->map(function ($file) use ($practice, $dir, $filterLastEncounter, $filterInsurance, $filterProblems){
+        ->map(function ($file) use ($practice, $dir, $filterLastEncounter, $filterInsurance, $filterProblems, $processedDir){
             $rawData = Storage::cloud()->get($file['path']);
 
-            if (str_contains($file['filename'], ['processed::'])) {
+            if (str_contains($file['filename'], ['processed'])) {
+                \Storage::cloud()->move($file['path'], "{$processedDir['path']}/{$file['filename']}");
+
                 return $file;
             }
 
@@ -1541,7 +1556,7 @@ Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}
                     (bool) $filterInsurance, (bool) $filterProblems),
             ])->dispatch($ccda->id);
 
-            \Storage::cloud()->move($file['path'], "$dir/processed::ccdaId=$ccda->id");
+            \Storage::cloud()->move($file['path'], "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
 
             return $file;
         })
