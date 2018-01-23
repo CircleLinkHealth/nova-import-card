@@ -9,27 +9,47 @@ use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class CheckCcdaEnrollmentEligibility implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     protected $ccda;
     protected $practice;
     protected $transformer;
+    private $filterLastEncounter;
+    private $filterInsurance;
+    private $filterProblems;
 
     /**
      * Create a new job instance.
      *
-     * @param Ccda $ccda
+     * @param $ccda
      * @param Practice $practice
+     * @param bool $filterLastEncounter
+     * @param bool $filterInsurance
+     * @param bool $filterProblems
+     * @param bool $createEnrollees
      */
-    public function __construct(Ccda $ccda, Practice $practice)
-    {
-        $this->ccda        = Ccda::find($ccda->id);
-        $this->transformer = new CcdToLogTranformer();
-        $this->practice    = $practice;
+    public function __construct(
+        $ccda,
+        Practice $practice,
+        $filterLastEncounter = null,
+        $filterInsurance = null,
+        $filterProblems = true
+    ) {
+        if (is_a($ccda, Ccda::class)) {
+            $ccda = $ccda->id;
+        }
+
+        $this->ccda                = Ccda::find($ccda);
+        $this->transformer         = new CcdToLogTranformer();
+        $this->practice            = $practice;
+        $this->filterLastEncounter = $filterLastEncounter;
+        $this->filterInsurance     = $filterInsurance;
+        $this->filterProblems      = $filterProblems;
     }
 
     /**
@@ -80,13 +100,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
-        $filterLastEncounter = false;
-        if (isset($json->encounters) && array_key_exists(0, $json->encounters) && isset($json->encounters[0]->date)) {
+        if ((is_null($this->filterLastEncounter) || $this->filterLastEncounter) && isset($json->encounters) && array_key_exists(0,
+                $json->encounters) && isset($json->encounters[0]->date)) {
             $lastEncounter = $json->encounters[0]->date;
 
             if ($lastEncounter) {
-                $filterLastEncounter = true;
+                $this->filterLastEncounter = true;
                 $patient->put('last_encounter', Carbon::parse($lastEncounter));
+            } else {
+                $this->filterLastEncounter = false;
             }
         }
 
@@ -98,20 +120,16 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $patient = $patient->put('problems', $problems);
 
 
-        $filterInsurance = false;
-
-        if ($insurance->isNotEmpty()) {
+        if ((is_null($this->filterInsurance) || $this->filterInsurance) && $insurance->isNotEmpty()) {
             $patient = $patient->put('primary_insurance', $insurance[0] ?? '');
             $patient = $patient->put('secondary_insurance', $insurance[1] ?? '');
-
-//            $filterInsurance = true;
         }
 
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
-            $filterLastEncounter,
-            $filterInsurance,
-            true,
+            $this->filterLastEncounter,
+            $this->filterInsurance,
+            $this->filterProblems,
             true,
             $this->practice,
             Ccda::class,

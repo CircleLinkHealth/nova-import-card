@@ -303,30 +303,24 @@ class WelcomeCallListGenerator
 //                return false;
 //            }
 
-        //Keep the patient if they have medicare AND a secondary insurance
-        if (str_contains($primary, [
-                'medicare b',
-                'medicare part b',
+        $eligibleInsurances = [];
+
+        foreach ([$primary, $secondary] as $insurance) {
+            if (str_contains(strtolower($insurance), [
                 'medicare',
-            ]) && !empty($secondary)
-        ) {
-            return true;
+            ])
+            ) {
+                $eligibleInsurances[] = $insurance;
+            }
         }
 
-        //Or the reverse
-        if (str_contains($secondary, [
-                'medicare b',
-                'medicare part b',
-                'medicare',
-            ]) && !empty($primary)
-        ) {
-            return true;
+        if (count($eligibleInsurances) < 1) {
+            $this->ineligiblePatients->push($record);
+
+            return false;
         }
 
-        //Otherwise, remove the patient from the list
-        $this->ineligiblePatients->push($record);
-
-        return false;
+        return true;
     }
 
     /**

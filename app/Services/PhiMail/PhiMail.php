@@ -5,6 +5,7 @@ use App\Contracts\DirectMail;
 use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maknz\Slack\Facades\Slack;
 
@@ -215,24 +216,26 @@ class PhiMail implements DirectMail
                     // written to files.
 
                     if (str_contains($showRes->mimeType, 'plain')) {
-                        Log::info('The plain text part of the mail');
-                        Log::info($showRes->data);
-                        self::writeDataFile(storage_path(str_random(20) . '.txt'), $showRes->data);
+                        Log::info('Plain Mime Type');
+                        self::writeDataFile(storage_path(Carbon::now()->toAtomString() . '.txt'), $showRes->data);
                     } elseif (str_contains($showRes->mimeType, 'xml')) {
-                        //save ccd to file
-                        self::writeDataFile(storage_path(str_random(20) . '.xml'), $showRes->data);
+                        Log::info('XML Mime Type');
+                        self::writeDataFile(storage_path(Carbon::now()->toAtomString() . '.xml'), $showRes->data);
                         $this->importCcd($showRes);
+                    } else {
+                        Log::info('Other Mime Type');
+                        self::writeDataFile(storage_path(Carbon::now()->toAtomString() . '.txt'), $showRes->data);
                     }
 
                     // Display the list of attachments and associated info. This info is only
                     // included with message part 0.
-//                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
-//                        Log::critical("Attachment " . ($k + 1)
-//                            . ": " . $showRes->attachmentInfo[$k]->mimeType
-//                            . " fn:" . $showRes->attachmentInfo[$k]->filename
-//                            . " Desc:" . $showRes->attachmentInfo[$k]->description
-//                            . "\n");
-//                    }
+                    for ($k = 0; $i == 0 && $k < $message->numAttachments; $k++) {
+                        Log::info("Attachment " . ($k + 1)
+                            . ": " . $showRes->attachmentInfo[$k]->mimeType
+                            . " fn:" . $showRes->attachmentInfo[$k]->filename
+                            . " Desc:" . $showRes->attachmentInfo[$k]->description
+                            . "\n");
+                    }
                 }
                 // This signals the server that the message can be safely removed from the queue
                 // and should only be sent after all required parts of the message have been
