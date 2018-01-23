@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id) }" 
+                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: selectedGoal && (selectedGoal.id === goal.id) && !selectedGoal.enabled }" 
                             v-for="(goal, index) in goals" :key="index" @click="select(index)">
                             {{goal.name}}
                             <span class="delete" title="remove this goal" @click="removeGoal">x</span>
@@ -64,10 +64,13 @@
                             </div>
                             <div class="col-sm-6 text-right" :class="{ 'col-sm-12': selectedGoal.id % 2 === 0 }">
                                 <loader v-if="loaders.addGoal"></loader>
-                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Edit' : 'Add'}} {{selectedGoal.name}}</button>
+                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Save' : 'Add'}} {{selectedGoal.name}}</button>
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="col-sm-12 text-center" v-if="selectedGoal && !selectedGoal.enabled">
+                    <label class="label label-primary">{{selectedGoal.name}} has been disabled. You can fill the form to enable.</label>
                 </div>
             </div>
         </template>
@@ -183,5 +186,10 @@
     button.goal-button div.loader.absolute {
         right: -13px;
         top: 15px;
+    }
+
+    .label.label-primary {
+        background-color: #ddd;
+        color: black;
     }
 </style>
