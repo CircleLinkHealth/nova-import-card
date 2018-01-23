@@ -9,25 +9,25 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="cpmProblems.length === 0">
-                    <div class="text-center" v-if="!cpmProblems || cpmProblems.length === 0">No Problems at this time</div>
+                <slot v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">
+                    <div class="text-center">No Problems at this time</div>
                 </slot>
                 
                 <ul class="subareas__list" v-if="cpmProblems && cpmProblems.length > 0">
-                    <li class='subareas__item inline-block col-sm-6 font-18 print-row' 
-                        v-for="(problem, index) in cpmProblems" :key="index">
+                    <li class='subareas__item inline-block col-sm-6 print-row' 
+                        v-for="(problem, index) in cpmProblemsForListing" :key="index">
                         {{problem.name}}
                     </li>
-                    <li class='subareas__item inline-block col-sm-6 font-18 print-row' 
+                    <li class='subareas__item inline-block col-sm-6 print-row' 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
                         {{problem.name}}
                     </li>
                 </ul>
             </div>
-            <div class="col-xs-12" v-if="ccdProblems && ccdProblems.length > 0">
+            <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
                 <h2 class="color-blue">Other Conditions</h2>
                 
-                <ul class="font-18 row">
+                <ul class="row">
                     <li class='top-10 col-sm-6' 
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
@@ -62,11 +62,14 @@
             problems() {
                 return [ ...this.cpmProblems, ...this.ccdProblems ]
             },
+            cpmProblemsForListing() {
+                return this.cpmProblems.distinct(p => p.name)
+            },
             ccdMonitoredProblems() {
-                return this.ccdProblems.filter(problem => problem.is_monitored)
+                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cp => cp.name == problem.name) && problem.is_monitored).distinct(p => p.name)
             },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id)))
+                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id))).distinct(p => p.name)
             }
         },
         methods: {
@@ -131,5 +134,9 @@
 <style>
     .color-blue {
         color: #109ace;
+    }
+
+    .font-22 {
+        font-size: 22px;
     }
 </style>

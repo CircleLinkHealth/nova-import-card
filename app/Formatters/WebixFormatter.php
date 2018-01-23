@@ -488,6 +488,7 @@ class WebixFormatter implements ReportFormatter
         $isCareCenter          = $auth->hasRole('care-center');
         $isAdmin               = $auth->hasRole('administrator');
         $isProvider            = $auth->hasRole('provider');
+        $isPracticeStaff            = $auth->hasRole(['office_admin', 'med_assistant']);
 
 
         foreach ($patients as $patient) {
@@ -619,6 +620,7 @@ class WebixFormatter implements ReportFormatter
             'isCareCenter',
             'isAdmin',
             'isProvider',
+            'isPracticeStaff',
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
+use App\Traits\PdfReportTrait;
 
 /**
  * App\CareplanAssessment
@@ -67,5 +68,27 @@ class CareplanAssessment extends \App\BaseModel
 
     public function toString() {
         return 'Patient ' . $this->careplan_id . ' enrolled.';
+    }
+    
+    /**
+        * Create a PDF of this resource and return the path to it.
+        *
+        * @return string
+        */
+    public function toPdf(): string
+    {
+        $patient = $this->patient()->first();
+        $approver = $this->approver()->first();
+
+        $pdf = app('snappy.pdf.wrapper');
+        $pdf->loadView('emails.assessment-created', [
+            'assessment'  => $this
+        ]);
+
+        $this->fileName = Carbon::now()->toDateString() . '-' . $patient->display_name . '.pdf';
+        $filePath       = base_path('storage/pdfs/assessments/' . $this->fileName);
+        $pdf->save($filePath, true);
+
+        return $filePath;
     }
 }

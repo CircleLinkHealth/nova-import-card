@@ -69,20 +69,24 @@ class CpmMiscUserRepository
             'message' => 'successful'
         ];
     }
+
+    public function removeInstructions($userId, $miscId) {
+        $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->with('cpmInstruction')->get()->map(function ($m) {
+            if ($m->cpmInstruction) {
+                $m->cpmInstruction->delete();
+            }
+        });
+        return [
+            'message' => 'successful'
+        ];
+    }
     
     public function editPatientMisc($userId, $miscId, $instructionId) {
-        if (!!$this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => null ])->first()) {
-            $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => null ])->update([
-                'cpm_instruction_id' => $instructionId
-            ]);
-            return $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
-        }
-        else {
-            $miscUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->first();
-            if (!$miscUser) {
-                return $this->addMiscToPatient($userId, $miscId, $instructionId);
-            }
-            return $miscUser;
-        }
+
+        $this->removeInstructions($userId, $miscId);
+
+        $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->delete();
+        
+        return $this->addMiscToPatient($miscId, $userId, $instructionId);
     }
 }

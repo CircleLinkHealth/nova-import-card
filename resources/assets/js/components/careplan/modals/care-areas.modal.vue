@@ -9,20 +9,21 @@
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
-                                v-for="(problem, index) in problems" :key="index" @click="select(index)">
+                                v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name}}
                             <span class="delete" title="remove this cpm problem" @click="removeCpmProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
-                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(-1)" />
+                        <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="!selectedProblem">
                     <div class="row">
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
-                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="7"
-                                :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }">
+                                <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
+                                    :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
+                                    @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
@@ -36,7 +37,7 @@
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addProblem"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 selected" value="Save" :disabled="patientHasSelectedProblem" />
+                                <input type="submit" class="btn btn-secondary right-0 selected" value="Add Condition" :disabled="patientHasSelectedProblem" />
                             </div>
                         </form>
                     </div>
@@ -57,76 +58,81 @@
                         </form>
                     </div>
                      <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12" v-if="selectedProblem.is_monitored">
                             <form @submit="editCcdProblem">
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" required />
+                                    <!-- <div class="col-sm-6">
+                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" 
+                                            :class="{ error: patientHasSelectedProblem }" 
+                                            :title="patientHasSelectedProblem ? 'Problem with this name already exists' : null" required />
                                     </div>
                                     <div class="col-sm-6">
                                         <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
                                             :options="cpmProblemsForSelect"></v-select>
                                     </div>
-                                    <div class="col-sm-8 top-20" v-if="selectedProblem.is_monitored">
-                                        <textarea class="form-control"
+                                    <div class="col-sm-6 font-14">
+                                        <label class="form-control">
+                                            <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
+                                        </label>
+                                    </div> -->
+                                    <div class="col-sm-12 top-20">
+                                        <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                     </div>
-                                    <div class="col-sm-4 top-20 font-14">
-                                        <label>
-                                            <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
-                                        </label>
-                                    </div>
-                                    <div class="col-sm-6 top-20 text-right" :class="{ 'col-sm-12' : selectedProblem.is_monitored }">
+                                    <div class="col-sm-12 top-20 text-right" >
                                         <loader class="absolute" v-if="loaders.editProblem"></loader>
                                         <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0" />
+                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <div class="col-sm-12">
-                            <h4>
-                                Problem Codes
-                            </h4>
-                        </div>
-                        <div class="col-sm-12 top-20">
-                            <ul class="list-group font-16 border-bottom">
-                                <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
-                                    <div class="col-sm-5">
-                                        <p>
-                                            {{code.code_system_name}}
-                                        </p>
+                            <collapsible>
+                                <template slot="title">
+                                    <h4>
+                                        Problem Codes
+                                    </h4>
+                                </template>
+                                <template>
+                                    <ul class="list-group font-16 border-bottom">
+                                        <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
+                                            <div class="col-sm-5">
+                                                <p>
+                                                    {{code.code_system_name}}
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <p>{{code.code}}</p>
+                                            </div>
+                                            <div class="col-sm-2 text-right">
+                                                <loader class="absolute" v-if="loaders.removeCode"></loader>
+                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                            </div>
+                                        </li>
+                                        <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
+                                            <center>No Codes Yet</center>
+                                        </li>
+                                    </ul>
+                                    <div class="row">
+                                        <form @submit="addCode">
+                                            <div class="col-sm-5">
+                                                <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
+                                                    :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
+                                            </div>
+                                            <div class="col-sm-2 text-right">
+                                                <loader class="absolute" v-if="loaders.addCode"></loader>
+                                                <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
+                                                    :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="col-sm-5">
-                                        <p>{{code.code}}</p>
-                                    </div>
-                                    <div class="col-sm-2 text-right">
-                                        <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                        <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
-                                    </div>
-                                </li>
-                                <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
-                                    <center>No Codes Yet</center>
-                                </li>
-                            </ul>
-                            <div class="row">
-                                <form @submit="addCode">
-                                    <div class="col-sm-5">
-                                        <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
-                                            :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
-                                    </div>
-                                    <div class="col-sm-2 text-right">
-                                        <loader class="absolute" v-if="loaders.addCode"></loader>
-                                        <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
-                                            :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
-                                    </div>
-                                </form>
-                            </div>
-                            
+                                </template>
+                            </collapsible>
                         </div>
                     </div>
                 </div>
@@ -141,6 +147,7 @@
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
     import VueComplete from 'v-complete'
+    import Collapsible from '../../collapsible'
 
     export default {
         name: 'care-areas-modal',
@@ -151,11 +158,16 @@
         components: {
             'modal': Modal,
             'v-select': VueSelect,
-            'v-complete': VueComplete
+            'v-complete': VueComplete,
+            'collapsible': Collapsible
         },
         computed: {
+            problemsForListing() {
+                return this.problems.distinct((p) => p.name)
+            },
             patientHasSelectedProblem() {
-                return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
+                if (!this.selectedProblem) return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
+                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
@@ -197,14 +209,17 @@
             }
         },
         methods: {
-            select(index) {
-                this.selectedProblem = (index >= 0) ? this.problems[index] : null
+            select(problem) {
+                this.selectedProblem = problem
             },
             reset () {
                 this.newProblem.name = ''
                 this.newProblem.problem = ''
                 this.newProblem.is_monitored = true
                 this.newProblem.icd10 = null
+            },
+            resolveIcd10Code() {
+                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code
             },
             addInstruction(e) {
                 e.preventDefault()
@@ -405,7 +420,7 @@
         margin-right: 0px;
     }
 
-    select.error, select.error:focus {
+    input.error, input.error:focus, select.error, select.error:focus {
         border: 1px solid red;
     }
 
@@ -527,5 +542,9 @@
 
     .v-complete.error {
         border: 1px solid red;
+    }
+
+    input.warning {
+        border: 1px solid #fa0;
     }
 </style>

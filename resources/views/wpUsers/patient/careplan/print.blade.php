@@ -156,17 +156,17 @@ if (isset($patient) && ! empty($patient)) {
                 </div>
                 <!-- CARE AREAS -->
                 <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
-                    <ul class="subareas__list">
+                    <template>
                         @if($problemNames)
-                            @foreach($problemNames as $prob)
-                                <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
-                            @endforeach
-                            
+                            <ul class="subareas__list">
+                                @foreach($problemNames as $prob)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$prob}}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <div class="text-center">No Problems at this time</div>
                         @endif
-                    </ul>
-                    @if (optional($problemNames)->count() == 0)
-                        <div class="text-center">No Problems at this time</div>
-                    @endif
+                    </template>
                 </care-areas>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
@@ -274,10 +274,10 @@ if (isset($patient) && ! empty($patient)) {
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
                             Part 3</h1>
                     </div>
-                    <div class="col-xs-12">
+                    {{--  <div class="col-xs-12">
                         <h1 class="patient-summary__title--secondary patient-summary--careplan"><p>Other information</p>
                         </h1>
-                    </div>
+                    </div>  --}}
                 </div>
 
                 <!-- ALLERGIES -->

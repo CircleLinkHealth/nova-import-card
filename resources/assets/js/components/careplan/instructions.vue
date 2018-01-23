@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <h2 class="patient-summary__subtitles patient-summary--careplan-background">
-                    Follow these instructions
+                    Follow These Instructions
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showCareAreasModal" aria-hidden="true"></span>
                 </h2>
             </div>
@@ -16,7 +16,7 @@
         <div class="row gutter" v-if="cpmProblems.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
-                <p v-for="(instruction, index) in problem.instruction.name.split('\n')" :key="index">{{instruction}}</p>
+                <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index">{{instruction}}</p>
             </div>
         </div>
         <!-- <div class="row gutter" v-if="ccdProblems">
@@ -59,7 +59,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instruction)
+                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name))
             }
         },
         methods: {
