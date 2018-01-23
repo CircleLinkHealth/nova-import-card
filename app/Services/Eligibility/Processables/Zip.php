@@ -29,7 +29,7 @@ class Zip extends BaseProcessable
      */
     public function processEligibility()
     {
-        $directory = $this->unzip();
+        $directory = storage_path($this->relativeDirectory);
 
         foreach (glob("$directory/*xml") as $filePath) {
             $ccda = Ccda::create([
@@ -79,6 +79,7 @@ class Zip extends BaseProcessable
 
     /**
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
      */
     public function queue()
     {
@@ -88,13 +89,17 @@ class Zip extends BaseProcessable
             $dir      = storage_path($relDir);
             $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
 
+            $made = mkdir($dir, 0775, true);
+
             $this->getFile()->move($dir, $fileName);
 
-            \Storage::disk('storage')->setVisibility("$relDir/$fileName",'public');
+            $changed = \Storage::disk('storage')->setVisibility("$relDir/$fileName",'public');
 
             $this->setFile("$dir/$fileName");
 
             $this->relativeDirectory = $relDir;
+
+            $this->unzip();
         }
 
         parent::queue();
