@@ -27,20 +27,18 @@ class Zip extends BaseProcessable
      */
     public function processEligibility()
     {
-        $directory = storage_path($this->relativeDirectory);
-
-        foreach (glob("$directory/*xml") as $filePath) {
+        foreach (\Storage::disk('cloud')->files($this->relativeDirectory) as $filePath) {
             $ccda = Ccda::create([
                 'source'      => 'uploaded',
                 'imported'    => false,
-                'xml'         => file_get_contents($filePath),
+                'xml'         => \Storage::disk('cloud')->get($filePath),
                 'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                 'practice_id' => $this->practice->id,
             ]);
 
             $filePath = str_replace(storage_path(), '', $filePath);
 
-            $deleted = \Storage::disk('storage')->delete($filePath);
+            $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
@@ -64,8 +62,6 @@ class Zip extends BaseProcessable
             $dirPerms = mkdir($dir, 0775, true);
 
             $this->getFile()->move($dir, $fileName);
-
-            $changed = \Storage::disk('storage')->setVisibility("$relDir/$fileName", 'public');
 
             $this->setFile("$dir/$fileName");
 
@@ -102,7 +98,14 @@ class Zip extends BaseProcessable
         $zip->extract($dir);
 
         foreach (glob("$dir/*xml") as $filePath) {
-            $changeFilePerms = chmod($filePath, 0775);
+            $file = new File($filePath);
+
+            if ($file->extension() == 'xml') {
+                $saved = \Storage::disk('cloud')
+                        ->putFileAs($this->relativeDirectory, $file, Carbon::now()->toAtomString() . '.xml');
+            }
+
+            $deleted = \Storage::disk('storage')->delete(str_replace(storage_path(), '', $filePath));
         }
 
         $deleted = \Storage::disk('storage')->delete(str_replace(storage_path(), '', $path));
