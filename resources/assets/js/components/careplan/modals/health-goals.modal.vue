@@ -64,7 +64,7 @@
                             </div>
                             <div class="col-sm-6 text-right" :class="{ 'col-sm-12': selectedGoal.id % 2 === 0 }">
                                 <loader v-if="loaders.addGoal"></loader>
-                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Edit' : 'Add'}} {{selectedGoal.name}}</button>
+                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Save' : 'Add'}} {{selectedGoal.name}}</button>
                             </div>
                         </div>
                     </form>
