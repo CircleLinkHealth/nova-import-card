@@ -30,11 +30,14 @@ class Zip extends BaseProcessable
         foreach (\Storage::disk('cloud')->files($this->relativeDirectory) as $filePath) {
             $ccda = Ccda::create([
                 'source'      => 'uploaded',
-                'imported'    => false,
                 'xml'         => \Storage::disk('cloud')->get($filePath),
                 'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'practice_id' => $this->practice->id,
+                'imported'    => false,
             ]);
+
+            //for some reason it doesn't save practice_id when using Ccda::create([])
+            $ccda->practice_id = (int) $this->practice->id;
+            $ccda->save();
 
 //            $filePath = str_replace(storage_path(), '', $filePath);
 //            $deleted = \Storage::disk('cloud')->delete($filePath);
@@ -52,12 +55,12 @@ class Zip extends BaseProcessable
      */
     public function queue()
     {
-        if (is_a($this->getFile(), UploadedFile::class) || is_a($this->getFile(), File::class)) {
+        if (is_a($this->getFilePath(), UploadedFile::class) || is_a($this->getFilePath(), File::class)) {
             $date     = Carbon::now();
             $relDir   = "{$date->toDateString()}/unzip/{$this->practice->name}/{$date->toTimeString()}";
             $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
 
-            \Storage::disk('ccdas')->putFileAs($relDir, new File($this->getFile()), $fileName);
+            \Storage::disk('local')->putFileAs($relDir, new File($this->getFilePath()), $fileName);
 
             $this->setFile("$relDir/$fileName");
 
@@ -76,43 +79,49 @@ class Zip extends BaseProcessable
      */
     public function unzip()
     {
-        $path = $this->getFile()->path();
+        $disk = \Storage::disk('local');
+        $cloudDisk = \Storage::disk('cloud');
+        $prefix = $disk->getAdapter()->getPathPrefix();
 
-        if ( ! file_exists($path)) {
+        $path = $this->getFilePath();
+        $fullZipFilePath = "$prefix$path";
+
+        if ( ! file_exists($fullZipFilePath)) {
             throw new \Exception('File does not exist.');
         }
 
-        if ( ! ZipFacade::check($path)) {
+        if ( ! ZipFacade::check($fullZipFilePath)) {
             throw new \Exception('Invalid zip file.');
         }
-        
-        $storage = \Storage::disk('ccdas');
-
-        $prefix = $storage->getAdapter()->getPathPrefix();
 
         $dir = $prefix."$this->relativeDirectory";
 
-        $zip = ZipFacade::open($path);
+        $zip = ZipFacade::open($fullZipFilePath);
         $zip->extract($dir);
 
-        if (count($storage->files($this->relativeDirectory)) < 1) {
+        $xmlFiles = glob("$dir/*xml");
+
+        if (count($xmlFiles) < 1) {
             throw new \Exception('No files were extracted. This could be due to an error, or the archive was empty.');
         }
 
-        foreach ($storage->files($this->relativeDirectory) as $filePath) {
-            $file = new File("$prefix$filePath");
+        foreach ($xmlFiles as $filePath) {
 
-            if (!file_exists("$prefix$filePath")) {
+            if (!file_exists($filePath)) {
                 throw new \Exception('File not found');
             }
 
-            $saved = \Storage::disk('cloud')
-                             ->putFileAs($this->relativeDirectory, $file, Carbon::now()->toAtomString() . '.xml');
+            $saved = $cloudDisk
+                             ->put($this->relativeDirectory.'/'.Carbon::now()->toAtomString().'.xml', fopen($filePath, 'r+'));
 
-            $deleted = $storage->delete($filePath);
+            $deleted = $disk->delete(str_replace($prefix, '', $filePath));
         }
 
-        $deleted = $storage->delete($path);
+        if (count($cloudDisk->files($this->relativeDirectory)) < 1) {
+            throw new \Exception('No files were saved to cloud storage.');
+        }
+
+        $deleted = $disk->delete($path);
 
         return $dir;
     }

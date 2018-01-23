@@ -86,24 +86,8 @@ abstract class BaseProcessable implements EligibilityProcessable
      * @return string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function getFile()
+    public function getFilePath()
     {
-        if (file_exists(storage_path($this->file))) {
-            return new File(storage_path($this->file));
-        }
-
-        if (\Storage::disk('ccdas')->exists($this->file)) {
-            return new File(\Storage::disk('ccdas')->getAdapter()->getPathPrefix(). "$this->file");
-        }
-
-        if (file_exists($this->file)) {
-            return new File($this->file);
-        }
-
-        if (\Storage::disk('cloud')->exists($this->file)) {
-            return \Storage::disk('cloud')->get($this->file);
-        }
-
         return $this->file;
     }
 
