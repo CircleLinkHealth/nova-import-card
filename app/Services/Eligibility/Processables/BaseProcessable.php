@@ -92,6 +92,10 @@ abstract class BaseProcessable implements EligibilityProcessable
             return new File(storage_path($this->file));
         }
 
+        if (\Storage::disk('ccdas')->exists($this->file)) {
+            return new File(\Storage::disk('ccdas')->getAdapter()->getPathPrefix(). "$this->file");
+        }
+
         if (file_exists($this->file)) {
             return new File($this->file);
         }

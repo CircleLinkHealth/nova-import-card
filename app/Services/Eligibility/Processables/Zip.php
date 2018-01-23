@@ -36,9 +36,8 @@ class Zip extends BaseProcessable
                 'practice_id' => $this->practice->id,
             ]);
 
-            $filePath = str_replace(storage_path(), '', $filePath);
-
-            $deleted = \Storage::disk('cloud')->delete($filePath);
+//            $filePath = str_replace(storage_path(), '', $filePath);
+//            $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
@@ -56,16 +55,11 @@ class Zip extends BaseProcessable
         if (is_a($this->getFile(), UploadedFile::class) || is_a($this->getFile(), File::class)) {
             $date     = Carbon::now();
             $relDir   = "{$date->toDateString()}/unzip/{$this->practice->name}/{$date->toTimeString()}";
-            $dir      = storage_path($relDir);
             $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
 
-            $dirPerms = mkdir($dir, 0775, true);
+            \Storage::disk('ccdas')->putFileAs($relDir, new File($this->getFile()), $fileName);
 
-            $this->getFile()->move($dir, $fileName);
-
-            $this->setFile("$dir/$fileName");
-
-            $changeFileNamePerms = chmod("$dir/$fileName", 0775);
+            $this->setFile("$relDir/$fileName");
 
             $this->relativeDirectory = $relDir;
 
@@ -91,24 +85,34 @@ class Zip extends BaseProcessable
         if ( ! ZipFacade::check($path)) {
             throw new \Exception('Invalid zip file.');
         }
+        
+        $storage = \Storage::disk('ccdas');
 
-        $dir = storage_path($this->relativeDirectory);
+        $prefix = $storage->getAdapter()->getPathPrefix();
+
+        $dir = $prefix."$this->relativeDirectory";
 
         $zip = ZipFacade::open($path);
         $zip->extract($dir);
 
-        foreach (glob("$dir/*xml") as $filePath) {
-            $file = new File($filePath);
-
-            if ($file->extension() == 'xml') {
-                $saved = \Storage::disk('cloud')
-                        ->putFileAs($this->relativeDirectory, $file, Carbon::now()->toAtomString() . '.xml');
-            }
-
-            $deleted = \Storage::disk('storage')->delete(str_replace(storage_path(), '', $filePath));
+        if (count($storage->files($this->relativeDirectory)) < 1) {
+            throw new \Exception('No files were extracted. This could be due to an error, or the archive was empty.');
         }
 
-        $deleted = \Storage::disk('storage')->delete(str_replace(storage_path(), '', $path));
+        foreach ($storage->files($this->relativeDirectory) as $filePath) {
+            $file = new File("$prefix$filePath");
+
+            if (!file_exists("$prefix$filePath")) {
+                throw new \Exception('File not found');
+            }
+
+            $saved = \Storage::disk('cloud')
+                             ->putFileAs($this->relativeDirectory, $file, Carbon::now()->toAtomString() . '.xml');
+
+            $deleted = $storage->delete($filePath);
+        }
+
+        $deleted = $storage->delete($path);
 
         return $dir;
     }
