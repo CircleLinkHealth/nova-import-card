@@ -2,8 +2,8 @@
     <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12 top-20" v-if="selectedMisc">
-                    <div class="row top-20">
+                <div class="col-sm-12" v-if="selectedMisc">
+                    <div class="row">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
                                 <textarea class="form-control height-200" v-model="newInstruction" placeholder="Add New Instruction" required></textarea>

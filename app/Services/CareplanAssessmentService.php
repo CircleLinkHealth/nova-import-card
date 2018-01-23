@@ -1,6 +1,7 @@
 <?php namespace App\Services;
 
 use App\Note;
+use App\User;
 use App\CareplanAssessment;
 use App\Repositories\CareplanRepository;
 use App\Repositories\CareplanAssessmentRepository;
@@ -42,7 +43,16 @@ class CareplanAssessmentService
         $this->createAssessmentNote($assessment, $assessment->toString(), 'Enrollment');
 
         $practice = $assessment->approver()->first()->practices()->first();
-        $practice->notify(new SendAssessmentNotification($assessment));
+        if ($practice) {
+            $location = $practice->primaryLocation()->first();
+            if ($location) {
+                $location->notify(new SendAssessmentNotification($assessment));
+            }
+        }
+
+        User::ofType('administrator')->get()->map(function ($user) use ($assessment) {
+            $user->notify(new SendAssessmentNotification($assessment));
+        });
 
         $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
     }
