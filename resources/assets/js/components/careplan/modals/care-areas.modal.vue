@@ -57,26 +57,26 @@
                             </div>
                         </form>
                     </div>
-                     <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
+                     <div class="row top-20" v-if="selectedProblem.type == 'ccd' && selectedProblem.is_monitored">
                         <div class="col-sm-12">
                             <form @submit="editCcdProblem">
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <!-- <div class="col-sm-6">
                                         <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" 
                                             :class="{ error: patientHasSelectedProblem }" 
                                             :title="patientHasSelectedProblem ? 'Problem with this name already exists' : null" required />
                                     </div>
-                                    <!-- <div class="col-sm-6">
+                                    <div class="col-sm-6">
                                         <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
                                             :options="cpmProblemsForSelect"></v-select>
-                                    </div> -->
+                                    </div>
                                     <div class="col-sm-6 font-14">
                                         <label class="form-control">
                                             <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
                                         </label>
-                                    </div>
-                                    <div class="col-sm-12 top-20" v-if="selectedProblem.is_monitored">
-                                        <textarea class="form-control"
+                                    </div> -->
+                                    <div class="col-sm-12 top-20">
+                                        <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                     </div>
