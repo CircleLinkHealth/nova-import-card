@@ -1,5 +1,10 @@
 <?php
 
+use App\Jobs\CheckCcdaEnrollmentEligibility;
+use App\Jobs\ProcessCcda;
+use App\Models\MedicalRecords\Ccda;
+use App\Practice;
+
 Route::post('send-sample-fax', 'DemoController@sendSampleEfaxNote');
 
 Route::post('/send-sample-direct-mail', 'DemoController@sendSampleEMRNote');
@@ -1504,3 +1509,44 @@ Route::group([
 });
 
 Route::impersonate();
+
+
+Route::get('drive-list', function() {
+    //cavallaro
+    $dir = '1v24WJ5aZ4TUItU9PZSOZkmBb_8Y5Pzck/1yZJRzconTFQmUlqxqecARybk87HI1DTt';
+    $practice = Practice::whereName('cavallaro')->first();
+    $recursive = false; // Get subdirectories also?
+    $contents = collect(Storage::cloud()->listContents($dir, $recursive));
+
+    return $contents->where('type', '=', 'file')
+        ->where('mimetype', '=', 'text/xml')
+        ->map(function ($file) use ($practice, $dir){
+            $rawData = Storage::cloud()->get($file['path']);
+
+            if (str_contains($file['filename'], ['processed::'])) {
+                return false;
+            }
+
+            $ccda = Ccda::create([
+                'source'      => 'uploaded',
+                'xml'         => $rawData,
+                'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                'imported'    => false,
+            ]);
+
+            //for some reason it doesn't save practice_id when using Ccda::create([])
+            $ccda->practice_id = (int) $practice->id;
+            $ccda->save();
+
+            ProcessCcda::withChain([
+                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, false,
+                    true, true),
+            ])->dispatch($ccda->id);
+
+            \Storage::cloud()->move($file['path'], "$dir/processed::ccdaId=$ccda->id");
+
+            return $file;
+        })
+        ->filter()
+        ->values();
+})->middleware(['auth']);
