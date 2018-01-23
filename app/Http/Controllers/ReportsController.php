@@ -512,9 +512,10 @@ class ReportsController extends Controller
             return "Patient Not Found..";
         }
 
-        if ( ! $patient->isCcmEligible()) {
-            return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
-        }
+
+        // if ( ! $patient->isCcmEligible()) {
+        //     return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+        // }
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
@@ -523,11 +524,14 @@ class ReportsController extends Controller
         }
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
-
+        $editable = false;
         $assessment = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId])->first();
         if ($assessment) {
             $assessment->unload();
+            $editable = $patient->isCcmEligible() || ($assessment->provider_approver_id != auth()->user()->id);
         }
+
+
 
         $approver = $assessment
             ? $assessment->approver()->first()
@@ -551,6 +555,7 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'assessment'              => $assessment,
                 'approver'                => $approver,
+                'editable'                => $editable
             ]
         );
 
