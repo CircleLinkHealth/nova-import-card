@@ -57,8 +57,8 @@
                             </div>
                         </form>
                     </div>
-                     <div class="row top-20" v-if="selectedProblem.type == 'ccd' && selectedProblem.is_monitored">
-                        <div class="col-sm-12">
+                     <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
+                        <div class="col-sm-12" v-if="selectedProblem.is_monitored">
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <!-- <div class="col-sm-6">
@@ -89,47 +89,50 @@
                             </form>
                         </div>
                         <div class="col-sm-12">
-                            <h4>
-                                Problem Codes
-                            </h4>
-                        </div>
-                        <div class="col-sm-12 top-20">
-                            <ul class="list-group font-16 border-bottom">
-                                <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
-                                    <div class="col-sm-5">
-                                        <p>
-                                            {{code.code_system_name}}
-                                        </p>
+                            <collapsible>
+                                <template slot="title">
+                                    <h4>
+                                        Problem Codes
+                                    </h4>
+                                </template>
+                                <template>
+                                    <ul class="list-group font-16 border-bottom">
+                                        <li class="row list-group-item" v-for="code in selectedProblem.codes" :key="code.id">
+                                            <div class="col-sm-5">
+                                                <p>
+                                                    {{code.code_system_name}}
+                                                </p>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <p>{{code.code}}</p>
+                                            </div>
+                                            <div class="col-sm-2 text-right">
+                                                <loader class="absolute" v-if="loaders.removeCode"></loader>
+                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                            </div>
+                                        </li>
+                                        <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
+                                            <center>No Codes Yet</center>
+                                        </li>
+                                    </ul>
+                                    <div class="row">
+                                        <form @submit="addCode">
+                                            <div class="col-sm-5">
+                                                <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
+                                                    :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
+                                            </div>
+                                            <div class="col-sm-2 text-right">
+                                                <loader class="absolute" v-if="loaders.addCode"></loader>
+                                                <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
+                                                    :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
+                                            </div>
+                                        </form>
                                     </div>
-                                    <div class="col-sm-5">
-                                        <p>{{code.code}}</p>
-                                    </div>
-                                    <div class="col-sm-2 text-right">
-                                        <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                        <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
-                                    </div>
-                                </li>
-                                <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
-                                    <center>No Codes Yet</center>
-                                </li>
-                            </ul>
-                            <div class="row">
-                                <form @submit="addCode">
-                                    <div class="col-sm-5">
-                                        <v-select class="form-control" v-model="selectedProblem.newCode.selectedCode" 
-                                            :options="codesForSelect" :class="{ error: codeHasBeenSelectedBefore }" required></v-select>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <input class="form-control" v-model="selectedProblem.newCode.code" placeholder="Code" required />
-                                    </div>
-                                    <div class="col-sm-2 text-right">
-                                        <loader class="absolute" v-if="loaders.addCode"></loader>
-                                        <input type="submit" class="btn btn-secondary selected margin-0" value="Add" 
-                                            :disabled="!selectedProblem.newCode.code || !(selectedProblem.newCode.selectedCode || {}).value || codeHasBeenSelectedBefore" />
-                                    </div>
-                                </form>
-                            </div>
-                            
+                                </template>
+                            </collapsible>
                         </div>
                     </div>
                 </div>
@@ -144,6 +147,7 @@
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
     import VueComplete from 'v-complete'
+    import Collapsible from '../../collapsible'
 
     export default {
         name: 'care-areas-modal',
@@ -154,7 +158,8 @@
         components: {
             'modal': Modal,
             'v-select': VueSelect,
-            'v-complete': VueComplete
+            'v-complete': VueComplete,
+            'collapsible': Collapsible
         },
         computed: {
             problemsForListing() {
