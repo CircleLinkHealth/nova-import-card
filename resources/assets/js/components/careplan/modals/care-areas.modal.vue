@@ -22,7 +22,8 @@
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
-                                :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5">
+                                    :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
+                                    @input="resolveIcd10Code">
                                 </v-complete>
                             </div>
                             <div class="col-sm-6 font-14 top-20">
@@ -211,6 +212,9 @@
                 this.newProblem.problem = ''
                 this.newProblem.is_monitored = true
                 this.newProblem.icd10 = null
+            },
+            resolveIcd10Code() {
+                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code
             },
             addInstruction(e) {
                 e.preventDefault()
