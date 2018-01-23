@@ -19,11 +19,15 @@ class ProcessCcda implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param $ccda
      */
-    public function __construct(Ccda $ccda)
+    public function __construct($ccda)
     {
-        $this->ccda = Ccda::find($ccda->id);
+        if (is_a($ccda, Ccda::class)) {
+            $ccda = $ccda->id;
+        }
+
+        $this->ccda = Ccda::find($ccda);
     }
 
     /**
