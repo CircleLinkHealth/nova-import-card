@@ -39,8 +39,7 @@ class Zip extends BaseProcessable
             $ccda->practice_id = (int) $this->practice->id;
             $ccda->save();
 
-//            $filePath = str_replace(storage_path(), '', $filePath);
-//            $deleted = \Storage::disk('cloud')->delete($filePath);
+            $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
