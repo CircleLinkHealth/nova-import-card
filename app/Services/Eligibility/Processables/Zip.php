@@ -89,13 +89,15 @@ class Zip extends BaseProcessable
             $dir      = storage_path($relDir);
             $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
 
-            $made = mkdir($dir, 0775, true);
+            $dirPerms = mkdir($dir, 0775, true);
 
             $this->getFile()->move($dir, $fileName);
 
             $changed = \Storage::disk('storage')->setVisibility("$relDir/$fileName",'public');
 
             $this->setFile("$dir/$fileName");
+
+            $changeFileNamePerms = chmod("$dir/$fileName", 0775);
 
             $this->relativeDirectory = $relDir;
 
