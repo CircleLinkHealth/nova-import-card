@@ -3,6 +3,7 @@
 use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
+use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
@@ -220,6 +221,7 @@ return [
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
         Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        GoogleDriveServiceProvider::class,
     ],
 
     /*
