@@ -1511,20 +1511,18 @@ Route::group([
 Route::impersonate();
 
 
-Route::get('drive-list', function() {
-    //cavallaro
-    $dir = '1v24WJ5aZ4TUItU9PZSOZkmBb_8Y5Pzck/1yZJRzconTFQmUlqxqecARybk87HI1DTt';
-    $practice = Practice::whereName('cavallaro')->first();
+Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', function($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+    $practice = Practice::whereName($practiceName)->first();
     $recursive = false; // Get subdirectories also?
     $contents = collect(Storage::cloud()->listContents($dir, $recursive));
 
     return $contents->where('type', '=', 'file')
         ->where('mimetype', '=', 'text/xml')
-        ->map(function ($file) use ($practice, $dir){
+        ->map(function ($file) use ($practice, $dir, $filterLastEncounter, $filterInsurance, $filterProblems){
             $rawData = Storage::cloud()->get($file['path']);
 
             if (str_contains($file['filename'], ['processed::'])) {
-                return false;
+                return $file;
             }
 
             $ccda = Ccda::create([
@@ -1539,8 +1537,8 @@ Route::get('drive-list', function() {
             $ccda->save();
 
             ProcessCcda::withChain([
-                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, false,
-                    true, true),
+                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool) $filterLastEncounter,
+                    (bool) $filterInsurance, (bool) $filterProblems),
             ])->dispatch($ccda->id);
 
             \Storage::cloud()->move($file['path'], "$dir/processed::ccdaId=$ccda->id");
@@ -1549,4 +1547,4 @@ Route::get('drive-list', function() {
         })
         ->filter()
         ->values();
-})->middleware(['auth']);
+})->middleware(['auth', 'role:administrator']);
