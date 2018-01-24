@@ -39,7 +39,7 @@
         name: 'questionnaire',
         props: {
             editable: {
-                type: Number,
+                type: Boolean,
                 default: true
             },
             questions: {

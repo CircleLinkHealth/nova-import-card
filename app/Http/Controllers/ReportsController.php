@@ -495,7 +495,7 @@ class ReportsController extends Controller
 
     public function makeAssessment(
         Request $request,
-        $patientId = false,
+        $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
         if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8)) {
@@ -525,7 +525,14 @@ class ReportsController extends Controller
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
         $editable = false;
-        $assessment = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId])->first();
+
+        $assessmentQuery = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId]);
+        if ($approverId) {
+            $assessmentQuery = $assessmentQuery->where([ 'provider_approver_id' => $approverId ]);
+        }
+        
+        $assessment = $assessmentQuery->first();
+
         if ($assessment) {
             $assessment->unload();
             $editable = $patient->isCcmEligible() || ($assessment->provider_approver_id != auth()->user()->id);
