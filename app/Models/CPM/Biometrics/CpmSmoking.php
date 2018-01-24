@@ -49,7 +49,7 @@ class CpmSmoking extends \App\BaseModel implements Biometric
     }
     
     public function biometric() {
-        return CpmBiometric::where('name', 'LIKE', 'smoking');
+        return CpmBiometric::where('name', 'LIKE', '%smoking%');
     }
 
 

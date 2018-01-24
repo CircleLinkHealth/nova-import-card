@@ -79,7 +79,7 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
     }
     
     public function biometric() {
-        return CpmBiometric::where('name', 'LIKE', 'pressure');
+        return CpmBiometric::where('name', 'LIKE', '%pressure%');
     }
 
     public function getUserValues(User $user)

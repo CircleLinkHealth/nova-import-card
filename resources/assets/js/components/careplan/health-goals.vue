@@ -71,6 +71,7 @@
             setupGoal(goal) {
                 goal.created_at = new Date(goal.created_at)
                 goal.updated_at = new Date(goal.updated_at)
+                goal.enabled = goal.enabled || false
                 if (goal.info) {
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)

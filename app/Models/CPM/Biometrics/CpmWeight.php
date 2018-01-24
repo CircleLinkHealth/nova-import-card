@@ -52,7 +52,7 @@ class CpmWeight extends \App\BaseModel implements Biometric
     }
 
     public function biometric() {
-        return CpmBiometric::where('name', 'LIKE', 'weight');
+        return CpmBiometric::where('name', 'LIKE', '%weight%');
     }
 
     public function getUserValues(User $user)

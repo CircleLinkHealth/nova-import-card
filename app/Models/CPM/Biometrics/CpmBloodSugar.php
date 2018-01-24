@@ -69,7 +69,7 @@ class CpmBloodSugar extends \App\BaseModel implements Biometric
     }
     
     public function biometric() {
-        return CpmBiometric::where('name', 'LIKE', 'sugar');
+        return CpmBiometric::where('name', 'LIKE', '%sugar%');
     }
 
     public function getUserValues(User $user)
