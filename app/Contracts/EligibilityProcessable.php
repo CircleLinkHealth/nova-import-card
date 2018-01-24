@@ -23,5 +23,5 @@ interface EligibilityProcessable
     /**
      * Return the file from S3 or Local storage.
      */
-    public function getFile();
+    public function getFilePath();
 }

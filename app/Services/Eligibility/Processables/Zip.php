@@ -11,9 +11,7 @@ namespace App\Services\Eligibility\Processables;
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
-use App\Jobs\ProcessEligibilityProcessable;
 use App\Models\MedicalRecords\Ccda;
-use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
 use Carbon\Carbon;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
@@ -29,25 +27,48 @@ class Zip extends BaseProcessable
      */
     public function processEligibility()
     {
-        $directory = $this->unzip();
-
-        foreach (glob("$directory/*xml") as $filePath) {
+        foreach (\Storage::disk('cloud')->files($this->relativeDirectory) as $filePath) {
             $ccda = Ccda::create([
                 'source'      => 'uploaded',
-                'imported'    => false,
-                'xml'         => file_get_contents($filePath),
+                'xml'         => \Storage::disk('cloud')->get($filePath),
                 'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                'practice_id' => $this->practice->id,
+                'imported'    => false,
             ]);
 
-            $filePath = str_replace(storage_path(), '', $filePath);
+            //for some reason it doesn't save practice_id when using Ccda::create([])
+            $ccda->practice_id = (int) $this->practice->id;
+            $ccda->save();
 
-            $deleted = \Storage::disk('storage')->delete($filePath);
+            $deleted = \Storage::disk('cloud')->delete($filePath);
 
             ProcessCcda::withChain([
-                new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter, $this->filterInsurance, $this->filterProblems)
-            ])->dispatch($ccda);
+                new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
+                    $this->filterInsurance, $this->filterProblems),
+            ])->dispatch($ccda->id);
         }
+    }
+
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \Exception
+     */
+    public function queue()
+    {
+        if (is_a($this->getFilePath(), UploadedFile::class) || is_a($this->getFilePath(), File::class)) {
+            $date     = Carbon::now();
+            $relDir   = "{$date->toDateString()}/unzip/{$this->practice->name}/{$date->toTimeString()}";
+            $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
+
+            \Storage::disk('local')->putFileAs($relDir, new File($this->getFilePath()), $fileName);
+
+            $this->setFile("$relDir/$fileName");
+
+            $this->relativeDirectory = $relDir;
+
+            $this->unzip();
+        }
+
+        parent::queue();
     }
 
     /**
@@ -57,44 +78,50 @@ class Zip extends BaseProcessable
      */
     public function unzip()
     {
-        $path = $this->getFile()->path();
+        $disk = \Storage::disk('local');
+        $cloudDisk = \Storage::disk('cloud');
+        $prefix = $disk->getAdapter()->getPathPrefix();
 
-        if ( ! file_exists($path)) {
+        $path = $this->getFilePath();
+        $fullZipFilePath = "$prefix$path";
+
+        if ( ! file_exists($fullZipFilePath)) {
             throw new \Exception('File does not exist.');
         }
 
-        if ( ! ZipFacade::check($path)) {
+        if ( ! ZipFacade::check($fullZipFilePath)) {
             throw new \Exception('Invalid zip file.');
         }
 
-        $dir = storage_path($this->relativeDirectory);
+        $dir = $prefix."$this->relativeDirectory";
 
-        $zip = ZipFacade::open($path);
+        $zip = ZipFacade::open($fullZipFilePath);
         $zip->extract($dir);
 
-        $deleted = \Storage::disk('storage')->delete(str_replace(storage_path(), '', $path));
+        $xmlFiles = glob("$dir/*xml");
 
-        return $dir;
-    }
-
-    /**
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     */
-    public function queue()
-    {
-        if (is_a($this->getFile(), UploadedFile::class) || is_a($this->getFile(), File::class)) {
-            $date     = Carbon::now();
-            $relDir   = "{$date->toDateString()}/unzip/{$this->practice->name}/{$date->toTimeString()}";
-            $dir      = storage_path($relDir);
-            $fileName = 'unzip-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.zip';
-
-            $this->getFile()->move($dir, $fileName);
-
-            $this->setFile("$dir/$fileName");
-
-            $this->relativeDirectory = $relDir;
+        if (count($xmlFiles) < 1) {
+            throw new \Exception('No files were extracted. This could be due to an error, or the archive was empty.');
         }
 
-        parent::queue();
+        foreach ($xmlFiles as $filePath) {
+
+            if (!file_exists($filePath)) {
+                throw new \Exception('File not found');
+            }
+
+            $saved = $cloudDisk
+                             ->put($this->relativeDirectory.'/'.Carbon::now()->toAtomString().'.xml', fopen($filePath, 'r+'));
+
+            $deleted = $disk->delete(str_replace($prefix, '', $filePath));
+        }
+
+        if (count($cloudDisk->files($this->relativeDirectory)) < 1) {
+            throw new \Exception('No files were saved to cloud storage.');
+        }
+
+        $deleted = $disk->delete($path);
+
+        return $dir;
     }
 }
