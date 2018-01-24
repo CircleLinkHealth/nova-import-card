@@ -94,25 +94,19 @@ class CpmBiometricUserRepository
                 $biometric->info = $bu->smoking()->first();
                 break;
         }
+        $biometric['enabled'] = !!$biometric->info;
         return $biometric;
     }
 
     public function patientBiometrics($userId) {
-        // return $this->model()->where([ 'patient_id' => $userId ])->get()->map(function ($bu) {
-        //     return $this->setupBiometricUser($bu);
-        // });
-
         return $this->biometrics()->map(function ($model) use ($userId) {
             $goal = $model->where([ 'patient_id' => $userId ])->first();
             if ($goal) {
-                $biometricId = $goal->biometric()->first()->id;
-                $biometricUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_biometric_id' => $biometricId ])->first() ?? new CpmBiometricUser();
-                
-                $biometricUser['info'] = $goal;
-                $biometricUser['enabled'] = !!$biometricUser['id'];
-                $biometricUser->patient_id = $userId;
-                $biometricUser->cpm_biometric_id = $biometricId;
-                return $biometricUser;
+                $biometric = $goal->biometric()->first();
+                $biometricUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_biometric_id' => $biometric->id ])->first() ?? new CpmBiometricUser();
+                $biometric['info'] = $goal;
+                $biometric['enabled'] = !!$biometricUser['id'];
+                return $biometric;
             }
             else return null;
         })->filter()->values();

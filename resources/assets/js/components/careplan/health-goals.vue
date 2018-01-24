@@ -89,7 +89,6 @@
                             goal.info.verb = 'Regulate'
                         }
                     }
-                    goal.enabled = true
                 }
                 else {
                     goal.info = {
@@ -110,7 +109,6 @@
                         goal.info.low_alert = 0
                         goal.info.starting_a1c = 0
                     }
-                    goal.enabled = false
                 }
                 return goal
             },
