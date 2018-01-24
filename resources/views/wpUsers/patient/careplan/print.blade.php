@@ -372,11 +372,11 @@ if (isset($patient) && ! empty($patient)) {
         </div>
         @include('partials.confirm-modal')
 
-        @push('scripts')
-            <script name="careplan" type="application/json">
-                <?php
-                    echo json_encode($careplan)
-                ?>
+        @push('styles')
+            <script>
+                var careplan = (<?php
+                echo json_encode($careplan)
+            ?>) || {}
             </script>
         @endpush
         
