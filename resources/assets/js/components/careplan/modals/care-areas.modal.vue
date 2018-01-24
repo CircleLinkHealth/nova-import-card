@@ -47,7 +47,7 @@
                     <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
-                                <textarea class="form-control free-note height-200" 
+                                <textarea class="form-control height-200" 
                                     v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                             </div>
                             <div class="col-sm-12 text-right top-20">

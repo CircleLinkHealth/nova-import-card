@@ -101,8 +101,7 @@
             }
         },
         mounted() {
-            this.cpmProblems = this.careplan().cpmProblems || []
-            this.ccdProblems = this.careplan().ccdProblems || []
+            this.cpmProblems = (this.careplan().cpmProblems || []).map(this.setupCpmProblem)
 
             Event.$on('care-areas:problems', (problems) => {
                 this.cpmProblems = problems.map(this.setupCpmProblem)
@@ -130,6 +129,8 @@
             Event.$on('care-areas:remove-ccd-problem', (id) => {
                 this.ccdProblems = this.ccdProblems.filter(problem => problem.id != id)
             })
+
+            Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))
         }
     }
 </script>
