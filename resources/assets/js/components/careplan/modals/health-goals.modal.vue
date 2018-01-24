@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: selectedGoal && (selectedGoal.id === goal.id) && !selectedGoal.enabled }" 
+                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: !goal.enabled }" 
                             v-for="(goal, index) in goals" :key="index" @click="select(index)">
                             {{goal.name}}
                             <span class="delete" title="remove this goal" @click="removeGoal">x</span>
@@ -158,6 +158,17 @@
 
     .btn.btn-submit {
         margin-top: 35px;
+    }
+
+    .btn.btn-secondary.goal-button.disabled {
+        background-color: #fa0;
+        pointer-events: all;
+    }
+
+    .btn.btn.btn-secondary.selected.disabled {
+        background: #47beab;
+        color: white;
+        pointer-events: none;
     }
 
     input[type='checkbox'] {
