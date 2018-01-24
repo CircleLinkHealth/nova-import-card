@@ -11,7 +11,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentStatsController extends Controller
@@ -23,11 +22,11 @@ class EnrollmentStatsController extends Controller
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
-            $start = Carbon::parse($input['start_date'])->toDateString();
-            $end   = Carbon::parse($input['end_date'])->toDateString();
+            $start = Carbon::parse($input['start_date'])->startOfDay()->toDateString();
+            $end   = Carbon::parse($input['end_date'])->endOfDay()->toDateString();
         } else {
-            $start = Carbon::now()->subWeek()->toDateString();
-            $end   = Carbon::now()->toDateString();
+            $start = Carbon::now()->startOfDay()->subWeek()->toDateString();
+            $end   = Carbon::now()->endOfDay()->toDateString();
         }
 
         $careAmbassadors = User::whereHas('roles', function ($q) {
@@ -103,11 +102,11 @@ class EnrollmentStatsController extends Controller
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
-            $start = Carbon::parse($input['start_date'])->toDateTimeString();
+            $start = Carbon::parse($input['start_date'])->startOfDay()->toDateTimeString();
             $end   = Carbon::parse($input['end_date'])->endOfDay()->toDateTimeString();
         } else {
-            $start = Carbon::now()->subWeek()->toDateTimeString();
-            $end   = Carbon::now()->toDateTimeString();
+            $start = Carbon::now()->subWeek()->startOfDay()->toDateTimeString();
+            $end   = Carbon::now()->endOfDay()->toDateTimeString();
         }
 
         $practices = DB::table('enrollees')->distinct('practice_id')->pluck('practice_id');
@@ -120,15 +119,15 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['name'] = $practice->display_name;
 
             $data[$practice->id]['unique_patients_called'] =
-                Enrollee
-                    ::where('practice_id', $practice->id)
-                    ->where('last_attempt_at', '>=', $start)
-                    ->where('last_attempt_at', '<=', $end)->where(function ($q) {
-                        $q->where('status', 'utc')
-                          ->orWhere('status', 'consented')
-                          ->orWhere('status', 'rejected');
-                    })
-                    ->count();
+                Enrollee::where('practice_id', $practice->id)
+                        ->where('last_attempt_at', '>=', $start)
+                        ->where('last_attempt_at', '<=', $end)
+                        ->where(function ($q) {
+                            $q->where('status', 'utc')
+                              ->orWhere('status', 'consented')
+                              ->orWhere('status', 'rejected');
+                        })
+                        ->count();
 
             $data[$practice->id]['consented'] = Enrollee
                 ::where('practice_id', $practice->id)
@@ -154,22 +153,21 @@ class EnrollmentStatsController extends Controller
             $data[$practice->id]['labor_hours'] =
                 secondsToHHMM($total_time);
 
-            $enrollers = Enrollee
-                ::select(DB::raw('care_ambassador_id, sum(total_time_spent) as total'))
-                ->where('practice_id', $practice->id)
-                ->where('last_attempt_at', '>=', $start)
-                ->where('last_attempt_at', '<=', $end)
-                ->groupBy('care_ambassador_id')->pluck('total', 'care_ambassador_id');
+            $enrollers = Enrollee::select(DB::raw('care_ambassador_id, sum(total_time_spent) as total'))
+                                 ->where('practice_id', $practice->id)
+                                 ->where('last_attempt_at', '>=', $start)
+                                 ->where('last_attempt_at', '<=', $end)
+                                 ->groupBy('care_ambassador_id')->pluck('total', 'care_ambassador_id');
 
             $data[$practice->id]['total_cost'] = 0;
 
-            Log::info($enrollers);
-
             foreach ($enrollers as $enrollerId => $time) {
-                if ($enrollerId != null) {
-                    $enroller                          = CareAmbassador::find($enrollerId);
-                    $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
+                if ( ! $enrollerId) {
+                    continue;
                 }
+
+                $enroller                          = CareAmbassador::find($enrollerId);
+                $data[$practice->id]['total_cost'] += number_format($enroller->hourly_rate * $time / 3600, 2);
             }
 
             if ($data[$practice->id]['unique_patients_called'] > 0 && $data[$practice->id]['consented'] > 0) {
@@ -190,12 +188,22 @@ class EnrollmentStatsController extends Controller
             }
 
 
-            $data[$practice->id]['labor_rate'] = '$' . number_format($enroller->hourly_rate, 2);
+            if ($data[$practice->id]['total_cost'] > 0 && $total_time > 0) {
+                $data[$practice->id]['labor_rate'] = '$' . number_format(
+                        $data[$practice->id]['total_cost'] / ($total_time / 3600),
+                        2
+                    );
+            } else {
+                $data[$practice->id]['labor_rate'] = 'N/A';
+            }
+
+
             $data[$practice->id]['total_cost'] = '$' . $data[$practice->id]['total_cost'];
 
         }
 
-        return Datatables::collection(collect($data))->make(true);
+        return Datatables::collection(collect($data))
+                         ->make(true);
     }
 
     public function makePracticeStats()
