@@ -25,7 +25,7 @@
                 </slot>
                 
                 <ul class="subareas__list" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goals.filter(g => g.info.created_at)" :key="goal.id">
+                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -43,6 +43,7 @@
     import { Event } from 'vue-tables-2'
     import HealthGoalsModal from './modals/health-goals.modal'
     import NoteTypes from '../../constants/note.types'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'care-areas',
@@ -51,6 +52,12 @@
         ],
         components: {
             'health-goals-modal': HealthGoalsModal
+        },
+        mixins: [ CareplanMixin ],
+        computed: {
+            goalsForListing () {
+                return this.goals.filter(goal => goal.enabled)
+            }
         },
         data() {
             return {
@@ -169,15 +176,14 @@
             }
         },
         mounted() {
-            this.getBaseGoals().then(baseGoals => {
-                this.getGoals().then(goals => {
-                    this.goals = baseGoals.map(baseGoal => {
+            const goals = this.careplan().healthGoals
+            
+            this.note = this.careplan().healthGoalNote
+            this.baseGoals = this.careplan().baseHealthGoals
+            this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
                     })
-                })
-            })
-            
-            this.getNote()
+
             Event.$on('health-goals:goals', (goals) => {
                 this.goals = goals
             })

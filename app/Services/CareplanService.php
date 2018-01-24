@@ -11,6 +11,7 @@ use App\Services\CPM\CpmSymptomService;
 use App\Services\CPM\CpmLifestyleService;
 use App\Services\CCD\CcdAllergyService;
 use App\Services\CPM\CpmMiscService;
+use App\Services\NoteService;
 use App\Services\AppointmentService;
 use App\Repositories\CareplanRepository;
 
@@ -28,6 +29,7 @@ class CareplanService
     private $allergyService;
     private $miscService;
     private $appointmentService;
+    private $noteService;
 
     public function __construct(CareplanRepository $careplanRepo, 
                                 CpmProblemService $cpmService, 
@@ -40,7 +42,8 @@ class CareplanService
                                 CpmLifestyleService $lifestyleService,
                                 CcdAllergyService $allergyService,
                                 CpmMiscService $miscService,
-                                AppointmentService $appointmentService) {
+                                AppointmentService $appointmentService,
+                                NoteService $noteService) {
         $this->careplanRepo = $careplanRepo;
         $this->cpmService = $cpmService;
         $this->cpmUserService = $cpmUserService;
@@ -53,6 +56,7 @@ class CareplanService
         $this->allergyService = $allergyService;
         $this->miscService = $miscService;
         $this->appointmentService = $appointmentService;
+        $this->noteService = $noteService;
     }
 
     public function repo() {
@@ -67,11 +71,15 @@ class CareplanService
             'medications'       => $this->medicationService->repo()->patientMedication($userId)->getCollection(),
             'medicationGroups'  => $this->medicationGroupService->repo()->groups(),
             'healthGoals'       => $this->biometricService->patientBiometrics($userId),
+            'baseHealthGoals'       => $this->biometricService->biometrics(),
             'symptoms'          => $this->symptomService->repo()->patientSymptoms($userId),
+            'allSymptoms'          => $this->symptomService->repo()->symptoms()->getCollection(),
             'lifestyles'        => $this->lifestyleService->patientLifestyles($userId),
+            'allLifestyles'     => $this->lifestyleService->repo()->lifestyles()->getCollection(),
             'allergies'         => $this->allergyService->patientAllergies($userId),
             'misc'              => $this->miscService->patientMisc($userId),
-            'appointments'      => $this->appointmentService->repo()->patientAppointments($userId)->getCollection()
+            'appointments'      => $this->appointmentService->repo()->patientAppointments($userId)->getCollection(),
+            'healthGoalNote'      => $this->noteService->repo()->patientNotes($userId, 'Biometrics')->getCollection()->first()
         ];
     }
 }

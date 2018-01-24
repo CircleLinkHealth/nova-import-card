@@ -38,6 +38,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import MedicationsModal from './modals/medications.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'medications',
@@ -48,6 +49,7 @@
         components: {
             'medications-modal': MedicationsModal
         },
+        mixins: [ CareplanMixin ],
         computed: {
             patientGroups() {
                 return this.medications.map(m => this.groups.find(g => g.id == m.medication_group_id)).filter(Boolean)
@@ -81,7 +83,7 @@
                     const pagination = response.data
                     console.log('medications:get-medications', pagination)
                     this.medications = this.medications.concat(pagination.data.map(this.setupMedication))
-                    if (pagination.to < pagination.total) return this.getMedications(page + 1)
+                    if (pagination.next_page_url) return this.getMedications(page + 1)
                 }).catch(err => {
                     console.error('medications:get-medications', err)
                 })
@@ -99,7 +101,9 @@
             }
         },
         mounted() {
-            this.getMedicationGroups().then(() => this.getMedications())
+            this.groups = this.careplan().medicationGroups
+            this.medications = this.careplan().medications.map(this.setupMedication)
+            this.getMedications(2)
             
             Event.$on('medication:remove', (id) => {
                 this.medications = this.medications.filter((medication) => medication.id != id)
