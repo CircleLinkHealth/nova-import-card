@@ -11,11 +11,11 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentStatsController extends Controller
 {
-
     public function ambassadorStats(Request $request)
     {
 
@@ -98,6 +98,12 @@ class EnrollmentStatsController extends Controller
     }
 
     public function practiceStats(Request $request)
+    {
+        return Datatables::collection(collect($this->getPracticeStats($request)))
+                         ->make(true);
+    }
+
+    private function getPracticeStats(Request $request)
     {
         $input = $request->input();
 
@@ -200,10 +206,21 @@ class EnrollmentStatsController extends Controller
 
             $data[$practice->id]['total_cost'] = '$' . $data[$practice->id]['total_cost'];
 
+            return $data;
         }
+    }
 
-        return Datatables::collection(collect($data))
-                         ->make(true);
+    public function practiceStatsExcel(Request $request)
+    {
+        $date = Carbon::now()->toAtomString();
+        $data = $this->getPracticeStats($request);
+
+        return Excel::create("Practice Enrollment Stats - $date", function ($excel) use ($data) {
+            $excel->sheet('Stats', function ($sheet) use ($data) {
+                $sheet->fromArray($data);
+            });
+        })
+                    ->export();
     }
 
     public function makePracticeStats()

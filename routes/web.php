@@ -793,6 +793,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'enrollment.practice.stats',
         ]);
 
+        Route::get('enrollment/practice/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@practiceStatsExcel',
+            'as'   => 'enrollment.practice.stats.excel',
+        ]);
+
         Route::get('enrollment/practice/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
             'as'   => 'enrollment.practice.stats.data',
