@@ -1,9 +1,15 @@
 <div>
     <?php
+        use \Carbon\Carbon;
         $patient = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
     ?>
-    <p>An assessment was made by {{ $approver->display_name }}:</p>
+    <p>
+        An 
+        <a href="{{ route('patient.careplan.assessment.approver', [ 'patientId' => $patient->id, 'approverId' => $approver->id ]) }}">assessment</a> 
+        was done on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
+        {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{ $approver->display_name }}:
+    </p>
     <table width="100%">
         <tr>
             <td width="50%">

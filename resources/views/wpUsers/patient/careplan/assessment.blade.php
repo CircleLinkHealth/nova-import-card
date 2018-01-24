@@ -65,17 +65,19 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <form method="post" name="questionnaire-form">
-                                    <div class="text-right">
-                                        <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
-                                    </div>
+                                    @if ($editable) 
+                                        <div class="text-right">
+                                            <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
+                                        </div>
+                                    @endif
                                     <div>
-                                        <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire"></questionnaire-app>
+                                        <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire" :editable="{{$editable ? 'true' : 'false'}}"></questionnaire-app>
                                     </div>
                                     <div id="questionnaire-app"></div>
                                     {{ csrf_field() }}
                                     <input type="hidden" name="careplan_id" value="{{$patient->id}}" />
                                     <input type="hidden" name="provider_approver_id" value="{{Auth::user()->id}}" />
-                                    <button class="btn btn-success font-24">Submit</button>
+                                    <button class="btn btn-success font-24" {{ !$editable ? 'disabled' : '' }}>Submit</button>
                                 </form>
                             </div>
                         </div>
