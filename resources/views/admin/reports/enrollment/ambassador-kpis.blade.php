@@ -26,7 +26,7 @@
 
                                         <label class="col-md-1 control-label" for="textinput">Start Date</label>
                                         <input class="col-md-2" id="start_date" name="start_date"
-                                               value="{{Carbon\Carbon::now()->subWeek()->toDateString()}}" type="date"
+                                               value="{{Carbon\Carbon::now()->startOfMonth()->toDateString()}}" type="date"
                                                placeholder="placeholder">
                                         <label class="col-md-1 control-label" for="textinput">End Date</label>
                                         <input class="col-md-2" id="end_date" name="end_date"

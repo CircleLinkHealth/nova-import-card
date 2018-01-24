@@ -48,7 +48,6 @@ class EnrollmentStatsController extends Controller
         }
 
         $careAmbassadors = User::whereHas('roles', function ($q) {
-
             $q->where('name', 'care-ambassador');
         })->pluck('id');
 
@@ -86,7 +85,7 @@ class EnrollmentStatsController extends Controller
                     );
 
                 $data[$ambassador->id]['calls_per_hour'] = number_format(
-                    $base->sum('total_calls') / $base->sum('total_time_in_system') / 3600,
+                    $base->sum('total_calls') / ($base->sum('total_time_in_system') / 3600),
                     2
                 );
 
