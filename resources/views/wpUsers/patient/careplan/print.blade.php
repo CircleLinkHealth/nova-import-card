@@ -371,9 +371,18 @@ if (isset($patient) && ! empty($patient)) {
             </section>
         </div>
         @include('partials.confirm-modal')
+
+        @push('scripts')
+            <script name="careplan" type="application/json">
+                <?php
+                    echo json_encode($careplan)
+                ?>
+            </script>
+        @endpush
         
         @if ($recentSubmission)
             @push('scripts')
+                
                 <script type="text/html" name="ccm-enrollment-submission">
                     <ol type="1">
                         <li>You must go over careplan with patient, then print it and hand to patient</li>

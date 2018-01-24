@@ -13,6 +13,7 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
+use App\Services\CareplanService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -571,7 +572,7 @@ class ReportsController extends Controller
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
-        CcdInsurancePolicyService $insurances
+        CcdInsurancePolicyService $insurances, CareplanService $careplanService
     ) {
         if ( ! $patientId) {
             return "Patient Not Found..";
@@ -615,6 +616,7 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
                 'recentSubmission'        => $recentSubmission,
+                'careplan'                => $careplanService->careplan($patientId)
             ]
         );
     }
