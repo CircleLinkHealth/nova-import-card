@@ -16,9 +16,27 @@ use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentStatsController extends Controller
 {
+    /**
+     * Render ambassador stats datatable
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
     public function ambassadorStats(Request $request)
     {
+        return Datatables::collection(collect($this->getAmbassadorStats($request)))->make(true);
+    }
 
+    /**
+     * Get Ambassador stats
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getAmbassadorStats(Request $request)
+    {
         $input = $request->input();
 
         if (isset($input['start_date']) && isset($input['end_date'])) {
@@ -89,20 +107,39 @@ class EnrollmentStatsController extends Controller
             }
         }
 
-        return Datatables::collection(collect($data))->make(true);
+        return $data;
     }
 
+    /**
+     * Show the page to request ambassador stats
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function makeAmbassadorStats()
     {
         return view('admin.reports.enrollment.ambassador-kpis');
     }
 
+    /**
+     * Render practice stats datatable
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
     public function practiceStats(Request $request)
     {
         return Datatables::collection(collect($this->getPracticeStats($request)))
                          ->make(true);
     }
 
+    /**
+     * Get practice stats
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
     private function getPracticeStats(Request $request)
     {
         $input = $request->input();
@@ -210,6 +247,13 @@ class EnrollmentStatsController extends Controller
         }
     }
 
+    /**
+     * Get an excel representation of practice stats
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
     public function practiceStatsExcel(Request $request)
     {
         $date = Carbon::now()->toAtomString();
@@ -223,6 +267,31 @@ class EnrollmentStatsController extends Controller
                     ->export();
     }
 
+    /**
+     * Get an excel representation of ambassador stats
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    public function ambassadorStatsExcel(Request $request)
+    {
+        $date = Carbon::now()->toAtomString();
+        $data = $this->getAmbassadorStats($request);
+
+        return Excel::create("Care Ambassador Enrollment Stats - $date", function ($excel) use ($data) {
+            $excel->sheet('Stats', function ($sheet) use ($data) {
+                $sheet->fromArray($data);
+            });
+        })
+                    ->export();
+    }
+
+    /**
+     * Show the page to request practice stats
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function makePracticeStats()
     {
 

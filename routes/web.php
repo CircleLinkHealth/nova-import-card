@@ -783,6 +783,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'enrollment.ambassador.stats',
         ]);
 
+        Route::get('enrollment/ambassador/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStatsExcel',
+            'as'   => 'enrollment.ambassador.stats.excel',
+        ]);
+
         Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',

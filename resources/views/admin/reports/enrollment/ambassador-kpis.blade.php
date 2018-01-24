@@ -16,7 +16,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Ambassador KPIs</div>
+                            <div class="panel-heading">Ambassador KPIs <span class="pull-right">
+                                    <a href="{{ route('enrollment.ambassador.stats.excel') }}">Export Excel</a>
+                                </span></div>
                             <div class="panel-body">
 
                                 <div class="col-md-12">
