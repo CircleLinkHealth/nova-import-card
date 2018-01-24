@@ -2,6 +2,7 @@
 
 use App\Contracts\Models\CPM\Biometric;
 use App\User;
+use App\Models\CPM\CpmBiometric;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -75,6 +76,10 @@ class CpmBloodPressure extends \App\BaseModel implements Biometric
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id');
+    }
+    
+    public function biometric() {
+        return CpmBiometric::where('name', 'LIKE', 'pressure');
     }
 
     public function getUserValues(User $user)

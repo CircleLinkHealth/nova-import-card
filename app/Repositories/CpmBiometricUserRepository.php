@@ -16,12 +16,22 @@ use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
 use App\Models\CPM\Biometrics\CpmSmoking;
 use App\Models\CPM\Biometrics\CpmWeight;
+use Illuminate\Support\Collection;
 
 class CpmBiometricUserRepository
 {
     public function model()
     {
         return app(CpmBiometricUser::class);
+    }
+
+    public function biometrics() {
+        return new Collection([
+            $this->pressure(),
+            $this->sugar(),
+            $this->smoking(),
+            $this->weight()
+        ]);
     }
 
     public function pressure() {
@@ -45,20 +55,20 @@ class CpmBiometricUserRepository
     }
 
     public function removePatientBiometric($userId, $biometricId) {
-        switch ($biometricId) {
-            case 1:
-                $this->weight()->where([ 'patient_id' => $userId ])->delete();
-                break;
-            case 2:
-                $this->pressure()->where([ 'patient_id' => $userId ])->delete();
-                break;
-            case 3:
-                $this->sugar()->where([ 'patient_id' => $userId ])->delete();
-                break;
-            case 4:
-                $this->smoking()->where([ 'patient_id' => $userId ])->delete();
-                break;
-        }
+        // switch ($biometricId) {
+        //     case 1:
+        //         $this->weight()->where([ 'patient_id' => $userId ])->delete();
+        //         break;
+        //     case 2:
+        //         $this->pressure()->where([ 'patient_id' => $userId ])->delete();
+        //         break;
+        //     case 3:
+        //         $this->sugar()->where([ 'patient_id' => $userId ])->delete();
+        //         break;
+        //     case 4:
+        //         $this->smoking()->where([ 'patient_id' => $userId ])->delete();
+        //         break;
+        // }
         $this->model()->where([
             'patient_id' => $userId,
             'cpm_biometric_id' => $biometricId
@@ -88,9 +98,24 @@ class CpmBiometricUserRepository
     }
 
     public function patientBiometrics($userId) {
-        return $this->model()->where([ 'patient_id' => $userId ])->get()->map(function ($bu) {
-            return $this->setupBiometricUser($bu);
-        });
+        // return $this->model()->where([ 'patient_id' => $userId ])->get()->map(function ($bu) {
+        //     return $this->setupBiometricUser($bu);
+        // });
+
+        return $this->biometrics()->map(function ($model) use ($userId) {
+            $goal = $model->where([ 'patient_id' => $userId ])->first();
+            if ($goal) {
+                $biometricId = $goal->biometric()->first()->id;
+                $biometricUser = $this->model()->where([ 'patient_id' => $userId, 'cpm_biometric_id' => $biometricId ])->first() ?? new CpmBiometricUser();
+                
+                $biometricUser['info'] = $goal;
+                $biometricUser['enabled'] = !!$biometricUser['id'];
+                $biometricUser->patient_id = $userId;
+                $biometricUser->cpm_biometric_id = $biometricId;
+                return $biometricUser;
+            }
+            else return null;
+        })->filter()->values();
     }
 
     public function addPatientBiometric($userId, $biometricId) {
