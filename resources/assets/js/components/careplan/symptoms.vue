@@ -31,6 +31,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import SymptomsModal from './modals/symptoms.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'symptoms',
@@ -40,6 +41,7 @@
         components: {
             'symptoms-modal': SymptomsModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  symptoms: []
@@ -69,14 +71,14 @@
                     this.symptoms = []
                     page = 1
                 }
-                return this.axios.get(rootUrl(`api/symptoms`)).then(response => {
+                return this.axios.get(rootUrl(`api/symptoms?page=${page}`)).then(response => {
                     const pagination = response.data
                     console.log('symptoms:get-symptoms', pagination)
                     pagination.data.map(this.setupSymptom).forEach(symptom => {
                         this.symptoms.push(symptom)
                     })
                     this.symptoms.sort((a, b) => a.name > b.name ? 1 : -1)
-                    if (pagination.to < pagination.total) return this.getSymptoms(page + 1)
+                    if (pagination.next_page_url) return this.getSymptoms(page + 1)
                 }).catch(err => {
                     console.error('symptoms:get-symptoms', err)
                 })
@@ -97,7 +99,12 @@
             }
         },
         mounted() {
-            this.getSymptoms().then(() => this.getPatientSymptoms())
+            const symptomIDs = this.careplan().symptoms.map(symptom => symptom.id)
+            this.symptoms = this.careplan().allSymptoms.map(this.setupSymptom).map(symptom => {
+                symptom.selected = symptomIDs.includes(symptom.id)
+                return symptom
+            })
+            this.getSymptoms(2)
 
             Event.$on('symptoms:select', (id) => {
                 const symptom = this.symptoms.find(symptom => symptom.id === id)

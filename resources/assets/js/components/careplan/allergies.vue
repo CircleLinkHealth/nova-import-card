@@ -30,6 +30,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import AllergiesModal from './modals/allergies.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'allergies',
@@ -40,6 +41,7 @@
         components: {
             'allergies-modal': AllergiesModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  allergies: []
@@ -67,7 +69,7 @@
             }
         },
         mounted() {
-            this.getAllergies()
+            this.allergies = (this.careplan().allergies || []).map(this.setupAllergy)
 
             Event.$on('allergies:add', (allergy) => {
                 if (allergy) this.allergies.push(this.setupAllergy(allergy))

@@ -43,12 +43,14 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import CareAreasModal from './modals/care-areas.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'care-areas',
         props: [
             'patient-id'
         ],
+        mixins: [CareplanMixin],
         components: {
             'care-areas-modal': CareAreasModal
         },
@@ -99,7 +101,7 @@
             }
         },
         mounted() {
-            this.getCpmProblems()
+            this.cpmProblems = (this.careplan().cpmProblems || []).map(this.setupCpmProblem)
 
             Event.$on('care-areas:problems', (problems) => {
                 this.cpmProblems = problems.map(this.setupCpmProblem)
@@ -127,6 +129,8 @@
             Event.$on('care-areas:remove-ccd-problem', (id) => {
                 this.ccdProblems = this.ccdProblems.filter(problem => problem.id != id)
             })
+
+            Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))
         }
     }
 </script>

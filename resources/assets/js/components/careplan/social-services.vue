@@ -29,6 +29,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import MiscModal from './modals/misc.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     const MISC_ID = 5
 
@@ -41,6 +42,7 @@
         components: {
             'misc-modal': MiscModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  socialService: {
@@ -71,7 +73,7 @@
             }
         },
         mounted() {
-            this.getSocialService()
+            this.socialService = this.setupSocialService(this.careplan().misc.find(m => m.id == MISC_ID))
 
             Event.$on('misc:change', (misc) => {
                 if (misc && misc.id === ((this.socialService || {}).id || MISC_ID)) {

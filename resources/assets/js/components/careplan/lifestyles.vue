@@ -31,6 +31,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import LifestylesModal from './modals/lifestyles.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'lifestyles',
@@ -40,6 +41,7 @@
         components: {
             'lifestyles-modal': LifestylesModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  lifestyles: []
@@ -69,7 +71,7 @@
                     this.lifestyles = []
                     page = 1
                 }
-                return this.axios.get(rootUrl(`api/lifestyles`)).then(response => {
+                return this.axios.get(rootUrl(`api/lifestyles?page=${page}`)).then(response => {
                     const pagination = response.data
                     console.log('lifestyles:get-lifestyles', pagination)
                     pagination.data.map(this.setupLifestyle).forEach(lifestyle => {
@@ -97,7 +99,11 @@
             }
         },
         mounted() {
-            this.getLifestyles().then(() => this.getPatientLifestyles())
+            const lifestyleIDs = this.careplan().lifestyles.map(lifestyle => lifestyle.id)
+            this.lifestyles = this.careplan().allLifestyles.map(this.setupLifestyle).map((lifestyle) => {
+                lifestyle.selected = lifestyleIDs.includes(lifestyle.id)
+                return lifestyle
+            })
 
             Event.$on('lifestyles:select', (id) => {
                 const lifestyle = this.lifestyles.find(lifestyle => lifestyle.id === id)
