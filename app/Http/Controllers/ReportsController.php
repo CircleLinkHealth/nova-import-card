@@ -525,7 +525,7 @@ class ReportsController extends Controller
         }
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
-        $editable = false;
+        $editable = true;
 
         $assessmentQuery = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId]);
         if ($approverId) {
