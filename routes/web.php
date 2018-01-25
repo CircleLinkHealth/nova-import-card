@@ -783,6 +783,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'enrollment.ambassador.stats',
         ]);
 
+        Route::get('enrollment/ambassador/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStatsExcel',
+            'as'   => 'enrollment.ambassador.stats.excel',
+        ]);
+
         Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
@@ -791,6 +796,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('enrollment/practice/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makePracticeStats',
             'as'   => 'enrollment.practice.stats',
+        ]);
+
+        Route::get('enrollment/practice/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@practiceStatsExcel',
+            'as'   => 'enrollment.practice.stats.excel',
         ]);
 
         Route::get('enrollment/practice/kpis/data', [

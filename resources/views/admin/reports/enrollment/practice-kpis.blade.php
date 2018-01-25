@@ -16,7 +16,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Practice Enrollment KPIs</div>
+                            <div class="panel-heading">Practice Enrollment KPIs <span class="pull-right">
+                                    <a href="{{ route('enrollment.practice.stats.excel') }}">Export Excel</a>
+                                </span></div>
                             <div class="panel-body">
 
                                 <div class="col-md-12">
@@ -24,7 +26,7 @@
 
                                         <label class="col-md-1 control-label" for="textinput">Start Date</label>
                                         <input class="col-md-2" id="start_date" name="start_date"
-                                               value="{{Carbon\Carbon::now()->subWeek()->toDateString()}}" type="date"
+                                               value="{{Carbon\Carbon::now()->startOfMonth()->toDateString()}}" type="date"
                                                placeholder="placeholder">
                                         <label class="col-md-1 control-label" for="textinput">End Date</label>
                                         <input class="col-md-2" id="end_date" name="end_date"
