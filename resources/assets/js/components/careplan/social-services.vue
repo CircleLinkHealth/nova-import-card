@@ -78,6 +78,7 @@
             Event.$on('misc:change', (misc) => {
                 if (misc && misc.id === ((this.socialService || {}).id || MISC_ID)) {
                     this.socialService = misc
+                    this.$forceUpdate()
                 }
             })
 
