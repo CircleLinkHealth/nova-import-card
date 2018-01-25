@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MedicalRecords\Ccda;
 use App\Repositories\CcdaRepository;
 
 class CcdaService
@@ -18,5 +19,15 @@ class CcdaService
 
     public function ccda($id = null) {
         return $this->repo()->ccda($id);
+    }
+
+    public function create(Ccda $ccda) {
+        $ccda->vendor_id = 1;
+        $ccda->source = Ccda::IMPORTER;
+        $ccda->save();
+        if ($ccda->json) {
+            $ccda->import();
+        }
+        return $ccda;
     }
 }
