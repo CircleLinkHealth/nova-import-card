@@ -32,6 +32,9 @@ class AddServiceIdColumnToPatientMonthlySummaries extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('patient_monthly_summaries', function (Blueprint $table) {
+            $table->dropForeign(['service_id']);
+            $table->dropColumn('service_id');
+        });
     }
 }
