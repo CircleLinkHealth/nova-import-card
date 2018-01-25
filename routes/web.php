@@ -141,6 +141,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{id}', 'ProviderController@show');
             Route::resource('', 'ProviderController');
         });
+
+        Route::group(['prefix' => 'ccda'], function () {
+            Route::get('{id}', 'CcdaController@show');
+            Route::resource('', 'CcdaController');
+        });
         
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
