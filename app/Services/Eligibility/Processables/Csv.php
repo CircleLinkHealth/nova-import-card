@@ -23,7 +23,7 @@ class Csv extends BaseProcessable
      */
     public function processEligibility()
     {
-        $csv         = parseCsvToArray($this->getFile());
+        $csv         = parseCsvToArray($this->getFilePath());
         $patientList = new Collection($csv);
 
         $list = new WelcomeCallListGenerator(
@@ -43,11 +43,12 @@ class Csv extends BaseProcessable
      */
     public function queue()
     {
-        if (is_a($this->getFile(), UploadedFile::class) || is_a($this->getFile(), File::class)) {
+        if (is_a($this->getFilePath(), UploadedFile::class) || is_a($this->getFilePath(), File::class)) {
             $fileName = 'process-eligibility-' . $this->practice->name . '-' . Carbon::now()->toTimeString() . '.csv';
             $date     = Carbon::now()->toDateString();
 
-            $this->getFile()->move(storage_path($date), $fileName);
+            $this->getFilePath()->move(storage_path($date), $fileName);
+            \Storage::disk('storage')->setVisibility("$date/$fileName",'public');
 
             $this->setFile(storage_path("$date/$fileName"));
         }

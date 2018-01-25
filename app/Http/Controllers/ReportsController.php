@@ -13,6 +13,7 @@ use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
+use App\Services\CareplanService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -495,7 +496,7 @@ class ReportsController extends Controller
 
     public function makeAssessment(
         Request $request,
-        $patientId = false,
+        $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
         if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8)) {
@@ -512,9 +513,10 @@ class ReportsController extends Controller
             return "Patient Not Found..";
         }
 
-        if ( ! $patient->isCcmEligible()) {
-            return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
-        }
+
+        // if ( ! $patient->isCcmEligible()) {
+        //     return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+        // }
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
@@ -523,11 +525,21 @@ class ReportsController extends Controller
         }
 
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        $editable = true;
 
-        $assessment = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId])->first();
+        $assessmentQuery = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId]);
+        if ($approverId) {
+            $assessmentQuery = $assessmentQuery->where([ 'provider_approver_id' => $approverId ]);
+        }
+        
+        $assessment = $assessmentQuery->first();
+
         if ($assessment) {
             $assessment->unload();
+            $editable = $patient->isCcmEligible() || ($assessment->provider_approver_id != auth()->user()->id);
         }
+
+
 
         $approver = $assessment
             ? $assessment->approver()->first()
@@ -551,6 +563,7 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'assessment'              => $assessment,
                 'approver'                => $approver,
+                'editable'                => $editable
             ]
         );
 
@@ -559,7 +572,7 @@ class ReportsController extends Controller
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
-        CcdInsurancePolicyService $insurances
+        CcdInsurancePolicyService $insurances, CareplanService $careplanService
     ) {
         if ( ! $patientId) {
             return "Patient Not Found..";
@@ -603,6 +616,7 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
                 'recentSubmission'        => $recentSubmission,
+                'careplan'                => $careplanService->careplan($patientId)
             ]
         );
     }

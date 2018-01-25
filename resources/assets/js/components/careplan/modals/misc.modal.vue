@@ -2,8 +2,8 @@
     <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
         <template scope="props">
             <div class="row">
-                <div class="col-sm-12 top-20" v-if="selectedMisc">
-                    <div class="row top-20">
+                <div class="col-sm-12" v-if="selectedMisc">
+                    <div class="row">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
                                 <textarea class="form-control height-200" v-model="newInstruction" placeholder="Add New Instruction" required></textarea>
@@ -28,6 +28,7 @@
     import Modal from '../../../admin/common/modal'
     import EventBus from '../../../admin/time-tracker/comps/event-bus'
     import NotificationsComponent from '../../notifications'
+    import CareplanMixin from '../mixins/careplan.mixin'
 
     export default {
         name: 'misc-modal',
@@ -36,6 +37,7 @@
             'modal': Modal,
             'notifications': NotificationsComponent
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                 newMisc: {
@@ -173,10 +175,11 @@
             }
         },
         mounted() {
-            Promise.all([this.getMisc(), this.getSelectedMisc()]).then(() => {
-                this.miscs.filter(m => !this.selectedMiscs.find(sm => sm.id == m.id)).forEach(misc => {
-                    this.addMisc(null, misc.id)
-                })
+            this.miscs = this.careplan().allMisc
+            this.selectedMiscs = this.careplan().misc
+
+            this.miscs.filter(m => !this.selectedMiscs.find(sm => sm.id == m.id)).forEach(misc => {
+                this.addMisc(null, misc.id)
             })
 
             Event.$on('misc:select', (misc) => {

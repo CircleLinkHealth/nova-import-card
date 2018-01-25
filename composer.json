@@ -56,7 +56,7 @@
         "prettus/laravel-validation": "*",
         "propaganistas/laravel-phone": "^3.0",
         "rap2hpoutre/laravel-log-viewer": "^0.4.0",
-        "spatie/laravel-google-calendar": "^1.0",
+        "spatie/laravel-google-calendar": "^2.0",
         "spiritix/lada-cache": "^2.0",
         "twilio/sdk": "5.7",
         "tylercd100/lern": "^3.8",
@@ -64,7 +64,8 @@
         "venturecraft/revisionable": "1.*",
         "waavi/url-shortener": "dev-master",
         "yajra/laravel-datatables-oracle": "~6.0",
-        "zanysoft/laravel-zip": "^1.0"
+        "zanysoft/laravel-zip": "^1.0",
+        "nao-pon/flysystem-google-drive": "~1.1"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",

@@ -47,7 +47,7 @@
                     <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
-                                <textarea class="form-control free-note height-200" 
+                                <textarea class="form-control height-200" 
                                     v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                             </div>
                             <div class="col-sm-12 text-right top-20">
@@ -148,6 +148,7 @@
     import VueSelect from 'vue-select'
     import VueComplete from 'v-complete'
     import Collapsible from '../../collapsible'
+    import CareplanMixin from '../mixins/careplan.mixin'
 
     export default {
         name: 'care-areas-modal',
@@ -155,6 +156,7 @@
             'patient-id': String,
             problems: Array
         },
+        mixins: [ CareplanMixin ],
         components: {
             'modal': Modal,
             'v-select': VueSelect,
@@ -377,7 +379,8 @@
             }
         },
         mounted() {
-            this.getCpmProblems()
+            this.cpmProblems = this.careplan().allCpmProblems || []
+            this.getCpmProblems(2)
             this.getSystemCodes()
         }
     }

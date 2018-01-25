@@ -42,6 +42,7 @@
     import { rootUrl } from '../../app.config'
     import { Event } from 'vue-tables-2'
     import FullConditionsModal from './modals/full-conditions.modal'
+    import CareplanMixin from './mixins/careplan.mixin'
 
     export default {
         name: 'instructions',
@@ -51,6 +52,7 @@
         components: {
             'full-conditions-modal': FullConditionsModal
         },
+        mixins: [ CareplanMixin ],
         data() {
             return {
                  cpmProblems: [],
@@ -59,7 +61,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name))
+                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name)).distinct(problem => problem.name)
             }
         },
         methods: {
@@ -90,7 +92,9 @@
             }
         },
         mounted() {
-            this.getCcdProblems()
+            this.ccdProblems = (this.careplan().ccdProblems || []).map(this.setupCcdProblem)
+
+            Event.$emit('care-areas:ccd-problems', this.ccdProblems)
 
             Event.$on('care-areas:problems', (problems) => {
                 this.cpmProblems = problems
@@ -136,6 +140,8 @@
                 }
                 
             })
+
+            Event.$emit('care-areas:request-problems')
         }
     }
 </script>

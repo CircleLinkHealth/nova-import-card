@@ -4,15 +4,21 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group" role="group">
-                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: selectedGoal && (selectedGoal.id === goal.id) && !selectedGoal.enabled }" 
+                        <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: !goal.enabled }" 
                             v-for="(goal, index) in goals" :key="index" @click="select(index)">
                             {{goal.name}}
-                            <span class="delete" title="remove this goal" @click="removeGoal">x</span>
-                            <loader class="absolute" v-if="loaders.removeGoal && selectedGoal && (selectedGoal.id === goal.id)"></loader>
                         </button>
                     </div>
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedGoal">
+                    <div class="row form-group">
+                        <div class="col-sm-12">
+                            <label class="form-control">
+                                <input type="checkbox" v-model="selectedGoal.enabled" @change="toggleEnable" :disabled="loaders.addGoal || loaders.removeGoal" /> Enable
+                                <loader v-if="loaders.removeGoal"></loader>
+                            </label>
+                        </div>
+                    </div>
                     <form @submit="addGoal">
                         <div class="row form-group">
                             <div class="col-sm-6">
@@ -64,13 +70,12 @@
                             </div>
                             <div class="col-sm-6 text-right" :class="{ 'col-sm-12': selectedGoal.id % 2 === 0 }">
                                 <loader v-if="loaders.addGoal"></loader>
-                                <button class="btn btn-secondary selected btn-submit">{{selectedGoal.info.created_at ? 'Save' : 'Add'}} {{selectedGoal.name}}</button>
+                                <button class="btn btn-secondary selected btn-submit" :disabled="!selectedGoal.enabled">
+                                    {{selectedGoal.info.created_at ? 'Save' : 'Add'}} {{selectedGoal.name}}
+                                </button>
                             </div>
                         </div>
                     </form>
-                </div>
-                <div class="col-sm-12 text-center" v-if="selectedGoal && !selectedGoal.enabled">
-                    <label class="label label-primary">{{selectedGoal.name}} has been disabled. You can fill the form to enable.</label>
                 </div>
             </div>
         </template>
@@ -110,14 +115,13 @@
         },
         methods: {
             select(index) {
-                if (!this.loaders.addGoal) this.selectedGoal = (index >= 0) ? this.goals[index] : null
+                if (!this.loaders.addGoal && !this.loaders.removeGoal) this.selectedGoal = (index >= 0) ? this.goals[index] : null
             },
             addGoal(e) {
                 e.preventDefault()
                 this.loaders.addGoal = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/biometrics`), Object.assign({
-                    biometric_id: this.selectedGoal.id,
-
+                    biometric_id: this.selectedGoal.id
                 }, this.selectedGoal.info)).then(response => {
                     console.log('health-goals:add', response.data)
                     Event.$emit('health-goals:add', this.selectedGoal.id, response.data)
@@ -129,7 +133,7 @@
             },
             removeGoal(e) {
                 e.preventDefault()
-                if (this.selectedGoal && confirm('Are you sure you want to remove this goal?')) {
+                if (this.selectedGoal && confirm('Are you sure you want to disable this goal?')) {
                     this.loaders.removeGoal = true
                     return this.axios.delete(rootUrl(`api/patients/${this.patientId}/biometrics/${this.selectedGoal.id}`)).then(response => {
                         console.log('health-goals:remove', response.data)
@@ -141,8 +145,19 @@
                     })
                 }
             },
-            editGoal(e) {
-                e.preventDefault()
+            toggleEnable(e) {
+                if (this.selectedGoal) {
+                    if (e.target.checked) {
+                        this.addGoal(e).then(() => {
+                            this.selectedGoal.enabled = true
+                        })
+                    }
+                    else {
+                        this.removeGoal(e).then(() => {
+                            this.selectedGoal.enabled = false
+                        })
+                    }
+                }
             }
         },
         mounted() {
@@ -158,6 +173,17 @@
 
     .btn.btn-submit {
         margin-top: 35px;
+    }
+
+    .btn.btn-secondary.goal-button.disabled {
+        background-color: #fa0;
+        pointer-events: all;
+    }
+
+    .btn.btn.btn-secondary.selected.disabled {
+        background: #47beab;
+        color: white;
+        pointer-events: none;
     }
 
     input[type='checkbox'] {
