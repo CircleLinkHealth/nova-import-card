@@ -10,16 +10,23 @@ class ChargeableService extends Model
     protected $fillable = [
         'code',
         'description',
-        'amount'
+        'amount',
     ];
 
-    public function practices(){
+    public function practices()
+    {
         return $this->morphedByMany(Practice::class, 'chargeable')
-            ->withTimestamps();
+                    ->withTimestamps();
     }
 
-    public function providers(){
+    public function providers()
+    {
         return $this->morphedByMany(User::class, 'chargeable')
-            ->withTimestamps();
+                    ->withTimestamps();
+    }
+
+    public function patientSummaries()
+    {
+        return $this->belongsTo(PatientMonthlySummary::class);
     }
 }
