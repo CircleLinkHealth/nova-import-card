@@ -61,7 +61,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name))
+                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name)).distinct(problem => problem.name)
             }
         },
         methods: {
