@@ -175,7 +175,7 @@
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.map(p => ({ name: p.name, id: p.id }))
+                return this.cpmProblems.map(p => ({ name: p.name, id: p.id })).concat(this.problems.map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)

@@ -178,7 +178,7 @@
         mounted() {
             const goals = this.careplan().healthGoals
             
-            this.note = this.careplan().healthGoalNote
+            this.note = this.careplan().healthGoalNote || this.note
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
