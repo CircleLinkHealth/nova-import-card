@@ -270,7 +270,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <?php
                     $cpmProblems = new Collection($data['cpmProblems']);
                     $ccdProblems = new Collection($data['ccdProblems']);
-                    $goals = new Collection($data['healthGoals']);
+                    $healthGoals = new Collection($data['healthGoals']);
                     $baseGoals = new Collection($data['baseHealthGoals']);
                     $healthNote = $data['healthGoalNote'];
                 ?>
@@ -305,7 +305,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            @if (!$data['cpmProblems']) 
+                            @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
                                 <div class="text-center">No Problems at this time</div>
                             @else
                                 <ul class="subareas__list">
@@ -336,32 +336,51 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 </div>
                 <!-- /CARE AREAS -->
                 <!-- BIOMETRICS -->
-                @if($careplan['bio_data'])
-                    <div class="patient-info__subareas">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
-                                    Goals</h2>
-                            </div>
-                        </div>
-                        @if ($healthNote)
-                            <div class="col-xs-12">
-                                {{ $healthNote['body'] }}
-                            </div>
-                        @endif
-                        <div class="row">
-                            <ul class="subareas__list">
-                                <li class="subareas__item subareas__item--wide col-sm-12">
-                                    @foreach(array_reverse($careplan['bio_data']) as $key => $value)
-                                        <div class="col-xs-5 print-row text-bold">{{ $value['verb'] }} {{$key}}</div>
-                                        <div class="col-xs-4 print-row text-bold">{{($value['verb'] == 'Maintain') ? 'at' :  'to' }} {{$value['target']}}</div>
-                                        <div class="col-xs-3 print-row">from {{$value['starting']}}</div>
-                                    @endforeach
-                                </li>
-                            </ul>
+                <div class="patient-info__subareas">
+                    <?php
+                        $healthGoalsForListing = $healthGoals->filter(function ($goal) {
+                            return $goal['enabled'];
+                        })->map(function ($goal) {
+                            $start = $goal['info']['starting'];
+                            $start = (int)($start ? explode('/', $start)[0] : 0);
+                            $end = $goal['info']['target'];
+                            $end = (int)($end ? explode('/', $end)[0] : 0);
+
+                            $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                            (($goal['name'] == 'Blood Pressure' && $start > 90) ||
+                                            ($start > 0 && $start < $end)) ? 'Increase' :
+                                            'Regulate';
+                            $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
+                            return $goal;
+                        });
+                    ?>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Your Health
+                                Goals</h2>
                         </div>
                     </div>
-                @endif
+                    @if ($healthNote)
+                        <div class="col-xs-12">
+                            {{ $healthNote['body'] }}
+                        </div>
+                    @endif
+                    <div class="row">
+                            @if (!$healthGoalsForListing->count()) 
+                                <div class="text-center">No Health Goals at this time</div>
+                            @else
+                                <ul class="subareas__list">
+                                    <li class="subareas__item subareas__item--wide col-sm-12">
+                                        @foreach($healthGoalsForListing as $goal)
+                                            <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
+                                            <div class="col-xs-4 print-row text-bold">{{ $goal['action'] }} {{ $goal['info']['target'] }} {{$goal['unit']}}</div>
+                                            <div class="col-xs-3 print-row">from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
+                                        @endforeach
+                                    </li>
+                                </ul>
+                            @endif
+                    </div>
+                </div>
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
