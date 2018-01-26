@@ -124,10 +124,12 @@
 
             Event.$on('care-areas:remove-cpm-problem', (id) => {
                 this.cpmProblems = this.cpmProblems.filter(problem => problem.id != id)
+                Event.$emit('care-areas:problems', this.cpmProblems)
             })
 
             Event.$on('care-areas:remove-ccd-problem', (id) => {
                 this.ccdProblems = this.ccdProblems.filter(problem => problem.id != id)
+                Event.$emit('care-areas:ccd-problems', this.ccdProblems)
             })
 
             Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))

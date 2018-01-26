@@ -100,6 +100,10 @@
                 this.cpmProblems = problems
             })
 
+            Event.$on('care-areas:ccd-problems', (problems) => {
+                this.ccdProblems = problems
+            })
+
             Event.$on('full-conditions:add', (ccdProblem) => {
                 if (ccdProblem) this.ccdProblems.push(this.setupCcdProblem(ccdProblem))
             })
@@ -118,6 +122,7 @@
                         this.ccdProblems[index].is_monitored = problem.is_monitored
                         this.ccdProblems[index].cpm_id = problem.cpm_id
                         this.ccdProblems[index].codes = problem.codes
+                        this.ccdProblems[index].instruction = problem.instruction
                     }
                 }
             })
