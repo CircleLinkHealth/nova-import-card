@@ -6,6 +6,8 @@
 * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
 */
 
+use \Illuminate\Support\Collection;
+
 if (!function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
@@ -34,55 +36,67 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         $billing = $patient->billingProviderUser();
         $lead = $patient->leadContact();
         ?>
-        <style type="text/css">
-            body {
-                margin: 0;
-                margin-right: 150px !important;
-            }
+        @push('styles')
+            <style type="text/css">
+                body {
+                    margin: 0;
+                    margin-right: 150px !important;
+                }
 
-            div.address {
-                line-height: 1.1em;
-                font-family: 'Roboto', sans-serif;
-            }
+                div.address {
+                    line-height: 1.1em;
+                    font-family: 'Roboto', sans-serif;
+                }
 
-            div.breakhere {
-                page-break-after: always;
-                /*height: 100%;*/
-            }
+                div.breakhere {
+                    page-break-after: always;
+                    /*height: 100%;*/
+                }
 
-            .address-height-print {
-                height: 1in !important;
-                max-height: 1in !important;
-            }
+                .address-height-print {
+                    height: 1in !important;
+                    max-height: 1in !important;
+                }
 
-            .sender-address-print {
-                font-size: 16px !important;
-            }
+                .sender-address-print {
+                    font-size: 16px !important;
+                }
 
-            .receiver-address-print {
-                font-size: 16px !important;
-                height: 1in !important;
-            }
+                .receiver-address-print {
+                    font-size: 16px !important;
+                    height: 1in !important;
+                }
 
-            .receiver-address-padding {
-                padding-top: 1.7in !important;
-                margin-top: 0 !important;
-                margin-bottom: 0 !important;
-            }
+                .receiver-address-padding {
+                    padding-top: 1.7in !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0 !important;
+                }
 
-            .welcome-copy {
-                font-size: 24px;
-                margin-top: 0.5in !important;
-            }
+                .welcome-copy {
+                    font-size: 24px;
+                    margin-top: 0.5in !important;
+                }
 
-            .omr-bar {
-                height: 15px;
-                background-color: black;
-                width: 35%;
-                margin-left: 120%;
-                margin-top: 15%;
-            }
-        </style>
+                .omr-bar {
+                    height: 15px;
+                    background-color: black;
+                    width: 35%;
+                    margin-left: 120%;
+                    margin-top: 15%;
+                }
+
+                /** begin general careplan styles */
+
+                .color-blue {
+                    color: #109ace;
+                }
+            
+                .font-22 {
+                    font-size: 22px;
+                }
+            </style>
+        @endpush
         <div class="container">
             <section class="patient-summary">
                 <div class="patient-info__main">
@@ -253,8 +267,36 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
                 </div>
+                <?php
+                    $cpmProblems = new Collection($data['cpmProblems']);
+                    $ccdProblems = new Collection($data['ccdProblems']);
+                    $goals = new Collection($data['healthGoals']);
+                    $baseGoals = new Collection($data['baseHealthGoals']);
+                    $healthNote = $data['healthGoalNote'];
+                ?>
                 <!-- CARE AREAS -->
                 <div class="patient-info__subareas">
+                    <?php
+                        $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+
+                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
+                            return !$cpmProblems->first(function ($cpm) use ($problem) {
+                                return $cpm['name'] == $problem['name'];
+                            }) && $problem['is_monitored'];
+                        })->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+                        
+                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
+                            return !$problem['is_monitored'] && !$cpmProblems->first(function ($cpm) use ($problem) {
+                                return $cpm['name'] == $problem['name'] || $cpm['id'] == $problem['id'];
+                            });
+                        })->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+                    ?>
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">We Are
@@ -263,14 +305,31 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            <ul class="subareas__list">
-                                @if($problemNames)
-                                    @foreach($problemNames as $problem)
-                                        @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS)
-                                            <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$problem}}</li>
-                                        @endif
+                            @if (!$data['cpmProblems']) 
+                                <div class="text-center">No Problems at this time</div>
+                            @else
+                                <ul class="subareas__list">
+                                    @foreach ($cpmProblemsForListing as $problem)
+                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                            {{$problem['name']}}
+                                        </li>
                                     @endforeach
-                                @endif
+                                    @foreach ($ccdMonitoredProblems as $problem)
+                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                            {{$problem['name']}}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
+                        <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
+                            <h2 class="color-blue">Other Conditions</h2>
+                            <ul class="row">
+                                @foreach ($ccdProblemsForListing as $problem)
+                                    <li class='top-10 col-sm-6'>
+                                        {{$problem['name']}}
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
@@ -285,6 +344,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     Goals</h2>
                             </div>
                         </div>
+                        @if ($healthNote)
+                            <div class="col-xs-12">
+                                {{ $healthNote['body'] }}
+                            </div>
+                        @endif
                         <div class="row">
                             <ul class="subareas__list">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
@@ -554,5 +618,13 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             </section>
         </div>
         <div class="row pb-before"></div>
+        
+        @push('styles')
+            <script>
+                var careplan = (<?php
+                echo json_encode($data)
+            ?>) || {}
+            </script>
+        @endpush
     @endforeach
 @stop
