@@ -28,6 +28,7 @@ class CpmMiscUserRepository
             $misc = $u->cpmMisc;
             $misc['instructions'] = array_values($this->model()
                                             ->where([ 'patient_id' => $userId, 'cpm_misc_id' => $misc->id ])
+                                            ->orderBy('id', 'desc')
                                             ->with('cpmInstruction')->get()->map(function ($cu) {
                                                 if ($cu->cpmInstruction) {
                                                     $cu->cpmInstruction['misc_user_id'] = $cu->id;
