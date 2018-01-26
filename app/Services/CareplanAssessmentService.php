@@ -34,13 +34,13 @@ class CareplanAssessmentService
         $note->author_id = $assessment->provider_approver_id;
         $note->body = $body;
         $note->type = $type;
-        return $this->noteRepo->addOrEdit($note);
+        return $this->noteRepo->add($note);
     }
 
     function after(CareplanAssessment $assessment) {
-        $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
+        if ($assessment->key_treatment) $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
 
-        $this->createAssessmentNote($assessment, $assessment->toString(), 'Enrollment');
+        $this->createAssessmentNote($assessment, $assessment->note(), 'Enrollment');
 
         $practice = $assessment->approver()->first()->practices()->first();
         if ($practice) {

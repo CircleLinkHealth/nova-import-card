@@ -66,8 +66,12 @@ class CareplanAssessment extends \App\BaseModel
         return $this->belongsTo(CarePlan::class, 'careplan_id');
     }
 
-    public function toString() {
-        return 'Patient ' . $this->careplan_id . ' enrolled.';
+    public function note() {
+        $patient = $this->patient()->first();
+        $approver = $this->approver()->first();
+        return 'Patient ' . $this->careplan_id . ' was enrolled by Dr. ' . 
+                    $approver->display_name . ' on ' . Carbon::parse($this->updated_at)->format('m/d/Y') . ' at ' . 
+                        Carbon::parse($this->updated_at)->format('H:i:s');
     }
     
     /**
