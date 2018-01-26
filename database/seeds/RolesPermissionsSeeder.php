@@ -30,7 +30,8 @@ class RolesPermissionsSeeder extends Seeder
             $role->perms()->sync($permissionIds);
         }
 
-        $this->giveAdminsAllPermissions();
+        $this->giveAdminsAllPermissions('administrator');
+        $this->giveAdminsAllPermissions('saas-admin');
 
         $this->command->info('That\'s all folks!');
     }
@@ -166,12 +167,20 @@ class RolesPermissionsSeeder extends Seeder
                     'users-create',
                 ],
             ],
+            [
+                'name'         => 'saas-admin',
+                'display_name' => 'SAAS Admin',
+                'description'  => 'An admin for CPM Software-As-A-Service.',
+                'permissions'  => [
+
+                ],
+            ],
         ];
     }
 
-    public function giveAdminsAllPermissions()
+    public function giveAdminsAllPermissions($roleName)
     {
-        $adminRole = Role::whereName('administrator')->first();
+        $adminRole = Role::whereName($roleName)->first();
 
         $permissions = Permission::where('name', '!=', 'care-plan-approve')
             ->get();
