@@ -18,7 +18,8 @@ class CpmDefaultInstructionSeeder extends Seeder
             if ($problem) {
                 if (!$problem->instructable) {
                     $instruction = $problem->cpmInstructions()->create([
-                        'name' => $body
+                        'name' => $body,
+                        'is_default' => 1
                     ]);
 
                     $problem->instructable()->update([
@@ -45,7 +46,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                 Eat all meat skinless, opt for lean proteins (chicken, fish, beef) and eat less fried food.
                 Cook most things in olive oil and avoid butter.
             ",
-            'CAD' => "Do not start or stop any medicines unless your doctor/provider tells you to. Many medicines cannot be used with blood thinners such as Ibuprofen, Aleve or other pain medicines.
+            'CAD/IHD' => "Do not start or stop any medicines unless your doctor/provider tells you to. Many medicines cannot be used with blood thinners such as Ibuprofen, Aleve or other pain medicines.
                 Let us know if you start noticing new chest pains or shortness of breath when exerting yourself.
                 Tell your provider right away if you forget to take the medicine, or if you take too much.
                 Do not get a flu vaccine before speaking to your care team.
@@ -62,7 +63,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                 Limit the consumption of alcohol. Sometimes alcohol needs to be avoided to better treat atrial fibrillation. If you are taking blood-thinner medications, alcohol may interfere with them by increasing their effect.
                 Never take stimulants such as amphetamines or cocaine. These drugs can speed up your heart rate and trigger atrial fibrillation.
             ",
-            'Kidney-Disease' => "Check your blood pressure regularly and report blood pressure over 140/90 to your MD right away
+            'Kidney Disease' => "Check your blood pressure regularly and report blood pressure over 140/90 to your MD right away
                 Eat 1500 mg or less of sodium daily
                 Eat less than 1500 milligrams to 2700 milligrams of potassium daily.
                 As instructed, limit protein in your diet.
@@ -87,7 +88,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                 Take your long-term inhaler every day.
                 Eat smaller meals more often -- 6 smaller meals a day. It might be easier to breathe when your stomach is not full
             ",
-            'Asthma-COPD' => "Avoid tobacco smoke—including secondhand smoke— it is unhealthy for everyone, especially people with asthma and/or COPD.
+            'Asthma' => "Avoid tobacco smoke—including secondhand smoke— it is unhealthy for everyone, especially people with asthma and/or COPD.
                 Limit exposure to common allergens (dust mites, pollen, mold and animal dander) and protect yourself against pollution
                 Keep active to build up strength
                 Build your strength even when you are sitting, by using small weights or rubber tubing to make your arms and shoulders stronger, standing up and sit down, or holding your legs straight out in front of you, then put them down. Repeat these movements several times.
