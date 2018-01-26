@@ -7,7 +7,7 @@ use App\Models\CPM\CpmInstructable;
 class CpmDefaultInstructionSeeder extends Seeder
 {   
     /**
-     * Run the database seeds.
+     * Create default instructions for cpm problems
      *
      * @return void
      */
