@@ -366,7 +366,7 @@
                                     <!--send alerts-->
                                     <div class="form-group col-md-6">
 
-                                        <label class="col-md-3 control-label">Send Alerts</label>
+                                        <label class="col-md-3 control-label">Receives Alerts</label>
 
                                         <div class="col-md-9">
                                             <div class="row">
