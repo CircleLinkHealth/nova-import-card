@@ -56,7 +56,8 @@
         data() {
             return {
                  cpmProblems: [],
-                 ccdProblems: []
+                 ccdProblems: [],
+                 allCpmProblems: []
             }
         },
         computed: {
@@ -71,7 +72,7 @@
                     problem_code_system_id: null,
                     selectedCode: 'Select a Code'
                 }
-                problem.instruction = problem.instruction || {}
+                problem.instruction = problem.instruction || (this.allCpmProblems.find(p => p.name == problem.name) || {}).instruction || {}
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
@@ -92,6 +93,7 @@
             }
         },
         mounted() {
+            this.allCpmProblems = (this.careplan().allCpmProblems || [])
             this.ccdProblems = (this.careplan().ccdProblems || []).map(this.setupCcdProblem)
 
             Event.$emit('care-areas:ccd-problems', this.ccdProblems)
