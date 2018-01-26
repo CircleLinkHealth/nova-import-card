@@ -78,6 +78,22 @@ class CpmDefaultInstructionSeeder extends Seeder
                 Keep all your appointments
                 Get all tests as recommended
             ",
+            'Diabetes Type 1' => "Measure your Blood Sugar frequently as indicated in your glucose monitoring kit (or insulin RX, if applicable)
+                Make sure you have plenty of lances, test strips, etc., and a working glucometer (we can help you obtain this if needed!)
+                Take your medications
+                Have a yearly eye exam
+                Check your feet regularly for dryness, cracking, calluses and sores
+                Keep all your appointments
+                Get all tests as recommended
+            ",
+            'Diabetes Type 2' => "Measure your Blood Sugar frequently as indicated in your glucose monitoring kit (or insulin RX, if applicable)
+                Make sure you have plenty of lances, test strips, etc., and a working glucometer (we can help you obtain this if needed!)
+                Take your medications
+                Have a yearly eye exam
+                Check your feet regularly for dryness, cracking, calluses and sores
+                Keep all your appointments
+                Get all tests as recommended
+            ",
             'COPD' => "Avoid tobacco smoke—including secondhand smoke— it is unhealthy for everyone, especially people with asthma and/or COPD.
                 Limit exposure to common allergens (dust mites, pollen, mold and animal dander) and protect yourself against pollution
                 Keep active to build up strength
