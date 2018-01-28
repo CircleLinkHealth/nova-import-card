@@ -9,7 +9,7 @@
         $(document).ready(function () {
             let practices = $(".practices")
 
-            practices.select2({closeOnSelect:false})
+            practices.select2({closeOnSelect: false})
 
             //show selections in the order they were selected
             practices.on('select2:select', function (e) {
@@ -35,7 +35,6 @@
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-8">
-
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
@@ -47,32 +46,37 @@
                         Add Internal User
                     </div>
                     <div class="panel-body">
-                        @include('errors.errors')
-
                         <div class="row">
                             <div class="col-md-10 col-md-offset-1">
-                                {!! Form::open(array('url' => URL::route('admin.users.store'), 'class' => 'form-horizontal')) !!}
-                                <div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @include('errors.errors')
+                                    </div>
+                                </div>
+
+                                <div id="create-internal-user-form-container">
+                                    {!! Form::open(['url' => route('saas-admin.users.store'), 'method' => 'post', 'class' => 'form-horizontal']) !!}
+
                                     <div role="tabpanel" class="tab-pane active" id="program">
                                         <h2>User Information</h2>
                                         <hr>
 
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('username', 'Username:') !!}</div>
-                                                <div class="col-xs-4">{!! Form::text('username', '', ['class' => 'form-control']) !!}</div>
+                                                <div class="col-xs-2">{!! Form::label('username', 'Username') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-4">{!! Form::text('user[username]', $usernameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('email', 'Email:') !!}</div>
-                                                <div class="col-xs-4">{!! Form::text('email', '', ['class' => 'form-control']) !!}</div>
+                                                <div class="col-xs-2">{!! Form::label('email', 'Email') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-4">{!! Form::text('user[email]', $emailField, ['class' => 'form-control', 'required' => true]) !!}</div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                                <div class="col-xs-4">{!! Form::text('first_name', '', ['class' => 'form-control']) !!}</div>
+                                                <div class="col-xs-2">{!! Form::label('first_name', 'First Name') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-4">{!! Form::text('user[first_name]', $firstNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                                <div class="col-xs-4">{!! Form::text('last_name', '', ['class' => 'form-control']) !!}</div>
+                                                <div class="col-xs-2">{!! Form::label('last_name', 'Last Name') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-4">{!! Form::text('user[last_name]', $lastNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
                                             </div>
                                         </div>
 
@@ -83,20 +87,13 @@
 
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">
-                                                    Practices
-                                                </div>
+                                                <div class="col-xs-2">{!! Form::label('practices', 'Practices') !!} <span style="color: red;">*</span></div>
                                                 <div class="col-xs-4">
-                                                    <select id="practices" name="practices[]"
-                                                            class="practices dropdown Valid form-control" multiple required>
-                                                        @foreach($practices as $id => $name)
-                                                            <option value="{{$id}}">{{$name}}</option>
-                                                        @endforeach
-                                                    </select>
+                                                    {!! Form::select('practices', $practices, $practicesField, ['class' => 'practices dropdown Valid form-control', 'required'=>true, 'multiple'=>true]) !!}
                                                 </div>
 
-                                                <div class="col-xs-2">{!! Form::label('role', 'Role:') !!}</div>
-                                                <div class="col-xs-4">{!! Form::select('role', $roles, '', ['class' => 'form-control select-picker']) !!}</div>
+                                                <div class="col-xs-2">{!! Form::label('role', 'Role') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-4">{!! Form::select('role', $roles, $roleField, ['class' => 'form-control select-picker']) !!}</div>
                                             </div>
                                         </div>
 
@@ -106,24 +103,24 @@
                                                     <div class="radio-inline">
                                                         <input id="auto_attach_programs" name="auto_attach_programs"
                                                                value="1" type="checkbox">
-                                                        <label for="auto_attach_programs"><span> </span>Grant permission to all practices</label>
+                                                        <label for="auto_attach_programs"><span> </span>Grant permission
+                                                            to all practices</label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-
-                                <div class="row" style="margin-top:50px;">
-                                    <div class="col-sm-12">
-                                        <div class="pull-right">
-                                            {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
+                                    <div class="row" style="margin-top:50px;">
+                                        <div class="col-sm-12">
+                                            <div class="pull-right">
+                                                {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                </form>
+                                    {!! Form::close() !!}
+                                </div>
                             </div>
                         </div>
                     </div>

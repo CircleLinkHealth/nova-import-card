@@ -7,6 +7,7 @@ use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
 
@@ -223,6 +224,7 @@ return [
         Spiritix\LadaCache\LadaCacheServiceProvider::class,
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
+        ManageInternalUser::class,
     ],
 
     /*

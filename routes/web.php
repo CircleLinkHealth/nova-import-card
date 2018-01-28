@@ -1712,11 +1712,21 @@ Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',
-    'middleware' => ['role:saas-admin']
+    'middleware' => ['auth', 'role:saas-admin']
 ], function (){
     Route::get('users/create', [
         'uses' => 'SAAS\Admin\InternalUserController@create',
         'as'   => 'saas-admin.users.create',
+    ]);
+
+    Route::post('users', [
+        'uses' => 'SAAS\Admin\InternalUserController@store',
+        'as'   => 'saas-admin.users.store',
+    ]);
+
+    Route::get('users/{userId}', [
+        'uses' => 'SAAS\Admin\InternalUserController@edit',
+        'as'   => 'saas-admin.users.edit',
     ]);
 });
 
