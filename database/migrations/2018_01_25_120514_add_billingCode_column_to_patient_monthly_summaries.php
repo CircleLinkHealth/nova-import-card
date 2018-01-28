@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddServiceIdColumnToPatientMonthlySummaries extends Migration
+class AddBillingCodeColumnToPatientMonthlySummaries extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,11 @@ class AddServiceIdColumnToPatientMonthlySummaries extends Migration
     public function up()
     {
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-            $table->unsignedInteger('service_id')
+            $table->unsignedInteger('billing_code')
                   ->default(1)
                   ->after('actor_id');
 
-            $table->foreign('service_id')
+            $table->foreign('billing_code')
                   ->references('id')->on('chargeable_services')
                   ->onUpdate('cascade')
                   ->onDelete('cascade');
@@ -33,8 +33,8 @@ class AddServiceIdColumnToPatientMonthlySummaries extends Migration
     public function down()
     {
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-            $table->dropForeign(['service_id']);
-            $table->dropColumn('service_id');
+            $table->dropForeign(['billing_code']);
+            $table->dropColumn('billing_code');
         });
     }
 }

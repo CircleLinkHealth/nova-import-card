@@ -114,7 +114,7 @@ class PatientMonthlySummary extends \App\BaseModel
 
     public function chargeableServices()
     {
-        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+        return $this->morphToMany(  ChargeableService::class, 'chargeable', 'chargeables', 'billing_code')
                     ->withTimestamps();
     }
 
