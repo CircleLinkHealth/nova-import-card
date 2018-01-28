@@ -1710,6 +1710,16 @@ Route::group([
 
 Route::impersonate();
 
+Route::group([
+    'prefix' => 'saas/admin',
+    'middleware' => ['role:saas-admin']
+], function (){
+    Route::get('users/create', [
+        'uses' => 'SAAS\Admin\InternalUserController@create',
+        'as'   => 'saas-admin.users.create',
+    ]);
+});
+
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', function($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
     $practice = Practice::whereName($practiceName)->first();
