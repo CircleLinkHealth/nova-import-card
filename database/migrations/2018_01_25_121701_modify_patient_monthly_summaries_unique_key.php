@@ -23,12 +23,10 @@ class ModifyPatientMonthlySummariesUniqueKey extends Migration
                 )
             );
 
-            if ($keyExists) {
-                $table->dropUnique(['patient_id', 'month_year']);
+            if (!$keyExists) {
+                $table->unique(['patient_id', 'month_year']);
             }
 
-
-            $table->unique(['patient_id', 'month_year', 'billing_code'], 'p_id_my_bc_unique');
         });
     }
 
@@ -40,7 +38,7 @@ class ModifyPatientMonthlySummariesUniqueKey extends Migration
     public function down()
     {
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-            $table->dropUnique('p_id_my_bc_unique');
+            $table->dropUnique(['patient_id', 'month_year']);
         });
     }
 }

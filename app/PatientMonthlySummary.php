@@ -64,7 +64,6 @@ class PatientMonthlySummary extends \App\BaseModel
         'actor_id',
         'problem_1',
         'problem_2',
-        'service_id',
     ];
 
     //updates Call info for patient
@@ -114,7 +113,7 @@ class PatientMonthlySummary extends \App\BaseModel
 
     public function chargeableServices()
     {
-        return $this->morphToMany(  ChargeableService::class, 'chargeable', 'chargeables', 'billing_code')
+        return $this->morphToMany(  ChargeableService::class, 'chargeable')
                     ->withTimestamps();
     }
 
