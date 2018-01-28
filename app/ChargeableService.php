@@ -27,6 +27,7 @@ class ChargeableService extends Model
 
     public function patientSummaries()
     {
-        return $this->belongsTo(PatientMonthlySummary::class);
+        return $this->morphedByMany(User::class, 'chargeable')
+                    ->withTimestamps();
     }
 }

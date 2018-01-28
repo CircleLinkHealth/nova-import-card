@@ -114,7 +114,8 @@ class PatientMonthlySummary extends \App\BaseModel
 
     public function chargeableServices()
     {
-        return $this->hasOne(ChargeableService::class, 'service_id');
+        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+                    ->withTimestamps();
     }
 
     public function scopeGetCurrent($q)
