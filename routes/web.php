@@ -1728,6 +1728,11 @@ Route::group([
         'uses' => 'SAAS\Admin\InternalUserController@edit',
         'as'   => 'saas-admin.users.edit',
     ]);
+
+    Route::patch('users/{userId}', [
+        'uses' => 'SAAS\Admin\InternalUserController@update',
+        'as'   => 'saas-admin.users.update',
+    ]);
 });
 
 

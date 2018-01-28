@@ -51,11 +51,14 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         @include('errors.errors')
+                                        @include('errors.messages')
                                     </div>
                                 </div>
 
                                 <div id="create-internal-user-form-container">
-                                    {!! Form::open(['url' => route('saas-admin.users.store'), 'method' => 'post', 'class' => 'form-horizontal']) !!}
+                                    {!! Form::open(['url' => $submitUrl, 'method' => $submitMethod, 'class' => 'form-horizontal']) !!}
+
+                                    <input type="hidden" name="user[id]" value="{{$internalUserId}}">
 
                                     <div role="tabpanel" class="tab-pane active" id="program">
                                         <h2>User Information</h2>
@@ -63,19 +66,23 @@
 
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('username', 'Username') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('username', 'Username') !!} <span
+                                                            style="color: red;">*</span></div>
                                                 <div class="col-xs-4">{!! Form::text('user[username]', $usernameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('email', 'Email') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('email', 'Email') !!} <span
+                                                            style="color: red;">*</span></div>
                                                 <div class="col-xs-4">{!! Form::text('user[email]', $emailField, ['class' => 'form-control', 'required' => true]) !!}</div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('first_name', 'First Name') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('first_name', 'First Name') !!}
+                                                    <span style="color: red;">*</span></div>
                                                 <div class="col-xs-4">{!! Form::text('user[first_name]', $firstNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('last_name', 'Last Name') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('last_name', 'Last Name') !!}
+                                                    <span style="color: red;">*</span></div>
                                                 <div class="col-xs-4">{!! Form::text('user[last_name]', $lastNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
                                             </div>
                                         </div>
@@ -87,12 +94,14 @@
 
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('practices', 'Practices') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('practices', 'Practices') !!}
+                                                    <span style="color: red;">*</span></div>
                                                 <div class="col-xs-4">
-                                                    {!! Form::select('practices', $practices, $practicesField, ['class' => 'practices dropdown Valid form-control', 'required'=>true, 'multiple'=>true]) !!}
+                                                    {!! Form::select('practices[]', $practices, $practicesField, ['class' => 'practices dropdown Valid form-control', 'required'=>true, 'multiple'=>true]) !!}
                                                 </div>
 
-                                                <div class="col-xs-2">{!! Form::label('role', 'Role') !!} <span style="color: red;">*</span></div>
+                                                <div class="col-xs-2">{!! Form::label('role', 'Role') !!} <span
+                                                            style="color: red;">*</span></div>
                                                 <div class="col-xs-4">{!! Form::select('role', $roles, $roleField, ['class' => 'form-control select-picker']) !!}</div>
                                             </div>
                                         </div>

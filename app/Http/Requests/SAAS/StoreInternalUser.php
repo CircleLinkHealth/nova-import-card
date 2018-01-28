@@ -3,6 +3,7 @@
 namespace App\Http\Requests\SAAS;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreInternalUser extends FormRequest
 {
@@ -24,12 +25,13 @@ class StoreInternalUser extends FormRequest
     public function rules()
     {
         return [
-            'user.username'   => 'required',
-            'user.email'      => 'required|email|unique:users,email',
+            'user.username'   => ['required', Rule::unique('users', 'username')->ignore($this->input('user.id'))],
+            'user.email'      => ['required', Rule::unique('users', 'email')->ignore($this->input('user.id'))],
+            'user.id'         => 'present',
             'user.first_name' => 'required',
             'user.last_name'  => 'required',
-            'role'       => 'required',
-            'practices'  => 'required',
+            'role'            => 'required',
+            'practices'       => 'required',
         ];
     }
 }

@@ -27,6 +27,10 @@ class InternalUser
      */
     public function getPractices()
     {
+        if ( ! is_array($this->practices)) {
+            return [$this->practices];
+        }
+
         return $this->practices;
     }
 

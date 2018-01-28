@@ -21,7 +21,7 @@ class ManageInternalUser extends ServiceProvider
      */
     public function boot()
     {
-        View::composer(['saas.admin.user.create'], function ($view) {
+        View::composer(['saas.admin.user.manage'], function ($view) {
             $data = collect($view->getData());
 
             $usernameField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->username : '';
@@ -30,6 +30,7 @@ class ManageInternalUser extends ServiceProvider
             $lastNameField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->last_name : '';
             $practicesField = $data->has('editedUser') ? $data->get('editedUser')->getPractices() : '';
             $roleField = $data->has('editedUser') ? $data->get('editedUser')->getRole() : '';
+            $internalUserId = $data->has('editedUser') ? $data->get('editedUser')->getUser()->id : '';
 
 
             $view->with(compact([
@@ -39,6 +40,7 @@ class ManageInternalUser extends ServiceProvider
                 'lastNameField',
                 'practicesField',
                 'roleField',
+                'internalUserId',
             ]));
         });
     }

@@ -35,11 +35,15 @@ class UserManagementService
      */
     public function storeInternalUser(InternalUser $internalUser)
     {
-        $user = User::create($internalUser->getUser());
+        $user = User::updateOrCreate($internalUser->getUser());
+
+        $sync = [];
 
         foreach ($internalUser->getPractices() as $practiceId) {
-            $user->attachRoleForSite($internalUser->getRole(), $practiceId);
+            $sync[$practiceId] = ['role_id' => $internalUser->getRole()];
         }
+
+        $user->practices()->sync($sync);
 
         return $user;
     }
@@ -51,6 +55,6 @@ class UserManagementService
                     ->first();
 
 
-        return new InternalUser($user, $user->practices->pluck('id')->all(), $user->roles->first()->id);
+        return new InternalUser($user, $user->practices->isNotEmpty() ? $user->practices->pluck('id')->all() : '', $user->roles->isNotEmpty() ? $user->roles->first()->id : '');
     }
 }
