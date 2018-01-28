@@ -57,7 +57,8 @@
         data() {
             return {
                 cpmProblems: [],
-                ccdProblems: []
+                ccdProblems: [],
+                allCpmProblems: []
             }
         },
         computed: {
@@ -81,7 +82,7 @@
                 return obj
             },
             setupCpmProblem(problem) {
-                problem.instruction = this.setupDates(problem.instruction || {
+                problem.instruction = this.setupDates(problem.instruction || (this.allCpmProblems.find(p => p.name == problem.name) || {}).instruction || {
                     name: null
                 })
                 problem.type = 'cpm'
@@ -102,6 +103,7 @@
         },
         mounted() {
             this.cpmProblems = (this.careplan().cpmProblems || []).map(this.setupCpmProblem)
+            this.allCpmProblems = (this.careplan().allCpmProblems || [])
 
             Event.$on('care-areas:problems', (problems) => {
                 this.cpmProblems = problems.map(this.setupCpmProblem)
@@ -124,10 +126,12 @@
 
             Event.$on('care-areas:remove-cpm-problem', (id) => {
                 this.cpmProblems = this.cpmProblems.filter(problem => problem.id != id)
+                Event.$emit('care-areas:problems', this.cpmProblems)
             })
 
             Event.$on('care-areas:remove-ccd-problem', (id) => {
                 this.ccdProblems = this.ccdProblems.filter(problem => problem.id != id)
+                Event.$emit('care-areas:ccd-problems', this.ccdProblems)
             })
 
             Event.$on('care-areas:request-problems', () => Event.$emit('care-areas:problems', this.cpmProblems))

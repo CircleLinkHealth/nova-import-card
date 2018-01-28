@@ -141,6 +141,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{id}', 'ProviderController@show');
             Route::resource('', 'ProviderController');
         });
+
+        Route::group(['prefix' => 'ccda'], function () {
+            Route::get('{id}', 'CcdaController@show');
+            Route::resource('', 'CcdaController');
+        });
         
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
@@ -1704,6 +1709,16 @@ Route::group([
 });
 
 Route::impersonate();
+
+Route::group([
+    'prefix' => 'saas/admin',
+    'middleware' => ['role:saas-admin']
+], function (){
+    Route::get('users/create', [
+        'uses' => 'SAAS\Admin\InternalUserController@create',
+        'as'   => 'saas-admin.users.create',
+    ]);
+});
 
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', function($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {

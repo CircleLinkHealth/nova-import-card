@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient\Traits;
 
+use App\Appointment;
 use Illuminate\Http\Request;
 
 trait AppointmentTraits

@@ -58,21 +58,13 @@ if (isset($patient) && ! empty($patient)) {
 
 
                                 <div class="col-xs-12 text-left">
-                                    @if ($skippedAssessment)
-                                        <div class="text-right">
-                                            <a class="btn btn-success btn-lg inline-block" aria-label="..."
-                                               role="button"
-                                               href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Skipped:
-                                                Print This Page</a>
-                                        </div>
-                                    @elseif ($recentSubmission)
+                                    @if ($recentSubmission)
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
                                             role="button"
                                             href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
-                                                Print This Page</a>
+                                                Print for Patient</a>
                                         </div>
-                                        
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="buttons">

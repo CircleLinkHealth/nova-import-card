@@ -45,7 +45,7 @@ trait MiscTraits
     
     public function removeInstructionFromMisc($userId, $miscId, $instructionId) {
         if ($userId && $miscId && $instructionId) {
-            return $this->miscService->removeInstructionFromPatientMisc($miscId, $userId, $instructionId);
+            return $this->miscService->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
         }
         else return $this->badRequest('"miscId", "userId" and "instructionId" are important');
     }

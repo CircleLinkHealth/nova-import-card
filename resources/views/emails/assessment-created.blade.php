@@ -6,7 +6,7 @@
     ?>
     <p>
         An 
-        <a href="{{ route('patient.careplan.assessment.approver', [ 'patientId' => $patient->id, 'approverId' => $approver->id ]) }}">assessment</a> 
+        <a href="{{ route('patient.careplan.assessment.approver', [ 'patientId' => $patient['id'], 'approverId' => $approver['id'] ]) }}">assessment</a> 
         was done on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
         {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{ $approver->display_name }}:
     </p>

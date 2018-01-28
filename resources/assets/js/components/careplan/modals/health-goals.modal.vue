@@ -144,18 +144,27 @@
                         this.loaders.removeGoal = false
                     })
                 }
+                return false
             },
             toggleEnable(e) {
                 if (this.selectedGoal) {
                     if (e.target.checked) {
-                        this.addGoal(e).then(() => {
+                        const promise = this.addGoal(e)
+                        if (promise) promise.then(() => {
                             this.selectedGoal.enabled = true
                         })
+                        else {
+                            this.selectedGoal.enabled = false
+                        }
                     }
                     else {
-                        this.removeGoal(e).then(() => {
+                        const promise = this.removeGoal(e)
+                        if (promise) promise.then(() => {
                             this.selectedGoal.enabled = false
                         })
+                        else {
+                            this.selectedGoal.enabled = true
+                        }
                     }
                 }
             }

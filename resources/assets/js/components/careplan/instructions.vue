@@ -16,7 +16,7 @@
         <div class="row gutter" v-if="cpmProblems.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
-                <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index">{{instruction}}</p>
+                <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index" v-html="instruction || '<br>'"></p>
             </div>
         </div>
         <!-- <div class="row gutter" v-if="ccdProblems">
@@ -56,7 +56,8 @@
         data() {
             return {
                  cpmProblems: [],
-                 ccdProblems: []
+                 ccdProblems: [],
+                 allCpmProblems: []
             }
         },
         computed: {
@@ -71,7 +72,7 @@
                     problem_code_system_id: null,
                     selectedCode: 'Select a Code'
                 }
-                problem.instruction = problem.instruction || {}
+                problem.instruction = problem.instruction || (this.allCpmProblems.find(p => p.name == problem.name) || {}).instruction || {}
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
@@ -92,12 +93,17 @@
             }
         },
         mounted() {
+            this.allCpmProblems = (this.careplan().allCpmProblems || [])
             this.ccdProblems = (this.careplan().ccdProblems || []).map(this.setupCcdProblem)
 
             Event.$emit('care-areas:ccd-problems', this.ccdProblems)
 
             Event.$on('care-areas:problems', (problems) => {
                 this.cpmProblems = problems
+            })
+
+            Event.$on('care-areas:ccd-problems', (problems) => {
+                this.ccdProblems = problems
             })
 
             Event.$on('full-conditions:add', (ccdProblem) => {
@@ -118,6 +124,7 @@
                         this.ccdProblems[index].is_monitored = problem.is_monitored
                         this.ccdProblems[index].cpm_id = problem.cpm_id
                         this.ccdProblems[index].codes = problem.codes
+                        this.ccdProblems[index].instruction = problem.instruction
                     }
                 }
             })

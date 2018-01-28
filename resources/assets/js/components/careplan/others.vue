@@ -16,7 +16,7 @@
         <div class="row gutter">
             <div class="col-xs-12">
                 <ul v-if="other && other.instructions.length > 0">
-                    <li v-for="(instruction, index) in other.instructions" :key="index" v-if="instruction.name">
+                    <li v-for="(instruction, index) in other.instructions.slice(0, 1)" :key="index" v-if="instruction.name">
                         <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
                     </li>
                 </ul>
@@ -76,6 +76,7 @@
             Event.$on('misc:change', (misc) => {
                 if (misc && misc.id === ((this.other || {}).id || MISC_ID)) {
                     this.other = misc
+                    this.$forceUpdate()
                 }
             })
 
