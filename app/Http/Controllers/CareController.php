@@ -3,14 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Services\UserService;
+use App\Services\CareplanService;
+use App\Repositories\CareplanRepository;
 use Illuminate\Http\Request;
 
 class CareController extends Controller
 {
-    public function enroll($enrollUserId)
-    {
+    private $userService;
+    private $careplanService;
+
+    public function __construct(UserService $userService, CareplanService $careplanService) {
+        $this->userService = $userService;
+        $this->careplanService = $careplanService;
+    }
+
+    function validate_user_id($enrollUserId, $callbackFn) {
         if (!$enrollUserId) {
-            return redirect()->route('home');
+            return redirect('/');
         }
         else {
             $patient = User::find($enrollUserId);
@@ -22,11 +32,32 @@ class CareController extends Controller
                     return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
                 }
                 else {
-                    return view('care.index', [
-                        'enrollUserId' => $enrollUserId
-                    ]);
+                    return call_user_func($callbackFn, $enrollUserId);
                 }
             }
         }
+    }
+
+    function render($enrollUserId) {
+        return view('care.index', [
+            'enrollUserId' => $enrollUserId
+        ]);
+    }
+
+    public function enroll($enrollUserId)
+    {
+        return $this->validate_user_id($enrollUserId, [$this, 'render']);
+    }
+
+    public function store($enrollUserId, Request $request) {
+        $status = $request->input('status');
+        
+        return $this->validate_user_id($enrollUserId, function () use ($enrollUserId, $status) {
+            if ($status == 'rejected') {
+                $this->careplanService->repo()->reject($enrollUserId, auth()->user()->id);
+                return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
+            }
+            return $this->render($enrollUserId);
+        });
     }
 }

@@ -8,8 +8,8 @@ use App\Role;
 use App\User;
 use Auth;
 use DateTimeZone;
-use EllipseSynergie\ApiResponse\Laravel\Response;
 use Illuminate\Http\Request;
+use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserController extends Controller

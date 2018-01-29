@@ -130,7 +130,7 @@
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/medication/${this.selectedMedication.id}`), { 
                             name: this.selectedMedication.name, 
                             sig: this.selectedMedication.sig,
-                            medication_group_id: (this.selectedMedication.groupName || {}).value 
+                            medication_group_id: (this.selectedMedication.groupName || {}).value || this.selectedMedication.medication_group_id
                     }).then(response => {
                         console.log('medication:edit', response.data)
                         this.loaders.editMedication = false

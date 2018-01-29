@@ -29,6 +29,19 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
+                <li class="dropdown-toggle">
+                    <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-expanded="false"
+                         style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
+                        Users <span class="caret" style="color: #fff"></span>
+                    </div>
+                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                        <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add Internal User</a></li>
+                        <li><a href="{{ URL::route('admin.observations.index', []) }}">Add Customer User</a></li>
+                        <li><a href="{{ URL::route('saas-admin.users.index', []) }}">View All</a></li>
+                    </ul>
+                </li>
+
                 @if (!isset($patient))
                     <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking ?? true}}"></time-tracker>

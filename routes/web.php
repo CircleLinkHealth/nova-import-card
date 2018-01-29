@@ -14,6 +14,7 @@ Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
+Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
 //Algo test routes.
 
@@ -37,8 +38,12 @@ Route::get('ajax/patients', 'UserController@getPatients');
  */
 Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
-Route::get('/', 'WelcomeController@index');
-Route::get('home', 'WelcomeController@index');
+Route::get('/', 'WelcomeController@index', [
+    'as' => 'index'
+]);
+Route::get('home', 'WelcomeController@index', [
+    'as' => 'home'
+]);
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
 Route::post('browser-check', [
@@ -1709,6 +1714,41 @@ Route::group([
 });
 
 Route::impersonate();
+
+Route::group([
+    'prefix' => 'saas/admin',
+    'middleware' => ['auth', 'role:saas-admin']
+], function (){
+    Route::get('users', [
+        'uses' => 'SAAS\Admin\InternalUserController@index',
+        'as'   => 'saas-admin.users.index',
+    ]);
+
+    Route::get('users/create', [
+        'uses' => 'SAAS\Admin\InternalUserController@create',
+        'as'   => 'saas-admin.users.create',
+    ]);
+
+    Route::post('users', [
+        'uses' => 'SAAS\Admin\InternalUserController@store',
+        'as'   => 'saas-admin.users.store',
+    ]);
+
+    Route::get('users/{userId}', [
+        'uses' => 'SAAS\Admin\InternalUserController@edit',
+        'as'   => 'saas-admin.users.edit',
+    ]);
+
+    Route::patch('users/{userId}', [
+        'uses' => 'SAAS\Admin\InternalUserController@update',
+        'as'   => 'saas-admin.users.update',
+    ]);
+
+    Route::post('users/action', [
+        'uses' => 'SAAS\Admin\InternalUserController@action',
+        'as'   => 'saas-admin.users.action',
+    ]);
+});
 
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', function($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {

@@ -102,9 +102,17 @@
             </ul>
         </div>
 
-        <div class="footer top-30 text-right">
-            <a class="btn btn-success" href="{{ url('manage-patients/' . $enrollUserId . '/view-careplan/assessment') }}">Patient Consented</a>
-            <a class="btn btn-warning" href="{{ url('home') }}">DID NOT CONSENT</a>
+        <div class="footer row top-30">
+            <div class="col-sm-6">
+                <form method="post" action="{{ url('care/enroll/' . $enrollUserId) }}">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="status" value="rejected" />
+                    <button class="btn btn-warning">DID NOT CONSENT</button>
+                </form>
+            </div>
+            <div class="col-sm-6 text-right">
+                <a class="btn btn-success" href="{{ url('manage-patients/' . $enrollUserId . '/view-careplan/assessment') }}">Patient Consented</a>
+            </div>
         </div>
     </div>
 @endsection

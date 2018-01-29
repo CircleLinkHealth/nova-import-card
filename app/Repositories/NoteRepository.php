@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Note;
 use Exception;
+use Carbon\Carbon;
 
 class NoteRepository
 {
@@ -54,6 +55,7 @@ class NoteRepository
 
     public function add(Note $note) {
         if ($note && $note->patient_id && $note->author_id && $note->body && $note->type) {
+            $note->performed_at = Carbon::now();
             $note->save();
             return $note;
         }
