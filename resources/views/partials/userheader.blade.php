@@ -117,6 +117,18 @@
             </div>
 
         </div>
+        <?php
+            use App\Services\CPM\CpmProblemUserService;
+            use App\Services\CCD\CcdProblemService;
+        
+            $cpmProblemService = app(CpmProblemUserService::class);
+            $ccdProblemService = app(CcdProblemService::class);
+        
+            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
+            $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
+
+            
+        ?>
         @if(!empty($problems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
