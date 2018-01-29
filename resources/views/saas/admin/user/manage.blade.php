@@ -123,7 +123,7 @@
                                     <div class="row" style="margin-top:50px;">
                                         <div class="col-sm-12">
                                             <div class="pull-right">
-                                                {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
+                                                {!! Form::submit('Create User', array('class' => 'btn btn-success submit')) !!}
                                             </div>
                                         </div>
                                     </div>
