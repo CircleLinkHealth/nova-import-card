@@ -38,7 +38,7 @@
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                         <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add Internal User</a></li>
                         <li><a href="{{ URL::route('admin.observations.index', []) }}">Add Customer User</a></li>
-                        <li><a href="{{ URL::route('admin.users.index', []) }}">View All</a></li>
+                        <li><a href="{{ URL::route('saas-admin.users.index', []) }}">View All</a></li>
                     </ul>
                 </li>
 

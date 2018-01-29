@@ -4,7 +4,13 @@ namespace App\Http\Controllers\SAAS\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
+use App\Practice;
+use App\Role;
+use App\User;
 use App\ValueObjects\SAAS\Admin\InternalUser;
+use Auth;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class InternalUserController extends Controller
 {
@@ -78,5 +84,128 @@ class InternalUserController extends Controller
         return redirect()->route('saas-admin.users.edit', [
             'userId' => $user->id,
         ])->with('messages', 'User created successfully!');
+    }
+
+    public function index(Request $request)
+    {
+        $practices = auth()->user()->practices;
+
+        $wpUsers = User::whereHas('practices', function ($q) use ($practices) {
+            $q->whereIn('id', $practices->pluck('id')->all());
+        })->orderBy('id', 'desc');
+
+        // FILTERS
+        $params = $request->all();
+
+        // filter user
+        $users = User::whereIn('id', Auth::user()->viewableUserIds())
+                     ->orderBy('display_name')
+                     ->get()
+                     ->mapWithKeys(function ($user) {
+                         return [
+                             $user->id => "{$user->first_name} {$user->last_name} ({$user->id})",
+                         ];
+                     })
+                     ->all();
+
+        $filterUser = 'all';
+
+        if ( ! empty($params['filterUser'])) {
+            $filterUser = $params['filterUser'];
+            if ($params['filterUser'] != 'all') {
+                $wpUsers->where('id', '=', $filterUser);
+            }
+        }
+
+        // role filter
+        $roles = Role::whereIn('name', [
+            'care-center',
+            'med_assistant',
+            'provider',
+            'participant',
+            'office_admin',
+            'saas-admin',
+            'specialist',
+            'registered-nurse',
+        ])
+                     ->orderBy('display_name')
+                     ->pluck('display_name', 'name')
+                     ->all();
+
+        $filterRole = 'all';
+
+        if ( ! empty($params['filterRole'])) {
+            $filterRole = $params['filterRole'];
+            if ($params['filterRole'] != 'all') {
+                $wpUsers->ofType($filterRole);
+            }
+        }
+
+        // program filter
+        $programs = Practice::whereIn('id', Auth::user()->viewableProgramIds())
+                            ->orderBy('display_name')
+                            ->get()
+                            ->pluck('display_name', 'id')
+                            ->all();
+
+        $filterProgram = 'all';
+
+        if ( ! empty($params['filterProgram'])) {
+            $filterProgram = $params['filterProgram'];
+            if ($params['filterProgram'] != 'all') {
+                $wpUsers->where('program_id', '=', $filterProgram);
+            }
+        }
+
+        // only let owners see owners
+        if ( ! Auth::user()->hasRole(['administrator'])) {
+            $wpUsers = $wpUsers->whereHas('roles', function ($q) {
+                $q->where('name', '!=', 'administrator');
+            });
+            // providers can only see their participants
+            if (Auth::user()->hasRole(['provider'])) {
+                $wpUsers->whereHas('roles', function ($q) {
+                    $q->whereHas('perms', function ($q2) {
+                        $q2->where('name', '=', 'is-participant');
+                    });
+                });
+                $wpUsers->where('program_id', '=', Auth::user()->program_id);
+            }
+        }
+
+        $queryString = $request->query();
+
+        // patient restriction
+        $wpUsers->whereIn('id', Auth::user()->viewableUserIds());
+        $wpUsers      = $wpUsers->paginate(20);
+        $invalidUsers = [];
+
+        return view('saas.admin.user.index', compact([
+            'wpUsers',
+            'users',
+            'filterUser',
+            'programs',
+            'filterProgram',
+            'roles',
+            'filterRole',
+            'invalidUsers',
+            'queryString',
+        ]));
+    }
+
+    public function action(Request $request)
+    {
+        $params = new ParameterBag($request->input());
+
+        if ($params->get('action') && $params->get('action') == 'delete') {
+            foreach ($params->get('users') as $userId) {
+                User::whereId($userId)
+                    ->delete();
+            }
+
+            return redirect()->back()->with('messages', ['successfully scrambled users']);
+        }
+
+        return redirect()->back();
     }
 }

@@ -1,6 +1,6 @@
 @extends('partials.providerUI')
 
-@section('title', 'Create Internal User')
+@section('title', 'Internal User')
 
 @section('content')
 
