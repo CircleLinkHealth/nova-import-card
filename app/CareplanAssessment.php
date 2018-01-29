@@ -75,10 +75,10 @@ class CareplanAssessment extends \App\BaseModel
     }
     
     /**
-        * Create a PDF of this resource and return the path to it.
-        *
-        * @return string
-        */
+    * Create a PDF of this resource and return the path to it.
+    *
+    * @return string
+    */
     public function toPdf(): string
     {
         $patient = $this->patient()->first();
@@ -89,7 +89,7 @@ class CareplanAssessment extends \App\BaseModel
             'assessment'  => $this
         ]);
 
-        $this->fileName = Carbon::now()->toDateString() . '-' . $patient->display_name . '.pdf';
+        $this->fileName = Carbon::now()->toDateString() . '-' . $patient['display_name'] . '.pdf';
         $filePath       = base_path('storage/pdfs/assessments/' . $this->fileName);
         $pdf->save($filePath, true);
 

@@ -5,21 +5,23 @@
 
 @section('content')
 
-    <script>
-        $(document).ready(function () {
-            $(".provider").select2();
-        });
-    </script>
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".provider").select2();
+            });
+        </script>
+    @endpush
 
-    <style>
-
-        .save-btn {
-            width: 100px;
-            height: 42px;
-            position: relative;
-        }
-
-    </style>
+    @push('styles')
+        <style>
+            .save-btn {
+                width: 100px;
+                height: 42px;
+                position: relative;
+            }
+        </style>
+    @endpush
 
     <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
