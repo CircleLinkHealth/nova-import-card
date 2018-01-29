@@ -17,9 +17,6 @@ class ManageInternalUserTest extends DuskTestCase
     private $adminUser;
 
     /**
-     * A basic test example.
-     *
-     * @return void
      * @throws \Exception
      * @throws \Throwable
      */
@@ -59,6 +56,47 @@ class ManageInternalUserTest extends DuskTestCase
             'role_id'    => $saasAdminRole->id,
             'user_id'    => $createdUser->id,
         ]);
+    }
+
+    /**
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function test_form_shows_validation_errors()
+    {
+        $practice        = $this->practice;
+        $saasAdminRole   = $this->saasAdminRole;
+        $loggedInUser    = $this->adminUser;
+        $newInternalUser = factory(User::class)->create([]);
+
+        $this->browse(function ($browser) use ($loggedInUser, $newInternalUser, $saasAdminRole, $practice) {
+            $browser->loginAs($loggedInUser)
+                    ->visit(route('saas-admin.users.create'))
+                    ->assertRouteIs('saas-admin.users.create')
+                    ->type('user[username]', $newInternalUser->username)
+                    ->type('user[email]', $newInternalUser->email)
+                    ->type('user[first_name]', $newInternalUser->first_name)
+                    ->type('user[last_name]', $newInternalUser->last_name)
+                    ->select('role', $saasAdminRole->id)
+                    ->select('practices[]', $practice->id)
+                    ->press('.submit')
+                    ->pause(2000)
+                    ->assertSee('The user.email has already been taken.')
+                    ->assertSee('The user.username has already been taken.')
+                    ->assertRouteIs('saas-admin.users.create');
+        });
+    }
+
+    public function test_403_if_not_saas_admin()
+    {
+        $practice        = $this->practice;
+        $loggedInUser    = $this->createUser($practice->id, 'provider');
+
+        $this->browse(function ($browser) use ($loggedInUser, $practice) {
+            $browser->loginAs($loggedInUser)
+                    ->visit(route('saas-admin.users.create'))
+                    ->assertDontSee('Create User');
+        });
     }
 
     protected function setUp()
