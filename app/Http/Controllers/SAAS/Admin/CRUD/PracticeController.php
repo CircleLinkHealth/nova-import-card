@@ -18,7 +18,7 @@ class PracticeController extends Controller
     {
         $practices = Practice::orderBy('id', 'desc')
                              ->whereActive(1)
-                             ->whereIn('id', auth()->user()->practices->pluck('id')->all())
+                             ->authUserCanAccess()
                              ->get();
 
         return view('saas.admin.practice.index', ['practices' => $practices]);

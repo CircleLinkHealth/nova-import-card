@@ -275,6 +275,11 @@ class Practice extends \App\BaseModel
         return $q->whereActive(1);
     }
 
+    public function scopeAuthUserCanAccess($q)
+    {
+        return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());
+    }
+
     public function cpmSettings()
     {
         return $this->settings->isEmpty()

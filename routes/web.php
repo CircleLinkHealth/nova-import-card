@@ -1772,6 +1772,13 @@ Route::group([
             'as'   => 'saas-admin.monthly.billing.data',
         ]);
     });
+
+    Route::group(['prefix' => 'practice/billing'], function () {
+        Route::get('create', [
+            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'as'   => 'saas-admin.practices.billing.create',
+        ]);
+    });
 });
 
 
