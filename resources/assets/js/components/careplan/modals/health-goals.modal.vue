@@ -7,6 +7,7 @@
                         <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: !goal.enabled }" 
                             v-for="(goal, index) in goals" :key="index" @click="select(index)">
                             {{goal.name}}
+                            <label class="label label-primary" v-if="!goal.enabled">disabled</label>
                         </button>
                     </div>
                 </div>
@@ -22,11 +23,11 @@
                     <form @submit="addGoal">
                         <div class="row form-group">
                             <div class="col-sm-6">
-                                <h4>Starting</h4>
+                                <h4>Starting<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
                                 <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.starting" step="0.01" />
                             </div>
                             <div class="col-sm-6">
-                                <h4>Target</h4>
+                                <h4>Target<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
                                 <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" />
                             </div>
                         </div>
@@ -185,14 +186,25 @@
     }
 
     .btn.btn-secondary.goal-button.disabled {
-        background-color: #fa0;
+        /*background-color: #fa0;*/
         pointer-events: all;
     }
 
-    .btn.btn.btn-secondary.selected.disabled {
+    .btn.btn-secondary.selected.disabled {
         background: #47beab;
         color: white;
         pointer-events: none;
+    }
+
+    .btn.btn.btn-secondary.goal-button.disabled label {
+        position: absolute;
+        top: -10px;
+        right: -1px;
+    }
+
+    .btn.btn.btn-secondary.goal-button.selected label {
+        background: #47beab;
+        color: white;
     }
 
     input[type='checkbox'] {
