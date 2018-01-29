@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use App\CarePlan;
 
 class CareplanRepository
@@ -19,8 +20,26 @@ class CareplanRepository
 
         $carePlans = $this->model()->where(['user_id' => $userId]);
 
-        if ($carePlans) {
-            $carePlans->update([ 'status' => $this->PROVIDER_APPROVED, 'provider_approver_id' => $providerApproverId ]);   
+        if ($carePlans->first()) {
+            $carePlans->update([ 'status' => $this->PROVIDER_APPROVED, 'provider_approver_id' => $providerApproverId, 'provider_date' => Carbon::now() ]);
+            return $carePlans->first();
+        }
+        else {
+            throw new Exception('careplans with user_id "'.$userId.'" not found');
+        }
+    }
+
+    public function reject($userId, $providerApproverId = null) {
+
+        $carePlans = $this->model()->where(['user_id' => $userId]);
+        
+        if ($carePlans->first()) {
+            $carePlans->update([ 'status' => $this->PATIENT_REJECTED, 'provider_date' => Carbon::now() ]);   
+
+            if ($providerApproverId) {
+                $carePlans->update([ 'provider_approver_id' => $providerApproverId ]); 
+            }
+            return $carePlans->first();
         }
         else {
             throw new Exception('careplans with user_id "'.$userId.'" not found');

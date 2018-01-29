@@ -17,7 +17,7 @@
             <div class="col-xs-12">
                 <ul v-if="other && other.instructions.length > 0">
                     <li v-for="(instruction, index) in other.instructions.slice(0, 1)" :key="index" v-if="instruction.name">
-                        <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index">{{chunk}}</p>
+                        <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index" v-html="chunk || '<br>'"></p>
                     </li>
                 </ul>
             </div>

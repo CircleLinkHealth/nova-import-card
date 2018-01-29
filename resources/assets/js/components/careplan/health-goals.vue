@@ -87,15 +87,28 @@
                     goal.end = () => goal.info.target
                     goal.active = () => !!(goal.info.starting && goal.info.target)
                     
-                    if (goal.start() > goal.end()) {
-                        goal.info.verb = 'Decrease'
-                    }
-                    else {
-                        if ((goal.name === 'Blood Pressure' && goal.start() < 90) || (goal.start() > 0 && goal.start() < goal.end())) {
-                            goal.info.verb = 'Increase'
+                    if ((goal.name === 'Blood Sugar')) {
+                        if (goal.start() > 130) {
+                            goal.info.verb = goal.end() < goal.start() ? 'Decrease' : 'Increase'
+                        }
+                        else if (goal.start() >= 80 && goal.start() <= 130) {
+                            goal.info.verb = 'Regulate'
                         }
                         else {
-                            goal.info.verb = 'Regulate'
+                            goal.info.verb = 'Increase'
+                        }
+                    }
+                    else {
+                        if (goal.start() > goal.end()) {
+                            goal.info.verb = 'Decrease'
+                        }
+                        else {
+                            if ((goal.name === 'Blood Pressure' && goal.start() < 90) || (goal.start() > 0 && goal.start() < goal.end())) {
+                                goal.info.verb = 'Increase'
+                            }
+                            else {
+                                goal.info.verb = 'Regulate'
+                            }
                         }
                     }
                 }
