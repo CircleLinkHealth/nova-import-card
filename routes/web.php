@@ -1719,6 +1719,11 @@ Route::group([
     'prefix' => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin']
 ], function (){
+    Route::get('users', [
+        'uses' => 'SAAS\Admin\InternalUserController@index',
+        'as'   => 'saas-admin.users.index',
+    ]);
+
     Route::get('users/create', [
         'uses' => 'SAAS\Admin\InternalUserController@create',
         'as'   => 'saas-admin.users.create',
@@ -1737,6 +1742,11 @@ Route::group([
     Route::patch('users/{userId}', [
         'uses' => 'SAAS\Admin\InternalUserController@update',
         'as'   => 'saas-admin.users.update',
+    ]);
+
+    Route::post('users/action', [
+        'uses' => 'SAAS\Admin\InternalUserController@action',
+        'as'   => 'saas-admin.users.action',
     ]);
 });
 
