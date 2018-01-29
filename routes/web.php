@@ -1761,15 +1761,17 @@ Route::group([
         'edit' => 'saas-admin.practices.edit',
     ]]);
 
-    Route::get('/make', [
-        'uses' => 'Billing\PracticeInvoiceController@make',
-        'as'   => 'monthly.billing.make',
-    ]);
+    Route::group(['prefix' => 'monthly-billing'], function(){
+        Route::get('make', [
+            'uses' => 'Billing\PracticeInvoiceController@make',
+            'as'   => 'saas-admin.monthly.billing.make',
+        ]);
 
-    Route::post('/data', [
-        'uses' => 'Billing\PracticeInvoiceController@data',
-        'as'   => 'monthly.billing.data',
-    ]);
+        Route::post('data', [
+            'uses' => 'Billing\PracticeInvoiceController@data',
+            'as'   => 'saas-admin.monthly.billing.data',
+        ]);
+    });
 });
 
 

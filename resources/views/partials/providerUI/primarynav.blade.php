@@ -53,7 +53,7 @@ if (isset($patient)) {
                             <li><a href="{{ route('saas-admin.practices.create', []) }}">Add New</a></li>
                             <li><a href="{{ route('saas-admin.practices.index', []) }}">Manage Active</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
-                            <li><a href="{{ route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>
+                            <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable Patients</a></li>
                         </ul>
                     </li>
                 @endif

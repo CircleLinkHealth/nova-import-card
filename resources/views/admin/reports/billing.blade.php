@@ -1,4 +1,6 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
+
+@section('title', 'Approve Billable Patients')
 
 @section('content')
     @push('styles')
