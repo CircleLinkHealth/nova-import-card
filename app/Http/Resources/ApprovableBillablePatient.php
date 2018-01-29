@@ -2,15 +2,18 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
+use App\ChargeableService;
+use App\Http\Resources\ChargeableService as ChargeableServiceResource;
 use App\User;
+use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function toArray($request)
@@ -32,6 +35,28 @@ class ApprovableBillablePatient extends Resource
         $problem2Name = $problem2->name ?? null;
 
         $lacksProblems = ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name;
+
+
+        $services = $this->chargableServices();
+        if (!$services) { $services = ChargableService::find(1); }
+
+        $data = ChargeableServiceResource::collection($services);
+
+        $billingCodes = $data->pluck('code');
+
+        dd($billingCodes);
+
+
+//        if ($this->chargeableServices()) {
+//            $services[] = $this->chargeableServices()->get();
+//        } else {
+//            $services[] = ChargeableService::where('id', 1)->first();
+//        }
+//        foreach ($services as $service) {
+//            $data           = ChargeableServiceResource::make($this->whenLoaded('chargeableServices'));
+//            $billingCodes[] = $data['code'];
+//        }
+
 
         $toQA = ( ! $this->approved && ! $this->rejected)
                 || $lacksProblems
@@ -62,6 +87,7 @@ class ApprovableBillablePatient extends Resource
             'practice'               => $this->patient->primaryPractice->display_name,
             'dob'                    => $this->patient->patientInfo->birth_date,
             'ccm'                    => round($this->ccm_time / 60, 2),
+            'billing code(s)'        => $billingCodes,
             'problem1'               => $problem1Name,
             'problem1_code'          => $problem1Code,
             'problem2'               => $problem2Name,
