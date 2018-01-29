@@ -1,5 +1,7 @@
 @extends('partials.providerUI')
 
+@section('title', 'Edit Practice')
+
 @section('content')
     <style>
         .form-group {

@@ -1,5 +1,7 @@
 @extends('partials.providerUI')
 
+@section('title', 'Create Practice')
+
 @section('content')
     @push('styles')
     <style>

@@ -38,7 +38,7 @@ if (isset($patient)) {
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             <li><a href="{{ route('saas-admin.users.create', []) }}">Add Internal User</a></li>
-                            <li><a href="{{ route('admin.observations.index', []) }}">Add Customer User</a></li>
+                            <li><a href="{{ route('saas-admin.practices.index', []) }}">Add Customer User</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">View All</a></li>
                         </ul>
                     </li>
@@ -50,7 +50,7 @@ if (isset($patient)) {
                             Practices <span class="caret" style="color: #fff"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            <li><a href="{{ route('saas-admin.users.create', []) }}">Add New</a></li>
+                            <li><a href="{{ route('saas-admin.practices.create', []) }}">Add New</a></li>
                             <li><a href="{{ route('saas-admin.practices.index', []) }}">Manage Active</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>

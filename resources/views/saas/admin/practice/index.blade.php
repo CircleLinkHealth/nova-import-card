@@ -1,5 +1,7 @@
 @extends('partials.providerUI')
 
+@section('title', 'Manage Practices')
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
