@@ -1504,7 +1504,7 @@ Route::group([
     'prefix'     => '{practiceSlug}/admin',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator',
+        'providerDashboardACL:administrator|saas-admin',
     ],
 ], function () {
 

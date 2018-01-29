@@ -125,18 +125,26 @@
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Cerberus::hasPermission('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                            @if($wpUser->hasRole(['care-center', 'saas-admin']))
+                                                <a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
+                                                   class="btn btn-primary btn-xs"><i
+                                                            class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            @elseif($wpUser->hasRole(['participant']))
+                                                <a href="{{ route('patient.demographics.show', ['patientId' => $wpUser->id]) }}"
+                                                   class="btn btn-primary btn-xs"><i
+                                                            class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            @else
+                                                <a href="{{ route('provider.dashboard.manage.staff', ['practiceSlug' => $wpUser->practices->first()->name]) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
-                                            @if (count($wpUser->roles) > 0)
-                                                @if($wpUser->hasRole('participant'))
-                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->id)) }}"
-                                                       class="btn btn-info btn-xs" style="margin-left:10px;"><i
-                                                                class="glyphicon glyphicon-eye-open"></i> UI</a>
-                                                @endif
+
+                                            @if($wpUser->hasRole('participant'))
+                                                <a href="{{ route('patient.summary', ['patientId' => $wpUser->id]) }}"
+                                                   class="btn btn-info btn-xs" style="margin-left:10px;"><i
+                                                            class="glyphicon glyphicon-eye-open"></i> View</a>
                                             @endif
+
                                             @if(Cerberus::hasPermission('users-edit-all'))
                                                 <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
