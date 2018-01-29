@@ -44,19 +44,6 @@ class ApprovableBillablePatient extends Resource
 
         $billingCodes = $data->pluck('code');
 
-        dd($billingCodes);
-
-
-//        if ($this->chargeableServices()) {
-//            $services[] = $this->chargeableServices()->get();
-//        } else {
-//            $services[] = ChargeableService::where('id', 1)->first();
-//        }
-//        foreach ($services as $service) {
-//            $data           = ChargeableServiceResource::make($this->whenLoaded('chargeableServices'));
-//            $billingCodes[] = $data['code'];
-//        }
-
 
         $toQA = ( ! $this->approved && ! $this->rejected)
                 || $lacksProblems
