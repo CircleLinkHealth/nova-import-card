@@ -1495,7 +1495,7 @@ Route::group([], function () {
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/admin',
+    'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
         'providerDashboardACL:administrator|saas-admin',
