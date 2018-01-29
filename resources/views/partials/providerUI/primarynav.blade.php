@@ -51,7 +51,7 @@ if (isset($patient)) {
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
                             <li><a href="{{ route('saas-admin.users.create', []) }}">Add New</a></li>
-                            <li><a href="{{ route('admin.programs.index', []) }}">Manage Active</a></li>
+                            <li><a href="{{ route('saas-admin.practices.index', []) }}">Manage Active</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
                             <li><a href="{{ route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>
                         </ul>

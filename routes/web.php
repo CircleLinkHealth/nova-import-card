@@ -868,12 +868,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
-
-            Route::post('monthly-billing', [
-                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-                'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
-            ]);
-
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
@@ -1720,34 +1714,44 @@ Route::group([
     'middleware' => ['auth', 'role:saas-admin']
 ], function (){
     Route::get('users', [
-        'uses' => 'SAAS\Admin\InternalUserController@index',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
         'as'   => 'saas-admin.users.index',
     ]);
 
     Route::get('users/create', [
-        'uses' => 'SAAS\Admin\InternalUserController@create',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
         'as'   => 'saas-admin.users.create',
     ]);
 
     Route::post('users', [
-        'uses' => 'SAAS\Admin\InternalUserController@store',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
         'as'   => 'saas-admin.users.store',
     ]);
 
     Route::get('users/{userId}', [
-        'uses' => 'SAAS\Admin\InternalUserController@edit',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
         'as'   => 'saas-admin.users.edit',
     ]);
 
     Route::patch('users/{userId}', [
-        'uses' => 'SAAS\Admin\InternalUserController@update',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
         'as'   => 'saas-admin.users.update',
     ]);
 
     Route::post('users/action', [
-        'uses' => 'SAAS\Admin\InternalUserController@action',
+        'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
         'as'   => 'saas-admin.users.action',
     ]);
+
+    Route::resource('practices', 'SAAS\Admin\CRUD\PracticeController', ['names' => [
+        'index' => 'saas-admin.practices.index',
+        'store' => 'saas-admin.practices.store',
+        'create' => 'saas-admin.practices.create',
+        'destroy' => 'saas-admin.practices.destroy',
+        'update' => 'saas-admin.practices.update',
+        'show' => 'saas-admin.practices.show',
+        'edit' => 'saas-admin.practices.edit',
+    ]]);
 });
 
 

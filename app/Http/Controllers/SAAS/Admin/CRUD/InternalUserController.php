@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\SAAS\Admin;
+namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
