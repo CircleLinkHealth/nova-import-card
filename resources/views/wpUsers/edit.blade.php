@@ -42,18 +42,18 @@
 
                         @include('errors.errors')
 
-                        {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($patient->hasRole('participant'))
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->id)) }}"
+                                        <a href="{{ route('patient.summary', array('patientId' => $patient->id)) }}"
                                            class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

@@ -35,7 +35,7 @@ if (isset($patient) && ! empty($patient)) {
                                 <div class="hide">
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
-                                            data-href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                                            data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
                                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                                         </span>
                                     </span>
@@ -47,7 +47,7 @@ if (isset($patient) && ! empty($patient)) {
                                         <span class="sr-only">Error:</span>
                                         Insurance plans in record may be expired.
                                         <a class="alert-link"
-                                           href="{{ URL::route('patient.demographics.show', [
+                                           href="{{ route('patient.demographics.show', [
                                            'patientId' => $patient->id,
                                            'scrollTo' => 'insurance-policies'
                                            ]) }}">
@@ -62,7 +62,7 @@ if (isset($patient) && ! empty($patient)) {
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
                                             role="button"
-                                            href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
+                                            href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
                                                 Print for Patient</a>
                                         </div>
                                     @else
@@ -86,7 +86,7 @@ if (isset($patient) && ! empty($patient)) {
                                                        class="btn btn-info btn-sm inline-block"
                                                        aria-label="..."
                                                        role="button"
-                                                       href="{{ URL::route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
 
                                                     @if(auth()->user()->hasRole('provider'))
                                                         <a style="margin-right:10px;"
@@ -99,7 +99,7 @@ if (isset($patient) && ! empty($patient)) {
 
                                                 <a class="btn btn-info btn-sm inline-block" aria-label="..."
                                                    role="button"
-                                                   href="{{ URL::route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                                   href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
 
                                                 <form class="lang" action="#" method="POST" id="form">
                                                 {{ csrf_field() }}
@@ -190,7 +190,7 @@ if (isset($patient) && ! empty($patient)) {
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" url="{{ URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
+                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" url="{{ route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
                     
                     <div class="col-xs-10">
                             @if(!empty($taking_medications))

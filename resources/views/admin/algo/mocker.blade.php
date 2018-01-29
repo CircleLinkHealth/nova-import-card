@@ -2,7 +2,7 @@
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('algo.mock.compute', array()),'id' => 'compute', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('algo.mock.compute', array()),'id' => 'compute', 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">

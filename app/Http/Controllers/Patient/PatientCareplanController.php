@@ -25,6 +25,7 @@ use App\Services\CPM\CpmSymptomService;
 use App\Services\PdfService;
 use App\Services\ReportsService;
 use App\Services\UserService;
+use App\Services\CareplanService;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -141,7 +142,7 @@ class PatientCareplanController extends Controller
         ]));
     }
 
-    public function printMultiCareplan(Request $request)
+    public function printMultiCareplan(Request $request, CareplanService $careplanService)
     {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
@@ -184,11 +185,12 @@ class PatientCareplanController extends Controller
                 //HTML render to help us with debugging
                 if ($request->filled('render') && $request->input('render') == 'html') {
                     return view('wpUsers.patient.multiview', [
-                        'careplans'    => [$user_id => $careplan],
+                        'careplans'    => [ $user_id => $careplan],
                         'isPdf'        => true,
                         'letter'       => $letter,
                         'problemNames' => $careplan['problem'],
                         'careTeam'     => $user->careTeamMembers,
+                        'data'         => $careplanService->careplan($user_id)
                     ]);
                 }
 
@@ -198,6 +200,7 @@ class PatientCareplanController extends Controller
                     'letter'       => $letter,
                     'problemNames' => $careplan['problem'],
                     'careTeam'     => $user->careTeamMembers,
+                    'data'         => $careplanService->careplan($user_id)
                 ], $fileNameWithPath);
             } catch (\Exception $e) {
                 \Log::critical($e);
@@ -493,7 +496,7 @@ class PatientCareplanController extends Controller
                 }
             }
 
-            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
+            return redirect(\route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
                 'messages',
                 ['Successfully created new patient with demographics.']
             );

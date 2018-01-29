@@ -1,6 +1,6 @@
 @extends('partials.providerUI')
 
-@section('title', 'Create Internal User')
+@section('title', 'Internal User')
 
 @section('content')
 
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-info">
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         Add Internal User
                     </div>
@@ -123,7 +123,14 @@
                                     <div class="row" style="margin-top:50px;">
                                         <div class="col-sm-12">
                                             <div class="pull-right">
-                                                {!! Form::submit('Create User', array('class' => 'btn btn-success submit')) !!}
+                                                @if(!$internalUserId)
+                                                    {!! Form::submit('Invite User', ['class' => 'btn btn-success submit']) !!}
+                                                @else
+                                                    {!! Form::submit('Save', ['class' => 'btn btn-success submit']) !!}
+                                                @endif
+
+                                                <a href="{{ route('saas-admin.users.index', []) }}" class="btn btn-danger">Cancel</a>
+
                                             </div>
                                         </div>
                                     </div>

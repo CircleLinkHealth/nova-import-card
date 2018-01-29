@@ -53,6 +53,7 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
+                             ->whereIn('id', auth()->user()->practices->pluck('id')->all())
                              ->active()
                              ->get();
 

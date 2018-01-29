@@ -27,7 +27,7 @@
                 <div class="main-form-title col-lg-12">
                     Record New Activity
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 

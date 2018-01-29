@@ -11,7 +11,7 @@
     @endpush
     
     <div class="container-fluid">
-        {!! Form::open(array('url' => URL::route('admin.families.store', array()), 'class' => 'form-horizontal')) !!}
+        {!! Form::open(array('url' => route('admin.families.store', array()), 'class' => 'form-horizontal')) !!}
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
@@ -36,7 +36,7 @@
                         <div class="col-sm-12">
                             <div class="pull-right">
                             <div class="pull-right">
-                                {{--<a href="{{ URL::route('admin.families.index', array()) }}" class="btn btn-danger">Cancel</a>--}}
+                                {{--<a href="{{ route('admin.families.index', array()) }}" class="btn btn-danger">Cancel</a>--}}
                                 {!! Form::submit('Create Family', array('class' => 'btn btn-success')) !!}
                             </div>
                         </div>

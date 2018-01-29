@@ -34,7 +34,7 @@
                                 <td>{{ $role->display_name }}</td>
                                 <td>
                                     @if(Cerberus::hasPermission('roles-manage'))
-                                        <a href="{{ URL::route('roles.edit', array('id' => $role->id)) }}"
+                                        <a href="{{ route('roles.edit', array('id' => $role->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>
