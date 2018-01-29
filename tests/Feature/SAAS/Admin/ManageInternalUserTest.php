@@ -5,17 +5,16 @@ namespace Tests\Feature\SAAS\Admin;
 use App\Practice;
 use App\Role;
 use App\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\DuskTestCase;
 use Tests\Helpers\UserHelpers;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ManageInternalUserTest extends DuskTestCase
 {
-    use //DatabaseTransactions,
-        UserHelpers;
+    use UserHelpers;
+
+    private $saasAdminRole;
+    private $practice;
+    private $adminUser;
 
     /**
      * A basic test example.
@@ -24,16 +23,15 @@ class ManageInternalUserTest extends DuskTestCase
      * @throws \Exception
      * @throws \Throwable
      */
-    public function test_form_displays_correctly()
+    public function test_form_creates_internal_user()
     {
-        $practice = factory(Practice::class)->create([]);
-        $saasAdminRole = Role::whereName('saas-admin')->first();
-
-        $adminUser = $this->createUser($practice->id, 'saas-admin');
+        $practice        = $this->practice;
+        $saasAdminRole   = $this->saasAdminRole;
+        $loggedInUser    = $this->adminUser;
         $newInternalUser = factory(User::class)->make([]);
 
-        $this->browse(function ($browser) use ($adminUser, $newInternalUser, $saasAdminRole, $practice) {
-            $browser->loginAs($adminUser)
+        $this->browse(function ($browser) use ($loggedInUser, $newInternalUser, $saasAdminRole, $practice) {
+            $browser->loginAs($loggedInUser)
                     ->visit(route('saas-admin.users.create'))
                     ->assertRouteIs('saas-admin.users.create')
                     ->type('user[username]', $newInternalUser->username)
@@ -42,14 +40,33 @@ class ManageInternalUserTest extends DuskTestCase
                     ->type('user[last_name]', $newInternalUser->last_name)
                     ->select('role', $saasAdminRole->id)
                     ->select('practices[]', $practice->id)
-                    ->press('Create User');
+                    ->press('.submit')
+                    ->pause(2000)
+                    ->assertPathBeginsWith('/saas/admin/users/');
         });
 
+        $createdUser = User::whereEmail($newInternalUser->email)->first();
+
         $this->assertDatabaseHas('users', [
-            'username' => $newInternalUser->username,
-            'email' => $newInternalUser->email,
+            'username'   => $newInternalUser->username,
+            'email'      => $newInternalUser->email,
             'first_name' => $newInternalUser->first_name,
-            'last_name' => $newInternalUser->last_name,
+            'last_name'  => $newInternalUser->last_name,
         ]);
+
+        $this->assertDatabaseHas('practice_role_user', [
+            'program_id' => $practice->id,
+            'role_id'    => $saasAdminRole->id,
+            'user_id'    => $createdUser->id,
+        ]);
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->practice      = factory(Practice::class)->create([]);
+        $this->saasAdminRole = Role::whereName('saas-admin')->first();
+        $this->adminUser     = $this->createUser($this->practice->id, 'saas-admin');
     }
 }
