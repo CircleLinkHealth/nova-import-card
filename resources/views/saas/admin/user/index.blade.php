@@ -26,7 +26,7 @@
                         {!! Form::open(array('url' => route('saas-admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="pull-right">
+                                <div class="pull-left">
                                     <a class="btn btn-info" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#collapseFilter">Toggle Filters</a>
@@ -38,16 +38,16 @@
                                 <div class="col-md-8 col-md-offset-2">
                                     <div class="row">
                                         <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Practice:') !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                 </div>
                             </div>
                             <div class="row" style="margin-top:50px;">
@@ -72,7 +72,7 @@
                         @if(Cerberus::hasPermission('users-edit-all'))
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="pull-right">
+                                    <div class="pull-left">
                                         With selected Users:
                                         <select name="action">
                                             <option value="delete">Delete</option>
@@ -93,7 +93,7 @@
                                 <td><strong>Name</strong></td>
                                 <td><strong>Role</strong></td>
                                 <td><strong>Email</strong></td>
-                                <td><strong>Program</strong></td>
+                                <td><strong>Practice</strong></td>
                                 <td><strong>Actions</strong></td>
                             </tr>
                             </thead>

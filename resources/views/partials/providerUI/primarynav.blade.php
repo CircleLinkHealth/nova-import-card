@@ -1,25 +1,25 @@
 <?php
-    if (isset($patient)) {
-        $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
-        $H = floor($seconds / 3600);
-        $i = ($seconds / 60) % 60;
-        $s = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-    }
-    else {
-        $monthlyTime = "";
-    }
+if (isset($patient)) {
+    $seconds     = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+    $H           = floor($seconds / 3600);
+    $i           = ($seconds / 60) % 60;
+    $s           = $seconds % 60;
+    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+} else {
+    $monthlyTime = "";
+}
 ?>
 <nav class="navbar primary-navbar">
     <div class="container-fluid col-md-12" style="width: 100%;">
 
         <div class="navbar-header" style="width: 6%;">
-            <a href="{{ URL::route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img src="/img/ui/clh_logo_lt.png"
-                                                                                       alt="Care Plan Manager"
-                                                                                       style="position:relative;top:-15px"
-                                                                                       width="50px"/></a>
+            <a href="{{ URL::route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img
+                        src="/img/ui/clh_logo_lt.png"
+                        alt="Care Plan Manager"
+                        style="position:relative;top:-15px"
+                        width="50px"/></a>
             {{--<a href="{{ URL::route('patients.dashboard') }}" style="font-size: 19px;"--}}
-               {{--class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>--}}
+            {{--class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>--}}
 
         </div>
 
@@ -29,22 +29,40 @@
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                <li class="dropdown-toggle">
-                    <div class="dropdown-toggle" data-toggle="dropdown" role="button"
-                       aria-expanded="false"
-                         style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
-                        Users <span class="caret" style="color: #fff"></span>
-                    </div>
-                    <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                        <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add Internal User</a></li>
-                        <li><a href="{{ URL::route('admin.observations.index', []) }}">Add Customer User</a></li>
-                        <li><a href="{{ URL::route('saas-admin.users.index', []) }}">View All</a></li>
-                    </ul>
-                </li>
+                @if(auth()->user()->hasRole('saas-admin'))
+                    <li class="dropdown-toggle">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
+                            Users <span class="caret" style="color: #fff"></span>
+                        </div>
+                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                            <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add Internal User</a></li>
+                            <li><a href="{{ URL::route('admin.observations.index', []) }}">Add Customer User</a></li>
+                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">View All</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown-toggle">
+                        <div class="dropdown-toggle" data-toggle="dropdown" role="button"
+                             aria-expanded="false"
+                             style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
+                            Practices <span class="caret" style="color: #fff"></span>
+                        </div>
+                        <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                            <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add New</a></li>
+                            <li><a href="{{ URL::route('admin.observations.index', []) }}">Manage Active</a></li>
+                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
+                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>
+                        </ul>
+                    </li>
+                @endif
 
                 @if (!isset($patient))
-                    <li data-monthly-time="{{$monthlyTime}}" style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
-                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true" :no-live-count="{{$noLiveCountTimeTracking ?? true}}"></time-tracker>
+                    <li data-monthly-time="{{$monthlyTime}}"
+                        style="padding-top: 15px; padding-bottom: 15px; line-height: 20px;">
+                        <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
+                                      :no-live-count="{{$noLiveCountTimeTracking ?? true}}"></time-tracker>
                     </li>
                 @endif
                 <li>
@@ -100,7 +118,8 @@
                         @endif
 
                         @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
-                            <li><a style="color: #47beab" href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}">
+                            <li><a style="color: #47beab"
+                                   href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel
                                 </a>
                             </li>
