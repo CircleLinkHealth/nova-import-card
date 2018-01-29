@@ -24,10 +24,6 @@ class UserController extends Controller
     {
         $messages = \Session::get('messages');
 
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
-
         $missingProgramId = [];
         $users = User::all();
 
@@ -217,9 +213,6 @@ class UserController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
         $messages = \Session::get('messages');
 
         $wpUser = new User;
@@ -326,9 +319,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
         $params = new ParameterBag($request->input());
 
         $userRepo = new UserRepository();
@@ -362,9 +352,6 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
         dd('user /edit to view user info');
     }
 
@@ -379,9 +366,6 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
         $messages = \Session::get('messages');
 
         $patient = User::find($id);
@@ -538,10 +522,6 @@ class UserController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
-        // instantiate user
         $wpUser = User::find($id);
         if (!$wpUser) {
             return response("User not found", 401);
@@ -567,10 +547,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
-
         $user = User::find($id);
         if (!$user) {
             return response("User not found", 401);
@@ -591,11 +567,6 @@ class UserController extends Controller
      */
     public function doAction(Request $request)
     {
-        if (!Auth::user()->hasRole('administrator')) {
-            abort(403);
-        }
-
-        // input
         $params = new ParameterBag($request->input());
 
         if ($params->get('action') && $params->get('action') == 'scramble') {
@@ -633,42 +604,5 @@ class UserController extends Controller
     public function getPatients()
     {
         return User::all();
-    }
-
-
-    public function showQuickAddAPI()
-    {
-        // render quick add view
-        $viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
-
-        // return view html
-        return response($viewHtml);
-    }
-
-    public function storeQuickAddAPI(Request $request)
-    {
-        //return $request;
-
-//		if ( $request->header('Client') == 'ui' ) { // WP Site
-//			$params = json_decode(Crypt::decrypt($request->input('data')), true);
-//		} else {
-//			$params = $request->all();
-//		}
-//
-//		$params = new ParameterBag($params);
-//
-//		$userRepo = new UserRepository();
-//
-//		$wpUser = new User;
-//
-//		$this->validate($request, $wpUser->rules);
-//
-//		$wpUser = $userRepo->createNewUser($wpUser, $params);
-//
-//		// render quick add view
-//		$viewHtml = '<html><h1>Header</h1><p>Paragraph</p></html>';
-//
-//		// return view html
-//		return response($viewHtml);
     }
 }
