@@ -53,7 +53,7 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
-                             ->whereIn('id', auth()->user()->practices->pluck('id')->all())
+                             ->authUserCanAccess()
                              ->active()
                              ->get();
 
@@ -141,7 +141,9 @@ class PracticeInvoiceController extends Controller
             $dates[$date->toDateString()] = $date->format('F, Y');
         }
 
-        $readyToBill = Practice::active()->get();
+        $readyToBill = Practice::active()
+                               ->authUserCanAccess()
+                               ->get();
         $needsQA     = [];
         $invoice_no  = AppConfig::where('config_key', 'billing_invoice_count')->first()['config_value'];
 

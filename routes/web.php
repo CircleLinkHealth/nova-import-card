@@ -1495,7 +1495,7 @@ Route::group([], function () {
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/admin',
+    'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
         'providerDashboardACL:administrator|saas-admin',
@@ -1770,6 +1770,13 @@ Route::group([
         Route::post('data', [
             'uses' => 'Billing\PracticeInvoiceController@data',
             'as'   => 'saas-admin.monthly.billing.data',
+        ]);
+    });
+
+    Route::group(['prefix' => 'practice/billing'], function () {
+        Route::get('create', [
+            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'as'   => 'saas-admin.practices.billing.create',
         ]);
     });
 });
