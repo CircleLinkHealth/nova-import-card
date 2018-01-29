@@ -13,7 +13,7 @@ if (isset($patient)) {
     <div class="container-fluid col-md-12" style="width: 100%;">
 
         <div class="navbar-header" style="width: 6%;">
-            <a href="{{ route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img
+            <a href="{{ url('/') }}" style="border: none" class="navbar-brand"><img
                         src="/img/ui/clh_logo_lt.png"
                         alt="Care Plan Manager"
                         style="position:relative;top:-15px"
@@ -66,7 +66,7 @@ if (isset($patient)) {
                     </li>
                 @endif
                 <li>
-                    <a href="{{ route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
+                    <a href="{{ url('/') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
                 <li>
                     <a href="{{ route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>

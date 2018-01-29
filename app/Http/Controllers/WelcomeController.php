@@ -46,7 +46,7 @@ class WelcomeController extends Controller
             }
 
             if (auth()->user()->hasRole('saas-admin')) {
-                return redirect()->route('patients.dashboard', [])->send();
+                return redirect()->route('saas-admin.home', [])->send();
             }
 
             if (auth()->user()->hasRole('provider')) {

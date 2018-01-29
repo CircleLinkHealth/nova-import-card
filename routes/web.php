@@ -1713,6 +1713,12 @@ Route::group([
     'prefix' => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin']
 ], function (){
+
+    Route::get('home', [
+        'uses' => 'Patient\PatientController@showDashboard',
+        'as' => 'saas-admin.home'
+    ]);
+
     Route::get('users', [
         'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
         'as'   => 'saas-admin.users.index',

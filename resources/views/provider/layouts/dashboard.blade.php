@@ -13,6 +13,10 @@
         main, header {
             padding-left: 300px;
         }
+
+        .provider-dashboard-logo {
+            height: 6.3rem !important;
+        }
     </style>
 @endpush
 
@@ -24,7 +28,9 @@
 
         <ul id="slide-out" class="side-nav" style="transform: translateX(0);">
             <li class="center-align">
-                <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
+                <a href="{{ url('/') }}" class="provider-dashboard-logo">
+                    <img src="{{asset('/img/clh_logo.svg')}}" height="64" class="brand-logo">
+                </a>
             </li>
             <li>
                 <div class="col s12" style="background-color: rgba(173, 216, 230, 0.42);color: #74b0d7;">
