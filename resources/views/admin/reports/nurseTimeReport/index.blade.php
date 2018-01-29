@@ -20,7 +20,7 @@
 
                 <div class="panel panel-default">
                     <div class="panel-body">
-                        {!! Form::open(array('url' => URL::route('admin.reports.nurseTime.index', array()), 'method' => 'get', 'class' => 'form-horizontal', 'id' => 'filters')) !!}
+                        {!! Form::open(array('url' => route('admin.reports.nurseTime.index', array()), 'method' => 'get', 'class' => 'form-horizontal', 'id' => 'filters')) !!}
                         <div class="row">
                             <div class="col-xs-2"><label for="start_date">Start Date:</label></div>
                             <div class="col-xs-4"><input id="start_date" class="form-control" name="start_date" type="input" value="{{ (old('start_date') ? old('start_date') : ($startDate->format('Y-m-d') ? $startDate->format('Y-m-d') : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('start_date') }}</span></div>
@@ -65,7 +65,7 @@
                     </div>
                 </div>
 
-                <a href="{{ URL::route('admin.reports.nurseTime.exportxls', array(
+                <a href="{{ route('admin.reports.nurseTime.exportxls', array(
                 'start_date' => (old('start_date') ? old('start_date') : ($startDate->format('Y-m-d') ? $startDate->format('Y-m-d') : '')),
                 'end_date' => (old('end_date') ? old('end_date') : ($endDate->format('Y-m-d') ? $endDate->format('Y-m-d') : ''))
                 )) }}" class="btn btn-success pull-right">Excel Export</a>

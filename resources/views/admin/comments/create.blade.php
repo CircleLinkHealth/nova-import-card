@@ -4,7 +4,7 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {!! Form::open(array('url' => URL::route('admin.comments.store', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.comments.store', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -57,7 +57,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.comments.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.comments.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Create Comment', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

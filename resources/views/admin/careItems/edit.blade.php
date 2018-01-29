@@ -4,7 +4,7 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {!! Form::open(array('url' => URL::route('admin.items.update', array('id' => $item->items_id)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.items.update', array('id' => $item->items_id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -33,16 +33,16 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-primary">Detail</a></td>
                                     <td>
                                         @if($item->pcp)
-                                            <a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
+                                            <a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
                                         @else
                                             {{ $item->pcp_id }}
                                         @endif
                                     </td>
                                     <td>{{ $item->items_parent }}</td>
-                                    <td><a href="{{ URL::route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
+                                    <td><a href="{{ route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
                                     <td>{{ $item->items_text }}</td>
                                 </tr>
                             </tbody>
@@ -71,7 +71,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.items.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.items.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Item', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

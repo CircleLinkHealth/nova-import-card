@@ -1,5 +1,5 @@
 <div id="utc" class="modal confirm modal-fixed-footer">
-    <form method="post" id="utc_form" action="{{URL::route('enrollment-center.utc')}}"
+    <form method="post" id="utc_form" action="{{route('enrollment-center.utc')}}"
           class="">
 
         {{ csrf_field() }}

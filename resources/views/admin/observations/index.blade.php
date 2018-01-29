@@ -22,7 +22,7 @@
                     @if(Cerberus::hasPermission('observations-create'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
+                                <a href="{{ route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
                             </div>
                         </div>
                     @endif
@@ -34,7 +34,7 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                {!! Form::open(array('url' => URL::route('admin.observations.index', array()), 'class' => 'form-horizontal')) !!}
+                                {!! Form::open(array('url' => route('admin.observations.index', array()), 'class' => 'form-horizontal')) !!}
                                 <h3>Filter</h3>
                                 <div class="row form-group">
                                     <div class="col-xs-2">{!! Form::label('filterUser', 'User:') !!}</div>
@@ -75,26 +75,26 @@
                             <tbody>
                             @foreach( $observations as $observation )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->id }}</a></td>
+                                    <td><a href="{{ route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->id }}</a></td>
                                     @if( isset($observation->question->qid) )
-                                        <td><a href="{{ URL::route('admin.questions.show', array('id' => $observation->question->qid)) }}" class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</a></td>
+                                        <td><a href="{{ route('admin.questions.show', array('id' => $observation->question->qid)) }}" class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</a></td>
                                     @else
                                         <td>{{ $observation->obs_message_id }}</td>
                                     @endif
-                                    <td><a href="{{ URL::route('admin.users.edit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
+                                    <td><a href="{{ route('admin.users.edit', array('id' => $observation->user_id)) }}" class="btn btn-orange btn-xs">{{ $observation->user_id }}</a></td>
                                     <td>{{ $observation->sequence_id }}</td>
                                     <td>{{ $observation->obs_date }}</td>
                                     <td>{{ $observation->obs_key }}</td>
                                     <td>{{ $observation->obs_method }}</td>
                                     <td>{{ $observation->obs_value }}</td>
                                     <td>{{ $observation->obs_unit }}</td>
-                                    <td><a href="{{ URL::route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
+                                    <td><a href="{{ route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
                                     <td>
                                         @if(Cerberus::hasPermission('observations-edit'))
-                                            <a href="{{ URL::route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
+                                            <a href="{{ route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
                                         @endif
                                         @if(Cerberus::hasPermission('observations-destroy'))
-                                            <a href="{{ URL::route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
+                                            <a href="{{ route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
                                         @endif
                                 </tr>
                             @endforeach

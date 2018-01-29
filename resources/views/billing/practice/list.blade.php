@@ -21,7 +21,7 @@
                         <hr>
 
                         <div class="row" style="padding-left: 30px;">
-                            {!! Form::open(array('url' => URL::route('monthly.billing.send', array()),'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => route('monthly.billing.send', array()),'class' => 'form-horizontal')) !!}
                                 <input type="hidden" value="{{json_encode($invoices)}}" name="links">
                                 <button id="submit" name="send" class="btn btn-success">
                                     Send To Practices

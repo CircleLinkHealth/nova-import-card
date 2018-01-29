@@ -13,12 +13,12 @@ if (isset($patient)) {
     <div class="container-fluid col-md-12" style="width: 100%;">
 
         <div class="navbar-header" style="width: 6%;">
-            <a href="{{ URL::route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img
+            <a href="{{ route('patients.dashboard') }}" style="border: none" class="navbar-brand"><img
                         src="/img/ui/clh_logo_lt.png"
                         alt="Care Plan Manager"
                         style="position:relative;top:-15px"
                         width="50px"/></a>
-            {{--<a href="{{ URL::route('patients.dashboard') }}" style="font-size: 19px;"--}}
+            {{--<a href="{{ route('patients.dashboard') }}" style="font-size: 19px;"--}}
             {{--class="navbar-title collapse navbar-collapse navbar-text navbar-left">CarePlan<span class="thin">Manager™</span></a>--}}
 
         </div>
@@ -37,9 +37,9 @@ if (isset($patient)) {
                             Users <span class="caret" style="color: #fff"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add Internal User</a></li>
-                            <li><a href="{{ URL::route('admin.observations.index', []) }}">Add Customer User</a></li>
-                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">View All</a></li>
+                            <li><a href="{{ route('saas-admin.users.create', []) }}">Add Internal User</a></li>
+                            <li><a href="{{ route('admin.observations.index', []) }}">Add Customer User</a></li>
+                            <li><a href="{{ route('saas-admin.users.index', []) }}">View All</a></li>
                         </ul>
                     </li>
 
@@ -50,10 +50,10 @@ if (isset($patient)) {
                             Practices <span class="caret" style="color: #fff"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            <li><a href="{{ URL::route('saas-admin.users.create', []) }}">Add New</a></li>
-                            <li><a href="{{ URL::route('admin.observations.index', []) }}">Manage Active</a></li>
-                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
-                            <li><a href="{{ URL::route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>
+                            <li><a href="{{ route('saas-admin.users.create', []) }}">Add New</a></li>
+                            <li><a href="{{ route('admin.programs.index', []) }}">Manage Active</a></li>
+                            <li><a href="{{ route('saas-admin.users.index', []) }}">Billable Patient Report</a></li>
+                            <li><a href="{{ route('saas-admin.users.index', []) }}">Approve Billable Patients</a></li>
                         </ul>
                     </li>
                 @endif
@@ -66,10 +66,10 @@ if (isset($patient)) {
                     </li>
                 @endif
                 <li>
-                    <a href="{{ URL::route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
+                    <a href="{{ route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
                 <li>
-                    <a href="{{ URL::route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
+                    <a href="{{ route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>
                 </li>
 
                 <li class="dropdown">
@@ -119,7 +119,7 @@ if (isset($patient)) {
 
                         @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
                             <li><a style="color: #47beab"
-                                   href="{{ empty($patient->id) ? URL::route('admin.dashboard') : URL::route('admin.users.edit', array('patient' => $patient->id)) }}">
+                                   href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel
                                 </a>
                             </li>

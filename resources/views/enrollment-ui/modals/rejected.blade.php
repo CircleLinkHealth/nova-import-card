@@ -1,5 +1,5 @@
 <div id="rejected" class="modal confirm modal-fixed-footer">
-    <form method="post" id="rejected_form" action="{{URL::route('enrollment-center.rejected')}}"
+    <form method="post" id="rejected_form" action="{{route('enrollment-center.rejected')}}"
           class="">
 
         {{ csrf_field() }}

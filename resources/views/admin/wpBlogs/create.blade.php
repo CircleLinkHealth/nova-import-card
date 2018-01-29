@@ -25,12 +25,12 @@
                         Add New Practice
                     </div>
                     <div class="panel-body">
-                        {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

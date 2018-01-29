@@ -108,7 +108,7 @@
                                                 <label for="select-user-checkbox-{{ $wpUser->id }}"><span> </span></label>
                                             </div>
                                         </td>
-                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                        <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -120,7 +120,7 @@
                                         <td>{{ $wpUser->email }}</td>
                                         <td>
                                             @if ($wpUser->primaryPractice)
-                                                <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
+                                                <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
                                             @endif
                                         </td>
@@ -146,7 +146,7 @@
                                             @endif
 
                                             @if(Cerberus::hasPermission('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
+                                                <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-remove-sign"></i> Delete</a>
