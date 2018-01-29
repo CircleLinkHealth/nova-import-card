@@ -127,17 +127,35 @@
             $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
             $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
 
-            
+            $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
+                return $problems->first();
+            });
+    
+            $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
+                return !$cpmProblems->first(function ($cpm) use ($problem) {
+                    return $cpm['name'] == $problem['name'];
+                }) && $problem['is_monitored'];
+            })->groupBy('name')->values()->map(function ($problems) {
+                return $problems->first();
+            });
         ?>
-        @if(!empty($problems))
+        @if(!empty($cpmProblemsForListing) || !empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
-                @foreach($problems as $problem)
-                    @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem != 'Diabetes')
+                @foreach($cpmProblemsForListing as $problem)
+                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                         checked="checked" disabled="disabled">
-                            <label for="condition27"><span> </span>{{$problem}}</label>
+                            <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                        </li>
+                    @endif
+                @endforeach
+                @foreach($ccdMonitoredProblems as $problem)
+                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
+                        <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                        checked="checked" disabled="disabled">
+                            <label for="condition27"><span> </span>{{$problem['name']}}</label>
                         </li>
                     @endif
                 @endforeach
