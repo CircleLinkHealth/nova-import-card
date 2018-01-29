@@ -1719,35 +1719,37 @@ Route::group([
         'as' => 'saas-admin.home'
     ]);
 
-    Route::get('users', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
-        'as'   => 'saas-admin.users.index',
-    ]);
+    Route::group(['prefix' => 'users'], function(){
+        Route::get('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
+            'as'   => 'saas-admin.users.index',
+        ]);
 
-    Route::get('users/create', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
-        'as'   => 'saas-admin.users.create',
-    ]);
+        Route::get('create', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
+            'as'   => 'saas-admin.users.create',
+        ]);
 
-    Route::post('users', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
-        'as'   => 'saas-admin.users.store',
-    ]);
+        Route::post('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
+            'as'   => 'saas-admin.users.store',
+        ]);
 
-    Route::get('users/{userId}', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
-        'as'   => 'saas-admin.users.edit',
-    ]);
+        Route::get('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
+            'as'   => 'saas-admin.users.edit',
+        ]);
 
-    Route::patch('users/{userId}', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
-        'as'   => 'saas-admin.users.update',
-    ]);
+        Route::patch('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
+            'as'   => 'saas-admin.users.update',
+        ]);
 
-    Route::post('users/action', [
-        'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
-        'as'   => 'saas-admin.users.action',
-    ]);
+        Route::post('action', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
+            'as'   => 'saas-admin.users.action',
+        ]);
+    });
 
     Route::resource('practices', 'SAAS\Admin\CRUD\PracticeController', ['names' => [
         'index' => 'saas-admin.practices.index',
@@ -1758,6 +1760,16 @@ Route::group([
         'show' => 'saas-admin.practices.show',
         'edit' => 'saas-admin.practices.edit',
     ]]);
+
+    Route::get('/make', [
+        'uses' => 'Billing\PracticeInvoiceController@make',
+        'as'   => 'monthly.billing.make',
+    ]);
+
+    Route::post('/data', [
+        'uses' => 'Billing\PracticeInvoiceController@data',
+        'as'   => 'monthly.billing.data',
+    ]);
 });
 
 
