@@ -62,8 +62,9 @@ class Kernel extends ConsoleKernel
                  ->weekdays()
                  ->dailyAt('08:00');
 
-        $schedule->command('nurseSchedule:export')
-                 ->hourly();
+        //commenting out due to isues with google calendar
+//        $schedule->command('nurseSchedule:export')
+//                 ->hourly();
 
         $schedule->command('athena:getAppointments')
                  ->dailyAt('23:00');
