@@ -105,7 +105,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 }
 
                 .top-20 {
-                    margin-top: 20px;
+                    margin-top: 20px !important;
                 }
 
                 li.list-square {
@@ -458,6 +458,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
+                <?php
+                    $symptoms = new Collection($data['symptoms']);
+                ?>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
@@ -468,11 +471,16 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @foreach($careplan['symptoms'] as $s)
-                                    <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                                @foreach($symptoms as $symptom)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row top-20'>{{$symptom['name']}}</li>
                                 @endforeach
                             </ul>
                         </div>
+                        @if (empty($symptoms))
+                            <div class="col-xs-12 text-center">
+                                No Symptoms at this time
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /SYMPTOMS -->
