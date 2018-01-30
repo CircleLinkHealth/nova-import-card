@@ -22,7 +22,7 @@ class PatientEnrollmentSeeeder extends Seeder
      */
     public function run()
     {
-        $patients = new Collection([ 874, 335, 336, 337, 342 ]);
+        $patients = new Collection([ 335, 336, 337, 342 ]);
         $patients->map(function ($id) {
             return Careplan::where([ 'user_id' => $id ])->first();
         })->map(function ($patient) {
