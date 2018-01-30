@@ -64,18 +64,23 @@ class NoteService
             if (!$this->userRepo->exists($userId)) {
                 throw new Exception('user with id "' . $userId . '" does not exist');
             }
-            else if (!$this->userRepo->exists($authorId)) {
+            else if ($type != 'Biometrics' && !$this->userRepo->exists($authorId)) {
                 throw new Exception('user with id "' . $authorId . '" does not exist');
             }
             else {
-                $note = new Note();
-                $note->patient_id = $userId;
-                $note->author_id = $authorId;
-                $note->body = $body;
-                $note->type = $type;
-                $note->isTCM = $isTCM;
-                $note->did_medication_recon = $did_medication_recon;
-                return $this->repo()->add($note);
+                if ($type != 'Biometrics') {
+                    $note = new Note();
+                    $note->patient_id = $userId;
+                    $note->author_id = $authorId;
+                    $note->body = $body;
+                    $note->type = $type;
+                    $note->isTCM = $isTCM;
+                    $note->did_medication_recon = $did_medication_recon;
+                    return $this->repo()->add($note);
+                }
+                else {
+                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
+                }
             }
         }
         else throw new Exception('invalid parameters');

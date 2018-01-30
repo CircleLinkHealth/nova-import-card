@@ -180,7 +180,7 @@
                     return $promise.then(response => {
                         console.log('health-goals:note-add', response.data)
                         Event.$emit('health-goals:note-add', response.data)
-                        this.note = response.data
+                        if (response.data) this.note = response.data
                         this.loaders.editNote = false
                     }).catch(err => {
                         console.error('health-goals:note-add', err)
@@ -193,6 +193,7 @@
             const goals = this.careplan().healthGoals
             
             this.note = this.careplan().healthGoalNote || this.note
+            console.log('patient-note', this.note)
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
