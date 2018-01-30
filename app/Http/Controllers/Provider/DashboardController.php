@@ -8,6 +8,7 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use App\Location;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -209,6 +210,11 @@ class DashboardController extends Controller
         }
 
         $this->primaryPractice->update($update);
+
+        Location::whereId($request['primary_location'])
+            ->update([
+                'is_primary' => true
+            ]);
 
         return redirect()->back();
     }
