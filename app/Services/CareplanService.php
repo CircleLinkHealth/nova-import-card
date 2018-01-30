@@ -80,7 +80,7 @@ class CareplanService
             'misc'              => $this->miscService->patientMisc($userId),
             'allMisc'           => $this->miscService->repo()->misc(),
             'appointments'      => $this->appointmentService->repo()->patientAppointments($userId)->getCollection(),
-            'healthGoalNote'    => $this->noteService->repo()->patientNotes($userId, 'Biometrics')->getCollection()->first()
+            'healthGoalNote'    => $this->noteService->patientNotes($userId, 'Biometrics')->first()
         ];
     }
 }
