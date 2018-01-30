@@ -2696,4 +2696,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'program_id' => $this->program_id
         ];
     }
+
+    public function saasAccount() {
+        return $this->belongsTo(SaasAccount::class);
+    }
 }
