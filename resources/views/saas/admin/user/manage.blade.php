@@ -59,6 +59,7 @@
                                     {!! Form::open(['url' => $submitUrl, 'method' => $submitMethod, 'class' => 'form-horizontal']) !!}
 
                                     <input type="hidden" name="user[id]" value="{{$internalUserId}}">
+                                    <input type="hidden" name="user[saas_account_id]" value="{{auth()->user()->saas_account_id}}">
 
                                     <div role="tabpanel" class="tab-pane active" id="program">
                                         <!-- User info -->

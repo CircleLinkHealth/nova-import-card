@@ -14,9 +14,11 @@ use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
 use App\Observers\PatientObserver;
 use App\Observers\ProblemCodeObserver;
+use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
 use App\PageTimer;
 use App\Patient;
+use App\SaasAccount;
 use App\User;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,6 +38,7 @@ class ObserversServiceProvider extends ServiceProvider
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);
         ProblemCode::observe(ProblemCodeObserver::class);
+        SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
     }
 
