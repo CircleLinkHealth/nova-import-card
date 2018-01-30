@@ -88,6 +88,7 @@ class OnboardingController extends Controller
 
         return view('provider.onboarding.invited-staff', [
             'user' => $user,
+            'invite' => $this->invite,
         ]);
     }
 
@@ -205,6 +206,9 @@ class OnboardingController extends Controller
         ]);
 
         auth()->login($user);
+
+        Invite::whereCode($request['code'])
+            ->delete();
 
         return redirect()
             ->to('/');

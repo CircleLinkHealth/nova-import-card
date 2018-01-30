@@ -83,6 +83,7 @@
     </div>
 
     <div class="row">
+        <input type="hidden" name="code" value="{{$invite->code}}">
         <button class="btn blue waves-effect waves-light col s12" type="submit" name="submit">
             Create account
         </button>

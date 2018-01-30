@@ -25,10 +25,16 @@ class CreateInvitedUserAccount extends FormRequest
     public function rules()
     {
         return [
-            'email'      => ['required', 'filled', 'email', Rule::unique('users', 'email')->ignore($this->input('userId'))],
+            'email'      => [
+                'required',
+                'filled',
+                'email',
+                Rule::unique('users', 'email')->ignore($this->input('userId')),
+            ],
             'first_name' => 'required|filled',
             'last_name'  => 'required|filled',
-            'password'   => 'required|filled|min:8'
+            'password'   => 'required|filled|min:8',
+            'code'       => 'required|filled',
         ];
     }
 }
