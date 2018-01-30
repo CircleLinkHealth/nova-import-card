@@ -22,16 +22,28 @@ class ManageInternalUser extends ServiceProvider
     public function boot()
     {
         View::composer(['saas.admin.user.manage'], function ($view) {
+            $autoAttachPrograms = $showNurseInfo = $usernameField = $emailField = $firstNameField = $lastNameField = $practicesField = $roleField = $internalUserId = $nurseInfo = '';
+
             $data = collect($view->getData());
 
-            $usernameField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->username : '';
-            $emailField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->email : '';
-            $firstNameField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->first_name : '';
-            $lastNameField = $data->has('editedUser') ? $data->get('editedUser')->getUser()->last_name : '';
-            $practicesField = $data->has('editedUser') ? $data->get('editedUser')->getPractices() : '';
-            $roleField = $data->has('editedUser') ? $data->get('editedUser')->getRole() : '';
-            $internalUserId = $data->has('editedUser') ? $data->get('editedUser')->getUser()->id : '';
+            if ($data->has('editedUser')) {
+                $editedUser = $data->get('editedUser')->getUser();
 
+                $autoAttachPrograms = $editedUser->auto_attach_programs
+                    ? 'checked'
+                    : '';
+                $usernameField      = $editedUser->username;
+                $emailField         = $editedUser->email;
+                $firstNameField     = $editedUser->first_name;
+                $lastNameField      = $editedUser->last_name;
+                $practicesField     = $data->get('editedUser')->getPractices();
+                $roleField          = $data->get('editedUser')->getRole();
+                $internalUserId     = $editedUser->id;
+
+                //Removing since we are not including this in the SAAS product yet
+//                $showNurseInfo      = $editedUser->hasRole('care-center');
+            }
+            $showNurseInfo = false;
 
             $view->with(compact([
                 'usernameField',
@@ -41,6 +53,9 @@ class ManageInternalUser extends ServiceProvider
                 'practicesField',
                 'roleField',
                 'internalUserId',
+                'showNurseInfo',
+                'autoAttachPrograms',
+                'nurseInfo',
             ]));
         });
     }

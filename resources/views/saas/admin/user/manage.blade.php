@@ -61,63 +61,85 @@
                                     <input type="hidden" name="user[id]" value="{{$internalUserId}}">
 
                                     <div role="tabpanel" class="tab-pane active" id="program">
-                                        <h2>User Information</h2>
-                                        <hr>
+                                        <!-- User info -->
+                                        <div id="user-info-formgroup">
+                                            <h2>User Information</h2>
+                                            <hr>
 
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('username', 'Username') !!} <span
-                                                            style="color: red;">*</span></div>
-                                                <div class="col-xs-4">{!! Form::text('user[username]', $usernameField, ['class' => 'form-control', 'required' => true]) !!}</div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-2">{!! Form::label('username', 'Username') !!}
+                                                        <span
+                                                                style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">{!! Form::text('user[username]', $usernameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('email', 'Email') !!} <span
-                                                            style="color: red;">*</span></div>
-                                                <div class="col-xs-4">{!! Form::text('user[email]', $emailField, ['class' => 'form-control', 'required' => true]) !!}</div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('first_name', 'First Name') !!}
-                                                    <span style="color: red;">*</span></div>
-                                                <div class="col-xs-4">{!! Form::text('user[first_name]', $firstNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
-
-                                                <div class="col-xs-2">{!! Form::label('last_name', 'Last Name') !!}
-                                                    <span style="color: red;">*</span></div>
-                                                <div class="col-xs-4">{!! Form::text('user[last_name]', $lastNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
-                                            </div>
-                                        </div>
-
-                                        <br>
-                                        <br>
-                                        <h2>Access Rights</h2>
-                                        <hr>
-
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-xs-2">{!! Form::label('practices', 'Practices') !!}
-                                                    <span style="color: red;">*</span></div>
-                                                <div class="col-xs-4">
-                                                    {!! Form::select('practices[]', $practices, $practicesField, ['class' => 'practices dropdown Valid form-control', 'required'=>true, 'multiple'=>true]) !!}
+                                                    <div class="col-xs-2">{!! Form::label('email', 'Email') !!} <span
+                                                                style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">{!! Form::text('user[email]', $emailField, ['class' => 'form-control', 'required' => true]) !!}</div>
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-2">{!! Form::label('first_name', 'First Name') !!}
+                                                        <span style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">{!! Form::text('user[first_name]', $firstNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
 
-                                                <div class="col-xs-2">{!! Form::label('role', 'Role') !!} <span
-                                                            style="color: red;">*</span></div>
-                                                <div class="col-xs-4">{!! Form::select('role', $roles, $roleField, ['class' => 'form-control select-picker']) !!}</div>
+                                                    <div class="col-xs-2">{!! Form::label('last_name', 'Last Name') !!}
+                                                        <span style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">{!! Form::text('user[last_name]', $lastNameField, ['class' => 'form-control', 'required' => true]) !!}</div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-xs-6">
-                                                    <div class="radio-inline">
-                                                        <input id="auto_attach_programs" name="auto_attach_programs"
-                                                               value="1" type="checkbox">
-                                                        <label for="auto_attach_programs"><span> </span>Grant permission
-                                                            to all practices</label>
+                                        <!-- Access rights -->
+                                        <div id="access-rights-formgroup">
+                                            <br>
+                                            <br>
+
+                                            <h2>Access Rights</h2>
+                                            <hr>
+
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-2">{!! Form::label('practices', 'Practices') !!}
+                                                        <span style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">
+                                                        {!! Form::select('practices[]', $practices, $practicesField, ['class' => 'practices dropdown Valid form-control', 'required'=>true, 'multiple'=>true]) !!}
+                                                    </div>
+
+                                                    <div class="col-xs-2">{!! Form::label('role', 'Role') !!} <span
+                                                                style="color: red;">*</span></div>
+                                                    <div class="col-xs-4">{!! Form::select('role', $roles, $roleField, ['class' => 'form-control select-picker']) !!}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-xs-6">
+                                                        <div class="radio-inline">
+                                                            <input id="auto_attach_programs"
+                                                                   name="user[auto_attach_programs]"
+                                                                   value="1" type="checkbox" {{$autoAttachPrograms}}>
+                                                            <label for="auto_attach_programs"><span> </span>Grant
+                                                                permission
+                                                                to all practices</label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Nurse info -->
+                                        @if($showNurseInfo)
+                                            <div id="nurse-info-formgroup">
+                                                <br>
+                                                <br>
+
+                                                <h2>Nurse Info</h2>
+                                                <hr>
+                                                @include('partials.admin.user.nurse-info')
+                                            </div>
+                                        @endif
                                     </div>
 
                                     <div class="row" style="margin-top:50px;">
@@ -129,7 +151,8 @@
                                                     {!! Form::submit('Save', ['class' => 'btn btn-success submit']) !!}
                                                 @endif
 
-                                                <a href="{{ route('saas-admin.users.index', []) }}" class="btn btn-danger">Cancel</a>
+                                                <a href="{{ route('saas-admin.users.index', []) }}"
+                                                   class="btn btn-danger">Cancel</a>
 
                                             </div>
                                         </div>
