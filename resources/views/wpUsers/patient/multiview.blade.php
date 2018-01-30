@@ -95,6 +95,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 .font-22 {
                     font-size: 22px;
                 }
+
+                .top-10 {
+                    margin-top: 10px;
+                }
+
+                .top-20 {
+                    margin-top: 20px;
+                }
             </style>
         @endpush
         <div class="container">
@@ -308,14 +316,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
                                 <div class="text-center">No Problems at this time</div>
                             @else
-                                <ul class="subareas__list">
+                                <ul class="row">
                                     @foreach ($cpmProblemsForListing as $problem)
-                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                        <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
                                         </li>
                                     @endforeach
                                     @foreach ($ccdMonitoredProblems as $problem)
-                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                        <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
                                         </li>
                                     @endforeach
