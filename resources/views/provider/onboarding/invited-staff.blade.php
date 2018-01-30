@@ -2,7 +2,7 @@
 
 @section('title', 'Welcome!')
 
-@section('instructions', "Welcome! Let's create <u>your user account</u>.")
+@section('instructions', "Welcome! Let's create your user account.")
 
 @section('module')
 
@@ -34,7 +34,7 @@
 
     <div class="row">
         @include('provider.partials.mdl.form.text.textfield', [
-            'name' => 'firstName',
+            'name' => 'first_name',
             'label' => 'First name',
             'class' => 'col s6',
             'value' => $user->first_name,
@@ -44,7 +44,7 @@
         ])
 
         @include('provider.partials.mdl.form.text.textfield', [
-            'name' => 'lastName',
+            'name' => 'last_name',
             'label' => 'Last name',
             'class' => 'col s6',
             'value' => $user->last_name,
@@ -66,6 +66,7 @@
                 'required' => 'required',
             ]
         ])
+        <input type="hidden" value="{{$user->id}}" name="userId">
     </div>
 
     <div class="row">
