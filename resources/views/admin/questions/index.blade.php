@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.questions.create', array()) }}" class="btn btn-success">New Question</a>
+                            <a href="{{ route('admin.questions.create', array()) }}" class="btn btn-success">New Question</a>
                         </div>
                     </div>
                 </div>
@@ -44,13 +44,13 @@
                             <tbody>
                             @foreach( $questions as $question )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">Detail</a></td>
                                     <td><div class="btn btn-orange btn-xs">{{ $question->msg_id }}</div></td>
                                     <td>{{ $question->qtype }}</td>
                                     <td>{{ $question->obs_key }}</td>
                                     <td>{!! $question->iconHtml() !!}</td>
                                     <td>{{ $question->category }}</td>
-                                    <td><a href="{{ URL::route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.questions.destroy', array('id' => $question->qid)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td><a href="{{ route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.questions.destroy', array('id' => $question->qid)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

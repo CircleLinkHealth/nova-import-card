@@ -151,7 +151,7 @@ class CallsController extends ApiController
                              }
                          })
                          ->editColumn('patient_name', function ($call) {
-                             return '<a href="' . \URL::route(
+                             return '<a href="' . \route(
                                      'patient.demographics.show',
                                      ['patientId' => $call->inboundUser->id]
                                  ) . '" target="_blank">' . $call->patient_name . '</span>';
@@ -255,7 +255,7 @@ class CallsController extends ApiController
                                  return '';
                              }
 
-                             return '<a target="_blank" href="' . \URL::route(
+                             return '<a target="_blank" href="' . \route(
                                      'patient.note.index',
                                      ['patientId' => $call->inboundUser->id]
                                  ) . '">Notes</a>';

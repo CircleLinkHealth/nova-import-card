@@ -55,7 +55,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                {!! Form::open(array('url' => URL::route('admin.users.store'), 'class' => 'form-horizontal')) !!}
+                                {!! Form::open(array('url' => route('admin.users.store'), 'class' => 'form-horizontal')) !!}
 
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
@@ -172,7 +172,7 @@
                                     <div class="row" style="margin-top:50px;">
                                         <div class="col-sm-12">
                                             <div class="pull-right">
-                                                <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                                <a href="{{ route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                                 {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
                                             </div>
                                         </div>

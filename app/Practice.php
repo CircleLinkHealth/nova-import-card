@@ -79,6 +79,7 @@ class Practice extends \App\BaseModel
         Notifiable;
 
     protected $fillable = [
+        'saas_account_id',
         'name',
         'display_name',
         'active',
@@ -273,6 +274,16 @@ class Practice extends \App\BaseModel
     public function scopeActive($q)
     {
         return $q->whereActive(1);
+    }
+
+    public function scopeAuthUserCanAccess($q)
+    {
+        return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());
+    }
+
+    public function scopeAuthUserCannotAccess($q)
+    {
+        return $q->whereNotIn('id', auth()->user()->practices->pluck('id')->all());
     }
 
     public function cpmSettings()

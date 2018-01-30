@@ -26,7 +26,7 @@
                         {!! Form::open(array('url' => route('saas-admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="pull-right">
+                                <div class="pull-left">
                                     <a class="btn btn-info" data-toggle="collapse"
                                        data-parent="#accordion"
                                        href="#collapseFilter">Toggle Filters</a>
@@ -38,16 +38,16 @@
                                 <div class="col-md-8 col-md-offset-2">
                                     <div class="row">
                                         <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
-                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Practice:') !!}</div>
+                                    <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                 </div>
                             </div>
                             <div class="row" style="margin-top:50px;">
@@ -72,7 +72,7 @@
                         @if(Cerberus::hasPermission('users-edit-all'))
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="pull-right">
+                                    <div class="pull-left">
                                         With selected Users:
                                         <select name="action">
                                             <option value="delete">Delete</option>
@@ -93,7 +93,7 @@
                                 <td><strong>Name</strong></td>
                                 <td><strong>Role</strong></td>
                                 <td><strong>Email</strong></td>
-                                <td><strong>Program</strong></td>
+                                <td><strong>Practice</strong></td>
                                 <td><strong>Actions</strong></td>
                             </tr>
                             </thead>
@@ -108,7 +108,7 @@
                                                 <label for="select-user-checkbox-{{ $wpUser->id }}"><span> </span></label>
                                             </div>
                                         </td>
-                                        <td><a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                        <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
@@ -120,25 +120,33 @@
                                         <td>{{ $wpUser->email }}</td>
                                         <td>
                                             @if ($wpUser->primaryPractice)
-                                                <a href="{{ URL::route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
+                                                <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Cerberus::hasPermission('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                            @if($wpUser->hasRole(['care-center', 'saas-admin']))
+                                                <a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
+                                                   class="btn btn-primary btn-xs"><i
+                                                            class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            @elseif($wpUser->hasRole(['participant']))
+                                                <a href="{{ route('patient.demographics.show', ['patientId' => $wpUser->id]) }}"
+                                                   class="btn btn-primary btn-xs"><i
+                                                            class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            @else
+                                                <a href="{{ route('provider.dashboard.manage.staff', ['practiceSlug' => $wpUser->practices->first()->name]) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
-                                            @if (count($wpUser->roles) > 0)
-                                                @if($wpUser->hasRole('participant'))
-                                                    <a href="{{ URL::route('patient.summary', array('patientId' => $wpUser->id)) }}"
-                                                       class="btn btn-info btn-xs" style="margin-left:10px;"><i
-                                                                class="glyphicon glyphicon-eye-open"></i> UI</a>
-                                                @endif
+
+                                            @if($wpUser->hasRole('participant'))
+                                                <a href="{{ route('patient.summary', ['patientId' => $wpUser->id]) }}"
+                                                   class="btn btn-info btn-xs" style="margin-left:10px;"><i
+                                                            class="glyphicon glyphicon-eye-open"></i> View</a>
                                             @endif
+
                                             @if(Cerberus::hasPermission('users-edit-all'))
-                                                <a href="{{ URL::route('admin.users.destroy', array('id' => $wpUser->id)) }}"
+                                                <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-remove-sign"></i> Delete</a>

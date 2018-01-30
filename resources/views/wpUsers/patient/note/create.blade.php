@@ -26,7 +26,7 @@
 
     @include('partials.confirm-modal')
 
-    <form id="newNote" method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient->id])}}"
+    <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
             <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"

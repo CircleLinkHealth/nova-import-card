@@ -54,7 +54,7 @@
                 {
                     id: "first_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                    template: "<a href='<?php echo URL::route('patient.summary',
+                    template: "<a href='<?php echo route('patient.summary',
                         array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>",
                     width: 200,
                     sort: 'string'
@@ -62,7 +62,7 @@
                 {
                     id: "last_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                    template: "<a href='<?php echo URL::route('patient.summary',
+                    template: "<a href='<?php echo route('patient.summary',
                         array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>",
                     width: 200,
                     sort: 'string'

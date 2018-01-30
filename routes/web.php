@@ -868,12 +868,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
-
-            Route::post('monthly-billing', [
-                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-                'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
-            ]);
-
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
@@ -1501,10 +1495,10 @@ Route::group([], function () {
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/admin',
+    'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator',
+        'providerDashboardACL:administrator|saas-admin',
     ],
 ], function () {
 
@@ -1719,35 +1713,72 @@ Route::group([
     'prefix' => 'saas/admin',
     'middleware' => ['auth', 'role:saas-admin']
 ], function (){
-    Route::get('users', [
-        'uses' => 'SAAS\Admin\InternalUserController@index',
-        'as'   => 'saas-admin.users.index',
+
+    Route::get('home', [
+        'uses' => 'Patient\PatientController@showDashboard',
+        'as' => 'saas-admin.home'
     ]);
 
-    Route::get('users/create', [
-        'uses' => 'SAAS\Admin\InternalUserController@create',
-        'as'   => 'saas-admin.users.create',
-    ]);
+    Route::group(['prefix' => 'users'], function(){
+        Route::get('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
+            'as'   => 'saas-admin.users.index',
+        ]);
 
-    Route::post('users', [
-        'uses' => 'SAAS\Admin\InternalUserController@store',
-        'as'   => 'saas-admin.users.store',
-    ]);
+        Route::get('create', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
+            'as'   => 'saas-admin.users.create',
+        ]);
 
-    Route::get('users/{userId}', [
-        'uses' => 'SAAS\Admin\InternalUserController@edit',
-        'as'   => 'saas-admin.users.edit',
-    ]);
+        Route::post('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
+            'as'   => 'saas-admin.users.store',
+        ]);
 
-    Route::patch('users/{userId}', [
-        'uses' => 'SAAS\Admin\InternalUserController@update',
-        'as'   => 'saas-admin.users.update',
-    ]);
+        Route::get('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
+            'as'   => 'saas-admin.users.edit',
+        ]);
 
-    Route::post('users/action', [
-        'uses' => 'SAAS\Admin\InternalUserController@action',
-        'as'   => 'saas-admin.users.action',
-    ]);
+        Route::patch('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
+            'as'   => 'saas-admin.users.update',
+        ]);
+
+        Route::post('action', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
+            'as'   => 'saas-admin.users.action',
+        ]);
+    });
+
+    Route::resource('practices', 'SAAS\Admin\CRUD\PracticeController', ['names' => [
+        'index' => 'saas-admin.practices.index',
+        'store' => 'saas-admin.practices.store',
+        'create' => 'saas-admin.practices.create',
+        'destroy' => 'saas-admin.practices.destroy',
+        'update' => 'saas-admin.practices.update',
+        'show' => 'saas-admin.practices.show',
+        'edit' => 'saas-admin.practices.edit',
+    ]]);
+
+    Route::group(['prefix' => 'monthly-billing'], function(){
+        Route::get('make', [
+            'uses' => 'Billing\PracticeInvoiceController@make',
+            'as'   => 'saas-admin.monthly.billing.make',
+        ]);
+
+        Route::post('data', [
+            'uses' => 'Billing\PracticeInvoiceController@data',
+            'as'   => 'saas-admin.monthly.billing.data',
+        ]);
+    });
+
+    Route::group(['prefix' => 'practice/billing'], function () {
+        Route::get('create', [
+            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'as'   => 'saas-admin.practices.billing.create',
+        ]);
+    });
 });
 
 
