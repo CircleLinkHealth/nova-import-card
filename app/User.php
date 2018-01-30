@@ -270,6 +270,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      * @var array
      */
     protected $fillable = [
+        'saas_account_id',
         'skip_browser_checks',
         'username',
         'password',
@@ -2699,5 +2700,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'specialty' => $this->specialty,
             'program_id' => $this->program_id
         ];
+    }
+
+    public function saasAccount() {
+        return $this->belongsTo(SaasAccount::class);
     }
 }

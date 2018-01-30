@@ -95,6 +95,30 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 .font-22 {
                     font-size: 22px;
                 }
+                
+                .font-18 {
+                    font-size: 18px;
+                }
+
+                .top-10 {
+                    margin-top: 10px;
+                }
+
+                .top-20 {
+                    margin-top: 20px !important;
+                }
+
+                li.list-square {
+                    list-style-type: square;
+                }
+            
+                .label-primary {
+                    background-color: #109ace;
+                }
+            
+                .label-secondary {
+                    background-color: #47beab;
+                }
             </style>
         @endpush
         <div class="container">
@@ -281,6 +305,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             return $problems->first();
                         });
 
+                        $problemsWithInstructions = $cpmProblemsForListing->filter(function ($cpm) {
+                            return $cpm['instruction']['name'];
+                        })->concat($ccdProblems->filter(function ($ccd) {
+                            return $ccd['instruction']['name'];
+                        }))->groupBy('name')->values()->map(function ($problems) {
+                            return $problems->first();
+                        });
+
                         $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
                             return !$cpmProblems->first(function ($cpm) use ($problem) {
                                 return $cpm['name'] == $problem['name'];
@@ -308,14 +340,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
                                 <div class="text-center">No Problems at this time</div>
                             @else
-                                <ul class="subareas__list">
+                                <ul class="row">
                                     @foreach ($cpmProblemsForListing as $problem)
-                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                        <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
                                         </li>
                                     @endforeach
                                     @foreach ($ccdMonitoredProblems as $problem)
-                                        <li class='subareas__item inline-block col-sm-6 print-row'>
+                                        <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
                                         </li>
                                     @endforeach
@@ -384,35 +416,49 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
+                <?php
+                    $medications = new Collection($data['medications']);
+                    $medicationGroups = new Collection($data['medicationGroups']);
+
+                    $medications = $medications->map(function ($medication) use ($medicationGroups) {
+                        $medication['group'] = $medicationGroups->first(function ($group) use ($medication) {
+                            return $group['id'] == $medication['medication_group_id'];
+                        });
+                        return $medication;
+                    });
+                ?>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Medications</h2>
                         </div>
-                        <div class="col-xs-10">
-                            <ul><strong>Monitoring these Medications</strong><BR>
-                                @if(!empty($careplan['medications']))
-                                    @if(is_array($careplan['medications']))
-                                        @foreach($careplan['medications'] as $medi)
-                                            <li style="margin-top:14px;">{!! $medi !!}</li>
-                                        @endforeach
-                                    @else
-                                        {{$careplan['medications']}}
-                                    @endif
-                                @endif
-                            </ul>
-                        </div>
-                        <div class="col-xs-10">
-                            <ul><strong>Taking these Medications</strong><BR>
-                                @if(!empty($careplan['taking_meds']))
-                                    @if(is_array($careplan['taking_meds']))
-                                        @foreach($careplan['taking_meds'] as $medi)
-                                            <li style="margin:14px 0px 0px 0px;">{!! $medi !!}</li>
-                                        @endforeach
-                                    @else
-                                        {{$careplan['taking_meds']}}
-                                    @endif
-                                @endif
+                        <div class="col-xs-12">
+                            <ul v-if="medications.length">
+                                @foreach ($medications as $medication) 
+                                    <li class="top-10">
+                                        @if ($medication['name'])
+                                        <h4>{{$medication['name']}} 
+                                            @if ($medication['group']['name'])
+                                                <label class="label label-secondary">{{$medication['group']['name']}}</label>
+                                            @endif
+                                        </h4>
+                                        @endif
+                                        @if (!$medication['name'])
+                                        <h4>- {{$medication['sig']}}
+                                            @if ($medication['group']['name'])
+                                                <label class="label label-primary">{{$medication['group']['name']}}</label>
+                                            @endif
+                                        </h4>
+                                        @endif
+                                        @if ($medication['name'] && $medication['sig'])
+                                            <ul class="font-18">
+                                                @foreach (explode('\n', $medication['sig']) as $sig)
+                                                <li class="list-square">{{$sig}}</li>
+                                                @endforeach
+                                            </ul>
+                                        @endif
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
                     </div>
@@ -420,6 +466,9 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- /MEDICATIONS -->
 
                 <!-- SYMPTOMS -->
+                <?php
+                    $symptoms = new Collection($data['symptoms']);
+                ?>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
@@ -430,16 +479,24 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @foreach($careplan['symptoms'] as $s)
-                                    <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row'>{{$s}}</li>
+                                @foreach($symptoms as $symptom)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-4 print-row top-20'>{{$symptom['name']}}</li>
                                 @endforeach
                             </ul>
                         </div>
+                        @if (empty($symptoms))
+                            <div class="col-xs-12 text-center">
+                                No Symptoms at this time
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /SYMPTOMS -->
 
                 <!-- LIFESTYLES -->
+                <?php
+                    $lifestyles = $data['lifestyles'];
+                ?>
                 <div class="patient-info__subareas">
                     <div class="row">
                         <div class="col-xs-12">
@@ -451,15 +508,28 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <div class="row">
                         <div class="col-xs-12">
                             <ul class="subareas__list">
-                                @foreach($careplan['lifestyle'] as $style)
-                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$style}}</li>
+                                @foreach($lifestyles as $lifestyle)
+                                    <li class='subareas__item inline-block col-xs-6 col-sm-3 print-row'>{{$lifestyle['name']}}</li>
                                 @endforeach
                             </ul>
                         </div>
                     </div>
                 </div>
                 <!-- /LIFESTYLES -->
+                
 
+                <div class="patient-info__subareas pb-before">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
+                                Plan</h2>
+                        </div>
+
+                        <div class="col-xs-12">
+                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- INSTRUCTIONS -->
                 <div class="patient-info__subareas pb-before">
@@ -469,15 +539,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Plan
                                 Part 2</h1>
                         </div>
-
-                        <div class="col-xs-12">
-                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
-                                Plan</h2>
-                        </div>
-
-                        <div class="col-xs-12">
-                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
-                        </div>
+                        
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Follow these
                                 Instructions:</h2>
@@ -485,12 +547,16 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-12">
                             <p></p>
                         </div>
+                        @foreach ($problemsWithInstructions as $problem)
+                            <div class="col-xs-12">
+                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{$problem['name']}}:</h3>
+                                @foreach (explode("\n", $problem['instruction']['name']) as $instruction)
+                                    <p>{!! $instruction == '' ? "<br>" : $instruction !!}</p>
+                                @endforeach
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-
-                @include('partials.view-care-plan.followTheseInstructions', [
-                    'problems' => $careplan['problems']
-                ])
 
             <!-- OTHER INFORMATION -->
                 <div class="row pb-before">

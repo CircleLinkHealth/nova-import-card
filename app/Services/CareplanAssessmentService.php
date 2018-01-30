@@ -38,8 +38,6 @@ class CareplanAssessmentService
     }
 
     function after(CareplanAssessment $assessment) {
-        if ($assessment->key_treatment) $this->createAssessmentNote($assessment, $assessment->key_treatment, 'Biometrics');
-
         $this->createAssessmentNote($assessment, $assessment->note(), 'Enrollment');
 
         $practice = $assessment->approver()->first()->practices()->first();

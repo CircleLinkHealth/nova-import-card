@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SAAS\Admin\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SAAS\StoreInternalUser;
+use App\Notifications\SAAS\SendInternalUserSignupInvitation;
 use App\Practice;
 use App\Role;
 use App\User;
@@ -51,6 +52,11 @@ class InternalUserController extends Controller
     {
         $internalUser = new InternalUser($request['user'], $request['practices'], $request['role']);
         $user         = $this->userManagementService->storeInternalUser($internalUser);
+
+        $practices = Practice::whereIn('id', $internalUser->getPractices())
+                             ->get();
+
+        $user->notify(new SendInternalUserSignupInvitation(auth()->user(), $practices, auth()->user()->saasAccount));
 
         return redirect()->route('saas-admin.users.edit', [
             'userId' => $user->id,
