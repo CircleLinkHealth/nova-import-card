@@ -30,10 +30,10 @@ class DashboardController extends Controller
         OnboardingService $onboardingService,
         Request $request
     ) {
-        $this->invites = $inviteRepository;
-        $this->locations = $locationRepository;
-        $this->practices = $practiceRepository;
-        $this->users = $userRepository;
+        $this->invites           = $inviteRepository;
+        $this->locations         = $locationRepository;
+        $this->practices         = $practiceRepository;
+        $this->users             = $userRepository;
         $this->onboardingService = $onboardingService;
 
         $this->practiceSlug = $request->route('practiceSlug');
@@ -50,7 +50,7 @@ class DashboardController extends Controller
     {
         $primaryPractice = $this->primaryPractice;
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -62,11 +62,13 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $users     = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
         return view('provider.practice.create', array_merge([
             'practiceSlug' => $this->practiceSlug,
             'staff'        => $users['existingUsers'],
+            'locations'    => $locations,
         ], $this->returnWithAll));
     }
 
@@ -86,7 +88,7 @@ class DashboardController extends Controller
     {
         $practice = $this->primaryPractice;
 
-        if (!$practice) {
+        if ( ! $practice) {
             return response('Practice not found', 404);
         }
 
@@ -130,13 +132,13 @@ class DashboardController extends Controller
     public function postStoreNotifications(UpdatePracticeSettingsAndNotifications $request)
     {
         $settingsInput = $request->input('settings');
-        $errors = collect();
+        $errors        = collect();
 
         if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->emr_direct_address) {
+                if ( ! $location->emr_direct_address) {
                     $locationsWithoutDM->push($location);
                 }
             }
@@ -157,7 +159,7 @@ class DashboardController extends Controller
             $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->fax) {
+                if ( ! $location->fax) {
                     $locationsWithoutFax->push($location);
                 }
             }
@@ -176,12 +178,12 @@ class DashboardController extends Controller
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
-        $invoiceRecipients = $request->input('invoice_recipients');
+        $invoiceRecipients      = $request->input('invoice_recipients');
         $weeklyReportRecipients = $request->input('weekly_report_recipients');
 
         $this->primaryPractice->update([
-            'invoice_recipients' => $invoiceRecipients,
-            'weekly_report_recipients' => $weeklyReportRecipients
+            'invoice_recipients'       => $invoiceRecipients,
+            'weekly_report_recipients' => $weeklyReportRecipients,
         ]);
 
         return redirect()->back()->withErrors($errors);
