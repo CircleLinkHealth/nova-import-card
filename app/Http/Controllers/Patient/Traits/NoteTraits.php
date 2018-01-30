@@ -9,7 +9,7 @@ trait NoteTraits
     public function getNotes($userId, Request $request) {
         if ($userId) {
             $type = $request->input('type');
-            return $this->noteService->repo()->patientNotes($userId, $type);
+            return $this->noteService->patientNotes($userId, $type);
         }
         else return $this->badRequest('"userId" is important');
     }
@@ -30,9 +30,10 @@ trait NoteTraits
         $body = $request->input('body');
         $author_id = auth()->user()->id;
         $isTCM = $request->input('isTCM') ?? 0;
+        $type = $request->input('type');
         $did_medication_recon = $request->input('did_medication_recon') ?? 0;
-        if ($userId && $id && $author_id) {
-            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon);
+        if ($userId && ($id || $type) && $author_id) {
+            return $this->noteService->editPatientNote($id, $userId, $author_id, $body, $isTCM, $did_medication_recon, $type);
         }
         else return $this->badRequest('"userId", "author_id" and "noteId" are is important');
     }

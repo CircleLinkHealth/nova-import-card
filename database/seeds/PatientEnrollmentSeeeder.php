@@ -1,9 +1,14 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use App\CarePlan;
 use App\CareplanAssessment;
+use App\Note;
 
+/**
+* Seeder to create the four test patients Raph needs to test the G0506 flow
+*/
 class PatientEnrollmentSeeeder extends Seeder
 {
     private $TO_ENROLL = 'to_enroll';
@@ -17,84 +22,19 @@ class PatientEnrollmentSeeeder extends Seeder
      */
     public function run()
     {
-        $this->createPatientThatDidNotEnroll();
-        $this->createPatientThatEnrolledAndProviderSkippedAssessment();
-        $this->createPatientThatEnrolledAndProviderPerformsAssessmentAndPrints();
-        $this->createPatientThatEnrolledAndProviderPerformsAssessmentAndForgetsToPrint();
-    }
-
-    /**
-    * Test Case 1: Patient did NOT Enroll
-    */
-    function createPatientThatDidNotEnroll() {
-        $id = 335;
-        $careplans = CarePlan::where([ 'user_id' => $id ]);
-        $careplans->update([
-            'provider_approver_id' => null,
-            'status' => $this->PATIENT_REJECTED
-        ]);
-    }
-
-    /**
-    * Test Case 2: Patient enrolled and MD skips assessment
-    */
-    function createPatientThatEnrolledAndProviderSkippedAssessment() {
-        $id = 336;
-        $careplans = CarePlan::where([ 'user_id' => $id ]);
-        $careplans->get()->map(function ($c) {
-            $c->assessment()->delete();
-        });
-        $careplans->update([
-            'provider_approver_id' => null,
-            'status' => $this->TO_ENROLL
-        ]);
-    }
-
-
-    /**
-    * Test Case 2: Patient enrolled and MD performs assessment and prints care plan
-    */
-    function createPatientThatEnrolledAndProviderPerformsAssessmentAndPrints() {
-        $id = 337;
-        $provider_id = 322;
-        $careplans = CarePlan::where([ 'user_id' => $id ]);
-        $careplans->get()->map(function ($c) use ($provider_id) {
-            if ($c->assessment()->count() == 0) {
-                $c->assessment()->create([
-                    'provider_approver_id' => $provider_id,
-                    'diabetes_screening_interval' => 'Every 6 months'
+        $patients = new Collection([ 335, 336, 337, 342 ]);
+        $patients->map(function ($id) {
+            return Careplan::where([ 'user_id' => $id ])->first();
+        })->map(function ($patient) {
+            if ($patient) {
+                Careplan::where([ 'user_id' => $patient->user_id ])->update([
+                    'provider_approver_id' => null,
+                    'status' => $this->TO_ENROLL
                 ]);
+                CareplanAssessment::where([ 'careplan_id' => $patient->user_id ])->delete();
+                Note::where([ 'patient_id' => $patient->user_id, 'type' => 'Enrollment' ])
+                    ->orWhere([ 'patient_id' => $patient->user_id, 'type' => 'Edit Assessment' ])->delete();
             }
         });
-        $careplans->update([
-            'qa_approver_id' => $provider_id,
-            'provider_approver_id' => $provider_id,
-            'status' => $this->PROVIDER_APPROVED,
-            'last_printed' => '2018-01-08 17:36:03'
-        ]);
-    }
-
-
-    /**
-    * Test Case 4: Patient enrolled and MD performs assessment and forgets to print care plan
-    */
-    function createPatientThatEnrolledAndProviderPerformsAssessmentAndForgetsToPrint() {
-        $id = 342;
-        $provider_id = 322;
-        $careplans = CarePlan::where([ 'user_id' => $id ]);
-        $careplans->get()->map(function ($c) use ($provider_id) {
-            if ($c->assessment()->count() == 0) {
-                $c->assessment()->create([
-                    'provider_approver_id' => $provider_id,
-                    'diabetes_screening_interval' => 'Every 6 months'
-                ]);
-            }
-        });
-        $careplans->update([
-            'qa_approver_id' => $provider_id,
-            'provider_approver_id' => $provider_id,
-            'status' => $this->PROVIDER_APPROVED,
-            'last_printed' => null
-        ]);
     }
 }
