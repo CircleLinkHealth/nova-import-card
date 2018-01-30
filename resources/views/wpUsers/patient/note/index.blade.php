@@ -150,7 +150,7 @@
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
                                         width: 100,
-                                        sort: 'string'
+                                        sort: 'date'
                                     },
 
                                     {
