@@ -29,7 +29,7 @@
                 <validate auto-label>
                     <div class="input-field col s6">
 
-                        <v-input type="text" label="Name" v-model="formData.name" name="name" required></v-input>
+                        <v-input type="text" label="Name" v-model="formData.name" name="name" required autocomplete="organization"></v-input>
 
                         <field-messages name="name" show="$untouched || $touched || $submitted"></field-messages>
                     </div>
@@ -55,7 +55,7 @@
                 <validate auto-label>
                     <div class="input-field col s6">
                         <v-input type="text" label="Address Line 1" v-model="formData.address_line_1"
-                                 name="address_line_1" required></v-input>
+                                 name="address_line_1" required autocomplete="address-line1"></v-input>
 
                         <field-messages name="address_line_1" show="$untouched || $touched || $submitted">
                         </field-messages>
@@ -65,7 +65,7 @@
                 <validate auto-label>
                     <div class="input-field col s6">
                         <v-input type="text" label="Address Line 2" v-model="formData.address_line_2"
-                                 name="address_line_2"></v-input>
+                                 name="address_line_2" autocomplete="address-line2"></v-input>
 
                         <field-messages name="address_line_2" show="$untouched || $touched || $submitted">
                         </field-messages>
