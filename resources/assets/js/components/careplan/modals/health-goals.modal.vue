@@ -7,7 +7,7 @@
                         <button class="btn btn-secondary goal-button" :class="{ selected: selectedGoal && (selectedGoal.id === goal.id), disabled: !goal.enabled }" 
                             v-for="(goal, index) in goals" :key="index" @click="select(index)">
                             {{goal.name}}
-                            <label class="label label-primary" v-if="!goal.enabled">disabled</label>
+                            <label class="label label-danger" v-if="!goal.enabled">disabled</label>
                         </button>
                     </div>
                 </div>
@@ -203,7 +203,6 @@
     }
 
     .btn.btn.btn-secondary.goal-button.selected label {
-        background: #47beab;
         color: white;
     }
 
