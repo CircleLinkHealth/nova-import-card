@@ -6,9 +6,10 @@ namespace App\Notifications;
 use App\Mail\PracticeInvoice as PracticeInvoiceMailable;
 use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
-class PracticeInvoice extends Notification
+class PracticeInvoice extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -54,9 +55,15 @@ class PracticeInvoice extends Notification
      */
     public function via($notifiable)
     {
+        if (isset($notifiable->id)) {
+            return [
+                'mail',
+                'database',
+            ];
+        }
+
         return [
             'mail',
-            'database',
         ];
     }
 
@@ -67,10 +74,18 @@ class PracticeInvoice extends Notification
      *
      * @return PracticeInvoiceMailable
      */
-    public function toMail(User $notifiable)
+    public function toMail($notifiable)
     {
+        if (isset($notifiable->email)) {
+            $to = $notifiable->email;
+        }
+
+        if (isset($notifiable->routes['mail'])) {
+            $to = $notifiable->routes['mail'];
+        }
+
         return (new PracticeInvoiceMailable($this->invoiceLink, $this->filePath))
-            ->to($notifiable->email);
+            ->to($to);
     }
 
     /**

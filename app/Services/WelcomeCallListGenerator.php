@@ -250,13 +250,13 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $this->patientList = $this->patientList->reject(function ($row) {
+        $this->patientList = $this->patientList->reject(function ($record) {
             if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
-                return !$this->validateInsuranceWithPrimaryAndSecondary($row);
+                return !$this->validateInsuranceWithPrimaryAndSecondary($record);
             }
 
             if (isset($record['insurances'])) {
-                return !$this->validateInsuranceWithCollection($row);
+                return !$this->validateInsuranceWithCollection($record);
             }
         });
 
@@ -267,7 +267,7 @@ class WelcomeCallListGenerator
         $eligibleInsurances = [];
 
         foreach ($record['insurances'] as $insurance) {
-            if (str_contains($insurance['type'], [
+            if (str_contains(strtolower($insurance['type']), [
                     'medicare b',
                     'medicare part b',
                     'medicare',
@@ -277,7 +277,7 @@ class WelcomeCallListGenerator
             }
         }
 
-        if (count($eligibleInsurances) < 2) {
+        if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
             return false;
@@ -483,7 +483,7 @@ class WelcomeCallListGenerator
         });
 
         if ($storeOnServer) {
-            $excel->store('xls', $path = false, $returnInfo = false);
+            $excel->store('xls', false, false);
         }
 
         if ($download) {
