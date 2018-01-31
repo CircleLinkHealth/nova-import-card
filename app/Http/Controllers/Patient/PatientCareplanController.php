@@ -157,6 +157,10 @@ class PatientCareplanController extends Controller
 
         $users         = explode(',', $request['users']);
 
+        foreach($users as $userId) {
+            $careplanService->repo()->approve($userId, auth()->user()->id);
+        }
+
         CarePlan::whereIn('user_id', $users)
             ->update([
                 'last_printed' => Carbon::now()->toDateTimeString()

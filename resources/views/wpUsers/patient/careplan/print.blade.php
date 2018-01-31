@@ -58,10 +58,10 @@ if (isset($patient) && ! empty($patient)) {
 
 
                                 <div class="col-xs-12 text-left">
-                                    @if ($recentSubmission)
+                                    @if ($recentSubmission || $skippedAssessment)
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
-                                            role="button"
+                                            role="button" target="_blank"
                                             href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
                                                 Print for Patient</a>
                                         </div>
