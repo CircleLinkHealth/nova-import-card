@@ -3,9 +3,10 @@
 use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
+use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
-use App\View\Composers\ProviderUITimerComposer;
 use App\Providers\ViewComposerServiceProvider;
+use App\View\Composers\ProviderUITimerComposer;
 
 return [
 
@@ -220,6 +221,7 @@ return [
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
         Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        GoogleDriveServiceProvider::class,
     ],
 
     /*
@@ -283,7 +285,8 @@ return [
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
-        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class
+        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
+        'Zip'            => ZanySoft\Zip\ZipFacade::class,
     ],
 
 ];

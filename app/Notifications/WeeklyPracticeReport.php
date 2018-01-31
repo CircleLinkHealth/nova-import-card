@@ -2,9 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Mail\WeeklyPracticeReport as WeeklyPracticeReportMailable;
-use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class WeeklyPracticeReport extends Notification
@@ -52,11 +51,13 @@ class WeeklyPracticeReport extends Notification
      *
      * @param  mixed $notifiable
      *
-     * @return WeeklyPracticeReportMailable
+     * @return MailMessage
      */
-    public function toMail(User $notifiable)
+    public function toMail($notifiable)
     {
-        return new WeeklyPracticeReportMailable($notifiable, $this->data, $this->subject);
+        return (new MailMessage)->view('sales.by-practice.report', ['data' => $this->data])
+                                ->from('notifications@careplanmanager.com', 'CircleLink Health')
+                                ->subject($this->subject);
     }
 
     /**

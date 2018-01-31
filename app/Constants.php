@@ -31,4 +31,10 @@ class Constants
         Constants::ICD10_NAME  => 2,
         Constants::SNOMED_NAME => 3,
     ];
+
+    /**
+     * S3 `cloud` disk storage
+     */
+    const CLOUD_LISTS_PROCESS_ELIGIBILITY_PATH = '/eligibility/lists';
+    const CLOUD_CCDAS_PROCESS_ELIGIBILITY_PATH = '/eligibility/ccdas';
 }

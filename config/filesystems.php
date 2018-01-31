@@ -41,6 +41,14 @@ return [
 
     'disks' => [
 
+        'google' => [
+            'driver' => 'google',
+            'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
+            'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
+            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        ],
+
         //The directory where Practices deposit CCDAs on the Worker environment
         'ccdas' => [
             'driver' => 'local',
@@ -50,6 +58,19 @@ return [
         'local' => [
             'driver' => 'local',
             'root'   => storage_path('app'),
+        ],
+
+        'storage' => [
+            'driver' => 'local',
+            'root'   => storage_path(),
+        ],
+
+        'cloud' => [
+            'driver' => 's3',
+            'key'    => env('S3_CPM_STORAGE_KEY'),
+            'secret' => env('S3_CPM_STORAGE_SECRET'),
+            'region' => env('S3_CPM_STORAGE_REGION'),
+            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
         ],
 
         'public' => [

@@ -40,6 +40,7 @@
         "laravel/passport": "^4.0",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "5.5.*",
+        "league/flysystem-aws-s3-v3": "~1.0",
         "league/fractal": "0.12.*",
         "maatwebsite/excel": "~2.1.0",
         "michalisantoniou6/laravel-cerberus": "dev-master",
@@ -50,13 +51,16 @@
         "prettus/laravel-validation": "*",
         "propaganistas/laravel-phone": "^3.0",
         "rap2hpoutre/laravel-log-viewer": "^0.4.0",
-        "spatie/laravel-google-calendar": "^1.0",
+        "spatie/laravel-google-calendar": "^2.0",
         "spiritix/lada-cache": "^2.0",
         "twilio/sdk": "5.7",
         "tylercd100/lern": "^3.8",
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
-        "yajra/laravel-datatables-oracle": "~6.0"
+        "waavi/url-shortener": "dev-master",
+        "yajra/laravel-datatables-oracle": "~6.0",
+        "zanysoft/laravel-zip": "^1.0",
+        "nao-pon/flysystem-google-drive": "~1.1"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",

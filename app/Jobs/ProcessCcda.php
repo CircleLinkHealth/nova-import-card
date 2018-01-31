@@ -7,22 +7,27 @@ use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 class ProcessCcda implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $ccda;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param $ccda
      */
-    public function __construct(Ccda $ccda)
+    public function __construct($ccda)
     {
-        $this->ccda = Ccda::find($ccda->id);
+        if (is_a($ccda, Ccda::class)) {
+            $ccda = $ccda->id;
+        }
+
+        $this->ccda = Ccda::find($ccda);
     }
 
     /**
@@ -57,7 +62,10 @@ class ProcessCcda implements ShouldQueue
     public function handleDuplicateCcdas(Ccda $ccda)
     {
         $duplicates = Ccda::withTrashed()
-                          ->where('mrn', '=', $ccda->mrn)
+                          ->where([
+                              ['mrn', '=', $ccda->mrn],
+                              ['practice_id', '=', $ccda->practice_id],
+                          ])
                           ->get(['id', 'date'])
                           ->sortByDesc(function ($ccda) {
                               return $ccda->date;

@@ -2,7 +2,9 @@
 
 use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
-use App\Console\Commands\EmailWeeklyReports;
+use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\DeleteProcessedFiles;
+use App\Console\Commands\QueueSendAuditReports;
 use App\Services\Calls\SchedulerService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -53,15 +55,16 @@ class Kernel extends ConsoleKernel
             (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
         })->everyMinute();
 
-        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-                 ->weeklyOn(1, '10:00');
+//        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+//                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
                  ->weekdays()
                  ->dailyAt('08:00');
 
-        $schedule->command('nurseSchedule:export')
-                 ->hourly();
+        //commenting out due to isues with google calendar
+//        $schedule->command('nurseSchedule:export')
+//                 ->hourly();
 
         $schedule->command('athena:getAppointments')
                  ->dailyAt('23:00');
@@ -108,11 +111,15 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
 
-        $schedule->command('send:audit-reports')
+        $schedule->command(QueueSendAuditReports::class)
                  ->monthlyOn(1, '02:00');
 
-        $schedule->command('emrDirect:checkInbox')
+        $schedule->command(CheckEmrDirectInbox::class)
                  ->everyFiveMinutes()
+                 ->withoutOverlapping();
+
+        $schedule->command(DeleteProcessedFiles::class)
+                 ->everyThirtyMinutes()
                  ->withoutOverlapping();
     }
 
