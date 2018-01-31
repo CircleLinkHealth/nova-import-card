@@ -29,6 +29,8 @@ use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
+use Way\Generators\GeneratorsServiceProvider;
+use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -123,8 +125,8 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');
-            $this->app->register(Way\Generators\GeneratorsServiceProvider::class);
-            $this->app->register(Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+            $this->app->register(GeneratorsServiceProvider::class);
+            $this->app->register(MigrationsGeneratorServiceProvider::class);
             $this->app->register(DuskServiceProvider::class);
         }
     }
