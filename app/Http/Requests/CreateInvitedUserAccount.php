@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\PasswordCharacters;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +34,12 @@ class CreateInvitedUserAccount extends FormRequest
             ],
             'first_name' => 'required|filled',
             'last_name'  => 'required|filled',
-            'password'   => 'required|filled|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
+            'password'   => [
+                'required',
+                'filled',
+                'min:8',
+                new PasswordCharacters,
+            ],
             'code'       => 'required|filled',
         ];
     }

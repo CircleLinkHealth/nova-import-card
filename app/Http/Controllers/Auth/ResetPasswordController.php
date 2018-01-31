@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Rules\PasswordCharacters;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 
@@ -41,9 +42,15 @@ class ResetPasswordController extends Controller
     protected function rules()
     {
         return [
-            'token' => 'required',
-            'email' => 'required|email',
-            'password'   => 'required|filled|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/|confirmed',
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => [
+                'required',
+                'filled',
+                'min:8',
+                'confirmed',
+                new PasswordCharacters,
+            ],
         ];
     }
 }
