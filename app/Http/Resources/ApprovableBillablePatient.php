@@ -63,7 +63,6 @@ class ApprovableBillablePatient extends Resource
             'practice'               => $this->patient->primaryPractice->display_name,
             'dob'                    => $this->patient->patientInfo->birth_date,
             'ccm'                    => round($this->ccm_time / 60, 2),
-            'chargeable_services'    => ChargeableService::make($this->whenLoaded('chargeableServices')),
             'problem1'               => $problem1Name,
             'problem1_code'          => $problem1Code,
             'problem2'               => $problem2Name,
@@ -77,6 +76,7 @@ class ApprovableBillablePatient extends Resource
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
 
+            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
 
         ];
     }
