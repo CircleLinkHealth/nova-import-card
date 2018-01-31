@@ -239,8 +239,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public $rules = [
         'username'         => 'required',
         'email'            => 'required|email|unique:users,email',
-        'password'         => 'required|min:8',
-        'password_confirm' => 'required|same:password',
+        'password'         => 'required|filled|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
+        'password_confirmation' => 'required|same:password',
     ];
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
