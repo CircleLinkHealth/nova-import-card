@@ -109,7 +109,7 @@ if (isset($patient)) {
                         </li>
                         @endImpersonating
 
-                        @if(auth()->user()->hasRole(['care-center']))
+                        @if(auth()->user()->hasRole(['care-center']) && auth()->user()->isNotSaas())
                             <li>
                                 <a href="{{ route('care.center.work.schedule.index') }}" id="work-schedule-link">
                                     Work Schedule
@@ -117,7 +117,7 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
+                        @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']) && auth()->user()->isNotSaas())
                             <li><a style="color: #47beab"
                                    href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel

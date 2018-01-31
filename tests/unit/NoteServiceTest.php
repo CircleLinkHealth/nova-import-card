@@ -24,7 +24,7 @@ class NoteServiceTest extends TestCase
 
         $this->provider = factory(User::class)->create();
         $this->note     = factory(Note::class)->create();
-        $this->service  = new NoteService();
+        $this->service  = app(NoteService::class);
     }
 
     public function test_it_marks_unread_notifications_as_read()

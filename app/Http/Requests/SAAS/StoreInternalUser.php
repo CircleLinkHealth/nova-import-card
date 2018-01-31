@@ -25,13 +25,13 @@ class StoreInternalUser extends FormRequest
     public function rules()
     {
         return [
-            'user.username'   => ['required', Rule::unique('users', 'username')->ignore($this->input('user.id'))],
-            'user.email'      => ['required', Rule::unique('users', 'email')->ignore($this->input('user.id'))],
+            'user.username'   => ['required', 'filled', Rule::unique('users', 'username')->ignore($this->input('user.id'))],
+            'user.email'      => ['required', 'filled','email', Rule::unique('users', 'email')->ignore($this->input('user.id'))],
             'user.id'         => 'present',
-            'user.first_name' => 'required',
-            'user.last_name'  => 'required',
-            'role'            => 'required',
-            'practices'       => 'required',
+            'user.first_name' => 'required|filled',
+            'user.last_name'  => 'required|filled',
+            'role'            => 'required|filled',
+            'practices'       => 'required|filled',
         ];
     }
 }

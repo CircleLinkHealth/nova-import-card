@@ -219,7 +219,7 @@
                                         var ss = date.getSeconds();
                                         return mm + ':' + zeroPad(ss,10);}}}});">
     @endif
-    @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
+    @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'saas-admin']))
         <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program'
                style='margin:15px;'
                onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
