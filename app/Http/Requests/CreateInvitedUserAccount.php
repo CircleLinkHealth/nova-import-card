@@ -33,7 +33,7 @@ class CreateInvitedUserAccount extends FormRequest
             ],
             'first_name' => 'required|filled',
             'last_name'  => 'required|filled',
-            'password'   => 'required|filled|min:8',
+            'password'   => 'required|filled|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\X])(?=.*[!$#%]).*$/',
             'code'       => 'required|filled',
         ];
     }
