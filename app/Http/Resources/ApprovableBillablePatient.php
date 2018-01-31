@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\ChargeableService;
-use App\Http\Resources\ChargeableService as ChargeableServiceResource;
 use App\User;
 use Illuminate\Http\Resources\Json\Resource;
 
@@ -36,15 +34,6 @@ class ApprovableBillablePatient extends Resource
 
         $lacksProblems = ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name;
 
-
-        $services = $this->chargableServices();
-        if (!$services) { $services = ChargableService::find(1); }
-
-        $data = ChargeableServiceResource::collection($services);
-
-        $billingCodes = $data->pluck('code');
-
-
         $toQA = ( ! $this->approved && ! $this->rejected)
                 || $lacksProblems
                 || $this->no_of_successful_calls == 0
@@ -74,7 +63,7 @@ class ApprovableBillablePatient extends Resource
             'practice'               => $this->patient->primaryPractice->display_name,
             'dob'                    => $this->patient->patientInfo->birth_date,
             'ccm'                    => round($this->ccm_time / 60, 2),
-            'billing code(s)'        => $billingCodes,
+            'chargeable_services'    => ChargeableService::make($this->whenLoaded('chargeableServices')),
             'problem1'               => $problem1Name,
             'problem1_code'          => $problem1Code,
             'problem2'               => $problem2Name,
@@ -87,6 +76,7 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
+
 
         ];
     }
