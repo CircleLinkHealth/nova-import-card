@@ -62,7 +62,7 @@ if (isset($patient) && ! empty($patient)) {
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
                                             role="button" target="_blank"
-                                            href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">FINAL STEP:
+                                            href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}&final=true">FINAL STEP:
                                                 Print for Patient</a>
                                         </div>
                                     @else
