@@ -46,7 +46,7 @@
                         </a>
                     </li>
 
-                    @if(auth()->user()->hasRole(['administrator', 'care-center']))
+                    @if(auth()->user()->hasRole(['administrator', 'care-center']) && auth()->user()->isNotSaas())
                         <li class="menu-item">
                             <a id="patient-list" href="{{ route('patientCallList.index', array()) }}">
                                 <div class="icon-container column-centered">
@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        @if($nurse)
+        @if($nurse && auth()->user()->isNotSaas())
             @include('partials.care-center.dashboard-schedule', [$nurse])
         @endif
 

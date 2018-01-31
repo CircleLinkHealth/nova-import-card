@@ -1,4 +1,4 @@
-cc@extends('layouts.no-menu')
+@extends('layouts.no-menu')
 
 @include('footer')
 

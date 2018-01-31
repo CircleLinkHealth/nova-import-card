@@ -19,7 +19,7 @@
                     <!-- <button type="submit" class="btn btn-primary btn-next inline-block">Submit</button> -->
                         @if( isset($showApprovalButton) && $showApprovalButton )
                             <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 1)) }}">Approve/Next
+                               dtarget="{{ route('patient.careplan.print', ['patientId' => $patient->id, 'page' => 3]) }}">Approve/Next
                                 Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @endif
                     @endif

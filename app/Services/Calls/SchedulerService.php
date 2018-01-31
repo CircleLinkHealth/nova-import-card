@@ -17,15 +17,20 @@ use Illuminate\Support\Facades\Auth;
 class SchedulerService
 {
     private $patientWriteRepository;
+    /**
+     * @var NoteService
+     */
+    private $noteService;
 
     /**
      * SchedulerService constructor.
      *
      * @param PatientWriteRepository $patientWriteRepository
      */
-    public function __construct(PatientWriteRepository $patientWriteRepository)
+    public function __construct(PatientWriteRepository $patientWriteRepository, NoteService $noteService)
     {
         $this->patientWriteRepository = $patientWriteRepository;
+        $this->noteService = $noteService;
     }
 
     /* Success is the call's status.
@@ -107,7 +112,7 @@ class SchedulerService
             $call->save();
         } else { // If call doesn't exist, make one and store it
 
-            (new NoteService)->storeCallForNote(
+            $this->noteService->storeCallForNote(
                 $note,
                 $status,
                 $patient,
