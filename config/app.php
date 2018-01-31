@@ -212,8 +212,6 @@ return [
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-//        Way\Generators\GeneratorsServiceProvider::class,
-//        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         ViewComposerServiceProvider::class,

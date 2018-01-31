@@ -63,10 +63,6 @@ class AppServiceProvider extends ServiceProvider
             return $this->app->make(SnappyPdfWrapper::class);
         });
 
-        if ($this->app->environment('local', 'testing', 'staging')) {
-            $this->app->register(DuskServiceProvider::class);
-        }
-
         $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
 
@@ -127,6 +123,9 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');
+            $this->app->register(Way\Generators\GeneratorsServiceProvider::class);
+            $this->app->register(Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
         }
     }
 }
