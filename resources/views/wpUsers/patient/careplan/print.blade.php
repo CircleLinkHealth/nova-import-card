@@ -61,10 +61,19 @@ if (isset($patient) && ! empty($patient)) {
                                     @if ($recentSubmission || $skippedAssessment)
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
-                                            role="button" target="_blank"
+                                            role="button" target="_blank" onclick="finalStepClick()"
                                             href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}&final=true">FINAL STEP:
                                                 Print for Patient</a>
                                         </div>
+                                        @push ('scripts')
+                                            <script>
+                                                function finalStepClick() {
+                                                    setTimeout(function () {
+                                                        location.href = "{{ route('patient.careplan.print', [ 'patientId' => $patient->id ]) }}"
+                                                    }, 3000)
+                                                }
+                                            </script>
+                                        @endpush
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="buttons">
