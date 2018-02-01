@@ -48,10 +48,6 @@ class CareplanAssessmentService
             }
         }
 
-        User::ofType('administrator')->get()->map(function ($user) use ($assessment) {
-            $user->notify(new SendAssessmentNotification($assessment));
-        });
-
         $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
     }
 

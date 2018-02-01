@@ -86,7 +86,8 @@ class CareplanAssessment extends \App\BaseModel
 
         $pdf = app('snappy.pdf.wrapper');
         $pdf->loadView('emails.assessment-created', [
-            'assessment'  => $this
+            'assessment'  => $this,
+            'notifiable'  => null
         ]);
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $patient['display_name'] . '.pdf';

@@ -1,5 +1,6 @@
 <div>
     <?php
+        use \App\User;
         use \Carbon\Carbon;
         $patient = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
@@ -10,6 +11,7 @@
         was done on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
         {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{ $approver['display_name'] }}:
     </p>
+    @if ($notifiable && !is_a($notifiable, User::class))
     <table width="100%">
         <tr>
             <td width="50%">
@@ -116,4 +118,5 @@
             </td>
         </tr>
     </table>
+    @endif
 </div>

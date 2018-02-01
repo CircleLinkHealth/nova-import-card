@@ -55,7 +55,8 @@ class SendAssessmentNotification extends Notification
                     ->from('notifications@careplanmanager.com', 'CircleLink Health')
                     ->subject('New Patient Assessment')
                     ->view('emails.assessment-created', [
-                        'assessment' => $this->attachment
+                        'assessment' => $this->attachment,
+                        'notifiable' => $notifiable
                     ]);
     }
 
