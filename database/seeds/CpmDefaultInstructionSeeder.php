@@ -23,10 +23,12 @@ class CpmDefaultInstructionSeeder extends Seeder
 
                 $instruction->save();
 
-                $problem->instructable()->update([
+                $instructable = $problem->instructable()->firstOrNew([
                     'cpm_instruction_id' => $instruction->id,
                     'instructable_type' => CpmProblem::class
                 ]);
+
+                $instructable->save();
             }
         }
     }
