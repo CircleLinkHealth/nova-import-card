@@ -1345,23 +1345,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         //Get email forwarding
         foreach ($careTeam as $carePerson) {
-            $forwards = $carePerson->user->forwardAlertsTo->whereIn('pivot.name', [
-                User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
-                User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
-            ]);
-
-            if ($forwards->isEmpty() && $carePerson->user) {
-                $users->push($carePerson->user);
-            }
-
-            foreach ($forwards as $forwardee) {
-                if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+            $forwardsTo = optional($carePerson->user)->forwardAlertsTo;
+            if ($forwardsTo) {
+                $forwards = $forwardsTo->whereIn('pivot.name', [
+                    User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                    User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+                ]);
+    
+                if ($forwards->isEmpty() && $carePerson->user) {
                     $users->push($carePerson->user);
-                    $users->push($forwardee);
                 }
-
-                if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
-                    $users->push($forwardee);
+    
+                foreach ($forwards as $forwardee) {
+                    if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+                        $users->push($carePerson->user);
+                        $users->push($forwardee);
+                    }
+    
+                    if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
+                        $users->push($forwardee);
+                    }
                 }
             }
         }

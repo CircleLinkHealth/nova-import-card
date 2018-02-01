@@ -76,9 +76,9 @@ class SendAssessmentNotification extends Notification
 
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),
-            'receiver_email' => $notifiable->email,
+            'receiver_email' => $notifiable->email ?? $notifiable->routeNotificationForMail(),
 
-            'pathToPdf' => $this->toPdf(),
+            'pathToPdf' => $this->toPdf($notifiable),
             'assessment' => $this->attachment
         ];
     }
@@ -87,12 +87,12 @@ class SendAssessmentNotification extends Notification
         if ( ! $notifiable || ! $notifiable->fax) {
             return false;
         }
-        return $this->toPdf();
+        return $this->toPdf($notifiable);
     }
 
-    public function toPdf() {
+    public function toPdf($notifiable = null) {
         if ( ! file_exists($this->pathToPdf)) {
-            $this->pathToPdf = $this->attachment->toPdf();
+            $this->pathToPdf = $this->attachment->toPdf($notifiable);
         }
         return $this->pathToPdf;
     }

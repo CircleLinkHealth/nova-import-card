@@ -28,6 +28,7 @@ use App\Traits\PdfReportTrait;
  * @property \Carbon\Carbon $updated_at
  * @property-read \App\User|null $approver
  * @property-read \App\User|null $patient
+ * @property-read \App\CarePlan|null $carePlan
  * @mixin \Eloquent
  */
 class CareplanAssessment extends \App\BaseModel
@@ -63,7 +64,11 @@ class CareplanAssessment extends \App\BaseModel
     }
     
     public function patient() {
-        return $this->belongsTo(CarePlan::class, 'careplan_id');
+        return $this->belongsTo(User::class, 'careplan_id');
+    }
+    
+    public function carePlan() {
+        return $this->belongsTo(CarePlan::class, 'careplan_id', 'user_id');
     }
 
     public function note() {
@@ -79,7 +84,7 @@ class CareplanAssessment extends \App\BaseModel
     *
     * @return string
     */
-    public function toPdf(): string
+    public function toPdf($notifiable): string
     {
         $patient = $this->patient()->first();
         $approver = $this->approver()->first();
@@ -87,10 +92,10 @@ class CareplanAssessment extends \App\BaseModel
         $pdf = app('snappy.pdf.wrapper');
         $pdf->loadView('emails.assessment-created', [
             'assessment'  => $this,
-            'notifiable'  => null
+            'notifiable'  => $notifiable
         ]);
 
-        $this->fileName = Carbon::now()->toDateString() . '-' . $patient['display_name'] . '.pdf';
+        $this->fileName = Carbon::now()->toDateString() . '-' . $patient['id'] . '.pdf';
         $filePath       = base_path('storage/pdfs/assessments/' . $this->fileName);
         $pdf->save($filePath, true);
 
