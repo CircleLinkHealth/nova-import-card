@@ -78,6 +78,14 @@ $new_user = false;
                 <!--footer-->
                 @include('wpUsers.patient.careplan.footer')
                 <br/><br/>
+                @push('styles')
+                    <style>
+                        .collapsing {
+                            -webkit-transition: none;
+                            transition: height 0.01s;
+                        }
+                    </style>
+                @endpush
 
             </section>
         </div>
