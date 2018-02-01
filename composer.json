@@ -51,6 +51,7 @@
         "waavi/url-shortener": "dev-master",
         "pda/pheanstalk": "~3.0",
         "phaxio/phaxio": "^1.0",
+        "predis/predis": "^1.1",
         "prettus/l5-repository": "dev-master",
         "prettus/laravel-validation": "*",
         "propaganistas/laravel-phone": "^3.0",
