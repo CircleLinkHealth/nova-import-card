@@ -48,7 +48,7 @@ class CareplanAssessmentService
             }
         }
 
-        $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
+        //$this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
     }
 
     public function save(CareplanAssessment $assessment) {
