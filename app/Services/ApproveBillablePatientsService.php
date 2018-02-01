@@ -48,9 +48,9 @@ class ApproveBillablePatientsService
                                              $summary = $this->patientSummaryRepo->attachBillableProblems($u,
                                                  $u->patientSummaries->first());
 
-                                             $services = $summary->chargeableServices;
-
-                                             if ($services->isEmpty()) { $summary->chargeableServices()->attach(1); }
+//                                             $services = $summary->chargeableServices;
+//
+//                                             if ($services->isEmpty()) { $summary->chargeableServices()->attach(1); }
 
                                              return $summary;
                                          });
