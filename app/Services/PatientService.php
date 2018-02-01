@@ -18,11 +18,19 @@ class PatientService
         $this->allergyService = $allergyService;
     }
 
+    public function repo() {
+        return $this->patientRepo;
+    }
+
     public function getPatientByUserId($userId) {
         return $this->userRepo->model()->with(['patientInfo'])->find($userId)->patientInfo;
     }
 
     public function getCcdAllergies($userId) {
         return $this->allergyService->patientAllergies($userId);
+    }
+
+    public function setStatus($userId, $status) {
+        $this->repo()->setStatus($userId, Patient::ENROLLED);
     }
 }
