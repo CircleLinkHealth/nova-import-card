@@ -280,11 +280,12 @@ class CareTeamController extends Controller
                 $oldBillingProvider->type = 'external';
 
                 if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
-                    $role = optional($oldBillingProvider->user->practiceOrGlobalRole())->name ?? '';
-                    if ($role == 'provider') {
-                        $role = 'billing_provider';
-                    }
-                    $oldBillingProvider->type = str_replace('-', '_', $role);
+                    // $role = optional($oldBillingProvider->user->practiceOrGlobalRole())->name ?? '';
+                    // if ($role == 'provider') {
+                    //     $role = 'billing_provider';
+                    // }
+                    // $oldBillingProvider->type = str_replace('-', '_', $role);
+                    $oldBillingProvider->type = 'internal';
                 }
 
                 $oldBillingProvider->save();
