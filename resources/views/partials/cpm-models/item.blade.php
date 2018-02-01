@@ -68,12 +68,12 @@
         <div class="form-item col-sm-12">
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <div class="radio-inline">
-                    <input id="{{ $section->name }}-{{$i}}{{$item->id}}"
+                    <input id="{{ $section->name }}-{{$i}}-{{$item->id}}"
                            name="{{ $section->name }}[{{ $item->id }}]"
                            value="{{ $item->id }}" class="itemTrigger" data-toggle="collapse"
-                           data-target="#collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}"
+                           data-target="#collapseItem-{{ $section->name }}-{{$i}}-{{$item->id}}"
                            type="checkbox" {{ in_array($item->id, $section->patientItemIds) ? 'checked=checked' : '' }}>
-                    <label for="{{ $section->name }}-{{$i}}{{$item->id}}">
+                    <label for="{{ $section->name }}-{{$i}}-{{$item->id}}">
                         <span></span>{{ $item->name }}</label>
                 </div>
             </div>
@@ -103,15 +103,15 @@
             <div class="checkbox text-medium-big" style="margin-top:0px;    margin-bottom: 0px;">
                 <button type="button"
                         class="btn btn-default btn-xs btn-monitor collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }} text-right"
-                        id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}"
+                        id="collapseItem-{{ $section->name }}-{{$i}}-{{$item->id}}"
                         data-backdrop="static" data-keyboard="false"
                         data-toggle="modal"
-                        data-target="#{{ $section->name }}-{{$i}}{{$item->id}}-Detail"
+                        data-target="#{{ $section->name }}-{{$i}}-{{$item->id}}-Detail"
                         style="margin-top:0px;    margin-bottom: 0px;"><span><i class="glyphicon glyphicon-pencil"></i></span>
                 </button>
 
                 <!-- Modal -->
-                <div id="{{ $section->name }}-{{$i}}{{$item->id}}-Detail" class="modal fade text-left"
+                <div id="{{ $section->name }}-{{$i}}-{{$item->id}}-Detail" class="modal fade text-left"
                      role="dialog">
                     <div class="modal-dialog modal-md">
 
@@ -150,7 +150,7 @@
 
 @if($section->name == 'cpmBiometrics')
     <div class="collapse {{ in_array($item->id, $section->patientItemIds) ? 'in' : '' }}"
-         id="collapseItem-{{ $section->name }}-{{$i}}{{$item->id}}">
+         id="collapseItem-{{ $section->name }}-{{$i}}-{{$item->id}}">
 
         @if($item->name == \App\Models\CPM\CpmBiometric::BLOOD_PRESSURE)
             @include('partials.cpm-models.biometrics.bloodPressure')
