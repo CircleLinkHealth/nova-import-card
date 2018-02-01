@@ -18,7 +18,7 @@
                                 <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
                             </div>
                             <div class="col-sm-4 top-20">
-                                <input type="date" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.date" :min="newAppointment.date" required />
+                                <input type="date" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.date" :min="newAppointment.min" required />
                             </div>
                             <div class="col-sm-4 top-20">
                                 <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -104,7 +104,8 @@
             return {
                 newAppointment: {
                     provider: null,
-                    date: moment(new Date()).format('YYYY-MM-DD'),
+                    min: moment(new Date()).format('YYYY-MM-DD'),
+                    date: null,
                     time: '09:00:00',
                     type: null,
                     comment: null,
