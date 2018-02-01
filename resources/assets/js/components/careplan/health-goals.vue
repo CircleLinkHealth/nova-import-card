@@ -83,15 +83,18 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => goal.info.starting
-                    goal.end = () => goal.info.target
+                    goal.start = () => (goal.info.starting || '0')
+                    goal.end = () => (goal.info.target || '0')
                     goal.active = () => !!(goal.info.starting && goal.info.target)
                     
+                    const start = (goal.start().split('/')[0] || 0)
+                    const end = (goal.end().split('/')[0] || 0)
+
                     if ((goal.name === 'Blood Sugar')) {
-                        if (goal.start() > 130) {
-                            goal.info.verb = goal.end() < goal.start() ? 'Decrease' : 'Increase'
+                        if (start > 130) {
+                            goal.info.verb = end < start ? 'Decrease' : 'Increase'
                         }
-                        else if (goal.start() >= 80 && goal.start() <= 130) {
+                        else if (start >= 80 && start <= 130) {
                             goal.info.verb = 'Regulate'
                         }
                         else {
@@ -99,11 +102,11 @@
                         }
                     }
                     else {
-                        if (goal.start() > goal.end()) {
+                        if (start > end) {
                             goal.info.verb = 'Decrease'
                         }
                         else {
-                            if ((goal.name === 'Blood Pressure' && goal.start() < 90) || (goal.start() > 0 && goal.start() < goal.end())) {
+                            if ((goal.name === 'Blood Pressure' && start < 90) || (start > 0 && start < end)) {
                                 goal.info.verb = 'Increase'
                             }
                             else {

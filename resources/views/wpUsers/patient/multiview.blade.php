@@ -378,10 +378,23 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             $end = $goal['info']['target'];
                             $end = (int)($end ? explode('/', $end)[0] : 0);
 
-                            $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                            (($goal['name'] == 'Blood Pressure' && $start > 90) ||
-                                            ($start > 0 && $start < $end)) ? 'Increase' :
-                                            'Regulate';
+                            if ($goal['name'] == 'Bloog Sugar') {
+                                if ($start > 130) {
+                                    $goal['verb'] = $end < $start ? 'Decrease' : 'Increase';
+                                }
+                                else if ($start >= 80 && $end <= 130) {
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    $goal['verb'] = 'Increase';
+                                }
+                            }
+                            else {
+                                $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                    (($goal['name'] == 'Blood Pressure' && $start < 90) ||
+                                    ($start > 0 && $start < $end)) ? 'Increase' :
+                                    'Regulate';
+                            }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;
                         });
