@@ -221,7 +221,7 @@
                 this.newProblem.icd10 = null
             },
             resolveIcd10Code() {
-                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code
+                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
             },
             addInstruction(e) {
                 e.preventDefault()
