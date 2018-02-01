@@ -212,7 +212,6 @@ class PatientCareplanController extends Controller
                 ], $fileNameWithPath);
             } catch (\Exception $e) {
                 \Log::critical($e);
-                dd($e);
             }
             $pageCount = $this->pdfService->countPages($fileNameWithPath);
 
