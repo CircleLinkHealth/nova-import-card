@@ -378,7 +378,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             $end = $goal['info']['target'];
                             $end = (int)($end ? explode('/', $end)[0] : 0);
 
-                            if ($goal['name'] == 'Bloog Sugar') {
+                            if ($goal['name'] == 'Blood Sugar') {
                                 if ($start > 130) {
                                     $goal['verb'] = $end < $start ? 'Decrease' : 'Increase';
                                 }
