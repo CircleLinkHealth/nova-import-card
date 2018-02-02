@@ -153,6 +153,8 @@ class PracticeInvoiceController extends Controller
 
         $summary->chargeableServices()->sync($chargeableServices);
 
+        return $this->ok();
+
     }
 
 
