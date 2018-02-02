@@ -106,25 +106,24 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $month    = $request['month_year'];
-        $practice = Practice::where('id', $request['practice_id']);
+        $month = $request['month_year'];
 
-        $patients = $practice->patients()
-                             ->whereHas('patientSummaries', function ($query) use ($month) {
-                                 $query->where('month_year', $month)
-                                       ->where('ccm_time', '>', 1200);
-                             })->get();
+        $patients = User::ofPractice($request['practice_id'])
+                            ->with('patientSummaries.chargeableServices')
+                            ->whereHas('patientSummaries', function ($query) use ($month) {
+                                $query->where('month_year', $month)
+                                      ->where('ccm_time', '>', 1200);
+                            })
+                            ->get()
+                            ->map(function ($user) use ($request, $month) {
+                                $user->patientSummaries
+                                    ->where('month_year', $month)
+                                    ->map(function ($summary) use ($request, $month) {
+                                        $summary->sync([$request['default_code_id']]);
 
-
-        foreach ($patients as $patient) {
-
-            $summary = $patient->patientSummaries()->where('month_year', $month)->first();
-
-            if ($summary->chargeableServices) {
-                $summary->chargeableServices()->detach();
-            }
-            $summary->attach($request['default_code_id']);
-        }
+                                        return $summary;
+                                    });
+                            });
 
         return $this->ok();
 
@@ -144,7 +143,7 @@ class PracticeInvoiceController extends Controller
 
         $month   = $request['month_year'];
         $patient = User::ofType('participant')
-                       ->where('program_id', '=', $request['patient_id'])->first();
+                       ->where('program_id', '=', $request['practice_id'])->first();
 
         //need array of IDs
         $chargeableServices = $request['patient_chargeable_services'];
