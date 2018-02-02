@@ -9,6 +9,7 @@ use App\Note;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
+use App\Repositories\PatientWriteRepository;
 use App\Services\AthenaAPI\Calls;
 use App\Services\NoteService;
 use App\User;
