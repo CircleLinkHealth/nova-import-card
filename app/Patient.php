@@ -120,11 +120,17 @@ class Patient extends \App\BaseModel
     use SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
+    const PAUSED = 'paused';
+    const ENROLLED = 'enrolled';
+    const WITHDRAWN = 'withdrawn';
+
     protected $dates = [
         'date_withdrawn',
         'date_paused',
         'paused_letter_printed_at',
     ];
+
+    
 
     /**
      * The connection name for the model.

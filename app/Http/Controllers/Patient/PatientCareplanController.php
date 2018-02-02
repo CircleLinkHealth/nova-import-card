@@ -26,6 +26,7 @@ use App\Services\PdfService;
 use App\Services\ReportsService;
 use App\Services\UserService;
 use App\Services\CareplanService;
+use App\Services\PatientService;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -142,7 +143,7 @@ class PatientCareplanController extends Controller
         ]));
     }
 
-    public function printMultiCareplan(Request $request, CareplanService $careplanService)
+    public function printMultiCareplan(Request $request, CareplanService $careplanService, PatientService $patientService)
     {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
@@ -160,6 +161,7 @@ class PatientCareplanController extends Controller
         if ($request->input('final')) {
             foreach($users as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
+                $patientService->setStatus($userId, Patient::ENROLLED);
             }
         }
 

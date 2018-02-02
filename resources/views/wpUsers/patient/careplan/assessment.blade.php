@@ -5,7 +5,7 @@
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 ?>
 
-@section('title', 'Care Plan Assessment')
+@section('title', 'G0506 Enrollment Assessment')
 @section('activity', 'Care Plan Assessment')
 
 @push('styles')
@@ -54,9 +54,9 @@
             <div class="patient-info__main">
                 <div class="row">
                     <div class="col-xs-12 top-20">
-                        <h1 class="color-blue">G0506 Assessment for MD</h1>
+                        <h1 class="color-blue">G0506 Enrollment Assessment</h1>
                         @if ($assessment) 
-                            <h4 class="text-right">Approved on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
+                            <h4 class="text-right">Performed on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
                                 {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{$approver->display_name}}</h4>
                         @endif
                         

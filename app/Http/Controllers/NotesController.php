@@ -323,9 +323,13 @@ class NotesController extends Controller
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
 
-                    $prediction = $schedulerService->getNextCall($patient, $note->id, true);
+                    if (auth()->user()->isNotSaas()) {
+                        $prediction = $schedulerService->getNextCall($patient, $note->id, true);
+                    }
                 } else {
-                    $prediction = $schedulerService->getNextCall($patient, $note->id, false);
+                    if (auth()->user()->isNotSaas()) {
+                        $prediction = $schedulerService->getNextCall($patient, $note->id, false);
+                    }
                 }
 
                 // add last contact time regardless of if success
@@ -343,11 +347,17 @@ class NotesController extends Controller
                     $ccm_above = true;
                 }
 
+                if (auth()->user()->isSaas()) {
+                    return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                        'messages',
+                        ['Successfully Created Note']
+                    );
+                }
                 $prediction['ccm_above']   = $ccm_above;
                 $prediction['ccm_complex'] = $ccm_complex;
 
-
                 return view('wpUsers.patient.calls.create', $prediction);
+
             }
         }
 

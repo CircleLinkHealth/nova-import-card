@@ -7,6 +7,7 @@ use App\Exceptions\InvalidArgumentException;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
+use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
 class PatientWriteRepository
@@ -131,5 +132,14 @@ class PatientWriteRepository
             ->update([
                 'paused_letter_printed_at' => $dateTime->toDateTimeString(),
             ]);
+    }
+
+    public function setStatus($userId, $status) {
+        $stati = new Collection([ Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN ]);
+        $user = User::find($userId);
+        if ($stati->contains($status) && $user) {
+            Patient::where([ 'user_id' => $userId ])->update([ 'ccm_status' => $status ]);
+        }
+        return Patient::where([ 'user_id' => $userId ])->first();
     }
 }

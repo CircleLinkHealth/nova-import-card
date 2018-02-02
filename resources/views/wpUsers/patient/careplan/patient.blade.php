@@ -17,9 +17,9 @@ $user_info = array();
         <div class="col-lg-10 col-lg-offset-1">
             @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <div class="icon-container col-lg-12">
-                    @if(isset($patient))
+                    {{--  @if(isset($patient))
                         @include('wpUsers.patient.careplan.nav')
-                    @endif
+                    @endif  --}}
                 </div>
             @endif
             {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
@@ -28,7 +28,7 @@ $user_info = array();
             @endif
             --}}
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;">
-                <div class="row">
+                <div class="row no-overflow">
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Profile
@@ -41,6 +41,8 @@ $user_info = array();
                     @endif
                     <div class="">
                         <div class="row">
+                            <div class="col-lg-12 main-form-primary-horizontal">
+                                <div class="row">
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
                                 <p><span class="attention">*</span> Required Field</p>
@@ -324,6 +326,19 @@ $user_info = array();
                                 </div>
                             </div>
                         </div>
+                        </div>
+
+                        <div class="main-form-block main-form-secondary col-lg-12 text-center">
+                            <button class="btn btn-primary">Save Profile</button>
+                        </div>
+                        </div>
+                        @push('styles') 
+                            <style>
+                                .no-overflow {
+                                    overflow: hidden;
+                                }
+                            </style>
+                        @endpush
                     </div>
                 </div>
             </div>

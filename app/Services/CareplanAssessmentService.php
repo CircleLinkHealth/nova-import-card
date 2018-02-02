@@ -2,10 +2,12 @@
 
 use App\Note;
 use App\User;
+use App\Patient;
 use App\CareplanAssessment;
 use App\Repositories\CareplanRepository;
 use App\Repositories\CareplanAssessmentRepository;
 use App\Repositories\NoteRepository;
+use App\Repositories\PatientWriteRepository;
 use App\Notifications\SendAssessmentNotification;
 
 class CareplanAssessmentService
@@ -13,11 +15,16 @@ class CareplanAssessmentService
     private $assessmentRepo;
     private $careplanRepo;
     private $noteRepo;
+    private $patientRepo;
 
-    public function __construct(CareplanAssessmentRepository $assessmentRepo, CareplanRepository $careplanRepo, NoteRepository $noteRepo) {
+    public function __construct(CareplanAssessmentRepository $assessmentRepo, 
+                                    CareplanRepository $careplanRepo, 
+                                        NoteRepository $noteRepo,
+                                            PatientWriteRepository $patientRepo) {
         $this->assessmentRepo = $assessmentRepo;
         $this->careplanRepo = $careplanRepo;
         $this->noteRepo = $noteRepo;
+        $this->patientRepo = $patientRepo;
     }
 
     public function repo() {
@@ -47,12 +54,6 @@ class CareplanAssessmentService
                 $location->notify(new SendAssessmentNotification($assessment));
             }
         }
-
-        User::ofType('administrator')->get()->map(function ($user) use ($assessment) {
-            $user->notify(new SendAssessmentNotification($assessment));
-        });
-
-        $this->careplanRepo->approve($assessment->careplan_id, $assessment->provider_approver_id);
     }
 
     public function save(CareplanAssessment $assessment) {

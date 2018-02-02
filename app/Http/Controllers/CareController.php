@@ -54,7 +54,7 @@ class CareController extends Controller
         
         return $this->validate_user_id($enrollUserId, function () use ($enrollUserId, $status) {
             if ($status == 'rejected') {
-                $this->careplanService->repo()->reject($enrollUserId, auth()->user()->id);
+                $this->careplanService->repo()->reject($enrollUserId, optional(auth()->user())->id);
                 return redirect()->route('patient.careplan.print', ['patientId' => $enrollUserId]);
             }
             return $this->render($enrollUserId);

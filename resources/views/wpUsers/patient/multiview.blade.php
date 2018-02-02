@@ -378,10 +378,23 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             $end = $goal['info']['target'];
                             $end = (int)($end ? explode('/', $end)[0] : 0);
 
-                            $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                            (($goal['name'] == 'Blood Pressure' && $start > 90) ||
-                                            ($start > 0 && $start < $end)) ? 'Increase' :
-                                            'Regulate';
+                            if ($goal['name'] == 'Blood Sugar') {
+                                if ($start > 130) {
+                                    $goal['verb'] = $end < $start ? 'Decrease' : 'Increase';
+                                }
+                                else if ($start >= 80 && $end <= 130) {
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    $goal['verb'] = 'Increase';
+                                }
+                            }
+                            else {
+                                $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                    (($goal['name'] == 'Blood Pressure' && $start < 90) ||
+                                    ($start > 0 && $start < $end)) ? 'Increase' :
+                                    'Regulate';
+                            }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;
                         });
@@ -619,7 +632,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <p style="margin-left: -10px;">
                                                 <strong>
                                                     {{snakeToSentenceCase($carePerson->type)}}:
-                                                </strong>{{$carePerson->user->first_name}} {{$carePerson->user->last_name}}
+                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}}
                                             </p>
                                         </div>
                                     </li>

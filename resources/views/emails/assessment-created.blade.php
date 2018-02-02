@@ -1,5 +1,7 @@
 <div>
     <?php
+        use \App\User;
+        use \App\Location;
         use \Carbon\Carbon;
         $patient = $assessment->patient()->first();
         $approver = $assessment->approver()->first();
@@ -10,6 +12,7 @@
         was done on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
         {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{ $approver['display_name'] }}:
     </p>
+    @if ($notifiable && is_a($notifiable, Location::class))
     <table width="100%">
         <tr>
             <td width="50%">
@@ -32,7 +35,7 @@
                 Risk Factors
             </td>
             <td>
-                {{ $assessment->risk_factors }}
+                {{ join(', ', (array)json_decode($assessment->risk_factors)) }}
             </td>
         </tr>
         <tr>
@@ -56,7 +59,7 @@
                 Diabetes Screening Risk
             </td>
             <td>
-                {{ $assessment->diabetes_screening_risk }}
+                {{ join(', ', (array)json_decode($assessment->diabetes_screening_risk)) }}
             </td>
         </tr>
         <tr>
@@ -104,7 +107,7 @@
                 Patient Functional Assistance Areas
             </td>
             <td>
-                {{ $assessment->patient_functional_assistance_areas }}
+                {{ join(', ', (array)json_decode($assessment->patient_functional_assistance_areas)) }}
             </td>
         </tr>
         <tr>
@@ -112,8 +115,9 @@
                 Patient Psychosocial Areas To Watch
             </td>
             <td>
-                {{ $assessment->patient_psychosocial_areas_to_watch }}
+                {{ join(', ', (array)json_decode($assessment->patient_psychosocial_areas_to_watch)) }}
             </td>
         </tr>
     </table>
+    @endif
 </div>

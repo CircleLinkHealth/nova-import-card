@@ -33,7 +33,7 @@
                                 <label><input type="radio" :value="false" v-model="newProblem.is_monitored" /> Other Condition</label>
                             </div>
                             <div class="col-sm-12 top-20" v-if="newProblem.is_monitored">
-                                <input class="form-control" v-model="newProblem.icd10" placeholder="ICD10 Code" required />
+                                <input type="text" class="form-control" v-model="newProblem.icd10" placeholder="ICD10 Code" />
                             </div>
                             <div class="col-sm-12 text-right top-20">
                                 <loader v-if="loaders.addProblem"></loader>
@@ -221,7 +221,7 @@
                 this.newProblem.icd10 = null
             },
             resolveIcd10Code() {
-                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code
+                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
             },
             addInstruction(e) {
                 e.preventDefault()
