@@ -202,11 +202,6 @@ class Patient extends \App\BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
-    public function monthlySummaries()
-    {
-        return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id');
-    }
-
     // END RELATIONSHIPS
 
 
