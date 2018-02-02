@@ -113,7 +113,7 @@ class PracticeInvoiceController extends Controller
                              ->whereHas('patientSummaries', function ($query) use ($month) {
                                  $query->where('month_year', $month)
                                        ->where('ccm_time', '>', 1200);
-                             });
+                             })->get();
 
 
         foreach ($patients as $patient) {
@@ -125,6 +125,8 @@ class PracticeInvoiceController extends Controller
             }
             $summary->attach($request['default_code_id']);
         }
+
+        return $this->ok();
 
 
     }
@@ -140,9 +142,9 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $month = $request['month_year'];
+        $month   = $request['month_year'];
         $patient = User::ofType('participant')
-                   ->where('program_id', '=', $request['patient_id']);
+                       ->where('program_id', '=', $request['patient_id'])->first();
 
         //need array of IDs
         $chargeableServices = $request['patient_chargeable_services'];
