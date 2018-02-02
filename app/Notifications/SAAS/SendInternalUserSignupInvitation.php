@@ -119,10 +119,12 @@ class SendInternalUserSignupInvitation extends Notification
             ->implode(', ');
         $saasAccountName = $this->saasAccount->name;
 
+        $appUrl = env('APP_URL');
+
         return [
             'subject'     => "$inviterName Invited You to {$practiceName}’s CCM Program!",
             'greeting'    => "Hello!",
-            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at www.careplanmanager.com, in partnership with {$saasAccountName}",
+            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at $appUrl, in partnership with {$saasAccountName}",
             'action_text' => 'Create password',
             'action_link' => route('get.onboarding.create.invited.user', [
                 'code' => $this->code,
