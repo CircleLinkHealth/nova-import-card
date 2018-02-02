@@ -13,6 +13,7 @@ class CpmDefaultInstructionSeeder extends Seeder
      */
     public function run()
     {
+        CpmInstructable::where([])->delete();
         foreach ($this->instructions() as $name => $body) {
             $problem = CpmProblem::where(['name' => $name])->with('instructable')->first();
             if ($problem) {

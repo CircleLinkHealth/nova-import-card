@@ -266,7 +266,9 @@ class CareTeamController extends Controller
             ? CarePerson::BILLING_PROVIDER
             : snake_case($input['formatted_type']);
 
-        if ($type == CarePerson::BILLING_PROVIDER) {
+        $is_billing_provider = $input['is_billing_provider'] ?? false;
+
+        if ($is_billing_provider) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)
                 ->where('type', '=', CarePerson::BILLING_PROVIDER)
                 ->first();
@@ -297,6 +299,20 @@ class CareTeamController extends Controller
                 $billingProvider = $billingProvider->id == $providerUser->id
                     ? null
                     : $billingProvider;
+            }
+        }
+        else {
+            $billingProvider = CarePerson::where('user_id', '=', $patientId)
+            ->where('type', '=', CarePerson::BILLING_PROVIDER)
+            ->first();
+            if ($billingProvider) {
+                $type = 'external';
+                $billingProvider->type = 'external';
+                if ($billingProvider->user && $billingProvider->user->practice($patient->primaryPractice->id)) {
+                    $billingProvider->type = 'internal';
+                    $type = 'internal';
+                }
+                $billingProvider->save();
             }
         }
 
