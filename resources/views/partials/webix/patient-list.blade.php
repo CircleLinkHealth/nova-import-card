@@ -54,7 +54,7 @@
                 {
                     id: "first_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                    template: "<a href='<?php echo URL::route('patient.summary',
+                    template: "<a href='<?php echo route('patient.summary',
                         array('patient' => '#key#')); ?>'>#first_name# #last_name#</a>",
                     width: 200,
                     sort: 'string'
@@ -62,7 +62,7 @@
                 {
                     id: "last_name",
                     header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
-                    template: "<a href='<?php echo URL::route('patient.summary',
+                    template: "<a href='<?php echo route('patient.summary',
                         array('patient' => '#key#')); ?>'>#last_name#, #first_name#</a>",
                     width: 200,
                     sort: 'string'
@@ -219,7 +219,7 @@
                                         var ss = date.getSeconds();
                                         return mm + ':' + zeroPad(ss,10);}}}});">
     @endif
-    @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']))
+    @if ( !Auth::guest() && Auth::user()->hasRole(['administrator', 'saas-admin']))
         <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program'
                style='margin:15px;'
                onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>

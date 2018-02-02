@@ -31,10 +31,10 @@
                                 @foreach( $locations as $loc )
                                     <tr>
                                         <td>
-                                            <a href="{{ URL::route('locations.edit', array('id' => $loc->id)) }}">{{ $loc->name }}</a>
+                                            <a href="{{ route('locations.edit', array('id' => $loc->id)) }}">{{ $loc->name }}</a>
                                         </td>
                                         <td>
-                                            <a href="{{ URL::route('locations.edit', array('id' => $loc->id)) }}"
+                                            <a href="{{ route('locations.edit', array('id' => $loc->id)) }}"
                                                class="btn btn-info btn-xs">Edit</a>
                                         </td>
                                     </tr>

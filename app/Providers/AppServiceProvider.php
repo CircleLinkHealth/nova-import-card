@@ -27,6 +27,8 @@ use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
+use Way\Generators\GeneratorsServiceProvider;
+use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -57,10 +59,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
-
-        if ($this->app->environment('local', 'testing', 'staging')) {
-            $this->app->register(DuskServiceProvider::class);
-        }
 
         $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
@@ -126,6 +124,9 @@ class AppServiceProvider extends ServiceProvider
 
         if ($this->app->environment('local')) {
             $this->app->register('Orangehill\Iseed\IseedServiceProvider');
+            $this->app->register(GeneratorsServiceProvider::class);
+            $this->app->register(MigrationsGeneratorServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
         }
     }
 }

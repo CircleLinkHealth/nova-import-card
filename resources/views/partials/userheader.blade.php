@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
-                            href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
+                            href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->fullName}}
                     </a> </span>
                 @if($ccm_complex)
@@ -24,7 +24,7 @@
                     @endpush
                 @endif
                 <a
-                        href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
+                        href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">

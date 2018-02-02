@@ -1,4 +1,4 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
 
 @section('content')
 
@@ -21,20 +21,19 @@
     @endpush
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
-    <div class="container-fluid">
+    {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
+    <div class="container-fluid" style="padding-top: 50rem;">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice Invoice and Patient Report Generator</div>
+                    <div class="panel-heading">Billable Patient Report Generator (Only shows approved patients > 20 minutes)</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
-                            <fieldset>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="practices">
-                                        Select Practices<br>
-                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                        Select Practices
+                                    </label>
                                     <div class="col-md-6">
                                         <select id="practices" name="practices[]"
                                                 class="practices dropdown Valid form-control" multiple required>
@@ -45,14 +44,22 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-
-                                    <label class="col-md-2 control-label" for="invoice_no">
-                                        Custom Invoice#<br></label>
-                                    <div class="col-md-6">
-                                        <input class="form-control" value="{{$invoice_no}}" name="invoice_no" id="invoice_no">
-                                    </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="invoice_no">
+                                    Custom Invoice#<br></label>
+                                <div class="col-md-6">
+                                    <input class="form-control" value="{{$invoice_no}}" name="invoice_no"
+                                           id="invoice_no">
                                 </div>
+                            </div>
+                            {{--<div class="form-group">--}}
+                            {{--<label class="col-md-2 control-label" for="invoice_no">--}}
+                            {{--Custom Invoice#<br></label>--}}
+                            {{--<div class="col-md-6">--}}
+                            {{--<input class="form-control" value="{{$invoice_no}}" name="invoice_no"--}}
+                            {{--id="invoice_no">--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="date">Month</label>
@@ -76,7 +83,6 @@
                                         </button>
                                     </div>
                                 </div>
-                            </fieldset>
                         </form>
 
                         <hr>

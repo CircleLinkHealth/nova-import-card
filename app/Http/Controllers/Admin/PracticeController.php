@@ -22,6 +22,7 @@ class PracticeController extends Controller
         }
         // display view
         $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
+
         return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
     }
 
@@ -159,9 +160,6 @@ class PracticeController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // find program
         $program = Practice::find($id);
         if (!$program) {

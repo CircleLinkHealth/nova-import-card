@@ -42,18 +42,18 @@
 
                         @include('errors.errors')
 
-                        {!! Form::open(array('url' => URL::route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.users.update', array('id' => $patient->id)), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 @if($patient->hasRole('participant'))
                                     <div class="pull-left" style="margin-left:10px;">
-                                        <a href="{{ URL::route('patient.summary', array('patientId' => $patient->id)) }}"
+                                        <a href="{{ route('patient.summary', array('patientId' => $patient->id)) }}"
                                            class="btn btn-info">Go To Provider UI</a>
                                     </div>
                                 @endif
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update User', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
@@ -464,32 +464,7 @@
                             @if($patient->hasRole('care-center') && $patient->nurseInfo)
                                 <div role="tabpanel" class="tab-pane" id="nurseinfo">
                                     <h2>Nurse Info</h2>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('hourly_rate', 'Hourly Rate:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('hourly_rate', $patient->nurseInfo->hourly_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-
-                                        <div class="row" style="padding: 10px 0px;">
-                                            <div class="col-xs-2">{!! Form::label('high_rate', 'Var. High Rate:') !!}</div>
-                                            <div class="col-xs-3">{!! Form::text('high_rate', $patient->nurseInfo->high_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                            <div class="col-xs-2">{!! Form::label('low_rate', 'Var. Low Rate:') !!}</div>
-                                            <div class="col-xs-3">{!! Form::text('low_rate', $patient->nurseInfo->low_rate, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-xs-2">{!! Form::label('status', 'Status') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('status', array('inactive' => 'Inactive', 'active' => 'Active'), $patient->nurseInfo->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
-                                        </div>
-
-                                        <div class="row" style="margin-top:10px;">
-                                            <div class="col-xs-2">{!! Form::label('spanish', 'Spanish') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('spanish', array('0' => 'No', '1' => 'Yes'), $patient->nurseInfo->spanish, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
-                                            <div class="col-xs-2"></div>
-                                            <div class="col-xs-4"></div>
-                                        </div>
-
-                                    </div>
+                                    @include('partials.admin.user.nurse-info')
                                 </div>
                             @endif
 

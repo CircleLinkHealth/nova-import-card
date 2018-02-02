@@ -5,6 +5,10 @@ import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
+import { ClientTable } from 'vue-tables-2'
+
+Vue.use(ClientTable, {}, false)
+
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -50,6 +54,7 @@ import PersistentTextArea from './components/persistent-textarea'
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
+Vue.component('billing-report', require('./admin/billing/index.vue'));
 Vue.component('component-proxy', ComponentProxy)
 Vue.component('careTeam', CareTeamComponent)
 Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)

@@ -48,7 +48,7 @@
                                         <p>My assigned calls</p>
                                     </div>
                                     <div class="col-sm-9">
-                                        {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                                        {!! Form::open(array('url' => route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                                         <div id="filters" class="" style="margin:40px 0px;">
                                             <div class="form-group">
                                                 <div id="dtBox"></div>
@@ -139,7 +139,7 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                                                                <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
                                                                    class="patientNameLink" call-id="{{ $call->id }}"
                                                                    style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
@@ -193,7 +193,7 @@
                                                             {{--@if($call->status == 'reached')--}}
 
                                                             {{--@elseif($call->status == 'scheduled')--}}
-                                                                {{--<a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
+                                                                {{--<a href="{{ route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
                                                                    {{--class="btn btn-danger btn-xs"><i--}}
                                                                             {{--class="glyphicon glyphicon-remove"></i>--}}
                                                                     {{--Unassign</a>--}}
@@ -251,7 +251,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                    <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
                        class="btn btn-primary">Continue to care plan</a>
                 </div>
             </div>

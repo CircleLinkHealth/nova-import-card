@@ -18,7 +18,7 @@ $new_user = false;
 @endpush
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
 
     <div id="content" class="row">
         <div class="container">

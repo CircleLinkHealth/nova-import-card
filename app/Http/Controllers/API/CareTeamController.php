@@ -264,7 +264,9 @@ class CareTeamController extends Controller
 
         $type = $input['is_billing_provider']
             ? CarePerson::BILLING_PROVIDER
-            : snake_case($input['formatted_type']);
+            : snake_case($input['formatted_type']) == CarePerson::BILLING_PROVIDER
+                ? 'Provider'
+                : snake_case($input['formatted_type']);
 
         if ($type == CarePerson::BILLING_PROVIDER) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)

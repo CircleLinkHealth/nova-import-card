@@ -16,7 +16,7 @@
                 @include('partials.userheader')
                 <div class="col-sm-12">
                     <div class="col-sm-6"><a
-                                href="{{ URL::route('patient.note.create', array('patient' => $patient->id)) }}"
+                                href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
                     <div class="col-sm-6 pull-right"

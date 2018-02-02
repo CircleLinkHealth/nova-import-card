@@ -21,7 +21,9 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
+use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
+use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use Carbon\Carbon;
@@ -236,12 +238,21 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
 
     use \Venturecraft\Revisionable\RevisionableTrait;
-    public $rules = [
-        'username'         => 'required',
-        'email'            => 'required|email|unique:users,email',
-        'password'         => 'required|min:8',
-        'password_confirm' => 'required|same:password',
-    ];
+
+    public $rules = [];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->rules = [
+            'username'         => 'required',
+            'email'            => 'required|email|unique:users,email',
+            'password'         => ['required', 'filled', 'min:8', new PasswordCharacters],
+            'password_confirmation' => 'required|same:password',
+        ];
+    }
+
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
         "daily_reminder_time"     => "required",
@@ -270,6 +281,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      * @var array
      */
     protected $fillable = [
+        'saas_account_id',
         'username',
         'password',
         'email',
@@ -1402,23 +1414,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         //Get email forwarding
         foreach ($careTeam as $carePerson) {
-            $forwards = $carePerson->user->forwardAlertsTo->whereIn('pivot.name', [
-                User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
-                User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
-            ]);
+            $forwardsTo = optional($carePerson->user)->forwardAlertsTo;
+            if ($forwardsTo) {
+                $forwards = $forwardsTo->whereIn('pivot.name', [
+                    User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
+                    User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
+                ]);
 
-            if ($forwards->isEmpty() && $carePerson->user) {
-                $users->push($carePerson->user);
-            }
-
-            foreach ($forwards as $forwardee) {
-                if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+                if ($forwards->isEmpty() && $carePerson->user) {
                     $users->push($carePerson->user);
-                    $users->push($forwardee);
                 }
 
-                if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
-                    $users->push($forwardee);
+                foreach ($forwards as $forwardee) {
+                    if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
+                        $users->push($carePerson->user);
+                        $users->push($forwardee);
+                    }
+
+                    if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
+                        $users->push($forwardee);
+                    }
                 }
             }
         }
@@ -2662,6 +2677,10 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
+        if (str_contains(strtolower(app()->environment()), 'saas')) {
+            return new EmptyUserNotificationList();
+        }
+
         return new UserNotificationList($this->id);
     }
 
@@ -2745,5 +2764,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function canImpersonate()
     {
         return $this->isAdmin();
+    }
+
+    public function saasAccount() {
+        return $this->belongsTo(SaasAccount::class);
+    }
+
+    public function isSaas() {
+        return $this->saas_account_id > 1;
+    }
+
+    public function isNotSaas() {
+        return !$this->isSaas();
     }
 }

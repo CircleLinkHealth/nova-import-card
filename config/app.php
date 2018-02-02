@@ -7,6 +7,7 @@ use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
 
@@ -211,8 +212,6 @@ return [
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         ViewComposerServiceProvider::class,
@@ -220,8 +219,9 @@ return [
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        Spiritix\LadaCache\LadaCacheServiceProvider::class,
+//        Spiritix\LadaCache\LadaCacheServiceProvider::class,
         GoogleDriveServiceProvider::class,
+        ManageInternalUser::class,
     ],
 
     /*

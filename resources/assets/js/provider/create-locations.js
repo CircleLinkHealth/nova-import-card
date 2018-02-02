@@ -166,11 +166,11 @@ const locationsVM = new Vue({
                 }
             })
                 .catch((error) => {
-                        // if (error.response) {
-                        //     console.log(error.response);
-                        // } else {
-                        //     console.log('Error', error.message);
-                        // }
+                        if (error.response) {
+                            console.log(error.response);
+                        } else {
+                            console.log('Error', error.message);
+                        }
 
 
                         let response = error.response;

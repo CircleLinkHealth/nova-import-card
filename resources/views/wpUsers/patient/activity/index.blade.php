@@ -12,7 +12,7 @@
                 </div>
                 @include('partials.userheader')
 
-                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                {!! Form::open(array('url' => route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="col-sm-3" style="top: 16px">
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
@@ -125,7 +125,7 @@
 
                                         template: function (obj) {
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo URL::route('patient.activity.view', array(
+                                                return "<a href='<?php echo route('patient.activity.view', array(
                                                         'patientId' => $patient->id,
                                                         'atcId'     => ''
                                                     )); ?>/" + obj.id + "'>" + obj.type + "</a>";

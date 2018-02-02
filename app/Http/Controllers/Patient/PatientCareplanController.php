@@ -561,7 +561,7 @@ class PatientCareplanController extends Controller
                 }
             }
 
-            return redirect(\URL::route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
+            return redirect(\route('patient.demographics.show', ['patientId' => $newUser->id]))->with(
                 'messages',
                 ['Successfully created new patient with demographics.']
             );

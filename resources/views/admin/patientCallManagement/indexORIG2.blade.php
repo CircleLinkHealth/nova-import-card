@@ -30,7 +30,7 @@
                         <div id="tBox"></div>
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                             <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
                             <div id="collapseFilter" class="panel-collapse collapse">
                                 <div class="form-group">
@@ -59,7 +59,7 @@
                                         <div class="" style="text-align:center;">
                                             {!! Form::hidden('action', 'filter') !!}
                                             <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                            <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
+                                            <a href="{{ route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
                                             
                                         </div>
                                     </div>
@@ -67,7 +67,7 @@
                             </div>
                         {!! Form::close() !!}
 
-                        {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         @push('styles')
                             <style>
                                 .table tbody>tr>td.vert-align{
@@ -127,7 +127,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->id)) }}">{{ $call->inboundUser->display_name }} </a>
+                                                <a href="{{ route('patient.demographics.show', array('patient' => $call->inboundUser->id)) }}">{{ $call->inboundUser->display_name }} </a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
@@ -169,7 +169,7 @@
                                             @endif
                                         </td>
                                         <td class="text-right vert-align">
-                                            <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            <a href="{{ route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

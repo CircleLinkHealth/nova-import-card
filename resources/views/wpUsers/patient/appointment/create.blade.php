@@ -33,7 +33,7 @@
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
                     <form id="save" name="save" method="post"
-                          action="{{URL::route('patient.appointment.store', array('patientId' => $patient->id))}}">
+                          action="{{route('patient.appointment.store', array('patientId' => $patient->id))}}">
                         {{ csrf_field() }}
 
                         <div class="row">

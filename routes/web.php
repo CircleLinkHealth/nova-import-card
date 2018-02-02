@@ -37,8 +37,12 @@ Route::get('ajax/patients', 'UserController@getPatients');
  */
 Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
-Route::get('/', 'WelcomeController@index');
-Route::get('home', 'WelcomeController@index');
+Route::get('/', 'WelcomeController@index', [
+    'as' => 'index'
+]);
+Route::get('home', 'WelcomeController@index', [
+    'as' => 'home'
+]);
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
 
@@ -564,6 +568,8 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
+
         Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
@@ -663,12 +669,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
-
-            Route::post('monthly-billing', [
-                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-                'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
-            ]);
-
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
@@ -1296,10 +1296,10 @@ Route::group([], function () {
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/admin',
+    'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator',
+        'providerDashboardACL:administrator|saas-admin',
     ],
 ], function () {
 
@@ -1510,6 +1510,77 @@ Route::group([
 
 Route::impersonate();
 
+Route::group([
+    'prefix' => 'saas/admin',
+    'middleware' => ['auth', 'role:saas-admin']
+], function (){
+
+    Route::get('home', [
+        'uses' => 'Patient\PatientController@showDashboard',
+        'as' => 'saas-admin.home'
+    ]);
+
+    Route::group(['prefix' => 'users'], function(){
+        Route::get('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
+            'as'   => 'saas-admin.users.index',
+        ]);
+
+        Route::get('create', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
+            'as'   => 'saas-admin.users.create',
+        ]);
+
+        Route::post('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
+            'as'   => 'saas-admin.users.store',
+        ]);
+
+        Route::get('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
+            'as'   => 'saas-admin.users.edit',
+        ]);
+
+        Route::patch('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
+            'as'   => 'saas-admin.users.update',
+        ]);
+
+        Route::post('action', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
+            'as'   => 'saas-admin.users.action',
+        ]);
+    });
+
+    Route::resource('practices', 'SAAS\Admin\CRUD\PracticeController', ['names' => [
+        'index' => 'saas-admin.practices.index',
+        'store' => 'saas-admin.practices.store',
+        'create' => 'saas-admin.practices.create',
+        'destroy' => 'saas-admin.practices.destroy',
+        'update' => 'saas-admin.practices.update',
+        'show' => 'saas-admin.practices.show',
+        'edit' => 'saas-admin.practices.edit',
+    ]]);
+
+    Route::group(['prefix' => 'monthly-billing'], function(){
+        Route::get('make', [
+            'uses' => 'Billing\PracticeInvoiceController@make',
+            'as'   => 'saas-admin.monthly.billing.make',
+        ]);
+
+        Route::post('data', [
+            'uses' => 'Billing\PracticeInvoiceController@data',
+            'as'   => 'saas-admin.monthly.billing.data',
+        ]);
+    });
+
+    Route::group(['prefix' => 'practice/billing'], function () {
+        Route::get('create', [
+            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'as'   => 'saas-admin.practices.billing.create',
+        ]);
+    });
+});
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', function($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
     $practice = Practice::whereName($practiceName)->first();

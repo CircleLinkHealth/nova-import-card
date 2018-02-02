@@ -12,7 +12,7 @@ $user_info = array();
 @endpush
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;">
         <div class="col-lg-10 col-lg-offset-1">
             @if ($patient->careplan_mode == App\CarePlan::WEB)

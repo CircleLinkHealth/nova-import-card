@@ -1,5 +1,5 @@
 <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}">
+    <form method="post" id="consented_form" action="{{route('enrollment-center.consented')}}">
 
         {{ csrf_field() }}
 

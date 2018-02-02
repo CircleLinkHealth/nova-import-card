@@ -52,24 +52,26 @@ class PatientProgramSecurity
             return redirect()->guest('login');
         }
 
+        if (auth()->user()->hasRole('care-ambassador')) {
+            return redirect()->route('enrollment-center.dashboard', [])->send();
+        }
+
         if ($request->route()->patientId) {
-            // viewing a specific patient, get patients program_id
-            $user = User::find($request->route()->patientId);
-            if (!$user) {
+            $user = User::whereId($request->route()->patientId)
+                        ->has('patientInfo')
+                        ->first();
+
+            if ( ! $user) {
                 return response('Could not locate patient.', 401);
             } else {
                 // security
                 if ($user->id == Auth::user()->id && !Auth::user()->hasPermission('users-view-self')) {
                     abort(403);
                 }
-                if ($user->id != Auth::user()->id && !Auth::user()->hasPermission('users-view-all')) {
+                if ($user->id != Auth::user()->id && ! Auth::user()->hasPermission('users-view-all')) {
                     abort(403);
                 }
-                if (//                    count(array_intersect(
-//                        $user->locations->pluck('id')->all(),
-//                        auth()->user()->locations->pluck('id')->all()
-//                    )) == 0
-//                    ||
+                if (
                     count(array_intersect(
                         $user->practices->pluck('id')->all(),
                         auth()->user()->practices->pluck('id')->all()
