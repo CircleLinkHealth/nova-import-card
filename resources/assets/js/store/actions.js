@@ -47,7 +47,7 @@ export const getPatientCareTeam = ({commit}, patientId) => {
 export const updateCarePerson = ({commit}, carePerson, patientId) => {
     carePersonApi.updateCarePerson((carePerson, oldCarePerson) => {
         commit('UPDATE_CARE_PERSON', carePerson)
-        commit('UPDATE_CARE_PERSON', oldCarePerson)
+        if (oldCarePerson) commit('UPDATE_CARE_PERSON', oldCarePerson)
     }, null, carePerson)
 }
 

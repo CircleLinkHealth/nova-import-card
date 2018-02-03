@@ -34,6 +34,9 @@ export default {
                         if (oldCarePerson.type == 'external') {
                             oldCarePerson.formatted_type = 'Provider (External)'
                         }
+                        else if (oldCarePerson.type == 'internal') {
+                            oldCarePerson.formatted_type = 'Provider (Internal)'
+                        }
                     }
                     return oldCarePerson
                 }
