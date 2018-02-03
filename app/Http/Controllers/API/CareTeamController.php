@@ -246,6 +246,8 @@ class CareTeamController extends Controller
 
         $patient = User::find($patientId);
 
+        $carePerson = CarePerson::find($request['id']);
+
         $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
@@ -267,6 +269,12 @@ class CareTeamController extends Controller
             : snake_case($input['formatted_type']) == CarePerson::BILLING_PROVIDER
                 ? 'Provider'
                 : snake_case($input['formatted_type']);
+
+        if ($carePerson->type == CarePerson::BILLING_PROVIDER && $type != CarePerson::BILLING_PROVIDER) {
+            //This user was the billing provider, but now a different role was assigned
+            //$billingProvider = $carePerson; helps us change the role name in vue
+            $billingProvider = $carePerson;
+        }
 
         if ($type == CarePerson::BILLING_PROVIDER) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)
