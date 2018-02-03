@@ -60,7 +60,6 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         'vendor_id',
         'ccd_problem_log_id',
         'name',
-        'activate',
         'cpm_problem_id',
         'patient_id',
         'billable'
