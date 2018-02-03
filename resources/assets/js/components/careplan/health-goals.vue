@@ -9,7 +9,7 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <div class="row">
+                <div class="row top-10">
                     <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <form @submit="editNote">
                             <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"></textarea>
@@ -24,7 +24,7 @@
                     <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 </slot>
                 
-                <ul class="subareas__list" v-if="goals && goals.length > 0">
+                <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
                     <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
