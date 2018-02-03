@@ -69,28 +69,36 @@ class ProviderUITimerComposer extends ServiceProvider
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
             $patient = $view->patient;
 
-            $seconds = optional($patient->patientInfo)
-                           ->cur_month_activity_time ?? 0;
+            if ($patient) {
+                $seconds = optional($patient->patientInfo)
+                               ->cur_month_activity_time ?? 0;
 
-            $H           = floor($seconds / 3600);
-            $i           = ($seconds / 60) % 60;
-            $s           = $seconds % 60;
-            $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-            $ccm_above   = false;
+                $H           = floor($seconds / 3600);
+                $i           = ($seconds / 60) % 60;
+                $s           = $seconds % 60;
+                $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+                $ccm_above   = false;
 
-            $ccm_complex = $patient->isCCMComplex() ?? false;
+                $ccm_complex = $patient->isCCMComplex() ?? false;
 
-            if ($seconds > 1199 && ! $ccm_complex) {
-                $ccm_above = true;
-            } elseif ($seconds > 3599 && $ccm_complex) {
-                $ccm_above = true;
+                if ($seconds > 1199 && ! $ccm_complex) {
+                    $ccm_above = true;
+                } elseif ($seconds > 3599 && $ccm_complex) {
+                    $ccm_above = true;
+                }
+
+                $provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
+
+                $location = empty($patient->getPreferredLocationName())
+                    ? 'Not Set'
+                    : $patient->getPreferredLocationName();
+            } else {
+                $ccm_above = false;
+                $ccm_complex = false;
+                $location = 'N/A';
+                $monthlyTime = sprintf("%02d:%02d:%02d", 0, 0, 0);
+                $provider = 'N/A';
             }
-
-            $provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
-
-            $location = empty($patient->getPreferredLocationName())
-                ? 'Not Set'
-                : $patient->getPreferredLocationName();
 
             $view->with(compact([
                 'ccm_above',
