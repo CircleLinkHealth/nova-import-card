@@ -2,6 +2,7 @@
 
 use App\Models\Ehr;
 use App\Traits\HasSettings;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -73,6 +74,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Practice extends \App\BaseModel
 {
     use HasSettings,
+        SaasAccountable,
         SoftDeletes;
 
     protected $fillable = [

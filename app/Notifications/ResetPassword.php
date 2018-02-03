@@ -49,9 +49,15 @@ class ResetPassword extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', url('auth/password/reset', $this->token))
-            ->line('If you did not request a password reset, no further action is required.');
+            ->view('vendor.notifications.email', [
+                'greeting'        => 'You are receiving this email because we received a password reset request for your account.',
+                'actionText'      => 'Reset Password',
+                'actionUrl'       => url('auth/password/reset', $this->token),
+                'introLines'      => [],
+                'outroLines'      => ['If you did not request a password reset, no further action is required.'],
+                'level'           => '',
+                'saasAccountName' => $notifiable->saasAccountName(),
+            ]);
     }
 
     /**
