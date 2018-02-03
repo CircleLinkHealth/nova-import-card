@@ -7,16 +7,23 @@ use App\ObservationMeta;
 use App\Practice;
 use App\User;
 use DateTime;
+use GuzzleHttp\Client;
 use Mail;
 
 class DatamonitorService
 {
 
-    public function __construct()
+    /**
+     * @var Client
+     */
+    private $client;
+
+    public function __construct(Client $client)
     {
         $this->time_start = 0;
         $this->time_end = 0;
         $this->int_id = 0;
+        $this->client = $client;
     }
 
     /**
@@ -581,7 +588,7 @@ class DatamonitorService
         $first_name = $user->meta()->where('meta_key', '=', 'last_names')->first();
         $last_name = $user->meta()->where('meta_key', '=', 'last_name')->first();
         $extra_vars['patientname'] = $first_name . ' ' . $last_name;
-        $extra_vars['alerts_url'] = '' . $this->get_alerts_url($observation['user_id'], $user->program_id) . '';
+        $extra_vars['alerts_url'] = $this->get_alerts_url($observation['user_id'], $user->program_id);
         $extra_vars['alert_key'] = str_replace("_", " ", $observation->obs_key);
         //$user_data_ucp = $user_data[$observation['user_id']]['usermeta']['user_care_plan'];
         $obs_value = $observation['obs_value'];
@@ -769,7 +776,7 @@ class DatamonitorService
         if ($wpBlog) {
             // $alerts_url = 'https://'. $wpBlog->domain . '/alerts/?user=' . $user_id;
             $alerts_url = 'https://' . $wpBlog->domain . '/manage-patients/' . $user_id . '/summary';
-            $alerts_url = file_get_contents('http://tinyurl.com/api-create.php?url=' . $alerts_url);
+            $alerts_url = $this->client->get('http://tinyurl.com/api-create.php?url=' . $alerts_url)->getBody();
         }
 
         return $alerts_url;
