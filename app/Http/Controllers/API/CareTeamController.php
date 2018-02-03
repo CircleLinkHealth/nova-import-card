@@ -264,13 +264,21 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
-        $type = $input['is_billing_provider']
-            ? CarePerson::BILLING_PROVIDER
-            : snake_case($input['formatted_type']) == CarePerson::BILLING_PROVIDER
-                ? 'Provider'
-                : snake_case($input['formatted_type']);
+        $isBillingProvider = (boolean) $input['is_billing_provider'];
 
-        if ($carePerson->type == CarePerson::BILLING_PROVIDER && $type != CarePerson::BILLING_PROVIDER) {
+        $type = '';
+
+        if ($isBillingProvider) {
+            $type = CarePerson::BILLING_PROVIDER;
+        } else {
+            if (snake_case($input['formatted_type']) == CarePerson::BILLING_PROVIDER) {
+                $type = 'provider';
+            } else {
+                $type = snake_case($input['formatted_type']);
+            }
+        }
+
+        if ($carePerson && $carePerson->type == CarePerson::BILLING_PROVIDER && $type != CarePerson::BILLING_PROVIDER) {
             //This user was the billing provider, but now a different role was assigned
             //$billingProvider = $carePerson; helps us change the role name in vue
             $billingProvider = $carePerson;
@@ -315,22 +323,13 @@ class CareTeamController extends Controller
             $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
-        if (str_contains($input['id'], 'new')) {
-            $carePerson = CarePerson::create([
-                'alert'          => $alert,
-                'type'           => $type,
-                'user_id'        => $patientId,
-                'member_user_id' => $providerUser->id,
-            ]);
-        } else {
-            $carePerson = CarePerson::where('id', '=', $input['id'])
-                ->with('user')
-                ->first();
-
-            $carePerson->alert = $alert;
-            $carePerson->type = $type;
-            $carePerson->save();
-        }
+        $carePerson = CarePerson::updateOrCreate([
+            'user_id'        => $patientId,
+            'member_user_id' => $providerUser->id,
+        ],[
+            'alert'          => $alert,
+            'type'           => $type,
+        ]);
 
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];
@@ -392,6 +391,11 @@ class CareTeamController extends Controller
         if (is_object($carePerson)) {
             $carePerson->load('user');
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
+        }
+
+        if ($billingProvider) {
+            $billingProvider = $billingProvider->fresh();
+            $billingProvider->formatted_type = snakeToSentenceCase($billingProvider->type);
         }
 
         return response()->json([
