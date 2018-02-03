@@ -69,7 +69,8 @@ class ProviderUITimerComposer extends ServiceProvider
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
             $patient = $view->patient;
 
-            $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+            $seconds = optional($patient->patientInfo)
+                           ->cur_month_activity_time ?? 0;
 
             $H           = floor($seconds / 3600);
             $i           = ($seconds / 60) % 60;

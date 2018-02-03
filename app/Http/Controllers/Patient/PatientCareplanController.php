@@ -149,7 +149,7 @@ class PatientCareplanController extends Controller
         }
 
         $users         = explode(',', $request['users']);
-        $reportService = new ReportsService($users);
+        $reportService = new ReportsService();
         //Save Printed Careplan as Meta
         foreach ($users as $user_id) {
             $user = User::find($user_id);
