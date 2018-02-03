@@ -106,29 +106,32 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $month = $request['month_year'];
+        $month         = $request['month_year'];
+        $practiceId    = $request['practice_id'];
+        $defaultCodeId = $request['default_code_id'];
 
-        $patients = User::ofPractice($request['practice_id'])
-                            ->with('patientSummaries.chargeableServices')
-                            ->whereHas('patientSummaries', function ($query) use ($month) {
-                                $query->where('month_year', $month)
-                                      ->where('ccm_time', '>', 1200);
-                            })
-                            ->get()
-                            ->map(function ($user) use ($request, $month) {
-                                $user->patientSummaries
-                                    ->where('month_year', $month)
-                                    ->map(function ($summary) use ($request, $month) {
-                                        $summary->sync([$request['default_code_id']]);
+        $patients = User::ofPractice($practiceId)
+                        ->with('patientSummaries.chargeableServices')
+                        ->whereHas('patientSummaries', function ($query) use ($month) {
+                            $query->where('month_year', $month)
+                                  ->where('ccm_time', '>', 1200);
+                        })
+                        ->get()
+                        ->map(function ($user) use ($defaultCodeId, $month) {
+                            $user->patientSummaries
+                                ->where('month_year', $month)
+                                ->map(function ($summary) use ($defaultCodeId, $month) {
+                                    $summary->chargeableServices()->sync($defaultCodeId);
 
-                                        return $summary;
-                                    });
-                            });
+                                    return $summary;
+                                });
+                        });
 
         return $this->ok();
 
 
     }
+
 
     /**
      * @param Request $request
@@ -141,16 +144,32 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $month   = $request['month_year'];
-        $patient = User::ofType('participant')
-                       ->where('program_id', '=', $request['practice_id'])->first();
 
         //need array of IDs
         $chargeableServices = $request['patient_chargeable_services'];
+        $month              = $request['month_year'];
+        $practiceId         = $request['practice_id'];
 
-        $summary = $patient->patientSummaries()->where('month_year', $month)->first();
+        $patient = User::ofType('participant')
+                       ->where('program_id', '=', $practiceId)
+                       ->whereHas('patientSummaries', function ($query) use ($month) {
+                           $query->where('month_year', $month)
+                                 ->where('ccm_time', '>', 1200);
+                       })
+                       ->with('patientSummaries.chargeableServices')
+                       ->get()
+                       ->map(function ($user) use ($month, $chargeableServices) {
+                           $user->patientSummaries
+                               ->where('month_year', $month)
+                               ->map(function ($summary) use ($month, $chargeableServices) {
 
-        $summary->chargeableServices()->sync($chargeableServices);
+                                   $summary->chargeableServices()->sync($chargeableServices);
+
+                                   return $summary;
+                               });
+
+                       });
+
 
         return $this->ok();
 

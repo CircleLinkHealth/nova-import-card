@@ -46,6 +46,7 @@ class PatientMonthlySummaryChargeableServices extends TestCase
         ],['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
+        $response->assertJson(['message' => 'success']);
     }
 
     /**
@@ -67,6 +68,7 @@ class PatientMonthlySummaryChargeableServices extends TestCase
             ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
+        $response->assertJson(['message' => 'success']);
 
 
     }
