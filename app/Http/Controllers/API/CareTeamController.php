@@ -262,13 +262,9 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
-        $type = $input['is_billing_provider']
-            ? CarePerson::BILLING_PROVIDER
-            : snake_case($input['formatted_type']);
+        $type = snake_case($input['formatted_type']);
 
-        $is_billing_provider = $input['is_billing_provider'] ?? false;
-
-        if ($is_billing_provider) {
+        if ($type == CarePerson::BILLING_PROVIDER) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)
                 ->where('type', '=', CarePerson::BILLING_PROVIDER)
                 ->first();
@@ -292,6 +288,8 @@ class CareTeamController extends Controller
 
                 $oldBillingProvider->save();
             }
+            
+            $billingProvider = $oldBillingProviders->first();
 
             //If the Billing Provider has changed, we want to reflect that change on the front end.
             //If it's the same, we'll return null
@@ -299,20 +297,6 @@ class CareTeamController extends Controller
                 $billingProvider = $billingProvider->id == $providerUser->id
                     ? null
                     : $billingProvider;
-            }
-        }
-        else {
-            $billingProvider = CarePerson::where('user_id', '=', $patientId)
-            ->where('type', '=', CarePerson::BILLING_PROVIDER)
-            ->first();
-            if ($billingProvider) {
-                $type = 'external';
-                $billingProvider->type = 'external';
-                if ($billingProvider->user && $billingProvider->user->practice($patient->primaryPractice->id)) {
-                    $billingProvider->type = 'internal';
-                    $type = 'internal';
-                }
-                $billingProvider->save();
             }
         }
 

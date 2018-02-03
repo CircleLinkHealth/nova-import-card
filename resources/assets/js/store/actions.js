@@ -44,9 +44,10 @@ export const getPatientCareTeam = ({commit}, patientId) => {
     }, patientId)
 }
 
-export const updateCarePerson = ({commit}, carePerson) => {
-    carePersonApi.updateCarePerson(carePerson => {
-        commit('UPDATE_CARE_PERSON', carePerson);
+export const updateCarePerson = ({commit}, carePerson, patientId) => {
+    carePersonApi.updateCarePerson((carePerson, oldCarePerson) => {
+        commit('UPDATE_CARE_PERSON', carePerson)
+        commit('UPDATE_CARE_PERSON', oldCarePerson)
     }, null, carePerson)
 }
 
