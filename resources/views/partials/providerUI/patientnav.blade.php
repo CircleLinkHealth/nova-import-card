@@ -35,10 +35,10 @@
                         <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
                             Activity Report</a>
                     </li>
-                    <li>
-                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
-                            Report</a>
-                    </li>
+                    {{--<li>--}}
+                        {{--<a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress--}}
+                            {{--Report</a>--}}
+                    {{--</li>--}}
                 </ul>
             </li>
 
