@@ -101,6 +101,24 @@
                             goal.info.verb = 'Increase'
                         }
                     }
+                    else if (goal.name === 'Blood Pressure') {
+                        if (goal.info.starting == 'N/A' || goal.info.target == 'TBD') {
+                            goal.info.verb = 'Regulate'
+                        }
+                        else {
+                            if (start > end) {
+                                goal.info.verb = 'Decrease'
+                            }
+                            else {
+                                if (start < 90) {
+                                    goal.info.verb = 'Increase'
+                                }
+                                else {
+                                    goal.info.verb = 'Regulate'
+                                }
+                            }
+                        }
+                    }
                     else {
                         if (start > end) {
                             goal.info.verb = 'Decrease'

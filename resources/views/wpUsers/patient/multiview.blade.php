@@ -389,6 +389,24 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     $goal['verb'] = 'Increase';
                                 }
                             }
+                            else if ($goal['name'] == 'Blood Pressure') {
+                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD') {
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    if ($start > $end) {
+                                        $goal['verb'] = 'Decrease';
+                                    }
+                                    else {
+                                        if ($start < 90) {
+                                            $goal['verb'] = 'Increase';
+                                        }
+                                        else {
+                                            $goal['verb'] = 'Regulate';
+                                        }
+                                    }
+                                }
+                            }
                             else {
                                 $goal['verb'] = ($start > $end) ? 'Decrease' : 
                                     (($goal['name'] == 'Blood Pressure' && $start < 90) ||
