@@ -256,6 +256,7 @@ class NotesController extends Controller
 
     public function store(
         Request $input,
+        SchedulerService $schedulerService,
         $patientId
     ) {
 
@@ -319,12 +320,10 @@ class NotesController extends Controller
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
 
-                    $prediction = $schedulerService->getNextCall($patient, $note->id, true);
                     if (auth()->user()->isNotSaas()) {
                         $prediction = $schedulerService->getNextCall($patient, $note->id, true);
                     }
                 } else {
-                    $prediction = $schedulerService->getNextCall($patient, $note->id, false);
                     if (auth()->user()->isNotSaas()) {
                         $prediction = $schedulerService->getNextCall($patient, $note->id, false);
                     }
