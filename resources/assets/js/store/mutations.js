@@ -10,7 +10,15 @@ export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
     const team = (state.patientCareTeam || [])
 
     if (newCarePerson) {
-        state.patientCareTeam = team.map((person, index) => (newCarePerson.id === person.id ? Object.assign(person, newCarePerson) : person))
+        state.patientCareTeam = team.map((person, index) => {
+            if (newCarePerson.id === person.id) {
+                newCarePerson.user = person.user
+                return Object.assign(person, newCarePerson)
+            }
+            else {
+                return person
+            }
+        })
     }
 
     

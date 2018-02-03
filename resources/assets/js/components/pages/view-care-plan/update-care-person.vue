@@ -591,6 +591,8 @@
 
         created() {
             this.formData = JSON.parse(JSON.stringify(this.carePerson))
+            this.formData.is_billing_provider = (this.formData.formatted_type == 'billing_provider') || (this.formData.formatted_type == 'Billing Provider')
+            console.log('update-care-person:form-data', this.formData)
         },
 
         data() {
