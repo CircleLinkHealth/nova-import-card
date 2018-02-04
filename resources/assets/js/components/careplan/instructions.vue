@@ -8,12 +8,12 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="cpmProblems.length === 0">
+        <slot v-if="cpmProblemsWithInstructions.length === 0">
             <div class="col-xs-12 text-center">
                 No Instructions at this time
             </div>
         </slot>
-        <div class="row gutter" v-if="cpmProblems.length > 0">
+        <div class="row gutter" v-if="cpmProblemsWithInstructions.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
                 <p v-for="(instruction, index) in (problem.instruction.name || '').split('\n')" :key="index" v-html="instruction || '<br>'"></p>
