@@ -105,6 +105,14 @@
                         if (goal.info.starting == 'N/A' || goal.info.target == 'TBD') {
                             goal.info.verb = 'Regulate'
                         }
+                        else if (start < 100) {
+                            if (end <= 130) {
+                                goal.info.verb = 'Regulate'
+                            }
+                            else {
+                                goal.info.verb = 'Decrease'
+                            }
+                        }
                         else {
                             if (start > end) {
                                 goal.info.verb = 'Decrease'
@@ -221,7 +229,7 @@
             this.note = this.careplan().healthGoalNote || this.note
             console.log('patient-note', this.note)
             textarea.rows = this.note.body.split('\n').length
-            
+
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)

@@ -395,6 +395,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD') {
                                     $goal['verb'] = 'Regulate';
                                 }
+                                else if ($start < 100) {
+                                    if ($end <= 130) {
+                                        $goal['verb'] = 'Regulate';
+                                    }
+                                    else {
+                                        $goal['verb'] = 'Decrease';
+                                    }
+                                }
                                 else {
                                     if ($start > $end) {
                                         $goal['verb'] = 'Decrease';
