@@ -212,9 +212,16 @@
         },
         mounted() {
             const goals = this.careplan().healthGoals
+            const textarea = this.$el.querySelector('textarea')
+
+            textarea.addEventListener('input', function () {
+                this.rows = this.value.split('\n').length
+            })
             
             this.note = this.careplan().healthGoalNote || this.note
             console.log('patient-note', this.note)
+            textarea.rows = this.note.body.split('\n').length
+            
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
