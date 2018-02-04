@@ -371,7 +371,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <div class="patient-info__subareas">
                     <?php
                         $healthGoalsForListing = $healthGoals->filter(function ($goal) {
-                            return $goal['enabled'];
+                            return $goal['enabled'] && $goal['name'] != 'Smoking (# per day)';
                         })->map(function ($goal) {
                             $start = $goal['info']['starting'];
                             $start = (int)($start ? explode('/', $start)[0] : 0);
@@ -409,9 +409,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             }
                             else {
                                 $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                    (($goal['name'] == 'Blood Pressure' && $start < 90) ||
-                                    ($start > 0 && $start < $end)) ? 'Increase' :
-                                    'Regulate';
+                                    (($start > 0 && $start < $end) ? 'Increase' :
+                                    'Regulate');
                             }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;

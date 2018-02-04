@@ -124,7 +124,7 @@
                             goal.info.verb = 'Decrease'
                         }
                         else {
-                            if ((goal.name === 'Blood Pressure' && start < 90) || (start > 0 && start < end)) {
+                            if (start > 0 && start < end) {
                                 goal.info.verb = 'Increase'
                             }
                             else {
@@ -229,6 +229,7 @@
                 if (index >= 0) {
                     this.goals[index].info = info
                     this.goals[index] = this.setupGoal(this.goals[index])
+                    this.goals[index].enabled = true
                     this.$forceUpdate()
                 }
             })
