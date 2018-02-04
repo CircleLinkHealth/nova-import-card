@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Carbon\Carbon;
 use App\CarePlan;
+use App\Patient;
 
 class CareplanRepository
 {
@@ -35,7 +36,7 @@ class CareplanRepository
         
         if ($carePlans->first()) {
             $carePlans->update([ 'status' => $this->PATIENT_REJECTED, 'provider_date' => Carbon::now() ]);   
-
+            Patient::where(['user_id' => $userId])->update([ 'ccm_status' => 'withdrawn' ]);
             if ($providerApproverId) {
                 $carePlans->update([ 'provider_approver_id' => $providerApproverId ]); 
             }
