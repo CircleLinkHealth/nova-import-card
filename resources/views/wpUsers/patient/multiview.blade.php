@@ -424,25 +424,25 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Goals</h2>
                         </div>
                     </div>
-                    @if ($healthNote)
-                        <div class="col-xs-12">
-                            {{ $healthNote['body'] }}
-                        </div>
-                    @endif
                     <div class="row">
-                            @if (!$healthGoalsForListing->count()) 
-                                <div class="text-center">No Health Goals at this time</div>
-                            @else
-                                <ul class="subareas__list">
-                                    <li class="subareas__item subareas__item--wide col-sm-12">
-                                        @foreach($healthGoalsForListing as $goal)
-                                            <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
-                                            <div class="col-xs-4 print-row text-bold">{{ $goal['action'] }} {{ $goal['info']['target'] }} {{$goal['unit']}}</div>
-                                            <div class="col-xs-3 print-row">from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
-                                        @endforeach
-                                    </li>
-                                </ul>
-                            @endif
+                        @if ($healthNote)
+                            <div class="col-xs-12 top-10">
+                                {{ $healthNote['body'] }}
+                            </div>
+                        @endif
+                        @if (!$healthGoalsForListing->count()) 
+                            <div class="col-sm-12 text-center top-10">No Health Goals at this time</div>
+                        @else
+                            <ul class="col-sm-12 subareas__list top-10">
+                                <li class="subareas__item subareas__item--wide col-sm-12">
+                                    @foreach($healthGoalsForListing as $goal)
+                                        <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
+                                        <div class="col-xs-4 print-row text-bold">{{ $goal['action'] }} {{ $goal['info']['target'] }} {{$goal['unit']}}</div>
+                                        <div class="col-xs-3 print-row">from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
+                                    @endforeach
+                                </li>
+                            </ul>
+                        @endif
                     </div>
                 </div>
             <!-- /BIOMETRICS -->
