@@ -354,16 +354,18 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 </ul>
                             @endif
                         </div>
-                        <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                            <h2 class="color-blue">Other Conditions</h2>
-                            <ul class="row">
-                                @foreach ($ccdProblemsForListing as $problem)
-                                    <li class='top-10 col-sm-6'>
-                                        {{$problem['name']}}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                        @if ($ccdProblemsForListing->count() > 0)
+                            <div class="col-xs-12">
+                                <h2 class="color-blue">Other Conditions</h2>
+                                <ul class="row">
+                                    @foreach ($ccdProblemsForListing as $problem)
+                                        <li class='top-10 col-sm-6'>
+                                            {{$problem['name']}}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                     </div>
                 </div>
                 <!-- /CARE AREAS -->
