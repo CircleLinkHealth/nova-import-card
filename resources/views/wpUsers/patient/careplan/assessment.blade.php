@@ -133,7 +133,8 @@
                         body: 'Advanced care planning by MD during OR after visit is needed to bill the G0506 code.',
                         confirmText: 'Skip',
                         cancelText: 'Go Back',
-                        neverShow: true
+                        neverShow: true,
+                        name: 'skip-assessment'
                     }).then(function (obj) {
                         if (obj.action) {
                             location.href = "{{asset('manage-patients/' . $patient->id . '/view-careplan?skippedAssessment')}}"
