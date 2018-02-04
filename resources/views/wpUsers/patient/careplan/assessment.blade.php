@@ -57,7 +57,8 @@
                         <h1 class="color-blue">G0506 Enrollment Assessment</h1>
                         @if ($assessment) 
                             <h4 class="text-right">Performed on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
-                                {{Carbon::parse($assessment->updated_at)->format('H:i:s')}} by {{$approver->display_name}}</h4>
+                                {{$assessment->updated_at->setTimezone($patient->timezone ?? 'America/New_York')->format('g:i A T')}} 
+                                by {{$approver->display_name}}</h4>
                         @endif
                         
                     </div>
