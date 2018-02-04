@@ -297,6 +297,10 @@
             });
         });
 
+        $('#newNote').submit(function () {
+            var key = 'notes:{{$patient->id}}:add';
+            window.sessionStorage.removeItem(key)
+        })
     </script>
     @endpush
 @endsection
