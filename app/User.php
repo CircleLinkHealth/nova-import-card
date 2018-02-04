@@ -2678,11 +2678,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
-        if (str_contains(strtolower(app()->environment()), 'saas')) {
-            return new EmptyUserNotificationList();
+        if (in_array(env('CACHE_DRIVER'), ['redis'])) {
+            return new UserNotificationList($this->id);
         }
 
-        return new UserNotificationList($this->id);
+        return new EmptyUserNotificationList();
     }
 
     public function patientSummaries()
