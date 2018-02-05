@@ -26,6 +26,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -233,7 +234,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         Impersonate,
         Notifiable,
-        Traits\SaasAccountable,
+        SaasAccountable,
         SoftDeletes;
 
 
@@ -2765,5 +2766,27 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function canImpersonate()
     {
         return $this->isAdmin();
+    }
+
+    public function saasAccountName()
+    {
+        $saasAccount = $this->saasAccount;
+        if ($saasAccount) return $saasAccount->name;
+
+
+        $saasAccount = $this->primaryPractice->saasAccount;
+        if (!$saasAccount) {
+            if (auth()->check()) $saasAccount = auth()->user()->saasAccount;
+        }
+
+        if ($saasAccount) {
+            $this->saasAccount()
+                 ->associate($saasAccount);
+
+            return $saasAccount->name;
+        }
+
+
+        return 'CircleLink Health';
     }
 }
