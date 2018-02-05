@@ -2,22 +2,29 @@
 
 namespace App\Observers;
 
-use App\Practice;
 use App\User;
 use Illuminate\Database\QueryException;
 
 class UserObserver
 {
     /**
-     * Listen to the User created event.
+     * Listen to the User saving event.
      *
      * @param  User $user
      *
      * @return void
      */
-    public function created(User $user)
+    public function saving(User $user)
     {
-        //
+        if ( ! $user->saas_account_id) {
+            $practice = $user->practices->first();
+
+            if ($practice) {
+                $user->saas_account_id = $practice->saas_account_id;
+            } elseif (auth()->check()) {
+                $user->saas_account_id = auth()->user()->saas_account_id;
+            }
+        }
     }
 
     /**

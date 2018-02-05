@@ -26,7 +26,7 @@ trait SaasAccountable
     }
 
     public function saasAccountName() {
-        $saasAccount = $this->saasAccount->first();
+        $saasAccount = $this->saasAccount;
 
         if ($saasAccount) return $saasAccount->name;
 
