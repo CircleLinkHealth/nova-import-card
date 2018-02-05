@@ -5,7 +5,7 @@
                 <div>{{props.row.name}}</div>
             </template>
             <template slot="Provider" scope="props">
-                <div>{{(props.row.provider_info || {}).name || ''}}</div>
+                <div>{{props.row.billing_provider_name}}</div>
             </template>
             <template slot="CCM Status" scope="props">
                 <div>{{(props.row.patient_info || {}).ccm_status || ''}}</div>
@@ -60,7 +60,7 @@
                                 (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
                             }
                             if (patient.patient_info) {
-                                patient.patient_info.created_at = moment(new Date(patient.patient_info.created_at)).format('YYYY-MM-DD')
+                                if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
                                 patient.patient_info.age = Math.floor((new Date() - new Date(patient.patient_info.birth_date)) / (1000 * 60 * 60 * 24 * 365))
                             }
                             return patient
