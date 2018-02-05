@@ -55,7 +55,7 @@ class UserManagementService
         //Save so that the saved event will run and replace
         $user->save();
 
-        return $user;
+        return $user->fresh();
     }
 
     public function getUser($userId)
