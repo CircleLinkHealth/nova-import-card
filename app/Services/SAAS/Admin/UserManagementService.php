@@ -42,17 +42,18 @@ class UserManagementService
             $user = User::create($internalUser->getUser());
         }
 
-        //If auto_attach_programs, all practices will be attached to the User iduring saved events
-        //Otherwise, add all practices below
-        if (!$user->auto_attach_programs) {
-            $sync = [];
+        $sync = [];
 
-            foreach ($internalUser->getPractices() as $practiceId) {
-                $sync[$practiceId] = ['role_id' => $internalUser->getRole()];
-            }
-
-            $user->practices()->sync($sync);
+        //We are doing this even if the user has auto_attach_programs
+        //So that the user will have a role
+        foreach ($internalUser->getPractices() as $practiceId) {
+            $sync[$practiceId] = ['role_id' => $internalUser->getRole()];
         }
+
+        $user->practices()->sync($sync);
+
+        //Save so that the saved event will run and replace
+        $user->save();
 
         return $user;
     }

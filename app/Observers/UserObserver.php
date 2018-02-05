@@ -65,7 +65,13 @@ class UserObserver
                 ->practices
                 ->map(function ($practice) use ($user) {
                     try {
-                        $user->attachRoleForSite($user->practiceOrGlobalRole()->id, $practice->id);
+                        $role = $user->practiceOrGlobalRole();
+
+                        if (!$role) {
+                            return false;
+                        }
+
+                        $user->attachRoleForSite($role->id, $practice->id);
 
                         return $practice->id;
                     } catch (\Exception $e) {
@@ -76,6 +82,8 @@ class UserObserver
                                 return false;
                             }
                         }
+
+                        throw $e;
                     }
                 });
         }

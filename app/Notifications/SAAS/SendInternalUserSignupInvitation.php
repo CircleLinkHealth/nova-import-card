@@ -138,7 +138,7 @@ class SendInternalUserSignupInvitation extends Notification
 
         return Invite::create([
             'inviter_id' => $this->sender->id,
-            'role_id'    => $notifiable->roles->first()->id,
+            'role_id'    => $notifiable->practiceOrGlobalRole()->id,
             'email'      => $notifiable->email,
             'subject'    => $arr['subject'],
             'message'    => $arr['greeting'] . PHP_EOL . $arr['line'] . PHP_EOL . $arr['action_text'] . PHP_EOL,
