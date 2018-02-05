@@ -231,7 +231,7 @@
             
             this.note = this.careplan().healthGoalNote || this.note
             console.log('patient-note', this.note)
-            autoGrow.call(textarea)
+            setTimeout(() => autoGrow.call(textarea), 200)
 
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {

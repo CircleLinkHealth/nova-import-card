@@ -269,6 +269,10 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing', $data);
     }
 
+    public function showPatientListingRemix() {
+        return view('wpUsers.patient.listing-remix');
+    }
+
     /**
      * Display the specified resource.
      *

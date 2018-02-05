@@ -64,6 +64,7 @@ import SocialServicesComponent from './components/careplan/social-services'
 import MiscModalComponent from './components/careplan/modals/misc.modal'
 import OthersComponent from './components/careplan/others'
 import AppointmentsComponent from './components/careplan/appointments'
+import PatientList from './components/patients/listing'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -99,6 +100,7 @@ Vue.component('social-services', SocialServicesComponent)
 Vue.component('others', OthersComponent)
 Vue.component('misc-modal', MiscModalComponent)
 Vue.component('appointments', AppointmentsComponent)
+Vue.component('patient-list', PatientList)
 
 const App = new Vue({
     el: '#app',

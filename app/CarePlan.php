@@ -194,4 +194,14 @@ class CarePlan extends \App\BaseModel implements PdfReport
             ? $approver->fullName
             : '';
     }
+
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'status' => $this->status,
+            'mode' => $this->mode,
+            'type' => $this->type
+        ];
+    }
 }

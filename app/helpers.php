@@ -898,7 +898,7 @@ if (!function_exists('cast')) {
             throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
         $ret = app($class);
         foreach (get_object_vars($object) as $key => $value) {
-            $ret->$key = $value;
+            $ret[$key] = $value;
         }
         return $ret;
     }
