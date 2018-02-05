@@ -16,7 +16,7 @@ trait AppointmentTraits
         $appointment->provider_id = $request->input('provider_id');
         $appointment->date = $request->input('date');
         $appointment->time = $request->input('time');
-        if ($userId && $appointment->provider_id && $appointment->author_id && $appointment->type && $appointment->comment) {
+        if ($userId && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }
         else return $this->badRequest('"userId", "author_id", "type", "comment" and "provider_id" are is important');

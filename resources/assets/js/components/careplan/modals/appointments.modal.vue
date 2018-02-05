@@ -15,7 +15,7 @@
                                 </h4>
                             </div>
                             <div class="col-sm-12 top-20">
-                                <v-select class="form-control" v-model="newAppointment.provider" :options="providers" required></v-select>
+                                <v-select class="form-control" v-model="newAppointment.provider" :options="providers"></v-select>
                             </div>
                             <div class="col-sm-4 top-20">
                                 <input type="date" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.date" :min="newAppointment.min" required />
@@ -117,7 +117,7 @@
                     removeAppointment: null,
                     getProviders: null
                 },
-                providers: [{ label: 'Select a Provider', value: null }],
+                providers: [{ label: 'Unknown', value: null }],
                 pagination: {
                     index: 1,
                     limit: 5,
