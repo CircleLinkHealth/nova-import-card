@@ -108,7 +108,7 @@
                                                 <label for="select-user-checkbox-{{ $wpUser->id }}"><span> </span></label>
                                             </div>
                                         </td>
-                                        <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
+                                        <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
