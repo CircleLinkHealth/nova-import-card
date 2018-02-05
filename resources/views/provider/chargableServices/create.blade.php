@@ -12,31 +12,46 @@
         <div class="row">
             {!! Form::open(['url' => route('provider.dashboard.store.chargeable-services', ['practiceSlug' => $practiceSlug]), 'method' => 'post', 'class' => 'col s12', 'id'=>'practice-chargeable-services-form']) !!}
 
-            <button type="submit"
-                    form="practice-chargeable-services-form"
-                    class="btn blue waves-effect waves-light col s4"
-                    onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
-                Update Preferences
-            </button>
+            <div class="row">
+                @foreach($chargeableServices as $service)
+                    <div class="col s12 m6">
+                        <div class="card grey lighten-4">
+                            <div class="card-content blue-gray-text">
+                                <span class="card-title">{{$service->code}}</span>
+                                <p>{{$service->description}}.</p>
+                            </div>
+                            <div class="card-action">
+                                <div style="text-align: right;">
+                                    <input name="chargeable_services[{{$service->id}}]" type="checkbox"
+                                           id="service-{{$service->id}}"
+                                           value="1" @if($service->is_on){{'checked'}}@endif  @if(!auth()->user()->hasPermission('create-practice-chargeable-service')){{'disabled'}}@endif>
+                                    <label for="service-{{$service->id}}">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
 
 
+            @if(auth()->user()->hasPermission('create-practice-chargeable-service'))
+                <button type="submit"
+                        form="practice-chargeable-services-form"
+                        class="btn blue waves-effect waves-light col s4"
+                        onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
+                    Update Preferences
+                </button>
+            @endif
 
-        <button type="submit"
-                form="practice-chargeable-services-form"
-                class="btn blue waves-effect waves-light col s4"
-                onclick="Materialize.toast('{{$practice->display_name}} preferences was successfully updated.', 4000)">
-            Update Preferences
-        </button>
+            {!! Form::close() !!}
 
-        {!! Form::close() !!}
+        </div>
+        @endsection
 
-    </div>
-@endsection
-
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            $('select').material_select();
-        });
-    </script>
-@endpush
+        @push('scripts')
+            <script>
+                $(document).ready(function () {
+                    $('select').material_select();
+                });
+            </script>
+    @endpush

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\ChargeableService;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Location;
 use App\Practice;
 use App\Services\OnboardingService;
@@ -87,12 +89,29 @@ class DashboardController extends Controller
 
     public function getCreateChargeableServices()
     {
-        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
+        $practiceChargeableRel = $this->primaryPractice->chargeableServices;
+
+        $allChargeableServices = ChargeableService::all()
+                                                  ->map(function ($service) use ($practiceChargeableRel) {
+                                                      $existing = $practiceChargeableRel
+                                                          ->where('id', '=', $service->id)
+                                                          ->first();
+
+                                                      $service->is_on = false;
+
+                                                      if ($existing) {
+                                                          $service->amount = $existing->amount;
+                                                          $service->is_on = true;
+                                                      }
+
+                                                      return $service;
+                                                  });
 
         return view('provider.chargableServices.create', array_merge([
             'practice'          => $this->primaryPractice,
             'practiceSlug'      => $this->practiceSlug,
             'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
 
