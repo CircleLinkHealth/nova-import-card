@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Billing;
 
 use App\AppConfig;
+use App\ChargeableService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
@@ -17,7 +18,6 @@ use App\Services\PracticeReportsService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 
@@ -67,9 +67,12 @@ class PracticeInvoiceController extends Controller
                                      ];
                                  });
 
+        $chargeableServices = ChargeableService::all();
+
         return view('admin.reports.billing', compact([
             'cpmProblems',
             'practices',
+            'chargeableServices',
         ]));
     }
 
@@ -91,6 +94,87 @@ class PracticeInvoiceController extends Controller
 
         return ApprovableBillablePatient::collection($data);
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updatePracticeChargeableServices(Request $request)
+    {
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+        $month         = $request['month_year'];
+        $practiceId    = $request['practice_id'];
+        $defaultCodeId = $request['default_code_id'];
+
+        $patients = User::ofPractice($practiceId)
+                        ->with('patientSummaries.chargeableServices')
+                        ->whereHas('patientSummaries', function ($query) use ($month) {
+                            $query->where('month_year', $month)
+                                  ->where('ccm_time', '>', 1200);
+                        })
+                        ->get()
+                        ->map(function ($user) use ($defaultCodeId, $month) {
+                            $user->patientSummaries
+                                ->where('month_year', $month)
+                                ->map(function ($summary) use ($defaultCodeId, $month) {
+                                    $summary->chargeableServices()->sync($defaultCodeId);
+
+                                    return $summary;
+                                });
+                        });
+
+        return $this->ok();
+
+
+    }
+
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateSummaryChargeableServices(Request $request)
+    {
+        if ( ! $request->ajax()) {
+            return response()->json('Method not allowed', 403);
+        }
+
+
+        //need array of IDs
+        $chargeableServices = $request['patient_chargeable_services'];
+        $month              = $request['month_year'];
+        $practiceId         = $request['practice_id'];
+
+        $patient = User::ofType('participant')
+                       ->where('program_id', '=', $practiceId)
+                       ->whereHas('patientSummaries', function ($query) use ($month) {
+                           $query->where('month_year', $month)
+                                 ->where('ccm_time', '>', 1200);
+                       })
+                       ->with('patientSummaries.chargeableServices')
+                       ->get()
+                       ->map(function ($user) use ($month, $chargeableServices) {
+                           $user->patientSummaries
+                               ->where('month_year', $month)
+                               ->map(function ($summary) use ($month, $chargeableServices) {
+
+                                   $summary->chargeableServices()->sync($chargeableServices);
+
+                                   return $summary;
+                               });
+
+                       });
+
+
+        return $this->ok();
+
+    }
+
 
     public function updateStatus(Request $request)
     {

@@ -887,6 +887,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.data',
                 ]);
 
+                Route::post('/updatePracticeServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
+                    'as'   => 'monthly.billing.practice.services',
+                ]);
+
+                Route::post('/updateSummaryServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
+                    'as'   => 'monthly.billing.summary.services',
+                ]);
+
                 Route::post('/status/update', [
                     'uses' => 'Billing\PracticeInvoiceController@updateStatus',
                     'as'   => 'monthly.billing.status.update',
