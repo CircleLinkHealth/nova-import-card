@@ -2399,6 +2399,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 
+    public function chargeableServices(){
+        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+                    ->withTimestamps();
+    }
+
     public function clinicalEmergencyContactLocations()
     {
         return $this->morphedByMany(Location::class, 'contactable', 'contacts')
