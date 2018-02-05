@@ -2330,6 +2330,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function chargeableServices(){
         return $this->morphToMany(  ChargeableService::class, 'chargeable')
+            ->withPivot(['amount'])
             ->withTimestamps();
     }
 
