@@ -222,13 +222,16 @@
             const goals = this.careplan().healthGoals
             const textarea = this.$el.querySelector('textarea')
 
-            textarea.addEventListener('input', function () {
-                this.rows = this.value.split('\n').length
-            })
+            const autoGrow = function () {
+                this.style.height = '50px'
+                this.style.height = this.scrollHeight + 'px'
+            }
+
+            textarea.addEventListener('input', autoGrow)
             
             this.note = this.careplan().healthGoalNote || this.note
             console.log('patient-note', this.note)
-            textarea.rows = this.note.body.split('\n').length
+            autoGrow.call(textarea)
 
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
