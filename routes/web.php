@@ -1303,6 +1303,16 @@ Route::group([
     ],
 ], function () {
 
+    Route::post('chargeable-services', [
+        'uses' => 'Provider\DashboardController@postStoreChargeableServices',
+        'as'   => 'provider.dashboard.store.chargeable-services',
+    ])->middleware('permission:create-practice-chargeable-service');
+
+    Route::get('chargeable-services', [
+        'uses' => 'Provider\DashboardController@getCreateChargeableServices',
+        'as'   => 'provider.dashboard.manage.chargeable-services',
+    ])->middleware('permission:read-practice-chargeable-service');
+
     Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',

@@ -85,6 +85,17 @@ class DashboardController extends Controller
         ], $this->returnWithAll));
     }
 
+    public function getCreateChargeableServices()
+    {
+        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
+
+        return view('provider.chargableServices.create', array_merge([
+            'practice'          => $this->primaryPractice,
+            'practiceSlug'      => $this->practiceSlug,
+            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+        ], $this->returnWithAll));
+    }
+
     public function getCreateStaff()
     {
         $practice = $this->primaryPractice;
@@ -188,6 +199,13 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->back()->withErrors($errors);
+    }
+
+    public function postStoreChargeableServices(Request $request)
+    {
+        $services = $request['services'];
+
+        return redirect()->back();
     }
 
     public function postStoreStaff(Request $request)
