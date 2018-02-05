@@ -24,22 +24,23 @@ class BillablePatientsEloquentRepository
             },
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200);
+                      ->where('ccm_time', '>=', 1200)
+                      ->with('chargeableServices');
             },
             'cpmProblems',
             'patientInfo',
             'primaryPractice',
-            'careTeamMembers' => function($q) {
+            'careTeamMembers'  => function ($q) {
                 $q->where('type', '=', 'billing_provider');
             },
         ])
-                   ->has('patientInfo')
-                   ->whereHas('patientSummaries', function ($query) use ($month) {
-                       $query->where('month_year', $month)
-                             ->where('ccm_time', '>=', 1200);
-                   })
-                   ->ofType('participant')
-                   ->where('program_id', '=', $practiceId);
+                      ->has('patientInfo')
+                      ->whereHas('patientSummaries', function ($query) use ($month) {
+                          $query->where('month_year', $month)
+                                ->where('ccm_time', '>=', 1200);
+                      })
+                      ->ofType('participant')
+                      ->where('program_id', '=', $practiceId);
 
         return $result;
     }

@@ -17,7 +17,7 @@ class PracticeObserver
     public function creating(Practice $practice)
     {
         if ( ! $practice->saas_account_id) {
-            $practice->saas_account_id = auth()->user()->saas_account_id;
+            $practice->saas_account_id = optional(auth()->user())->saas_account_id;
         }
     }
 

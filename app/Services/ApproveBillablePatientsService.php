@@ -1,5 +1,6 @@
 <?php namespace App\Services;
 
+use App\ChargeableService;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
@@ -43,8 +44,15 @@ class ApproveBillablePatientsService
         return $this->approvePatientsRepo->billablePatients($practiceId, $month)
                                          ->get()
                                          ->map(function ($u) {
-                                             return $this->patientSummaryRepo->attachBillableProblems($u,
+
+                                             $summary = $this->patientSummaryRepo->attachBillableProblems($u,
                                                  $u->patientSummaries->first());
+
+//                                             $services = $summary->chargeableServices;
+//
+//                                             if ($services->isEmpty()) { $summary->chargeableServices()->attach(1); }
+
+                                             return $summary;
                                          });
     }
 }

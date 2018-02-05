@@ -138,6 +138,12 @@ class Practice extends \App\BaseModel
         });
     }
 
+    public function chargeableServices(){
+        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+                    ->withPivot(['amount'])
+                    ->withTimestamps();
+    }
+
     public function getCountOfUserTypeAtPractice($role)
     {
 
