@@ -24,8 +24,18 @@ if (isset($patient) && ! empty($patient)) {
 @endif
 
 @section('content')
+    @push('styles')
+        <style>
+            [v-cloak] > * { 
+                display:none
+            }
+            [v-cloak]::before { 
+                content: "loading…"
+            }
+        </style>
+    @endpush
     @if(isset($patient) && !empty($patient))
-        <div id="v-pdf-careplans" class="container">
+        <div id="v-pdf-careplans" class="container" v-cloak>
             <section class="patient-summary">
                 <div class="patient-info__main">
                     @if(!isset($isPdf))
