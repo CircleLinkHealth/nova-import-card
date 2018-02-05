@@ -21,39 +21,39 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
-
-            $handled = (new ReschedulerHandler())->handle();
-
-            if ( ! empty($handled)) {
-                $message = "The CPMbot just rescheduled some calls.\n";
-
-                foreach ($handled as $call) {
-                    $message = "We just fixed call: {$call->id}. \n";
-                }
-
-                sendSlackMessage('#background-tasks', $message);
-            }
-        })->dailyAt('00:05');
+//        $schedule->call(function () {
+//
+//            $handled = (new ReschedulerHandler())->handle();
+//
+//            if ( ! empty($handled)) {
+//                $message = "The CPMbot just rescheduled some calls.\n";
+//
+//                foreach ($handled as $call) {
+//                    $message = "We just fixed call: {$call->id}. \n";
+//                }
+//
+//                sendSlackMessage('#background-tasks', $message);
+//            }
+//        })->dailyAt('00:05');
 
         //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('00:20');
+//        $schedule->call(function () {
+//            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+//        })->dailyAt('00:20');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
         //syncs families.
-        $schedule->call(function () {
-            (new SchedulerService())->syncFamilialCalls();
-        })->dailyAt('00:30');
+//        $schedule->call(function () {
+//            (new SchedulerService())->syncFamilialCalls();
+//        })->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-        })->everyMinute();
+//        $schedule->call(function () {
+//            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
+//        })->everyMinute();
 
 //        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
 //                 ->weeklyOn(1, '10:00');
@@ -66,15 +66,15 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('nurseSchedule:export')
 //                 ->hourly();
 
-        $schedule->command('athena:getAppointments')
-                 ->dailyAt('23:00');
+//        $schedule->command('athena:getAppointments')
+//                 ->dailyAt('23:00');
+//
+//        $schedule->command('athena:getCcds')
+//                 ->everyThirtyMinutes();
 
-        $schedule->command('athena:getCcds')
-                 ->everyThirtyMinutes();
-
-        $schedule->command('nurses:emailDailyReport')
-                 ->weekdays()
-                 ->at('21:00');
+//        $schedule->command('nurses:emailDailyReport')
+//                 ->weekdays()
+//                 ->at('21:00');
 
         //Run at 12:01am every 1st of month
         $schedule->command('ccm_time:reset')
@@ -87,21 +87,23 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
-        $schedule->command('report:nurseInvoices')
-                 ->dailyAt('04:00')
-                 ->withoutOverlapping();
+//        $schedule->command('report:nurseInvoices')
+//                 ->dailyAt('04:00')
+//                 ->withoutOverlapping();
+//
+//        $schedule->command('report:nurseDaily')
+//                 ->dailyAt('23:50')
+//                 ->withoutOverlapping();
 
-        $schedule->command('report:nurseDaily')
-                 ->dailyAt('23:50')
-                 ->withoutOverlapping();
+
+//        $schedule->command('ccda:determineEligibility')
+//                 ->everyFiveMinutes()
+//                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()
 //            ->withoutOverlapping();
 
-        $schedule->command('ccda:determineEligibility')
-                 ->everyFiveMinutes()
-                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
 //            ->everyMinute()
