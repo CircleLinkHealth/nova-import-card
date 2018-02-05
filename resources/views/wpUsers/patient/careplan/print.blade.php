@@ -32,11 +32,11 @@ if (isset($patient) && ! empty($patient)) {
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
 
-                                <div class="hide">
+                                <div>
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
                                             data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
-                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"></time-tracker>
                                         </span>
                                     </span>
                                 </div>
