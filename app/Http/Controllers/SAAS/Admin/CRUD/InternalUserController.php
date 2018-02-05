@@ -84,7 +84,13 @@ class InternalUserController extends Controller
 
     public function update(StoreInternalUser $request, $userId)
     {
-        $internalUser = new InternalUser($request['user'], $request['practices'], $request['role']);
+        $userAttr = $request['user'];
+
+        if (!$request->has('user.auto_attach_programs')) {
+            $userAttr['auto_attach_programs'] = false;
+        }
+
+        $internalUser = new InternalUser($userAttr, $request['practices'], $request['role']);
         $user         = $this->userManagementService->storeInternalUser($internalUser);
 
         return redirect()->route('saas-admin.users.edit', [

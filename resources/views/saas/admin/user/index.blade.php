@@ -1,5 +1,7 @@
 @extends('partials.providerUI')
 
+@section('title', 'View all Users')
+
 @section('content')
     @push('scripts')
     <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>

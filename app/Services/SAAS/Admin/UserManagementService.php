@@ -35,15 +35,24 @@ class UserManagementService
      */
     public function storeInternalUser(InternalUser $internalUser)
     {
-        $user = User::updateOrCreate($internalUser->getUser());
-
-        $sync = [];
-
-        foreach ($internalUser->getPractices() as $practiceId) {
-            $sync[$practiceId] = ['role_id' => $internalUser->getRole()];
+        if (array_key_exists('id', $internalUser->getUser())) {
+            $user = User::find($internalUser->getUser()['id']);
+            $user->update($internalUser->getUser());
+        } else {
+            $user = User::create($internalUser->getUser());
         }
 
-        $user->practices()->sync($sync);
+        //If auto_attach_programs, all practices will be attached to the User iduring saved events
+        //Otherwise, add all practices below
+        if (!$user->auto_attach_programs) {
+            $sync = [];
+
+            foreach ($internalUser->getPractices() as $practiceId) {
+                $sync[$practiceId] = ['role_id' => $internalUser->getRole()];
+            }
+
+            $user->practices()->sync($sync);
+        }
 
         return $user;
     }
@@ -52,9 +61,16 @@ class UserManagementService
     {
         $user = User::with(['practices', 'roles'])
                     ->whereId($userId)
-                    ->first();
+                    ->firstOrFail();
 
+        $practices = $user->practices->isNotEmpty()
+            ? $user->practices->pluck('id')->all()
+            : '';
 
-        return new InternalUser($user, $user->practices->isNotEmpty() ? $user->practices->pluck('id')->all() : '', $user->roles->isNotEmpty() ? $user->roles->first()->id : '');
+        $roles = $user->roles->isNotEmpty()
+            ? $user->roles->first()->id
+            : '';
+
+        return new InternalUser($user, $practices, $roles);
     }
 }
