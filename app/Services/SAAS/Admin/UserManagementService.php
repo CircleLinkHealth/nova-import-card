@@ -55,6 +55,13 @@ class UserManagementService
         //Save so that the saved event will run and replace
         $user->save();
 
+        //if role = care-center
+        if ($internalUser->getRole() == 10) {
+            $user->nurseInfo()->create([
+                'status' => 'active',
+            ]);
+        }
+
         return $user->fresh();
     }
 
