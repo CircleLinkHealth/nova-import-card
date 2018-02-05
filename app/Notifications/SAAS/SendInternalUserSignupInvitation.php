@@ -124,7 +124,7 @@ class SendInternalUserSignupInvitation extends Notification
         return [
             'subject'     => "$inviterName Invited You to {$practiceName}’s CCM Program!",
             'greeting'    => "Hello!",
-            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at $appUrl, in partnership with {$saasAccountName}",
+            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at $appUrl.",
             'action_text' => 'Create password',
             'action_link' => route('get.onboarding.create.invited.user', [
                 'code' => $this->code,
