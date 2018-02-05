@@ -108,7 +108,7 @@ class PracticeReportsService
 
         $chargeableServices = $chargeable->chargeableServices()->get();
 
-        //defaults to CPT99490 if practice doesnt have a chargeableService, until further notice
+        //defaults to CPT 99490 if practice doesnt have a chargeableService, until further notice
         if ( ! $chargeableServices) {
             $chargeableServices = ChargeableService::where('id', 1)->get();
         }

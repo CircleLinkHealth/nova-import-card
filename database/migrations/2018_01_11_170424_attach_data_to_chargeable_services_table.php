@@ -14,7 +14,7 @@ class AttachDataToChargeableServicesTable extends Migration
     public function up()
     {
         $service = ChargeableService::updateOrCreate([
-            'code'        => 'CPT99490',
+            'code'        => 'CPT 99490',
             'description' => 'CCM Services over 20 mins (1 month).',
             'amount'      => 29,
         ]);

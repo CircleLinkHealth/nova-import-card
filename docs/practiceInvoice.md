@@ -5,7 +5,7 @@
 
 ## ChargeableService Model
 Represents the services that practices and/or providers are charged.
-Its properties are: `code` (e.g. CPT99490), `description` and `amount` (currency).
+Its properties are: `code` (e.g. CPT 99490), `description` and `amount` (currency).
 
 ChargeableService shares a **Many to Many Polymorhpic Relationship** to the `Practice` and `User`(Provider) models:
 
@@ -46,7 +46,7 @@ Takes an array of Practices and a Carbon Date. It creates a Pdf Invoice and Pati
 ##### makeQuickbookReport()
 
 ##### getChargeableServices()
-Gets all ChargeableServices related to the argument, which is either a Practice or a Provider. If no related ChargeableServices are found, it retrieves `CPT99490` as default. Returns a Collection.
+Gets all ChargeableServices related to the argument, which is either a Practice or a Provider. If no related ChargeableServices are found, it retrieves `CPT 99490` as default. Returns a Collection.
 
 ##### makeRow()
 Takes a Practice model, a Carbon date item, ChargeableService model and a User  model which is nullable (used only when generating QuickBooks for Providers).
