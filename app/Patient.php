@@ -508,4 +508,16 @@ class Patient extends \App\BaseModel
     {
         return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
+
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'ccm_status' => $this->ccm_status,
+            'birth_date' => $this->birth_date,
+            'gender' => $this->gender,
+            'created_at' => $this->created_at->format('c'),
+            'updated_at' => $this->updated_at->format('c')
+        ];
+    }
 }

@@ -2698,7 +2698,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     }
 
     public function safe() {
-        return [
+        return cast((object)[
             'id' => $this->id,
             'username' => $this->username,
             'name' => $this->name(),
@@ -2706,8 +2706,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'city' => $this->city,
             'state' => $this->state,
             'specialty' => $this->specialty,
-            'program_id' => $this->program_id
-        ];
+            'program_id' => $this->program_id,
+            'count_ccm_time' => $this->count_ccm_time,
+            'status' => $this->status,
+            'user_status' => $this->user_status,
+            'is_online' => $this->is_online,
+            'patient_info' => optional($this->patientInfo()->first())->safe(),
+            'provider_info' => $this->providerInfo()->first()
+        ], User::class);
     }
 
     public function saasAccount() {

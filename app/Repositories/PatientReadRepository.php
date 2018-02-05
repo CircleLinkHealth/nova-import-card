@@ -26,6 +26,14 @@ class PatientReadRepository
         return $this->user;
     }
 
+    public function patients() {
+        $users = $this->model()->whereHas('patientInfo')->paginate();
+        $users->getCollection()->transform(function ($user) {
+            return optional($user)->safe();
+        });
+        return $users;
+    }
+
     /**
      * Scope for paused patients
      *

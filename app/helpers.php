@@ -873,3 +873,33 @@ if (!function_exists('validateYYYYMMDDDateString')){
         return $isValid;
     }
 }
+
+if (!function_exists('cast')) {
+    /**
+    * Cast an object into a different class.
+    *
+    * Currently this only supports casting DOWN the inheritance chain,
+    * that is, an object may only be cast into a class if that class 
+    * is a descendant of the object's current class.
+    *
+    * This is mostly to avoid potentially losing data by casting across
+    * incompatable classes.
+    *
+    * @param object $object The object to cast.
+    * @param string $class The class to cast the object into.
+    * @return object
+    */
+    function cast($object, $class) {
+        if( !is_object($object) ) 
+            throw new InvalidArgumentException('$object must be an object.');
+        if( !is_string($class) )
+            throw new InvalidArgumentException('$class must be a string.');
+        if( !class_exists($class) )
+            throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
+        $ret = app($class);
+        foreach (get_object_vars($object) as $key => $value) {
+            $ret->$key = $value;
+        }
+        return $ret;
+    }
+}
