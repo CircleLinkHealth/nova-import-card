@@ -24,6 +24,7 @@ class DashboardController extends Controller
     protected $practices;
     protected $users;
     protected $onboardingService;
+    protected $primaryPractice;
 
     public function __construct(
         InviteRepository $inviteRepository,
@@ -100,7 +101,7 @@ class DashboardController extends Controller
                                                       $service->is_on = false;
 
                                                       if ($existing) {
-                                                          $service->amount = $existing->amount;
+                                                          $service->amount = $existing->pivot->amount;
                                                           $service->is_on = true;
                                                       }
 
@@ -222,7 +223,21 @@ class DashboardController extends Controller
 
     public function postStoreChargeableServices(Request $request)
     {
-        $services = $request['services'];
+        $services = $request['chargeable_services'];
+
+        $sync = [];
+
+        foreach ($services as $id => $service) {
+            if (array_key_exists('is_on', $service)) {
+                $sync[$id] = [
+                    'amount' => $service['amount']
+                ];
+            }
+        }
+
+        $this->primaryPractice
+            ->chargeableServices()
+            ->sync($sync);
 
         return redirect()->back();
     }
