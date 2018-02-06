@@ -1,6 +1,12 @@
 <template>
     <div>
+        <div>
+            <loader v-if="loaders.next"></loader>
+        </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options">
+            <template slot="filter__ccm">
+                <div>(HH:MM:SS)</div>
+            </template>
         </v-client-table>
     </div>
 </template>
@@ -9,16 +15,26 @@
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
     import moment from 'moment'
+    import loader from '../loader'
     
     export default {
         name: 'PatientList',
+        components: {
+            loader
+        },
         data() {
             return {
                 page: 1,
                 tableData: [],
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 options: {
-                    filterByColumn: true
+                    filterByColumn: true,
+                    filterable: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
+                    listColumns: {
+                        provider: [],
+                        ccmStatus: [],
+                        careplanStatus: []
+                    }
                 },
                 loaders: {
                     next: null
@@ -29,7 +45,7 @@
             getPatients () {
                 if (!this.loaders.next) {
                     const self = this
-                    this.loaders.next = this.axios.get(rootUrl('api/patients')).then(response => {
+                    this.loaders.next = this.axios.get(rootUrl(`api/patients?page=${this.page}`)).then(response => {
                         console.log('patient-list', response.data)
                         const pagination = response.data
                         const ids = this.tableData.map(patient => patient.id)
@@ -57,6 +73,19 @@
                             patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
                             patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
                             return patient
+                        }).map(patient => {
+                            const loadColumnList = (list = [], item = null) => {
+                                if ((item || '').trim() && !list.find(orb => orb.text == item)) {
+                                    list.push({
+                                        id: item,
+                                        text: item
+                                    })
+                                }
+                            }
+                            loadColumnList(this.options.listColumns.provider, patient.provider)
+                            loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
+                            loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
+                            return patient
                         }).filter(patient => (ids.indexOf(patient.id) < 0))
                         this.tableData = this.tableData.concat(patients)
                         this.page++
@@ -70,6 +99,13 @@
         },
         mounted() {
             this.getPatients()
+            const $table = this.$refs.tblPatientList
+            Event.$on('vue-tables.pagination', (page) => {
+                if (page === $table.totalPages) {
+                    console.log('next table data')
+                    this.getPatients();
+                }
+            })
         }
     }
 </script>

@@ -22,7 +22,7 @@
                     Patient List
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12 overflow-scroll">
-                    <patient-list></patient-list>
+                    <patient-list ref="patientList"></patient-list>
                 </div>
             </div>
         </div>
