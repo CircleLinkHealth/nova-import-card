@@ -472,8 +472,7 @@ class WebixFormatter implements ReportFormatter
         return $careplanReport;
     }
 
-    public function patientListing(Collection $patients = null)
-    {
+    public function patients(Collection $patients = null) {
         $patientData = [];
         $auth        = \Auth::user();
 
@@ -613,7 +612,20 @@ class WebixFormatter implements ReportFormatter
                 \Log::critical("{$e} has no patient info");
             }
         }
+        return $patientData;
+    }
+
+    public function patientListing(Collection $patients = null)
+    {
+        $patientData = $this->patients($patients);
         $patientJson = json_encode($patientData);
+        $auth        = \Auth::user();
+        $canApproveCarePlans   = $auth->canApproveCareplans();
+        $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
+        $isCareCenter          = $auth->hasRole('care-center');
+        $isAdmin               = $auth->hasRole('administrator');
+        $isProvider            = $auth->hasRole('provider');
+        $isPracticeStaff            = $auth->hasRole(['office_admin', 'med_assistant']);
 
         return compact([
             'patientJson',

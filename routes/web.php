@@ -491,8 +491,13 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
         
         Route::get('listing/remix', [
-        'uses' => 'Patient\PatientController@showPatientListingRemix',
+            'uses' => 'Patient\PatientController@showPatientListingRemix',
             'as'   => 'patients.listing.remix',
+        ]);
+        
+        Route::get('listing/pdf', [
+            'uses' => 'Patient\PatientController@showPatientListingPdf',
+            'as'   => 'patients.listing.pdf',
         ]);
 
         Route::get('careplan-print-multi', [

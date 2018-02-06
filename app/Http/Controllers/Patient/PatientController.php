@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
+use App\Services\PdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +15,12 @@ use URL;
 class PatientController extends Controller
 {
     private $formatter;
+    private $pdfService;
 
-    public function __construct(ReportFormatter $formatter)
+    public function __construct(ReportFormatter $formatter, PdfService $pdfService)
     {
         $this->formatter = $formatter;
+        $this->pdfService = $pdfService;
     }
 
     /**
@@ -271,6 +274,21 @@ class PatientController extends Controller
 
     public function showPatientListingRemix() {
         return view('wpUsers.patient.listing-remix');
+    }
+    
+    public function showPatientListingPdf() {
+        $storageDirectory = 'storage/pdfs/patients/';
+        $datetimePrefix   = date('Y-m-dH:i:s');
+        $fileName = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
+        $file = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
+            'patients' => $this->formatter->patients(),
+            'pdfOptions' => [
+                'orientation' => 'Landscape',
+                'margin-left' => '3',
+                'margin-right' => '3'
+            ]
+        ]);
+        return response()->file($file);
     }
 
     /**
