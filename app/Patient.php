@@ -517,7 +517,8 @@ class Patient extends \App\BaseModel
             'birth_date' => $this->birth_date,
             'gender' => $this->gender,
             'created_at' => $this->created_at->format('c'),
-            'updated_at' => $this->updated_at->format('c')
+            'updated_at' => $this->updated_at->format('c'),
+            'cur_month_activity_time' => $this->cur_month_activity_time
         ];
     }
 }

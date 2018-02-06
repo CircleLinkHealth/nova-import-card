@@ -1,27 +1,6 @@
 <template>
     <div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options">
-            <template slot="Name" scope="props">
-                <div>{{props.row.name}}</div>
-            </template>
-            <template slot="Provider" scope="props">
-                <div>{{props.row.billing_provider_name}}</div>
-            </template>
-            <template slot="CCM Status" scope="props">
-                <div>{{(props.row.patient_info || {}).ccm_status || ''}}</div>
-            </template>
-            <template slot="CarePlan Status" scope="props">
-                <div>{{(props.row.careplan || {}).status || ''}}</div>
-            </template>
-            <template slot="DOB" scope="props">
-                <div>{{(props.row.patient_info || {}).birth_date || ''}}</div>
-            </template>
-            <template slot="Age" scope="props">
-                <div>{{(props.row.patient_info || {}).age || ''}}</div>
-            </template>
-            <template slot="Registered On" scope="props">
-                <div>{{(props.row.patient_info || {}).created_at || ''}}</div>
-            </template>
         </v-client-table>
     </div>
 </template>
@@ -37,8 +16,7 @@
             return {
                 page: 1,
                 tableData: [],
-                columns: ['Name', 'Provider', 'CCM Status', 'CarePlan Status', 'DOB', 'Phone', 'Age', 'Registered On', 
-                            'Last Reading', 'CCM'],
+                columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 options: {
                     filterByColumn: true
                 },
@@ -62,7 +40,22 @@
                             if (patient.patient_info) {
                                 if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
                                 patient.patient_info.age = Math.floor((new Date() - new Date(patient.patient_info.birth_date)) / (1000 * 60 * 60 * 24 * 365))
+                                
+                                const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
+                                const seconds = patient.patient_info.cur_month_activity_time || 0
+                                patient.patient_info.cur_month_activity_time = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                             }
+                            return patient
+                        }).map(patient => {
+                            patient.name = patient.name
+                            patient.provider = patient.billing_provider_name
+                            patient.ccmStatus = (patient.patient_info || {}).ccm_status || ''
+                            patient.careplanStatus = (patient.careplan || {}).status || ''
+                            patient.dob = (patient.patient_info || {}).birth_date || ''
+                            patient.age = patient.patient_info.age || ''
+                            patient.registeredOn = (patient.patient_info || {}).created_at || ''
+                            patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
+                            patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
                             return patient
                         }).filter(patient => (ids.indexOf(patient.id) < 0))
                         this.tableData = this.tableData.concat(patients)

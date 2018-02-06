@@ -29,7 +29,8 @@ class PatientReadRepository
     public function patients() {
         $users = $this->model()->whereHas('patientInfo')->paginate();
         $users->getCollection()->transform(function ($user) {
-            return optional($user)->safe();
+            $user = optional($user)->safe();
+            return $user;
         });
         return $users;
     }

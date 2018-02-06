@@ -2705,6 +2705,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function safe() {
         $careplan = $this->carePlan()->first();
+        $observation = $this->observations()->orderBy('id', 'desc')->first();
+        $phone = $this->phoneNumbers()->first();
+
         return [
             'id' => $this->id,
             'username' => $this->username,
@@ -2714,14 +2717,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'state' => $this->state,
             'specialty' => $this->specialty,
             'program_id' => $this->program_id,
-            'count_ccm_time' => $this->count_ccm_time,
             'status' => $this->status,
             'user_status' => $this->user_status,
             'is_online' => $this->is_online,
             'patient_info' => optional($this->patientInfo()->first())->safe(),
             'provider_info' => $this->providerInfo()->first(),
             'billing_provider_name' => $this->billing_provider_name,
-            'careplan' => optional($this->careplan)->safe()
+            'careplan' => optional($careplan)->safe(),
+            'last_read' => optional($observation)->obs_date,
+            'phone' => $this->phone ?? optional($phone)->number
         ];
     }
 
