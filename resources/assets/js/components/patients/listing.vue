@@ -4,6 +4,9 @@
             <loader v-if="loaders.next || loaders.practices"></loader>
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options">
+            <template slot="name" scope="props">
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')">{{props.row.name}}</a></div>
+            </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
@@ -14,10 +17,12 @@
                     :value="'Show by ' + (nameDisplayType ? 'Last' : 'First') + ' Name'" @click="changeNameDisplayType" >
             </div>
             <div class="col-sm-3">
+                <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+            </div>
+            <div class="col-sm-3">
                 <input type="button" class="btn btn-success" 
                     :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
             </div>
-            <div class="col-sm-3"></div>
             <div class="col-sm-3"></div>
         </div>
     </div>
@@ -63,6 +68,7 @@
             }
         },
         methods: {
+            rootUrl,
             toggleProgramColumn () {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
