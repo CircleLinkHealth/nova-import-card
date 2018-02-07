@@ -53,6 +53,9 @@ class NoteForwarded extends Notification
      */
     public function toMail($notifiable)
     {
+        $saasAccountName = $notifiable->saasAccountName();
+        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+
         return (new MailMessage())
             ->view('vendor.notifications.email', [
                 'greeting'        => $this->getBody(),
@@ -61,8 +64,9 @@ class NoteForwarded extends Notification
                 'introLines'      => [],
                 'outroLines'      => [],
                 'level'           => '',
-                'saasAccountName' => $notifiable->saasAccountName(),
+                'saasAccountName' => $saasAccountName,
             ])
+            ->from("no-reply@$slugSaasAccountName.com", $saasAccountName)
             ->subject($this->getSubject());
     }
 
