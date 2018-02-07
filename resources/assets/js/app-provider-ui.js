@@ -74,6 +74,7 @@ Vue.component('time-tracker', TimeTracker)
 Vue.component('server-time-display', ServerTimeDisplay)
 Vue.component('loader', LoaderComponent)
 Vue.component('persistent-textarea', PersistentTextArea)
+Vue.component('importerTrainer', ImporterTraining)
 
 const App = new Vue({
     el: '#app',

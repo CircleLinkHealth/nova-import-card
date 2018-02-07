@@ -9,7 +9,9 @@
                     {{--<p class="help-block">Hint: You can also drop a CSV file on this panel</p>--}}
 
                     <br>
-                    <input type="submit" class="btn btn-default funky-background" value="Create Careplan(s)" name="submit">
+                    <input type="submit" class="btn btn-success" value="Create Careplan(s)" name="submit">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{{route('view.files.ready.to.import')}}" class="btn btn-default">View Imported CCDAs</a>
                 </div>
             </form>
         </div>
