@@ -117,7 +117,7 @@ class ImporterController extends Controller
                         return $m->first_name . $m->last_name;
                     });
 
-                    if ($providers->count() > 1) {
+                    if ($providers->count() > 1 ||  !$mr->location_id || !$mr->location_id || !$mr->billing_provider_id) {
                         $summary['flag'] = true;
                     }
 
