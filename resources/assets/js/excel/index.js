@@ -33,7 +33,7 @@ export const styles = {
     cellNormal: {
       fill: {
         fgColor: {
-          rgb: '00000000'
+          rgb: '0170b5FF'
         }
       },
       font: {
