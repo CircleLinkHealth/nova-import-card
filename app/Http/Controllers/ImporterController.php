@@ -80,7 +80,7 @@ class ImporterController extends Controller
      */
     public function create()
     {
-        return view('CCDUploader.uploader');
+        return view('saas.importer.create');
     }
     
     /**
