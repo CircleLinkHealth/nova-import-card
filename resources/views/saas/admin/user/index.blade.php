@@ -113,10 +113,8 @@
                                         <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
-                                            @if (count($wpUser->roles) > 0)
-                                                @foreach($wpUser->roles as $role)
-                                                    {{ $role->display_name }}
-                                                @endforeach
+                                            @if ($wpUser->roles->isNotEmpty())
+                                                {{ $wpUser->roles->first()->display_name }}
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->email }}</td>
