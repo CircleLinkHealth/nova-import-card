@@ -61,10 +61,12 @@ class PracticeInvoiceGenerator
 
     public function makePatientReportPdf($reportName) {
 
-        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
-        $pdfItemized->save(storage_path("download/$reportName.pdf"), true);
+        $path = storage_path("download/$reportName.pdf");
 
-        return storage_path("download/$reportName.pdf");
+        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
+        $pdfItemized->save($path, true);
+
+        return $path;
     }
 
 
