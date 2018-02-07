@@ -21,9 +21,12 @@
             </div>
             <div class="col-sm-3">
                 <input type="button" class="btn btn-success" 
+                    value="Export as Excel" @click="exportExcel" >
+            </div>
+            <div class="col-sm-3">
+                <input type="button" class="btn btn-success" 
                     :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
             </div>
-            <div class="col-sm-3"></div>
         </div>
     </div>
 </template>
@@ -33,7 +36,13 @@
     import { Event } from 'vue-tables-2'
     import moment from 'moment'
     import loader from '../loader'
+    import buildReport, {styles} from '../../excel'
 
+    /**
+     * Determines whether to show patient name format as
+     * - {FirstName} {LastName} or
+     * - {LastName} {FirstName}
+     */
     const NameDisplayType = {
         FirstName: 0,
         LastName: 1
@@ -158,12 +167,44 @@
                         this.loaders.next = null
                     })
                 }
+            },
+            exportExcel () {
+                const bytes = buildReport([
+                    {
+                        name: 'patient list',
+                        heading: [],
+                        merges: [],
+                        specification: this.columns.reduce((a, b) => {
+                            a[b] = {
+                                displayName: b,
+                                headerStyle: styles.cellNormal,
+                                width: 100
+                            }
+                            return a
+                        }, {}),
+                        data: this.tableData
+                    }
+                ])
+
+                const blob = new Blob([bytes], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+                const link = document.createElement('a')
+                link.href = window.URL.createObjectURL(blob)
+                link.download = `patient-list-${Date.now()}.xlsx`
+                link.click()
             }
         },
         mounted() {
+            /**
+             * load practices, then patients
+             */
             this.getPractices().then(() => {
                 this.getPatients()
             })
+
+            /**
+             * listen to table pagination event and ...
+             * load next patients when user is on the last page
+             */
             const $table = this.$refs.tblPatientList
             Event.$on('vue-tables.pagination', (page) => {
                 if (page === $table.totalPages) {
