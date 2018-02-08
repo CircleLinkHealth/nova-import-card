@@ -112,17 +112,19 @@
     </div>
 </div>
 
-<script>
-
-    $(document).ready(function() {
-
-        $("#name option").filter(function() {
-            return $(this).val() == $("#firstname").val();
-        }).attr('selected', true);
-
-        $("#name").on("change", function() {
-            $("#firstname").val($(this).find("option:selected").attr("value"));
+@push('scripts')
+    <script>
+        
+        $(document).ready(function() {
+    
+            $("#name option").filter(function() {
+                return $(this).val() == $("#firstname").val();
+            }).attr('selected', true);
+    
+            $("#name").on("change", function() {
+                $("#firstname").val($(this).find("option:selected").attr("value"));
+            });
         });
-    });
-
-</script>
+    
+    </script>
+@endpush
