@@ -1,3 +1,6 @@
+<?php
+use App\Patient;
+?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
 @if ($enableTimeTracking)
@@ -5,6 +8,10 @@
     <?php
     if (isset($patient)) {
         $patientId = $patient->id;
+        
+        if (is_a($patient, Patient::class)) {
+            $patientId = optional($patient->user()->first())->id;
+        }
     }
 
     $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
