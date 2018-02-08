@@ -94,15 +94,17 @@
         use App\Patient;
 
         $user = null;
-        if (is_a($patient, Patient::class)) {
-            $user = $patient->user()->first();
-        }
-        else {
-            $user = $patient;
+        if (isset($patient)) {
+            if (is_a($patient, Patient::class)) {
+                $user = $patient->user()->first();
+            }
+            else {
+                $user = $patient;
+            }
         }
     ?>
 
-    @if(is_object($patient) && isset($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))
+    @if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 
