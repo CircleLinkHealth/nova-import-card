@@ -58,7 +58,8 @@
                             <div class="col-sm-12">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">{{$formatted_monthly_time}}
+                                        <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                                             @if($ccm_above)
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             @endif
