@@ -230,17 +230,17 @@ class PatientCareplanController extends Controller
                 \Log::critical($e);
                 //dd($e);
             }
-            $pageCount = $this->count_pages($fileNameWithPath);
+//            $pageCount = $this->count_pages($fileNameWithPath);
 //            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
 
             // append blank page if needed
-            if ((count($users) > 1) && $pageCount % 2 != 0) {
-                $fileName         = $storageDirectory . $this->merge_pages([
-                        $fileName,
-                        $fileNameBlankPage,
-                    ], $prefix, $storageDirectory);
-                $fileNameWithPath = base_path($fileName);
-            }
+//            if ((count($users) > 1) && $pageCount % 2 != 0) {
+//                $fileName         = $storageDirectory . $this->merge_pages([
+//                        $fileName,
+//                        $fileNameBlankPage,
+//                    ], $prefix, $storageDirectory);
+//                $fileNameWithPath = base_path($fileName);
+//            }
 
             // add to array
             $pageFileNames[] = $fileName;
@@ -249,18 +249,18 @@ class PatientCareplanController extends Controller
         }
 
         // merge to final file
-        $mergedFileName         = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
-        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages(
-                $pageFileNames,
-                $datetimePrefix,
-                $storageDirectory
-            );
+//        $mergedFileName         = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
+//        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages(
+//                $pageFileNames,
+//                $datetimePrefix,
+//                $storageDirectory
+//            );
 
         //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
 
-        return response(file_get_contents(base_path($mergedFileNameWithPath)), 200, [
+        return response(file_get_contents($fileNameWithPath), 200, [
             'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $mergedFileName . '"',
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
         ]);
         //return view('wpUsers.patient.multiview', compact(['careplans']));
     }
