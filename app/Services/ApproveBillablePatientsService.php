@@ -41,18 +41,86 @@ class ApproveBillablePatientsService
 
     public function patientsToApprove($practiceId, Carbon $month)
     {
-        return $this->approvePatientsRepo->billablePatients($practiceId, $month)
-                                         ->get()
-                                         ->map(function ($u) {
+        $summaries = $this->approvePatientsRepo->billablePatients($practiceId, $month)
+                                         ->paginate();
+        $summaries->getCollection()->transform(function ($u) {
+            return $this->patientSummaryRepo->attachBillableProblems($u,
+                $u->patientSummaries->first());
+        });
 
-                                             $summary = $this->patientSummaryRepo->attachBillableProblems($u,
-                                                 $u->patientSummaries->first());
-
-//                                             $services = $summary->chargeableServices;
-//
-//                                             if ($services->isEmpty()) { $summary->chargeableServices()->attach(1); }
-
-                                             return $summary;
-                                         });
+        return $summaries;
     }
+
+    public function transformPatientsToApprove($practiceId, Carbon $month) {
+        $summaries = $this->patientsToApprove($practiceId, $month);
+        
+        $summaries->getCollection()->transform(function ($summary) {
+            $user = $summary->patient()->first();
+
+            $problems = $user->ccdProblems()->get()->map(function ($prob) {
+                return [
+                    'id'   => $prob->id,
+                    'name' => $prob->name,
+                    'code' => $prob->icd10Code(),
+                ];
+            });
+            
+            $problem1 = isset($user->problem_1) && $problems
+                ? $problems->where('id', $user->problem_1)->first()
+                : null;
+            $problem1Code = $problem1 ? $problem1['code'] : null;
+            $problem1Name = $problem1 ? ($problem1['name']) : null;
+            
+            $problem2 = isset($user->problem_2) && $problems
+                ? $problems->where('id', $user->problem_2)->first()
+                : null;
+            $problem2Code = $problem2 ? $problem2['code'] : null;
+            $problem2Name = $problem2 ? ($problem2['name']) : null;
+    
+            $lacksProblems = ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name;
+    
+            $toQA = ( ! $user->approved && ! $user->rejected)
+                    || $lacksProblems
+                    || $user->no_of_successful_calls == 0
+                    || in_array($user->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+    
+            if (($user->rejected || $user->approved) && $user->actor_id) {
+                $toQA = false;
+            }
+    
+            if ($toQA) {
+                $user->approved = $user->rejected = false;
+            }
+    
+            $bP = $user->careTeamMembers->where('type', '=', 'billing_provider')->first();
+    
+            $name = $user->fullName;
+    
+            return [
+                'mrn'                    => $user->patientInfo->mrn_number,
+                'name'                   => $name,
+                'provider'               => ($bP && $bP->user)
+                    ? $bP->user->fullName
+                    : '',
+                'practice'               => $user->primaryPractice->display_name,
+                'dob'                    => $user->patientInfo->birth_date,
+                'ccm'                    => round($user->ccm_time / 60, 2),
+                'problem1'               => $problem1Name,
+                'problem1_code'          => $problem1Code,
+                'problem2'               => $problem2Name,
+                'problem2_code'          => $problem2Code,
+                'problems'               => $problems,
+                'no_of_successful_calls' => $user->no_of_successful_calls,
+                'status'                 => $user->patientInfo->ccm_status,
+                'approve'                => $user->approved,
+                'reject'                 => $user->rejected,
+                'report_id'              => $user->id,
+                'qa'                     => $toQA,
+                'lacksProblems'          => $lacksProblems
+            ];    
+        });
+
+        return $summaries;
+    }
+
 }
