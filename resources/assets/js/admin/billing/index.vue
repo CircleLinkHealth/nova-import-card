@@ -57,7 +57,7 @@
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
                 <template slot="approved" scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
@@ -65,7 +65,7 @@
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
@@ -102,7 +102,7 @@
     import PatientProblemModal from './comps/patient-problem-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
-    import buildReport, {styles} from '../../excel'
+    import buildReport, {styles} from './excel'
     import Select2Component from '../../components/src/select2'
 
     export default {
@@ -318,6 +318,7 @@
                 })
             },
 
+
             showProblemsModal(patient, type) {
                 const self = this
                 Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
@@ -422,7 +423,6 @@
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport
-
                 if (page === $table.totalPages) {
                     console.log('next page clicked')
                     this.page = ($table.totalPages - 1) || 0

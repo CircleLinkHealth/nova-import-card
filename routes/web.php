@@ -108,7 +108,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'API\ActivityController@ccmTime',
             'as'   => 'get.total.ccm.time',
         ]);
-        
+
         Route::group(['prefix' => 'biometrics'], function () {
             Route::get('', 'BiometricController@index');
             Route::get('{biometricId}', 'BiometricController@show');
@@ -119,28 +119,28 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('', 'ProblemController@ccdAllergies');
             Route::get('search', 'ProblemController@searchCcdAllergies');
         });
-        
+
         Route::group(['prefix' => 'symptoms'], function () {
             Route::resource('', 'SymptomController');
         });
-        
+
         Route::group(['prefix' => 'lifestyles'], function () {
             Route::get('{id}', 'LifestyleController@show');
             Route::get('{id}/patients', 'LifestyleController@patients');
             Route::resource('', 'LifestyleController');
         });
-        
+
         Route::group(['prefix' => 'misc'], function () {
             Route::get('{id}', 'MiscController@show');
             Route::get('{id}/patients', 'MiscController@patients');
             Route::resource('', 'MiscController');
         });
-        
+
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('{id}', 'API\AppointmentController@show');
             Route::resource('', 'API\AppointmentController');
         });
-        
+
         Route::group(['prefix' => 'providers'], function () {
             Route::get('list', 'ProviderController@list');
             Route::get('{id}', 'ProviderController@show');
@@ -151,7 +151,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{id}', 'CcdaController@show');
             Route::resource('', 'CcdaController');
         });
-        
+
         Route::group(['prefix' => 'medication'], function () {
             Route::get('search', 'MedicationController@search');
             Route::resource('', 'MedicationController');
@@ -168,7 +168,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
             Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
             Route::resource('', 'ProblemController');
-            
+
             Route::group(['prefix' => 'codes'], function () {
                 Route::get('{id}', 'ProblemCodeController@show');
                 Route::delete('{id}', 'ProblemCodeController@remove');
@@ -182,15 +182,15 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::resource('', 'ProblemInstructionController');
             });
         });
-        
-        /** 
+
+        /**
         * ~/api/patients/...
         */
         Route::group([
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
-            Route::group([ 
+            Route::group([
                 'prefix' => '{userId}'
             ], function () {
                 Route::get('', 'PatientController@getPatient');
@@ -202,7 +202,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::post('', 'PatientController@addBiometric');
                     Route::delete('{id}', 'PatientController@removeBiometric');
                 });
-                
+
                 Route::group([
                     'prefix' => 'problems'
                 ], function () {
@@ -215,7 +215,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::put('ccd/{ccdId}', 'PatientController@editCcdProblem');
                     Route::delete('ccd/{ccdId}', 'PatientController@removeCcdProblem');
                 });
-                
+
                 Route::group([
                     'prefix' => 'allergies'
                 ], function () {
@@ -223,7 +223,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::post('', 'PatientController@addCcdAllergies');
                     Route::delete('{allergyId}', 'PatientController@deleteCcdAllergy');
                 });
-                
+
                 Route::group([
                     'prefix' => 'symptoms'
                 ], function () {
@@ -231,7 +231,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::post('', 'PatientController@addSymptom');
                     Route::delete('{symptomId}', 'PatientController@removeSymptom');
                 });
-                
+
                 Route::group([
                     'prefix' => 'medication'
                 ], function () {
@@ -241,7 +241,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::delete('{medicationId}', 'PatientController@removeMedication');
                     Route::get('groups', 'PatientController@getMedicationGroups');
                 });
-                
+
                 Route::group([
                     'prefix' => 'appointments'
                 ], function () {
@@ -249,7 +249,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::post('', 'PatientController@addAppointment');
                     Route::delete('{id}', 'PatientController@removeAppointment');
                 });
-                
+
                 Route::group([
                     'prefix' => 'providers'
                 ], function () {
@@ -258,7 +258,7 @@ Route::group(['middleware' => 'auth'], function () {
                     Route::delete('{id}', 'PatientController@removeProvider');
                 });
             });
-            
+
             Route::get('{userId}/lifestyles', 'PatientController@getLifestyles');
             Route::post('{userId}/lifestyles', 'PatientController@addLifestyle');
             Route::delete('{userId}/lifestyles/{lifestyleId}', 'PatientController@removeLifestyle');
@@ -275,7 +275,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('{patientId}/problems/ccd/{problemId}/instructions', 'ProblemInstructionController@addInstructionToCcdProblem');
             Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
             Route::delete('{patientId}/problems/ccd/{problemId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionFromCcdProblem');
-            
+
             Route::resource('', 'PatientController');
         });
 
@@ -489,12 +489,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',
         ]);
-        
+
         Route::get('listing/remix', [
             'uses' => 'Patient\PatientController@showPatientListingRemix',
             'as'   => 'patients.listing.remix',
         ]);
-        
+
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
             'as'   => 'patients.listing.pdf',
@@ -588,7 +588,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment',
         ]);
-        
+
         Route::get('view-careplan/assessment/{approverId}', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment.approver',

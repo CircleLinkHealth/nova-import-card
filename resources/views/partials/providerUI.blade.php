@@ -92,7 +92,6 @@
         */
         use App\User;
         use App\Patient;
-
         $user = null;
         if (isset($patient)) {
             if (is_a($patient, Patient::class)) {

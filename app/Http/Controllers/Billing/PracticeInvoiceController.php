@@ -19,6 +19,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Collection;
 
 
 class PracticeInvoiceController extends Controller
@@ -94,7 +95,7 @@ class PracticeInvoiceController extends Controller
              return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
          }
          $data = $this->service->transformPatientsToApprove($practice_id, $date);
- 
+
          return $data;
      }
 
@@ -105,42 +106,19 @@ class PracticeInvoiceController extends Controller
      */
     public function updatePracticeChargeableServices(Request $request)
     {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
+        $practice_id = $request->input('practice_id');
+        $date = $request->input('date');
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
         }
+        else {
+            return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
+        }
+        $data = $this->service->transformPatientsToApprove($practice_id, $date);
 
-        $month         = $request['month_year'];
-        $practiceId    = $request['practice_id'];
-        $defaultCodeId = $request['default_code_id'];
-
-        $patients = User::ofPractice($practiceId)
-                        ->with('patientSummaries.chargeableServices')
-                        ->whereHas('patientSummaries', function ($query) use ($month) {
-                            $query->where('month_year', $month)
-                                  ->where('ccm_time', '>', 1200);
-                        })
-                        ->get()
-                        ->map(function ($user) use ($defaultCodeId, $month) {
-                            $user->patientSummaries
-                                ->where('month_year', $month)
-                                ->map(function ($summary) use ($defaultCodeId, $month) {
-                                    $summary->chargeableServices()->sync($defaultCodeId);
-
-                                    return $summary;
-                                });
-                        });
-
-        return $this->ok();
-
-
+        return $data;
     }
 
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function updateSummaryChargeableServices(Request $request)
     {
         if ( ! $request->ajax()) {

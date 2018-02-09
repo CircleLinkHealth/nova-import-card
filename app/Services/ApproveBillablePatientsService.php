@@ -1,6 +1,5 @@
 <?php namespace App\Services;
 
-use App\ChargeableService;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
@@ -66,8 +65,8 @@ class ApproveBillablePatientsService
             });
             
             $problem1 = (isset($summary->problem_1) && $problems)
-                ? $problems->where('id', $summary->problem_1)->first()
-                : null;
+            ? $problems->where('id', $summary->problem_1)->first()
+            : null;
             $problem1Code = $problem1 ? $problem1['code'] : null;
             $problem1Name = $problem1 ? ($problem1['name']) : null;
             
@@ -100,7 +99,6 @@ class ApproveBillablePatientsService
                 'id'                     => $user->id,
                 'mrn'                    => $user->patientInfo->mrn_number,
                 'name'                   => $name,
-                'url'                    => route('patient.careplan.show', [ 'patient' => $user->id, 'page' => 1]),
                 'provider'               => ($bP && $bP->user)
                     ? $bP->user->fullName
                     : '',
@@ -124,5 +122,4 @@ class ApproveBillablePatientsService
 
         return $summaries;
     }
-
 }
