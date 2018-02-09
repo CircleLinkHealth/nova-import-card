@@ -48,6 +48,14 @@ class PatientSummaryEloquentRepository
             if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
                 $summary->approved = true;
 
+                if ($summary->problem_1 && $summary->problem_2) {
+                    Problem::whereNotIn('id',
+                        array_filter([$summary->problem_1, $summary->problem_2]))
+                           ->update([
+                               'billable' => false,
+                           ]);
+                }
+
                 $summary->save();
             }
 
