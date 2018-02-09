@@ -54,9 +54,7 @@ class ApproveBillablePatientsService
         $summaries = $this->patientsToApprove($practiceId, $month);
         
         $summaries->getCollection()->transform(function ($summary) {
-            $user = $summary->patient()->first();
-
-            $problems = $user->ccdProblems()->get()->map(function ($prob) {
+            $problems = $summary->patient->ccdProblems()->get()->map(function ($prob) {
                 return [
                     'id'   => $prob->id,
                     'name' => $prob->name,
@@ -78,47 +76,47 @@ class ApproveBillablePatientsService
     
             $lacksProblems = ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name;
     
-            $toQA = ( ! $user->approved && ! $user->rejected)
+            $toQA = ( ! $summary->approved && ! $summary->rejected)
                     || $lacksProblems
-                    || $user->no_of_successful_calls == 0
-                    || in_array($user->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+                    || $summary->no_of_successful_calls == 0
+                    || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
     
-            if (($user->rejected || $user->approved) && $user->actor_id) {
+            if (($summary->rejected || $summary->approved) && $summary->actor_id) {
                 $toQA = false;
             }
     
             if ($toQA) {
-                $user->approved = $user->rejected = false;
+                $summary->approved = $summary->rejected = false;
             }
     
-            $bP = $user->careTeamMembers->where('type', '=', 'billing_provider')->first();
+            $bP = $summary->patient->careTeamMembers->where('type', '=', 'billing_provider')->first();
     
-            $name = $user->fullName; 
+            $name = $summary->fullName;
       
             return [
-                'id'                     => $user->id,
-                'mrn'                    => $user->patientInfo->mrn_number,
+                'id'                     => $summary->patient->id,
+                'mrn'                    => $summary->patient->patientInfo->mrn_number,
                 'name'                   => $name,
                 'url'                    => route('patient.careplan.show', [
-                                                'patient' => $user->id,
+                                                'patient' => $summary->id,
                                                 'page'    => 1
                                             ]),
                 'provider'               => ($bP && $bP->user)
                     ? $bP->user->fullName
                     : '',
-                'practice'               => $user->primaryPractice->display_name,
-                'dob'                    => $user->patientInfo->birth_date,
-                'ccm'                    => round($user->ccm_time / 60, 2),
+                'practice'               => $summary->patient->primaryPractice->display_name,
+                'dob'                    => $summary->patient->patientInfo->birth_date,
+                'ccm'                    => round($summary->ccm_time / 60, 2),
                 'problem1'               => $problem1Name,
                 'problem1_code'          => $problem1Code,
                 'problem2'               => $problem2Name,
                 'problem2_code'          => $problem2Code,
                 'problems'               => $problems,
-                'no_of_successful_calls' => $user->no_of_successful_calls,
-                'status'                 => $user->patientInfo->ccm_status,
-                'approve'                => $user->approved,
-                'reject'                 => $user->rejected,
-                'report_id'              => $user->id,
+                'no_of_successful_calls' => $summary->no_of_successful_calls,
+                'status'                 => $summary->patient->patientInfo->ccm_status,
+                'approve'                => $summary->approved,
+                'reject'                 => $summary->rejected,
+                'report_id'              => $summary->id,
                 'qa'                     => $toQA,
                 'lacksProblems'          => $lacksProblems
             ];    
