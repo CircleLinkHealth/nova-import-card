@@ -57,8 +57,20 @@ class PostPatientCarePlanDocument extends Command
                       ->map(function ($c) {
                           $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
 
-                          $response = $this->api->postPatientDocument($c->user_id, $practiceId, $link,
-                              $departmentId);
+                          $practiceId = $c->patient()->primaryPractice()->external_id;
+
+                          $appoointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
+
+                          foreach ($appoointments as $appoointment){
+
+                              $departmentId = $appoointment['departmentid'];
+                              $appoointmentId = $appoointment['appointmentid'];
+
+                              //need to pass in appointment id
+                              $response = $this->api->postPatientDocument($c->user_id, $practiceId, $link,
+                                  $departmentId);
+                          }
+
                       });;
             },
         ]);
