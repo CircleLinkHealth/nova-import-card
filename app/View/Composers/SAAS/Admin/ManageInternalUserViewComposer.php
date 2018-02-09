@@ -12,7 +12,7 @@ namespace App\View\Composers\SAAS\Admin;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
-class ManageInternalUser extends ServiceProvider
+class ManageInternalUserViewComposer extends ServiceProvider
 {
     /**
      * Register bindings in the container.

@@ -7,7 +7,7 @@ use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
-use App\View\Composers\SAAS\Admin\ManageInternalUser;
+use App\View\Composers\SAAS\Admin\ManageInternalUserViewComposer;
 
 return [
 
@@ -219,9 +219,9 @@ return [
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-//        Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        Spiritix\LadaCache\LadaCacheServiceProvider::class,
         GoogleDriveServiceProvider::class,
-        ManageInternalUser::class,
+        ManageInternalUserViewComposer::class,
     ],
 
     /*
