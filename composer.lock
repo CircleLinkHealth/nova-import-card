@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "561a065bb63c5b71820ce33190f7f19f",
+    "content-hash": "5daad7e765cdf5b68d1f21d5d0266422",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -1680,16 +1680,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.57",
+            "version": "v1.2.58",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "2f1502a434baad1da0fa43c3f3e2b09504fa6b81"
+                "reference": "7d5346fefb34033f7c08019dc57ceaa5d7a68dc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/2f1502a434baad1da0fa43c3f3e2b09504fa6b81",
-                "reference": "2f1502a434baad1da0fa43c3f3e2b09504fa6b81",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/7d5346fefb34033f7c08019dc57ceaa5d7a68dc0",
+                "reference": "7d5346fefb34033f7c08019dc57ceaa5d7a68dc0",
                 "shasum": ""
             },
             "require": {
@@ -1725,7 +1725,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-02-03T12:01:03+00:00"
+            "time": "2018-02-09T16:24:01+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -6305,14 +6305,8 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Waavi/url-shortener.git",
-                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Waavi/url-shortener/zipball/15301d166765681929e1bdc25eb2c1e01d416f31",
-                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31",
-                "shasum": ""
+                "url": "git@github.com:michalisantoniou6/url-shortener.git",
+                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
             },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -6330,7 +6324,16 @@
                     "Waavi\\UrlShortener\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Waavi\\UrlShortener\\Test\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -6350,7 +6353,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2017-10-06T10:09:24+00:00"
+            "time": "2018-01-09T20:43:17+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
