@@ -91,7 +91,7 @@ class ApproveBillablePatientsService
     
             $bP = $summary->patient->careTeamMembers->where('type', '=', 'billing_provider')->first();
     
-            $name = $summary->fullName;
+            $name = $summary->patient->fullName;
       
             return [
                 'id'                     => $summary->patient->id,
