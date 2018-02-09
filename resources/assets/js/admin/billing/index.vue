@@ -25,7 +25,7 @@
                     <div>
                         <label>Select Month</label>
                     </div>
-                    <select2 class="form-control" v-model="selectedMonth" @change="retrieve" :value="months[0].long">
+                    <select2 class="form-control" v-model="selectedMonth" @change="changePractice" :value="months[0].long">
                         <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}
                         </option>
                     </select2>
@@ -102,7 +102,7 @@
     import PatientProblemModal from './comps/patient-problem-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
-    import buildReport, {styles} from './excel'
+    import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
 
     export default {
@@ -224,7 +224,7 @@
                         if (row.qa) return 'bg-flagged'
                         return ''
                     },
-                    perPage: 15
+                    perPage: 12
                 }
             }
         },
