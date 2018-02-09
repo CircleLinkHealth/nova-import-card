@@ -102,7 +102,7 @@
     import PatientProblemModal from './comps/patient-problem-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
-    import buildReport, {styles} from './excel'
+    import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
 
     export default {
