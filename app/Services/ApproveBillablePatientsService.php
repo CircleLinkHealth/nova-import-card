@@ -93,12 +93,16 @@ class ApproveBillablePatientsService
     
             $bP = $user->careTeamMembers->where('type', '=', 'billing_provider')->first();
     
-            $name = $user->fullName;
-    
+            $name = $user->fullName; 
+      
             return [
                 'id'                     => $user->id,
                 'mrn'                    => $user->patientInfo->mrn_number,
                 'name'                   => $name,
+                'url'                    => route('patient.careplan.show', [
+                                                'patient' => $user->id,
+                                                'page'    => 1
+                                            ]),
                 'provider'               => ($bP && $bP->user)
                     ? $bP->user->fullName
                     : '',
