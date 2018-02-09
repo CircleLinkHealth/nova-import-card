@@ -16,7 +16,7 @@
                     <div>
                         <label>Select Practice</label>
                     </div>
-                    <select2 class="form-control" v-model="selectedPractice" @change="retrieve">
+                    <select2 class="form-control" v-model="selectedPractice" @change="changePractice">
                         <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}
                         </option>
                     </select2>
@@ -122,6 +122,7 @@
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
+                page: 0,
                 columns: [
                     'MRN',
                     'Provider',
@@ -222,7 +223,8 @@
                     rowClassCallback(row) {
                         if (row.qa) return 'bg-flagged'
                         return ''
-                    }
+                    },
+                    perPage: 15
                 }
             }
         },
@@ -263,15 +265,23 @@
                     })
                 } 
             },
+            changePractice() {
+                this.page = 0
+                this.tableData = []
+                this.retrieve()
+            },
             retrieve() {
-                this.loading = true
-                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/data'), {
+                this.loading = true;
+                this.page++;
+                this.axios.post(rootUrl(`admin/reports/monthly-billing/v2/data?page=${this.page}`), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
-                    this.tableData = response.data.data.map((patient, index) => {
+                    const pagination = response.data || []
+                    const ids = this.tableData.map(i => i.id)
+                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         return {
-                            id: index,
+                            id: patient.id,
                             MRN: patient.mrn,
                             approved: patient.approve,
                             rejected: patient.reject,
@@ -279,8 +289,8 @@
                             qa: patient.qa,
                             problems: patient.problems || [],
                             Provider: patient.provider,
-                            Patient: this.$elem(patient.name).querySelector('a').innerText,
-                            patientUrl: this.$elem(patient.name).querySelector('a').href,
+                            Patient: patient.name,
+                            patientUrl: patient.url,
                             Practice: patient.practice,
                             DOB: patient.dob,
                             Status: patient.status,
@@ -299,8 +309,8 @@
                                 approve_reject: null
                             }
                         }
-                    }).sort((pA, pB) => pB.qa - pA.qa)
-                    this.loading = false
+                    }).sort((pA, pB) => pB.qa - pA.qa))
+                    this.loading = false;
                     console.log('bills-report', this.tableData)
                 }).catch(err => {
                     console.error(err)
@@ -409,6 +419,16 @@
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
+
+            Event.$on('vue-tables.pagination', (page) => {
+                const $table = this.$refs.tblBillingReport
+
+                if (page === $table.totalPages) {
+                    console.log('next page clicked')
+                    this.page = ($table.totalPages - 1) || 0
+                    this.retrieve();
+                }
+            })
         }
     }
 </script>

@@ -114,7 +114,7 @@ class PatientSummaryEloquentRepository
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '!=', 1)
             ->reject(function ($problem) {
-                return ! validProblemName($problem->name);
+                return $problem && ! validProblemName($problem->name);
             })
             ->unique('cpm_problem_id')
             ->values();
