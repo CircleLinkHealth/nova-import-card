@@ -42,7 +42,7 @@ class ApproveBillablePatientsService
     public function patientsToApprove($practiceId, Carbon $month)
     {
         $summaries = $this->approvePatientsRepo->billablePatients($practiceId, $month)
-                                         ->paginate();
+                                         ->paginate(10);
         $summaries->getCollection()->transform(function ($u) {
             return $this->patientSummaryRepo->attachBillableProblems($u,
                 $u->patientSummaries->first());
