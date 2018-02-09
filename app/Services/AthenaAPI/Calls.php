@@ -61,6 +61,37 @@ class Calls
     }
 
     /**
+     * Gets Information about a single patient's appointments
+     * set $showPast to false to get future appointments only
+     *
+     * @param $practiceId
+     * @param $patientId
+     * @param bool $showPast
+     * @param bool $showCancelled
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getPatientAppointments(
+        $practiceId,
+        $patientId,
+        $showPast = true,
+        $showCancelled = false
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("patients/{$patientId}/appointments",
+            [
+                'showpast'      => $showPast,
+                'showcancelled' => $showCancelled,
+
+            ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
      * Checks if the response contains errors. If it does, it logs the response and throws an Exception
      *
      * @throws \Exception
@@ -216,10 +247,11 @@ class Calls
         return $this->response($response);
     }
 
-    public function getBillingProviderName($practiceId, $providerId){
+    public function getBillingProviderName($practiceId, $providerId)
+    {
 
         $response = $this->api->GET("$practiceId/providers/$providerId", [
-            'showallproviderids' => true
+            'showallproviderids' => true,
         ]);
 
         return $this->response($response);
