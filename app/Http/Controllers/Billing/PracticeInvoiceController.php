@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Collection;
 
 
 class PracticeInvoiceController extends Controller
@@ -74,13 +75,17 @@ class PracticeInvoiceController extends Controller
      */
     public function data(Request $request)
     {
-        if ( ! $request->ajax()) {
-            return response()->json('Method not allowed', 403);
+        $practice_id = $request->input('practice_id');
+        $date = $request->input('date');
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
         }
+        else {
+            return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
+        }
+        $data = $this->service->transformPatientsToApprove($practice_id, $date);
 
-        $data = $this->service->patientsToApprove($request['practice_id'], Carbon::createFromFormat('M, Y', $request['date']));
-
-        return ApprovableBillablePatient::collection($data);
+        return $data;
     }
 
     public function updateStatus(Request $request)
