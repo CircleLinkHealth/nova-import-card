@@ -78,17 +78,17 @@ class ApproveBillablePatientsService
     
             $lacksProblems = ! $problem1Code || ! $problem2Code || ! $problem1Name || ! $problem2Name;
     
-            $toQA = ( ! $user->approved && ! $user->rejected)
+            $toQA = ( ! $summary->approved && ! $summary->rejected)
                     || $lacksProblems
-                    || $user->no_of_successful_calls == 0
-                    || in_array($user->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+                    || $summary->no_of_successful_calls == 0
+                    || in_array($user->patientInfo->ccm_status, ['withdrawn', 'paused']);
     
-            if (($user->rejected || $user->approved) && $user->actor_id) {
+            if (($summary->rejected || $summary->approved) && $summary->actor_id) {
                 $toQA = false;
             }
     
             if ($toQA) {
-                $user->approved = $user->rejected = false;
+                $summary->approved = $summary->rejected = false;
             }
     
             $bP = $user->careTeamMembers->where('type', '=', 'billing_provider')->first();
@@ -114,11 +114,11 @@ class ApproveBillablePatientsService
                 'problem2'               => $problem2Name,
                 'problem2_code'          => $problem2Code,
                 'problems'               => $problems,
-                'no_of_successful_calls' => $user->no_of_successful_calls,
+                'no_of_successful_calls' => $summary->no_of_successful_calls,
                 'status'                 => $user->patientInfo->ccm_status,
-                'approve'                => $user->approved,
-                'reject'                 => $user->rejected,
-                'report_id'              => $user->id,
+                'approve'                => $summary->approved,
+                'reject'                 => $summary->rejected,
+                'report_id'              => $summary->id,
                 'qa'                     => $toQA,
                 'lacksProblems'          => $lacksProblems
             ];    
