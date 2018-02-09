@@ -65,14 +65,14 @@ class ApproveBillablePatientsService
                 ];
             });
             
-            $problem1 = isset($user->problem_1) && $problems
-                ? $problems->where('id', $user->problem_1)->first()
+            $problem1 = (isset($summary->problem_1) && $problems)
+                ? $problems->where('id', $summary->problem_1)->first()
                 : null;
             $problem1Code = $problem1 ? $problem1['code'] : null;
             $problem1Name = $problem1 ? ($problem1['name']) : null;
             
-            $problem2 = isset($user->problem_2) && $problems
-                ? $problems->where('id', $user->problem_2)->first()
+            $problem2 = (isset($summary->problem_2) && $problems)
+                ? $problems->where('id', $summary->problem_2)->first()
                 : null;
             $problem2Code = $problem2 ? $problem2['code'] : null;
             $problem2Name = $problem2 ? ($problem2['name']) : null;
@@ -97,8 +97,10 @@ class ApproveBillablePatientsService
             $name = $user->fullName;
     
             return [
+                'id'                     => $user->id,
                 'mrn'                    => $user->patientInfo->mrn_number,
                 'name'                   => $name,
+                'url'                    => route('patient.careplan.show', [ 'patient' => $user->id, 'page' => 1]),
                 'provider'               => ($bP && $bP->user)
                     ? $bP->user->fullName
                     : '',
