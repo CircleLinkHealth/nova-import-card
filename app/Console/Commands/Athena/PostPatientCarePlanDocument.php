@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Athena;
 
 use App\CarePlan;
 use App\Services\AthenaAPI\Calls;
@@ -13,7 +13,7 @@ class PostPatientCarePlanDocument extends Command
      *
      * @var string
      */
-    protected $signature = 'command:postPatientDocument';
+    protected $signature = 'athena:postPatientDocument';
 
     /**
      * The console command description.
@@ -22,10 +22,12 @@ class PostPatientCarePlanDocument extends Command
      */
     protected $description = 'Post patient care plan link to EHR';
 
+    private $api;
+
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param Calls $api
      */
     public function __construct(Calls $api)
     {
@@ -41,39 +43,35 @@ class PostPatientCarePlanDocument extends Command
      */
     public function handle()
     {
-        //query for CarePlans 'to_enroll', map() each careplan to get link to post to EHR
-
         $response = CarePlan::with([
-            'patient' => function ($query) {
-                $query->with([
-                    'primaryPractice' => function ($practice) {
-                        $practice->whereHas('ehr', function ($q) {
-                            $q->where('name', '=', 'Athena')
-                              ->whereNotNull('external_id');
-                        });
-
-                    },
-                ])->get()
-                      ->map(function ($c) {
-                          $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
-
-                          $practiceId = $c->patient()->primaryPractice()->external_id;
-
-                          $appoointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
-
-                          foreach ($appoointments as $appoointment){
-
-                              $departmentId = $appoointment['departmentid'];
-                              $appoointmentId = $appoointment['appointmentid'];
-
-                              //need to pass in appointment id
-                              $response = $this->api->postPatientDocument($c->user_id, $practiceId, $link,
-                                  $departmentId);
-                          }
-
-                      });;
+            'patient.primaryPractice' => function ($practice) {
+                $practice->whereHas('ehr', function ($q) {
+                    $q->where('name', '=', 'Athena')
+                      ->whereNotNull('external_id');
+                });
             },
-        ]);
+        ])
+            ->where('status', '=', CarePlan::TO_ENROLL)
+                            ->get()
+                            ->map(function ($c) {
+                                $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
 
+                                $practiceId = $c->patient
+                                    ->primaryPractice
+                                    ->external_id;
+
+                                $appointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
+
+                                foreach ($appointments as $appointment) {
+
+                                    $departmentId   = $appointment['departmentid'];
+                                    $appointmentId = $appointment['appointmentid'];
+
+                                    //need to pass in appointment id
+                                    $response = $this->api->postPatientDocument($c->user_id, $practiceId, $link,
+                                        $departmentId, $appointmentId);
+                                }
+
+                            });
     }
 }

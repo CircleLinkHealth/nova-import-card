@@ -375,6 +375,7 @@ class Calls
         $practiceId,
         $attachmentContent,
         $departmentId,
+        $appointmentId = null,
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     ) {
@@ -396,7 +397,11 @@ class Calls
          * HACK
          * @todo: Figure out why the above doesn't work
          */
-        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $appointmentField = $appointmentId
+            ? "-F appointmentid=$appointmentId"
+            : '';
+
+        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId $appointmentField -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
 
