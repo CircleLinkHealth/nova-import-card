@@ -142,6 +142,8 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
+        $txnDate = new Carbon($data['month']);
+
         $providerName = '';
 
         if ($provider) {
@@ -158,7 +160,7 @@ class PracticeReportsService
         $rowData = [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
-            'TxnDate'               => (string)$data['invoice_date'],
+            'TxnDate'               => (string)$txnDate->endOfMonth()->toDateString(),
             'AllowOnlineACHPayment' => 'Y',
             'SalesTerm'             => (string)'Net' . ' ' . $data['practice']->term_days,
             'ToBePrinted'           => 'N',
