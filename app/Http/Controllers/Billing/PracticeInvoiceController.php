@@ -114,9 +114,23 @@ class PracticeInvoiceController extends Controller
         else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
-        $data = $this->service->transformPatientsToApprove($practice_id, $date);
+        $summaries = $this->service->billablePatientSummaries($practice_id, $date)
+            ->paginate(1000);
 
-        return $data;
+        $summaries->getCollection()->transform(function ($summary) {
+            $result = $this->patientSummaryDBRepository
+                ->approveIfShouldApprove($summary->patient, $summary);
+
+            $data = $summary;
+
+            if ($result) {
+                $data = $result;
+            }
+
+            return ApprovableBillablePatient::make($data);
+        });
+
+        return $summaries;
     }
 
     public function updateSummaryChargeableServices(Request $request)
