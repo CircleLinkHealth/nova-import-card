@@ -659,11 +659,6 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix' => 'reports',
         ], function () {
 
-            Route::post('monthly-billing', [
-                'uses' => 'Admin\Reports\MonthlyBillingReportsController@makeMonthlyReport',
-                'as'   => 'MonthlyBillingReportsController.makeMonthlyReport',
-            ]);
-
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
@@ -1508,7 +1503,6 @@ Route::group([
 });
 
 Route::impersonate();
-
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
