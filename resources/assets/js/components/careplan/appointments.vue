@@ -79,13 +79,14 @@
                 appointment.isPending = () => (appointment.at > new Date())
 
                 /** A product of the VueCache mixin */
-                this.cache().get(rootUrl(`api/providers/${appointment.provider_id}`)).then(provider => {
-                    if (provider) {
-                        provider.location = () => ((provider.user || {}).locations || [])[0] || {}
-                        appointment.provider = () => provider
-                    }
-                })
-
+                if (appointment.provider_id) {
+                    this.cache().get(rootUrl(`api/providers/${appointment.provider_id}`)).then(provider => {
+                        if (provider) {
+                            provider.location = () => ((provider.user || {}).locations || [])[0] || {}
+                            appointment.provider = () => provider
+                        }
+                    })
+                }
                 return appointment
             },
             getAppointments(page) {
