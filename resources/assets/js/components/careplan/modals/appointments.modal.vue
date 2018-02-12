@@ -168,9 +168,9 @@
             },
             addAppointment(e) {
                 e.preventDefault()
-                this.loaders.addAppointment = true
-                this.newAppointment.provider_id = this.newAppointment.provider.value
+                this.newAppointment.provider_id = (this.newAppointment.provider || {}).value
                 this.newAppointment.date = this.newAppointmentDate
+                this.loaders.addAppointment = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/appointments`), this.newAppointment).then(response => {
                     console.log('appointments-modal:add', response.data)
                     Event.$emit('appointments:add', response.data)
