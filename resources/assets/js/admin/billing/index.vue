@@ -433,7 +433,11 @@
     }
 </script>
 
-<style>
+<style scoped>
+    input[type="checkbox"] {
+        display: inline-block !important;
+    }
+
     span.color-orange {
         color: orange
     }
