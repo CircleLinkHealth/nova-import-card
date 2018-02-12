@@ -27,7 +27,7 @@ class PatientSummaryEloquentRepository
      */
     public function shouldApprove(User $patient, PatientMonthlySummary $summary) {
         return !$this->lacksProblems($summary)
-               && $summary->no_of_successful_calls > 1
+               && $summary->no_of_successful_calls >= 1
                && $patient->patientInfo->ccm_status == 'enrolled'
                && $summary->rejected != 1;
     }
@@ -44,21 +44,9 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
-        if (!$this->lacksProblems($summary)) {
-            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
-                $summary->approved = true;
+        $approved = $this->approveIfShouldApprove($patient, $summary);
 
-                if ($summary->problem_1 && $summary->problem_2) {
-                    Problem::whereNotIn('id',
-                        array_filter([$summary->problem_1, $summary->problem_2]))
-                           ->update([
-                               'billable' => false,
-                           ]);
-                }
-
-                $summary->save();
-            }
-
+        if ($approved) {
             return $summary;
         }
 
@@ -332,5 +320,33 @@ class PatientSummaryEloquentRepository
                     'code' => $p->icd10Code(),
                 ];
             });
+    }
+
+    public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
+    {
+        if (!$this->lacksProblems($summary)) {
+            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
+                $summary->approved = true;
+
+                if ($summary->problem_1 && $summary->problem_2) {
+                    Problem::whereNotIn('id',
+                        array_filter([$summary->problem_1, $summary->problem_2]))
+                           ->update([
+                               'billable' => false,
+                           ]);
+                }
+
+                Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
+                       ->update([
+                           'billable' => true,
+                       ]);
+
+                $summary->save();
+            }
+
+            return $summary;
+        }
+
+        return false;
     }
 }

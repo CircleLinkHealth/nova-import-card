@@ -60,4 +60,9 @@ class ApproveBillablePatientsService
 
         return $summaries;
     }
+
+    public function billablePatientSummaries($practiceId, Carbon $month) {
+        return $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month);
+    }
 }

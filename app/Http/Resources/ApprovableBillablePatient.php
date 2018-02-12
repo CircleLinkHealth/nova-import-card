@@ -46,7 +46,10 @@ class ApprovableBillablePatient extends Resource
             $this->approved = $this->rejected = false;
         }
 
-        $bP = $this->patient->careTeamMembers->where('type', '=', 'billing_provider')->first();
+        $bP = $this->patient
+            ->careTeamMembers
+            ->where('type', '=', 'billing_provider')
+            ->first();
 
         $name = $this->patient->fullName;
         $url = route('patient.careplan.show', [
