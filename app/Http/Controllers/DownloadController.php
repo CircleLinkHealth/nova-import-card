@@ -26,6 +26,10 @@ class DownloadController extends Controller
         }
 
         if (!file_exists($path)) {
+            $path = $filePath;
+        }
+
+        if (!file_exists($path)) {
             return "Could not locate file with name: $filePath";
         }
 

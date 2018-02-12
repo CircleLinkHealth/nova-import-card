@@ -46,9 +46,9 @@
         "laravelcollective/html": "5.5.*",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/fractal": "0.12.*",
-        "maatwebsite/excel": "~2.1.0",
+        "maatwebsite/excel": "^2.1",
         "michalisantoniou6/laravel-cerberus": "dev-master",
-        "waavi/url-shortener": "dev-master",
+        "nao-pon/flysystem-google-drive": "~1.1",
         "pda/pheanstalk": "~3.0",
         "phaxio/phaxio": "^1.0",
         "predis/predis": "^1.1",
@@ -62,9 +62,9 @@
         "tylercd100/lern": "^3.8",
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
+        "waavi/url-shortener": "dev-master",
         "yajra/laravel-datatables-oracle": "~6.0",
-        "zanysoft/laravel-zip": "^1.0",
-        "nao-pon/flysystem-google-drive": "~1.1"
+        "zanysoft/laravel-zip": "^1.0"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",

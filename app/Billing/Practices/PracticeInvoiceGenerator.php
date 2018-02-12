@@ -102,12 +102,12 @@ class PracticeInvoiceGenerator
 
     public function incrementInvoiceNo()
     {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+                        ->firstOrFail();
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+        $current = $num->config_value;
 
-        $current = $num['config_value'];
-
-        $num['config_value'] = $num['config_value'] + 1;
+        $num->config_value = $current + 1;
 
         $num->save();
 
