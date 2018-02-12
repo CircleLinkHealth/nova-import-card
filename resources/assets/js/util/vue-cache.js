@@ -13,7 +13,7 @@ export default {
                             return this.cacheProvider[url] = response.data
                         }).catch(err => {
                             console.error(err)
-                            delete cacheProvider[url]
+                            delete this.cacheProvider[url]
                             Promise.reject(err)
                         })
                     }

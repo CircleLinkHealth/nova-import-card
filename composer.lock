@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "432bf82307c455a266f1135ceda17509",
+    "content-hash": "5daad7e765cdf5b68d1f21d5d0266422",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -9416,8 +9416,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "michalisantoniou6/laravel-cerberus": 20,
-        "waavi/url-shortener": 20,
         "prettus/l5-repository": 20,
+        "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },

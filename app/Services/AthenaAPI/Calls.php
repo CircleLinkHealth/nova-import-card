@@ -466,4 +466,78 @@ class Calls
 
         return $this->response($response);
     }
+
+    /**
+     * Creates new apointment slot for testing
+     * Returns appointment id and time of appointment slot.
+     * We use that id to create new appointment in the slot
+     *
+     * @param $practiceId
+     * @param $providerId
+     * @param $departmentId
+     * @param $reasonId
+     * @param $appointmentDate
+     * @param $appointmentTime
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function createNewAppointmentSlot(
+        $practiceId,
+        $departmentId,
+        $providerId,
+        $reasonId,
+        $appointmentDate,
+        $appointmentTime
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->POST("appointments/open", [
+            'practiceid'      => $practiceId,
+            'departmentid'    => $departmentId,
+            'providerid'      => $providerId,
+            'reasonid'        => $reasonId,
+            'appointmentdate' => $appointmentDate,
+            'appointmenttime' => $appointmentTime,
+        ]);
+
+        return $this->response($response);
+
+    }
+
+    /**
+     *
+     *
+     * @param $practiceId
+     * @param $departmentId
+     * @param $patientId
+     * @param $providerId
+     * @param $appointmentId
+     * @param null $reasonId
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function createNewAppointment(
+        $practiceId,
+        $departmentId,
+        $patientId,
+        $providerId,
+        $appointmentId,
+        $reasonId = null
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->PUT("appointments/$appointmentId", [
+            'practiceid'      => $practiceId,
+            'departmentid'    => $departmentId,
+            'patientid'    => $patientId,
+            'providerid'      => $providerId,
+            'appointmentid' => $appointmentId,
+            'reasonid'        => $reasonId,
+        ]);
+
+        return $this->response($response);
+
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-    use App\Patient;
+use App\Patient;
 ?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
@@ -8,12 +8,11 @@
     <?php
     if (isset($patient)) {
         $patientId = $patient->id;
-        
+
         if (is_a($patient, Patient::class)) {
             $patientId = optional($patient->user()->first())->id;
         }
     }
-
     $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
     ?>
     <script>
@@ -26,7 +25,7 @@
                                 var split = monthlyTime.split(':');
                                 var seconds = Number(split[2]), minutes = Number(split[1]), hours = Number(split[0]);
                                 return seconds +
-                                        (minutes * 60) + 
+                                        (minutes * 60) +
                                         (hours * 60 * 60);
                             }
                             return 0;
