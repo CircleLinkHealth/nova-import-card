@@ -142,9 +142,11 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
-        $txnDate = new Carbon($data['month']);
+        $txnDate = Carbon::createFromFormat('F, Y', $data['month'])->endOfMonth()->toDateString();
+
 
         $providerName = '';
+
 
         if ($provider) {
             $providerName = '-' . $provider->display_name;
@@ -160,7 +162,7 @@ class PracticeReportsService
         $rowData = [
             'RefNumber'             => (string)$data['invoice_num'],
             'Customer'              => (string)$data['bill_to'],
-            'TxnDate'               => (string)$txnDate->endOfMonth()->toDateString(),
+            'TxnDate'               => (string)$txnDate,
             'AllowOnlineACHPayment' => 'Y',
             'SalesTerm'             => (string)'Net' . ' ' . $data['practice']->term_days,
             'ToBePrinted'           => 'N',
