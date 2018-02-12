@@ -122,7 +122,7 @@
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
-                page: 0,
+                url: null,
                 columns: [
                     'MRN',
                     'Provider',
@@ -138,93 +138,13 @@
                     '#Successful Calls',
                     'approved',
                     'rejected'],
-                tableData: [
-                    /*{
-                        id: 1,
-                        mrn: "",
-                        "approved": true,
-                        "rejected": false,
-                        "Provider": "Dr. Demo MD",
-                        "Patient": "Cecilia Z-Armstrong",
-                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice": "Demo",
-                        "DOB": "1918/09/22",
-                        "Status": "enrolled",
-                        "CCM Mins": 0,
-                        "Problem 1": "Smoking",
-                        "Problem 2": "Asthma",
-                        "Problem 1 Code": "I10",
-                        "Problem 2 Code": "I10",
-                        "#Successful Calls": 0,
-                        qa: 0,
-                        reportId: 9,
-                        problems: [
-                            {
-                                id: 1,
-                                name: 'Smoking',
-                                code: 'I10'
-                            },
-                            {
-                                id: 2,
-                                name: 'Asthma',
-                                code: 'I11'
-                            }
-                        ],
-                        promises: {
-                            problem_1: false,
-                            problem_2: false,
-                            approve_reject: false
-                        },
-                        errors: {
-                            approve_reject: null
-                        }
-                    },
-                    {
-                        id: 2,
-                        mrn: "",
-                        "approved": false,
-                        "rejected": false,
-                        "Provider": "  ",
-                        "Patient": "Kenneth Z-Smitham ",
-                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice": "Demo",
-                        "DOB": "1958-09-08",
-                        "Status": "enrolled",
-                        "CCM Mins": 0,
-                        "Problem 1": null,
-                        "Problem 2": null,
-                        "Problem 1 Code": null,
-                        "Problem 2 Code": null,
-                        "#Successful Calls": 0,
-                        qa: 1,
-                        reportId: 10,
-                        problems: [
-                            {
-                                id: 1,
-                                name: 'Tobacco',
-                                code: 'T01'
-                            },
-                            {
-                                id: 2,
-                                name: 'Syphilis',
-                                code: 'SP2'
-                            }
-                        ],
-                        promises: {
-                            problem_1: false,
-                            problem_2: false,
-                            approve_reject: false
-                        },
-                        errors: {
-                            approve_reject: null
-                        }
-                    }*/],
+                tableData: [],
                 options: {
                     rowClassCallback(row) {
                         if (row.qa) return 'bg-flagged'
                         return ''
                     },
-                    perPage: 12
+                    perPage: 15
                 }
             }
         },
@@ -266,19 +186,18 @@
                 } 
             },
             changePractice() {
-                this.page = 0
                 this.tableData = []
                 this.retrieve()
             },
             retrieve() {
                 this.loading = true;
-                this.page++;
-                this.axios.post(rootUrl(`admin/reports/monthly-billing/v2/data?page=${this.page}`), {
+                this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
                     const pagination = response.data || []
                     const ids = this.tableData.map(i => i.id)
+                    this.url = pagination.next_page_url
                     this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         return {
                             id: patient.id,
@@ -425,7 +344,6 @@
                 const $table = this.$refs.tblBillingReport
                 if (page === $table.totalPages) {
                     console.log('next page clicked')
-                    this.page = ($table.totalPages - 1) || 0
                     this.retrieve();
                 }
             })
