@@ -82,6 +82,8 @@ class ProcessEligibilityController extends Controller
                         $randomStr = str_random();
                         $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
+
+                        $localDisk->delete($path);
                     }
 
                     $localDisk->deleteDir("zip/$dir");
