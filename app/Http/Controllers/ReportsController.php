@@ -53,7 +53,7 @@ class ReportsController extends Controller
     ) {
 
         $user             = User::find($patientId);
-        $treating         = (new CpmProblemService())->getDetails($user);
+        $treating         = (app(CpmProblemService::class))->getDetails($user);
         $biometrics       = $this->service->getBiometricsToMonitor($user);
         $biometrics_data  = [];
         $biometrics_array = [];
