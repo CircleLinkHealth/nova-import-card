@@ -13,6 +13,65 @@ router.use(function (req, res, next) {
   next()
 })
 
+const userExistsValidator = function (req, res, next) {
+  const providerId = req.params.providerId
+  const patientId = req.params.patientId
+
+  const timeTracker = app.timeTracker
+
+  const info = { providerId, patientId }
+
+  const userExists = timeTracker.exists(info)
+
+  if (userExists) next()
+  else res.status(404).send({
+    error: 'user key not found'
+  })
+}
+
+/**
+ * @swagger
+ * /:practitionerId/:patientId:
+ *   put:
+ *     tags:
+ *       - Default
+ *     requestBody:
+ *      content:
+ *        application/json:
+ *          examples:
+ *            startTime: 200
+ *     description: Modifies latent properties in practiioner-patient time activities, such as adding to startTime
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: practitioner-patient activities
+ */
+router.put('/:providerId/:patientId', userExistsValidator, function (req, res, next) {
+  const providerId = req.params.providerId
+  const patientId = req.params.patientId
+
+  const timeTracker = app.timeTracker
+
+  const info = { providerId, patientId }
+  
+  const user = timeTracker.get(info)
+
+  if (user) {
+    const {
+      startTime
+    } = req.body
+  
+    if (Number(startTime)) {
+      user.totalTime += Number(startTime)
+    }
+    res.send(user.report())
+  }
+  else res.status(404).send({
+    error: 'user not found'
+  })
+})
+
 /**
  * @swagger
  * /:practitionerId/:patientId:
@@ -26,7 +85,7 @@ router.use(function (req, res, next) {
  *       200:
  *         description: practitioner-patient activities
  */
-router.get('/:providerId/:patientId', function(req, res, next) {
+router.get('/:providerId/:patientId', userExistsValidator, function(req, res, next) {
 
   const providerId = req.params.providerId
   const patientId = req.params.patientId
@@ -35,34 +94,11 @@ router.get('/:providerId/:patientId', function(req, res, next) {
 
   const info = { providerId, patientId }
 
-  const userExists = timeTracker.exists(info)
-
-  
-
-  if (userExists) {
-    const user = timeTracker.get(info)
-    if (user) res.send({
-      seconds: user.totalSeconds,
-      startTime: user.totalTime,
-      activities: user.activities.map(activity => ({
-        name: activity.name,
-        title: activity.title,
-        duration: activity.duration,
-        url: activity.url,
-        url_short: activity.url_short,
-        start_time: activity.start_time
-      })),
-      key: user.key
-    })
-    else res.status(404).send({
-      error: 'user not found'
-    })
-  }
-  else {
-    res.status(404).send({
-      error: 'user key not found'
-    })
-  }
+  const user = timeTracker.get(info)
+  if (user) res.send(user.report())
+  else res.status(404).send({
+    error: 'user not found'
+  })
 });
 
 /**

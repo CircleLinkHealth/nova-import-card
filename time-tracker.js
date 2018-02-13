@@ -253,6 +253,20 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         })
     }
 
+    user.report = () => ({
+        seconds: user.totalSeconds,
+        startTime: user.totalTime,
+        activities: user.activities.map(activity => ({
+            name: activity.name,
+            title: activity.title,
+            duration: activity.duration,
+            url: activity.url,
+            url_short: activity.url_short,
+            start_time: activity.start_time
+        })),
+        key: user.key
+    })
+
     return user
 }
 
