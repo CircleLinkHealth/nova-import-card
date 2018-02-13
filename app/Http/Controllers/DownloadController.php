@@ -33,7 +33,7 @@ class DownloadController extends Controller
             return "Could not locate file with name: $filePath";
         }
 
-        $fileName = str_replace('/', '', strstr($filePath, '/'));
+        $fileName = str_replace('/', '', strrchr($filePath, '/'));
 
         return response()->download($path, $fileName, [
             'Content-Length: ' . filesize($path),

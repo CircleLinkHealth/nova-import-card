@@ -134,7 +134,7 @@ class PracticeReportsService
     ) {
         $generator = new PracticeInvoiceGenerator($practice, $date);
 
-        $reportName = str_random() . '-' . $date->toAtomString();
+        $reportName = $practice->name . '-' . $date->format('Y-m') . '-patients';
 
         $pathToPatientReport = $generator->makePatientReportPdf($reportName);
 
@@ -161,7 +161,7 @@ class PracticeReportsService
 
         $rowData = [
             'RefNumber'             => (string)$data['invoice_num'],
-            'Customer'              => (string)$data['bill_to'],
+            'Customer'              => (string)$data['practice']->display_name,
             'TxnDate'               => (string)$txnDate,
             'AllowOnlineACHPayment' => 'Y',
             'SalesTerm'             => (string)'Net' . ' ' . $data['practice']->term_days,
@@ -190,7 +190,7 @@ Wire Payments:
 JPMorgan Chase Bank
 Routing Number (ABA): 021000021
 Account Number: 693139136
-Account Name: Circle Link Health
+Account Name: CircleLink Health
 Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902',
         ];
 

@@ -19,7 +19,7 @@
                             </div>
                             <div class="col-sm-4 top-20">
                                 <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="yyyy-MM-dd"
-                                    v-model="newAppointment.date" :disabled="{ to: today }"" placeholder="YYYY-MM-DD" required></datepicker>
+                                    v-model="newAppointment.date" :disabled="{ to: today }" placeholder="YYYY-MM-DD" required></datepicker>
                             </div>
                             <div class="col-sm-4 top-20">
                                 <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
@@ -32,7 +32,7 @@
                             </div>
                             <div class="col-sm-12 top-20 text-right">
                                 <loader v-if="loaders.addAppointment"></loader>
-                                <button class="btn btn-secondary selected" :disabled="!newAppointment.isPending()">Add</button>
+                                <button class="btn btn-secondary selected" :disabled="!newAppointment.isPending() || ((newAppointment.provider || {}).value == -1)">Add</button>
                             </div>
                         </div>
                     </form>
@@ -126,7 +126,7 @@
                     removeAppointment: null,
                     getProviders: null
                 },
-                providers: [{ label: 'Unknown', value: null }],
+                providers: [{ label: 'Select Physician', value: -1 }, { label: 'Unknown', value: null }],
                 pagination: {
                     index: 1,
                     limit: 5,

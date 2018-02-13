@@ -93,12 +93,12 @@ class DetermineTargetPatientEligibility extends Command
                                          'practice_id' => $practice->id,
 
                                          //notRequired
-                                         'address' => $demos['address1'],
+                                         'address' => $demos['address1'] ?? null,
                                          'address_2' => $demos['address2'] ?? null,
                                          'dob' => $demos['dob'],
                                          'state' => $demos['state'],
-                                         'city' => $demos['city'],
-                                         'zip' => $demos['zip'],
+                                         'city' => $demos['city'] ?? null,
+                                         'zip' => $demos['zip'] ?? null,
 
                                          'primary_insurance' => array_key_exists(0, $insurances) ? $insurances[0]['insurancetype'] . ': ' . $insurances[0]['insuranceplanname'] : '',
                                          'secondary_insurance' => array_key_exists(1, $insurances) ? $insurances[1]['insurancetype'] . ': ' . $insurances[1]['insuranceplanname'] : '',

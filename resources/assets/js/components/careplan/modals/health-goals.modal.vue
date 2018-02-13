@@ -145,6 +145,9 @@
                         this.loaders.removeGoal = false
                     })
                 }
+                else {
+                    this.selectedGoal.enabled = true
+                }
                 return false
             },
             toggleEnable(e) {
