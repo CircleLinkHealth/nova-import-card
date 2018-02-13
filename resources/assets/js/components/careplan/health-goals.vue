@@ -56,7 +56,7 @@
         mixins: [ CareplanMixin ],
         computed: {
             goalsForListing () {
-                return this.goals.filter(goal => goal.enabled && goal.active())
+                return this.goals.filter(goal => goal.enabled)
             }
         },
         data() {
@@ -245,9 +245,7 @@
             Event.$on('health-goals:add', (id, info) => {
                 const index = this.goals.findIndex(g => g.id == id)
                 if (index >= 0) {
-                    this.goals[index].info = info
-                    this.goals[index] = this.setupGoal(this.goals[index])
-                    this.goals[index].enabled = true
+                    Object.assign(this.goals[index], this.setupGoal({ info, enabled: true }))
                     this.$forceUpdate()
                 }
             })

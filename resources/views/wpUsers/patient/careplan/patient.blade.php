@@ -330,6 +330,7 @@ $user_info = array();
 
                         <div class="main-form-block main-form-secondary col-lg-12 text-center">
                             <button class="btn btn-primary">Save Profile</button>
+                            <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
                         </div>
                         </div>
                         @push('styles') 
