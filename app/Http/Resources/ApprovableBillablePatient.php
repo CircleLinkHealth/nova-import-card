@@ -64,7 +64,7 @@ class ApprovableBillablePatient extends Resource
             'name'                   => $name,
             'url'                   => $url,
             'provider'               => $bP
-                ? $bP->user->fullName
+                ? optional($bP->user)->fullName
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
             'dob'                    => $this->patient->patientInfo->birth_date,

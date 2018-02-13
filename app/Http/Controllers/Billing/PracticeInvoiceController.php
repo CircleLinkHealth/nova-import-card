@@ -115,7 +115,7 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)
-            ->paginate(1000);
+            ->paginate(100);
 
         $summaries->getCollection()->transform(function ($summary) {
             $result = $this->patientSummaryDBRepository

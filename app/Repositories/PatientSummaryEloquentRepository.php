@@ -51,7 +51,7 @@ class PatientSummaryEloquentRepository
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', true));
+            $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', '=', true));
         }
 
         if ($this->lacksProblems($summary)) {
@@ -195,7 +195,7 @@ class PatientSummaryEloquentRepository
 
         $updated  = null;
         $toUpdate = $this->getValidCcdProblems($patient)
-                         ->where('billable', null)
+                         ->where('billable', '=', null)
                          ->take(2);
 
         if ($toUpdate->isNotEmpty()) {
