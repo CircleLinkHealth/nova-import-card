@@ -56,7 +56,7 @@
         mixins: [ CareplanMixin ],
         computed: {
             goalsForListing () {
-                return this.goals.filter(goal => goal.enabled && goal.active())
+                return this.goals.filter(goal => goal.enabled)
             }
         },
         data() {
