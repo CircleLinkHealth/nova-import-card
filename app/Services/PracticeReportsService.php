@@ -134,7 +134,7 @@ class PracticeReportsService
     ) {
         $generator = new PracticeInvoiceGenerator($practice, $date);
 
-        $reportName = str_random() . '-' . $date->toAtomString();
+        $reportName = $practice->name . '-' . $date->format('Y-m') . '-patients';
 
         $pathToPatientReport = $generator->makePatientReportPdf($reportName);
 
