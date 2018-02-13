@@ -248,6 +248,7 @@
                     this.goals[index].info = info
                     this.goals[index] = this.setupGoal(this.goals[index])
                     this.goals[index].enabled = true
+                    this.goals[index].active = () => !!(this.goals[index].info.starting && this.goals[index].info.target)
                     this.$forceUpdate()
                 }
             })
