@@ -245,10 +245,7 @@
             Event.$on('health-goals:add', (id, info) => {
                 const index = this.goals.findIndex(g => g.id == id)
                 if (index >= 0) {
-                    this.goals[index].info = info
-                    this.goals[index] = this.setupGoal(this.goals[index])
-                    this.goals[index].enabled = true
-                    this.goals[index].active = () => !!(this.goals[index].info.starting && this.goals[index].info.target)
+                    Object.assign(this.goals[index], this.setupGoal({ info, enabled: true }))
                     this.$forceUpdate()
                 }
             })
