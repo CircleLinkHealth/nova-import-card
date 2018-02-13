@@ -91,6 +91,9 @@
                     const end = (goal.end().split('/')[0] || 0)
 
                     if ((goal.name === 'Blood Sugar')) {
+                        goal.info.target = goal.info.target || '120'
+                        goal.info.high_alert = (Number(goal.info.high_alert) || '350') + ''
+                        goal.info.low_alert = (Number(goal.info.low_alert) || '60') + ''
                         if (start > 130) {
                             goal.info.verb = end < start ? 'Decrease' : 'Increase'
                         }
@@ -102,6 +105,11 @@
                         }
                     }
                     else if (goal.name === 'Blood Pressure') {
+                        goal.info.target = goal.info.target || '130/80'
+                        goal.info.systolic_high_alert = (Number(goal.info.systolic_high_alert) || '180') + ''
+                        goal.info.systolic_low_alert = (Number(goal.info.systolic_low_alert) || '80') + ''
+                        goal.info.diastolic_high_alert = (Number(goal.info.diastolic_high_alert) || '90') + ''
+                        goal.info.diastolic_low_alert = (Number(goal.info.diastolic_low_alert) || '40') + ''
                         if (goal.info.starting == 'N/A' || goal.info.target == 'TBD') {
                             goal.info.verb = 'Regulate'
                         }
