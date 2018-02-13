@@ -45,6 +45,17 @@ class AthenaApiCallsTest extends TestCase
         $this->assertEquals(0, $response['totalcount']);
     }
 
+    public function test_it_gets_patient_appointments()
+    {
+        $appointment = $this->createNewAthenaAppointment();
+
+        $response = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
+
+        $this->assertTrue(is_array($response));
+
+
+    }
+
     protected function setUp()
     {
         parent::setUp();
@@ -99,6 +110,60 @@ class AthenaApiCallsTest extends TestCase
         }
 
         $this->assertTrue(false);
+    }
+
+
+    private function createAppointmentSlot(){
+
+        $providerId = '86';
+        $reasonId = '962';
+        $appointmentDate = Carbon::now()->addMonth()->toDateString();
+        $appointmentTime = '11:00';
+
+
+        $response = $this->api->createNewAppointmentSlot($this->athenaPracticeId,
+            $this->athenaDepartmentId,
+            $providerId,
+            $reasonId,
+            $appointmentDate,
+            $appointmentTime);
+
+        if (array_key_exists(0, $response)) {
+            $this->assertTrue(true);
+
+            //need only the key TODO
+            return $response['appointmentids'];
+        }
+
+        $this->assertTrue(false);
+
+
+
+
+    }
+
+    private function createNewAthenaAppointment(){
+
+        $providerId = '86';
+        $reasonId = '962';
+
+        $appointmentId = $this->createAppointmentSlot();
+
+        $response = $this->api->createNewAppointment($this->athenaPracticeId,
+            $this->athenaDepartmentId,
+            $this->athenaPatientId,
+            $providerId,
+            $appointmentId,
+            $reasonId);
+
+        if (array_key_exists(0, $response)) {
+            $this->assertTrue(true);
+
+            return $response;
+        }
+
+        $this->assertTrue(false);
+
     }
 
     private function addProblem(Problem $problem)
