@@ -41,6 +41,8 @@ if (process.env.NODE_ENV != 'production') {
     passphrase: 'x12345678y'
   }, app)
   httpsServer.listen(3001)
+
+  console.log('Listening on port 3001')
 }
 
 //server.listen(port);
