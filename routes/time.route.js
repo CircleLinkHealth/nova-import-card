@@ -13,7 +13,19 @@ router.use(function (req, res, next) {
   next()
 })
 
-/* GET provider-patient time. */
+/**
+ * @swagger
+ * /:practitionerId/:patientId:
+ *   get:
+ *     tags:
+ *       - Default
+ *     description: Returns a practitioner-patient time activities
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: practitioner-patient activities
+ */
 router.get('/:providerId/:patientId', function(req, res, next) {
 
   const providerId = req.params.providerId
@@ -21,18 +33,25 @@ router.get('/:providerId/:patientId', function(req, res, next) {
 
   const timeTracker = app.timeTracker
 
-  const key = providerId + '-' + patientId
+  const info = { providerId, patientId }
 
-  const userExists = timeTracker.exists(key)
+  const userExists = timeTracker.exists(info)
 
   
 
   if (userExists) {
-    const user = timeTracker.get(key)
+    const user = timeTracker.get(info)
     if (user) res.send({
-      seconds: user.interval(),
-      totalTime: user.interval() + user.info.totalTime,
-      info: user.info,
+      seconds: user.totalSeconds,
+      startTime: user.totalTime,
+      activities: user.activities.map(activity => ({
+        name: activity.name,
+        title: activity.title,
+        duration: activity.duration,
+        url: activity.url,
+        url_short: activity.url_short,
+        start_time: activity.start_time
+      })),
       key: user.key
     })
     else res.status(404).send({
@@ -46,6 +65,19 @@ router.get('/:providerId/:patientId', function(req, res, next) {
   }
 });
 
+/**
+ * @swagger
+ * /keys:
+ *   get:
+ *     tags:
+ *       - Default
+ *     description: Returns a list of practitionerId-patientId keys currently active
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: list of practitionerId-patientId keys currently active
+ */
 router.get('/keys', function (req, res, next) {
   const timeTracker = app.timeTracker
 
