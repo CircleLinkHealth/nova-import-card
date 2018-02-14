@@ -194,7 +194,8 @@
                     name: '',
                     problem: '',
                     is_monitored: true,
-                    icd10: null
+                    icd10: null,
+                    cpm_problem_id: null
                 },
                 selectedCpmProblemId: null,
                 loaders: {
@@ -222,6 +223,7 @@
             },
             resolveIcd10Code() {
                 this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
+                this.newProblem.cpm_problem_id = (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).id
             },
             addInstruction(e) {
                 e.preventDefault()
