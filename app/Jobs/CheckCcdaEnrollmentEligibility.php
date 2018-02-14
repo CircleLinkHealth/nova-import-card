@@ -101,6 +101,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
+        if (!$patient->get('mrn', null) && !$patient->get('mrn_number', null)) {
+            $patient = $patient->put('mrn', $this->ccda->mrn);
+        }
+
         $patient = $this->handleLastEncounter($patient, $json);
 
         if (array_key_exists(0, $json->document->documentation_of)) {
