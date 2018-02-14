@@ -80,6 +80,8 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
     const SFTP_DROPBOX = 'sftp_dropbox';
+    const UPLOADED = 'uploaded';
+    const GOOGLE_DRIVE = 'google_drive';
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates

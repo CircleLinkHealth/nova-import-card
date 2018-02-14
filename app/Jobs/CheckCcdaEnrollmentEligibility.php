@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class CheckCcdaEnrollmentEligibility implements ShouldQueue
 {
@@ -100,17 +101,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
-        if ((is_null($this->filterLastEncounter) || $this->filterLastEncounter) && isset($json->encounters) && array_key_exists(0,
-                $json->encounters) && isset($json->encounters[0]->date)) {
-            $lastEncounter = $json->encounters[0]->date;
-
-            if ($lastEncounter) {
-                $this->filterLastEncounter = true;
-                $patient->put('last_encounter', Carbon::parse($lastEncounter));
-            } else {
-                $this->filterLastEncounter = false;
-            }
-        }
+        $patient = $this->handleLastEncounter($patient, $json);
 
         if (array_key_exists(0, $json->document->documentation_of)) {
             $provider = $this->transformer->provider($json->document->documentation_of[0]);
@@ -119,11 +110,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $patient->put('problems', $problems);
 
-
-        if ((is_null($this->filterInsurance) || $this->filterInsurance) && $insurance->isNotEmpty()) {
-            $patient = $patient->put('primary_insurance', $insurance[0] ?? '');
-            $patient = $patient->put('secondary_insurance', $insurance[1] ?? '');
-        }
+        $patient = $this->handleInsurance($patient, $insurance);
 
         $list = (new WelcomeCallListGenerator(
             collect([$patient]),
@@ -146,5 +133,53 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $this->ccda->save();
 
         return $this->ccda->status;
+    }
+
+    private function handleLastEncounter($patient, $ccdaJson)
+    {
+        $lastEncounter = false;
+        $patient->put('last_encounter', '');
+
+        if (isset($ccdaJson->encounters)
+            && array_key_exists(0, $ccdaJson->encounters)
+            && isset($ccdaJson->encounters[0]->date)) {
+            if ($ccdaJson->encounters[0]->date) {
+                $lastEncounter = $ccdaJson->encounters[0]->date;
+                $patient->put('last_encounter', Carbon::parse($lastEncounter));
+            }
+        }
+
+        if ((is_null($this->filterLastEncounter) || $this->filterLastEncounter)) {
+            $this->filterLastEncounter = (boolean)$lastEncounter;
+        }
+
+        return $patient;
+    }
+
+    private function handleInsurance($patient, Collection $insurance)
+    {
+        $patient = $patient->put('primary_insurance', '');
+        $patient = $patient->put('secondary_insurance', '');
+        $patient = $patient->put('tertiary_insurance', '');
+
+        if ($insurance->isNotEmpty()) {
+            $patient = $patient->put('primary_insurance', $insurance[0] ?? '');
+            $patient = $patient->put('secondary_insurance', $insurance[1] ?? '');
+            $patient = $patient->put('tertiary_insurance', $insurance[2] ?? '');
+        }
+
+        if ((is_null($this->filterInsurance) || $this->filterInsurance)) {
+            $count = 0;
+
+            foreach ([$patient['primary_insurance'], $patient['secondary_insurance'], $patient['tertiary_insurance']] as $string) {
+                if ($string) {
+                    ++$count;
+                }
+            }
+
+            $this->filterInsurance = $count > 0;
+        }
+
+        return $patient;
     }
 }
