@@ -137,16 +137,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
     private function handleLastEncounter($patient, $ccdaJson)
     {
+        $lastEncounter = false;
+        $patient->put('last_encounter', '');
+
         if (isset($ccdaJson->encounters)
             && array_key_exists(0, $ccdaJson->encounters)
             && isset($ccdaJson->encounters[0]->date)) {
-            $lastEncounter = $ccdaJson->encounters[0]->date;
-
-            if ($lastEncounter) {
+            if ($ccdaJson->encounters[0]->date) {
+                $lastEncounter = $ccdaJson->encounters[0]->date;
                 $patient->put('last_encounter', Carbon::parse($lastEncounter));
-            } else {
-                $lastEncounter = false;
-                $patient->put('last_encounter', 'N/A');
             }
         }
 
@@ -159,9 +158,9 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
     private function handleInsurance($patient, Collection $insurance)
     {
-        $patient = $patient->put('primary_insurance', 'N/A');
-        $patient = $patient->put('secondary_insurance', 'N/A');
-        $patient = $patient->put('tertiary_insurance', 'N/A');
+        $patient = $patient->put('primary_insurance', '');
+        $patient = $patient->put('secondary_insurance', '');
+        $patient = $patient->put('tertiary_insurance', '');
 
         if ($insurance->isNotEmpty()) {
             $patient = $patient->put('primary_insurance', $insurance[0] ?? '');
