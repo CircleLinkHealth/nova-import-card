@@ -372,7 +372,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- BIOMETRICS -->
                 <div class="patient-info__subareas">
                     <?php
-                        $healthGoalsForListing = $healthGoals->filter(function ($goal) {
+                        $healthGoalsForListing = $healthGoals->sortBy('id')->filter(function ($goal) {
                             return $goal['enabled'];
                         })->map(function ($goal) {
                             $start = $goal['info']['starting'];
@@ -509,7 +509,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                 <!-- SYMPTOMS -->
                 <?php
-                    $symptoms = new Collection($data['symptoms']);
+                    $symptoms = (new Collection($data['symptoms']))->sortBy('name');
                 ?>
                 <div class="patient-info__subareas">
                     <div class="row">
