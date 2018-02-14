@@ -18,7 +18,7 @@ class AddIndexesForBillable extends Migration
                 ->nullable()
                 ->change();
 
-            $table->index('program_id');
+//            $table->index('program_id');
         });
 
         Schema::table('patient_care_team_members', function (Blueprint $table) {
