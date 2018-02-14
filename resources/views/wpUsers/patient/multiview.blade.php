@@ -436,12 +436,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         @if ($healthNote)
                             <div class="col-xs-12 top-10">
                                 {{ $healthNote['body'] }}
+                                <br><br><br>
                             </div>
                         @endif
                         @if (!$healthGoalsForListing->count()) 
                             <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
                         @else
-                            <ul class="col-sm-12 subareas__list top-20" style="margin-top:70px !important;">
+                            <br><br>
+                            <ul class="col-sm-12 subareas__list top-20" style="padding-top:70px !important;">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach($healthGoalsForListing as $goal)
                                         <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
