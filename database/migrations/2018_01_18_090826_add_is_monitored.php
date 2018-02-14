@@ -14,12 +14,14 @@ class AddIsMonitored extends Migration
      */
     public function up()
     {
-        Schema::table('ccd_problems', function (Blueprint $table) {
-            $table->boolean('is_monitored')
-                ->comment('A monitored problem is a problem we provide Care Management for.')
-                ->after('id')
-                ->default(false);
-        });
+        if (!Schema::hasColumn('ccd_problems', 'is_monitored')) {
+            Schema::table('ccd_problems', function (Blueprint $table) {
+                $table->boolean('is_monitored')
+                      ->comment('A monitored problem is a problem we provide Care Management for.')
+                      ->after('id')
+                      ->default(false);
+            });
+        }
 
         Problem::whereNotNull('cpm_problem_id')
             ->orWhere('billable', '=', true)
