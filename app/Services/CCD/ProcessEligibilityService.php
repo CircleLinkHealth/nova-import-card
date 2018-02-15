@@ -10,6 +10,7 @@ namespace App\Services\CCD;
 
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
+use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use Carbon\Carbon;
@@ -152,5 +153,9 @@ class ProcessEligibilityService
                         })
                         ->filter()
                         ->values();
+    }
+
+    public function queueFromGoogleDirve($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+        ProcessEligibilityFromGoogleDrive::dispatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
     }
 }
