@@ -83,7 +83,7 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => (goal.info.starting || '0')
+                    goal.start = () => (goal.info.starting || 'N/A')
                     goal.end = () => (goal.info.target || '0')
                     goal.active = () => !!(goal.info.starting && goal.info.target)
                     
@@ -151,7 +151,7 @@
                 }
                 else {
                     goal.info = {
-                        starting: 0,
+                        starting: null,
                         target: 0
                     }
                     if (goal.type === 0) {

@@ -427,7 +427,7 @@ Route::group(['middleware' => 'auth'], function () {
     ], function () {
 
         Route::get('create', [
-            'uses' => 'ImporterController@create',
+            'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd',
         ]);
 
