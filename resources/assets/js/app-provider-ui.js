@@ -36,8 +36,8 @@ Vue.use(VueForm, {
 
 import ComponentProxy from './components/shared/component-proxy'
 import CareTeamComponent from './components/pages/view-care-plan/care-team'
-import CreateAppointmentsAddCarePerson from './components/CareTeam/create-appointments-add-care-person'
-import CreateCarePerson from './components/CareTeam/create-care-person'
+import CreateAppointmentsAddCarePerson from './components/careteam/create-appointments-add-care-person'
+import CreateCarePerson from './components/careteam/create-care-person'
 import UpdateCarePerson from './components/pages/view-care-plan/update-care-person'
 import Select2Component from './components/src/select2'
 import FabComponent from './components/fab'
@@ -69,8 +69,20 @@ import PatientList from './components/patients/listing'
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
-Vue.component('billing-report', require('./admin/billing/index.vue'));
-Vue.component('component-proxy', ComponentProxy)
+function deferImport (name) {
+    return (resolve) => {
+        return import(name).then((component) => {
+            resolve(component)
+        })
+    }
+}
+
+Vue.component('billing-report', (resolve) => {
+    import('./admin/billing/index.vue').then((component) => {
+        resolve(component)
+    })
+});
+Vue.component('component-proxy', deferImport('./components/shared/component-proxy'))
 Vue.component('careTeam', CareTeamComponent)
 Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
 Vue.component('createCarePerson', CreateCarePerson)
