@@ -83,7 +83,7 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => (goal.info.starting || '0')
+                    goal.start = () => (goal.info.starting || 'N/A')
                     goal.end = () => (goal.info.target || '0')
                     goal.active = () => !!(goal.info.starting && goal.info.target)
                     
@@ -151,22 +151,24 @@
                 }
                 else {
                     goal.info = {
-                        starting: 0,
+                        starting: null,
                         target: 0
                     }
                     if (goal.type === 0) {
                         goal.info.monitor_changes_for_chf = 0
                     }
                     else if (goal.type === 1) {
-                        goal.info.systolic_high_alert = 0
-                        goal.info.systolic_low_alert = 0
-                        goal.info.diastolic_high_alert = 0
-                        goal.info.diastolic_low_alert = 0
+                        goal.info.systolic_high_alert = 180
+                        goal.info.systolic_low_alert = 80
+                        goal.info.diastolic_high_alert = 90
+                        goal.info.diastolic_low_alert = 40
+                        goal.info.target = '130/80'
                     }
                     else if (goal.type === 2) {
-                        goal.info.high_alert = 0
-                        goal.info.low_alert = 0
+                        goal.info.high_alert = 350
+                        goal.info.low_alert = 60
                         goal.info.starting_a1c = 0
+                        goal.info.target = '120'
                     }
                 }
                 return goal

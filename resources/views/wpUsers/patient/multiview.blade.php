@@ -292,6 +292,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <?php
+                    $allCpmProblems = new Collection($data['allCpmProblems']);
                     $cpmProblems = new Collection($data['cpmProblems']);
                     $ccdProblems = new Collection($data['ccdProblems']);
                     $healthGoals = new Collection($data['healthGoals']);
@@ -301,6 +302,18 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- CARE AREAS -->
                 <div class="patient-info__subareas">
                     <?php
+                        $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
+                            if (!$problem['instruction']) {
+                                $cpmProblem =  $allCpmProblems->first(function ($cpm) use ($problem) {
+                                    return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
+                                });
+                                if ($cpmProblem) {
+                                    $problem['instruction'] = $cpmProblem['instruction'];
+                                }
+                            }
+                            return $problem;
+                        });
+
                         $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });

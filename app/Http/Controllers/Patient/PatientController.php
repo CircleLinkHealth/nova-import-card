@@ -265,15 +265,8 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showPatientListing()
-    {
-        $data = $this->formatter->patientListing();
-
-        return view('wpUsers.patient.listing', $data);
-    }
-
-    public function showPatientListingRemix() {
-        return view('wpUsers.patient.listing-remix');
+    public function showPatientListing() {
+        return view('wpUsers.patient.listing');
     }
     
     public function showPatientListingPdf() {
