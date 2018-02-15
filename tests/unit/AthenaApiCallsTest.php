@@ -21,10 +21,11 @@ class AthenaApiCallsTest extends TestCase
 
     public function test_it_gets_problems()
     {
-        $problem1        = $this->addProblem($this->fakeProblem(234347009, $this->athenaPatientId, $this->athenaPracticeId));
-        $problem2        = $this->addProblem($this->fakeProblem(195949008, $this->athenaPatientId, $this->athenaPracticeId));
+        $problem1 = $this->addProblem($this->fakeProblem(234347009, $this->athenaPatientId, $this->athenaPracticeId));
+        $problem2 = $this->addProblem($this->fakeProblem(195949008, $this->athenaPatientId, $this->athenaPracticeId));
 
-        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId, $this->athenaDepartmentId);
+        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId,
+            $this->athenaDepartmentId);
 
         $this->assertTrue(is_array($response));
         $this->assertEquals(2, $response['totalcount']);
@@ -38,41 +39,44 @@ class AthenaApiCallsTest extends TestCase
     public function test_it_gets_zero_problems()
     {
         //make a call to ad
-        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId, $this->athenaDepartmentId);
+        $response = $this->api->getPatientProblems($this->athenaPatientId, $this->athenaPracticeId,
+            $this->athenaDepartmentId);
 
         $this->assertTrue(is_array($response));
         $this->assertEquals([], $response['problems']);
         $this->assertEquals(0, $response['totalcount']);
     }
 
-//    public function test_it_gets_patient_existing_appointments(){
-//
-//    }
+    public function test_it_gets_patient_existing_appointments()
+    {
 
-//    public function test_it_gets_patient_new_appointments()
-//    {
-//        $appointment = $this->createNewAthenaAppointment();
-//
-//        $response = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
-//
-//        $this->assertTrue(is_array($response));
-//
-//
-//    }
+    }
+
+    public function test_it_gets_patient_new_appointments()
+    {
+        $appointment = $this->createNewAthenaAppointment();
+
+        $response = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
+
+        $this->assertTrue(is_array($response));
+
+
+    }
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->api             = new Calls();
+        $this->api = new Calls();
 
-        $this->athenaPracticeId = 195900;
+        $this->athenaPracticeId   = 195900;
         $this->athenaDepartmentId = 1;
-        $this->fakePatient     = $this->fakePatient();
-        $this->athenaPatientId = $this->createAthenaApiPatient($this->fakePatient);
+        $this->fakePatient        = $this->fakePatient();
+        $this->athenaPatientId    = $this->createAthenaApiPatient($this->fakePatient);
     }
 
-    private function fakeProblem($snomedCode, $athenaPatientId, $athenaPracticeId) {
+    private function fakeProblem($snomedCode, $athenaPatientId, $athenaPracticeId)
+    {
         $problem = new Problem();
         $problem->setDepartmentId(1);
         $problem->setPracticeId($athenaPracticeId);
@@ -117,10 +121,11 @@ class AthenaApiCallsTest extends TestCase
     }
 
 
-    private function createAppointmentSlot(){
+    private function createAppointmentSlot()
+    {
 
-        $providerId = '86';
-        $reasonId = '962';
+        $providerId      = '86';
+        $reasonId        = '962';
         $appointmentDate = Carbon::now()->addMonth()->toDateString();
         $appointmentTime = '11:00';
 
@@ -132,26 +137,28 @@ class AthenaApiCallsTest extends TestCase
             $appointmentDate,
             $appointmentTime);
 
-        if (array_key_exists(0, $response)) {
-            $this->assertTrue(true);
+        $appointmentId = '';
 
-            //need only the key TODO
-            return $response['appointmentids'];
+        foreach ($response as $id => $appointments) {
+            foreach ($appointments as $appointment => $time) {
+
+                $appointmentId = $appointment;
+            }
         }
 
-
-
-
+        return $appointmentId;
 
 
     }
 
-    private function createNewAthenaAppointment(){
+    private function createNewAthenaAppointment()
+    {
 
         $providerId = '86';
-        $reasonId = '962';
+        $reasonId   = '962';
 
         $appointmentId = $this->createAppointmentSlot();
+
 
         $response = $this->api->createNewAppointment($this->athenaPracticeId,
             $this->athenaDepartmentId,

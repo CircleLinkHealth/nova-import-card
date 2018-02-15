@@ -524,17 +524,19 @@ class Calls
         $patientId,
         $providerId,
         $appointmentId,
-        $reasonId = null
+        $reasonId
     ) {
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->PUT("appointments/$appointmentId", [
-            'practiceid'      => $practiceId,
-            'departmentid'    => $departmentId,
-            'patientid'    => $patientId,
-            'providerid'      => $providerId,
-            'appointmentid' => $appointmentId,
-            'reasonid'        => $reasonId,
+            'practiceid'                  => $practiceId,
+            'departmentid'                => $departmentId,
+            'patientid'                   => $patientId,
+            'providerid'                  => $providerId,
+            'appointmentid'               => $appointmentId,
+            'reasonid'                    => $reasonId,
+            'Content-Type'                => 'application/x-www-form-urlencoded',
+            'ignoreschedulablepermission' => false,
         ]);
 
         return $this->response($response);
