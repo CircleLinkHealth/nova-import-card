@@ -33,7 +33,7 @@ Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 })
-
+import BillingComponent from './admin/billing/index.vue'
 import ComponentProxy from './components/shared/component-proxy'
 import CareTeamComponent from './components/pages/view-care-plan/care-team'
 import CreateAppointmentsAddCarePerson from './components/careteam/create-appointments-add-care-person'
@@ -69,20 +69,10 @@ import PatientList from './components/patients/listing'
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
-function deferImport (name) {
-    return (resolve) => {
-        return import(name).then((component) => {
-            resolve(component)
-        })
-    }
-}
 
-Vue.component('billing-report', (resolve) => {
-    import('./admin/billing/index.vue').then((component) => {
-        resolve(component)
-    })
-});
-Vue.component('component-proxy', deferImport('./components/shared/component-proxy'))
+
+Vue.component('billing-report', BillingComponent);
+Vue.component('component-proxy', ComponentProxy)
 Vue.component('careTeam', CareTeamComponent)
 Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
 Vue.component('createCarePerson', CreateCarePerson)
