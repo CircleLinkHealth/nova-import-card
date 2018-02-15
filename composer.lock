@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "561a065bb63c5b71820ce33190f7f19f",
+    "content-hash": "78bc3bb1b07c6f6bf02666200bbb69ef",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -1019,6 +1019,51 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2017-06-27T22:17:23+00:00"
+        },
+        {
+            "name": "gemorroj/archive7z",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Gemorroj/Archive7z.git",
+                "reference": "cd231835f7904ecad1a08657ecf1dd2718ea7bf0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Gemorroj/Archive7z/zipball/cd231835f7904ecad1a08657ecf1dd2718ea7bf0",
+                "reference": "cd231835f7904ecad1a08657ecf1dd2718ea7bf0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/process": "^2.8|^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8|^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Archive7z\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Gemorroj"
+                }
+            ],
+            "description": "7z cli wrapper",
+            "keywords": [
+                "7-zip",
+                "7z",
+                "archive",
+                "p7zip"
+            ],
+            "time": "2017-11-12T13:37:34+00:00"
         },
         {
             "name": "genealabs/laravel-caffeine",
