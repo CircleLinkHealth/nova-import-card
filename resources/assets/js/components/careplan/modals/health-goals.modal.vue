@@ -24,11 +24,11 @@
                         <div class="row form-group">
                             <div class="col-sm-6">
                                 <h4>Starting<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
-                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.starting" step="0.01" />
+                                <input type="text" class="form-control" v-model="selectedGoal.info.starting" step="0.01" />
                             </div>
                             <div class="col-sm-6">
                                 <h4>Target<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
-                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" />
+                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" required />
                             </div>
                         </div>
                         <div class="row form-group" v-if="selectedGoal.id === 3"> <!--Blood Sugar-->
@@ -144,6 +144,9 @@
                         console.error('health-goals:add', err)
                         this.loaders.removeGoal = false
                     })
+                }
+                else {
+                    this.selectedGoal.enabled = true
                 }
                 return false
             },

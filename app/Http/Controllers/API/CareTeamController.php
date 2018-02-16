@@ -262,9 +262,7 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
-        $type = $input['is_billing_provider']
-            ? CarePerson::BILLING_PROVIDER
-            : snake_case($input['formatted_type']);
+        $type = snake_case($input['formatted_type']);
 
         if ($type == CarePerson::BILLING_PROVIDER) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)
@@ -290,6 +288,8 @@ class CareTeamController extends Controller
 
                 $oldBillingProvider->save();
             }
+            
+            $billingProvider = $oldBillingProviders->first();
 
             //If the Billing Provider has changed, we want to reflect that change on the front end.
             //If it's the same, we'll return null

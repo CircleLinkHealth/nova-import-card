@@ -5,6 +5,7 @@ use Illuminate\Support\Collection;
 use App\CarePlan;
 use App\CareplanAssessment;
 use App\Note;
+use App\Patient;
 
 /**
 * Seeder to create the four test patients Raph needs to test the G0506 flow
@@ -30,6 +31,9 @@ class PatientEnrollmentSeeeder extends Seeder
                 Careplan::where([ 'user_id' => $patient->user_id ])->update([
                     'provider_approver_id' => null,
                     'status' => $this->TO_ENROLL
+                ]);
+                Patient::where([ 'user_id' => $patient->user_id ])->update([
+                    'ccm_status' => 'paused'
                 ]);
                 CareplanAssessment::where([ 'careplan_id' => $patient->user_id ])->delete();
                 Note::where([ 'patient_id' => $patient->user_id, 'type' => 'Enrollment' ])

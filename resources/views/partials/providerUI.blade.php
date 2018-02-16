@@ -84,7 +84,26 @@
 
     @yield('content')
 
-    @if(isset($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $patient->isCcmEligible()) && !isset($isPdf))
+    <?php
+        /**
+        * Sometimes, $patient is an instance of User::class, 
+        * other times, it is an instance of Patient::class
+        * We have to make sure that $user is always an instance of User::class by deriving it from $patient
+        */
+        use App\User;
+        use App\Patient;
+        $user = null;
+        if (isset($patient)) {
+            if (is_a($patient, Patient::class)) {
+                $user = $patient->user()->first();
+            }
+            else {
+                $user = $patient;
+            }
+        }
+    ?>
+
+    @if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 

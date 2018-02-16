@@ -13,7 +13,7 @@ $user_info = array();
 
 @section('content')
     {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
-    <div class="row" style="margin-top:20px;">
+    <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1">
             @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <div class="icon-container col-lg-12">
@@ -27,7 +27,7 @@ $user_info = array();
                 <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
             @endif
             --}}
-            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;">
+            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row no-overflow">
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
@@ -330,6 +330,7 @@ $user_info = array();
 
                         <div class="main-form-block main-form-secondary col-lg-12 text-center">
                             <button class="btn btn-primary">Save Profile</button>
+                            <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
                         </div>
                         </div>
                         @push('styles') 
@@ -342,9 +343,16 @@ $user_info = array();
                     </div>
                 </div>
             </div>
+            <div class="top-20"></div>
         </div>
-            @include('wpUsers.patient.careplan.footer')
-        <br/><br/>
+        @push('styles')
+            <style>
+                .top-20 {
+                    margin-top: 20px;
+                }
+            </style>
+        @endpush
+        <br><br><br><br>
 
         @if(isset($_GET['scrollTo']))
             @push('scripts')

@@ -1,6 +1,6 @@
 <?php namespace App\Services;
 
-use App\ChargeableService;
+use App\Http\Resources\ApprovableBillablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
@@ -41,18 +41,28 @@ class ApproveBillablePatientsService
 
     public function patientsToApprove($practiceId, Carbon $month)
     {
-        return $this->approvePatientsRepo->billablePatients($practiceId, $month)
-                                         ->get()
-                                         ->map(function ($u) {
+        $summaries = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+                                         ->paginate();
+        $summaries->getCollection()->transform(function ($summary) {
+            return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
+        });
 
-                                             $summary = $this->patientSummaryRepo->attachBillableProblems($u,
-                                                 $u->patientSummaries->first());
+        return $summaries;
+    }
 
-//                                             $services = $summary->chargeableServices;
-//
-//                                             if ($services->isEmpty()) { $summary->chargeableServices()->attach(1); }
+    public function transformPatientsToApprove($practiceId, Carbon $month) {
+        $summaries = $this->patientsToApprove($practiceId, $month);
+        
+        $summaries->getCollection()->transform(function ($summary) {
+            return ApprovableBillablePatient::make($summary);
+        });
 
-                                             return $summary;
-                                         });
+        return $summaries;
+    }
+
+    public function billablePatientSummaries($practiceId, Carbon $month) {
+        return $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month);
     }
 }

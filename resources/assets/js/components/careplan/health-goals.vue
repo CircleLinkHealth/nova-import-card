@@ -9,10 +9,10 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <div class="row">
+                <div class="row top-10">
                     <div :class="{ 'col-sm-12': !loaders.editNote && !loaders.getNote, 'col-sm-11': loaders.editNote }">
                         <form @submit="editNote">
-                            <input class="form-control free-note " v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote" />
+                            <textarea class="form-control free-note" v-model="note.body" placeholder="Enter Note and press ENTER" @change="editNote"></textarea>
                         </form>
                     </div>
                     <div class="col-sm-1" v-if="loaders.editNote || loaders.getNote">
@@ -24,8 +24,8 @@
                     <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 </slot>
                 
-                <ul class="subareas__list" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing" :key="goal.id">
+                <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
+                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing()" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -55,9 +55,7 @@
         },
         mixins: [ CareplanMixin ],
         computed: {
-            goalsForListing () {
-                return this.goals.filter(goal => goal.enabled && goal.active())
-            }
+            
         },
         data() {
             return {
@@ -75,6 +73,9 @@
             }
         },
         methods: {
+            goalsForListing () {
+                return this.goals.filter(goal => goal.enabled)
+            },
             setupGoal(goal) {
                 goal.created_at = new Date(goal.created_at)
                 goal.updated_at = new Date(goal.updated_at)
@@ -83,7 +84,7 @@
                     goal.info.created_at = new Date(goal.info.created_at)
                     goal.info.updated_at = new Date(goal.info.updated_at)
                     goal.info.monitor_changes_for_chf = goal.info.monitor_changes_for_chf || false
-                    goal.start = () => (goal.info.starting || '0')
+                    goal.start = () => (goal.info.starting || 'N/A')
                     goal.end = () => (goal.info.target || '0')
                     goal.active = () => !!(goal.info.starting && goal.info.target)
                     
@@ -91,6 +92,9 @@
                     const end = (goal.end().split('/')[0] || 0)
 
                     if ((goal.name === 'Blood Sugar')) {
+                        goal.info.target = goal.info.target || '120'
+                        goal.info.high_alert = (Number(goal.info.high_alert) || '350') + ''
+                        goal.info.low_alert = (Number(goal.info.low_alert) || '60') + ''
                         if (start > 130) {
                             goal.info.verb = end < start ? 'Decrease' : 'Increase'
                         }
@@ -101,12 +105,43 @@
                             goal.info.verb = 'Increase'
                         }
                     }
+                    else if (goal.name === 'Blood Pressure') {
+                        goal.info.target = goal.info.target || '130/80'
+                        goal.info.systolic_high_alert = (Number(goal.info.systolic_high_alert) || '180') + ''
+                        goal.info.systolic_low_alert = (Number(goal.info.systolic_low_alert) || '80') + ''
+                        goal.info.diastolic_high_alert = (Number(goal.info.diastolic_high_alert) || '90') + ''
+                        goal.info.diastolic_low_alert = (Number(goal.info.diastolic_low_alert) || '40') + ''
+                        if (goal.info.starting == 'N/A' || goal.info.target == 'TBD') {
+                            goal.info.verb = 'Regulate'
+                        }
+                        else if (start < 100) {
+                            if (end <= 130) {
+                                goal.info.verb = 'Regulate'
+                            }
+                            else {
+                                goal.info.verb = 'Decrease'
+                            }
+                        }
+                        else {
+                            if (start > end) {
+                                goal.info.verb = 'Decrease'
+                            }
+                            else {
+                                if (start < 90) {
+                                    goal.info.verb = 'Increase'
+                                }
+                                else {
+                                    goal.info.verb = 'Regulate'
+                                }
+                            }
+                        }
+                    }
                     else {
                         if (start > end) {
                             goal.info.verb = 'Decrease'
                         }
                         else {
-                            if ((goal.name === 'Blood Pressure' && start < 90) || (start > 0 && start < end)) {
+                            if (start > 0 && start < end) {
                                 goal.info.verb = 'Increase'
                             }
                             else {
@@ -117,22 +152,24 @@
                 }
                 else {
                     goal.info = {
-                        starting: 0,
+                        starting: null,
                         target: 0
                     }
                     if (goal.type === 0) {
                         goal.info.monitor_changes_for_chf = 0
                     }
                     else if (goal.type === 1) {
-                        goal.info.systolic_high_alert = 0
-                        goal.info.systolic_low_alert = 0
-                        goal.info.diastolic_high_alert = 0
-                        goal.info.diastolic_low_alert = 0
+                        goal.info.systolic_high_alert = 180
+                        goal.info.systolic_low_alert = 80
+                        goal.info.diastolic_high_alert = 90
+                        goal.info.diastolic_low_alert = 40
+                        goal.info.target = '130/80'
                     }
                     else if (goal.type === 2) {
-                        goal.info.high_alert = 0
-                        goal.info.low_alert = 0
+                        goal.info.high_alert = 350
+                        goal.info.low_alert = 60
                         goal.info.starting_a1c = 0
+                        goal.info.target = '120'
                     }
                 }
                 return goal
@@ -194,9 +231,19 @@
         },
         mounted() {
             const goals = this.careplan().healthGoals
+            const textarea = this.$el.querySelector('textarea')
+
+            const autoGrow = function () {
+                this.style.height = '50px'
+                this.style.height = this.scrollHeight + 'px'
+            }
+
+            textarea.addEventListener('input', autoGrow)
             
             this.note = this.careplan().healthGoalNote || this.note
             console.log('patient-note', this.note)
+            setTimeout(() => autoGrow.call(textarea), 500)
+
             this.baseGoals = this.careplan().baseHealthGoals
             this.goals = this.baseGoals.map(baseGoal => {
                         return this.setupGoal(goals.find(g => g.id === baseGoal.id) || baseGoal)
@@ -209,8 +256,7 @@
             Event.$on('health-goals:add', (id, info) => {
                 const index = this.goals.findIndex(g => g.id == id)
                 if (index >= 0) {
-                    this.goals[index].info = info
-                    this.goals[index] = this.setupGoal(this.goals[index])
+                    Object.assign(this.goals[index], this.setupGoal({ info, enabled: true }))
                     this.$forceUpdate()
                 }
             })

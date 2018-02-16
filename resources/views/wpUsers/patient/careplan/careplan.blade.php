@@ -87,6 +87,14 @@ $new_user = false;
                     </style>
                 @endpush
 
+                @push('styles')
+                    <style>
+                        .collapsing {
+                            -webkit-transition: none;
+                            transition: height 0.01s;
+                        }
+                    </style>
+                @endpush
             </section>
         </div>
     </div>

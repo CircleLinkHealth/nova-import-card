@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 
+use App\PatientMonthlySummary;
 use App\User;
 use Carbon\Carbon;
 
@@ -41,6 +42,35 @@ class BillablePatientsEloquentRepository
                       })
                       ->ofType('participant')
                       ->where('program_id', '=', $practiceId);
+
+        return $result;
+    }
+
+    public function billablePatientSummaries($practiceId, Carbon $date)
+    {
+        $month = $date->startOfMonth()->toDateString();
+
+        $result = PatientMonthlySummary::where('month_year', $month)
+                                       ->where('ccm_time', '>=', 1200)
+                                       ->with([
+                                           'patient' => function ($q) use ($month, $practiceId) {
+                                               $q->with([
+                                                   'ccdProblems'     => function ($query) {
+                                                       $query->with(['icd10Codes', 'cpmProblem']);
+                                                   },
+                                                   'cpmProblems',
+                                                   'patientInfo',
+                                                   'primaryPractice',
+                                                   'careTeamMembers' => function ($q) {
+                                                       $q->where('type', '=', 'billing_provider');
+                                                   },
+                                               ]);
+                                           },
+                                       ])
+                                       ->has('patient.patientInfo')
+                                       ->whereHas('patient.practices', function ($q) use ($practiceId) {
+                                           $q->where('id', '=', $practiceId);
+                                       });
 
         return $result;
     }

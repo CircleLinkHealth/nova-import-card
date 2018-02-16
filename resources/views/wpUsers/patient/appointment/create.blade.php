@@ -52,8 +52,8 @@
                                                 <div class="form-group providerBox" id="providerBox">
                                                     <select id="provider" name="provider"
                                                             class="provider selectpickerX dropdownValid form-control"
-                                                            data-size="10" required>
-                                                        <option value=""></option>
+                                                            data-size="10">
+                                                        <option value="null">Unknown</option>
                                                         @foreach ($providers as $key => $value)
                                                             <option value="{{$key}}"> {{$value}} </option>
                                                         @endforeach

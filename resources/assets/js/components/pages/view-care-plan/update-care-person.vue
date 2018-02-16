@@ -469,7 +469,7 @@
                                                                    id="is_billing_provider"
                                                                    name="is_billing_provider"
                                                                    class="form-control input-md"
-                                                                   type="checkbox"
+                                                                   type="checkbox" @change="changeFormattedType"
                                                                    style="display: inline;">
                                                         </div>
 
@@ -558,7 +558,7 @@
 
                     let id = this.formData.id ? this.formData.id : 'new'
 
-                    this.updateCarePerson(this.formData)
+                    this.updateCarePerson(this.formData, this.patientId)
 
                     this.clearOpenModal()
 
@@ -568,6 +568,11 @@
                         type: "success",
                         timeout: true
                     })
+                },
+
+                changeFormattedType(e) {
+                    this.formData.formatted_type = e.target.checked ? 'Billing Provider' : 'Provider'
+                    console.log(this.formData.formatted_type)
                 },
 
                 fieldClassName(field) {
@@ -586,6 +591,8 @@
 
         created() {
             this.formData = JSON.parse(JSON.stringify(this.carePerson))
+            this.formData.is_billing_provider = (this.formData.formatted_type == 'billing_provider') || (this.formData.formatted_type == 'Billing Provider')
+            console.log('update-care-person:form-data', this.formData)
         },
 
         data() {

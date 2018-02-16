@@ -105,8 +105,15 @@ class PdfService
             ->setOption('margin-top', '12')
             ->setOption('margin-left', '25')
             ->setOption('margin-bottom', '15')
-            ->setOption('margin-right', '0.75')
-            ->save($outputFullPath, true);
+            ->setOption('margin-right', '0.75');
+
+        if (isset($args['pdfOptions'])) {
+            foreach ($args['pdfOptions'] as $key => $value) {
+                $pdf = $pdf->setOption($key, $value);
+            }
+        }
+        
+        $pdf = $pdf->save($outputFullPath, true);
 
         return $outputFullPath;
     }
