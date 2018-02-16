@@ -25,7 +25,7 @@
                 </slot>
                 
                 <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing" :key="goal.id">
+                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing()" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.info.verb === 'Regulate') ? 'keep under' :  'to' }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -55,9 +55,7 @@
         },
         mixins: [ CareplanMixin ],
         computed: {
-            goalsForListing () {
-                return this.goals.filter(goal => goal.enabled)
-            }
+            
         },
         data() {
             return {
@@ -75,6 +73,9 @@
             }
         },
         methods: {
+            goalsForListing () {
+                return this.goals.filter(goal => goal.enabled)
+            },
             setupGoal(goal) {
                 goal.created_at = new Date(goal.created_at)
                 goal.updated_at = new Date(goal.updated_at)
