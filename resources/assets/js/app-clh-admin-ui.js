@@ -1,4 +1,4 @@
-require('./bootstrap');
+require('./bootstrap')
 
 import Vue from 'vue'
 import axios from './bootstrap-axios'
@@ -27,14 +27,15 @@ Vue.use(VueForm, {
     }
 });
 
-import CallMgmtApp from './admin/calls/app'
 import { ClientTable } from 'vue-tables-2'
-import NurseDailyHours from './components/pages/work-schedule/daily-hours'
-import ImporterTraining from './components/Importer/trainer'
-import Select2Component from './components/src/select2'
-import PassportClientsComponent from './components/passport/Clients'
-import PassportAuthorizedClientsComponent from './components/passport/AuthorizedClients'
-import PassportPersonalAccessTokensComponent from './components/passport/PersonalAccessTokens'
+
+const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
+const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
+const ImporterTraining = () => import(/* webpackChunkName: "chunk-admin" */ './components/importer/trainer')
+const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
+const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
+const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
+const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
 
 Vue.use(ClientTable, {}, false)
 
