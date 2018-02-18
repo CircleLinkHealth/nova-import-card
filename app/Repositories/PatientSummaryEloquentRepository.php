@@ -27,7 +27,7 @@ class PatientSummaryEloquentRepository
      */
     public function shouldApprove(User $patient, PatientMonthlySummary $summary) {
         return !$this->lacksProblems($summary)
-               && $summary->no_of_successful_calls > 1
+               && $summary->no_of_successful_calls >= 1
                && $patient->patientInfo->ccm_status == 'enrolled'
                && $summary->rejected != 1;
     }
@@ -44,18 +44,14 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
-        if (!$this->lacksProblems($summary)) {
-            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
-                $summary->approved = true;
+        $approved = $this->approveIfShouldApprove($patient, $summary);
 
-                $summary->save();
-            }
-
+        if ($approved) {
             return $summary;
         }
 
         if ($this->lacksProblems($summary)) {
-            $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', true));
+            $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', '=', true));
         }
 
         if ($this->lacksProblems($summary)) {
@@ -114,7 +110,7 @@ class PatientSummaryEloquentRepository
         $billableProblems = $billableProblems
             ->where('cpm_problem_id', '!=', 1)
             ->reject(function ($problem) {
-                return ! validProblemName($problem->name);
+                return $problem && ! validProblemName($problem->name);
             })
             ->unique('cpm_problem_id')
             ->values();
@@ -199,7 +195,7 @@ class PatientSummaryEloquentRepository
 
         $updated  = null;
         $toUpdate = $this->getValidCcdProblems($patient)
-                         ->where('billable', null)
+                         ->where('billable', '=', null)
                          ->take(2);
 
         if ($toUpdate->isNotEmpty()) {
@@ -324,5 +320,33 @@ class PatientSummaryEloquentRepository
                     'code' => $p->icd10Code(),
                 ];
             });
+    }
+
+    public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
+    {
+        if (!$this->lacksProblems($summary)) {
+            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
+                $summary->approved = true;
+
+                if ($summary->problem_1 && $summary->problem_2) {
+                    Problem::whereNotIn('id',
+                        array_filter([$summary->problem_1, $summary->problem_2]))
+                           ->update([
+                               'billable' => false,
+                           ]);
+                }
+
+                Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
+                       ->update([
+                           'billable' => true,
+                       ]);
+
+                $summary->save();
+            }
+
+            return $summary;
+        }
+
+        return false;
     }
 }

@@ -134,7 +134,7 @@ class PracticeReportsService
     ) {
         $generator = new PracticeInvoiceGenerator($practice, $date);
 
-        $reportName = str_random() . '-' . $date->toDateTimeString();
+        $reportName = $practice->name . '-' . $date->format('Y-m') . '-patients';
 
         $pathToPatientReport = $generator->makePatientReportPdf($reportName);
 
@@ -142,10 +142,14 @@ class PracticeReportsService
 
         $data = $generator->getInvoiceData();
 
+        $txnDate = Carbon::createFromFormat('F, Y', $data['month'])->endOfMonth()->toDateString();
+
+
         $providerName = '';
 
-        if ($provider){
-            $providerName = '-'. $provider->display_name;
+
+        if ($provider) {
+            $providerName = '-' . $provider->display_name;
         }
 
         //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
@@ -157,20 +161,37 @@ class PracticeReportsService
 
         $rowData = [
             'RefNumber'             => (string)$data['invoice_num'],
-            'Customer'              => (string)$data['bill_to'],
-            'TxnDate'               => (string)$data['invoice_date'],
+            'Customer'              => (string)$data['practice']->display_name,
+            'TxnDate'               => (string)$txnDate,
             'AllowOnlineACHPayment' => 'Y',
-            'SalesTerm'             => (string)$data['practice']->term_days,
+            'SalesTerm'             => (string)'Net' . ' ' . $data['practice']->term_days,
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
             'PT.Billing Report:'    => (string)$link,
             'Line Item'             => (string)$chargeableService->code . $providerName,
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => (string)$chargeableService->description,
-            'LineUnitPrice'         => (string)$lineUnitPrice,
-            'Msg'                   => '"Thank you for your business. Check Payments: CircleLink Health Shippan Landing Workpoint 290 Harbor Drive, Stamford, CT 06902, ACH Payments: JPMorgan Chase Bank Routing Number (ABA): 02110361, Account Number: 693139136
-            Account Name: CircleLink Health, Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 Wire Payments: JPMorgan Chase Bank Routing Number (ABA): 021000021 Account Number: 693139136 Account Name: Circle Link Health
-            Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902"',
+            'LineUnitPrice'         => (string)'$' . ' ' . $lineUnitPrice,
+            'Msg'                   => 'Thank you for your business. 
+
+Check Payments:
+CircleLink Health
+Shippan Landing Workpoint
+290 Harbor Drive, Stamford, CT 06902
+
+ACH Payments:
+JPMorgan Chase Bank
+Routing Number (ABA): 02110361
+Account Number: 693139136
+Account Name: CircleLink Health
+Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
+
+Wire Payments:
+JPMorgan Chase Bank
+Routing Number (ABA): 021000021
+Account Number: 693139136
+Account Name: CircleLink Health
+Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902',
         ];
 
         $quickBooksRow = new QuickBooksRow($rowData);

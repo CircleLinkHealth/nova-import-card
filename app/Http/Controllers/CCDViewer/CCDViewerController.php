@@ -24,7 +24,8 @@ class CCDViewerController extends Controller
 
     public function show($ccdaId)
     {
-        $ccda = Ccda::find($ccdaId);
+        $ccda = Ccda::withTrashed()
+            ->find($ccdaId);
 
         if ($ccda) {
             $ccd = $ccda->bluebuttonJson();

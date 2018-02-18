@@ -15,3 +15,5 @@ storage/oauth-public.key
 public/js/uploader.js
 public/js/uploader.js.map
 storage/patient/pdf-careplans/
+public/*.js
+public/*.js.map

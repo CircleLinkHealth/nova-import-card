@@ -61,10 +61,12 @@ class PracticeInvoiceGenerator
 
     public function makePatientReportPdf($reportName) {
 
-        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
-        $pdfItemized->save(storage_path("download/$reportName.pdf"), true);
+        $path = storage_path("/download/$reportName.pdf");
 
-        return storage_path("download/$reportName.pdf");
+        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
+        $pdfItemized->save($path, true);
+
+        return $path;
     }
 
 
@@ -100,12 +102,12 @@ class PracticeInvoiceGenerator
 
     public function incrementInvoiceNo()
     {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+                        ->firstOrFail();
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+        $current = $num->config_value;
 
-        $current = $num['config_value'];
-
-        $num['config_value'] = $num['config_value'] + 1;
+        $num->config_value = $current + 1;
 
         $num->save();
 

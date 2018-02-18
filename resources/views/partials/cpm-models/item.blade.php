@@ -106,12 +106,12 @@
                         id="collapseItem-{{ $section->name }}-{{$i}}-{{$item->id}}"
                         data-backdrop="static" data-keyboard="false"
                         data-toggle="modal"
-                        data-target="#{{ $section->name }}-{{$i}}{{$item->id}}-Detail"
+                        data-target="#{{ $section->name }}-{{$i}}-{{$item->id}}-Detail"
                         style="margin-top:0px;    margin-bottom: 0px;"><span><i class="glyphicon glyphicon-pencil"></i></span>
                 </button>
 
                 <!-- Modal -->
-                <div id="{{ $section->name }}-{{$i}}{{$item->id}}-Detail" class="modal fade text-left"
+                <div id="{{ $section->name }}-{{$i}}-{{$item->id}}-Detail" class="modal fade text-left"
                      role="dialog">
                     <div class="modal-dialog modal-md">
 

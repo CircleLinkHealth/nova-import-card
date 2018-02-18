@@ -58,7 +58,8 @@
                             <div class="col-sm-12">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">{{$formatted_monthly_time}}
+                                        <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"></time-tracker>
                                             @if($ccm_above)
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             @endif
@@ -112,17 +113,19 @@
     </div>
 </div>
 
-<script>
-
-    $(document).ready(function() {
-
-        $("#name option").filter(function() {
-            return $(this).val() == $("#firstname").val();
-        }).attr('selected', true);
-
-        $("#name").on("change", function() {
-            $("#firstname").val($(this).find("option:selected").attr("value"));
+@push('scripts')
+    <script>
+        
+        $(document).ready(function() {
+    
+            $("#name option").filter(function() {
+                return $(this).val() == $("#firstname").val();
+            }).attr('selected', true);
+    
+            $("#name").on("change", function() {
+                $("#firstname").val($(this).find("option:selected").attr("value"));
+            });
         });
-    });
-
-</script>
+    
+    </script>
+@endpush

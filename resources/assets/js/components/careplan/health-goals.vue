@@ -56,7 +56,7 @@
         mixins: [ CareplanMixin ],
         computed: {
             goalsForListing () {
-                return this.goals.filter(goal => goal.enabled && goal.active())
+                return this.goals.filter(goal => goal.enabled)
             }
         },
         data() {
@@ -91,6 +91,9 @@
                     const end = (goal.end().split('/')[0] || 0)
 
                     if ((goal.name === 'Blood Sugar')) {
+                        goal.info.target = goal.info.target || '120'
+                        goal.info.high_alert = (Number(goal.info.high_alert) || '350') + ''
+                        goal.info.low_alert = (Number(goal.info.low_alert) || '60') + ''
                         if (start > 130) {
                             goal.info.verb = end < start ? 'Decrease' : 'Increase'
                         }
@@ -102,6 +105,11 @@
                         }
                     }
                     else if (goal.name === 'Blood Pressure') {
+                        goal.info.target = goal.info.target || '130/80'
+                        goal.info.systolic_high_alert = (Number(goal.info.systolic_high_alert) || '180') + ''
+                        goal.info.systolic_low_alert = (Number(goal.info.systolic_low_alert) || '80') + ''
+                        goal.info.diastolic_high_alert = (Number(goal.info.diastolic_high_alert) || '90') + ''
+                        goal.info.diastolic_low_alert = (Number(goal.info.diastolic_low_alert) || '40') + ''
                         if (goal.info.starting == 'N/A' || goal.info.target == 'TBD') {
                             goal.info.verb = 'Regulate'
                         }
@@ -150,15 +158,17 @@
                         goal.info.monitor_changes_for_chf = 0
                     }
                     else if (goal.type === 1) {
-                        goal.info.systolic_high_alert = 0
-                        goal.info.systolic_low_alert = 0
-                        goal.info.diastolic_high_alert = 0
-                        goal.info.diastolic_low_alert = 0
+                        goal.info.systolic_high_alert = 180
+                        goal.info.systolic_low_alert = 80
+                        goal.info.diastolic_high_alert = 90
+                        goal.info.diastolic_low_alert = 40
+                        goal.info.target = '130/80'
                     }
                     else if (goal.type === 2) {
-                        goal.info.high_alert = 0
-                        goal.info.low_alert = 0
+                        goal.info.high_alert = 350
+                        goal.info.low_alert = 60
                         goal.info.starting_a1c = 0
+                        goal.info.target = '120'
                     }
                 }
                 return goal
@@ -245,9 +255,7 @@
             Event.$on('health-goals:add', (id, info) => {
                 const index = this.goals.findIndex(g => g.id == id)
                 if (index >= 0) {
-                    this.goals[index].info = info
-                    this.goals[index] = this.setupGoal(this.goals[index])
-                    this.goals[index].enabled = true
+                    Object.assign(this.goals[index], this.setupGoal({ info, enabled: true }))
                     this.$forceUpdate()
                 }
             })

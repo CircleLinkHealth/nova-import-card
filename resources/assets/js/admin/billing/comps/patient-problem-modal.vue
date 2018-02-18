@@ -97,8 +97,8 @@
         mounted() {
           Event.$on('modal-patient-problem:show', (patientProblem, type, done) => {
             this.patientProblemModalInfo.problems = patientProblem.problems
-            this.patientProblemModalInfo.name = (type === 1) ? patientProblem['Problem 1'] : patientProblem['Problem 1']
-            this.patientProblemModalInfo.code = (type === 1) ? patientProblem['Problem 1 Code'] : patientProblem['Problem 1 Code']
+            this.patientProblemModalInfo.name = (type === 1) ? patientProblem['Problem 1'] : patientProblem['Problem 2']
+            this.patientProblemModalInfo.code = (type === 1) ? patientProblem['Problem 1 Code'] : patientProblem['Problem 2 Code']
             this.patientProblemModalInfo.id = (patientProblem.problems.find(problem => problem.code === this.patientProblemModalInfo.code) || {}).id
             console.log(this.patientProblemModalInfo)
             if (done && typeof(done) == 'function') this.patientProblemModalInfo.done = done.bind(this.patientProblemModalInfo)
