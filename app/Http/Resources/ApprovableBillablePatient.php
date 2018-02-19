@@ -82,7 +82,7 @@ class ApprovableBillablePatient extends Resource
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
 
-            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
+            'chargeable_services'    => $this->chargeableServices()->get(),
 
         ];
     }

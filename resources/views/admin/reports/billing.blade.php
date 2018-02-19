@@ -91,6 +91,7 @@
                                     problem.name = decodeHTML(problem.name)
                                     return problem
                                 })
+                                var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>
