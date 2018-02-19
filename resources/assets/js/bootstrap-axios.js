@@ -21,6 +21,14 @@ if (window && document) {
     } else {
         console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
     }
+    
+    axios.default.interceptors.response.use(response => {
+        return response
+    }, error => {
+        if (error.response.status === 419) {
+            window.location.href = '/auth/logout'
+        }
+    })
 
     window.axios = axios
 }
