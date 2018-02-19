@@ -266,7 +266,7 @@
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loading = false;
-                    console.log('bills-report', this.tableData)
+                    console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
                     this.loading = false

@@ -77,6 +77,10 @@ class PracticeInvoiceController extends Controller
         ]));
     }
 
+    public function getChargeableServices() {
+        return $this->ok(ChargeableService::all());
+    }
+
     /**
      * Get approvable patients for a practice for a month.
      *
@@ -97,6 +101,10 @@ class PracticeInvoiceController extends Controller
          $data = $this->service->transformPatientsToApprove($practice_id, $date);
 
          return $data;
+     }
+
+     public function updatePatientChargeableServices(Request $request) {
+         
      }
 
     /**
