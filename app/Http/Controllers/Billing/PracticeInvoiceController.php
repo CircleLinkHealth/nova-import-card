@@ -161,34 +161,29 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
+        $reportId         = $request['report_id'];
+
+        if (!$reportId) {
+            return $this->badRequest('report_id is a required field');
+        }
 
         //need array of IDs
         $chargeableServices = $request['patient_chargeable_services'];
-        $month              = $request['month_year'];
-        $practiceId         = $request['practice_id'];
 
-        $patient = User::ofType('participant')
-                       ->where('patient_id', '=', $request['patient_id'])
-                       ->whereHas('patientSummaries', function ($query) use ($month) {
-                           $query->where('month_year', $month)
-                                 ->where('ccm_time', '>', 1200);
-                       })
-                       ->with('patientSummaries.chargeableServices')
-                       ->get()
-                       ->map(function ($user) use ($month, $chargeableServices) {
-                           $user->patientSummaries
-                               ->where('month_year', $month)
-                               ->map(function ($summary) use ($month, $chargeableServices) {
-
-                                   $summary->chargeableServices()->sync($chargeableServices);
-
-                                   return $summary;
-                               });
-
-                       });
+        if (!is_array($chargeableServices)) {
+            return $this->badRequest('patient_chargeable_services must be an array');
+        }
 
 
-        return $this->ok();
+        $summary = PatientMonthlySummary::find($reportId);
+
+        if (!$summary) {
+            return $this->badRequest("Report with id $reportId not found.");
+        }
+
+        $summary->chargeableServices()->sync($chargeableServices);
+
+        return $this->ok($summary);
 
     }
 
