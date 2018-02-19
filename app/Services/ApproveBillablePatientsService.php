@@ -20,21 +20,23 @@ class ApproveBillablePatientsService
 
     public function counts($practiceId, Carbon $month)
     {
-        $count['approved'] = 0;
-        $count['toQA']     = 0;
-        $count['rejected'] = 0;
+        $count['approved'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('approved', '=', true)
+            ->where('rejected', '=', false)
+            ->count();
 
-        foreach ($this->approvePatientsRepo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
-            $report = $patient->patientSummaries->first();
+        $count['toQA']     = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('approved', '=', false)
+            ->where('rejected', '=', false)
+            ->count();
 
-            if (($report->rejected == 0 && $report->approved == 0) || $this->patientSummaryRepo->lacksProblems($report)) {
-                $count['toQA'] += 1;
-            } else if ($report->rejected == 1) {
-                $count['rejected'] += 1;
-            } else if ($report->approved == 1) {
-                $count['approved'] += 1;
-            }
-        }
+        $count['rejected'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('rejected', '=', true)
+            ->where('approved', '=', false)
+            ->count();
 
         return $count;
     }
