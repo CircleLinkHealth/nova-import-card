@@ -88,8 +88,17 @@
                         <div class="loading" v-if="props.row.promises['problem_2']"></div>
                     </div>
                 </template>
+                <template slot="chargeable_services" scope="props">
+                    <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
+                        <div v-if="props.row.chargeable_services.length">
+                            <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
+                        </div>
+                        <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
+                    </div>
+                </template>
             </v-client-table>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
         </div>
     </div>
@@ -100,6 +109,7 @@
     import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
+    import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
     import buildReport, {styles} from '../../excel'
@@ -112,7 +122,8 @@
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
             'error-modal': ErrorModal,
-            'select2': Select2Component
+            'select2': Select2Component,
+            'chargeable-services-modal': ChargeableServicesModal
         },
         data() {
             return {
@@ -121,6 +132,7 @@
                 loading: true,
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
+                chargeableServices: [],
                 practiceId: 0,
                 url: null,
                 columns: [
@@ -138,7 +150,7 @@
                     '#Successful Calls',
                     'approved',
                     'rejected',
-                    'chargeableServices'],
+                    'chargeable_services'],
                 tableData: [],
                 options: {
                     rowClassCallback(row) {
@@ -190,6 +202,17 @@
                 this.tableData = []
                 this.retrieve()
             },
+            getChargeableServices() {
+                return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
+                    this.chargeableServices = (response.data || []).map(service => {
+                        service.selected = null
+                        return service
+                    })
+                    console.log('billing:chargeable-services', this.chargeableServices)
+                }).catch(err => {
+                    console.error('billing:chargeable-services', err)
+                })
+            },
             retrieve() {
                 this.loading = true;
                 this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
@@ -200,7 +223,7 @@
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
                     this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
-                        return {
+                        const item = {
                             id: patient.id,
                             MRN: patient.mrn,
                             approved: patient.approve,
@@ -220,15 +243,27 @@
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
                             '#Successful Calls': patient.no_of_successful_calls,
+                            chargeable_services: patient.chargeable_services,
                             promises: {
                                 problem_1: false,
                                 problem_2: false,
-                                approve_reject: false
+                                approve_reject: false,
+                                update_chargeables: false
                             },
                             errors: {
                                 approve_reject: null
+                            },
+                            chargeables: () => {
+                                return item.chargeable_services.map(id => this.chargeableServices.find(service => service.id == id)).filter(Boolean)
+                            },
+                            onChargeableServicesUpdate: (serviceIDs) => {
+                                item.chargeable_services = serviceIDs
+                                console.log('service-ids', serviceIDs)
+                                item.promises.update_chargeables = true
+                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), )
                             }
                         }
+                        return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loading = false;
                     console.log('bills-report', this.tableData)
@@ -238,6 +273,12 @@
                 })
             },
 
+            showChargeableServicesModal(row) {
+                Event.$emit('modal-chargeable-services:show', {
+                    title: 'Select Chargeable Services for ' + row.Patient,
+                    row: row
+                })
+            },
 
             showProblemsModal(patient, type) {
                 const self = this
@@ -340,6 +381,7 @@
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
+            this.getChargeableServices()
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport
@@ -353,6 +395,10 @@
 </script>
 
 <style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+
     input[type="checkbox"] {
         display: inline-block !important;
     }
