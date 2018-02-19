@@ -24,41 +24,41 @@
                         <div class="row form-group">
                             <div class="col-sm-6">
                                 <h4>Starting<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
-                                <input type="text" class="form-control" v-model="selectedGoal.info.starting" step="0.01" />
+                                <input type="text" class="form-control" v-model="selectedGoal.info.starting" step="0.01" pattern="(\d+)(\/\d+)?" />
                             </div>
                             <div class="col-sm-6">
                                 <h4>Target<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
-                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" required />
+                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" pattern="(\d+)(\/\d+)?" required />
                             </div>
                         </div>
                         <div class="row form-group" v-if="selectedGoal.id === 3"> <!--Blood Sugar-->
                             <div class="col-sm-6">
                                 <h4>Low Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.low_alert" step="0.01"  />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.low_alert" step="0.01" max="999"  />
                             </div>
                             <div class="col-sm-6">
                                 <h4>High Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.high_alert" step="0.01" />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.high_alert" step="0.01" max="999" />
                             </div>
                         </div>
                         <div class="row form-group" v-if="selectedGoal.id === 2"> <!--Blood Pressure-->
                             <div class="col-sm-6">
                                 <h4>Systolic Low Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.systolic_low_alert" step="0.01" />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.systolic_low_alert" step="0.01" max="999" />
                             </div>
                             <div class="col-sm-6">
                                 <h4>Systolic High Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.systolic_high_alert" step="0.01"  />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.systolic_high_alert" step="0.01" max="999"  />
                             </div>
                         </div>
                         <div class="row form-group" v-if="selectedGoal.id === 2">
                             <div class="col-sm-6">
                                 <h4>Diastolic Low Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.diastolic_low_alert" step="0.01"  />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.diastolic_low_alert" step="0.01" max="999"  />
                             </div>
                             <div class="col-sm-6">
                                 <h4>Diastolic High Alert</h4>
-                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.diastolic_high_alert" step="0.01"  />
+                                <input type="number" class="form-control" placeholder="0.00" v-model="selectedGoal.info.diastolic_high_alert" step="0.01" max="999"  />
                             </div>
                         </div>
                         <div class="row form-group">
