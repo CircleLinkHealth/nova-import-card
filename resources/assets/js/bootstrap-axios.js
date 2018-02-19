@@ -26,7 +26,7 @@ if (window && document) {
         return response
     }, error => {
         if (error.response.status === 419) {
-            window.location.href = '/auth/logout'
+            window.location.href = '/auth/inactivity-logout'
         }
     })
 
