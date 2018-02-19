@@ -885,6 +885,11 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data'
                 ]);
+                
+                Route::get('/services', [
+                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
+                    'as'   => 'monthly.billing.services',
+                ]);
 
                 Route::post('/updatePracticeServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
