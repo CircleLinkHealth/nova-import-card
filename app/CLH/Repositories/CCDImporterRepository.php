@@ -73,7 +73,7 @@ class CCDImporterRepository
             'body'    => $xml,
         ]);
 
-        if ($response->getStatusCode() != 200) {
+        if (!in_array($response->getStatusCode(), [200,201])) {
             return [
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

@@ -66,6 +66,7 @@ class BillablePatientsEloquentRepository
                                                    },
                                                ]);
                                            },
+                                           'chargeableServices'
                                        ])
                                        ->has('patient.patientInfo')
                                        ->whereHas('patient.practices', function ($q) use ($practiceId) {
