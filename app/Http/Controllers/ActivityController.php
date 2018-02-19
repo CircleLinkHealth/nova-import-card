@@ -266,7 +266,7 @@ class ActivityController extends Controller
                         Log::critical($body);
                     }
                 }
-                catch (Exception $ex) {
+                catch (\Exception $ex) {
                     Log::critical($ex);
                 }
             }
