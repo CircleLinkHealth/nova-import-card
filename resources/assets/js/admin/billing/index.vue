@@ -36,21 +36,21 @@
                     <strong>Approved: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-green">
-                        {{loading ? '' : noOfApproved}}
+                        {{loading ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-orange">
-                        {{loading ? '' : noOfFlagged}}
+                        {{loading ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-red">
-                        {{loading ? '' : noOfRejected}}
+                        {{loading ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -135,6 +135,14 @@
                 chargeableServices: [],
                 practiceId: 0,
                 url: null,
+                counts: {
+                    approved: 0,
+                    rejected: 0,
+                    flagged: 0,
+                    total () {
+                        return this.approved + this.rejected + this.flagged
+                    }
+                },
                 columns: [
                     'MRN',
                     'Provider',
@@ -151,14 +159,7 @@
                     'approved',
                     'rejected',
                     'chargeable_services'],
-                tableData: [],
-                options: {
-                    rowClassCallback(row) {
-                        if (row.qa) return 'bg-flagged'
-                        return ''
-                    },
-                    perPage: 15
-                }
+                tableData: []
             }
         },
         methods: {
@@ -190,6 +191,11 @@
                         tablePatient.promises['approve_reject'] = false
                         tablePatient.approved = !!(response.data.status || {}).approved
                         tablePatient.rejected = !!(response.data.status || {}).rejected
+                        if ((response.data || {}).counts) {
+                            this.counts.approved = ((response.data || {}).counts || {}).approved || 0
+                            this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
+                            this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                        }
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
@@ -201,6 +207,7 @@
             changePractice() {
                 this.tableData = []
                 this.retrieve()
+                this.getCounts()
             },
             getChargeableServices() {
                 return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
@@ -211,6 +218,15 @@
                     console.log('billing:chargeable-services', this.chargeableServices)
                 }).catch(err => {
                     console.error('billing:chargeable-services', err)
+                })
+            },
+            getCounts() {
+                return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
+                    console.log('billing:counts', response.data)
+                    this.counts.approved = (response.data || {}).approved || 0
+                    this.counts.rejected = (response.data || {}).rejected || 0
+                    this.counts.flagged = (response.data || {}).toQA || 0
+                    return this.counts
                 })
             },
             retrieve() {
@@ -362,18 +378,21 @@
                     months.push({short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0})
                 }
                 return months
-            },
-            noOfApproved() {
-                return this.tableData.filter(patient => patient.approved).length
-            },
-            noOfRejected() {
-                return this.tableData.filter(patient => patient.rejected).length
-            },
-            noOfFlagged() {
-                return this.tableData.filter(patient => patient.qa).length
-            },
+            } ,
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
+            },
+            options() {
+                return {
+                    rowClassCallback(row) {
+                        if (row.qa) return 'bg-flagged'
+                        return ''
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${this.counts.total()} records|${this.counts.total()} records|One record`
+                    },
+                    perPage: 15
+                }
             }
         },
         mounted() {
@@ -382,6 +401,7 @@
             this.selectedPractice = this.practices[0].id
             this.retrieve()
             this.getChargeableServices()
+            this.getCounts()
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport
