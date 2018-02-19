@@ -137,7 +137,8 @@
                     'Problem 2 Code',
                     '#Successful Calls',
                     'approved',
-                    'rejected'],
+                    'rejected',
+                    'chargeableServices'],
                 tableData: [],
                 options: {
                     rowClassCallback(row) {
