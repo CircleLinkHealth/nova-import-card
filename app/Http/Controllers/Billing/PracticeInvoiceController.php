@@ -139,17 +139,17 @@ class PracticeInvoiceController extends Controller
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)
             ->paginate(100);
 
-        $summaries->getCollection()->transform(function ($summary) {
+        $summaries->getCollection()->transform(function ($summary) use ($request) {
             $result = $this->patientSummaryDBRepository
                 ->approveIfShouldApprove($summary->patient, $summary);
 
-            $data = $summary;
-
             if ($result) {
-                $data = $result;
+                $summary = $result;
             }
 
-            return ApprovableBillablePatient::make($data);
+            $summary->sync($request['default_code_id']);
+
+            return ApprovableBillablePatient::make($summary);
         });
 
         return $summaries;
@@ -168,7 +168,7 @@ class PracticeInvoiceController extends Controller
         $practiceId         = $request['practice_id'];
 
         $patient = User::ofType('participant')
-                       ->where('program_id', '=', $practiceId)
+                       ->where('patient_id', '=', $request['patient_id'])
                        ->whereHas('patientSummaries', function ($query) use ($month) {
                            $query->where('month_year', $month)
                                  ->where('ccm_time', '>', 1200);
