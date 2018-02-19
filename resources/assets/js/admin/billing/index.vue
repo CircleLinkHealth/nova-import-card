@@ -138,7 +138,10 @@
                 counts: {
                     approved: 0,
                     rejected: 0,
-                    flagged: 0
+                    flagged: 0,
+                    total () {
+                        return this.approved + this.rejected + this.flagged
+                    }
                 },
                 columns: [
                     'MRN',
@@ -156,14 +159,7 @@
                     'approved',
                     'rejected',
                     'chargeable_services'],
-                tableData: [],
-                options: {
-                    rowClassCallback(row) {
-                        if (row.qa) return 'bg-flagged'
-                        return ''
-                    },
-                    perPage: 15
-                }
+                tableData: []
             }
         },
         methods: {
@@ -385,6 +381,18 @@
             } ,
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
+            },
+            options() {
+                return {
+                    rowClassCallback(row) {
+                        if (row.qa) return 'bg-flagged'
+                        return ''
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${this.counts.total()} records|${this.counts.total()} records|One record`
+                    },
+                    perPage: 15
+                }
             }
         },
         mounted() {
