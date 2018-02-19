@@ -76,4 +76,26 @@ class LoginController extends Controller
     {
         return $this->username;
     }
+
+    /**
+     * Logout due to inactivity
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function inactivityLogout(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return redirect()
+            ->route('login')
+            ->with([
+                'messages' => [
+                    'Our apologies. You have been logged out due to inactivity.'
+                ]
+            ]);
+    }
 }
