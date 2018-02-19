@@ -103,6 +103,10 @@ class PracticeInvoiceController extends Controller
          return $data;
      }
 
+     public function updatePatientChargeableServices(Request $request) {
+         
+     }
+
     /**
      * @param Request $request
      *
