@@ -277,11 +277,6 @@ class Practice extends \App\BaseModel
         return $this->belongsTo(Ehr::class);
     }
 
-    public function ehrKeychain()
-    {
-
-    }
-
     public function scopeActive($q)
     {
         return $q->whereActive(1);
