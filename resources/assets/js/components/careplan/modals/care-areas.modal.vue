@@ -324,7 +324,7 @@
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
                         name: this.selectedProblem.name, 
-                        cpm_problem_id: (this.selectedProblem.cpm || {}).value,
+                        cpm_problem_id: this.selectedProblem.cpm_id,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
                         instruction: this.selectedProblem.instruction.name
