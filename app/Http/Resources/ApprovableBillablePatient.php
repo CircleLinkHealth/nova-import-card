@@ -53,9 +53,8 @@ class ApprovableBillablePatient extends Resource
             ->first();
 
         $name = $this->patient->fullName;
-        $url = route('patient.careplan.show', [
+        $url = route('patient.note.index', [
             'patient' => $this->patient->id,
-            'page'    => 1,
         ]);
 
         return [
