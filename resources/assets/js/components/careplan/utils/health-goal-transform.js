@@ -73,6 +73,10 @@ const transformHealthGoal = (goal) => {
                 get () {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
+
+                    if (!goal.info.starting || goal.info.starting == 'N/A') {
+                        return 'Regulate'
+                    }
                     
                     if (start > end) {
                         return 'Decrease'

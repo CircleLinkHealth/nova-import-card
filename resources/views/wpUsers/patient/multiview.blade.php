@@ -426,9 +426,14 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 }
                             }
                             else {
-                                $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A') {
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    $goal['verb'] = ($start > $end) ? 'Decrease' : 
                                     (($start < $end) ? 'Increase' :
                                     'Regulate');
+                                }
                             }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;
