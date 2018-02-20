@@ -71,7 +71,7 @@
                             </div>
                             <div class="col-sm-6 text-right" :class="{ 'col-sm-12': selectedGoal.id % 2 === 0 }">
                                 <loader v-if="loaders.addGoal"></loader>
-                                <button class="btn btn-secondary selected btn-submit" :disabled="!selectedGoal.enabled">
+                                <button class="btn btn-secondary selected btn-submit" :class="{ 'warning': selectedGoal.isModified() }" title="Don't forget to save" :disabled="!selectedGoal.enabled">
                                     {{selectedGoal.info.created_at ? 'Save' : 'Add'}} {{selectedGoal.name}}
                                 </button>
                             </div>
@@ -240,5 +240,9 @@
     .label.label-primary {
         background-color: #ddd;
         color: black;
+    }
+
+    button.warning {
+        background-color: #fa0 !important;
     }
 </style>

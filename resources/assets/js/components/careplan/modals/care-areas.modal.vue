@@ -305,7 +305,7 @@
                 this.loaders.addProblem = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
                                     name: this.newProblem.name, 
-                                    cpm_problem_id: (this.newProblem.problem || {}).value,
+                                    cpm_problem_id: this.newProblem.cpm_problem_id,
                                     is_monitored: this.newProblem.is_monitored,
                                     icd10: this.newProblem.icd10
                                 }).then(response => {

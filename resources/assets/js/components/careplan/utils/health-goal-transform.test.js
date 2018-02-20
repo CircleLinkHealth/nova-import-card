@@ -44,7 +44,7 @@ describe('Health Goal Transform Verbs', () => {
                     name: 'Blood Pressure',
                     info: {
                         starting: '131',
-                        target: BLOOD_PRESSURE_TARGET
+                        target: '220'
                     }
                 }
 
