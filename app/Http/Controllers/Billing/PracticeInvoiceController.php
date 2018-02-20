@@ -77,6 +77,10 @@ class PracticeInvoiceController extends Controller
         ]));
     }
 
+    public function getChargeableServices() {
+        return $this->ok(ChargeableService::all());
+    }
+
     /**
      * Get approvable patients for a practice for a month.
      *
@@ -94,9 +98,27 @@ class PracticeInvoiceController extends Controller
          else {
              return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
          }
-         $data = $this->service->transformPatientsToApprove($practice_id, $date);
+         $summaries = $this->service->billablePatientSummaries($practice_id, $date)
+                                    ->paginate(100);
 
-         return $data;
+         $summaries->getCollection()->transform(function ($summary) {
+             $result = $this->patientSummaryDBRepository
+                 ->attachBillableProblems($summary->patient, $summary);
+
+             $data = $summary;
+
+             if ($result) {
+                 $data = $result;
+             }
+
+             return ApprovableBillablePatient::make($data);
+         });
+
+         return $summaries;
+     }
+
+     public function updatePatientChargeableServices(Request $request) {
+         
      }
 
     /**
@@ -117,17 +139,17 @@ class PracticeInvoiceController extends Controller
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)
             ->paginate(100);
 
-        $summaries->getCollection()->transform(function ($summary) {
+        $summaries->getCollection()->transform(function ($summary) use ($request) {
             $result = $this->patientSummaryDBRepository
-                ->approveIfShouldApprove($summary->patient, $summary);
-
-            $data = $summary;
+                ->attachBillableProblems($summary->patient, $summary);
 
             if ($result) {
-                $data = $result;
+                $summary = $result;
             }
 
-            return ApprovableBillablePatient::make($data);
+            $summary->sync($request['default_code_id']);
+
+            return ApprovableBillablePatient::make($summary);
         });
 
         return $summaries;
@@ -139,34 +161,29 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
+        $reportId         = $request['report_id'];
+
+        if (!$reportId) {
+            return $this->badRequest('report_id is a required field');
+        }
 
         //need array of IDs
         $chargeableServices = $request['patient_chargeable_services'];
-        $month              = $request['month_year'];
-        $practiceId         = $request['practice_id'];
 
-        $patient = User::ofType('participant')
-                       ->where('program_id', '=', $practiceId)
-                       ->whereHas('patientSummaries', function ($query) use ($month) {
-                           $query->where('month_year', $month)
-                                 ->where('ccm_time', '>', 1200);
-                       })
-                       ->with('patientSummaries.chargeableServices')
-                       ->get()
-                       ->map(function ($user) use ($month, $chargeableServices) {
-                           $user->patientSummaries
-                               ->where('month_year', $month)
-                               ->map(function ($summary) use ($month, $chargeableServices) {
-
-                                   $summary->chargeableServices()->sync($chargeableServices);
-
-                                   return $summary;
-                               });
-
-                       });
+        if (!is_array($chargeableServices)) {
+            return $this->badRequest('patient_chargeable_services must be an array');
+        }
 
 
-        return $this->ok();
+        $summary = PatientMonthlySummary::find($reportId);
+
+        if (!$summary) {
+            return $this->badRequest("Report with id $reportId not found.");
+        }
+
+        $summary->chargeableServices()->sync($chargeableServices);
+
+        return $this->ok($summary);
 
     }
 

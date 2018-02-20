@@ -53,9 +53,8 @@ class ApprovableBillablePatient extends Resource
             ->first();
 
         $name = $this->patient->fullName;
-        $url = route('patient.careplan.show', [
+        $url = route('patient.note.index', [
             'patient' => $this->patient->id,
-            'page'    => 1,
         ]);
 
         return [
@@ -82,7 +81,7 @@ class ApprovableBillablePatient extends Resource
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
 
-            'chargeable_services'    => ChargeableService::collection($this->whenLoaded('chargeableServices')),
+            'chargeable_services'    => $this->chargeableServices()->get(),
 
         ];
     }

@@ -41,7 +41,7 @@ export const Stor = function (mode) {
     }
 
     this.get = function (key) {
-        key = key.toString().toLowerCase()
+        if (key) key = key.toString().toLowerCase()
         const value = this.storage().getItem(key)
         if (!value || value === '') return undefined;
         else {
@@ -89,7 +89,7 @@ const WinName = {
         this.save();
     },
     getItem: function (key) {
-        key = key.toString().toLowerCase();
+        if (key) key = key.toString().toLowerCase();
         var i = this.contains(key);
         if (i > -1) {
             return this.items[i].value;
@@ -97,7 +97,7 @@ const WinName = {
         return undefined;
     },
     contains: function (key) {
-        key = key.toString().toLowerCase();
+        if (key) key = key.toString().toLowerCase();
         for (var i = 0; i < this.items.length; i++) {
             if (this.items[i].key == key) {
                 return i;
@@ -106,7 +106,7 @@ const WinName = {
         return -1;
     },
     removeItem: function (key) {
-        key = key.toString().toLowerCase();
+        if (key) key = key.toString().toLowerCase();
         var ret = [];
         for (var i = 0; i < this.items.length ; i++) {
             if (this.items[i].key != key) {
@@ -117,7 +117,7 @@ const WinName = {
         this.save();
     },
     updateItem: function (key, value) {
-        key = key.toString().toLowerCase();
+        if (key) key = key.toString().toLowerCase();
         this.items[this.contains(key)].value = value;
         this.save();
     },

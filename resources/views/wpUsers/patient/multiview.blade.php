@@ -389,15 +389,23 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             return $goal['enabled'];
                         })->map(function ($goal) {
                             $start = $goal['info']['starting'];
-                            $start = (int)($start ? explode('/', $start)[0] : 0);
+                            $start = (int)($start ? explode('/', $start)[0] : 'N/A');
                             $end = $goal['info']['target'];
                             $end = (int)($end ? explode('/', $end)[0] : 0);
 
+                            if ($goal['info']['starting'] == '') {
+                                $goal['info']['starting'] = 'N/A';
+                            }
+
                             if ($goal['name'] == 'Blood Sugar') {
-                                if ($start > 130) {
-                                    $goal['verb'] = $end < $start ? 'Decrease' : 'Increase';
+                                $goal['info']['target'] = $goal['info']['target'] ?? '120';
+                                if ($goal['info']['target'] == '0') {
+                                    $goal['info']['target'] = '120';
                                 }
-                                else if ($start >= 80 && $end <= 130) {
+                                if ($start > 130) {
+                                    $goal['verb'] = 'Decrease';
+                                }
+                                else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
                                     $goal['verb'] = 'Regulate';
                                 }
                                 else {
@@ -405,35 +413,27 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 }
                             }
                             else if ($goal['name'] == 'Blood Pressure') {
-                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD') {
+                                $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
+                                if ($goal['info']['target'] == '0') {
+                                    $goal['info']['target'] = '130/80';
+                                }
+
+                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start < 130)) {
                                     $goal['verb'] = 'Regulate';
                                 }
-                                else if ($start < 100) {
-                                    if ($end <= 130) {
-                                        $goal['verb'] = 'Regulate';
-                                    }
-                                    else {
-                                        $goal['verb'] = 'Decrease';
-                                    }
-                                }
-                                else {
-                                    if ($start > $end) {
-                                        $goal['verb'] = 'Decrease';
-                                    }
-                                    else {
-                                        if ($start < 90) {
-                                            $goal['verb'] = 'Increase';
-                                        }
-                                        else {
-                                            $goal['verb'] = 'Regulate';
-                                        }
-                                    }
+                                else if ($start >= 130) {
+                                    $goal['verb'] = 'Decrease';
                                 }
                             }
                             else {
-                                $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                    (($start > 0 && $start < $end) ? 'Increase' :
+                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A') {
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                    (($start < $end) ? 'Increase' :
                                     'Regulate');
+                                }
                             }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;

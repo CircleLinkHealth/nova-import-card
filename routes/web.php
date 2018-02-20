@@ -53,6 +53,7 @@ Route::group([
     Auth::routes();
 
     Route::get('logout', 'Auth\LoginController@logout');
+    Route::get('inactivity-logout', 'Auth\LoginController@inactivityLogout');
 });
 
 /****************************/
@@ -885,6 +886,11 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data'
                 ]);
+                
+                Route::get('/services', [
+                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
+                    'as'   => 'monthly.billing.services',
+                ]);
 
                 Route::post('/updatePracticeServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
@@ -904,6 +910,10 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                     'as'   => 'monthly.billing.count',
+                ]);
+                
+                Route::get('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts'
                 ]);
 
                 Route::post('/storeProblem', [

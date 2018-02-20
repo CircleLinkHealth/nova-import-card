@@ -251,18 +251,23 @@ class ActivityController extends Controller
             */
             if ($nurseId && $patientId && $duration) {
                 $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
-                $res = $client->put($url, [
-                    'form_params' => [
-                        'startTime' => $duration
-                    ]
-                ]);
-                $status = $res->getStatusCode();
-                $body = $res->getBody();
-                if ($status == 200) {
-                    Log::info($body);
+                try {
+                    $res = $client->put($url, [
+                        'form_params' => [
+                            'startTime' => $duration
+                        ]
+                    ]);
+                    $status = $res->getStatusCode();
+                    $body = $res->getBody();
+                    if ($status == 200) {
+                        Log::info($body);
+                    }
+                    else {
+                        Log::critical($body);
+                    }
                 }
-                else {
-                    Log::critical($body);
+                catch (\Exception $ex) {
+                    Log::critical($ex);
                 }
             }
         }

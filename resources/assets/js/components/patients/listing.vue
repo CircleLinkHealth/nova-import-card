@@ -3,7 +3,7 @@
         <div>
             <loader v-if="loaders.next || loaders.practices"></loader>
         </div>
-        <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options">
+        <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
             <template slot="name" scope="props">
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')">{{props.row.name}}</a></div>
             </template>
@@ -216,6 +216,5 @@
     }
 </script>
 
-<style>
-    
+<style scoped>
 </style>

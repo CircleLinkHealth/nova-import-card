@@ -175,7 +175,7 @@
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.map(p => ({ name: p.name, id: p.id })).concat(this.problems.map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).concat(this.problems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -305,7 +305,7 @@
                 this.loaders.addProblem = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
                                     name: this.newProblem.name, 
-                                    cpm_problem_id: (this.newProblem.problem || {}).value,
+                                    cpm_problem_id: this.newProblem.cpm_problem_id,
                                     is_monitored: this.newProblem.is_monitored,
                                     icd10: this.newProblem.icd10
                                 }).then(response => {
@@ -324,7 +324,7 @@
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
                         name: this.selectedProblem.name, 
-                        cpm_problem_id: (this.selectedProblem.cpm || {}).value,
+                        cpm_problem_id: this.selectedProblem.cpm_id,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
                         instruction: this.selectedProblem.instruction.name

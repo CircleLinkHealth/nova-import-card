@@ -9,7 +9,7 @@
                 <div class="col-sm-12 pad-top-10" :class="{ 'allergy-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'allergy-buttons': isExtendedView }">
                         <button class="btn btn-secondary allergy-button" :class="{ selected: selectedAllergy && (selectedAllergy.id === allergy.id) }" 
-                                v-for="(allergy, index) in allergies" :key="index" @click="select(index)">
+                                v-for="(allergy, index) in allergiesForListing" :key="index" @click="select(index)">
                             {{allergy.name}}
                             <span class="delete" title="remove this cpm allergy" @click="removeAllergy">x</span>
                             <loader class="absolute" v-if="loaders.removeAllergy && selectedAllergy && (selectedAllergy.id === allergy.id)"></loader>
@@ -21,11 +21,11 @@
                     <form @submit="addAllergy">
                         <div class="form-group">
                             <div class="top-20">
-                                <input type="text" class="form-control color-black" placeholder="Enter a title" v-model="newAllergy.name" required />
+                                <input type="text" class="form-control color-black" placeholder="Enter a title" :class="{ error: alreadyExists }" v-model="newAllergy.name" required />
                             </div>
                             <div class="top-20 text-right">
                                 <loader v-if="loaders.addAllergy"></loader>
-                                <button class="btn btn-secondary selected">Create</button>
+                                <button class="btn btn-secondary selected" :disabled="alreadyExists">Create</button>
                             </div>
                         </div>
                     </form>
@@ -52,6 +52,12 @@
         computed: {
             isExtendedView() {
                 return this.allergies.length > 12
+            },
+            alreadyExists() {
+                return !!this.allergies.find(allergy => allergy.name == this.newAllergy.name)
+            },
+            allergiesForListing() {
+                return this.allergies.distinct(allergy => allergy.name)
             }
         },
         data() {

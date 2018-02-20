@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Response;
+use \Storage;
 
 class PatientCarePlanController extends Controller
 {
@@ -58,6 +59,8 @@ class PatientCarePlanController extends Controller
             $now = Carbon::now()->toDateTimeString();
             $hash = Str::random();
             $filename = "{$carePlan->patient->first_name}_{$carePlan->patient->last_name}-{$hash}-{$now}-CarePlan.pdf";
+            Storage::disk('storage')
+                   ->makeDirectory('patient/pdf-careplans');
             file_put_contents(storage_path("patient/pdf-careplans/$filename"), file_get_contents($file));
 
             $pdf = Pdf::create([
