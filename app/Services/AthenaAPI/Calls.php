@@ -409,6 +409,35 @@ class Calls
     }
 
 
+    /**
+     * Add a note for an appointment.
+     * Can be desplayed on homescreen.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showOnDesplay
+     * @param $noteText
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function postAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $showOnDesplay = false,
+        $noteText
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->POST("appointments/{$appointmentId}/notes", [
+            'displayonschedule' => $showOnDesplay,
+            'notetext' => $noteText,
+            ]);
+
+        return $this->response($response);
+    }
+
+
     //create method to create patient in athena (for testing), issue with date format
     public function createNewPatient(Patient $patient)
     {
