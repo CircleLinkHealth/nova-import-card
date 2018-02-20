@@ -1,6 +1,5 @@
 import PersistentTextArea from '../persistent-textarea'
 import { mount } from 'vue-test-utils'
-import Vue from 'vue'
 import { sstor } from '../../stor'
 
 const STORAGE_KEY = 'my-textarea'
