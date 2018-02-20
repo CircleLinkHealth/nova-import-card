@@ -391,7 +391,12 @@
                     texts: {
                         count: `Showing {from} to {to} of ${this.counts.total()} records|${this.counts.total()} records|One record`
                     },
-                    perPage: 15
+                    perPage: 15,
+                    perPageValues: [
+                        15,
+                        30,
+                        50
+                    ]
                 }
             }
         },
