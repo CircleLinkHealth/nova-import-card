@@ -13,6 +13,10 @@
             .VueTables__table.table {
                 width: 1500px;
             }
+
+            #patient-list-table > div.table-responsive > table > thead {
+                background-color: #d2e3ef !important;
+            }
         </style>
     @endpush
     <div class="row" style="margin-top:60px;">
