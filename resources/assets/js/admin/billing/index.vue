@@ -36,21 +36,21 @@
                     <strong>Approved: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-green">
-                        {{loading ? '' : noOfApproved}}
+                        {{loading ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-orange">
-                        {{loading ? '' : noOfFlagged}}
+                        {{loading ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-red">
-                        {{loading ? '' : noOfRejected}}
+                        {{loading ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -123,6 +123,14 @@
                 cpmProblems: window.cpmProblems || [],
                 practiceId: 0,
                 url: null,
+                counts: {
+                    approved: 0,
+                    rejected: 0,
+                    flagged: 0,
+                    total () {
+                        return this.approved + this.rejected + this.flagged
+                    }
+                },
                 columns: [
                     'MRN',
                     'Provider',
@@ -138,14 +146,7 @@
                     '#Successful Calls',
                     'approved',
                     'rejected'],
-                tableData: [],
-                options: {
-                    rowClassCallback(row) {
-                        if (row.qa) return 'bg-flagged'
-                        return ''
-                    },
-                    perPage: 15
-                }
+                tableData: []
             }
         },
         methods: {
@@ -177,6 +178,11 @@
                         tablePatient.promises['approve_reject'] = false
                         tablePatient.approved = !!(response.data.status || {}).approved
                         tablePatient.rejected = !!(response.data.status || {}).rejected
+                        if ((response.data || {}).counts) {
+                            this.counts.approved = ((response.data || {}).counts || {}).approved || 0
+                            this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
+                            this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                        }
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
@@ -188,6 +194,16 @@
             changePractice() {
                 this.tableData = []
                 this.retrieve()
+                this.getCounts()
+            },
+            getCounts() {
+                return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
+                    console.log('billing:counts', response.data)
+                    this.counts.approved = (response.data || {}).approved || 0
+                    this.counts.rejected = (response.data || {}).rejected || 0
+                    this.counts.flagged = (response.data || {}).toQA || 0
+                    return this.counts
+                })
             },
             retrieve() {
                 this.loading = true;
@@ -199,7 +215,7 @@
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
                     this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
-                        return {
+                        const item = {
                             id: patient.id,
                             MRN: patient.mrn,
                             approved: patient.approve,
@@ -222,12 +238,23 @@
                             promises: {
                                 problem_1: false,
                                 problem_2: false,
-                                approve_reject: false
+                                approve_reject: false,
+                                update_chargeables: false
                             },
                             errors: {
                                 approve_reject: null
+                            },
+                            chargeables: () => {
+                                return item.chargeable_services.map(id => this.chargeableServices.find(service => service.id == id)).filter(Boolean)
+                            },
+                            onChargeableServicesUpdate: (serviceIDs) => {
+                                item.chargeable_services = serviceIDs
+                                console.log('service-ids', serviceIDs)
+                                item.promises.update_chargeables = true
+                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), )
                             }
                         }
+                        return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loading = false;
                     console.log('bills-report', this.tableData)
@@ -321,17 +348,20 @@
                 }
                 return months
             },
-            noOfApproved() {
-                return this.tableData.filter(patient => patient.approved).length
-            },
-            noOfRejected() {
-                return this.tableData.filter(patient => patient.rejected).length
-            },
-            noOfFlagged() {
-                return this.tableData.filter(patient => patient.qa).length
-            },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
+            },
+            options() {
+                return {
+                    rowClassCallback(row) {
+                        if (row.qa) return 'bg-flagged'
+                        return ''
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${this.counts.total()} records|${this.counts.total()} records|One record`
+                    },
+                    perPage: 15
+                }
             }
         },
         mounted() {
@@ -339,6 +369,7 @@
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
+            this.getCounts()
 
             Event.$on('vue-tables.pagination', (page) => {
                 const $table = this.$refs.tblBillingReport
@@ -352,6 +383,14 @@
 </script>
 
 <style>
+    .inline-block {
+        display: inline-block;
+    }
+
+    input[type="checkbox"] {
+        display: inline-block !important;
+    }
+
     span.color-orange {
         color: orange
     }

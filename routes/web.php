@@ -687,6 +687,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                     'as'   => 'monthly.billing.count',
                 ]);
+                
+                Route::get('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts'
+                ]);
 
                 Route::post('/storeProblem', [
                     'uses' => 'Billing\PracticeInvoiceController@storeProblem',
