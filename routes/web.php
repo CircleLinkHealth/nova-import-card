@@ -913,8 +913,7 @@ Route::group(['middleware' => 'auth'], function () {
                 ]);
                 
                 Route::get('/counts', [
-                    'uses' => 'Billing\PracticeInvoiceController@counts',
-                    'as'   => 'monthly.billing.count',
+                    'uses' => 'Billing\PracticeInvoiceController@counts'
                 ]);
 
                 Route::post('/storeProblem', [

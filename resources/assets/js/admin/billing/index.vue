@@ -378,7 +378,7 @@
                     months.push({short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0})
                 }
                 return months
-            } ,
+            },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
             },
