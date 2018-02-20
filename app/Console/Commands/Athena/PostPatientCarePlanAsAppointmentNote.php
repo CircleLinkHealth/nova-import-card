@@ -6,14 +6,14 @@ use App\CarePlan;
 use App\Services\AthenaAPI\Calls;
 use Illuminate\Console\Command;
 
-class PostPatientCarePlanDocument extends Command
+class PostPatientCarePlanAsAppointmentNote extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'athena:postPatientDocument';
+    protected $signature = 'athena:postPatientNote';
 
     /**
      * The console command description.
@@ -62,6 +62,8 @@ class PostPatientCarePlanDocument extends Command
 
                                 $appointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
 
+
+                                //sto epomeno appointment mono TODO
                                 foreach ($appointments as $appointment) {
 
                                     $departmentId   = $appointment['departmentid'];

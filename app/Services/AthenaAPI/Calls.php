@@ -438,6 +438,33 @@ class Calls
     }
 
 
+    /**
+     * Retrieve notes for an appointment.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showDeleted
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $showDeleted = false
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("appointments/{$appointmentId}/notes", [
+            'showdeleted' => $showDeleted,
+        ]);
+
+        return $this->response($response);
+
+
+    }
+
+
     //create method to create patient in athena (for testing), issue with date format
     public function createNewPatient(Patient $patient)
     {
