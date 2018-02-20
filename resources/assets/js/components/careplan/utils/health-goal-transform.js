@@ -111,6 +111,10 @@ const transformHealthGoal = (goal) => {
             goal.info.target = '120'
         }
     }
+
+    const text = JSON.stringify(goal)
+    goal.isModified = () => text != JSON.stringify(goal)
+
     return goal
 }
 
