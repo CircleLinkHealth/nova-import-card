@@ -17,6 +17,15 @@
             #patient-list-table > div.table-responsive > table > thead {
                 background-color: #d2e3ef !important;
             }
+
+            .page-link  {
+                cursor: pointer !important;
+                border: 1px solid #3498db !important;
+                color: #fff !important;
+                background: #3498db !important;
+                border-bottom: 1px solid #2386c8 !important;
+                margin-bottom: 5px !important;
+            }
         </style>
     @endpush
     <div class="row" style="margin-top:60px;">
