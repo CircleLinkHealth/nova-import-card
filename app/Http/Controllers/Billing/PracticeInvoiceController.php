@@ -103,7 +103,7 @@ class PracticeInvoiceController extends Controller
 
          $summaries->getCollection()->transform(function ($summary) {
              $result = $this->patientSummaryDBRepository
-                 ->approveIfShouldApprove($summary->patient, $summary);
+                 ->attachBillableProblems($summary->patient, $summary);
 
              $data = $summary;
 
