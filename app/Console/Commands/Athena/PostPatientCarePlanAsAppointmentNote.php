@@ -61,18 +61,12 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                                     ->external_id;
 
                                 $appointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
+                                $sortedAppointments = collect($appointments['appointments'])->sortBy('date')->toArray();
+                                $nextAppointment = $sortedAppointments[0];
 
 
-                                //sto epomeno appointment mono TODO
-                                foreach ($appointments as $appointment) {
+                                $response = $this->api->postAppointmentNotes($practiceId, $nextAppointment['appointmentid'], $link, true);
 
-                                    $departmentId   = $appointment['departmentid'];
-                                    $appointmentId = $appointment['appointmentid'];
-
-                                    //need to pass in appointment id
-                                    $response = $this->api->postPatientDocument($c->user_id, $practiceId, $link,
-                                        $departmentId, $appointmentId);
-                                }
 
                             });
     }

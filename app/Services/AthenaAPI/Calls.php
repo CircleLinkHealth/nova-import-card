@@ -424,13 +424,14 @@ class Calls
     public function postAppointmentNotes(
         $practiceId,
         $appointmentId,
-        $showOnDesplay = false,
-        $noteText
+        $noteText,
+        $showOnDisplay = false
+
     ){
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->POST("appointments/{$appointmentId}/notes", [
-            'displayonschedule' => $showOnDesplay,
+            'displayonschedule' => $showOnDisplay,
             'notetext' => $noteText,
             ]);
 
