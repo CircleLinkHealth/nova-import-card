@@ -7,10 +7,10 @@ use App\Practice;
 use App\SaasAccount;
 use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /*
 

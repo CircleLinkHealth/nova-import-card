@@ -38,6 +38,11 @@
                     {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
                     <label>Starting CarePlan Mode</label>
                 </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    {{ Form::select('settings[bill_to]', ['practice'=>'Practice','provider'=>'Provider'], $practiceSettings->bill_to) }}
+                    <label>Bill to:</label>
+                </div>
             </div>
 
             <div class="row">

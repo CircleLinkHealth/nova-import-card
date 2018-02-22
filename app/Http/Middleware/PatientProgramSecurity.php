@@ -39,15 +39,6 @@ class PatientProgramSecurity
         $request,
         Closure $next
     ) {
-        // admins can see and do all
-        if (auth()->user()->hasRole(['administrator'])) {
-            return $next($request);
-        }
-
-        if (auth()->user()->hasRole('care-ambassador')) {
-            return redirect()->route('enrollment-center.dashboard', [])->send();
-        }
-
         if (auth()->guest()) {
             return redirect()->guest('login');
         }
@@ -64,8 +55,7 @@ class PatientProgramSecurity
             if ( ! $user) {
                 return response('Could not locate patient.', 401);
             } else {
-                // security
-                if ($user->id == Auth::user()->id && !Auth::user()->hasPermission('users-view-self')) {
+                if ($user->id == Auth::user()->id && ! Auth::user()->hasPermission('users-view-self')) {
                     abort(403);
                 }
                 if ($user->id != Auth::user()->id && ! Auth::user()->hasPermission('users-view-all')) {

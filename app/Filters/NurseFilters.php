@@ -175,4 +175,19 @@ class NurseFilters extends QueryFilters
     public function user() {
         return $this->builder->with('user');
     }
+
+
+    /**
+     * Search for a Nurse by full name.
+     *
+     * @param $term
+     *
+     * @return $this
+     */
+    public function search($term) {
+        return $this->builder
+            ->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+    }
 }

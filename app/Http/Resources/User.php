@@ -35,12 +35,13 @@ class User extends Resource
             'updated_at'          => $this->updated_at,
             'deleted_at'          => $this->deleted_at,
 
-            'billing_provider' => BillingProvider::make($this->whenLoaded('billingProvider')),
-            'notes'            => Note::collection($this->whenLoaded('notes')),
-            'nurse_info'       => NurseInfo::make($this->whenLoaded('nurseInfo')),
-            'patient_info'     => PatientInfo::make($this->whenLoaded('patientInfo')),
-            'provider_info'    => ProviderInfo::make($this->whenLoaded('providerInfo')),
-            'primary_practice' => Practice::make($this->whenLoaded('primaryPractice')),
+            'billing_provider'  => BillingProvider::make($this->whenLoaded('billingProvider')),
+            'notes'             => Note::collection($this->whenLoaded('notes')),
+            'nurse_info'        => NurseInfo::make($this->whenLoaded('nurseInfo')),
+            'patient_info'      => PatientInfo::make($this->whenLoaded('patientInfo')),
+            'patient_summaries' => PatientMonthlySummary::collection($this->whenLoaded('patientSummaries')),
+            'provider_info'     => ProviderInfo::make($this->whenLoaded('providerInfo')),
+            'primary_practice'  => Practice::make($this->whenLoaded('primaryPractice')),
         ];
     }
 }

@@ -7,7 +7,7 @@ use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
-use App\View\Composers\SAAS\Admin\ManageInternalUserViewComposer;
+use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
 
@@ -220,8 +220,9 @@ return [
         EmailArrayValidatorServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
         Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
-        ManageInternalUserViewComposer::class,
+        ManageInternalUser::class,
     ],
 
     /*
@@ -287,6 +288,7 @@ return [
         'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'Zip'            => ZanySoft\Zip\ZipFacade::class,
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
 ];

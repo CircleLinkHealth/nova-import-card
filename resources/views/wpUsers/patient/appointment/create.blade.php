@@ -5,21 +5,23 @@
 
 @section('content')
 
-    <script>
-        $(document).ready(function () {
-            $(".provider").select2();
-        });
-    </script>
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                $(".provider").select2();
+            });
+        </script>
+    @endpush
 
-    <style>
-
-        .save-btn {
-            width: 100px;
-            height: 42px;
-            position: relative;
-        }
-
-    </style>
+    @push('styles')
+        <style>
+            .save-btn {
+                width: 100px;
+                height: 42px;
+                position: relative;
+            }
+        </style>
+    @endpush
 
     <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
@@ -50,8 +52,8 @@
                                                 <div class="form-group providerBox" id="providerBox">
                                                     <select id="provider" name="provider"
                                                             class="provider selectpickerX dropdownValid form-control"
-                                                            data-size="10" required>
-                                                        <option value=""></option>
+                                                            data-size="10">
+                                                        <option value="null">Unknown</option>
                                                         @foreach ($providers as $key => $value)
                                                             <option value="{{$key}}"> {{$value}} </option>
                                                         @endforeach

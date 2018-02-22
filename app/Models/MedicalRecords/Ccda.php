@@ -80,6 +80,8 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
     const SFTP_DROPBOX = 'sftp_dropbox';
+    const UPLOADED = 'uploaded';
+    const GOOGLE_DRIVE = 'google_drive';
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
@@ -97,7 +99,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'date',
         'mrn',
         'referring_provider_name',
-        'location_id' .
+        'location_id',
         'practice_id',
         'billing_provider_id',
         'user_id',
@@ -127,6 +129,11 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             ->first();
     }
 
+    public function scopeExclude($query, $value = array()) 
+    {
+        $defaultColumns = ['id', 'created_at', 'updated_at'];
+        return $query->select( array_diff( array_merge($defaultColumns, $this->fillable), (array) $value) );
+    }
 
     /**
      * Get the Logger
@@ -184,12 +191,12 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
         ]);
 
-        $response = $client->request('POST', '/ccda/parse', [
+        $response = $client->request('POST', '/api/parser', [
             'headers' => ['Content-Type' => 'text/xml'],
             'body'    => $xml,
         ]);
 
-        if ($response->getStatusCode() != 200) {
+        if (!in_array($response->getStatusCode(), [200,201])) {
             return [
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

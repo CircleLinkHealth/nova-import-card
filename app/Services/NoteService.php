@@ -9,12 +9,106 @@ use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
+use App\CareplanAssessment;
+use App\Repositories\NoteRepository;
+use App\Repositories\CareplanAssessmentRepository;
+use App\CLH\Repositories\UserRepository;
 use App\View\MetaTag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\URL;
+use Exception;
 
 class NoteService
 {
+    private $noteRepo;
+    private $userRepo;
+    private $assessmentRepo;
+
+    public function __construct(NoteRepository $noteRepo, UserRepository $userRepo, CareplanAssessmentRepository $assessmentRepo) {
+        $this->noteRepo = $noteRepo;
+        $this->userRepo = $userRepo;
+        $this->assessmentRepo = $assessmentRepo;
+    }
+
+    public function repo() {
+        return $this->noteRepo;
+    }
+
+    public function patientNotes($userId, $type = null) {
+        if ($type) {
+            $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
+            return $assessments->map([$this, 'createNoteFromAssessment']);
+        }
+        return $this->repo()->patientNotes($userId, $type);
+    }
+
+    function createNoteFromAssessment($assessment) {
+        if ($assessment) {
+            $note = new Note();
+            $note->body = $assessment->key_treatment;
+            $note->author_id = $assessment->provider_approver_id;
+            $note->patient_id = $assessment->careplan_id;
+            $note->created_at = $assessment->created_at;
+            $note->updated_at = $assessment->updated_at;
+            $note->isTCM = 0;
+            $note->did_medication_recon = 0;
+            $note->type = 'Biometrics';
+            $note->id = 0;
+            return $note;
+        }
+        else return null;
+    }
+
+    public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon) {
+        if ($userId && $authorId && $body) {
+            if (!$this->userRepo->exists($userId)) {
+                throw new Exception('user with id "' . $userId . '" does not exist');
+            }
+            else if ($type != 'Biometrics' && !$this->userRepo->exists($authorId)) {
+                throw new Exception('user with id "' . $authorId . '" does not exist');
+            }
+            else {
+                if ($type != 'Biometrics') {
+                    $note = new Note();
+                    $note->patient_id = $userId;
+                    $note->author_id = $authorId;
+                    $note->body = $body;
+                    $note->type = $type;
+                    $note->isTCM = $isTCM;
+                    $note->did_medication_recon = $did_medication_recon;
+                    return $this->repo()->add($note);
+                }
+                else {
+                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
+                }
+            }
+        }
+        else throw new Exception('invalid parameters');
+    }
+
+    public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null) {
+        if (!$type) {
+            if (!$id) throw new Exception('$id is required');
+            else {
+                $note = $this->repo()->model()->find($id);
+                if ($note->patient_id != $userId) throw new Exception('Note with id "' . $id . '" does not belong to patient with id "' . $userId . '"');
+                else if ($note->author_id != $authorId) throw new Exception('Attempt to edit note blocked because note does not belong to author');
+                else {
+                    $note = new Note();
+                    $note->id = $id;
+                    $note->patient_id = $userId;
+                    $note->author_id = $authorId;
+                    $note->body = $body;
+                    $note->isTCM = $isTCM;
+                    $note->did_medication_recon = $did_medication_recon;
+                    return $this->repo()->edit($note);
+                }
+            }
+        }
+        else {
+            return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
+        }
+    }
 
     public function storeNote($input)
     {
@@ -36,6 +130,22 @@ class NoteService
 
         $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
 
+        return $note;
+    }
+
+    public function createAssessmentNote(CareplanAssessment $assessment) {
+        $note = new Note();
+        $note->patient_id = $assessment->careplan_id;
+        $note->author_id = $assessment->provider_approver_id;
+
+        $patient = User::find($note->patient_id);
+
+        $note->body = 'Created/Edited Assessment for ' . $patient->name() . ' (' . $assessment->careplan_id . ') ... See ' . 
+                        URL::to('/manage-patients/' . $assessment->careplan_id . '/view-careplan/assessment');
+        $note->type = 'Edit Assessment';
+        $note->performed_at = Carbon::now();
+        $note->save();
+        $note->forward(true, true);
         return $note;
     }
 

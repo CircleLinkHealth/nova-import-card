@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\CLH\Helpers\StringManipulation;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -78,11 +79,27 @@ class PhoneNumber extends \App\BaseModel
         ];
     }
 
-    // START RELATIONSHIPS
-
     public function user()
     {
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
-    // END RELATIONSHIPS
+
+    /**
+     * Get phone number in this format xxx-xxx-xxxx
+     *
+     * @return string
+     */
+    public function getNumberWithDashesAttribute() {
+        return (new StringManipulation())->formatPhoneNumber($this->number);
+    }
+
+    /**
+     * Set the phone number.
+     *
+     * @param $value
+     * @return void
+     */
+    public function setNumberAttribute($value) {
+        $this->attributes['number'] = (new StringManipulation())->formatPhoneNumberE164($value);
+    }
 }

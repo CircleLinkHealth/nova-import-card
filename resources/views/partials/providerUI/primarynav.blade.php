@@ -82,21 +82,13 @@ if (isset($patient)) {
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
                         <li>
-                            <a href="{{ URL::route('patient.note.listing') }}">
-                                Notes Report</a>
+                            <a href="{{ route('patients.careplan.printlist', []) }}">Care Plan Print List</a>
                         </li>
                         <li>
-                            <a href="{{URL::route('patient.reports.u20')}}">
-                                Under 20 Minute Report</a>
+                            <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                         </li>
-                        {{--<li>--}}
-                        {{--<a href="{{URL::route('patient.reports.billing')}}">--}}
-                        {{--Patient Billing Report</a>--}}
-                        {{--</li>--}}
                         <li>
-                            <a href="{{ URL::route('patients.careplan.printlist', array()) }}">
-                                Patient Care Plan Print
-                                List</a>
+                            <a href="{{route('patient.reports.u20')}}">Under 20 Minutes Report</a>
                         </li>
                     </ul>
                 </li>

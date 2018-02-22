@@ -25,8 +25,8 @@
         var $modal = $("#confirmButtonModal");
         var ccmBadgeModelState = {
             title: "Confirm Complex CCM Patient",
-            body: `<p>Please confirm patient will benefit from extra CCM care time this month.</p>
-                   <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>`
+            body: '<p>Please confirm patient will benefit from extra CCM care time this month.</p>' +
+                   '<p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>'
         }
         var submitViaAjax = function () {
             //console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())

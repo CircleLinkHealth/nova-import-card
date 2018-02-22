@@ -91,7 +91,7 @@
                                                     class="selectpickerX provider dropdown Valid form-control" data-size="10" required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)
-                                                    <option value="{{$id}}"> {{$name}} </option>
+                                                    <option value="{{$id}}"> {{($name && (trim($name) == '')) ? 'Me' : $name}} </option>
                                                 @endforeach
                                             </select>
                                         </div>

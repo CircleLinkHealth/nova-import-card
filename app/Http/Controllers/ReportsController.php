@@ -7,9 +7,13 @@ use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\Practice;
+use App\Repositories\PatientReadRepository;
+use App\Services\CareplanAssessmentService;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
+use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
+use App\Services\CareplanService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -22,15 +26,24 @@ use Illuminate\Support\Facades\DB;
 class ReportsController extends Controller
 {
     private $service;
+    private $assessmentService;
     private $formatter;
+    private $printPausedPatientLettersService;
+    private $patientReadRepository;
 
     public function __construct(
+        CareplanAssessmentService $assessmentService,
         ReportsService $service,
         ReportFormatter $formatter,
-        Request $request
+        Request $request,
+        PrintPausedPatientLettersService $printPausedPatientLettersService,
+        PatientReadRepository $patientReadRepository
     ) {
-        $this->service   = $service;
-        $this->formatter = $formatter;
+        $this->service                          = $service;
+        $this->formatter                        = $formatter;
+        $this->assessmentService                = $assessmentService;
+        $this->printPausedPatientLettersService = $printPausedPatientLettersService;
+        $this->patientReadRepository            = $patientReadRepository;
     }
 
     //PROGRESS REPORT
@@ -40,7 +53,7 @@ class ReportsController extends Controller
     ) {
 
         $user             = User::find($patientId);
-        $treating         = (new CpmProblemService())->getDetails($user);
+        $treating         = (app(CpmProblemService::class))->getDetails($user);
         $biometrics       = $this->service->getBiometricsToMonitor($user);
         $biometrics_data  = [];
         $biometrics_array = [];
@@ -145,7 +158,7 @@ class ReportsController extends Controller
                         ->ofType('participant')
                         ->with([
                             'primaryPractice',
-                            'activities' => function($q) use ($start, $end) {
+                            'activities' => function ($q) use ($start, $end) {
                                 $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
                                   ->whereBetween('performed_at', [
                                       $start,
@@ -155,7 +168,7 @@ class ReportsController extends Controller
                                   ->orderBy('performed_at', 'desc');
                             },
                         ])
-                        ->whereHas('patientSummaries', function ($q) use ($time){
+                        ->whereHas('patientSummaries', function ($q) use ($time) {
                             $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
                               ->where('ccm_time', '<', 1200);
                         })
@@ -483,54 +496,83 @@ class ReportsController extends Controller
 
     public function makeAssessment(
         Request $request,
-        $patientId = false,
+        $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
+        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8)) {
+            return abort(403);
+        }
+
         if ( ! $patientId) {
             return "Patient Not Found..";
-        } else {
-            $patient = User::find($patientId);
-
-            if ( ! $patient) {
-                return "Patient Not Found..";
-            }
-            if ( ! $patient->isCcmEligible()) {
-                return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
-            }
-
-            $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
-
-            if ( ! $careplan) {
-                return 'Careplan not found...';
-            }
-
-            $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
-
-            return view(
-                'wpUsers.patient.careplan.assessment',
-                [
-                    'patient'                 => $patient,
-                    'problems'                => $careplan[$patientId]['problems'],
-                    'problemNames'            => $careplan[$patientId]['problem'],
-                    'biometrics'              => $careplan[$patientId]['bio_data'],
-                    'symptoms'                => $careplan[$patientId]['symptoms'],
-                    'lifestyle'               => $careplan[$patientId]['lifestyle'],
-                    'medications_monitor'     => $careplan[$patientId]['medications'],
-                    'taking_medications'      => $careplan[$patientId]['taking_meds'],
-                    'allergies'               => $careplan[$patientId]['allergies'],
-                    'social'                  => $careplan[$patientId]['social'],
-                    'appointments'            => $careplan[$patientId]['appointments'],
-                    'other'                   => $careplan[$patientId]['other'],
-                    'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-                ]
-            );
         }
+
+        $patient = User::with('carePlan')->find($patientId);
+
+        if ( ! $patient) {
+            return "Patient Not Found..";
+        }
+
+
+        // if ( ! $patient->isCcmEligible()) {
+        //     return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+        // }
+
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+
+        if ( ! $careplan) {
+            return 'Careplan not found...';
+        }
+
+        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        $editable = true;
+
+        $assessmentQuery = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId]);
+        if ($approverId) {
+            $assessmentQuery = $assessmentQuery->where([ 'provider_approver_id' => $approverId ]);
+        }
+        
+        $assessment = $assessmentQuery->first();
+
+        if ($assessment) {
+            $assessment->unload();
+            $editable = $patient->isCcmEligible() || ($assessment->provider_approver_id != auth()->user()->id);
+        }
+
+
+
+        $approver = $assessment
+            ? $assessment->approver()->first()
+            : null;
+
+        return view(
+            'wpUsers.patient.careplan.assessment',
+            [
+                'patient'                 => $patient,
+                'problems'                => $careplan[$patientId]['problems'],
+                'problemNames'            => $careplan[$patientId]['problem'],
+                'biometrics'              => $careplan[$patientId]['bio_data'],
+                'symptoms'                => $careplan[$patientId]['symptoms'],
+                'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                'medications_monitor'     => $careplan[$patientId]['medications'],
+                'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                'allergies'               => $careplan[$patientId]['allergies'],
+                'social'                  => $careplan[$patientId]['social'],
+                'appointments'            => $careplan[$patientId]['appointments'],
+                'other'                   => $careplan[$patientId]['other'],
+                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                'assessment'              => $assessment,
+                'approver'                => $approver,
+                'editable'                => $editable
+            ]
+        );
+
     }
 
     public function viewPrintCareplan(
         Request $request,
         $patientId = false,
-        CcdInsurancePolicyService $insurances
+        CcdInsurancePolicyService $insurances, CareplanService $careplanService
     ) {
         if ( ! $patientId) {
             return "Patient Not Found..";
@@ -552,6 +594,8 @@ class ReportsController extends Controller
 
         $skippedAssessment = $request->has('skippedAssessment');
 
+        $recentSubmission = $request->input('recentSubmission') ?? false;
+
         return view(
             'wpUsers.patient.careplan.print',
             [
@@ -569,6 +613,8 @@ class ReportsController extends Controller
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
+                'recentSubmission'        => $recentSubmission,
+                'careplan'                => $careplanService->careplan($patientId)
             ]
         );
     }
@@ -703,12 +749,7 @@ class ReportsController extends Controller
 
     public function excelReportT2()
     {
-        // get all users with paused ccm_status
-        $users = User::with('patientInfo')
-                     ->whereHas('patientInfo', function ($q) {
-                         $q->where('ccm_status', '=', 'paused');
-                     })
-                     ->get();
+        $users = $this->patientReadRepository->paused()->fetch();
 
         $date = date('Y-m-d H:i:s');
 
@@ -1073,5 +1114,35 @@ class ReportsController extends Controller
                 }
             });
         })->export('xls');
+    }
+
+    public function pausedPatientsLetterPrintList()
+    {
+        $patients = false;
+
+        $pausedPatients = $this->printPausedPatientLettersService->getPausedPatients();
+
+        if ($pausedPatients->isNotEmpty()) {
+            $patients = $pausedPatients->toJson();
+        }
+
+        $url = route('get.paused.letters.file') . '?patientUserIds=';
+
+        return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
+    }
+
+    public function getPausedLettersFile(Request $request)
+    {
+        if (!$request->has('patientUserIds')) {
+            throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
+        }
+
+        $viewOnly = $request->has('view');
+
+        $userIdsToPrint = explode(',', $request['patientUserIds']);
+
+        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint, $viewOnly);
+
+        return response()->file($fullPathToFile);
     }
 }

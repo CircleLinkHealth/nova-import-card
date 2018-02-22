@@ -211,4 +211,8 @@ class Location extends \App\BaseModel
 
         return 'CircleLink Health';
     }
+
+    public function routeNotificationForMail() {
+        return optional($this->user()->first())->email;
+    }
 }

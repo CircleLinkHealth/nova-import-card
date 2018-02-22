@@ -35,7 +35,6 @@
         },
         methods: {
             changeTextArea() {
-                console.log(this.text)
                 sstor.add(this.storageKey, this.text)
                 this.$emit('input', this.text)
             }

@@ -180,33 +180,4 @@ class SalesByLocationReport
     }
 
 
-//    public function mail(){
-//
-//        $nurse = $this->nurse;
-//
-//        $fileName = $this->generatePdf();
-//
-//        Mail::send('billing.nurse.invoice', $this->formattedItemizedActivities, function ($m) use ($nurse, $fileName) {
-//
-//            $m->from('billing@circlelinkhealth.com', 'CircleLink Health');
-//
-//            $m->attach(storage_path("download/$fileName"));
-//
-//            $m->to($nurse->user->email, $nurse->user->fullName)
-//                ->subject('New Invoice from CircleLink Health');
-//        });
-//
-////        MailLog::create([
-////            'sender_email' => $sender->email,
-////            'receiver_email' => $receiver->email,
-////            'body' => $body,
-////            'subject' => $email_subject,
-////            'type' => 'note',
-////            'sender_cpm_id' => $sender->id,
-////            'receiver_cpm_id' => $receiver->id,
-////            'created_at' => $note->created_at,
-////            'note_id' => $note->id
-////        ]);
-//
-//    }
 }

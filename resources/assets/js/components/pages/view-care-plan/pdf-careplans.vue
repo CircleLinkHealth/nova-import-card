@@ -51,6 +51,9 @@
             },
             viewCareplanUrl() {
                 return rootUrl('manage-patients/' + this.patientId + '/view-careplan')
+            },
+            assessmentUrl() {
+                return rootUrl('manage-patients/' + this.patientId + '/view-careplan/assessment')
             }
         },
         methods: Object.assign({},
@@ -76,6 +79,7 @@
                         console.log(carePlan)
                         
                         this.patientCarePlan = carePlan;
+                        console.log('patient-careplan', this.patientCarePlan)
                     }, error => {
                         console.log(error)
                     }, patientId)
@@ -145,6 +149,7 @@
             </div>
             <div class="col-md-6 text-right">
                 <slot name="buttons"></slot>
+                <a :href="assessmentUrl" v-if="patientCarePlan.status == 'provider_approved'" class="btn btn-info btn-sm inline-block">View Assessment</a>
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>

@@ -198,6 +198,10 @@
                                 <li><a href="{{ route('excel.report.t2', array()) }}">Paused Patients (export)</a>
                                 </li>
 
+                                <li>
+                                    <a href="{{route('get.print.paused.letters')}}">Print Paused Patient Letters</a>
+                                </li>
+
                             </ul>
                         </li>
 

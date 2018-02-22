@@ -7,8 +7,8 @@ use App\Exceptions\InvalidArgumentException;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class PatientWriteRepository
 {
@@ -79,9 +79,9 @@ class PatientWriteRepository
 
         // get record for month
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record    = PatientMonthlySummary::where('patient_id', $patient->user_id)
-                                          ->where('month_year', $day_start)
-                                          ->first();
+        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
+                                       ->where('month_year', $day_start)
+                                       ->first();
 
         // set increment var
         $successful_call_increment = 0;
@@ -99,16 +99,16 @@ class PatientWriteRepository
         $patient->save();
 
         // Determine whether to add to record or not
-        if ( ! $record) {
-            $record                         = new PatientMonthlySummary;
-            $record->patient_id             = $patient->user_id;
-            $record->ccm_time               = 0;
-            $record->month_year             = $day_start;
-            $record->no_of_calls            = 1;
+        if (!$record) {
+            $record = new PatientMonthlySummary;
+            $record->patient_id = $patient->user_id;
+            $record->ccm_time = 0;
+            $record->month_year = $day_start;
+            $record->no_of_calls = 1;
             $record->no_of_successful_calls = $successful_call_increment;
             $record->save();
         } else {
-            $record->no_of_calls            = $record->no_of_calls + 1;
+            $record->no_of_calls = $record->no_of_calls + 1;
             $record->no_of_successful_calls = ($record->no_of_successful_calls + $successful_call_increment);
             $record->save();
         }

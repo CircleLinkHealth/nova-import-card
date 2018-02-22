@@ -2,15 +2,16 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
 use App\User;
+use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function toArray($request)
@@ -46,18 +47,23 @@ class ApprovableBillablePatient extends Resource
             $this->approved = $this->rejected = false;
         }
 
-        $bP = $this->patient->careTeamMembers->where('type', '=', 'billing_provider')->first();
+        $bP = $this->patient
+            ->careTeamMembers
+            ->where('type', '=', 'billing_provider')
+            ->first();
 
-        $name = "<a href = " . route('patient.careplan.show', [
-                'patient' => $this->patient->id,
-                'page'    => 1,
-            ]) . "  target='_blank' >" . $this->patient->fullName . "</a>";
+        $name = $this->patient->fullName;
+        $url = route('patient.note.index', [
+            'patient' => $this->patient->id,
+        ]);
 
         return [
+            'id'                     => $this->patient->id,
             'mrn'                    => $this->patient->patientInfo->mrn_number,
             'name'                   => $name,
+            'url'                   => $url,
             'provider'               => $bP
-                ? $bP->user->fullName
+                ? optional($bP->user)->fullName
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
             'dob'                    => $this->patient->patientInfo->birth_date,
@@ -74,6 +80,8 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
+
+            'chargeable_services'    => $this->chargeableServices()->get(),
 
         ];
     }

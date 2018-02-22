@@ -58,7 +58,7 @@
 
             <tr>
 
-                <td>CCM Services (CPT99490)</td>
+                <td>CCM Services (CPT 99490)</td>
                 <td>{{$billable}}</td>
                 <td>{{$rate}}</td>
                 <td>${{$invoice_amount}}</td>

@@ -16,7 +16,7 @@
                     <div>
                         <label>Select Practice</label>
                     </div>
-                    <select2 class="form-control" v-model="selectedPractice" @change="retrieve">
+                    <select2 class="form-control" v-model="selectedPractice" @change="changePractice">
                         <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}
                         </option>
                     </select2>
@@ -25,7 +25,7 @@
                     <div>
                         <label>Select Month</label>
                     </div>
-                    <select2 class="form-control" v-model="selectedMonth" @change="retrieve" :value="months[0].long">
+                    <select2 class="form-control" v-model="selectedMonth" @change="changePractice" :value="months[0].long">
                         <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}
                         </option>
                     </select2>
@@ -36,21 +36,21 @@
                     <strong>Approved: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-green">
-                        {{loading ? '' : noOfApproved}}
+                        {{loading ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-orange">
-                        {{loading ? '' : noOfFlagged}}
+                        {{loading ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
                     <div class="loading" v-if="loading"></div>
                     <span class="color-dark-red">
-                        {{loading ? '' : noOfRejected}}
+                        {{loading ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -88,8 +88,17 @@
                         <div class="loading" v-if="props.row.promises['problem_2']"></div>
                     </div>
                 </template>
+                <template slot="chargeable_services" scope="props">
+                    <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
+                        <div v-if="props.row.chargeable_services.length">
+                            <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
+                        </div>
+                        <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
+                    </div>
+                </template>
             </v-client-table>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
         </div>
     </div>
@@ -100,9 +109,10 @@
     import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
+    import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
-    import buildReport, {styles} from './excel'
+    import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
 
     export default {
@@ -112,7 +122,8 @@
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
             'error-modal': ErrorModal,
-            'select2': Select2Component
+            'select2': Select2Component,
+            'chargeable-services-modal': ChargeableServicesModal
         },
         data() {
             return {
@@ -121,7 +132,17 @@
                 loading: true,
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
+                chargeableServices: [],
                 practiceId: 0,
+                url: null,
+                counts: {
+                    approved: 0,
+                    rejected: 0,
+                    flagged: 0,
+                    total () {
+                        return this.approved + this.rejected + this.flagged
+                    }
+                },
                 columns: [
                     'MRN',
                     'Provider',
@@ -136,94 +157,9 @@
                     'Problem 2 Code',
                     '#Successful Calls',
                     'approved',
-                    'rejected'],
-                tableData: [
-                    /*{
-                        id: 1,
-                        mrn: "",
-                        "approved": true,
-                        "rejected": false,
-                        "Provider": "Dr. Demo MD",
-                        "Patient": "Cecilia Z-Armstrong",
-                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice": "Demo",
-                        "DOB": "1918/09/22",
-                        "Status": "enrolled",
-                        "CCM Mins": 0,
-                        "Problem 1": "Smoking",
-                        "Problem 2": "Asthma",
-                        "Problem 1 Code": "I10",
-                        "Problem 2 Code": "I10",
-                        "#Successful Calls": 0,
-                        qa: 0,
-                        reportId: 9,
-                        problems: [
-                            {
-                                id: 1,
-                                name: 'Smoking',
-                                code: 'I10'
-                            },
-                            {
-                                id: 2,
-                                name: 'Asthma',
-                                code: 'I11'
-                            }
-                        ],
-                        promises: {
-                            problem_1: false,
-                            problem_2: false,
-                            approve_reject: false
-                        },
-                        errors: {
-                            approve_reject: null
-                        }
-                    },
-                    {
-                        id: 2,
-                        mrn: "",
-                        "approved": false,
-                        "rejected": false,
-                        "Provider": "  ",
-                        "Patient": "Kenneth Z-Smitham ",
-                        "patientUrl": "https://cpm-web.dev/manage-patients/345/careplan/sections/1",
-                        "Practice": "Demo",
-                        "DOB": "1958-09-08",
-                        "Status": "enrolled",
-                        "CCM Mins": 0,
-                        "Problem 1": null,
-                        "Problem 2": null,
-                        "Problem 1 Code": null,
-                        "Problem 2 Code": null,
-                        "#Successful Calls": 0,
-                        qa: 1,
-                        reportId: 10,
-                        problems: [
-                            {
-                                id: 1,
-                                name: 'Tobacco',
-                                code: 'T01'
-                            },
-                            {
-                                id: 2,
-                                name: 'Syphilis',
-                                code: 'SP2'
-                            }
-                        ],
-                        promises: {
-                            problem_1: false,
-                            problem_2: false,
-                            approve_reject: false
-                        },
-                        errors: {
-                            approve_reject: null
-                        }
-                    }*/],
-                options: {
-                    rowClassCallback(row) {
-                        if (row.qa) return 'bg-flagged'
-                        return ''
-                    }
-                }
+                    'rejected',
+                    'chargeable_services'],
+                tableData: []
             }
         },
         methods: {
@@ -255,6 +191,11 @@
                         tablePatient.promises['approve_reject'] = false
                         tablePatient.approved = !!(response.data.status || {}).approved
                         tablePatient.rejected = !!(response.data.status || {}).rejected
+                        if ((response.data || {}).counts) {
+                            this.counts.approved = ((response.data || {}).counts || {}).approved || 0
+                            this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
+                            this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
+                        }
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
@@ -263,15 +204,43 @@
                     })
                 } 
             },
+            changePractice() {
+                this.tableData = []
+                this.retrieve()
+                this.getCounts()
+            },
+            getChargeableServices() {
+                return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
+                    this.chargeableServices = (response.data || []).map(service => {
+                        service.selected = null
+                        return service
+                    })
+                    console.log('billing:chargeable-services', this.chargeableServices)
+                }).catch(err => {
+                    console.error('billing:chargeable-services', err)
+                })
+            },
+            getCounts() {
+                return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
+                    console.log('billing:counts', response.data)
+                    this.counts.approved = (response.data || {}).approved || 0
+                    this.counts.rejected = (response.data || {}).rejected || 0
+                    this.counts.flagged = (response.data || {}).toQA || 0
+                    return this.counts
+                })
+            },
             retrieve() {
-                this.loading = true
-                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/data'), {
+                this.loading = true;
+                this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
-                    this.tableData = response.data.data.map((patient, index) => {
-                        return {
-                            id: index,
+                    const pagination = response.data || []
+                    const ids = this.tableData.map(i => i.id)
+                    this.url = pagination.next_page_url
+                    this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
+                        const item = {
+                            id: patient.id,
                             MRN: patient.mrn,
                             approved: patient.approve,
                             rejected: patient.reject,
@@ -279,8 +248,8 @@
                             qa: patient.qa,
                             problems: patient.problems || [],
                             Provider: patient.provider,
-                            Patient: this.$elem(patient.name).querySelector('a').innerText,
-                            patientUrl: this.$elem(patient.name).querySelector('a').href,
+                            Patient: patient.name,
+                            patientUrl: patient.url,
                             Practice: patient.practice,
                             DOB: patient.dob,
                             Status: patient.status,
@@ -290,21 +259,40 @@
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
                             '#Successful Calls': patient.no_of_successful_calls,
+                            chargeable_services: patient.chargeable_services,
                             promises: {
                                 problem_1: false,
                                 problem_2: false,
-                                approve_reject: false
+                                approve_reject: false,
+                                update_chargeables: false
                             },
                             errors: {
                                 approve_reject: null
+                            },
+                            chargeables: () => {
+                                return item.chargeable_services.map(id => this.chargeableServices.find(service => service.id == id)).filter(Boolean)
+                            },
+                            onChargeableServicesUpdate: (serviceIDs) => {
+                                item.chargeable_services = serviceIDs
+                                console.log('service-ids', serviceIDs)
+                                item.promises.update_chargeables = true
+                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), )
                             }
                         }
-                    }).sort((pA, pB) => pB.qa - pA.qa)
-                    this.loading = false
-                    console.log('bills-report', this.tableData)
+                        return item
+                    }).sort((pA, pB) => pB.qa - pA.qa))
+                    this.loading = false;
+                    console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
                     this.loading = false
+                })
+            },
+
+            showChargeableServicesModal(row) {
+                Event.$emit('modal-chargeable-services:show', {
+                    title: 'Select Chargeable Services for ' + row.Patient,
+                    row: row
                 })
             },
 
@@ -391,17 +379,25 @@
                 }
                 return months
             },
-            noOfApproved() {
-                return this.tableData.filter(patient => patient.approved).length
-            },
-            noOfRejected() {
-                return this.tableData.filter(patient => patient.rejected).length
-            },
-            noOfFlagged() {
-                return this.tableData.filter(patient => patient.qa).length
-            },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
+            },
+            options() {
+                return {
+                    rowClassCallback(row) {
+                        if (row.qa) return 'bg-flagged'
+                        return ''
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${this.counts.total()} records|${this.counts.total()} records|One record`
+                    },
+                    perPage: 15,
+                    perPageValues: [
+                        15,
+                        30,
+                        50
+                    ]
+                }
             }
         },
         mounted() {
@@ -409,11 +405,29 @@
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
+            this.getChargeableServices()
+            this.getCounts()
+
+            Event.$on('vue-tables.pagination', (page) => {
+                const $table = this.$refs.tblBillingReport
+                if (page === $table.totalPages) {
+                    console.log('next page clicked')
+                    this.retrieve();
+                }
+            })
         }
     }
 </script>
 
-<style>
+<style scoped>
+    .inline-block {
+        display: inline-block;
+    }
+
+    input[type="checkbox"] {
+        display: inline-block !important;
+    }
+
     span.color-orange {
         color: orange
     }

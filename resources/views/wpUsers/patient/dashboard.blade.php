@@ -46,18 +46,18 @@
                         </a>
                     </li>
 
-                    {{--@if(auth()->user()->hasRole(['administrator', 'care-center']) && auth()->user()->isNotSaas())--}}
-                        {{--<li class="menu-item">--}}
-                            {{--<a id="patient-list" href="{{ route('patientCallList.index', array()) }}">--}}
-                                {{--<div class="icon-container column-centered">--}}
-                                    {{--<i class="icon--phone-call--big icon--menu"></i>--}}
-                                {{--</div>--}}
-                                {{--<div>--}}
-                                    {{--<p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>--}}
-                                {{--</div>--}}
-                            {{--</a>--}}
-                        {{--</li>--}}
-                    {{--@endif--}}
+                    @if(auth()->user()->hasRole(['administrator', 'care-center']) && auth()->user()->isNotSaas())
+                        <li class="menu-item">
+                            <a id="patient-list" href="{{ route('patientCallList.index', array()) }}">
+                                <div class="icon-container column-centered">
+                                    <i class="icon--phone-call--big icon--menu"></i>
+                                </div>
+                                <div>
+                                    <p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>
+                                </div>
+                            </a>
+                        </li>
+                    @endif
                     @if( auth()->user()->hasPermission(['ccd-import']) )
                         <li class="menu-item">
                             <a id="patient-list" href="{{ route('import.ccd') }}">

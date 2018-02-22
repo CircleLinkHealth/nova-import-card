@@ -9,6 +9,7 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use App\Location;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Location;
 use App\Practice;

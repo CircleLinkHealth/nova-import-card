@@ -56,6 +56,11 @@ class ProcessCcda implements ShouldQueue
 
         $ccda->save();
 
+        if (!$ccda->mrn) {
+            $ccda->mrn = "clh#{$ccda->id}";
+            $ccda->save();
+        }
+
         $this->handleDuplicateCcdas($ccda);
     }
 

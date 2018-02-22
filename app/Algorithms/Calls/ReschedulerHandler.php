@@ -32,6 +32,12 @@ use Carbon\Carbon;
 
 class ReschedulerHandler
 {
+    private $schedulerService;
+
+    public function __construct(SchedulerService $schedulerService)
+    {
+        $this->schedulerService = $schedulerService;
+    }
 
     protected $callsToReschedule;
     protected $rescheduledCalls = [];
@@ -105,7 +111,7 @@ class ReschedulerHandler
                 $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
                 $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-                $this->rescheduledCalls[] = (new SchedulerService())->storeScheduledCall(
+                $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
                     $patient->user->id,
                     $window_start,
                     $window_end,

@@ -1,10 +1,11 @@
 @extends('partials.providerUI')
 
 <?php
+    use \Carbon\Carbon;
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 ?>
 
-@section('title', 'Care Plan Assessment')
+@section('title', 'G0506 Enrollment Assessment')
 @section('activity', 'Care Plan Assessment')
 
 @push('styles')
@@ -53,20 +54,31 @@
             <div class="patient-info__main">
                 <div class="row">
                     <div class="col-xs-12 top-20">
-                        <h1 class="color-blue">G0506 Template Form for MD</h1>
+                        <h1 class="color-blue">G0506 Enrollment Assessment</h1>
+                        @if ($assessment) 
+                            <h4 class="text-right">Performed on {{Carbon::parse($assessment->updated_at)->format('m/d/Y')}} at 
+                                {{$assessment->updated_at->setTimezone($patient->timezone ?? 'America/New_York')->format('g:i A T')}} 
+                                by {{$approver->display_name}}</h4>
+                        @endif
+                        
                     </div>
                     <div class="col-xs-12">
                         <div class="row">
                             <div class="col-xs-12">
-                                <form name="questionnaire-form">
-                                    <div class="text-right">
-                                        <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
-                                    </div>
+                                <form method="post" name="questionnaire-form">
+                                    @if ($editable) 
+                                        <div class="text-right">
+                                            <input type="button" name="skip" class="btn btn-warning font-24" value="Skip">
+                                        </div>
+                                    @endif
                                     <div>
-                                        <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire"></questionnaire-app>
+                                        <questionnaire-app ref="questionnaireApp" :questions="questions" class-name="questionnaire" :editable="{{$editable ? 'true' : 'false'}}"></questionnaire-app>
                                     </div>
                                     <div id="questionnaire-app"></div>
-                                    <button class="btn btn-success font-24">Submit</button>
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="careplan_id" value="{{$patient->id}}" />
+                                    <input type="hidden" name="provider_approver_id" value="{{Auth::user()->id}}" />
+                                    <button class="btn btn-success font-24" {{ !$editable ? 'disabled' : '' }}>Submit</button>
                                 </form>
                             </div>
                         </div>
@@ -82,8 +94,14 @@
                 include app_path() . '/../public/data/ccm-eligibility-questions.json';
             ?>
         </script>
+        <script type="application/json" id="assessment-script">
+            <?php 
+                echo json_encode($assessment);
+            ?>
+        </script>
         <script>
             var questions = JSON.parse(document.getElementById('questions-script').innerHTML);
+            var answers = JSON.parse(document.getElementById('assessment-script').innerHTML);
         </script>
     @endpush
     @push('scripts')
@@ -113,10 +131,11 @@
                 $skipBtn.click(function () {
                     $.showConfirmModal({
                         title: 'Are you sure you want to skip?',
-                        body: 'Advanced care planning by MD during visit is needed to bill the G0506 code.',
+                        body: 'Advanced care planning by MD during OR after visit is needed to bill the G0506 code.',
                         confirmText: 'Skip',
                         cancelText: 'Go Back',
-                        neverShow: true
+                        neverShow: true,
+                        name: 'skip-assessment'
                     }).then(function (obj) {
                         if (obj.action) {
                             location.href = "{{asset('manage-patients/' . $patient->id . '/view-careplan?skippedAssessment')}}"

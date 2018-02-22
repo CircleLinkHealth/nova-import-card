@@ -1,10 +1,12 @@
 <?php namespace App;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasSettings;
 use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 /**
  * App\Practice
@@ -75,7 +77,8 @@ class Practice extends \App\BaseModel
 {
     use HasSettings,
         SaasAccountable,
-        SoftDeletes;
+        SoftDeletes,
+        Notifiable;
 
     protected $fillable = [
         'saas_account_id',
@@ -126,7 +129,11 @@ class Practice extends \App\BaseModel
             $q->whereName('participant');
         });
     }
-    
+
+    public function providers() {
+        return Practice::getProviders($this->id);
+    }
+
     public function nurses() {
         return $this->users()->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
@@ -232,6 +239,10 @@ class Practice extends \App\BaseModel
         return $data;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function getAddress()
     {
 
@@ -239,6 +250,10 @@ class Practice extends \App\BaseModel
 
         if (is_null($primary)) {
             $primary = $this->locations()->first();
+        }
+
+        if (is_null($primary)){
+            throw new \Exception('This Practice does not have a location.', 500);
         }
 
         return [
@@ -292,5 +307,14 @@ class Practice extends \App\BaseModel
 
     public function getInvoiceRecipientsArray() {
         return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
+    }
+
+    /**
+     * Get phone number in this format xxx-xxx-xxxx
+     *
+     * @return string
+     */
+    public function getNumberWithDashesAttribute() {
+        return (new StringManipulation())->formatPhoneNumber($this->outgoing_phone_number);
     }
 }

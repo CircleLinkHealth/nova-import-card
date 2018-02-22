@@ -58,7 +58,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed $last_name
  * @property mixed $state
  * @property mixed $zip
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientMonthlySummary[] $monthlySummaries
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read \App\User $user
@@ -121,10 +120,17 @@ class Patient extends \App\BaseModel
     use SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
+    const PAUSED = 'paused';
+    const ENROLLED = 'enrolled';
+    const WITHDRAWN = 'withdrawn';
+
     protected $dates = [
         'date_withdrawn',
         'date_paused',
+        'paused_letter_printed_at',
     ];
+
+    
 
     /**
      * The connection name for the model.
@@ -307,18 +313,16 @@ class Patient extends \App\BaseModel
     {
         $statusBefore                   = $this->ccm_status;
         $this->attributes['ccm_status'] = $value;
-        // update date tracking
+
         if ($statusBefore !== $value) {
             if ($value == 'paused') {
-                $this->attributes['date_paused'] = date("Y-m-d H:i:s");
+                $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             };
             if ($value == 'withdrawn') {
-                $this->attributes['date_withdrawn'] = date("Y-m-d H:i:s");
+                $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             };
         }
         $this->save();
-
-        return true;
     }
 
 
@@ -383,9 +387,9 @@ class Patient extends \App\BaseModel
      * @return array of PatientContactWindows
      */
     public function attachNewOrDefaultCallWindows(
-        array $days,
-        $fromTime,
-        $toTime
+        array $days = [],
+        $fromTime = null,
+        $toTime = null
     ) {
         $daysNumber = [
             1,
@@ -445,6 +449,16 @@ class Patient extends \App\BaseModel
         return Nurse::where('user_id', $id)->first();
     }
 
+    /**
+     * Scope by ccm_status
+     *
+     * @param $builder
+     * @param $status
+     * @param string $operator
+     */
+    public function scopeCcmStatus($builder, $status, $operator = '=') {
+        $builder->where('ccm_status', $operator, $status);
+    }
 
     /**
      * Returns nurseInfos that have:
@@ -493,5 +507,18 @@ class Patient extends \App\BaseModel
     public function location()
     {
         return $this->belongsTo(Location::class, 'preferred_contact_location');
+    }
+
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'ccm_status' => $this->ccm_status,
+            'birth_date' => $this->birth_date,
+            'gender' => $this->gender,
+            'created_at' => $this->created_at->format('c'),
+            'updated_at' => $this->updated_at->format('c'),
+            'cur_month_activity_time' => $this->cur_month_activity_time
+        ];
     }
 }

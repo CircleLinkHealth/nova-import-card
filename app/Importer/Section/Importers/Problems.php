@@ -80,7 +80,6 @@ class Problems extends BaseImporter
 
                 if ($problemMap) {
                     array_push($problemsToActivate, $problemMap->cpm_problem_id);
-                    $importedProblem->activate = true;
                     $importedProblem->cpm_problem_id = $problemMap->cpm_problem_id;
                     $importedProblem->save();
                     continue;
@@ -100,7 +99,6 @@ class Problems extends BaseImporter
 
                     if (str_contains(strtolower($importedProblem->name), strtolower($keyword))) {
                         array_push($problemsToActivate, $cpmProblem->id);
-                        $importedProblem->activate = true;
                         $importedProblem->cpm_problem_id = $cpmProblem->id;
                         $importedProblem->save();
                         continue 3;

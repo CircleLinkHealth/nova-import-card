@@ -13,6 +13,7 @@ use App\Models\CPM\Biometrics\CpmWeight;
 use App\Patient;
 use App\PatientContactWindow;
 use App\Practice;
+use App\Repositories\PatientReadRepository;
 use App\Role;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
@@ -21,8 +22,11 @@ use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmSymptomService;
+use App\Services\PdfService;
 use App\Services\ReportsService;
 use App\Services\UserService;
+use App\Services\CareplanService;
+use App\Services\PatientService;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -34,11 +38,15 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
 {
+    private $patientReadRepository;
+    private $pdfService;
     private $formatter;
 
-    public function __construct(ReportFormatter $formatter)
+    public function __construct(ReportFormatter $formatter, PatientReadRepository $patientReadRepository, PdfService $pdfService)
     {
         $this->formatter = $formatter;
+        $this->patientReadRepository = $patientReadRepository;
+        $this->pdfService = $pdfService;
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
@@ -81,9 +89,9 @@ class PatientCareplanController extends Controller
             if ($careplanStatus == 'provider_approved') {
                 $careplanStatus = $careplanStatusLink = 'Approved';
 
-                $approver = $patient->carePlan->providerApproverUser;
+                $approver = $patient->carePlan->provider_approver_name;
                 if ($approver) {
-                    $approverName         = $approver->fullName;
+                    $approverName         = $approver;
                     $carePlanProviderDate = $patient->carePlanProviderDate;
 
                     $careplanStatusLink = '<span data-toggle="" title="' . $approverName . ' ' . $carePlanProviderDate . '">Approved</span>';
@@ -135,7 +143,7 @@ class PatientCareplanController extends Controller
         ]));
     }
 
-    public function printMultiCareplan(Request $request)
+    public function printMultiCareplan(Request $request, CareplanService $careplanService, PatientService $patientService)
     {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
@@ -149,40 +157,29 @@ class PatientCareplanController extends Controller
         }
 
         $users         = explode(',', $request['users']);
-        $reportService = new ReportsService();
-        //Save Printed Careplan as Meta
-        foreach ($users as $user_id) {
-            $user = User::find($user_id);
-            if ($user) {
-                $user->careplan_last_printed = Carbon::now();
-                $user->save();
+
+        if ($request->input('final')) {
+            foreach($users as $userId) {
+                $careplanService->repo()->approve($userId, auth()->user()->id);
+                $patientService->setStatus($userId, Patient::ENROLLED);
             }
         }
 
-        // vars
-        $storageDirectory = 'storage/pdfs/careplans/';
-        $datetimePrefix   = date('Y-m-dH:i:s');
-        $pageFileNames    = [];
-
-        try {
-            // first create blank page
-            $pdf = App::make('snappy.pdf.wrapper');
-            $pdf->loadView('wpUsers.patient.careplan.print', [
-                'patient' => false,
-                'isPdf'   => true,
+        CarePlan::whereIn('user_id', $users)
+            ->update([
+                'last_printed' => Carbon::now()->toDateTimeString()
             ]);
 
-            $fileNameBlankPage         = $storageDirectory . $datetimePrefix . '-0-PDFblank.pdf';
-            $fileNameWithPathBlankPage = base_path($fileNameBlankPage);
-            $pdf->save($fileNameWithPathBlankPage, true);
-        } catch (\Exception $e) {
-            \Log::critical($e);
-        }
+        $storageDirectory = 'storage/pdfs/careplans/';
+        $pageFileNames    = [];
+
+        $fileNameWithPathBlankPage = $this->pdfService->blankPage();
 
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
             // add p to datetime prefix
+            $datetimePrefix   = date('Y-m-d-' . $user_id . '-H-i-s');
             $prefix   = $datetimePrefix . '-' . $p;
             $user     = User::find($user_id);
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
@@ -190,108 +187,55 @@ class PatientCareplanController extends Controller
             if (empty($careplan)) {
                 return false;
             }
+
+            $fileNameWithPath = base_path($storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf');
+            $pageCount = 0;
             try {
                 //HTML render to help us with debugging
                 if ($request->filled('render') && $request->input('render') == 'html') {
                     return view('wpUsers.patient.multiview', [
-                        'careplans'    => [$user_id => $careplan],
+                        'careplans'    => [ $user_id => $careplan],
                         'isPdf'        => true,
                         'letter'       => $letter,
                         'problemNames' => $careplan['problem'],
                         'careTeam'     => $user->careTeamMembers,
+                        'data'         => $careplanService->careplan($user_id)
                     ]);
                 }
 
-                // build pdf
-                $pdf = App::make('snappy.pdf.wrapper');
-//            leaving these here in case we need them
-//            $pdf->setOption('disable-javascript', false);
-//            $pdf->setOption('enable-javascript', true);
-//            $pdf->setOption('javascript-delay', 400);
-
-                $pdf->loadView('wpUsers.patient.multiview', [
+                $fileNameWithPath = $this->pdfService->createPdfFromView('wpUsers.patient.multiview', [
                     'careplans'    => [$user_id => $careplan],
                     'isPdf'        => true,
                     'letter'       => $letter,
                     'problemNames' => $careplan['problem'],
                     'careTeam'     => $user->careTeamMembers,
-                ]);
-                $pdf->setOption('footer-center', 'Page [page]');
-                $pdf->setOption('margin-top', '12');
-                $pdf->setOption('margin-left', '25');
-                $pdf->setOption('margin-bottom', '15');
-                $pdf->setOption('margin-right', '0.75'); //31.75 //1.25 inches
+                    'data'         => $careplanService->careplan($user_id)
+                ], $fileNameWithPath);
 
-                $fileName         = $storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf';
-                $fileNameWithPath = base_path($fileName);
-
-                $pdf->save($fileNameWithPath, true);
+                $pageCount = $this->pdfService->countPages($fileNameWithPath);
             } catch (\Exception $e) {
                 \Log::critical($e);
-                //dd($e);
             }
-//            $pageCount = $this->count_pages($fileNameWithPath);
-//            echo PHP_EOL . '<br /><br />' . $fileNameWithPath . ' - PAGE COUNT: ' . $pageCount;
-
             // append blank page if needed
-//            if ((count($users) > 1) && $pageCount % 2 != 0) {
-//                $fileName         = $storageDirectory . $this->merge_pages([
-//                        $fileName,
-//                        $fileNameBlankPage,
-//                    ], $prefix, $storageDirectory);
-//                $fileNameWithPath = base_path($fileName);
-//            }
+            if ((count($users) > 1) && $pageCount % 2 != 0) {
+                $fileNameWithPath         = $this->pdfService->mergeFiles([
+                        $fileNameWithPath,
+                        $fileNameWithPathBlankPage,
+                    ], base_path($storageDirectory . $prefix . "-merged.pdf"));
+            }
 
             // add to array
-            $pageFileNames[] = $fileName;
+            $pageFileNames[] = $fileNameWithPath;
 
             $p++;
         }
 
         // merge to final file
-//        $mergedFileName         = $this->merge_pages($pageFileNames, $datetimePrefix, $storageDirectory);
-//        $mergedFileNameWithPath = $storageDirectory . $this->merge_pages(
-//                $pageFileNames,
-//                $datetimePrefix,
-//                $storageDirectory
-//            );
+        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, base_path($storageDirectory . $datetimePrefix . "-merged.pdf"));
 
-        //dd($mergedFileName . ' - PAGE COUNT: '.$this->count_pages(base_path($mergedFileNameWithPath)));
-
-        return response(file_get_contents($fileNameWithPath), 200, [
-            'Content-Type'        => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
-        ]);
-        //return view('wpUsers.patient.multiview', compact(['careplans']));
+        return response()->file($mergedFileNameWithPath);
     }
 
-    public function count_pages($pdfname)
-    {
-        $pdftext = file_get_contents($pdfname);
-        $num     = preg_match_all("/\/Page\W/", $pdftext, $dummy);
-
-        return $num;
-    }
-
-    public function merge_pages(
-        $fileArray,
-        $prefix = '',
-        $storageDirectory = ''
-    ) {
-        //$fileArray= array("name1.pdf","name2.pdf","name3.pdf","name4.pdf");
-
-        $outputFileName = $prefix . "-merged.pdf";
-        $outputName     = base_path($storageDirectory . $prefix . "-merged.pdf");
-
-        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=$outputName ";
-//Add each pdf file to the end of the command
-        foreach ($fileArray as $file) {
-            $cmd .= base_path($file) . " ";
-        }
-        $result = shell_exec($cmd);
-
-        return $outputFileName;
-    }
 
     /**
      * Display patient add/edit

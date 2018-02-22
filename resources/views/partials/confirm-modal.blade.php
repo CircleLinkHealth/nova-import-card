@@ -87,8 +87,27 @@
                 $cancel.text(modal.cancelText || 'Cancel');
                 $confirm.off('click');
                 $cancel.off('click');
-                if (!!modal.neverShow) $neverShowContainer.show();
+                var key = 'confirm-modal:' + (modal.name || 'unknown') + ':skipped'
+                if (!!modal.neverShow) {
+                    $neverShow.change(function (e) {
+                        if (window.localStorage) {
+                            if (e.target.checked) {
+                                window.localStorage.setItem(key, true)
+                            }
+                            else {
+                                window.localStorage.removeItem(key)
+                            }
+                        }
+                    })
+                    $neverShowContainer.show();
+                }
                 else $neverShowContainer.hide();
+                if (window.localStorage.getItem(key)) {
+                    return Promise.resolve({
+                        action: true,
+                        neverShowAgain: true
+                    })
+                }
                 $modal.modal({backdrop: 'static', keyboard: false});
 
                 var isComplex= !!modal.neverShow;

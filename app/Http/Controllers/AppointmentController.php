@@ -51,12 +51,14 @@ class AppointmentController extends Controller
 
         $was_completed = isset($input['is_completed']) ?? false;
 
+        $providerId = $input['provider'] != 'null' ? $input['provider'] : null;
+
         $data = Appointment::create([
 
             'patient_id' => $input['patientId'],
             'author_id' => auth()->user()->id,
             'type' =>  $input['appointment_type'],
-            'provider_id' => $input['provider'],
+            'provider_id' => $providerId,
             'date' => $input['date'],
             'time' => $input['time'],
             'comment' => $input['comment'],

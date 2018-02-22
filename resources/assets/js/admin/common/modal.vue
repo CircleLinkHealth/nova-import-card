@@ -25,7 +25,7 @@
                             </div>
                         </div>
 
-                        <div class="modal-footer close-footer">
+                        <div class="modal-footer close-footer" v-if="!noButtons">
                             <input type="button" v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()" :value="cancelText || 'Cancel'">
                             <input type="button" class="modal-button modal-ok-button" @click="ok()" :value="okText || 'OK'">
                         </div>
@@ -49,6 +49,7 @@
             'no-title', 
             'no-footer', 
             'no-cancel',
+            'no-buttons',
             'info', 
             'class-name',
             'cancelText',

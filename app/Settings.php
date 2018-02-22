@@ -69,6 +69,8 @@ class Settings extends \App\BaseModel
         'email_careplan_approval_reminders',
         'email_note_was_forwarded',
         'email_weekly_report',
+
+        'bill_to',
     ];
 
     /**

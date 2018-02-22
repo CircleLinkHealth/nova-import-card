@@ -12,7 +12,7 @@
                    role="button">Patient Overview</a>
             </li>
 
-            @if ($patient->careplan_mode == App\CarePlan::WEB)
+            {{--  @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <li class="inline-block">
                     <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
                        role="button">Edit Care Plan</a>
@@ -24,7 +24,12 @@
                     <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
                        role="button">Patient Profile</a>
                 </li>
-            @endif
+            @endif  --}}
+
+            <li class="inline-block">
+                <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                    role="button">Patient Profile</a>
+            </li>
 
 
             <li class="inline-block dropdown">
@@ -35,10 +40,12 @@
                         <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
                             Activity Report</a>
                     </li>
-                    {{--<li>--}}
-                        {{--<a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress--}}
-                            {{--Report</a>--}}
-                    {{--</li>--}}
+                    @if(auth()->user()->isNotSaas())
+                    <li>
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
+                            Report</a>
+                    </li>
+                        @endif
                 </ul>
             </li>
 

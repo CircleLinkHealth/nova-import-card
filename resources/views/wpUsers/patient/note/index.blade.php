@@ -127,7 +127,7 @@
                                                 return "<a href='<?php echo route('patient.note.view', [
                                                     'patientId' => $patient->id,
                                                     'noteId'    => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>";
+                                                ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
                                             else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
                                                 return "<a href='<?php echo route('patient.activity.view', [
                                                     'patientId' => $patient->id,
@@ -144,13 +144,13 @@
                                         fillspace: true,
                                         width: 400,
                                         sort: 'string',
-                                        tooltip: ['#comment#']
+                                        tooltip: false
                                     },
                                     {
                                         id: "performed_at",
                                         header: ["Date", {content: "textFilter", placeholder: "Filter"}],
                                         width: 100,
-                                        sort: 'string'
+                                        sort: 'date'
                                     },
 
                                     {
