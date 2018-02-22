@@ -1817,7 +1817,6 @@ Route::group([
     });
 });
 
-
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
     'as'   => 'process.eligibility.google.drive'
