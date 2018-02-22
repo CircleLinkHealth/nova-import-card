@@ -49,22 +49,22 @@ class AthenaApiCallsTest extends TestCase
 
     public function test_it_creates_and_gets_patient_appointments()
     {
+        //creates slot and appointment
         $appointment = $this->createNewAthenaAppointment();
 
+        //retrieves all patient appointments
         $patientAppointments = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
 
         $this->assertTrue(is_array($patientAppointments));
 
 
 
-
-
         //test appointment notes
-        $note = $this->addAppointmentNote($appointment['appointmentid']);
+        $note = $this->addAppointmentNote($appointment[0]['appointmentid']);
 
         $this->assertTrue(is_array($note));
 
-        $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment['appointmentid']);
+        $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment[0]['appointmentid']);
 
         $this->assertTrue(is_array($appointmentNotes));
 
@@ -208,7 +208,7 @@ class AthenaApiCallsTest extends TestCase
 
         $response = $this->api->postAppointmentNotes($this->athenaPracticeId, $appointmentId, $noteText);
 
-        if (array_key_exists(0, $response)) {
+        if (array_key_exists('success', $response)) {
             $this->assertTrue(true);
 
             return $response;
