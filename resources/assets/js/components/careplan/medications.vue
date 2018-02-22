@@ -9,8 +9,10 @@
             </div>
         </div>
         <slot v-if="medications.length === 0">
-            <div class="col-xs-12 text-center">
-                No Medications at this time
+            <div class="col-xs-12">
+                <p>
+                    No Medications at this time
+                </p>
             </div>
         </slot>
         <div class="row gutter" v-if="medications.length > 0">
