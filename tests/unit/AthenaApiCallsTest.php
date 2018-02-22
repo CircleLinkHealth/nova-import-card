@@ -47,18 +47,28 @@ class AthenaApiCallsTest extends TestCase
         $this->assertEquals(0, $response['totalcount']);
     }
 
-    public function test_it_gets_patient_existing_appointments()
-    {
-
-    }
-
-    public function test_it_gets_patient_new_appointments()
+    public function test_it_creates_and_gets_patient_appointments()
     {
         $appointment = $this->createNewAthenaAppointment();
 
-        $response = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
+        $patientAppointments = $this->api->getPatientAppointments($this->athenaPracticeId, $this->athenaPatientId);
 
-        $this->assertTrue(is_array($response));
+        $this->assertTrue(is_array($patientAppointments));
+
+
+
+
+
+        //test appointment notes
+        $note = $this->addAppointmentNote($appointment['appointmentid']);
+
+        $this->assertTrue(is_array($note));
+
+        $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment['appointmentid']);
+
+        $this->assertTrue(is_array($appointmentNotes));
+
+
 
 
     }
@@ -190,6 +200,22 @@ class AthenaApiCallsTest extends TestCase
         $this->assertTrue(true, 'Problem created in AthenaAPI');
 
         return $problem['problemid'];
+    }
+
+    private function addAppointmentNote($appointmentId){
+
+        $noteText = 'TEST';
+
+        $response = $this->api->postAppointmentNotes($this->athenaPracticeId, $appointmentId, $noteText);
+
+        if (array_key_exists(0, $response)) {
+            $this->assertTrue(true);
+
+            return $response;
+        }
+
+        $this->assertTrue(false);
+
     }
 
 
