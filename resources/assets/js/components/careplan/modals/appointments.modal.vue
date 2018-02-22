@@ -117,7 +117,7 @@
                     time: '09:00:00',
                     type: null,
                     comment: null,
-                    isPending: () => (new Date(this.newAppointmentDate + ' ' + this.newAppointment.time) > new Date())
+                    isPending: () => (moment(this.newAppointmentDate + ' ' + this.newAppointment.time).toDate() > new Date())
                 },
                 today: moment().add(-1, 'days').toDate(),
                 selectedAppointment: null,
@@ -150,7 +150,7 @@
                     time: '09:00:00',
                     type: null,
                     comment: null,
-                    isPending: () => (new Date(this.newAppointmentDate + ' ' + this.newAppointment.time) > new Date())
+                    isPending: () => (moment(this.newAppointmentDate + ' ' + this.newAppointment.time).toDate() > new Date())
                 }
             },
             removeAppointment(index) {
