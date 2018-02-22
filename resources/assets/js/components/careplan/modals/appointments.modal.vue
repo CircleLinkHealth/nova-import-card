@@ -17,12 +17,19 @@
                             <div class="col-sm-12 top-20">
                                 <v-select class="form-control" v-model="newAppointment.provider" :options="providers"></v-select>
                             </div>
-                            <div class="col-sm-4 top-20">
-                                <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="yyyy-MM-dd"
-                                    v-model="newAppointment.date" :disabled="{ to: today }" placeholder="YYYY-MM-DD" required></datepicker>
-                            </div>
-                            <div class="col-sm-4 top-20">
-                                <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
+                            <div class="col-sm-8 top-20">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <datepicker class="form-control pad-0" :class="{ error: !newAppointment.isPending() }" format="yyyy-MM-dd"
+                                            v-model="newAppointment.date" :disabled="{ to: today }" placeholder="YYYY-MM-DD" required></datepicker>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="time" class="form-control" :class="{ error: !newAppointment.isPending() }" v-model="newAppointment.time" required />
+                                    </div>
+                                    <div class="col-sm-12" v-if="!newAppointment.isPending()">
+                                        <h5 class="alert alert-danger">Please, select a future date/time</h5>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-4 top-20">
                                 <input type="text" class="form-control" v-model="newAppointment.type" placeholder="Reason" required />
