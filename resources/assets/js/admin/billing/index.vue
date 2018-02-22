@@ -94,6 +94,7 @@
                             <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
                         </div>
                         <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
+                        <div class="loading" v-if="props.row.promises['update_chargeables']"></div>
                     </div>
                 </template>
             </v-client-table>
@@ -276,7 +277,16 @@
                                 item.chargeable_services = serviceIDs
                                 console.log('service-ids', serviceIDs)
                                 item.promises.update_chargeables = true
-                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), )
+                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
+                                    report_id: item.id,
+                                    patient_chargeable_services: serviceIDs
+                                }).then(response => {
+                                    console.log('billing:chargeable-services:update', response.data)
+                                    item.promises.update_chargeables = false
+                                }).catch(err => {
+                                    console.error('billing:chargeable-services:update', err)
+                                    item.promises.update_chargeables = false
+                                })
                             }
                         }
                         return item
@@ -290,9 +300,10 @@
             },
 
             showChargeableServicesModal(row) {
+                const self = this
                 Event.$emit('modal-chargeable-services:show', {
                     title: 'Select Chargeable Services for ' + row.Patient,
-                    row: row
+                    row
                 })
             },
 

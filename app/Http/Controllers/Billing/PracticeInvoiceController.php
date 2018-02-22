@@ -12,6 +12,7 @@ use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Chargeable;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
@@ -161,27 +162,41 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $reportId         = $request['report_id'];
+        $reportId = $request->input('report_id');
 
         if (!$reportId) {
             return $this->badRequest('report_id is a required field');
         }
 
         //need array of IDs
-        $chargeableServices = $request['patient_chargeable_services'];
+        $chargeableIDs = $request->input('patient_chargeable_services');
 
-        if (!is_array($chargeableServices)) {
+        if (!is_array($chargeableIDs)) {
             return $this->badRequest('patient_chargeable_services must be an array');
+        }
+        else {
+            $chargeableIDs = new Collection($chargeableIDs);
         }
 
 
-        $summary = PatientMonthlySummary::find($reportId);
+        $summary = PatientMonthlySummary::where('patient_id', $reportId)->first();
 
         if (!$summary) {
             return $this->badRequest("Report with id $reportId not found.");
         }
 
-        $summary->chargeableServices()->sync($chargeableServices);
+        $summary->chargeables()->delete();
+
+        $chargeableIDs->map(function ($id) use ($reportId) {
+            $chargeable = new Chargeable();
+            $chargeable->chargeable_service_id = $id;
+            $chargeable->chargeable_id = $reportId;
+            $chargeable->chargeable_type = PatientMonthlySummary::class;
+            $chargeable->save();
+            return $chargeable;
+        });
+
+        //$summary->chargeableServices()->sync($chargeableServices);
 
         return $this->ok($summary);
 
