@@ -265,4 +265,8 @@
     .vdp-datepicker.form-control input[type='text'] {
         height: 33px;
     }
+
+    .vdp-datepicker.form-control.error div {
+        border: 1px solid red;
+    }
 </style>
