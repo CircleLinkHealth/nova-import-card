@@ -150,7 +150,7 @@
                     time: '09:00:00',
                     type: null,
                     comment: null,
-                    isPending: () => (new Date(this.newAppointment.date + ' ' + this.newAppointment.time) > new Date())
+                    isPending: () => (new Date(this.newAppointmentDate + ' ' + this.newAppointment.time) > new Date())
                 }
             },
             removeAppointment(index) {
