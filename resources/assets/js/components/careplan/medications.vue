@@ -8,10 +8,12 @@
                 </h2>
             </div>
              <div class="col-xs-12 text-center" v-if="medications.length === 0">
-                No Medications at this time
+                 <p>
+                     No Medications at this time
+                 </p>
             </div>
         </div>
-       
+
         <div class="row gutter" v-if="medications.length > 0">
             <div class="col-xs-12">
                 <ul v-if="medications.length">
