@@ -3,24 +3,28 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
+use App\Filters\CallFilters;
+use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
-use App\Http\Resources\User as UserResource;
+use App\Http\Resources\User;
 use App\Services\Calls\ManagementService;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
 
 class CallsController extends ApiController
 {
     private $service;
+    private $noteService;
 
-    public function __construct(ManagementService $service)
+    public function __construct(ManagementService $service, NoteService $noteService)
     {
-        $this->service = $service;
+        $this->service     = $service;
+        $this->noteService = $noteService;
     }
 
     public function toBeDeprecatedIndex()
@@ -147,7 +151,7 @@ class CallsController extends ApiController
                              }
                          })
                          ->editColumn('patient_name', function ($call) {
-                             return '<a href="' . \URL::route(
+                             return '<a href="' . \route(
                                      'patient.demographics.show',
                                      ['patientId' => $call->inboundUser->id]
                                  ) . '" target="_blank">' . $call->patient_name . '</span>';
@@ -251,7 +255,7 @@ class CallsController extends ApiController
                                  return '';
                              }
 
-                             return '<a target="_blank" href="' . \URL::route(
+                             return '<a target="_blank" href="' . \route(
                                      'patient.note.index',
                                      ['patientId' => $call->inboundUser->id]
                                  ) . '">Notes</a>';
@@ -281,11 +285,11 @@ class CallsController extends ApiController
                                                  $notesHtml .= '<div class="label label-info" style="margin:5px;">Successful Clinical Call</div>';
                                              }
 
-                                             if ($note->mail->count() > 0) {
+                                             if ($this->noteService->getForwards($note)->count() > 0) {
                                                  $mailText = 'Forwarded: ';
-                                                 foreach ($note->mail as $mail) {
-                                                     if ($mail->receiverUser) {
-                                                         $mailText .= $mail->receiverUser->display_name . ', ';
+                                                 foreach ($this->noteService->getForwards($note) as $name => $forwardedAt) {
+                                                     if ($name) {
+                                                         $mailText .= $name . ', ';
                                                      }
                                                  }
                                                  $notesHtml .= '<div class="label label-info" style="margin:5px;" data-toggle="tooltip" title="' . rtrim(
@@ -323,49 +327,34 @@ class CallsController extends ApiController
                          ->make(true);
     }
 
-    /**    
-     *   @SWG\GET(
+    /**
+     * @SWG\GET(
      *     path="/admin/calls",
      *     tags={"calls"},
      *     summary="Get Calls Info",
      *     description="Display a listing of calls",
      *     @SWG\Header(header="X-Requested-With", type="String", default="XMLHttpRequest"),
      *     @SWG\Response(
-     *         response="default", 
+     *         response="default",
      *         description="A listing of calls"
      *     )
-     *   )   
+     *   )
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(CallFilters $filters)
     {
-        $calls = $this->service->getScheduledCalls()->paginate(30);
+        $calls = Call::filter($filters)
+                     ->paginate(15);
 
         return CallResource::collection($calls);
     }
 
-    public function patientsWithoutScheduledCalls($practiceId) {
+    public function patientsWithoutScheduledCalls($practiceId)
+    {
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
-            ->get([
-                'id',
-                'first_name',
-                'last_name',
-                'suffix',
-                'city',
-                'state'
-            ])->map(function ($patient) {
-                return [
-                    'id' =>  $patient->id,
-                    'first_name' =>  $patient->first_name,
-                    'last_name' =>  $patient->last_name,
-                    'suffix' =>  $patient->suffix,
-                    'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
-                    'city' =>  $patient->city,
-                    'state' =>  $patient->state
-                ];
-            })->toArray();
+                                  ->get();
 
-        return response()->json($patients);
+        return User::collection($patients);
     }
 
     /**
@@ -382,7 +371,7 @@ class CallsController extends ApiController
             $ids = explode(',', $ids);
         }
 
-        if (! is_array($ids)) {
+        if ( ! is_array($ids)) {
             $ids = [$ids];
         }
 

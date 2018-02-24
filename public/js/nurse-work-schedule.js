@@ -23427,7 +23427,7 @@ var state = {
         window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(function (resp) {
             return cb(resp.data);
         }, function (error) {
-            return ecb(error.response.data);
+            return ecb(error.response.data.errors);
         });
     },
     delete: function _delete(cb) {
@@ -23442,7 +23442,7 @@ var state = {
         window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(function (resp) {
             return cb(resp.data);
         }, function (error) {
-            return ecb(error.response.data);
+            return ecb(error.response.data.errors);
         });
     }
 });

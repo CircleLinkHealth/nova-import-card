@@ -185,12 +185,14 @@
         },
         next() {
           if (!this.$nextPromise) {
-            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?page=' + this.page)).then((result) => result.data).then(result => {
+            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?scheduled&page=' + this.page)).then((result) => result).then(result => {
+                result = result.data;
+
                 console.log(result)
               if (result) {
                 const calls = result.data;
                 if (calls && Array.isArray(calls)) {
-                  calls.forEach(call => {
+                    calls.forEach(call => {
                     if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
                     if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
                     call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?

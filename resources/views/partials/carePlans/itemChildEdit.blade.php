@@ -1,6 +1,6 @@
 <div class="row">
     <button type="button" class="btn btn-success btn-xs" data-toggle="collapse" href="#itemEdit{{ $planItemChild->id }}" aria-expanded="false" aria-controls="itemEdit{{ $planItemChild->id }}">Edit</button>
-    <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-danger btn-xs section-reload" section="{{ $careSection->id }}">Remove</a>
+    <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-danger btn-xs section-reload" section="{{ $careSection->id }}">Remove</a>
 </div>
 <div class="collapse" id="itemEdit{{ $planItemChild->id }}" style="background:#ccc;">
     [ui_sort:{{ $planItemChild->ui_sort }}]<br />

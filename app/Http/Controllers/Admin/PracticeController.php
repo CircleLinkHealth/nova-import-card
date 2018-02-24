@@ -22,6 +22,7 @@ class PracticeController extends Controller
         }
         // display view
         $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
+
         return view('admin.wpBlogs.index', [ 'wpBlogs' => $wpBlogs ]);
     }
 

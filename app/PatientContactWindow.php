@@ -327,10 +327,10 @@ class PatientContactWindow extends \App\BaseModel
             ];
         }
 
-        $adjusted_offset = Carbon::parse($offset_date)->subDay()->toDateString();
+        $adjusted_offset = $offset_date->copy()->subDay();
 
         foreach ($patient_windows as $window) {
-            $days[] = Carbon::parse($adjusted_offset)->next(clhToCarbonDayOfWeek($window->day_of_week));
+            $days[] = $adjusted_offset->copy()->next(clhToCarbonDayOfWeek($window->day_of_week));
         }
 
         $date = min($days)->toDateString();

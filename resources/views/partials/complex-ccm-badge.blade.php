@@ -1,10 +1,10 @@
 <div name="complexity_toggle_container">
-    <form method="post" name="complexity_toggle_form" id="complexity_toggle" action="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}" class="form-horizontal">
+    <form method="post" name="complexity_toggle_form" id="complexity_toggle" action="{{route('patient.ccm.toggle', array('patient' => $patient->id))}}" class="form-horizontal">
         {{ csrf_field() }}
         <div class="radio-inline">
             <input type="checkbox" name="complex" {{$ccm_complex ? 'checked' : ''}} id="complex"/>
             <label for="complex"><span> </span>Complex CCM</label>
-            <input type="hidden" name="action" value="{{URL::route('patient.ccm.toggle', array('patient' => $patient->id))}}" />
+            <input type="hidden" name="action" value="{{route('patient.ccm.toggle', array('patient' => $patient->id))}}" />
         </div>
     </form>
 </div>
@@ -25,8 +25,8 @@
         var $modal = $("#confirmButtonModal");
         var ccmBadgeModelState = {
             title: "Confirm Complex CCM Patient",
-            body: `<p>Please confirm patient will benefit from extra CCM care time this month.</p>
-                   <p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>`
+            body: '<p>Please confirm patient will benefit from extra CCM care time this month.</p>' +
+                   '<p>Friendly Reminder: A Medication Reconciliation is required for Complex CCM patients.</p>'
         }
         var submitViaAjax = function () {
             //console.log("complex-ccm-badge-form-request", $action.val(), $(this).serialize())

@@ -28,7 +28,6 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Addendum[] $addendums
  * @property-read \App\User $author
  * @property-read \App\Call $call
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\MailLog[] $mail
  * @property-read \App\User $patient
  * @property-read \App\User $program
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note whereAuthorId($value)
@@ -84,10 +83,6 @@ class Note extends \App\BaseModel implements PdfReport
         return $this->belongsTo(User::class, 'logger_id')->withTrashed();
     }
 
-    public function mail()
-    {
-        return $this->hasMany('App\MailLog');
-    }
 
     public function call()
     {

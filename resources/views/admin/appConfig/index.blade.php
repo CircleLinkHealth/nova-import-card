@@ -17,7 +17,7 @@
                     @if(Cerberus::hasPermission('app-config-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('admin.appConfig.create', array()) }}" class="btn btn-success">New App Config</a>
+                                <a href="{{ route('admin.appConfig.create', array()) }}" class="btn btn-success">New App Config</a>
                             </div>
                         </div>
                     @endif
@@ -39,7 +39,7 @@
                         <tbody>
                         @foreach( $appConfigs as $appConfig )
                             <tr>
-                                <td><a href="{{ URL::route('admin.appConfig.show', array('id' => $appConfig->id)) }}" class="btn btn-primary">Detail</a></td>
+                                <td><a href="{{ route('admin.appConfig.show', array('id' => $appConfig->id)) }}" class="btn btn-primary">Detail</a></td>
                                 <td>{{ $appConfig->id }}</td>
                                 <td>{{ $appConfig->config_key }}</td>
                                 <td>{{ $appConfig->config_value }}</td>
@@ -47,8 +47,8 @@
                                 <td>{{ date('F d, Y g:i A', strtotime($appConfig->updated_at)) }}</td>
                                 <td>
                                     @if(Cerberus::hasPermission('app-config-manage'))
-                                        <a href="{{ URL::route('admin.appConfig.edit', array('id' => $appConfig->id)) }}" class="btn btn-primary">Edit</a>
-                                        <a href="{{ URL::route('admin.appConfig.destroy', array('id' => $appConfig->id)) }}" class="btn btn-danger">Delete</a>
+                                        <a href="{{ route('admin.appConfig.edit', array('id' => $appConfig->id)) }}" class="btn btn-primary">Edit</a>
+                                        <a href="{{ route('admin.appConfig.destroy', array('id' => $appConfig->id)) }}" class="btn btn-danger">Delete</a>
                                     @endif
                                 </td>
                             </tr>

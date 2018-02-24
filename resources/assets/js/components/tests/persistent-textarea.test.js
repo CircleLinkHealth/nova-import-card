@@ -1,24 +1,22 @@
 import PersistentTextArea from '../persistent-textarea'
 import { mount } from 'vue-test-utils'
-import stor from '../../stor'
-import Vue from 'vue'
-global.window = {}
-import localStorage from 'mock-local-storage'
-window.localStorage = global.localStorage
+import { sstor } from '../../stor'
+
+const STORAGE_KEY = 'my-textarea'
 
 describe('Persistent-TextArea', () => {
     const comp = mount(PersistentTextArea, {
-        props: {
-            storageKey: 'my-textarea'
+        propsData: {
+            storageKey: STORAGE_KEY
         }
     })
 
     it('should mount', () => {
-        console.log(stor.storage())
+        
     })
     
     it('should have a storage-key prop', () => {
-        expect(comp.hasProp('storageKey')).toBe(true)
+        expect(comp.hasProp('storageKey', STORAGE_KEY)).toBe(true)
     })
 
     it('should have a textarea', () => {
@@ -28,18 +26,11 @@ describe('Persistent-TextArea', () => {
     
     it('should be persistent', () => {
         const textarea = comp.vm.$el
-        textarea.onchange = (e) => {
-            console.log(localStorage.getItem('my-textarea'))
-        }
         textarea.value = 'Hello World'
-        textarea.dispatchEvent(new Event('input'))
-
-        Vue.nextTick(() => {
-            console.log(stor.get('my-textarea'))
-        }) 
-
-        // setImmediate(() => {
-        //     expect(stor.get('my-textarea')).toBe('Hello World')
-        // })
+        comp.vm.$on('input', (e) => {
+            expect(sstor.get(STORAGE_KEY)).toEqual(textarea.value)
+        })
+        textarea.dispatchEvent(new Event('input')) 
+        comp.vm.changeTextArea()
     })
 })

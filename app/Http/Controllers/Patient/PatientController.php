@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\CarePlanViewService;
 use App\User;
+use App\Services\PdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +15,12 @@ use URL;
 class PatientController extends Controller
 {
     private $formatter;
+    private $pdfService;
 
-    public function __construct(ReportFormatter $formatter)
+    public function __construct(ReportFormatter $formatter, PdfService $pdfService)
     {
         $this->formatter = $formatter;
+        $this->pdfService = $pdfService;
     }
 
     /**
@@ -85,7 +88,6 @@ class PatientController extends Controller
                   ->orderBy('obs_date', 'desc')
                   ->take(100);
             },
-            'patientInfo.monthlySummaries',
         ])
                       ->where('id', $patientId)
                       ->first();
@@ -263,11 +265,23 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showPatientListing()
-    {
-        $data = $this->formatter->patientListing();
-
-        return view('wpUsers.patient.listing', $data);
+    public function showPatientListing() {
+        return view('wpUsers.patient.listing');
+    }
+    
+    public function showPatientListingPdf() {
+        $storageDirectory = 'storage/pdfs/patients/';
+        $datetimePrefix   = date('Y-m-dH:i:s');
+        $fileName = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
+        $file = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
+            'patients' => $this->formatter->patients(),
+            'pdfOptions' => [
+                'orientation' => 'Landscape',
+                'margin-left' => '3',
+                'margin-right' => '3'
+            ]
+        ]);
+        return response()->file($file);
     }
 
     /**
@@ -324,7 +338,7 @@ class PatientController extends Controller
             $dob                  = new Carbon(($d->birth_date));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
             $patients[$i]['mrn']  = $d->mrn_number;
-            $patients[$i]['link'] = URL::route('patient.summary', ['patient' => $d->id]);
+            $patients[$i]['link'] = route('patient.summary', ['patient' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 

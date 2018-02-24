@@ -11,7 +11,7 @@
                 <ul class="" style="margin:0;padding:0;">
 
                     {{--<li class="menu-item">--}}
-                    {{--<a id="select-patient" href="{{ URL::route('patients.search', array()) }}">--}}
+                    {{--<a id="select-patient" href="{{ route('patients.search', array()) }}">--}}
                     {{--<div class="icon-container column-centered">--}}
                     {{--<i class="icon--find-patient--big icon--menu"></i>--}}
                     {{--</div>--}}
@@ -21,7 +21,7 @@
                     {{--</a>--}}
                     {{--</li>--}}
                     <li class="menu-item">
-                        <a id="patient-list" href="{{ URL::route('patients.listing', array()) }}">
+                        <a id="patient-list" href="{{ route('patients.listing', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--list-patient--big icon--menu">
                                     <div class="notification btn-warning">{{ $pendingApprovals }}</div>
@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a dusk="add-patient-btn" href="{{ URL::route('patients.demographics.show', array()) }}">
+                        <a dusk="add-patient-btn" href="{{ route('patients.demographics.show', array()) }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
@@ -46,9 +46,9 @@
                         </a>
                     </li>
 
-                    @if(auth()->user()->hasRole(['administrator', 'care-center']))
+                    @if(auth()->user()->hasRole(['administrator', 'care-center']) && auth()->user()->isNotSaas())
                         <li class="menu-item">
-                            <a id="patient-list" href="{{ URL::route('patientCallList.index', array()) }}">
+                            <a id="patient-list" href="{{ route('patientCallList.index', array()) }}">
                                 <div class="icon-container column-centered">
                                     <i class="icon--phone-call--big icon--menu"></i>
                                 </div>
@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        @if($nurse)
+        @if($nurse && auth()->user()->isNotSaas())
             @include('partials.care-center.dashboard-schedule', [$nurse])
         @endif
 

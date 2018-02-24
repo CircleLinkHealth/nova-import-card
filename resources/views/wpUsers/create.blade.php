@@ -55,7 +55,7 @@
 
                         <div class="row">
                             <div class="col-md-12">
-                                {!! Form::open(array('url' => URL::route('admin.users.store'), 'class' => 'form-horizontal')) !!}
+                                {!! Form::open(array('url' => route('admin.users.store'), 'class' => 'form-horizontal')) !!}
 
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist" style="margin-top:20px;">
@@ -82,8 +82,8 @@
                                                 <div class="row">
                                                     <div class="col-xs-2">{!! Form::label('password', 'Password:') !!}</div>
                                                     <div class="col-xs-4">{!! Form::password('password', ['class' => 'form-control']) !!}</div>
-                                                    <div class="col-xs-2">{!! Form::label('password_confirm', 'Confirm Password:') !!}</div>
-                                                    <div class="col-xs-4">{!! Form::password('password_confirm', ['class' => 'form-control']) !!}</div>
+                                                    <div class="col-xs-2">{!! Form::label('password_confirmation', 'Confirm Password:') !!}</div>
+                                                    <div class="col-xs-4">{!! Form::password('password_confirmation', ['class' => 'form-control']) !!}</div>
                                                 </div>
                                             </div>
                                             <div class="form-group">
@@ -172,7 +172,7 @@
                                     <div class="row" style="margin-top:50px;">
                                         <div class="col-sm-12">
                                             <div class="pull-right">
-                                                <a href="{{ URL::route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                                <a href="{{ route('admin.users.index', array()) }}" class="btn btn-danger">Cancel</a>
                                                 {!! Form::submit('Create User', array('class' => 'btn btn-success')) !!}
                                             </div>
                                         </div>

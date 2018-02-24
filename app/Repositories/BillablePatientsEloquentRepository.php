@@ -25,7 +25,8 @@ class BillablePatientsEloquentRepository
             },
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200);
+                      ->where('ccm_time', '>=', 1200)
+                      ->with('chargeableServices');
             },
             'cpmProblems',
             'patientInfo',
@@ -65,6 +66,7 @@ class BillablePatientsEloquentRepository
                                                    },
                                                ]);
                                            },
+                                           'chargeableServices'
                                        ])
                                        ->has('patient.patientInfo')
                                        ->whereHas('patient.practices', function ($q) use ($practiceId) {

@@ -823,9 +823,9 @@ if (!function_exists('validProblemName')) {
 }
 
 if (!function_exists('showDiabetesBanner')) {
-    function showDiabetesBanner($patient)
+    function showDiabetesBanner($patient, $noShow = null)
     {
-        if ($patient
+        if (!$noShow && $patient
             && is_a($patient, User::class)
             && $patient->hasProblem('Diabetes')
             && !$patient->hasProblem('Diabetes Type 1')
@@ -836,5 +836,70 @@ if (!function_exists('showDiabetesBanner')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('shortenUrl')){
+    /**
+     * Create a short URL
+     *
+     * @param $url
+     *
+     * @return string
+     * @throws \Waavi\UrlShortener\InvalidResponseException
+     */
+    function shortenUrl($url){
+        $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+        return $shortUrl;
+    }
+}
+
+if (!function_exists('validateYYYYMMDDDateString')){
+    /**
+     * Validate that the given date string has format YYYY-MM-DD
+     *
+     * @param $date
+     *
+     * @return bool
+     * @throws Exception
+     */
+    function validateYYYYMMDDDateString($date, $throwException = true){
+        $isValid = (bool) preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
+
+        if (!$isValid && $throwException) {
+            throw new \Exception("Invalid Date");
+        }
+
+        return $isValid;
+    }
+}
+
+if (!function_exists('cast')) {
+    /**
+    * Cast an object into a different class.
+    *
+    * Currently this only supports casting DOWN the inheritance chain,
+    * that is, an object may only be cast into a class if that class 
+    * is a descendant of the object's current class.
+    *
+    * This is mostly to avoid potentially losing data by casting across
+    * incompatable classes.
+    *
+    * @param object $object The object to cast.
+    * @param string $class The class to cast the object into.
+    * @return object
+    */
+    function cast($object, $class) {
+        if( !is_object($object) ) 
+            throw new InvalidArgumentException('$object must be an object.');
+        if( !is_string($class) )
+            throw new InvalidArgumentException('$class must be a string.');
+        if( !class_exists($class) )
+            throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
+        $ret = app($class);
+        foreach (get_object_vars($object) as $key => $value) {
+            $ret[$key] = $value;
+        }
+        return $ret;
     }
 }

@@ -16,7 +16,7 @@
                     @if(Cerberus::hasPermission('roles-permissions-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('permissions.create', array()) }}" class="btn btn-success">New
+                                <a href="{{ route('permissions.create', array()) }}" class="btn btn-success">New
                                     Permission</a>
                             </div>
                         </div>
@@ -38,7 +38,7 @@
                         <tbody>
                         @foreach( $permissions as $permission )
                             <tr>
-                                <td><a href="{{ URL::route('permissions.show', array('id' => $permission->id)) }}"
+                                <td><a href="{{ route('permissions.show', array('id' => $permission->id)) }}"
                                        class="btn btn-primary">Detail</a></td>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
@@ -46,7 +46,7 @@
                                 <td>{{ date('F d, Y g:i A', strtotime($permission->created_at)) }}</td>
                                 <td>
                                     @if(Cerberus::hasPermission('roles-permissions-manage'))
-                                        <a href="{{ URL::route('permissions.edit', array('id' => $permission->id)) }}"
+                                        <a href="{{ route('permissions.edit', array('id' => $permission->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>

@@ -5,7 +5,7 @@
         <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
     @endpush
     
-    {!! Form::open(array('url' => URL::route('admin.patientCallManagement.update', array('id' => $call->id)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.patientCallManagement.update', array('id' => $call->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -36,7 +36,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary">{{ $call->id }} Detail</a></td>
+                                    <td><a href="{{ route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary">{{ $call->id }} Detail</a></td>
                                     <td>{{ $call->inbound_cpm_id }}</td>
                                     <td>{{ $call->outbound_cpm_id }}</td>
                                     <td>{{ $call->status }}</td>
@@ -64,7 +64,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-danger">Back</a>
+                                    <a href="{{ route('admin.patientCallManagement.index', array()) }}" class="btn btn-danger">Back</a>
                                     {!! Form::submit('Update Call', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

@@ -99,7 +99,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'date',
         'mrn',
         'referring_provider_name',
-        'location_id' .
+        'location_id',
         'practice_id',
         'billing_provider_id',
         'user_id',
@@ -129,6 +129,11 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             ->first();
     }
 
+    public function scopeExclude($query, $value = array()) 
+    {
+        $defaultColumns = ['id', 'created_at', 'updated_at'];
+        return $query->select( array_diff( array_merge($defaultColumns, $this->fillable), (array) $value) );
+    }
 
     /**
      * Get the Logger

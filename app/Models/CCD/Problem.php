@@ -3,6 +3,7 @@
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
+use App\Models\CPM\CpmInstruction;
 use App\Models\ProblemCode;
 use App\Scopes\Imported;
 use App\Scopes\WithNonImported;
@@ -17,15 +18,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $problem_import_id
  * @property int|null $ccda_id
  * @property int $patient_id
- * @property int|null $vendor_id
  * @property int|null $ccd_problem_log_id
  * @property string|null $name
- * @property string|null $icd_10_code
- * @property string|null $code
- * @property string|null $code_system
- * @property string|null $code_system_name
- * @property int $activate
  * @property int|null $cpm_problem_id
+ * @property int|null $cpm_instruction_id
  * @property string|null $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
@@ -33,6 +29,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ProblemCode[] $codes
  * @property-read \App\Models\CPM\CpmProblem|null $cpmProblem
  * @property-read \App\User $patient
+ * @property-read \App\Models\CPM\CpmInstruction $cpmInstruction
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereActivate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdProblemLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CCD\Problem whereCcdaId($value)
@@ -57,10 +54,8 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
 
     protected $fillable = [
         'ccda_id',
-        'vendor_id',
         'ccd_problem_log_id',
         'name',
-        'activate',
         'cpm_problem_id',
         'patient_id',
         'billable'
@@ -83,6 +78,11 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     {
         return $this->belongsTo(CpmProblem::class);
     }
+    
+    public function cpmInstruction()
+    {
+        return $this->hasOne(CpmInstruction::class, 'id', 'cpm_instruction_id');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -103,14 +103,6 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-    public function convertCode($from, $to)
-    {
-        return SnomedToCpmIcdMap::where($from, '=', $this->code)
-            ->whereNotNull($to)
-            ->where($to, '!=', '')
-            ->first()
-            ->{$to} ?? null;
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

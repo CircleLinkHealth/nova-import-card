@@ -1,4 +1,4 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
 
 @section('content')
 
@@ -10,9 +10,9 @@
                 practices.select2()
 
                 //show selections in the order they were selected
-                practices.on('select2:select', function(e){
+                practices.on('select2:select', function (e) {
                     var id = e.params.data.id;
-                    var option = $(e.target).children('[value='+id+']');
+                    var option = $(e.target).children('[value=' + id + ']');
                     option.detach();
                     $(e.target).append(option).change();
                 });
@@ -21,20 +21,19 @@
     @endpush
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
-    <div class="container-fluid">
+    {!! Form::open(array('url' => route('practice.billing.make', array()),'class' => 'form-horizontal')) !!}
+    <div class="container-fluid" style="padding-top: 50rem;">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice Invoice and Patient Report Generator</div>
+                    <div class="panel-heading">Billable Patient Report Generator (Only shows approved patients > 20 minutes)</div>
                     <div class="panel-body">
                         <form class="form-horizontal">
                             {{ csrf_field() }}
-                            <fieldset>
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="practices">
-                                        Select Practices<br>
-                                        Select All <kbd><kbd>cmd</kbd> + <kbd>A</kbd></kbd></label>
+                                        Select Practices
+                                    </label>
                                     <div class="col-md-6">
                                         <select id="practices" name="practices[]"
                                                 class="practices dropdown Valid form-control" multiple required>
@@ -45,18 +44,18 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-
-                                    <label class="col-md-2 control-label" for="invoice_no">
-                                        Custom Invoice#<br></label>
-                                    <div class="col-md-6">
-                                        <input class="form-control" value="{{$invoice_no}}" name="invoice_no" id="invoice_no">
-                                    </div>
-                                </div>
+                                {{--<div class="form-group">--}}
+                                    {{--<label class="col-md-2 control-label" for="invoice_no">--}}
+                                        {{--Custom Invoice#<br></label>--}}
+                                    {{--<div class="col-md-6">--}}
+                                        {{--<input class="form-control" value="{{$invoice_no}}" name="invoice_no"--}}
+                                               {{--id="invoice_no">--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
 
                                 <div class="form-group">
                                     <label class="col-md-2 control-label" for="date">Month</label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <select class="col-md-3 practices dropdown Valid form-control reloader"
                                                 name="date" id="date">
                                             @foreach($dates as $key => $val)
@@ -69,14 +68,28 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="format">Select Format</label>
+                                    <div class="col-md-6">
+                                        <select class="col-md-3 practices dropdown Valid form-control reloader"
+                                                name="format" required>
+                                            <option value="pdf" selected>PDF</option>
+                                            <option value="csv">QuickBooks CSV</option>
+                                            <option value="xls">QuickBooks Excel</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-2 control-label">
                                         <button id="submit" name="submit" value="download"
                                                 class="btn btn-success">
                                             Create Invoice(s) / Report(s)
                                         </button>
                                     </div>
                                 </div>
-                            </fieldset>
                         </form>
 
                         <hr>

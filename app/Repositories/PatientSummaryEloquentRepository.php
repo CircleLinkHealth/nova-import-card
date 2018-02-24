@@ -12,7 +12,7 @@ class PatientSummaryEloquentRepository
 {
     public $patientRepo;
 
-    public function __construct(PatientRepository $patientRepo)
+    public function __construct(PatientWriteRepository $patientRepo)
     {
         $this->patientRepo = $patientRepo;
     }

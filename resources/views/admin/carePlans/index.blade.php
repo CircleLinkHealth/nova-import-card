@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-sm-10">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.careplans.create', array()) }}" class="btn btn-success">New Care Plan</a>
+                            <a href="{{ route('admin.careplans.create', array()) }}" class="btn btn-success">New Care Plan</a>
                         </div>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                {!! Form::open(array('url' => URL::route('admin.careplans.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                                {!! Form::open(array('url' => route('admin.careplans.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                                 <h2>Filter</h2>
                                 <div class="form-group">
                                     <div class="row">
@@ -56,11 +56,11 @@
                             <tbody>
                             @foreach( $careplans as $careplan )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.careplans.show', array('id' => $careplan->id)) }}" class="btn btn-primary btn-xs">Detail</a></td>
+                                    <td><a href="{{ route('admin.careplans.show', array('id' => $careplan->id)) }}" class="btn btn-primary btn-xs">Detail</a></td>
                                     <td>{{ $careplan->name }}</td>
                                     <td>{{ $careplan->type }}</td>
                                     <td>{{ $careplan->user_id }}</td>
-                                    <td class="text-right"><a href="{{ URL::route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-xs btn-primary">Edit</a> <a href="{{ URL::route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-xs btn-danger">Remove</a></td>
+                                    <td class="text-right"><a href="{{ route('admin.careplans.edit', array('id' => $careplan->id)) }}" class="btn btn-xs btn-primary">Edit</a> <a href="{{ route('admin.careplans.destroy', array('id' => $careplan->id)) }}" class="btn btn-xs btn-danger">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>
