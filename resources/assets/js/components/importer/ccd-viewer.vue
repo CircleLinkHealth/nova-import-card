@@ -1,5 +1,11 @@
 <template>
     <div>
+        <notifications>
+            <template scope="props">
+               <a :href="props.note.href">{{props.note.message}}</a>
+            </template>
+        </notifications>
+
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" scope="props">
                 <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
@@ -72,6 +78,7 @@
     import LoaderComponent from '../loader'
     import ErrorModal from '../../admin/billing/comps/error-modal'
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
+    import NotificationComponent from '../notifications'
 
     export default {
         name: 'ccd-viewer',
@@ -79,7 +86,8 @@
             'text-editable': TextEditable,
             'loader': LoaderComponent,
             'error-modal': ErrorModal,
-            'error-modal-button': ErrorModalButton
+            'error-modal-button': ErrorModalButton,
+            'notifications': NotificationComponent
         },
         data() {
             return {
@@ -164,7 +172,7 @@
                     if (practice) {
                         record.Practice = practice.id;
                         record.practice_name = practice.display_name
-                        record.Location = null
+                        //record.Location = null
                         record.locations = []
                         record.loaders.locations = true
                         record['Billing Provider'] = null
@@ -173,6 +181,7 @@
                             console.log('get-practice-locations', practiceId, locations)
                             record.locations = locations
                             record.loaders.locations = false
+                            this.changeLocation(recordId, record.Location)
                         }).catch(err => {
                             record.loaders.locations = false
                             record.errors.locations = err.message
@@ -189,7 +198,7 @@
                         record.Location = location.id;
                         record.location_name = location.name
                         record.providers = []
-                        record['Billing Provider'] = null
+                        //record['Billing Provider'] = null
                         record.loaders.providers = true
                         this.getProviders(record.Practice, locationId).then(providers => {
                             record.providers = providers
@@ -283,6 +292,12 @@
                             this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
                         }
                         console.log('submit-one', record, response.data)
+                        const patient = (((response.data || [])[0] || {}).patient || {})
+                        EventBus.$emit('notifications:create', { 
+                            message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                            href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                            noTimeout: true
+                        })
                         return response
                     }).catch((err) => {
                         record.loaders.confirm = false
@@ -346,7 +361,7 @@
 
             EventBus.$on('vdropzone:success', (records) => {
                 this.tableData = records.map(this.setupRecord)
-
+                if (this.tableData.length > 0) this.changePractice(this.tableData[0].id, this.tableData[0].Practice)
                 EventBus.$emit('vdropzone:remove-all-files')
             })
         }

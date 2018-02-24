@@ -4,7 +4,7 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {!! Form::open(array('url' => URL::route('admin.observations.update', array('id' => $observation->qid)), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.observations.update', array('id' => $observation->qid)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -38,7 +38,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->qid }} Detail</a></td>
+                                    <td><a href="{{ route('admin.observations.show', array('id' => $observation->id)) }}" class="btn btn-primary">{{ $observation->qid }} Detail</a></td>
                                     <td><div class="btn btn-orange btn-xs">{{ $observation->obs_message_id }}</div></td>
                                     <td>{{ $observation->user_id }}</td>
                                     <td>{{ $observation->sequence_id }}</td>
@@ -71,7 +71,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.observations.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.observations.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Observation', array('class' => 'btn btn-success', 'disabled' => 'disabled')) !!}
                                 </div>
                             </div>

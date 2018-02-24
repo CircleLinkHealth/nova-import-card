@@ -27,7 +27,7 @@
                 <div class="main-form-title col-lg-12">
                     Record New Activity
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
+                {!! Form::open(array('url' => route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
 
                 @include('partials.userheader')
 
@@ -91,7 +91,7 @@
                                                     class="selectpickerX provider dropdown Valid form-control" data-size="10" required>
                                                 <option value=""> Select Provider</option>
                                                 @foreach ($provider_info as $id => $name)
-                                                    <option value="{{$id}}"> {{$name}} </option>
+                                                    <option value="{{$id}}"> {{($name && (trim($name) == '')) ? 'Me' : $name}} </option>
                                                 @endforeach
                                             </select>
                                         </div>

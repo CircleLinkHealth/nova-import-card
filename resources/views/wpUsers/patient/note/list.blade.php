@@ -35,7 +35,7 @@
                 <div class="main-form-title col-lg-12">
                     All Patient Notes
                 </div>
-                {!! Form::open(array('url' => URL::route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                {!! Form::open(array('url' => route('patient.note.listing'), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div style="clear:both"></div>
                 <ul class="person-conditions-list inline-block pull-left">
                     <li class="inline-block"><input type="checkbox" id="mail_filter" name="mail_filter" value="true"
@@ -165,7 +165,7 @@
                                                 header: ["Patient Name", {content: "textFilter", placeholder: "Filter"}],
                                                 width: 140,
                                                 sort: 'string',
-                                                template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                template: "<a href='<?php echo route('patient.note.view', array(
                                                         'patient' => '#patient_id#',
                                                         'noteId'  => '#id#'
                                                 )); ?>'>#patient_name#</a>"
@@ -198,7 +198,7 @@
                                                 sort: 'string',
                                                 tooltip: ['#comment#'],
                                                 fillspace: true,
-                                                template: "<a href='<?php echo URL::route('patient.note.view', array(
+                                                template: "<a href='<?php echo route('patient.note.view', array(
                                                         'patient' => '#patient_id#',
                                                         'noteId'  => '#id#'
                                                 )); ?>'>#comment#</a>"

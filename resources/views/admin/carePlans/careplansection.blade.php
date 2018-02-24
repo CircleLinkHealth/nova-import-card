@@ -2,7 +2,7 @@
     @foreach($carePlan->careSections as $careSection)
         @if($careSection->id == $section)
             <a class="" role="" data-toggle="collapse" href="#collapseSection{{ $careSection->id }}" aria-expanded="false" aria-controls="collapseSection{{ $careSection->id }}">
-                <h1> {{ $careSection->display_name }} <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-primary btn-xs section-reload" section="{{ $careSection->id }}">Refresh</a></h1>
+                <h1> {{ $careSection->display_name }} <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-primary btn-xs section-reload" section="{{ $careSection->id }}">Refresh</a></h1>
             </a>
             @if(!empty($careSection->carePlanItems))
                 <?php $i=0; ?>
@@ -14,7 +14,7 @@
                                     {{ $planItem->ui_row_start > 0 ? '<div class="row">' : '' }}
                                     {{ $planItem->ui_col_start > 0 ? '<div class="col-sm-'.$planItem->ui_col_start.'>' : '' }}
                                     <div class="col-sm-12" style="border:1px solid blue;">
-                                        <h2>{{ $planItem->careItem->display_name }} <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">Edit</a></h2><br />
+                                        <h2>{{ $planItem->careItem->display_name }} <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">Edit</a></h2><br />
                                         <strong>{{ $planItem->meta_key . ' = ' . $planItem->meta_value }}</strong><br />
                                         {{--[EYE:{{ $i+1 .' of '.$careSection->carePlanItems->count() }}]<br />
                                         [CarePlanItem:{{ $planItem->id }}]<br />

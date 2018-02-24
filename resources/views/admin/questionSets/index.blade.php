@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.questionSets.create', array()) }}" class="btn btn-success">New Question Set</a>
+                            <a href="{{ route('admin.questionSets.create', array()) }}" class="btn btn-success">New Question Set</a>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                         @include('errors.errors')
                         <div class="row">
                             <div class="col-sm-12">
-                                {!! Form::open(array('url' => URL::route('admin.questionSets.index', array()), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
+                                {!! Form::open(array('url' => route('admin.questionSets.index', array()), 'class' => 'form-horizontal', 'id' => 'filterForm')) !!}
                                 <div id="filters">
                                     <h3>Filter</h3>
                                     <div class="form-group">
@@ -82,7 +82,7 @@
                             <tbody>
                             @foreach( $questionSets as $questionSet )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.questionSets.show', array('id' => $questionSet->qsid)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ route('admin.questionSets.show', array('id' => $questionSet->qsid)) }}" class="btn btn-primary">Detail</a></td>
                                     <td><div class="btn btn-orange btn-xs">{{ $questionSet->provider_id }}</div></td>
                                     <td>{{ $questionSet->qs_type }}</td>
                                     <td>{{ $questionSet->qs_sort }}</td>
@@ -96,7 +96,7 @@
                                     <td>{{ $questionSet->low }}</td>
                                     <td>{{ $questionSet->high }}</td>
                                     <td>{{ $questionSet->action }}</td>
-                                    <td><a href="{{ URL::route('admin.questionSets.edit', array('id' => $questionSet->qsid)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.questionSets.destroy', array('id' => $questionSet->qsid)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td><a href="{{ route('admin.questionSets.edit', array('id' => $questionSet->qsid)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.questionSets.destroy', array('id' => $questionSet->qsid)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

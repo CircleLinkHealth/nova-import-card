@@ -1,4 +1,6 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
+
+@section('title', 'Approve Billable Patients')
 
 @section('content')
     @push('styles')
@@ -39,21 +41,8 @@
                             </select>
                         </div>
 
-                        {{--<div id="showOther" class="form-group" style="display:none">--}}
-                            {{--<label for="otherProblem">If other, please specify</label>--}}
-                            {{--<input class="form-control" name="otherProblem" id="otherProblem">--}}
-                        {{--</div>--}}
-
-                        {{--<div class="form-group">--}}
-                            {{--<label for="code">Problem ICD10 Code</label>--}}
-                            {{--<input class="form-control" name="code" id="code">--}}
-                        {{--</div>--}}
-
                         <input type="hidden" id="report_id" name="report_id">
                         <input type="hidden" id="problem_no" name="problem_no">
-                        {{--<input type="hidden" id="has_problem" name="has_problem">--}}
-                        {{--<input type="hidden" id="modal_date" name="modal_date">--}}
-                        {{--<input type="hidden" id="modal_practice_id" name="modal_practice_id">--}}
                     </form>
                 </div>
 
@@ -72,7 +61,7 @@
     </div>
 
 
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding-top: 50rem;">
         <div class="row">
             <div class="col-md-12">
                 @include('errors.errors')
@@ -102,6 +91,7 @@
                                     problem.name = decodeHTML(problem.name)
                                     return problem
                                 })
+                                var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>

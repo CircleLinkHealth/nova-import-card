@@ -86,7 +86,7 @@
     <div class="row" id="enrollment_module">
 
         <form method="post" name="enroll" id="enroll"
-              action="{{URL::route('patient.enroll.update', ['enrollee_id' => $enrollee->id])}}"
+              action="{{route('patient.enroll.update', ['enrollee_id' => $enrollee->id])}}"
               class="col s12" style="padding-top: 20px;">
 
             <div class="row center">

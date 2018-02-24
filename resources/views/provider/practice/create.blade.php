@@ -42,7 +42,20 @@
                     </select>
                 </div>
 
-                <div class="col s6"></div>
+                <div class="input-field col s6">
+
+                    <label class="active" for="primary_location" data-error="required">Primary Location</label>
+                    <div style="height: 15px;"></div>
+
+
+                    <select id="primary_location" name="primary_location" class="validate" required>
+                        @foreach($locations as $location)
+                            <option value="{{$location['id']}}"
+                                    @if($location['is_primary']) selected @endif>{{$location['name']}}</option>
+                        @endforeach
+                    </select>
+
+                </div>
             </div>
         </div>
 
@@ -60,9 +73,11 @@
 @endsection
 
 @push('scripts')
-    <script src="{{asset('/js/materialize.min.js')}}"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
-    <script type="text/javascript">
-        $('select').select2();
-    </script>
+<script src="{{asset('/js/materialize.min.js')}}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').material_select();
+    });
+</script>
 @endpush

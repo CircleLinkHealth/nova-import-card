@@ -19,7 +19,7 @@
                         @include('errors.errors')
 
                         <form id="location-form" class="form-horizontal" role="form" method="POST"
-                              action="{{ URL::route('locations.update', array('id' => $location->id)) }}">
+                              action="{{ route('locations.update', array('id' => $location->id)) }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                             <div class="form-group">

@@ -36,10 +36,10 @@ class PracticeInvoice extends Mailable
     protected $filePath;
 
 
-
     /**
      * Create a new message instance.
      *
+     * @throws \Exception
      * @return void
      */
     public function __construct($invoiceLink, $filePath)
@@ -47,7 +47,7 @@ class PracticeInvoice extends Mailable
         $this->invoiceLink = $invoiceLink;
 
         if (!file_exists($filePath)) {
-            throw new \Exception("File does not exist");
+            throw new \Exception("File does not exist: $filePath \n\n Invoice Link: $invoiceLink");
         }
         $this->filePath = $filePath;
     }

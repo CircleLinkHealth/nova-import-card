@@ -88,8 +88,17 @@
                         <div class="loading" v-if="props.row.promises['problem_2']"></div>
                     </div>
                 </template>
+                <template slot="chargeable_services" scope="props">
+                    <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
+                        <div v-if="props.row.chargeable_services.length">
+                            <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
+                        </div>
+                        <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
+                    </div>
+                </template>
             </v-client-table>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
+            <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
         </div>
     </div>
@@ -100,9 +109,10 @@
     import {Event} from 'vue-tables-2'
     import TextEditable from '../comps/text-editable'
     import PatientProblemModal from './comps/patient-problem-modal'
+    import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
     import moment from 'moment'
-    import buildReport, {styles} from './excel'
+    import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
 
     export default {
@@ -112,7 +122,8 @@
             'text-editable': TextEditable,
             'patient-problem-modal': PatientProblemModal,
             'error-modal': ErrorModal,
-            'select2': Select2Component
+            'select2': Select2Component,
+            'chargeable-services-modal': ChargeableServicesModal
         },
         data() {
             return {
@@ -121,6 +132,7 @@
                 loading: true,
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
+                chargeableServices: [],
                 practiceId: 0,
                 url: null,
                 counts: {
@@ -145,7 +157,8 @@
                     'Problem 2 Code',
                     '#Successful Calls',
                     'approved',
-                    'rejected'],
+                    'rejected',
+                    'chargeable_services'],
                 tableData: []
             }
         },
@@ -196,6 +209,17 @@
                 this.retrieve()
                 this.getCounts()
             },
+            getChargeableServices() {
+                return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
+                    this.chargeableServices = (response.data || []).map(service => {
+                        service.selected = null
+                        return service
+                    })
+                    console.log('billing:chargeable-services', this.chargeableServices)
+                }).catch(err => {
+                    console.error('billing:chargeable-services', err)
+                })
+            },
             getCounts() {
                 return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
                     console.log('billing:counts', response.data)
@@ -235,6 +259,7 @@
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
                             '#Successful Calls': patient.no_of_successful_calls,
+                            chargeable_services: patient.chargeable_services,
                             promises: {
                                 problem_1: false,
                                 problem_2: false,
@@ -257,13 +282,19 @@
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
                     this.loading = false;
-                    console.log('bills-report', this.tableData)
+                    console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
                     this.loading = false
                 })
             },
 
+            showChargeableServicesModal(row) {
+                Event.$emit('modal-chargeable-services:show', {
+                    title: 'Select Chargeable Services for ' + row.Patient,
+                    row: row
+                })
+            },
 
             showProblemsModal(patient, type) {
                 const self = this
@@ -374,6 +405,7 @@
             this.selectedMonth = this.months[0].long
             this.selectedPractice = this.practices[0].id
             this.retrieve()
+            this.getChargeableServices()
             this.getCounts()
 
             Event.$on('vue-tables.pagination', (page) => {
@@ -387,7 +419,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .inline-block {
         display: inline-block;
     }

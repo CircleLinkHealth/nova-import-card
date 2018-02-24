@@ -1,5 +1,5 @@
 <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
-    <form method="post" id="consented_form" action="{{URL::route('enrollment-center.consented')}}">
+    <form method="post" id="consented_form" action="{{route('enrollment-center.consented')}}">
 
         {{ csrf_field() }}
 
@@ -7,38 +7,39 @@
             <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
             <blockquote style="border-left: 5px solid #26a69a;">
                 <span class="consented_title"><b>I.</b></span>
-                @if($enrollee->lang == 'ES')
-                    <b>Ask patient:</b> ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos
-                    pongamos en
-                    contacto?
-                @else
-                    <b>Ask patient:</b> Do you want us to call you directly or is there someone else we should contact?
-                @endif
+
+                <b>Ask patient:</b>
+                <div class="enrollment-script">
+                    @if($enrollee->lang == 'ES')
+                        ¿Quiere quele llamemos directamente o hay alguien más con el cual quiere quenos pongamos en
+                        contacto?
+                    @else
+                        Do you want us to call you directly or is there someone else we should contact?
+                    @endif
+                </div>
                 <br>
                 <b>Use radio button to confirm patient's preferred phone number to receive care management calls.</b>
-                <br>
-                [<b>format</b>: xxx-xxx-xxxx]
             </blockquote>
             <div class="row">
                 <div class="col s6 m4 select-custom">
                     <input name="preferred_phone" type="radio" id="home_radio" value="home"
                            @if($enrollee->home_phone != '') checked @endif/>
                     <label for="home_radio"
-                           v-bind:class="{valid: home_is_valid, invalid: home_is_invalid}">@{{home_phone_label}}</label>
+                           :class="{valid: home_is_valid, invalid: home_is_invalid}">@{{home_phone_label}}</label>
                     <input class="input-field" name="home_phone" id="home_phone" v-model="home_phone"/>
                 </div>
                 <div class="col s6 m4 select-custom">
                     <input name="preferred_phone" type="radio" id="cell_radio" value="cell"
                            @if($enrollee->home_phone == '' && $enrollee->cell_phone != '') checked @endif/>
                     <label for="cell_radio"
-                           v-bind:class="{valid: cell_is_valid, invalid: cell_is_invalid}">@{{cell_phone_label}}</label>
+                           :class="{valid: cell_is_valid, invalid: cell_is_invalid}">@{{cell_phone_label}}</label>
                     <input class="input-field" name="cell_phone" id="cell_phone" v-model="cell_phone"/>
                 </div>
                 <div class="col s6 m4 select-custom">
                     <input name="preferred_phone" type="radio" id="other_radio" value="other"
                            @if($enrollee->home_phone == '' && $enrollee->cell_phone == '' && $enrollee->other_phone != '') checked @endif/>
                     <label for="other_radio"
-                           v-bind:class="{valid: other_is_valid, invalid: other_is_invalid}">@{{other_phone_label}}</label>
+                           :class="{valid: other_is_valid, invalid: other_is_invalid}">@{{other_phone_label}}</label>
                     <input class="input-field" name="other_phone" id="other_phone" v-model="other_phone"/>
                 </div>
             </div>
@@ -74,7 +75,8 @@
             </div>
             <div class="row">
                 <blockquote style="border-left: 5px solid #26a69a;">
-                    <span class="consented_title"><b>III.</b></span> Please confirm the patient's preferred contact days and
+                    <span class="consented_title"><b>III.</b></span> Please confirm the patient's preferred contact days
+                    and
                     times, and any other relevant information:
                 </blockquote>
                 <div class="col s12 m3">
@@ -99,33 +101,35 @@
                 </div>
                 <div class="col s12 m6 select-custom">
                     <input class="materialize-textarea input-field" id="extra" name="extra"
-                           placeholder="Optional additional information" style="margin-bottom: 10px; padding-bottom: 18px;">
+                           placeholder="Optional additional information"
+                           style="margin-bottom: 10px; padding-bottom: 18px;">
                 </div>
             </div>
 
             <blockquote style="border-left: 5px solid #26a69a;">
                 <span class="consented_title"><b>IV.</b></span>
                 <span style="color: red"><b>TELL PATIENT BEFORE HANGING UP!</b></span><br>
-                @if($enrollee->lang == 'ES')
-                    Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
-                    @{{practice_phone}}. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
-                    ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
-                @else
-                    A Registered Nurse will call you shortly from the same # I’m calling from, @{{practice_phone}}.
-                    Please save it so you accept the call when she/he rings. So glad we
-                    connected! Have a great day!
-
-                @endif
+                <div class="enrollment-script">
+                    @if($enrollee->lang == 'ES')
+                        Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
+                        @{{practice_phone}}. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
+                        ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
+                    @else
+                        A Registered Nurse will call you shortly from the same # I’m calling from, @{{practice_phone}}.
+                        Please save it so you accept the call when she/he rings. So glad we
+                        connected! Have a great day!
+                    @endif
+                </div>
             </blockquote>
 
             <input type="hidden" name="status" value="consented">
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
-            <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
-            <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
+            <input type="hidden" name="total_time_in_system" :value="total_time_in_system">
+            <input type="hidden" name="time_elapsed" :value="time_elapsed">
 
         </div>
         <div class="modal-footer">
-            <button id="submit" name="submit" type="submit"
+            <button id="submit" name="submit" type="submit" :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
                     class="modal-action waves-effect waves-light btn">Confirm and call next patient
             </button>
             <div v-if="onCall === true" style="text-align: center">

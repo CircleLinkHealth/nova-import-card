@@ -26,7 +26,7 @@
 
     @include('partials.confirm-modal')
 
-    <form id="newNote" method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient->id])}}"
+    <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
           class="form-horizontal">
         <div class="row" style="margin-top:30px;">
             <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
@@ -238,9 +238,6 @@
                                                       placeholder="Enter Note..."
                                                       name="body" :required="true"></persistent-textarea>
                                             <br>
-                                            {{--  <textarea id="note" class="form-control" rows="10" cols="100"
-                                                      placeholder="Enter Note..."
-                                                      name="body" required></textarea> <br/>  --}}
                                         </div>
                                     </div>
 
@@ -297,6 +294,10 @@
             });
         });
 
+        $('#newNote').submit(function () {
+            var key = 'notes:{{$patient->id}}:add';
+            window.sessionStorage.removeItem(key)
+        })
     </script>
     @endpush
 @endsection

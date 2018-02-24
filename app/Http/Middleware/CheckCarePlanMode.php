@@ -22,7 +22,7 @@ class CheckCarePlanMode
         $cp = CarePlan::where('user_id', '=', $patientId)
             ->first();
 
-        if ($cp->mode == CarePlan::WEB) {
+        if ($cp && $cp->mode == CarePlan::WEB) {
             return $next($request);
         }
 

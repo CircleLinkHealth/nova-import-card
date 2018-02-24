@@ -18,7 +18,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            <a href="{{ URL::route('admin.ucp.create', array()) }}" class="btn btn-success" disabled="disabled">New User Care Plan</a>
+                            <a href="{{ route('admin.ucp.create', array()) }}" class="btn btn-success" disabled="disabled">New User Care Plan</a>
                         </div>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                            {!! Form::open(array('url' => URL::route('admin.ucp.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => route('admin.ucp.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                                 <h2>Filter</h2>
                                 <div class="form-group">
                                     <div class="row">
@@ -68,10 +68,10 @@
                             <tbody>
                             @foreach( $ucps as $ucp )
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
                                     <td>
                                         @if($ucp->item)
-                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->pcp->section_text }}({{ $ucp->item->pcp->pcp_id }})</a> <br> <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs" style="margin-top:5px;">{{ $ucp->item->items_text }}({{ $ucp->items_id }})</a>
+                                            <a href="{{ route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->pcp->section_text }}({{ $ucp->item->pcp->pcp_id }})</a> <br> <a href="{{ route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs" style="margin-top:5px;">{{ $ucp->item->items_text }}({{ $ucp->items_id }})</a>
                                         @else
                                             {{ $ucp->items_id }}
                                         @endif
@@ -79,7 +79,7 @@
                                     <td>{{ $ucp->user_id }}</td>
                                     <td>{{ $ucp->meta_key }}</td>
                                     <td><strong>{{ $ucp->meta_value }}</strong></td>
-                                    <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
+                                    <td><a href="{{ route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
                                 </tr>
                             @endforeach
                             </tbody>

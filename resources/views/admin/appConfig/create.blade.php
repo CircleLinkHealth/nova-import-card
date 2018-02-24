@@ -1,7 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('admin.appConfig.store', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.appConfig.store', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -33,7 +33,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.appConfig.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.appConfig.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add App Config', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

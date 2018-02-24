@@ -9,6 +9,7 @@ Route::resource('sign-up', 'PatientSignupController');
 Route::get('talk-to-us', 'PatientSignupController@talkToUs');
 
 Route::get('care/enroll/{enrollUserId}', 'CareController@enroll');
+Route::post('care/enroll/{enrollUserId}', 'CareController@store');
 
 //Algo test routes.
 
@@ -32,10 +33,18 @@ Route::get('ajax/patients', 'UserController@getPatients');
  */
 Route::post('account/login', 'Patient\PatientController@patientAjaxSearch');
 
-Route::get('/', 'WelcomeController@index');
-Route::get('home', 'WelcomeController@index');
+Route::get('/', 'WelcomeController@index', [
+    'as' => 'index'
+]);
+Route::get('home', 'WelcomeController@index', [
+    'as' => 'home'
+]);
 
 Route::get('login', 'Auth\LoginController@showLoginForm');
+Route::post('browser-check', [
+    'uses' => 'Auth\LoginController@storeBrowserCompatibilityCheckPreference',
+    'as' => 'store.browser.compatibility.check.preference'
+]);
 
 Route::group([
     'prefix'     => 'auth',
@@ -96,8 +105,174 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.total.ccm.time',
         ]);
 
+        Route::group(['prefix' => 'biometrics'], function () {
+            Route::get('', 'BiometricController@index');
+            Route::get('{biometricId}', 'BiometricController@show');
+            Route::get('{biometricId}/patients', 'BiometricController@patients');
+        });
+
+        Route::group(['prefix' => 'allergies'], function () {
+            Route::get('', 'ProblemController@ccdAllergies');
+            Route::get('search', 'ProblemController@searchCcdAllergies');
+        });
+
+        Route::group(['prefix' => 'symptoms'], function () {
+            Route::resource('', 'SymptomController');
+        });
+
+        Route::group(['prefix' => 'lifestyles'], function () {
+            Route::get('{id}', 'LifestyleController@show');
+            Route::get('{id}/patients', 'LifestyleController@patients');
+            Route::resource('', 'LifestyleController');
+        });
+
+        Route::group(['prefix' => 'misc'], function () {
+            Route::get('{id}', 'MiscController@show');
+            Route::get('{id}/patients', 'MiscController@patients');
+            Route::resource('', 'MiscController');
+        });
+
+        Route::group(['prefix' => 'appointments'], function () {
+            Route::get('{id}', 'API\AppointmentController@show');
+            Route::resource('', 'API\AppointmentController');
+        });
+
+        Route::group(['prefix' => 'providers'], function () {
+            Route::get('list', 'ProviderController@list');
+            Route::get('{id}', 'ProviderController@show');
+            Route::resource('', 'ProviderController');
+        });
+
+        Route::group(['prefix' => 'ccda'], function () {
+            Route::get('{id}', 'CcdaController@show');
+            Route::resource('', 'CcdaController');
+        });
+
+        Route::group(['prefix' => 'medication'], function () {
+            Route::get('search', 'MedicationController@search');
+            Route::resource('', 'MedicationController');
+
+            Route::group(['prefix' => 'groups'], function () {
+                Route::get('{id}', 'MedicationGroupController@show');
+                Route::resource('', 'MedicationGroupController');
+            });
+        });
+
         Route::group(['prefix' => 'problems'], function () {
-            Route::resource('', 'CpmProblemController');
+            Route::get('cpm', 'ProblemController@cpmProblems');
+            Route::get('ccd', 'ProblemController@ccdProblems');
+            Route::get('cpm/{cpmId}', 'ProblemController@cpmProblem');
+            Route::get('ccd/{ccdId}', 'ProblemController@ccdProblem');
+            Route::resource('', 'ProblemController');
+
+            Route::group(['prefix' => 'codes'], function () {
+                Route::get('{id}', 'ProblemCodeController@show');
+                Route::delete('{id}', 'ProblemCodeController@remove');
+                Route::resource('', 'ProblemCodeController');
+            });
+
+            Route::group(['prefix' => 'instructions'], function () {
+                Route::get('search', 'ProblemInstructionController@search');
+                Route::get('{instructionId}', 'ProblemInstructionController@instruction');
+                Route::put('{id}', 'ProblemInstructionController@edit');
+                Route::resource('', 'ProblemInstructionController');
+            });
+        });
+
+        /**
+        * ~/api/patients/...
+        */
+        Route::group([
+                'prefix' => 'patients',
+                'middleware' => ['patientProgramSecurity']
+            ], function () {
+            Route::group([
+                'prefix' => '{userId}'
+            ], function () {
+                Route::get('', 'PatientController@getPatient');
+
+                Route::group([
+                    'prefix' => 'biometrics'
+                ], function () {
+                    Route::get('', 'PatientController@getBiometrics');
+                    Route::post('', 'PatientController@addBiometric');
+                    Route::delete('{id}', 'PatientController@removeBiometric');
+                });
+
+                Route::group([
+                    'prefix' => 'problems'
+                ], function () {
+                    Route::get('', 'PatientController@getProblems');
+                    Route::post('', 'PatientController@addCpmProblem');
+                    Route::get('cpm', 'PatientController@getCpmProblems');
+                    Route::delete('cpm/{cpmId}', 'PatientController@removeCpmProblem');
+                    Route::get('ccd', 'PatientController@getCcdProblems');
+                    Route::post('ccd', 'PatientController@addCcdProblem');
+                    Route::put('ccd/{ccdId}', 'PatientController@editCcdProblem');
+                    Route::delete('ccd/{ccdId}', 'PatientController@removeCcdProblem');
+                });
+
+                Route::group([
+                    'prefix' => 'allergies'
+                ], function () {
+                    Route::get('', 'PatientController@getCcdAllergies');
+                    Route::post('', 'PatientController@addCcdAllergies');
+                    Route::delete('{allergyId}', 'PatientController@deleteCcdAllergy');
+                });
+
+                Route::group([
+                    'prefix' => 'symptoms'
+                ], function () {
+                    Route::get('', 'PatientController@getSymptoms');
+                    Route::post('', 'PatientController@addSymptom');
+                    Route::delete('{symptomId}', 'PatientController@removeSymptom');
+                });
+
+                Route::group([
+                    'prefix' => 'medication'
+                ], function () {
+                    Route::get('', 'PatientController@getMedication');
+                    Route::post('', 'PatientController@addMedication');
+                    Route::put('{id}', 'PatientController@editMedication');
+                    Route::delete('{medicationId}', 'PatientController@removeMedication');
+                    Route::get('groups', 'PatientController@getMedicationGroups');
+                });
+
+                Route::group([
+                    'prefix' => 'appointments'
+                ], function () {
+                    Route::get('', 'PatientController@getAppointments');
+                    Route::post('', 'PatientController@addAppointment');
+                    Route::delete('{id}', 'PatientController@removeAppointment');
+                });
+
+                Route::group([
+                    'prefix' => 'providers'
+                ], function () {
+                    Route::get('', 'PatientController@getProviders');
+                    Route::post('', 'PatientController@addProvider');
+                    Route::delete('{id}', 'PatientController@removeProvider');
+                });
+            });
+
+            Route::get('{userId}/lifestyles', 'PatientController@getLifestyles');
+            Route::post('{userId}/lifestyles', 'PatientController@addLifestyle');
+            Route::delete('{userId}/lifestyles/{lifestyleId}', 'PatientController@removeLifestyle');
+            Route::get('{userId}/misc', 'PatientController@getMisc');
+            Route::get('{userId}/misc/{miscTypeId}', 'PatientController@getMiscByType');
+            Route::post('{userId}/misc', 'PatientController@addMisc');
+            Route::post('{userId}/misc/{miscId}/instructions', 'PatientController@addInstructionToMisc');
+            Route::delete('{userId}/misc/{miscId}/instructions/{instructionId}', 'PatientController@removeInstructionFromMisc');
+            Route::delete('{userId}/misc/{miscId}', 'PatientController@removeMisc');
+            Route::get('{userId}/notes', 'PatientController@getNotes');
+            Route::post('{userId}/notes', 'PatientController@addNote');
+            Route::put('{userId}/notes/{id}', 'PatientController@editNote');
+            Route::post('{patientId}/problems/cpm/{cpmId}/instructions', 'ProblemInstructionController@addInstructionProblem');
+            Route::post('{patientId}/problems/ccd/{problemId}/instructions', 'ProblemInstructionController@addInstructionToCcdProblem');
+            Route::delete('{patientId}/problems/cpm/{cpmId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionProblem');
+            Route::delete('{patientId}/problems/ccd/{problemId}/instructions/{instructionId}', 'ProblemInstructionController@removeInstructionFromCcdProblem');
+
+            Route::resource('', 'PatientController');
         });
 
         Route::group(['prefix' => 'practices'], function () {
@@ -311,6 +486,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.listing',
         ]);
 
+        Route::get('listing/pdf', [
+            'uses' => 'Patient\PatientController@showPatientListingPdf',
+            'as'   => 'patients.listing.pdf',
+        ]);
+
         Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
@@ -398,6 +578,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment',
+        ]);
+
+        Route::get('view-careplan/assessment/{approverId}', [
+            'uses' => 'ReportsController@makeAssessment',
+            'as'   => 'patient.careplan.assessment.approver',
+        ]);
+
+        Route::post('view-careplan/assessment', [
+            'uses' => 'CareplanAssessmentController@store',
+            'as'   => 'patient.careplan.assessment.create',
         ]);
 
         Route::get('approve-careplan/{viewNext?}', [
@@ -569,6 +759,16 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.athena.ccdas',
         ]);
 
+        Route::get('patients/letters/paused', [
+            'uses' => 'ReportsController@pausedPatientsLetterPrintList',
+            'as'   => 'get.print.paused.letters'
+        ]);
+
+        Route::get('patients/letters/paused/file', [
+            'uses' => 'ReportsController@getPausedLettersFile',
+            'as'   => 'get.paused.letters.file'
+        ]);
+
         /**
          * LOGGER
          */
@@ -594,6 +794,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'enrollment.ambassador.stats',
         ]);
 
+        Route::get('enrollment/ambassador/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStatsExcel',
+            'as'   => 'enrollment.ambassador.stats.excel',
+        ]);
+
         Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
@@ -602,6 +807,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('enrollment/practice/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makePracticeStats',
             'as'   => 'enrollment.practice.stats',
+        ]);
+
+        Route::get('enrollment/practice/kpis/excel', [
+            'uses' => 'Enrollment\EnrollmentStatsController@practiceStatsExcel',
+            'as'   => 'enrollment.practice.stats.excel',
         ]);
 
         Route::get('enrollment/practice/kpis/data', [
@@ -659,7 +869,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
             'prefix' => 'reports',
         ], function () {
-
             Route::group([
                 'prefix' => 'monthly-billing/v2',
             ], function () {
@@ -676,6 +885,21 @@ Route::group(['middleware' => 'auth'], function () {
 
                 Route::get('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data'
+                ]);
+                
+                Route::get('/services', [
+                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
+                    'as'   => 'monthly.billing.services',
+                ]);
+
+                Route::post('/updatePracticeServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
+                    'as'   => 'monthly.billing.practice.services',
+                ]);
+
+                Route::post('/updateSummaryServices', [
+                    'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
+                    'as'   => 'monthly.billing.summary.services',
                 ]);
 
                 Route::post('/status/update', [
@@ -1295,10 +1519,10 @@ Route::group([], function () {
  *
  */
 Route::group([
-    'prefix'     => '{practiceSlug}/admin',
+    'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator',
+        'providerDashboardACL:administrator|saas-admin',
     ],
 ], function () {
 
@@ -1508,6 +1732,79 @@ Route::group([
 });
 
 Route::impersonate();
+
+Route::group([
+    'prefix' => 'saas/admin',
+    'middleware' => ['auth', 'role:saas-admin']
+], function (){
+
+    Route::get('home', [
+        'uses' => 'Patient\PatientController@showDashboard',
+        'as' => 'saas-admin.home'
+    ]);
+
+    Route::group(['prefix' => 'users'], function(){
+        Route::get('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@index',
+            'as'   => 'saas-admin.users.index',
+        ]);
+
+        Route::get('create', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@create',
+            'as'   => 'saas-admin.users.create',
+        ]);
+
+        Route::post('', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@store',
+            'as'   => 'saas-admin.users.store',
+        ]);
+
+        Route::get('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@edit',
+            'as'   => 'saas-admin.users.edit',
+        ]);
+
+        Route::patch('{userId}', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@update',
+            'as'   => 'saas-admin.users.update',
+        ]);
+
+        Route::post('action', [
+            'uses' => 'SAAS\Admin\CRUD\InternalUserController@action',
+            'as'   => 'saas-admin.users.action',
+        ]);
+    });
+
+    Route::resource('practices', 'SAAS\Admin\CRUD\PracticeController', ['names' => [
+        'index' => 'saas-admin.practices.index',
+        'store' => 'saas-admin.practices.store',
+        'create' => 'saas-admin.practices.create',
+        'destroy' => 'saas-admin.practices.destroy',
+        'update' => 'saas-admin.practices.update',
+        'show' => 'saas-admin.practices.show',
+        'edit' => 'saas-admin.practices.edit',
+    ]]);
+
+    Route::group(['prefix' => 'monthly-billing'], function(){
+        Route::get('make', [
+            'uses' => 'Billing\PracticeInvoiceController@make',
+            'as'   => 'saas-admin.monthly.billing.make',
+        ]);
+
+        Route::post('data', [
+            'uses' => 'Billing\PracticeInvoiceController@data',
+            'as'   => 'saas-admin.monthly.billing.data',
+        ]);
+    });
+
+    Route::group(['prefix' => 'practice/billing'], function () {
+        Route::get('create', [
+            'uses' => 'Billing\PracticeInvoiceController@createInvoices',
+            'as'   => 'saas-admin.practices.billing.create',
+        ]);
+    });
+});
+
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',

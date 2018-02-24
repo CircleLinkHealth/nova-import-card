@@ -1,7 +1,7 @@
 <div class="row">
     <button type="button" class="btn btn-success btn-xs" data-toggle="collapse" href="#collapseItemEdit{{ $planItem->id }}" aria-expanded="false" aria-controls="collapseItemEdit{{ $planItem->id }}">Edit</button>
-    <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-danger btn-xs section-reload" section="{{ $careSection->id }}">Remove</a>
-    <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs section-reload" section="{{ $careSection->id }}">Add Child Item</a>
+    <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-danger btn-xs section-reload" section="{{ $careSection->id }}">Remove</a>
+    <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs section-reload" section="{{ $careSection->id }}">Add Child Item</a>
 </div>
 <div class="collapse" id="collapseItemEdit{{ $planItem->id }}" style="background:#ccc;">
     [EYE:{{ $i+1 .' of '.$careSection->carePlanItems->count() }}]<br />

@@ -4,7 +4,7 @@
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 <a href="#" class="btn btn-green btn-next inline-block submitFormBtn" dtarget="/" omitsubmit="yes">Cancel</a>
                 <a href="#" class="btn btn-green btn-next inline-block submitFormBtn"
-                   dtarget="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}">
+                   dtarget="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}">
 
                 </a>
                 <button type="submit" class="btn btn-orange">Submit</button>

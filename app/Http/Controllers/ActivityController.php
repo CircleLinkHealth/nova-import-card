@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use GuzzleHttp\Client;
+use \Log;
 
 /**
  * Class ActivityController
@@ -237,6 +239,37 @@ class ActivityController extends Controller
         // convert minutes to seconds.
         if ($input['duration']) {
             $input['duration'] = $input['duration'] * 60;
+
+            $client = new Client();
+
+            $nurseId = $input['provider_id'];
+            $patientId = $input['patient_id'];
+            $duration = (int)$input['duration'];
+
+            /**
+            * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
+            */
+            if ($nurseId && $patientId && $duration) {
+                $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
+                try {
+                    $res = $client->put($url, [
+                        'form_params' => [
+                            'startTime' => $duration
+                        ]
+                    ]);
+                    $status = $res->getStatusCode();
+                    $body = $res->getBody();
+                    if ($status == 200) {
+                        Log::info($body);
+                    }
+                    else {
+                        Log::critical($body);
+                    }
+                }
+                catch (\Exception $ex) {
+                    Log::critical($ex);
+                }
+            }
         }
 
         // store activity

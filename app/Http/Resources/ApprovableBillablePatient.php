@@ -2,15 +2,16 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\Resource;
 use App\User;
+use Illuminate\Http\Resources\Json\Resource;
 
 class ApprovableBillablePatient extends Resource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function toArray($request)
@@ -53,7 +54,7 @@ class ApprovableBillablePatient extends Resource
 
         $name = $this->patient->fullName;
         $url = route('patient.note.index', [
-            'patient' => $this->patient->id
+            'patient' => $this->patient->id,
         ]);
 
         return [
@@ -79,6 +80,8 @@ class ApprovableBillablePatient extends Resource
             'report_id'              => $this->id,
             'qa'                     => $toQA,
             'lacksProblems'          => $lacksProblems,
+
+            'chargeable_services'    => $this->chargeableServices()->get(),
 
         ];
     }

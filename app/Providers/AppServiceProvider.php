@@ -1,5 +1,6 @@
 <?php namespace App\Providers;
 
+use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -19,14 +20,18 @@ use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
+use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
-use App\Services\NoteService;
+use App\Services\SnappyPdfWrapper;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
+use Orangehill\Iseed\IseedServiceProvider;
+use Way\Generators\GeneratorsServiceProvider;
+use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -57,10 +62,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
         $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
         $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
-
-        if ($this->app->environment('local', 'testing', 'staging')) {
-            $this->app->register(DuskServiceProvider::class);
-        }
+        $this->app->bind(HtmlToPdfService::class, function () {
+            return $this->app->make(SnappyPdfWrapper::class);
+        });
 
         $this->app->alias('bugsnag.multi', \Illuminate\Contracts\Logging\Log::class);
         $this->app->alias('bugsnag.multi', \Psr\Log\LoggerInterface::class);
@@ -112,7 +116,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             UserRepository::class,
-            UserRepositoryEloquent::class
+            PrettusUserRepositoryEloquent::class
         );
 
         $this->app->bind(
@@ -120,12 +124,11 @@ class AppServiceProvider extends ServiceProvider
             WebixFormatter::class
         );
 
-        $this->app->bind(WebixFormatter::class, function(){
-            return new WebixFormatter(new NoteService());
-        });
-
         if ($this->app->environment('local')) {
-            $this->app->register('Orangehill\Iseed\IseedServiceProvider');
+            $this->app->register(IseedServiceProvider::class);
+            $this->app->register(GeneratorsServiceProvider::class);
+            $this->app->register(MigrationsGeneratorServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
         }
     }
 }

@@ -14,9 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $patient_id
  * @property int $provider_id
  * @property string $start_time
- * @property string $actual_start_time
  * @property string $end_time
- * @property string $actual_end_time
  * @property string|null $redirect_to
  * @property string|null $url_full
  * @property string|null $url_short
@@ -95,9 +93,7 @@ class PageTimer extends \App\BaseModel
         'patient_id',
         'provider_id',
         'start_time',
-        'actual_start_time',
         'end_time',
-        'actual_end_time',
         'redirect_to',
         'url_full',
         'url_short',

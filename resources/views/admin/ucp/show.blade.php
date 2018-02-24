@@ -34,7 +34,7 @@
                             <tr>
                                 <td>
                                     @if($ucp->item)
-                                        <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                        <a href="{{ route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
                                     @else
                                         {{ $ucp->items_id }}
                                     @endif
@@ -42,7 +42,7 @@
                                 <td>{{ $ucp->user_id }}</td>
                                 <td>{{ $ucp->meta_key }}</td>
                                 <td><strong>{{ $ucp->meta_value }}</strong></td>
-                                <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
+                                <td><a href="{{ route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                             </tbody>
                         </table>

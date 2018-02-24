@@ -42,8 +42,8 @@
 
     @push('scripts')
         <script>
-            var callUpdatePostUri = "{{ URL::route('api.callupdate') }}";
-            var datatableDataUri = "{{ URL::route('call.anyCallsManagement') }}";
+            var callUpdatePostUri = "{{ route('api.callupdate') }}";
+            var datatableDataUri = "{{ route('call.anyCallsManagement') }}";
         </script>
         <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
         <!-- <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
@@ -75,7 +75,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row" style="margin:20px 0px 40px 0px;">
-                        <form id="addCallForm" action="<?php echo URL::route('api.callcreate'); ?>" method="post">
+                        <form id="addCallForm" action="<?php echo route('api.callcreate'); ?>" method="post">
                             {{ csrf_field() }}
                             <div class="col-md-12">
                                 <div class="row">
@@ -136,11 +136,11 @@
 
                         <div class="row">
                             <div class="col-sm-12">
-                                <a href="{{ URL::route('CallReportController.exportxls', array()) }}" class="btn btn-primary pull-right">Excel Export</a> &nbsp;
+                                <a href="{{ route('CallReportController.exportxls', array()) }}" class="btn btn-primary pull-right">Excel Export</a> &nbsp;
                                 <button style="margin-right:5px;" type="button" id="addCallButton" class="btn btn-success pull-right" data-toggle="modal" data-target="#addCallModal">Add Call</button>
                             </div>
                         </div>
-                        {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                             <div class="row" style="margin:40px 0px;">
                                 <div class="col-xs-4">
                                     With selected calls:&nbsp;&nbsp;

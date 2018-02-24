@@ -9,7 +9,7 @@
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
@@ -95,6 +95,7 @@
                                 // view:"datatable",
                                 //css:"webix_clh_cf_style",
                                 autoheight: true,
+                                autowidth: true,
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                 // leftSplit:2,
                                 scrollX: false,
@@ -103,36 +104,36 @@
                                     {
                                         id: "patient_name",
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 200,
                                         sort: 'string',
-                                        template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
+                                        adjust: true,
+                                        template: "<a href='<?php echo route('patient.activity.providerUIIndex',
                                             array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
                                         id: "site",
                                         header: ["Practice", {content: "selectFilter"}],
-                                        width: 150,
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "ccm_status",
                                         header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
-                                        width: 110,
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "dob",
                                         header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 110,
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "colsum_careplan",
                                         header: ["CarePlan", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_careplan;
                                             var date = new Date(seconds * 1000);
@@ -144,9 +145,9 @@
                                     {
                                         id: "colsum_progress",
                                         header: ["Progress", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_progress;
                                             var date = new Date(seconds * 1000);
@@ -158,9 +159,9 @@
                                     {
                                         id: "colsum_rpm",
                                         header: ["RPM", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_rpm;
                                             var date = new Date(seconds * 1000);
@@ -172,9 +173,9 @@
                                     {
                                         id: "colsum_tcc",
                                         header: ["CC", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         format: webix.numberFormat,
                                         template: function (obj) {
                                             var seconds = obj.colsum_tcc;
@@ -187,10 +188,10 @@
                                     {
                                         id: "colsum_other",
                                         header: ["Other", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
-                                        css: {"color": "black", "text-align": "right"}
-                                        , template: function (obj) {
+                                        css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
+                                        template: function (obj) {
                                         var seconds = obj.colsum_other;
                                         var date = new Date(seconds * 1000);
                                         var mm = Math.floor(seconds / 60);
@@ -204,6 +205,7 @@
                                         header: ["Total", "(Min:Sec)"],
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         format: webix.numberFormat,
                                         template: function (obj, common) {
                                             var seconds = obj.colsum_total;
