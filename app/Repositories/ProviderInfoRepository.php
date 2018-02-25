@@ -41,8 +41,8 @@ class ProviderInfoRepository
             'address' => $providerUser->address,
             'status' => $providerUser->status,
             'locations' => $providerUser->locations()->get(),
-            'created_at' => $providerUser->created_at->format('c'),
-            'updated_at' => $providerUser->updated_at->format('c')
+            'created_at' => $providerUser->created_at->format('c') ?? null,
+            'updated_at' => $providerUser->updated_at->format('c') ?? null
         ];
     }
 
