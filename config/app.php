@@ -152,8 +152,6 @@ return [
         */
         Jenssegers\Agent\AgentServiceProvider::class,
 
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
-
         /*
          * Laravel Framework Service Providers...
          */
@@ -285,7 +283,6 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
         'Zip'            => ZanySoft\Zip\ZipFacade::class,
         'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
