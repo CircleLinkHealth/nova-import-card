@@ -2725,7 +2725,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'billing_provider_name' => $this->billing_provider_name,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
-            'phone' => $this->phone ?? optional($phone)->number
+            'phone' => $this->phone ?? optional($phone)->number,
+            'created_at' => $this->created_at->format('c'),
+            'updated_at' => $this->updated_at->format('c')
         ];
     }
 

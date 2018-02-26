@@ -140,7 +140,7 @@
                             patient.dob = (patient.patient_info || {}).birth_date || ''
                             patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                             patient.age = patient.patient_info.age || ''
-                            patient.registeredOn = (patient.patient_info || {}).created_at || ''
+                            patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
                             patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
                             patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
                             return patient
