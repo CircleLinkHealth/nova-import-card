@@ -71,10 +71,20 @@ class PatientSearchModel extends \App\BaseModel
         }
         
         if ($this->age) {
-            $year = Carbon::now()->subYear($this->age)->format('Y');
-            $query = $query->whereHas('patientInfo', function ($query) use ($year) {
-               $query->where('birth_date', 'LIKE', $year . '%');
+            $date = Carbon::now()->subYear($this->age)->format('Y');
+            $query = $query->whereHas('patientInfo', function ($query) use ($date) {
+               $query->where('birth_date', 'LIKE', $date . '%');
             });
+        }
+        
+        if ($this->registeredOn) {
+            $query = $query->where('created_at', 'LIKE', $this->registeredOn . ' %');
+        }
+        
+        if ($this->lastReading) {
+            $query = $query->whereHas('lastObservation', function ($query) {
+                $query->where('obs_date', 'LIKE', $this->lastReading . '%');
+             });
         }
 
         return $query;
