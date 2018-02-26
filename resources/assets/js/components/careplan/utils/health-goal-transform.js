@@ -11,7 +11,7 @@ const transformHealthGoal = (goal) => {
             goal.info.starting = ''
         }
         goal.start = () => (goal.info.starting || 'N/A')
-        goal.end = () => (goal.info.target || '0')
+        goal.end = () => ((goal.info.target == '0') ? 'N/A' : (goal.info.target || 'N/A'))
         goal.active = () => !!(goal.info.starting && goal.info.target)
         
         const start = (goal.start().split('/')[0] || 0)
@@ -74,7 +74,8 @@ const transformHealthGoal = (goal) => {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
 
-                    if (!goal.info.starting || goal.info.starting == 'N/A') {
+
+                    if (!goal.info.starting || goal.info.starting == 'N/A' || !goal.info.target || (goal.name == 'Weight' && (goal.info.target == '0'))) {
                         return 'Regulate'
                     }
                     
