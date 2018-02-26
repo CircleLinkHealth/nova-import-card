@@ -10,6 +10,7 @@ namespace App\Repositories;
 
 
 use App\User;
+use App\PatientSearchModel;
 
 class PatientReadRepository
 {
@@ -75,5 +76,9 @@ class PatientReadRepository
         }
 
         return $result;
+    }
+
+    public function search(PatientSearchModel $searchModel) {
+        return $searchModel->results();
     }
 }
