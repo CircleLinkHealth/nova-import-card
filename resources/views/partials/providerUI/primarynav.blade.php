@@ -29,7 +29,7 @@ if (isset($patient)) {
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                @if(auth()->user()->hasRole('saas-admin'))
+                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator'))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                              aria-expanded="false"
