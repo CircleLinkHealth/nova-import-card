@@ -270,6 +270,18 @@ class PatientController extends Controller
         return view('wpUsers.patient.listing');
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @return Response
+     */
+    public function toDeprecateShowPatientListing()
+    {
+        $data = $this->formatter->patientListing();
+
+        return view('wpUsers.patient.listingToDeprecate', $data);
+    }
+
     public function showPatientListingPdf() {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');

@@ -29,7 +29,6 @@
         "arcturial/clickatell": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-snappy": "*",
-        "bugsnag/bugsnag-laravel": "^2.0",
         "dionera/laravel-beanstalkd-ui": "*",
         "fideloper/proxy": "~3.3",
         "gemorroj/archive7z": "^3.0",
