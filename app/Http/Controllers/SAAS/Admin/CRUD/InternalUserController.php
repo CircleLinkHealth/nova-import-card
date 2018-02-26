@@ -36,6 +36,7 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.store');
         $data['submitMethod'] = 'post';
+        $data['titleVerb'] = 'Add';
 
         return view('saas.admin.user.manage', $data);
     }
@@ -78,6 +79,7 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
         $data['submitMethod'] = 'patch';
+        $data['titleVerb'] = 'Edit';
 
         return view('saas.admin.user.manage', $data);
     }
