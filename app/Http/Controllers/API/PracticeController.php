@@ -41,7 +41,10 @@ class PracticeController extends Controller
     * get list of available practices
     */
     public function getPractices() {
-        $practicesCollection = Practice::get([
+        $practicesCollection = auth()->user()
+                                ->practices()
+                                ->with('locations')
+                                ->get([
                                             'id',
                                             'display_name',
                                         ]);
@@ -102,7 +105,7 @@ class PracticeController extends Controller
     }
 
     public function getPatients($practiceId) {
-        $practice = Practice::where('id', $practiceId)->get(['id'])->first();
+        $practice = Practice::find($practiceId);
         $patients = $practice->patients()->get([
             'id',
             'first_name',
