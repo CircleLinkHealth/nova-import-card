@@ -23,8 +23,8 @@ use Carbon\Carbon;
 class PatientSearchModel extends \App\BaseModel
 {
     public static function create($data) {
+        $model = new PatientSearchModel();
         if ($data) {
-            $model = new PatientSearchModel();
             $model->name = isset($data['name']) ? $data['name'] : null;
             $model->provider = isset($data['provider']) ? $data['provider'] : null;
             $model->careplanStatus = isset($data['careplanStatus']) ? $data['careplanStatus'] : null;
@@ -33,9 +33,8 @@ class PatientSearchModel extends \App\BaseModel
             $model->age = isset($data['age']) ? $data['age'] : null;
             $model->registeredOn = isset($data['registeredOn']) ? $data['registeredOn'] : null;
             $model->lastReading = isset($data['lastReading']) ? $data['lastReading'] : null;
-            return $model;
         }
-        throw new \Exception('argument (data) not specified');
+        return $model;
     }
 
     public function users() {
