@@ -55,9 +55,28 @@ class PatientSearchModel extends \App\BaseModel
         if ($this->careplanStatus) {
             $query = $query->whereHas('carePlan', function ($query) {
                $query->where('status', $this->careplanStatus)->orWhere('status', 'LIKE', '%\"status\":\"' . $this->careplanStatus . '\"%');
-
             });
         }
+        
+        if ($this->dob) {
+            $query = $query->whereHas('patientInfo', function ($query) {
+               $query->where('birth_date', $this->dob);
+            });
+        }
+        
+        if ($this->phone) {
+            $query = $query->whereHas('phoneNumbers', function ($query) {
+               $query->where('number', $this->phone);
+            });
+        }
+        
+        if ($this->age) {
+            $year = Carbon::now()->subYear($this->age)->format('Y');
+            $query = $query->whereHas('patientInfo', function ($query) use ($year) {
+               $query->where('birth_date', 'LIKE', $year . '%');
+            });
+        }
+
         return $query;
     }
 
