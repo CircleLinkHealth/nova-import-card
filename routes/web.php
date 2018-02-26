@@ -1752,7 +1752,7 @@ Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin']
+    'middleware' => ['auth', 'role:saas-admin|administrator']
 ], function (){
 
     Route::get('home', [
