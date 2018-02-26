@@ -223,7 +223,7 @@
                         </li>
 
 
-                        @if ( ! Auth::guest())
+
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -242,8 +242,8 @@
                                             Patient Report</a></li>
                                 </ul>
                             </li>
-                        @endif
 
+                        @if(auth()->user()->isSaas())
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -253,6 +253,7 @@
                                     <li><a href="{{ route('saas-accounts.create', []) }}">Create New</a></li>
                                 </ul>
                             </li>
+                        @endif
 
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
