@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\User;
 use App\ProviderInfo;
+use Carbon\Carbon;
 
 class ProviderInfoRepository
 {
@@ -41,8 +42,8 @@ class ProviderInfoRepository
             'address' => $providerUser->address,
             'status' => $providerUser->status,
             'locations' => $providerUser->locations()->get(),
-            'created_at' => $providerUser->created_at->format('c') ?? null,
-            'updated_at' => $providerUser->updated_at->format('c') ?? null
+            'created_at' => Carbon::parse($providerUser->created_at)->format('c') ?? null,
+            'updated_at' => Carbon::parse($providerUser->updated_at)->format('c') ?? null
         ];
     }
 
