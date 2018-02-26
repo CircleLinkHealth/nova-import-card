@@ -64,7 +64,7 @@ class EmptyUserNotificationList implements UserNotificationListInterface
      */
     public function all($start = 0, $end = -1)
     {
-        // TODO: Implement all() method.
+        return [];
     }
 
     public function delete($notification)
