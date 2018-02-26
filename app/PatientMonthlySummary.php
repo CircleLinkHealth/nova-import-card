@@ -130,12 +130,6 @@ class PatientMonthlySummary extends \App\BaseModel
         return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
     }
 
-    public function chargeableServices(){
-        return $this->morphToMany(  ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
-    }
-
     //Run at beginning of month
 
     public function getPatientsOver20MinsForPracticeForMonth(
