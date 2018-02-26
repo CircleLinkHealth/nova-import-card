@@ -23,7 +23,7 @@ use Carbon\Carbon;
 class PatientSearchModel
 {
     public static function create($data) {
-        $model = new PatientSearchModel();
+        $model = new \stdClass();
         if ($data) {
             $model->name = isset($data['name']) ? $data['name'] : null;
             $model->provider = isset($data['provider']) ? $data['provider'] : null;
