@@ -110,7 +110,7 @@
                                                 <label for="select-user-checkbox-{{ $wpUser->id }}"><span> </span></label>
                                             </div>
                                         </td>
-                                        <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
+                                        <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}" target="_blank"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if ($wpUser->roles->isNotEmpty())
@@ -124,7 +124,14 @@
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
                                             @endif
                                         </td>
-                                        <td class="text-right">
+                                        <td>
+                                            <div class="text-right">
+                                            @if($wpUser->hasRole('participant'))
+                                                <a href="{{ route('patient.summary', ['patientId' => $wpUser->id]) }}"
+                                                   class="btn btn-info btn-xs" style="margin-left:10px;"><i
+                                                            class="glyphicon glyphicon-eye-open"></i> View</a>
+                                            @endif
+
                                             @if($wpUser->hasRole(['care-center', 'saas-admin']))
                                                 <a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}"
                                                    class="btn btn-primary btn-xs"><i
@@ -139,18 +146,13 @@
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
                                             @endif
 
-                                            @if($wpUser->hasRole('participant'))
-                                                <a href="{{ route('patient.summary', ['patientId' => $wpUser->id]) }}"
-                                                   class="btn btn-info btn-xs" style="margin-left:10px;"><i
-                                                            class="glyphicon glyphicon-eye-open"></i> View</a>
-                                            @endif
-
                                             @if(Cerberus::hasPermission('users-edit-all'))
                                                 <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i
                                                             class="glyphicon glyphicon-remove-sign"></i> Delete</a>
                                             @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

@@ -2698,6 +2698,28 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasRole('administrator');
     }
 
+    public function isInternalUser() {
+        return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+    }
+
+    public function isPracticeStaff() {
+        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
+    public function linkToViewResource() {
+        if ($this->isInternalUser()) {
+            return route('admin.users.edit', ['id' => $this->id]);
+        }
+
+        if ($this->hasRole('participant')) {
+            return route('patient.careplan.print', ['id' => $this->id]);
+        }
+
+        if ($this->isPracticeStaff()) {
+            return route('provider.dashboard.manage.staff', ['practiceSlug' => $this->practices->first()->name]);
+        }
+    }
+
     /**
      * @return bool
      */

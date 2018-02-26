@@ -11,7 +11,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Location;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
-use App\Location;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
