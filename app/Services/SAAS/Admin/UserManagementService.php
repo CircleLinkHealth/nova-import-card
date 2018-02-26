@@ -13,7 +13,13 @@ class UserManagementService
      */
     public function getDataForCreateUserPage()
     {
-        $roles = Role::whereIn('name', ['saas-admin', 'care-center'])
+        $rolesChoices = ['saas-admin', 'care-center'];
+
+        if (auth()->user()->hasRole('administrator')) {
+            $rolesChoices[] = 'administrator';
+        }
+
+        $roles = Role::whereIn('name', $rolesChoices)
                      ->get()
                      ->pluck('display_name', 'id');
 
