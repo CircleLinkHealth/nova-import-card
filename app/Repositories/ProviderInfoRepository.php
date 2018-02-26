@@ -42,8 +42,8 @@ class ProviderInfoRepository
             'address' => $providerUser->address,
             'status' => $providerUser->status,
             'locations' => $providerUser->locations()->get(),
-            'created_at' => Carbon::parse($providerUser->created_at)->format('c') ?? null,
-            'updated_at' => Carbon::parse($providerUser->updated_at)->format('c') ?? null
+            'created_at' => optional($providerUser->created_at)->format('c') ?? null,
+            'updated_at' => optional($providerUser->updated_at)->format('c') ?? null
         ];
     }
 
