@@ -137,7 +137,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
 
     public function getStatusAttribute() {
         $value = $this->attributes['status'];
-        if ($value && substr($value, 0, 1) === '{') {
+        if ($value && starts_with($value, ['{', '['])) {
             $careplan = (array)json_decode($value);
             return $careplan['status'];
         }
