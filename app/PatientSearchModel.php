@@ -23,17 +23,16 @@ use Carbon\Carbon;
 class PatientSearchModel
 {
     public static function create($data) {
-        $model = new \stdClass();
-        if ($data) {
-            $model->name = isset($data['name']) ? $data['name'] : null;
-            $model->provider = isset($data['provider']) ? $data['provider'] : null;
-            $model->careplanStatus = isset($data['careplanStatus']) ? $data['careplanStatus'] : null;
-            $model->dob = isset($data['dob']) ? $data['dob'] : null;
-            $model->phone = isset($data['phone']) ? $data['phone'] : null;
-            $model->age = isset($data['age']) ? $data['age'] : null;
-            $model->registeredOn = isset($data['registeredOn']) ? $data['registeredOn'] : null;
-            $model->lastReading = isset($data['lastReading']) ? $data['lastReading'] : null;
-        }
+        $data = $data ?? [];
+        $model = new PatientSearchModel();
+        $model->name = isset($data['name']) ? $data['name'] : null;
+        $model->provider = isset($data['provider']) ? $data['provider'] : null;
+        $model->careplanStatus = isset($data['careplanStatus']) ? $data['careplanStatus'] : null;
+        $model->dob = isset($data['dob']) ? $data['dob'] : null;
+        $model->phone = isset($data['phone']) ? $data['phone'] : null;
+        $model->age = isset($data['age']) ? $data['age'] : null;
+        $model->registeredOn = isset($data['registeredOn']) ? $data['registeredOn'] : null;
+        $model->lastReading = isset($data['lastReading']) ? $data['lastReading'] : null;
         return $model;
     }
 
