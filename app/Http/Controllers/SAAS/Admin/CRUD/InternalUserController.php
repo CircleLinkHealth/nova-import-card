@@ -129,8 +129,7 @@ class InternalUserController extends Controller
             }
         }
 
-        // role filter
-        $roles = Role::whereIn('name', [
+        $rolesArray = [
             'care-center',
             'med_assistant',
             'provider',
@@ -139,7 +138,14 @@ class InternalUserController extends Controller
             'saas-admin',
             'specialist',
             'registered-nurse',
-        ])
+        ];
+
+        if (auth()->user()->hasRole('administrator')) {
+            $rolesArray[] = 'administrator';
+        }
+
+        // role filter
+        $roles = Role::whereIn('name', $rolesArray)
                      ->orderBy('display_name')
                      ->pluck('display_name', 'name')
                      ->all();
@@ -176,12 +182,7 @@ class InternalUserController extends Controller
             });
             // providers can only see their participants
             if (Auth::user()->hasRole(['provider'])) {
-                $wpUsers->whereHas('roles', function ($q) {
-                    $q->whereHas('perms', function ($q2) {
-                        $q2->where('name', '=', 'is-participant');
-                    });
-                });
-                $wpUsers->where('program_id', '=', Auth::user()->program_id);
+                $wpUsers->ofType('participant');
             }
         }
 
