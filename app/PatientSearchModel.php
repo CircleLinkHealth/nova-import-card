@@ -20,7 +20,7 @@ use Carbon\Carbon;
  * @property string|null $lastReading
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
  */
-class PatientSearchModel extends \App\BaseModel
+class PatientSearchModel
 {
     public static function create($data) {
         $model = new PatientSearchModel();
