@@ -55,7 +55,7 @@
         },
         data() {
             return {
-                page: 1,
+                pagination: null,
                 tableData: [],
                 practices: [],
                 nameDisplayType: NameDisplayType.FirstName,
@@ -113,10 +113,21 @@
             getPatients () {
                 if (!this.loaders.next) {
                     const self = this
-                    this.loaders.next = this.axios.get(rootUrl(`api/patients?page=${this.page}`)).then(response => {
+                    this.loaders.next = this.axios.get((this.pagination || {}).next_page_url || rootUrl(`api/patients`)).then(response => {
                         console.log('patient-list', response.data)
                         const pagination = response.data
                         const ids = this.tableData.map(patient => patient.id)
+                        this.pagination = {
+                            current_page: pagination.current_page,
+                            from: pagination.from,
+                            last_page: pagination.last_page,
+                            last_page_url: pagination.last_page_url,
+                            next_page_url: pagination.next_page_url,
+                            path: pagination.path,
+                            per_page: pagination.per_page,
+                            to: pagination.to,
+                            total: pagination.total
+                        }
                         const patients = (pagination.data || []).map(patient => {
                             if (((patient.careplan || {}).status || '').startsWith('{')) {
                                 (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
@@ -160,7 +171,6 @@
                             return patient
                         }).filter(patient => (ids.indexOf(patient.id) < 0))
                         this.tableData = this.tableData.concat(patients)
-                        this.page++
                         this.loaders.next = null
                     }).catch(err => {
                         console.error('patient-list', err)
@@ -208,7 +218,7 @@
             const $table = this.$refs.tblPatientList
             Event.$on('vue-tables.pagination', (page) => {
                 if (page === $table.totalPages) {
-                    console.log('next table data')
+                    //console.log('next table data')
                     this.getPatients();
                 }
             })
