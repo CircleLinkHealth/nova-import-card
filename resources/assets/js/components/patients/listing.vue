@@ -5,7 +5,7 @@
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
             <template slot="name" scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')">{{props.row.name}}</a></div>
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')" target="_blank">{{props.row.name}}</a></div>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -55,29 +55,57 @@
         },
         data() {
             return {
-                page: 1,
+                pagination: null,
                 tableData: [],
                 practices: [],
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
-                options: {
+                loaders: {
+                    next: null,
+                    practices: null,
+                    providers: null
+                }
+            }
+        },
+        computed: {
+            options() {
+                return {
                     filterByColumn: true,
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: [],
-                        ccmStatus: [],
-                        careplanStatus: [],
-                        program: []
+                        ccmStatus: [ 
+                                        { id: 'enrolled', text: 'enrolled' }, 
+                                        { id: 'paused', text: 'paused' }, 
+                                        { id: 'withdrawn', text: 'withdrawn' } 
+                                    ],
+                        careplanStatus: [ 
+                                            { id: '', text: 'none' },
+                                            { id: 'qa_approved', text: 'qa_approved' }, 
+                                            { id: 'provider_approved', text: 'provider_approved' }, 
+                                            { id: 'to_enroll', text: 'to_enroll' }, 
+                                            { id: 'patient_withdrawn', text: 'patient_withdrawn' }
+                                        ],
+                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name }))
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     }
-                },
-                loaders: {
-                    next: null,
-                    practices: null
                 }
             }
         },
         methods: {
             rootUrl,
+            nextPageUrl () {
+                const query = this.$refs.tblPatientList.$data.query
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
+                if (this.pagination) {
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}`)
+                }
+                else {
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}`)
+                }
+            },
             toggleProgramColumn () {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
@@ -85,6 +113,11 @@
                 else {
                     this.columns.splice(2, 0, 'program')
                 }
+            },
+            activateFilters () {
+                this.pagination = null
+                this.tableData = []
+                this.getPatients()
             },
             changeNameDisplayType () {
                 if (this.nameDisplayType != NameDisplayType.FirstName) {
@@ -110,13 +143,35 @@
                     this.loaders.practices = null
                 })
             },
+            getProviders() {
+                return this.loaders.providers = this.axios.get(rootUrl('api/providers')).then(response => {
+                    console.log('patient-list:providers', response.data)
+                    this.providers = response.data
+                    this.loaders.providers = null
+                    return this.providers
+                }).catch(err => {
+                    console.error('patient-list:providers', err)
+                    this.loaders.providers = null
+                })
+            },
             getPatients () {
                 if (!this.loaders.next) {
                     const self = this
-                    this.loaders.next = this.axios.get(rootUrl(`api/patients?page=${this.page}`)).then(response => {
+                    this.loaders.next = this.axios.get(this.nextPageUrl()).then(response => {
                         console.log('patient-list', response.data)
                         const pagination = response.data
                         const ids = this.tableData.map(patient => patient.id)
+                        this.pagination = {
+                            current_page: pagination.current_page,
+                            from: pagination.from,
+                            last_page: pagination.last_page,
+                            last_page_url: pagination.last_page_url,
+                            next_page_url: pagination.next_page_url,
+                            path: pagination.path,
+                            per_page: pagination.per_page,
+                            to: pagination.to,
+                            total: pagination.total
+                        }
                         const patients = (pagination.data || []).map(patient => {
                             if (((patient.careplan || {}).status || '').startsWith('{')) {
                                 (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
@@ -158,9 +213,22 @@
                             loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
                             loadColumnList(this.options.listColumns.program, patient.program)
                             return patient
-                        }).filter(patient => (ids.indexOf(patient.id) < 0))
-                        this.tableData = this.tableData.concat(patients)
-                        this.page++
+                        })
+
+                        if (!this.tableData.length) {
+                            const arr = this.tableData.concat(patients)
+                            const total = ((this.pagination || {}).total || 0)
+                            this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                        }
+                        else {
+                            const from = ((this.pagination || {}).from || 0)
+                            const to = ((this.pagination || {}).to || 0)
+                            console.log(patients)
+                            for (let i = from - 1; i < to; i++) {
+                                this.tableData[i] = patients[i - from + 1]
+                            }
+                        }
+                        
                         this.loaders.next = null
                     }).catch(err => {
                         console.error('patient-list', err)
@@ -207,11 +275,30 @@
              */
             const $table = this.$refs.tblPatientList
             Event.$on('vue-tables.pagination', (page) => {
-                if (page === $table.totalPages) {
-                    console.log('next table data')
-                    this.getPatients();
-                }
+                this.getPatients()
             })
+
+
+
+            Event.$on('vue-tables.filter::program', this.activateFilters)
+
+            Event.$on('vue-tables.filter::name', this.activateFilters)
+
+            Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
+
+            Event.$on('vue-tables.filter::careplanStatus', this.activateFilters)
+
+            Event.$on('vue-tables.filter::dob', this.activateFilters)
+
+            Event.$on('vue-tables.filter::phone', this.activateFilters)
+
+            Event.$on('vue-tables.filter::age', this.activateFilters)
+
+            Event.$on('vue-tables.filter::registeredOn', this.activateFilters)
+
+            Event.$on('vue-tables.filter::lastReading', this.activateFilters)
+
+            Event.$on('vue-tables.limit', this.activateFilters)
         }
     }
 </script>
