@@ -76,7 +76,7 @@
                         provider: [],
                         ccmStatus: [],
                         careplanStatus: [],
-                        program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name }))
+                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name }))
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -87,11 +87,13 @@
         methods: {
             rootUrl,
             nextPageUrl () {
+                const query = this.$refs.tblPatientList.$data.query
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}&${filters}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}&${filters}`)
                 }
             },
             toggleProgramColumn () {
@@ -101,6 +103,11 @@
                 else {
                     this.columns.splice(2, 0, 'program')
                 }
+            },
+            activateFilters () {
+                this.pagination = null
+                this.tableData = []
+                this.getPatients()
             },
             changeNameDisplayType () {
                 if (this.nameDisplayType != NameDisplayType.FirstName) {
@@ -260,6 +267,14 @@
             Event.$on('vue-tables.pagination', (page) => {
                 this.getPatients()
             })
+
+
+
+            Event.$on('vue-tables.filter::program', this.activateFilters)
+
+            Event.$on('vue-tables.filter::name', this.activateFilters)
+
+            Event.$on('vue-tables.limit', this.activateFilters)
         }
     }
 </script>
