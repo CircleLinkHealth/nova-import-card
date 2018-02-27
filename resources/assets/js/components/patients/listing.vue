@@ -5,7 +5,7 @@
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
             <template slot="name" scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')">{{props.row.name}}</a></div>
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')" target="_blank">{{props.row.name}}</a></div>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -100,10 +100,10 @@
                 const query = this.$refs.tblPatientList.$data.query
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}&${filters}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}&${filters}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}`)
                 }
             },
             toggleProgramColumn () {
