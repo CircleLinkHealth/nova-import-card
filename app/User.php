@@ -486,11 +486,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(ForeignId::class);
     }
 
-    public function ehrKeychain()
-    {
-        return $this->hasOne(EhrKeychain::class);
-    }
-
     public function patientDemographics()
     {
         return $this->hasMany(DemographicsImport::class, 'provider_id');
@@ -1928,6 +1923,19 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->save();
 
         return $this;
+    }
+
+    /**
+     * (functions as an @ehrKeychain)
+     *
+     * Relates to TargetPatient class, contains all patient info for EHR
+     * (ehr_practice_id, ehr_department_id etc)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ehrInfo(){
+
+        return $this->hasOne(TargetPatient::class);
     }
 
     public function getUCP()
