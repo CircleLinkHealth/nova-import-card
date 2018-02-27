@@ -60,7 +60,15 @@
                 practices: [],
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
-                options: {
+                loaders: {
+                    next: null,
+                    practices: null
+                }
+            }
+        },
+        computed: {
+            options() {
+                return {
                     filterByColumn: true,
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
@@ -68,11 +76,10 @@
                         ccmStatus: [],
                         careplanStatus: [],
                         program: []
+                    },
+                    texts: {
+                        count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     }
-                },
-                loaders: {
-                    next: null,
-                    practices: null
                 }
             }
         },
