@@ -132,6 +132,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'MiscController');
         });
 
+        Route::get('test', 'MiscController@test');
+
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('{id}', 'API\AppointmentController@show');
             Route::resource('', 'API\AppointmentController');
