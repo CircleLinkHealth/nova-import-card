@@ -71,7 +71,8 @@ class UpdatePracticeAppointments extends Command
                         ->whereHas('ehrInfo', function ($e) {
                             $e->where('ehr_id', 2);
                         })
-                        ->ofType('participant');
+                        ->ofType('participant')
+                        ->get();
 
 
         //updateOrCreate Appointments
@@ -83,7 +84,7 @@ class UpdatePracticeAppointments extends Command
 
 
             if ($response['totalcount'] == 0) {
-                return;
+                return false;
             }
 
 
@@ -105,7 +106,7 @@ class UpdatePracticeAppointments extends Command
                     'type'          => $ehrAppointment['patientappointmenttypename'],
                     'date'          => $ehrAppointment['date'],
                     'time'          => $ehrAppointment['starttime'],
-                    'comment'       => "Appointment regarding [appt type/reason] to see [Dr. name] has been scheduled for " . $ehrAppointment['date'] . "at " . $ehrAppointment['starttime'] . "at [appt location]",
+                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . "to see [Dr. name] has been scheduled for " . $ehrAppointment['date'] . "at " . $ehrAppointment['starttime'] . "at [appt location]",
                 ]);
 
 
