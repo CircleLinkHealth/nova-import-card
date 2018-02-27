@@ -75,25 +75,25 @@ class PatientSearchModel
         
         if ($this->dob) {
             $query = $query->whereHas('patientInfo', function ($query) {
-               $query->where('birth_date', $this->dob);
+               $query->where('birth_date', 'LIKE', '%' . $this->dob . '%');
             });
         }
         
         if ($this->phone) {
             $query = $query->whereHas('phoneNumbers', function ($query) {
-               $query->where('number', $this->phone);
+               $query->where('number', 'LIKE', '%' . $this->phone . '%');
             });
         }
         
         if ($this->age) {
-            $date = Carbon::now()->subYear($this->age)->format('Y');
+            $date = Carbon::now()->subYear($this->age + 1)->format('Y');
             $query = $query->whereHas('patientInfo', function ($query) use ($date) {
                $query->where('birth_date', 'LIKE', $date . '%');
             });
         }
         
         if ($this->registeredOn) {
-            $query = $query->where('created_at', 'LIKE', $this->registeredOn . ' %');
+            $query = $query->where('created_at', 'LIKE', '%' . $this->registeredOn . '%');
         }
         
         if ($this->lastReading) {
