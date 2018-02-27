@@ -85,6 +85,14 @@
         },
         methods: {
             rootUrl,
+            nextPageUrl () {
+                if (this.pagination) {
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}`)
+                }
+                else {
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}`)
+                }
+            },
             toggleProgramColumn () {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
@@ -120,7 +128,7 @@
             getPatients () {
                 if (!this.loaders.next) {
                     const self = this
-                    this.loaders.next = this.axios.get((this.pagination || {}).next_page_url || rootUrl(`api/patients`)).then(response => {
+                    this.loaders.next = this.axios.get(this.nextPageUrl()).then(response => {
                         console.log('patient-list', response.data)
                         const pagination = response.data
                         const ids = this.tableData.map(patient => patient.id)
@@ -176,8 +184,22 @@
                             loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
                             loadColumnList(this.options.listColumns.program, patient.program)
                             return patient
-                        }).filter(patient => (ids.indexOf(patient.id) < 0))
-                        this.tableData = this.tableData.concat(patients)
+                        })
+
+                        if (!this.tableData.length) {
+                            const arr = this.tableData.concat(patients)
+                            const total = ((this.pagination || {}).total || 0)
+                            this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                        }
+                        else {
+                            const from = ((this.pagination || {}).from || 0)
+                            const to = ((this.pagination || {}).to || 0)
+                            console.log(patients)
+                            for (let i = from - 1; i < to; i++) {
+                                this.tableData[i] = patients[i - from + 1]
+                            }
+                        }
+                        
                         this.loaders.next = null
                     }).catch(err => {
                         console.error('patient-list', err)
@@ -224,10 +246,7 @@
              */
             const $table = this.$refs.tblPatientList
             Event.$on('vue-tables.pagination', (page) => {
-                if (page === $table.totalPages) {
-                    //console.log('next table data')
-                    this.getPatients();
-                }
+                this.getPatients()
             })
         }
     }

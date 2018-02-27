@@ -18,6 +18,7 @@ use Carbon\Carbon;
  * @property int $age
  * @property string|null $registeredOn
  * @property string|null $lastReading
+ * @property int $rows
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
  */
 class PatientSearchModel
@@ -33,6 +34,7 @@ class PatientSearchModel
         $model->age = isset($data['age']) ? $data['age'] : null;
         $model->registeredOn = isset($data['registeredOn']) ? $data['registeredOn'] : null;
         $model->lastReading = isset($data['lastReading']) ? $data['lastReading'] : null;
+        $model->rows = isset($data['rows']) ? $data['rows'] : null;
         return $model;
     }
 
@@ -89,7 +91,7 @@ class PatientSearchModel
     }
 
     public function results() {
-        $users = $this->users()->whereHas('patientInfo')->paginate();
+        $users = $this->users()->whereHas('patientInfo')->paginate($this->rows ?? 15);
         $users->getCollection()->transform(function ($user) {
             $user = optional($user)->safe();
             return $user;

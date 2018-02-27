@@ -106,7 +106,6 @@ class PatientController extends Controller
     public function index(Request $request)
     {
         return response()->json($this->patientService->search($request->all()));
-        //return response()->json($this->patientService->patients());
     }
 
     public function getPatient($userId) {
