@@ -28,7 +28,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <h4>Target<small v-if="selectedGoal.id == 4"> (# per day)</small></h4>
-                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" pattern="(\d+)(\/\d+)?" required />
+                                <input type="text" class="form-control" placeholder="0.00" v-model="selectedGoal.info.target" step="0.01" pattern="(\d+)(\/\d+)?" :required="selectedGoal.name != 'Weight'" />
                             </div>
                         </div>
                         <div class="row form-group" v-if="selectedGoal.id === 3"> <!--Blood Sugar-->

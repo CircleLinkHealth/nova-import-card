@@ -294,9 +294,17 @@
             });
         });
 
-        $('#newNote').submit(function () {
-            var key = 'notes:{{$patient->id}}:add';
-            window.sessionStorage.removeItem(key)
+        $('#newNote').submit(function (e) {
+            e.preventDefault()
+            var form = this
+            $.get('/api/test').always(response => {
+                if (response.status == 200) {
+                    var key = 'notes:{{$patient->id}}:add'
+                    window.sessionStorage.removeItem(key)
+                }
+                form.submit()
+            })
+            
         })
     </script>
     @endpush
