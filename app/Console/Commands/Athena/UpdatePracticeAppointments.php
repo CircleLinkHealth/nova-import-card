@@ -105,7 +105,7 @@ class UpdatePracticeAppointments extends Command
                     'type'          => $ehrAppointment['patientappointmenttypename'],
                     'date'          => $ehrAppointment['date'],
                     'time'          => $ehrAppointment['starttime'],
-                    'comment'       => 'Retrieved from Athena API',
+                    'comment'       => "Appointment regarding [appt type/reason] to see [Dr. name] has been scheduled for " . $ehrAppointment['date'] . "at " . $ehrAppointment['starttime'] . "at [appt location]",
                 ]);
 
 
