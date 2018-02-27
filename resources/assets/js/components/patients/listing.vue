@@ -62,7 +62,8 @@
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 loaders: {
                     next: null,
-                    practices: null
+                    practices: null,
+                    providers: null
                 }
             }
         },
@@ -75,7 +76,7 @@
                         provider: [],
                         ccmStatus: [],
                         careplanStatus: [],
-                        program: []
+                        program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name }))
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -123,6 +124,17 @@
                 }).catch(err => {
                     console.error('patient-list:practices', err)
                     this.loaders.practices = null
+                })
+            },
+            getProviders() {
+                return this.loaders.providers = this.axios.get(rootUrl('api/providers')).then(response => {
+                    console.log('patient-list:providers', response.data)
+                    this.providers = response.data
+                    this.loaders.providers = null
+                    return this.providers
+                }).catch(err => {
+                    console.error('patient-list:providers', err)
+                    this.loaders.providers = null
                 })
             },
             getPatients () {
