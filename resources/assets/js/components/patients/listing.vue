@@ -74,8 +74,14 @@
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: [],
-                        ccmStatus: [],
-                        careplanStatus: [],
+                        ccmStatus: [ { id: 'enrolled', text: 'enrolled' }, { id: 'paused', text: 'paused' }, { id: 'withdrawn', text: 'withdrawn' } ],
+                        careplanStatus: [ 
+                                            { id: '', text: 'none' },
+                                            { id: 'qa_approved', text: 'qa_approved' }, 
+                                            { id: 'provider_approved', text: 'provider_approved' }, 
+                                            { id: 'to_enroll', text: 'to_enroll' }, 
+                                            { id: 'patient_withdrawn', text: 'patient_withdrawn' }
+                                        ],
                         program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name }))
                     },
                     texts: {
@@ -273,6 +279,20 @@
             Event.$on('vue-tables.filter::program', this.activateFilters)
 
             Event.$on('vue-tables.filter::name', this.activateFilters)
+
+            Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
+
+            Event.$on('vue-tables.filter::careplanStatus', this.activateFilters)
+
+            Event.$on('vue-tables.filter::dob', this.activateFilters)
+
+            Event.$on('vue-tables.filter::phone', this.activateFilters)
+
+            Event.$on('vue-tables.filter::age', this.activateFilters)
+
+            Event.$on('vue-tables.filter::registeredOn', this.activateFilters)
+
+            Event.$on('vue-tables.filter::lastReading', this.activateFilters)
 
             Event.$on('vue-tables.limit', this.activateFilters)
         }
