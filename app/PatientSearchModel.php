@@ -10,8 +10,8 @@ use Carbon\Carbon;
  * @description created for searching through users for the patient-listing view
  *
  * @property string $name
- * @property int $provider
- * @property int $program
+ * @property string $provider
+ * @property string $program
  * @property string $ccmStatus
  * @property string $careplanStatus
  * @property string|null $dob
@@ -30,6 +30,7 @@ class PatientSearchModel
         $model->name = isset($data['name']) ? $data['name'] : null;
         $model->provider = isset($data['provider']) ? $data['provider'] : null;
         $model->program = isset($data['program']) ? $data['program'] : null;
+        $model->ccmStatus = isset($data['ccmStatus']) ? $data['ccmStatus'] : null;
         $model->careplanStatus = isset($data['careplanStatus']) ? $data['careplanStatus'] : null;
         $model->dob = isset($data['dob']) ? $data['dob'] : null;
         $model->phone = isset($data['phone']) ? $data['phone'] : null;
@@ -55,12 +56,20 @@ class PatientSearchModel
         }
         
         if ($this->program) {
-            $query = $query->where('program_id', $this->program);
+            $query = $query->whereHas('primaryPractice', function ($query) {
+                $query->where('display_name', $this->program);
+            });
         }
         
         if ($this->careplanStatus) {
             $query = $query->whereHas('carePlan', function ($query) {
                $query->where('status', $this->careplanStatus)->orWhere('status', 'LIKE', '%\"status\":\"' . $this->careplanStatus . '\"%');
+            });
+        }
+        
+        if ($this->ccmStatus) {
+            $query = $query->whereHas('patientInfo', function ($query) {
+               $query->where('ccm_status', $this->ccmStatus);
             });
         }
         
