@@ -10,7 +10,8 @@ use Carbon\Carbon;
  * @description created for searching through users for the patient-listing view
  *
  * @property string $name
- * @property string $provider
+ * @property int $provider
+ * @property int $program
  * @property string $ccmStatus
  * @property string $careplanStatus
  * @property string|null $dob
@@ -28,6 +29,7 @@ class PatientSearchModel
         $model = new PatientSearchModel();
         $model->name = isset($data['name']) ? $data['name'] : null;
         $model->provider = isset($data['provider']) ? $data['provider'] : null;
+        $model->program = isset($data['program']) ? $data['program'] : null;
         $model->careplanStatus = isset($data['careplanStatus']) ? $data['careplanStatus'] : null;
         $model->dob = isset($data['dob']) ? $data['dob'] : null;
         $model->phone = isset($data['phone']) ? $data['phone'] : null;
@@ -47,9 +49,13 @@ class PatientSearchModel
         if ($this->provider) {
             $query = $query->whereHas('billingProvider', function ($query) {
                 $query->whereHas('user', function ($q) {
-                    $q->where('display_name', $this->provider);
+                    $q->where('display_name', $this->provider)->orWhere('id', $this->provider);
                 });
             });
+        }
+        
+        if ($this->program) {
+            $query = $query->where('program_id', $this->program);
         }
         
         if ($this->careplanStatus) {
