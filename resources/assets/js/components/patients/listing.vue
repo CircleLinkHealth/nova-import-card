@@ -74,7 +74,11 @@
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: [],
-                        ccmStatus: [ { id: 'enrolled', text: 'enrolled' }, { id: 'paused', text: 'paused' }, { id: 'withdrawn', text: 'withdrawn' } ],
+                        ccmStatus: [ 
+                                        { id: 'enrolled', text: 'enrolled' }, 
+                                        { id: 'paused', text: 'paused' }, 
+                                        { id: 'withdrawn', text: 'withdrawn' } 
+                                    ],
                         careplanStatus: [ 
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
