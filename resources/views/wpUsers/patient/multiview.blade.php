@@ -426,7 +426,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 }
                             }
                             else {
-                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A') {
+                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || !$goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                    if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                        $goal['info']['target'] = 'N/A';
+                                    }
                                     $goal['verb'] = 'Regulate';
                                 }
                                 else {

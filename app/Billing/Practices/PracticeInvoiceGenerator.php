@@ -50,6 +50,8 @@ class PracticeInvoiceGenerator
 
 
     public function makeInvoicePdf($reportName) {
+        \Storage::disk('storage')
+            ->makeDirectory('download');
 
         $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
         $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);

@@ -103,9 +103,9 @@ class PatientController extends Controller
     /**
      * returns a list of CPM Problems in the system
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->patientService->patients());
+        return response()->json($this->patientService->search($request->all()));
     }
 
     public function getPatient($userId) {

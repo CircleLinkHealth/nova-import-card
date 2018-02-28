@@ -153,5 +153,21 @@ describe('Health Goal Transform Verbs', () => {
                 expect(transformedGoal.info.verb).toEqual('Increase')
             })
         })
+        
+        describe('target is null', () => {
+            it('Should be Regulate', () => {
+                const goal = {
+                    name: 'Weight',
+                    info: {
+                        starting: '200',
+                        target: null
+                    }
+                }
+
+                const transformedGoal = transformHealthGoal(goal)
+
+                expect(transformedGoal.info.verb).toEqual('Regulate')
+            })
+        })
     })
 })

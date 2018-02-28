@@ -29,6 +29,7 @@ class UpdatePracticeStaff extends FormRequest
             'first_name'         => 'required',
             'last_name'          => 'required',
             'phone_number'       => 'nullable|phone:US',
+            'phone_type'         => 'nullable|integer|min:1|max:3',
             'phone_extension'    => 'nullable',
             'emr_direct_address' => 'nullable|email',
             'role_name'          => 'required',

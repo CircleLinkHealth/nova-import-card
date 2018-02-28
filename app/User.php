@@ -2703,9 +2703,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->display_name ?? ($this->first_name . $this->last_name);
     }
 
+    public function lastObservation() {
+        return $this->observations()->orderBy('id', 'desc');
+    }
+
     public function safe() {
         $careplan = $this->carePlan()->first();
-        $observation = $this->observations()->orderBy('id', 'desc')->first();
+        $observation = $this->lastObservation()->first();
         $phone = $this->phoneNumbers()->first();
 
         return [
@@ -2725,7 +2729,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'billing_provider_name' => $this->billing_provider_name,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
-            'phone' => $this->phone ?? optional($phone)->number
+            'phone' => $this->phone ?? optional($phone)->number,
+            'created_at' => optional($this->created_at)->format('c') ?? null,
+            'updated_at' => optional($this->updated_at)->format('c') ?? null
         ];
     }
 

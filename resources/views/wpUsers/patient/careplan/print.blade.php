@@ -26,10 +26,10 @@ if (isset($patient) && ! empty($patient)) {
 @section('content')
     @push('styles')
         <style>
-            [v-cloak] > * { 
+            [v-cloak] > * {
                 display:none
             }
-            [v-cloak]::before { 
+            [v-cloak]::before {
                 content: "loading…"
             }
         </style>
@@ -209,8 +209,8 @@ if (isset($patient) && ! empty($patient)) {
             <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
-                <medications ref="medicationsComponent" patient-id="{{$patient->id}}" url="{{ route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}">
-                    
+                <medications ref="medicationsComponent" patient-id="{{$patient->id}}">
+
                     <div class="col-xs-10">
                             @if(!empty($taking_medications))
                                 @if(is_array($taking_medications))
@@ -253,7 +253,7 @@ if (isset($patient) && ! empty($patient)) {
                 </lifestyles>
                 <!-- /LIFESTYLES -->
 
-                
+
 
 
             <div class="patient-info__subareas pb-before">
@@ -388,10 +388,10 @@ if (isset($patient) && ! empty($patient)) {
             ?>) || {}
             </script>
         @endpush
-        
+
         @if ($recentSubmission)
             @push('scripts')
-                
+
                 <script type="text/html" name="ccm-enrollment-submission">
                     <ol type="1">
                         <li>You must go over careplan with patient, then print it and hand to patient</li>
@@ -417,7 +417,7 @@ if (isset($patient) && ! empty($patient)) {
                         confirmText: 'Got it',
                         noCancel: true
                     }).then((patientHasConsented) => {
-                        
+
                     })
                 </script>
             @endpush
