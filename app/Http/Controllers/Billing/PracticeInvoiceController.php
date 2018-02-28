@@ -119,7 +119,7 @@ class PracticeInvoiceController extends Controller
      }
 
      public function updatePatientChargeableServices(Request $request) {
-         
+
      }
 
     /**
@@ -140,36 +140,28 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
-        if ($default_code_id && $practice_id) {
-            $summaries = $this->service->billablePatientSummaries($practice_id, $date)->get()->map(function ($summary) use ($default_code_id) {
-                $result = $this->patientSummaryDBRepository
-                    ->attachBillableProblems($summary->patient, $summary);
-
-                if ($result) {
-                    $summary = $result;
-                }
-
-                if (!$summary->chargeables()->where([ 'chargeable_service_id' => $default_code_id ])->first()) {
-                    $chargeable = new Chargeable();
-                    $chargeable->chargeable_service_id = $default_code_id;
-                    $chargeable->chargeable_id = $summary->patient_id;
-                    $chargeable->chargeable_type = PatientMonthlySummary::class;
-                    try {
-                        $chargeable->save();
-                    }
-                    catch (\Exception $ex) {
-
-                    }
-                }
-
-                return ApprovableBillablePatient::make($summary);
-            });
-
-            return response()->json($summaries);
-        }
-        else {
+        if (!$default_code_id || !$practice_id) {
             return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
         }
+
+        $summaries = $this->service
+            ->billablePatientSummaries($practice_id, $date)
+            ->get()
+            ->map(function ($summary) use ($default_code_id) {
+                 $result = $this->patientSummaryDBRepository
+                     ->attachBillableProblems($summary->patient, $summary);
+
+                 if ($result) {
+                     $summary = $result;
+                 }
+
+                 $summary->chargeableServices()
+                         ->syncWithoutDetaching($default_code_id);
+
+                 return ApprovableBillablePatient::make($summary);
+        });
+
+        return response()->json($summaries);
     }
 
     public function updateSummaryChargeableServices(Request $request)
@@ -190,10 +182,6 @@ class PracticeInvoiceController extends Controller
         if (!is_array($chargeableIDs)) {
             return $this->badRequest('patient_chargeable_services must be an array');
         }
-        else {
-            $chargeableIDs = new Collection($chargeableIDs);
-        }
-
 
         $summary = PatientMonthlySummary::where('patient_id', $reportId)->first();
 
@@ -201,18 +189,7 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest("Report with id $reportId not found.");
         }
 
-        $summary->chargeables()->delete();
-
-        $chargeableIDs->map(function ($id) use ($reportId) {
-            $chargeable = new Chargeable();
-            $chargeable->chargeable_service_id = $id;
-            $chargeable->chargeable_id = $reportId;
-            $chargeable->chargeable_type = PatientMonthlySummary::class;
-            $chargeable->save();
-            return $chargeable;
-        });
-
-        //$summary->chargeableServices()->sync($chargeableServices);
+        $summary->chargeableServices()->sync($chargeableIDs);
 
         return $this->ok($summary);
 
