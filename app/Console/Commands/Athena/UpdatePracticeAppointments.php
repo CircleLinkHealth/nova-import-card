@@ -98,6 +98,9 @@ class UpdatePracticeAppointments extends Command
                               ->where('last_name', 'API')
                               ->first();
 
+                $provider = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id, $ehrAppointment['providerid']);
+                $department = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id, $ehrAppointment['departmentid']);
+
                 $appointment = Appointment::updateOrCreate([
                     'patient_id'    => $patient->id,
                     'author_id'     => $athena->id,
@@ -106,11 +109,11 @@ class UpdatePracticeAppointments extends Command
                     'type'          => $ehrAppointment['patientappointmenttypename'],
                     'date'          => $ehrAppointment['date'],
                     'time'          => $ehrAppointment['starttime'],
-                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . "to see [Dr. name] has been scheduled for " . $ehrAppointment['date'] . "at " . $ehrAppointment['starttime'] . "at [appt location]",
+                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] .  " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . "at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
 
 
-                //notify
+
 
             }
         }

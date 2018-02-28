@@ -292,6 +292,18 @@ class Calls
         return $this->response($response);
     }
 
+    public  function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
+    {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("departments/$departmentId", [
+            'providerlist' => $providerList,
+        ]);
+
+        return $this->response($response);
+
+    }
+
     /**
      * Get the next paginated result set
      *
