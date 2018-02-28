@@ -55,9 +55,9 @@
     "vue-form": "^4.4.1",
     "vue-mdl": "^1.1.1",
     "vue-select": "github:sagalbot/vue-select",
-    "vue-tables-2": "^0.6.84",
+    "vue-tables-2": "^0.6.99",
     "vue2-dropzone": "^2.3.6",
-    "vuejs-datepicker": "^0.9.25",
+    "vuejs-datepicker": "github:mykeels/vuejs-datepicker#dist",
     "vuejs-paginator": "^2.0.2",
     "vuex": "^2.4.0",
     "webpack": "3.5.5"
