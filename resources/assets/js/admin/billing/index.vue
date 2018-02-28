@@ -12,7 +12,7 @@
         </div>
         <div class="panel-body">
             <div class="col-sm-12 row">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div>
                         <label>Select Practice</label>
                     </div>
@@ -21,12 +21,22 @@
                         </option>
                     </select2>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <div>
                         <label>Select Month</label>
                     </div>
                     <select2 class="form-control" v-model="selectedMonth" @change="changePractice" :value="months[0].long">
                         <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}
+                        </option>
+                    </select2>
+                </div>
+                <div class="col-sm-4">
+                    <div>
+                        <label>Set Chargeable Service</label>
+                    </div>
+                    <select2 class="form-control" v-model="selectedService" @change="changeService">
+                        <option :value="null">Set Default Code</option>
+                        <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
                         </option>
                     </select2>
                 </div>
@@ -130,6 +140,7 @@
             return {
                 selectedMonth: '',
                 selectedPractice: 0,
+                selectedService: null,
                 loading: true,
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
@@ -210,6 +221,32 @@
                 this.retrieve()
                 this.getCounts()
             },
+            changeService(id) {
+                console.log('billing:chargeable-service:default', id)
+                const service = this.chargeableServices.find(s => s.id == id)
+                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (id && service && practice && !this.loading && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
+                    this.loading = true
+                    return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), {
+                        practice_id: this.selectedPractice,
+                        date: this.selectedMonth,
+                        default_code_id: id
+                    }).then(response => {
+                        (response.data || []).forEach(summary => {
+                            const tableItem = this.tableData.find(row => row.id == summary.id)
+                            if (tableItem) {
+                                tableItem.chargeable_services = summary.chargeable_services
+                            }
+                        })
+                        this.loading = false
+                        console.log('billing:chargeable-services:default:update', response.data)
+                    }).catch(err => {
+                        console.error('billing:chargeable-services:default:update', err)
+                        
+                        this.loading = false
+                    })
+                }
+            },
             getChargeableServices() {
                 return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
                     this.chargeableServices = (response.data || []).map(service => {
@@ -275,9 +312,9 @@
                             },
                             onChargeableServicesUpdate: (serviceIDs) => {
                                 item.chargeable_services = serviceIDs
-                                console.log('service-ids', serviceIDs)
+                                console.log('service-ids', serviceIDs, item)
                                 item.promises.update_chargeables = true
-                                this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
+                                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
                                     report_id: item.id,
                                     patient_chargeable_services: serviceIDs
                                 }).then(response => {

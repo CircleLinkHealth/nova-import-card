@@ -131,29 +131,45 @@ class PracticeInvoiceController extends Controller
     {
         $practice_id = $request->input('practice_id');
         $date = $request->input('date');
+        $default_code_id = $request->input('default_code_id');
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
         else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
-        $summaries = $this->service->billablePatientSummaries($practice_id, $date)
-            ->paginate(100);
 
-        $summaries->getCollection()->transform(function ($summary) use ($request) {
-            $result = $this->patientSummaryDBRepository
-                ->attachBillableProblems($summary->patient, $summary);
+        if ($default_code_id && $practice_id) {
+            $summaries = $this->service->billablePatientSummaries($practice_id, $date)->get()->map(function ($summary) use ($default_code_id) {
+                $result = $this->patientSummaryDBRepository
+                    ->attachBillableProblems($summary->patient, $summary);
 
-            if ($result) {
-                $summary = $result;
-            }
+                if ($result) {
+                    $summary = $result;
+                }
 
-            $summary->sync($request['default_code_id']);
+                if (!$summary->chargeables()->where([ 'chargeable_service_id' => $default_code_id ])->first()) {
+                    $chargeable = new Chargeable();
+                    $chargeable->chargeable_service_id = $default_code_id;
+                    $chargeable->chargeable_id = $summary->patient_id;
+                    $chargeable->chargeable_type = PatientMonthlySummary::class;
+                    try {
+                        $chargeable->save();
+                    }
+                    catch (\Exception $ex) {
 
-            return ApprovableBillablePatient::make($summary);
-        });
+                    }
+                }
 
-        return $summaries;
+                return ApprovableBillablePatient::make($summary);
+            });
+
+            return response()->json($summaries);
+        }
+        else {
+            return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
+        }
     }
 
     public function updateSummaryChargeableServices(Request $request)
