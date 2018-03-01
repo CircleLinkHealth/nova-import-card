@@ -148,12 +148,12 @@ class PracticeInvoiceController extends Controller
             ->billablePatientSummaries($practice_id, $date)
             ->get()
             ->map(function ($summary) use ($default_code_id) {
-                 $result = $this->patientSummaryDBRepository
+                $result = $this->patientSummaryDBRepository
                      ->attachBillableProblems($summary->patient, $summary);
 
-                 if ($result) {
-                     $summary = $result;
-                 }
+                if ($result) {
+                    $summary = $result;
+                }
 
                  $summary->chargeableServices()
                          ->sync($default_code_id);
