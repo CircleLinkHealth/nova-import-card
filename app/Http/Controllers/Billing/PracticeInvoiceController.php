@@ -155,8 +155,8 @@ class PracticeInvoiceController extends Controller
                     $summary = $result;
                 }
 
-                $summary->chargeableServices()
-                         ->syncWithoutDetaching($default_code_id);
+                 $summary->chargeableServices()
+                         ->sync($default_code_id);
 
                 $summary->load('chargeableServices');
 
