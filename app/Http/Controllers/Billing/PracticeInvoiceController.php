@@ -148,18 +148,20 @@ class PracticeInvoiceController extends Controller
             ->billablePatientSummaries($practice_id, $date)
             ->get()
             ->map(function ($summary) use ($default_code_id) {
-                 $result = $this->patientSummaryDBRepository
+                $result = $this->patientSummaryDBRepository
                      ->attachBillableProblems($summary->patient, $summary);
 
-                 if ($result) {
-                     $summary = $result;
-                 }
+                if ($result) {
+                    $summary = $result;
+                }
 
-                 $summary->chargeableServices()
+                $summary->chargeableServices()
                          ->syncWithoutDetaching($default_code_id);
 
-                 return ApprovableBillablePatient::make($summary);
-        });
+                $summary->load('chargeableServices');
+
+                return ApprovableBillablePatient::make($summary);
+            });
 
         return response()->json($summaries);
     }

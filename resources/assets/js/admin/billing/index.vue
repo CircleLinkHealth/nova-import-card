@@ -235,7 +235,7 @@
                         (response.data || []).forEach(summary => {
                             const tableItem = this.tableData.find(row => row.id == summary.id)
                             if (tableItem) {
-                                tableItem.chargeable_services = [ ...(summary.chargeable_services || []).map(item => item.id), id ].distinct()
+                                tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
                             }
                         })
                         this.loading = false
