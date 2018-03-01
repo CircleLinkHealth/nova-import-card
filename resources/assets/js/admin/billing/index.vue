@@ -420,12 +420,31 @@
         },
         computed: {
             months() {
-                let months = []
+                let dates = []
+                const months = [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dev'
+                    ]
+                let currentMonth = (new Date()).getMonth()
+                let currentYear = (new Date()).getFullYear()
                 for (let i = 0; i >= -6; i--) {
-                    let mDate = moment(new Date()).add(i * 30, 'days')
-                    months.push({short: mDate.format('YYYY-MM-DD'), long: mDate.format('MMM, YYYY'), selected: i === 0})
+                    let mDate = moment(new Date())
+                    const month = months[currentMonth < 0 ? 12 + currentMonth : currentMonth];
+                    const year = currentMonth < 0 ? currentYear - 1 : currentYear
+                    dates.push({ long: month + ', ' + year, selected: i === 0 })
+                    currentMonth--;
                 }
-                return months
+                return dates
             },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
