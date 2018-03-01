@@ -4,7 +4,7 @@ use App\Activity;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
-use App\PatientMonthlySummary;
+use App\Repositories\PatientWriteRepository;
 use App\Services\Calls\SchedulerService;
 use App\Services\NoteService;
 use App\User;
@@ -19,13 +19,16 @@ class NotesController extends Controller
 
     private $service;
     private $formatter;
+    private $patientRepo;
 
     public function __construct(
         NoteService $noteService,
-        ReportFormatter $formatter
+        ReportFormatter $formatter,
+        PatientWriteRepository $patientWriteRepository
     ) {
-        $this->service   = $noteService;
-        $this->formatter = $formatter;
+        $this->service     = $noteService;
+        $this->formatter   = $formatter;
+        $this->patientRepo = $patientWriteRepository;
     }
 
     public function index(
@@ -164,7 +167,7 @@ class NotesController extends Controller
                     'providers_for_blog' => $providers_for_blog,
                     'isProviderSelected' => false,
                     'only_mailed_notes'  => false,
-                    'dateFilter'        => $months
+                    'dateFilter'         => $months,
                 ];
             }
         }
@@ -256,6 +259,7 @@ class NotesController extends Controller
 
     public function store(
         Request $input,
+        SchedulerService $schedulerService,
         $patientId
     ) {
 
@@ -319,9 +323,13 @@ class NotesController extends Controller
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
 
-                    $prediction = (new SchedulerService())->getNextCall($patient, $note->id, true);
+                    if (auth()->user()->isNotSaas()) {
+                        $prediction = $schedulerService->getNextCall($patient, $note->id, true);
+                    }
                 } else {
-                    $prediction = (new SchedulerService())->getNextCall($patient, $note->id, false);
+                    if (auth()->user()->isNotSaas()) {
+                        $prediction = $schedulerService->getNextCall($patient, $note->id, false);
+                    }
                 }
 
                 // add last contact time regardless of if success
@@ -339,11 +347,17 @@ class NotesController extends Controller
                     $ccm_above = true;
                 }
 
+                if (auth()->user()->isSaas()) {
+                    return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                        'messages',
+                        ['Successfully Created Note']
+                    );
+                }
                 $prediction['ccm_above']   = $ccm_above;
                 $prediction['ccm_complex'] = $ccm_complex;
 
-
                 return view('wpUsers.patient.calls.create', $prediction);
+
             }
         }
 
@@ -353,7 +367,7 @@ class NotesController extends Controller
                 if (auth()->user()->hasRole('provider')) {
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
 
-                    (new PatientMonthlySummary())->updateCallInfoForPatient($patient->patientInfo, true);
+                    $this->patientRepo->updateCallLogs($patient->patientInfo, true);
 
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();

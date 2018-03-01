@@ -29,7 +29,7 @@ class NurseDailyReport
             $nurses[$i]['name'] = $nurse->fullName;
 
             $last_activity_date = DB::table('lv_page_timer')
-                ->select(DB::raw('max(`actual_end_time`) as last_activity'))
+                ->select(DB::raw('max(`end_time`) as last_activity'))
                 ->where('provider_id', $nurse->id)
                 ->get();
 

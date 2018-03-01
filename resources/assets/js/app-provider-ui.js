@@ -1,10 +1,17 @@
 require('./bootstrap');
 
+import 'es6-string-polyfills'
+import './prototypes/array.prototype'
+
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
+import { ClientTable } from 'vue-tables-2'
+
+Vue.use(ClientTable, {}, false)
+
 
 if (document) {
     const elem = document.querySelector('meta[name="base-url"]')
@@ -46,10 +53,24 @@ import TimeTracker from './admin/time-tracker'
 import ServerTimeDisplay from './admin/time-tracker/comps/server-time-display'
 import LoaderComponent from './components/loader'
 import PersistentTextArea from './components/persistent-textarea'
+import CareAreasComponent from './components/careplan/care-areas'
+import HealthGoalsComponent from './components/careplan/health-goals'
+import MedicationsComponent from './components/careplan/medications'
+import SymptomsComponent from './components/careplan/symptoms'
+import LifestylesComponent from './components/careplan/lifestyles'
+import InstructionsComponent from './components/careplan/instructions'
+import AllergiesComponent from './components/careplan/allergies'
+import SocialServicesComponent from './components/careplan/social-services'
+import MiscModalComponent from './components/careplan/modals/misc.modal'
+import OthersComponent from './components/careplan/others'
+import AppointmentsComponent from './components/careplan/appointments'
+import PatientList from './components/patients/listing'
+import Datepicker from 'vuejs-datepicker'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
+Vue.component('billing-report', require('./admin/billing/index.vue'));
 Vue.component('component-proxy', ComponentProxy)
 Vue.component('careTeam', CareTeamComponent)
 Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
@@ -69,6 +90,19 @@ Vue.component('time-tracker', TimeTracker)
 Vue.component('server-time-display', ServerTimeDisplay)
 Vue.component('loader', LoaderComponent)
 Vue.component('persistent-textarea', PersistentTextArea)
+Vue.component('care-areas', CareAreasComponent)
+Vue.component('health-goals', HealthGoalsComponent)
+Vue.component('medications', MedicationsComponent)
+Vue.component('symptoms', SymptomsComponent)
+Vue.component('lifestyles', LifestylesComponent)
+Vue.component('instructions', InstructionsComponent)
+Vue.component('allergies', AllergiesComponent)
+Vue.component('social-services', SocialServicesComponent)
+Vue.component('others', OthersComponent)
+Vue.component('misc-modal', MiscModalComponent)
+Vue.component('appointments', AppointmentsComponent)
+Vue.component('patient-list', PatientList)
+Vue.component('v-datepicker', Datepicker)
 
 const App = new Vue({
     el: '#app',

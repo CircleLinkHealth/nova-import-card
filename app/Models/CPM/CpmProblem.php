@@ -3,6 +3,8 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmInstructable;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmProblemService;
 use App\User;
@@ -29,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMedicationGroup[] $cpmMedicationGroupsToBeActivated
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptom[] $cpmSymptomsToBeActivated
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @property-read App\Models\CPM\CpmInstructable $instructable
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereContains($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmProblem whereDefaultIcd10Code($value)
@@ -121,6 +124,22 @@ class CpmProblem extends \App\BaseModel implements Serviceable
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_problems_users', 'patient_id');
+    }
+
+    public function user() {
+        return $this->hasMany(CpmProblemUser::class, 'cpm_problem_id');
+    }
+
+    public function instruction() {
+        return $this->cpmInstructions()->first();
+    }
+
+    public function instructions() {
+        return $this->user()->whereNotNull('cpm_instruction_id')->with(['instruction'])->groupBy('cpm_instruction_id');
+    }
+
+    public function instructable() {
+        return $this->hasOne(CpmInstructable::class, 'instructable_id');
     }
 
     /**

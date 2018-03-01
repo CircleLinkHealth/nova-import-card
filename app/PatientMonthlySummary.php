@@ -4,7 +4,6 @@ namespace App;
 
 use App\Models\CCD\Problem;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\PatientMonthlySummary
@@ -50,7 +49,7 @@ use Illuminate\Database\Eloquent\Model;
 class PatientMonthlySummary extends \App\BaseModel
 {
     protected $dates = [
-        'month_year'
+        'month_year',
     ];
 
     protected $fillable = [
@@ -67,47 +66,6 @@ class PatientMonthlySummary extends \App\BaseModel
         'problem_2',
     ];
 
-    public static function updateCallInfoForPatient(
-        Patient $patient,
-        $ifSuccessful
-    ) {
-
-        // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = PatientMonthlySummary::where('patient_id', $patient->user_id)
-                                       ->where('month_year', $day_start)
-                                       ->first();
-
-        // set increment var
-        $successful_call_increment = 0;
-        if ($ifSuccessful) {
-            $successful_call_increment = 1;
-            // reset call attempts back to 0
-            $patient->no_call_attempts_since_last_success = 0;
-        } else {
-            // add +1 to call attempts
-            $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
-        }
-        $patient->save();
-
-        // Determine whether to add to record or not
-        if (!$record) {
-            $record = new PatientMonthlySummary;
-            $record->patient_id = $patient->user_id;
-            $record->ccm_time = 0;
-            $record->month_year = $day_start;
-            $record->no_of_calls = 1;
-            $record->no_of_successful_calls = $successful_call_increment;
-            $record->save();
-        } else {
-            $record->no_of_calls = $record->no_of_calls + 1;
-            $record->no_of_successful_calls = ($record->no_of_successful_calls + $successful_call_increment);
-            $record->save();
-        }
-
-        return $record;
-    }
-
     //updates Call info for patient
 
     public static function updateCCMInfoForPatient(
@@ -118,30 +76,29 @@ class PatientMonthlySummary extends \App\BaseModel
 
         $record = PatientMonthlySummary::updateOrCreate([
             'patient_id' => $userId,
-            'month_year' => $dayStart
+            'month_year' => $dayStart,
         ], [
-            'ccm_time' => $ccmTime
+            'ccm_time' => $ccmTime,
         ]);
 
-        if (!$record->problem_1 || !$record->problem_2) {
+        if ( ! $record->problem_1 || ! $record->problem_2) {
             $existingRecord = PatientMonthlySummary::where('patient_id', $userId)
                                                    ->where('id', '!=', $record->id)
                                                    ->orderBy('id', 'DESC')
                                                    ->first();
 
             if ($existingRecord) {
-                if ($existingRecord->problem_1 && !$record->problem_1) $record->problem_1 = $existingRecord->problem_1;
-                if ($existingRecord->problem_2 && !$record->problem_2) $record->problem_2 = $existingRecord->problem_2;
+                if ($existingRecord->problem_1 && ! $record->problem_1) {
+                    $record->problem_1 = $existingRecord->problem_1;
+                }
+                if ($existingRecord->problem_2 && ! $record->problem_2) {
+                    $record->problem_2 = $existingRecord->problem_2;
+                }
                 $record->save();
             }
         }
 
         return $record;
-    }
-
-    public function patientInfo()
-    {
-        return $this->belongsTo(Patient::class);
     }
 
     public function patient()
@@ -152,6 +109,13 @@ class PatientMonthlySummary extends \App\BaseModel
     public function actor()
     {
         return $this->hasOne(User::class, 'actor_id');
+    }
+
+    public function chargeableServices()
+    {
+        return $this->morphToMany(ChargeableService::class, 'chargeable')
+                    ->withPivot(['amount'])
+                    ->withTimestamps();
     }
 
     public function scopeGetCurrent($q)
@@ -176,9 +140,9 @@ class PatientMonthlySummary extends \App\BaseModel
 
 
         $patients = User::where('program_id', $practice->id)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get();
+                        ->whereHas('roles', function ($q) {
+                            $q->where('name', '=', 'participant');
+                        })->get();
 
         $count = 0;
 
@@ -197,26 +161,26 @@ class PatientMonthlySummary extends \App\BaseModel
     ) {
 
         $patients = User::where('program_id', $practice->id)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', '=', 'participant');
-            })->get();
+                        ->whereHas('roles', function ($q) {
+                            $q->where('name', '=', 'participant');
+                        })->get();
 
         $count['approved'] = 0;
-        $count['toQA'] = 0;
+        $count['toQA']     = 0;
         $count['rejected'] = 0;
 
         foreach ($patients as $p) {
-            $ccm = Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) ;
+            $ccm = Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false);
 
             if ($ccm < 1200) {
                 continue;
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                ->where('patient_id', $p->id)->first();
+                                           ->where('patient_id', $p->id)->first();
 
 
-            if (!$report) {
+            if ( ! $report) {
                 continue;
             }
 
@@ -243,16 +207,16 @@ class PatientMonthlySummary extends \App\BaseModel
         $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
         $patients = User::select('id')->ofType('participant')
-                                      ->get()
-                                    ->map(function ($patient) use ($monthYear) {
-                                        PatientMonthlySummary::create([
-                                            'patient_id' => $patient->id,
-                                            'ccm_time' => 0,
-                                            'month_year' => $monthYear,
-                                            'no_of_calls' => 0,
-                                            'no_of_successful_calls' => 0,
-                                        ]);
-                                    });
+                        ->get()
+                        ->map(function ($patient) use ($monthYear) {
+                            PatientMonthlySummary::create([
+                                'patient_id'             => $patient->id,
+                                'ccm_time'               => 0,
+                                'month_year'             => $monthYear,
+                                'no_of_calls'            => 0,
+                                'no_of_successful_calls' => 0,
+                            ]);
+                        });
     }
 
     public function updateMonthlyReportForPatient(
@@ -261,30 +225,29 @@ class PatientMonthlySummary extends \App\BaseModel
     ) {
 
         $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-        $day_end = Carbon::parse(Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $day_end   = Carbon::parse(Carbon::now()->endOfMonth()->format('Y-m-d'));
 
         $info = $patient->patientInfo;
 
         $no_of_calls = Call::where('outbound_cpm_id', $patient->id)
-            ->orWhere('inbound_cpm_id', $patient->id)
-            ->where('created_at', '<=', $day_start)
-            ->where('created_at', '>=', $day_end)->count();
+                           ->orWhere('inbound_cpm_id', $patient->id)
+                           ->where('created_at', '<=', $day_start)
+                           ->where('created_at', '>=', $day_end)->count();
 
-        $no_of_successful_calls = Call::where('status', 'reached')->where(function ($q) use
-            (
+        $no_of_successful_calls = Call::where('status', 'reached')->where(function ($q) use (
             $patient
         ) {
             $q->where('outbound_cpm_id', $patient->id)
-                ->orWhere('inbound_cpm_id', $patient->id);
+              ->orWhere('inbound_cpm_id', $patient->id);
         })
-            ->where('created_at', '<=', $day_start)
-            ->where('created_at', '>=', $day_end)->count();
+                                      ->where('created_at', '<=', $day_start)
+                                      ->where('created_at', '>=', $day_end)->count();
 
         $report = PatientMonthlySummary::where('patient_id', $patient->id)->where('month_year', $day_start)->first();
 
         if ($report) {
-            $report->ccm_time = $ccm_time;
-            $report->no_of_calls = $no_of_calls;
+            $report->ccm_time               = $ccm_time;
+            $report->no_of_calls            = $no_of_calls;
             $report->no_of_successful_calls = $no_of_successful_calls;
             $report->save();
         } else {
@@ -292,11 +255,13 @@ class PatientMonthlySummary extends \App\BaseModel
         }
     }
 
-    public function billableProblem1() {
+    public function billableProblem1()
+    {
         return $this->belongsTo(Problem::class, 'problem_1');
     }
 
-    public function billableProblem2() {
+    public function billableProblem2()
+    {
         return $this->belongsTo(Problem::class, 'problem_2');
     }
 }

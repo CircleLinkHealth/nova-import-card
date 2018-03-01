@@ -106,7 +106,8 @@ class MedicalRecordImportController extends Controller
                             $carePlan = $imr->createCarePlan();
                             array_push($importedRecords, [
                                 'id' => $id,
-                                'completed' => true
+                                'completed' => true,
+                                'patient' => $carePlan->patient()->first()
                             ]);
                         }
                         catch (\Exception $ex) {

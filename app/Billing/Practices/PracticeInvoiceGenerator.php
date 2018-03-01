@@ -27,31 +27,52 @@ class PracticeInvoiceGenerator
 
     public function generatePdf($withItemized = true)
     {
-
-        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
-
         $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
 
-        $pdfInvoice->save(storage_path("download/$invoiceName.pdf"), true);
+        $pdfInvoicePath = $this->makeInvoicePdf($invoiceName);
 
         $data = [
             'Invoice' => $invoiceName . '.pdf',
         ];
 
         if ($withItemized) {
-            $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
 
-            $itemizedName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $reportName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $pdfPatientReportPath = $this->makePatientReportPdf($reportName);
 
-            $pdfItemized->save(storage_path("download/$itemizedName.pdf"), true);
-
-            $data['Patient Report'] = $itemizedName . '.pdf';
+            $data['Patient Report'] = $reportName . '.pdf';
         }
 
         $data['practiceId'] = $this->practice->id;
 
         return $data;
     }
+
+
+    public function makeInvoicePdf($reportName) {
+        \Storage::disk('storage')
+            ->makeDirectory('download');
+
+        $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
+        $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);
+
+        return storage_path("download/$reportName.pdf");
+    }
+
+
+
+    public function makePatientReportPdf($reportName) {
+
+        $path = storage_path("/download/$reportName.pdf");
+
+        $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
+        $pdfItemized->save($path, true);
+
+        return $path;
+    }
+
+
+
 
     public function getInvoiceData()
     {
@@ -83,12 +104,12 @@ class PracticeInvoiceGenerator
 
     public function incrementInvoiceNo()
     {
+        $num = AppConfig::where('config_key', 'billing_invoice_count')
+                        ->firstOrFail();
 
-        $num = AppConfig::where('config_key', 'billing_invoice_count')->first();
+        $current = $num->config_value;
 
-        $current = $num['config_value'];
-
-        $num['config_value'] = $num['config_value'] + 1;
+        $num->config_value = $current + 1;
 
         $num->save();
 

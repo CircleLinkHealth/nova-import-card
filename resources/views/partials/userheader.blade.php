@@ -3,7 +3,7 @@
         <div class="col-sm-12">
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
-                            href="{{ URL::route('patient.summary', array('patient' => $patient->id)) }}">
+                            href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
                     {{$patient->fullName}}
                     </a> </span>
                 @if($ccm_complex)
@@ -24,7 +24,7 @@
                     @endpush
                 @endif
                 <a
-                        href="{{ URL::route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
+                        href="{{ route('patient.demographics.show', array('patient' => $patient->id)) }}"><span
                             class="glyphicon glyphicon-pencil" style="margin-right:3px;"></span></a><br/>
 
                 <ul class="inline-block" style="margin-left: -40px; font-size: 16px">
@@ -117,15 +117,45 @@
             </div>
 
         </div>
-        @if(!empty($problems))
+        <?php
+            use App\Services\CPM\CpmProblemUserService;
+            use App\Services\CCD\CcdProblemService;
+        
+            $cpmProblemService = app(CpmProblemUserService::class);
+            $ccdProblemService = app(CcdProblemService::class);
+        
+            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
+            $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
+
+            $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
+                return $problems->first();
+            });
+    
+            $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
+                return !$cpmProblems->first(function ($cpm) use ($problem) {
+                    return $cpm['name'] == $problem['name'];
+                }) && $problem['is_monitored'];
+            })->groupBy('name')->values()->map(function ($problems) {
+                return $problems->first();
+            });
+        ?>
+        @if(!empty($cpmProblemsForListing) || !empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
-                @foreach($problems as $problem)
-                    @if($problem != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem != 'Diabetes')
+                @foreach($cpmProblemsForListing as $problem)
+                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                         checked="checked" disabled="disabled">
-                            <label for="condition27"><span> </span>{{$problem}}</label>
+                            <label for="condition27"><span> </span>{{$problem['name']}}</label>
+                        </li>
+                    @endif
+                @endforeach
+                @foreach($ccdMonitoredProblems as $problem)
+                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
+                        <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
+                                                        checked="checked" disabled="disabled">
+                            <label for="condition27"><span> </span>{{$problem['name']}}</label>
                         </li>
                     @endif
                 @endforeach

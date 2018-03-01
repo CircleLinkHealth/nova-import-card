@@ -26,10 +26,14 @@ class DownloadController extends Controller
         }
 
         if (!file_exists($path)) {
+            $path = $filePath;
+        }
+
+        if (!file_exists($path)) {
             return "Could not locate file with name: $filePath";
         }
 
-        $fileName = str_replace('/', '', strstr($filePath, '/'));
+        $fileName = str_replace('/', '', strrchr($filePath, '/'));
 
         return response()->download($path, $fileName, [
             'Content-Length: ' . filesize($path),

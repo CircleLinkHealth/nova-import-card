@@ -1,11 +1,18 @@
 <?php namespace App\Console;
 
-use App\Algorithms\Calls\ReschedulerHandler;
+use App\Console\Commands\Athena\GetAppointments;
+use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
+use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
-use App\Services\Calls\SchedulerService;
+use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Console\Commands\RescheduleMissedCalls;
+use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\SyncFamilialCalls;
+use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -20,40 +27,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
-            $handled = (new ReschedulerHandler())->handle();
-
-            if ( ! empty($handled)) {
-                $message = "The CPMbot just rescheduled some calls.\n";
-
-                foreach ($handled as $call) {
-                    $message = "We just fixed call: {$call->id}. \n";
-                }
-
-                sendSlackMessage('#background-tasks', $message);
-            }
-        })->dailyAt('00:05');
-
-        //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('00:20');
+        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-        //syncs families.
-        $schedule->call(function () {
-            (new SchedulerService())->syncFamilialCalls();
-        })->dailyAt('00:30');
+        $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-        })->everyMinute();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute();
 
 //        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
 //                 ->weeklyOn(1, '10:00');
@@ -66,18 +51,18 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('nurseSchedule:export')
 //                 ->hourly();
 
-        $schedule->command('athena:getAppointments')
+        $schedule->command(GetAppointments::class)
                  ->dailyAt('23:00');
 
-        $schedule->command('athena:getCcds')
+        $schedule->command(GetCcds::class)
                  ->everyThirtyMinutes();
 
-        $schedule->command('nurses:emailDailyReport')
+        $schedule->command(EmailRNDailyReport::class)
                  ->weekdays()
                  ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command('ccm_time:reset')
+        $schedule->command(ResetCcmTime::class)
                  ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
@@ -87,9 +72,13 @@ class Kernel extends ConsoleKernel
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
-        $schedule->command('report:nurseInvoices')
+        $schedule->command(QueueGenerateNurseInvoices::class)
                  ->dailyAt('04:00')
                  ->withoutOverlapping();
+                 
+        $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
+                ->dailyAt('09:00')
+                ->withoutOverlapping();
 
         $schedule->command('report:nurseDaily')
                  ->dailyAt('23:50')

@@ -44,6 +44,7 @@ export default class Errors {
      * @param {object} errors
      */
     setErrors(errors) {
+        console.log(errors)
         this.errors = errors
     }
 

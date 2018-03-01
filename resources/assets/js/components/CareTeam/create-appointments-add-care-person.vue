@@ -22,14 +22,16 @@
     .has-errors {
         color: #a94442;
     }
+
+    a.pointer {
+        cursor: pointer;
+    }
 </style>
 
 <template>
     <div>
         <label>
-            Select Existing Provider (or, <span style="color: #4fb2e2"><a
-                href="#"
-                @click="show = true">add new</a></span>)
+            Select Existing Provider (or, <span style="color: #4fb2e2"><a class="pointer" @click="show = true">add new</a></span>)
         </label>
 
 
@@ -511,7 +513,7 @@
                         <button style="width:50%" class="btn btn-default" @click="clearOpenModal">Close</button>
                     </div>
                     <div class="col-md-6 text-center">
-                        <button style="width:50%" :disabled="false" @click.prevent.default="sendForm" class=" btn btn-info">
+                        <button style="width:50%" :disabled="false" @click="sendForm" class=" btn btn-info">
                             Save <i v-if="false" class="fa fa-spinner fa-pulse fa-fw"></i>
                         </button>
                     </div>
@@ -554,7 +556,8 @@
                     Object.assign(this.$data, this.$options.data.apply(this))
                     this.show = false
                 },
-                sendForm() {
+                sendForm(e) {
+                    if (e) e.preventDefault();
                     this.submitClicked = true
 
                     if (this.validationErrors) {

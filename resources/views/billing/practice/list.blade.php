@@ -1,13 +1,13 @@
-@extends('partials.adminUI')
+@extends('partials.providerUI')
 
 @section('content')
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <div class="container-fluid">
+    <div class="container-fluid" style="padding-top: 50rem;">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 {{ csrf_field() }}
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice Invoices and Patient Billable Reports</div>
+                    <div class="panel-heading">Billable Patient Reports & Invoices</div>
                     <div class="panel-body">
 
                         @foreach($invoices as $key => $value)
@@ -21,7 +21,7 @@
                         <hr>
 
                         <div class="row" style="padding-left: 30px;">
-                            {!! Form::open(array('url' => URL::route('monthly.billing.send', array()),'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => route('monthly.billing.send', array()),'class' => 'form-horizontal')) !!}
                                 <input type="hidden" value="{{json_encode($invoices)}}" name="links">
                                 <button id="submit" name="send" class="btn btn-success">
                                     Send To Practices

@@ -183,7 +183,7 @@ if (!function_exists('buildProviderInfoContainers')) {
 
     <script>
     </script>
-    {!! Form::open(array('url' => URL::route('patient.careteam.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patient.careteam.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <style>
         .careTeamMemberContainer {
             margin-top: 30px;

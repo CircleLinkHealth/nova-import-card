@@ -2,10 +2,8 @@
 
 namespace App;
 
-use Aloha\Twilio\Twilio;
-use App\CLH\Helpers\StringManipulation;
+use App\Facades\StringManipulation;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Enrollee
@@ -276,9 +274,7 @@ class Enrollee extends \App\BaseModel
      */
     public function setHomePhoneAttribute($homePhone)
     {
-        $helper = new StringManipulation();
-
-        $this->attributes['home_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['home_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -288,9 +284,7 @@ class Enrollee extends \App\BaseModel
      */
     public function setCellPhoneAttribute($homePhone)
     {
-        $helper = new StringManipulation();
-
-        $this->attributes['cell_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['cell_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -300,9 +294,7 @@ class Enrollee extends \App\BaseModel
      */
     public function setOtherPhoneAttribute($homePhone)
     {
-        $helper = new StringManipulation();
-
-        $this->attributes['other_phone'] = $helper->formatPhoneNumberE164($homePhone);
+        $this->attributes['other_phone'] = StringManipulation::formatPhoneNumberE164($homePhone);
     }
 
     /**
@@ -312,19 +304,17 @@ class Enrollee extends \App\BaseModel
      */
     public function setPrimaryPhoneNumberAttribute($primaryPhone)
     {
-        $helper = new StringManipulation();
-
-        $this->attributes['primary_phone'] = $helper->formatPhoneNumberE164($primaryPhone);
+        $this->attributes['primary_phone'] = StringManipulation::formatPhoneNumber($primaryPhone);
     }
 
     /**
-     * Get Primary Phone
+     * Get Primary Phone in E164 format
      *
      * @return mixed
      */
-    public function getPrimaryPhoneAttribute($value)
+    public function getPrimaryPhoneE164Attribute()
     {
-        return $value;
+        return StringManipulation::formatPhoneNumberE164($this->primary_phone);
     }
 
     public function sendEnrollmentConsentReminderSMS()
@@ -357,5 +347,83 @@ class Enrollee extends \App\BaseModel
         //@todo add check for where phones are not all null
 
         return $query->where('status', self::TO_CALL);
+    }
+
+    /**
+     * Get Home Phone in E164 format
+     *
+     * @return
+     */
+    public function getHomePhoneE164Attribute()
+    {
+        return StringManipulation::formatPhoneNumberE164($this->home_phone);
+    }
+
+    /**
+     * Get Cell Phone in E164 format
+     *
+     * @return
+     */
+    public function getCellPhoneE164Attribute()
+    {
+        return StringManipulation::formatPhoneNumberE164($this->cell_phone);
+    }
+
+    /**
+     * Get Other Phone in E164 format
+     *
+     * @return
+     */
+    public function getOtherPhoneE164Attribute()
+    {
+        return StringManipulation::formatPhoneNumberE164($this->other_phone);
+    }
+
+    /**
+     * Get Home Phone
+     *
+     * @param $homePhone
+     *
+     * @return
+     */
+    public function getHomePhoneAttribute($homePhone)
+    {
+        return StringManipulation::formatPhoneNumber($homePhone);
+    }
+
+    /**
+     * Get Cell Phone
+     *
+     * @param $cellPhone
+     *
+     * @return
+     */
+    public function getCellPhoneAttribute($cellPhone)
+    {
+        return StringManipulation::formatPhoneNumber($cellPhone);
+    }
+
+    /**
+     * Get Other Phone
+     *
+     * @param $otherPhone
+     *
+     * @return
+     */
+    public function getOtherPhoneAttribute($otherPhone)
+    {
+        return StringManipulation::formatPhoneNumber($otherPhone);
+    }
+
+    /**
+     * Get Other Phone
+     *
+     * @param $primaryPhone
+     *
+     * @return
+     */
+    public function getPrimaryPhoneAttribute($primaryPhone)
+    {
+        return StringManipulation::formatPhoneNumber($primaryPhone);
     }
 }

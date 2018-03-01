@@ -38,7 +38,7 @@
                                 <td>{{ $question->obs_key }}</td>
                                 <td>{!! $question->iconHtml() !!}</td>
                                 <td>{{ $question->category }}</td>
-                                <td><a href="{{ URL::route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a></td>
+                                <td><a href="{{ route('admin.questions.edit', array('id' => $question->qid)) }}" class="btn btn-primary">Edit</a></td>
                             </tr>
                             </tbody>
                         </table>
@@ -91,7 +91,7 @@
                                         <td>{!! Form::checkbox('care_team[]', $item->items_id, ['checked' => 'checked'], ['disabled' => 'disabled']) !!}</td>
                                         <td><strong>@if(($item->pcp->program->first())){{ $item->pcp->program->first()->domain }}@endif</strong></td>
                                         <td><strong>{{ $item->pcp->section_text }}</strong></td>
-                                        <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
+                                        <td><a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
                                     </tr>
                                 @endforeach
                             @endif

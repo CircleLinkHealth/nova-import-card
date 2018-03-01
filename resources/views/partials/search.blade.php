@@ -18,7 +18,7 @@
 
             pat.initialize();
 
-            let searchBox = $('#patient-search-text-box');
+            var searchBox = $('#patient-search-text-box');
 
             searchBox.typeahead({
                 hint: true,

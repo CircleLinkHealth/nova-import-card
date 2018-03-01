@@ -3,6 +3,7 @@
 use App\CarePlanTemplate;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmMiscService;
+use App\Models\CPM\CpmMiscUser;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMiscUser[] $users
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCareItemId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMisc whereDetailsCareItemId($value)
@@ -60,6 +62,11 @@ class CpmMisc extends \App\BaseModel implements Serviceable
     public function patient()
     {
         return $this->belongsToMany(User::class, 'cpm_miscs_users', 'patient_id');
+    }
+
+    public function users()
+    {
+        return $this->hasMany(CpmMiscUser::class, 'cpm_misc_id');
     }
 
     /**

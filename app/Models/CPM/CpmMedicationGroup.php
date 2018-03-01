@@ -48,7 +48,7 @@ class CpmMedicationGroup extends \App\BaseModel implements Serviceable
      */
     public function medications()
     {
-        return $this->hasMany(Medication::class);
+        return $this->hasMany(Medication::class, 'medication_group_id');
     }
     
     public function carePlanItemIdDeprecated()

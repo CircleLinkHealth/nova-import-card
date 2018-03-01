@@ -13,6 +13,10 @@
             "url": "git@github.com:jamisonvalenta/Laravel-4-Generators.git"
         },
         {
+            "type": "git",
+            "url": "git@github.com:michalisantoniou6/url-shortener.git"
+        },
+        {
             "type": "composer",
             "url": "https://packagist.org"
         },
@@ -25,7 +29,6 @@
         "arcturial/clickatell": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-snappy": "*",
-        "bugsnag/bugsnag-laravel": "^2.0",
         "dionera/laravel-beanstalkd-ui": "*",
         "fideloper/proxy": "~3.3",
         "gemorroj/archive7z": "^3.0",
@@ -43,7 +46,7 @@
         "laravelcollective/html": "5.5.*",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/fractal": "0.12.*",
-        "maatwebsite/excel": "~2.1.0",
+        "maatwebsite/excel": "^2.1",
         "michalisantoniou6/laravel-cerberus": "dev-master",
         "nao-pon/flysystem-google-drive": "~1.1",
         "pda/pheanstalk": "~3.0",
@@ -106,13 +109,15 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover"
+            "@php artisan package:discover",
+            "php artisan config:clear",
+            "php artisan route:clear",
+            "php artisan view:clear"
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan ide-helper:generate",
-            "php artisan ide-helper:meta",
-            "php artisan optimize"
+            "php artisan ide-helper:meta"
         ]
     },
     "config": {

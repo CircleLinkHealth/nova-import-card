@@ -9,7 +9,7 @@
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
 
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.billing'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => route('patient.reports.billing'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
@@ -113,7 +113,7 @@
                                         fillspace: true,
                                         width: 90,
                                         sort: 'string',
-                                        template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
+                                        template: "<a href='<?php echo route('patient.activity.providerUIIndex',
                                                 array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
                                     },
                                     {

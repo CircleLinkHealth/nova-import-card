@@ -191,4 +191,8 @@ class Location extends \App\BaseModel
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function routeNotificationForMail() {
+        return optional($this->user()->first())->email;
+    }
 }
