@@ -90,7 +90,7 @@ class UpdatePracticeAppointments extends Command
 
             $ehrAppointments = $response['appointments'];
 
-            //carbon date
+
             foreach ($ehrAppointments as $ehrAppointment) {
 
                 //Dummy User to indicate that the appointment is created in Athena
@@ -98,21 +98,21 @@ class UpdatePracticeAppointments extends Command
                               ->where('last_name', 'API')
                               ->first();
 
-                $provider = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id, $ehrAppointment['providerid']);
+                $provider   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id,
+                    $ehrAppointment['providerid']);
                 $department = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id, $ehrAppointment['departmentid']);
 
                 $appointment = Appointment::updateOrCreate([
-                    'patient_id'    => $patient->id,
-                    'author_id'     => $athena->id,
-                    'provider_id'   => null,
-                    'was_completed' => 0,
-                    'type'          => $ehrAppointment['patientappointmenttypename'],
+                    'patient_id'  => $patient->id,
+                    'author_id'   => $athena->id,
+                    'provider_id' => null,
                     'date'          => $ehrAppointment['date'],
                     'time'          => $ehrAppointment['starttime'],
-                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] .  " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . "at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
+                ], [
+                    'was_completed' => 0,
+                    'type'          => $ehrAppointment['patientappointmenttypename'],
+                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] . " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . "at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
-
-
 
 
             }

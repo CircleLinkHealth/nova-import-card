@@ -2721,10 +2721,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
-    public function safe() {
-        $careplan = $this->carePlan()->first();
-        $observation = $this->lastObservation()->first();
-        $phone = $this->phoneNumbers()->first();
+
     public function safe()
     {
         $careplan    = $this->carePlan()->first();
