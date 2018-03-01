@@ -158,6 +158,8 @@ class PracticeInvoiceController extends Controller
                  $summary->chargeableServices()
                          ->sync($default_code_id);
 
+                 $summary->load('chargeableServices');
+
                  return ApprovableBillablePatient::make($summary);
         });
 
