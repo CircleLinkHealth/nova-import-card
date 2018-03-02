@@ -118,20 +118,10 @@
       },
       data() {
         return {
-          page: 1,
+          pagination: null,
           selected: false,
           columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
-          options: {
-          // see the options API
-            columnsClasses: {
-              'selected': 'blank'
-            },
-            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterByColumn: true,
-            footerHeadings: true
-          },
           currentDate: new Date()
         }
       },
@@ -148,10 +138,34 @@
               name: row.Nurse
             }
           }))
+        },
+        options () {
+          return {
+            columnsClasses: {
+              'selected': 'blank'
+            },
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterByColumn: true,
+            footerHeadings: true,
+            texts: {
+                count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
+            }
+          }
         }
       },
       methods: {
         rootUrl,
+        nextPageUrl () {
+            const query = this.$refs.tblCalls.$data.query
+            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
+            if (this.pagination) {
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}`)
+            }
+            else {
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}`)
+            }
+        },
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
             row.selected = this.selected;
@@ -185,11 +199,20 @@
         },
         next() {
           if (!this.$nextPromise) {
-            return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?scheduled&page=' + this.page)).then((result) => result).then(result => {
-                result = result.data;
-
+            return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
+              result = result.data;
+              this.pagination = {
+                            current_page: result.meta.current_page,
+                            from: result.meta.from,
+                            last_page: result.meta.last_page,
+                            last_page_url: result.links.last,
+                            next_page_url: result.links.next,
+                            path: result.meta.path,
+                            per_page: result.meta.per_page,
+                            to: result.meta.to,
+                            total: result.meta.total
+                        }
               if (result) {
-                console.log('calls:result', result)
                 const calls = result.data || [];
                 if (calls && Array.isArray(calls)) {
                     calls.forEach(call => {
@@ -222,7 +245,6 @@
                         })
                       }
                     })
-                  console.log('calls:list', calls)
                   const tableCalls = calls.map(call => ({
                                         id: call.id,
                                         selected: false,
@@ -259,17 +281,24 @@
                                         'Call Time Start': call.window_start,
                                         'Call Time End': call.window_end
                                       }))
-                  console.log('calls:table', tableCalls)
-                  this.tableData = this.tableData.concat(tableCalls)
-                  this.page++;
+                  if (!this.tableData.length) {
+                      const arr = this.tableData.concat(tableCalls)
+                      const total = ((this.pagination || {}).total || 0)
+                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                  }
+                  else {
+                      const from = ((this.pagination || {}).from || 0)
+                      const to = ((this.pagination || {}).to || 0)
+                      for (let i = from - 1; i < to; i++) {
+                          this.tableData[i] = tableCalls[i - from + 1]
+                      }
+                  }
                   delete this.$nextPromise;
-                  console.log(calls);
-                  console.log(this.$refs);
                   return tableCalls;
                 }
               }
             }).catch(function (err) {
-              //console.error(err)
+              console.error('calls:response', err)
             })
           }
         }
