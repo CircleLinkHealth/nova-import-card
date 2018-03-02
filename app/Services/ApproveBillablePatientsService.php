@@ -26,7 +26,7 @@ class ApproveBillablePatientsService
             ->where('rejected', '=', false)
             ->count();
 
-        $count['toQA']     = $this->approvePatientsRepo
+        $count['toQA'] = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month)
             ->where('approved', '=', false)
             ->where('rejected', '=', false)
@@ -45,17 +45,21 @@ class ApproveBillablePatientsService
     {
         $summaries = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month)
-                                         ->paginate();
+            ->paginate();
         $summaries->getCollection()->transform(function ($summary) {
+            $summary = $this->patientSummaryRepo
+                ->attachDefaultChargeableService($summary);
+
             return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
         });
 
         return $summaries;
     }
 
-    public function transformPatientsToApprove($practiceId, Carbon $month) {
+    public function transformPatientsToApprove($practiceId, Carbon $month)
+    {
         $summaries = $this->patientsToApprove($practiceId, $month);
-        
+
         $summaries->getCollection()->transform(function ($summary) {
             return ApprovableBillablePatient::make($summary);
         });
@@ -63,7 +67,8 @@ class ApproveBillablePatientsService
         return $summaries;
     }
 
-    public function billablePatientSummaries($practiceId, Carbon $month) {
+    public function billablePatientSummaries($practiceId, Carbon $month)
+    {
         return $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month);
     }
