@@ -36,7 +36,7 @@ class AttachBillableProblemsToSummary implements ShouldQueue
     {
         $summary = $repo->attachBillableProblems($this->summary->patient, $this->summary);
 
-        $summary = $repo->attachDefaultChargeableService($summary);
+        $summary = $repo->attachDefaultChargeableService($summary, null, false);
 
         if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();

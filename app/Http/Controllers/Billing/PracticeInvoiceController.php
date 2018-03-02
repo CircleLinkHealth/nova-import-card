@@ -107,7 +107,7 @@ class PracticeInvoiceController extends Controller
                  ->attachBillableProblems($summary->patient, $summary);
 
              $summary = $this->patientSummaryDBRepository
-                 ->attachDefaultChargeableService($result);
+                 ->attachDefaultChargeableService($summary);
 
              return ApprovableBillablePatient::make($summary);
          });
@@ -153,7 +153,7 @@ class PracticeInvoiceController extends Controller
                 }
 
                  $summary = $this->service
-                     ->attachDefaultChargeableService($summary, $default_code_id);
+                     ->attachDefaultChargeableService($summary, $default_code_id, false);
 
                  return ApprovableBillablePatient::make($summary);
         });
