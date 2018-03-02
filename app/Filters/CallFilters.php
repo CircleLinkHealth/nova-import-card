@@ -35,15 +35,27 @@ class CallFilters extends QueryFilters
     */
     public function nurse($term)
     {
-        return $this->builder->whereHas('outboundUser', function ($q) use ($term) {
-            $q->where('display_name', 'like', "%$term%");
-        })->orWhereHas('inboundUser', function ($q) use ($term) {
-            $q->where('display_name', 'like', "%$term%");
+        return $this->builder->whereHas('outboundUser.nurseInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        })->orWhereHas('inboundUser.nurseInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
         });
     }
 
     public function patient($term) {
-        return $this->nurse($term);
+        return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        })->orWhereHas('inboundUser.patientInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        });
     }
     
     public function patientStatus($term) {
