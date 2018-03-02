@@ -27,6 +27,48 @@ class CallFilters extends QueryFilters
     {
         return $this->builder->scheduled();
     }
+    
+    /**
+    * Scope for nurse and patient, who may be any of inbound or outbound callers
+    *
+    * @return \Illuminate\Database\Eloquent\Builder
+    */
+    public function nurse($term)
+    {
+        return $this->builder->whereHas('outboundUser', function ($q) use ($term) {
+            $q->where('display_name', 'like', "%$term%");
+        })->orWhereHas('inboundUser', function ($q) use ($term) {
+            $q->where('display_name', 'like', "%$term%");
+        });
+    }
+
+    public function patient($term) {
+        return $this->nurse($term);
+    }
+    
+    public function patientStatus($term) {
+        return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
+            $q->where('ccm_status', 'LIKE', "$term%");
+        })->orWhereHas('inboundUser.patientInfo', function ($q) use ($term) {
+            $q->where('ccm_status', 'LIKE', "$term%");
+        });
+    }
+
+    public function practice($term) {
+        return $this->builder->whereHas('inboundUser.primaryPractice', function ($q) use ($term) {
+            $q->where('display_name', 'LIKE', "%$term%");
+        });
+    }
+    
+    public function billingProvider($term) {
+        return $this->builder->whereHas('inboundUser.billingProvider.user', function ($q) use ($term) {
+            $q->where('display_name', 'LIKE', "%$term%");
+        });
+    }
+    
+    public function scheduler($term) {
+        return $this->builder->where('scheduler', 'LIKE', "%$term%");
+    }
 
     /**
      * Scope for calls by Caller name.
@@ -83,10 +125,10 @@ class CallFilters extends QueryFilters
      */
     public function scheduledDate($date)
     {
-        validateYYYYMMDDDateString($date);
+        //validateYYYYMMDDDateString($date);
 
         return $this->builder
-            ->whereScheduledDate($date);
+            ->where('scheduled_date', 'LIKE', '%'.$date.'%');
     }
 
     /**

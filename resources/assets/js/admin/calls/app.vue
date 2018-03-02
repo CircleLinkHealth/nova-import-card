@@ -145,7 +145,7 @@
               'selected': 'blank'
             },
             sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
-            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
             footerHeadings: true,
             texts: {
@@ -156,15 +156,29 @@
       },
       methods: {
         rootUrl,
+        columnMapping (name) {
+          const columns = {
+            'Patient ID': 'patientId',
+            'Next Call': 'scheduledDate',
+            'Last Call': 'lastCall'
+          }
+          //to camel case
+          return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+        },
         nextPageUrl () {
             const query = this.$refs.tblCalls.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
+            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
             if (this.pagination) {
                 return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}`)
             }
             else {
                 return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}`)
             }
+        },
+        activateFilters () {
+            this.pagination = null
+            this.tableData = []
+            this.next()
         },
         toggleAllSelect(e) {
           this.tableData = this.tableData.map(row => {
@@ -263,7 +277,7 @@
                                           message: 'Demo: The Patient is responding to treatment'
                                         }],
                                         'Last Call Status': call.getPatient().getInfo().last_call_status,
-                                        'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
+                                        'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
                                         'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
                                         'Time Zone': call.getPatient().timezone,
