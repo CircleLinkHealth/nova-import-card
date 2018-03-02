@@ -188,40 +188,41 @@
             return this.$nextPromise = this.axios.get(rootUrl('api/admin/calls?scheduled&page=' + this.page)).then((result) => result).then(result => {
                 result = result.data;
 
-                console.log(result)
               if (result) {
-                const calls = result.data;
+                console.log('calls:result', result)
+                const calls = result.data || [];
                 if (calls && Array.isArray(calls)) {
                     calls.forEach(call => {
-                    if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
-                    if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
-                    call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
-                                                    call.inbound_user : 
-                                              (call.outbound_user && call.outbound_user.nurse_info) ?
-                                                    call.outbound_user : 
-                                                    null)
-                    call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
-                                                    call.inbound_user : 
-                                              (call.outbound_user && call.outbound_user.patient_info) ?
-                                                    call.outbound_user : 
-                                                    null);
-                    
-                    const patient = call.getPatient();
-                    if (patient) {
-                      const emptyObject = {}
-                      patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
-                      patient.getPractice = () => (patient.primary_practice || {});
-                      patient.getInfo = () => (patient.patient_info || {});
+                      if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
+                      if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
+                      call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
+                                                      call.inbound_user : 
+                                                (call.outbound_user && call.outbound_user.nurse_info) ?
+                                                      call.outbound_user : 
+                                                      null)
+                      call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
+                                                      call.inbound_user : 
+                                                (call.outbound_user && call.outbound_user.patient_info) ?
+                                                      call.outbound_user : 
+                                                      null);
+                      
+                      const patient = call.getPatient();
+                      if (patient) {
+                        const emptyObject = {}
+                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
+                        patient.getPractice = () => (patient.primary_practice || {});
+                        patient.getInfo = () => (patient.patient_info || {});
 
-                      const billingProvider = patient.getBillingProvider();
-                      billingProvider.getUser = () => (billingProvider.user || {});
+                        const billingProvider = patient.getBillingProvider();
+                        billingProvider.getUser = () => (billingProvider.user || {});
 
-                      patient.getInfo().contact_windows.forEach(time_window => {
-                        time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
-                        time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
-                      })
-                    }
-                  })
+                        patient.getInfo().contact_windows.forEach(time_window => {
+                          time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
+                          time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+                        })
+                      }
+                    })
+                  console.log('calls:list', calls)
                   const tableCalls = calls.map(call => ({
                                         id: call.id,
                                         selected: false,
@@ -242,7 +243,7 @@
                                         'Last Call Status': call.getPatient().getInfo().last_call_status,
                                         'Last Call': new Date(call.getPatient().getInfo().last_contact_time).toDateString(),
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
-                                        'Successful Calls': (call.getPatient().getInfo().monthly_summaries.slice(-1).no_of_successful_calls || 0),
+                                        'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
                                         'Time Zone': call.getPatient().timezone,
                                         'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
                                                                                         .map(time_window => time_window.shortDayOfWeek)
@@ -258,6 +259,7 @@
                                         'Call Time Start': call.window_start,
                                         'Call Time End': call.window_end
                                       }))
+                  console.log('calls:table', tableCalls)
                   this.tableData = this.tableData.concat(tableCalls)
                   this.page++;
                   delete this.$nextPromise;
