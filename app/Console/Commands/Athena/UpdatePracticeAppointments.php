@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\Appointment;
+use App\Call;
 use App\Services\AthenaAPI\Calls;
 use App\User;
 use Carbon\Carbon;
@@ -73,7 +74,7 @@ class UpdatePracticeAppointments extends Command
                         ->ofType('participant')
                         ->get();
 
-        $x = 1;
+
 
         //updateOrCreate Appointments
         foreach ($patients as $patient) {
@@ -115,6 +116,15 @@ class UpdatePracticeAppointments extends Command
                     'type'          => $ehrAppointment['patientappointmenttypename'],
                     'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] .  " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . " at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
+
+
+                $call = Call::where('inbound_cpm_id', $patient->id)->orderBy('id', 'desc')->first();
+
+                if ($call){
+                    $call->attempt_note = $appointment->comment;
+                    $call->save();
+                }
+
 
 
 
