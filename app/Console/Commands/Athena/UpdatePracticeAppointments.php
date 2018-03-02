@@ -5,6 +5,7 @@ namespace App\Console\Commands\Athena;
 use App\Appointment;
 use App\Services\AthenaAPI\Calls;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class UpdatePracticeAppointments extends Command
@@ -53,8 +54,7 @@ class UpdatePracticeAppointments extends Command
             },
             'primaryPractice' => function ($practice) {
                 $practice->whereHas('ehr', function ($q) {
-                    $q->where('name', '=', 'Athena')
-                      ->whereNotNull('external_id');
+                    $q->where('name', '=', 'Athena');
                 });
             },
             'careTeamMembers' => function ($q) {
@@ -64,8 +64,7 @@ class UpdatePracticeAppointments extends Command
                         ->has('patientInfo')
                         ->whereHas('primaryPractice', function ($practice) {
                             $practice->whereHas('ehr', function ($q) {
-                                $q->where('name', '=', 'Athena')
-                                  ->whereNotNull('external_id');
+                                $q->where('name', '=', 'Athena');
                             });
                         })
                         ->whereHas('ehrInfo', function ($e) {
@@ -74,11 +73,12 @@ class UpdatePracticeAppointments extends Command
                         ->ofType('participant')
                         ->get();
 
+        $x = 1;
 
         //updateOrCreate Appointments
         foreach ($patients as $patient) {
 
-            $ehrInfo = $patient->ehrInfo();
+            $ehrInfo = $patient->ehrInfo;
 
             $response = $this->api->getPatientAppointments($ehrInfo->ehr_practice_id, $ehrInfo->ehr_patient_id, false);
 
@@ -94,25 +94,28 @@ class UpdatePracticeAppointments extends Command
             foreach ($ehrAppointments as $ehrAppointment) {
 
                 //Dummy User to indicate that the appointment is created in Athena
-                $athena = User::where('first_name', 'Athena')
-                              ->where('last_name', 'API')
+                $athena = User::where('last_name', 'API')
                               ->first();
 
-                $provider   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id,
-                    $ehrAppointment['providerid']);
-                $department = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id, $ehrAppointment['departmentid']);
+                $providerResponse   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id, $ehrAppointment['providerid']);
+                $provider = $providerResponse[0];
+                $departmentResponse = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id, $ehrAppointment['departmentid']);
+                $department = $departmentResponse[0];
+
+                $date = new Carbon($ehrAppointment['date']);
 
                 $appointment = Appointment::updateOrCreate([
                     'patient_id'  => $patient->id,
                     'author_id'   => $athena->id,
                     'provider_id' => null,
-                    'date'          => $ehrAppointment['date'],
+                    'date'          => $date->toDateString(),
                     'time'          => $ehrAppointment['starttime'],
                 ], [
                     'was_completed' => 0,
                     'type'          => $ehrAppointment['patientappointmenttypename'],
-                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] . " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . "at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
+                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] .  " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . " at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
+
 
 
             }

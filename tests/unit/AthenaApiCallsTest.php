@@ -2,7 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Appointment;
 use App\Services\AthenaAPI\Calls;
+use App\User;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
 use Carbon\Carbon;
@@ -58,7 +60,6 @@ class AthenaApiCallsTest extends TestCase
         $this->assertTrue(is_array($patientAppointments));
 
 
-
         //test appointment notes
         $note = $this->addAppointmentNote($appointment[0]['appointmentid']);
 
@@ -67,9 +68,6 @@ class AthenaApiCallsTest extends TestCase
         $appointmentNotes = $this->api->getAppointmentNotes($this->athenaPracticeId, $appointment[0]['appointmentid']);
 
         $this->assertTrue(is_array($appointmentNotes));
-
-
-
 
     }
 
@@ -202,7 +200,8 @@ class AthenaApiCallsTest extends TestCase
         return $problem['problemid'];
     }
 
-    private function addAppointmentNote($appointmentId){
+    private function addAppointmentNote($appointmentId)
+    {
 
         $noteText = 'TEST';
 

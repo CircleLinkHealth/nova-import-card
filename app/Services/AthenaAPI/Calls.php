@@ -249,8 +249,9 @@ class Calls
 
     public function getBillingProviderName($practiceId, $providerId)
     {
+        $this->api->setPracticeId($practiceId);
 
-        $response = $this->api->GET("$practiceId/providers/$providerId", [
+        $response = $this->api->GET("providers/$providerId", [
             'showallproviderids' => true,
         ]);
 
