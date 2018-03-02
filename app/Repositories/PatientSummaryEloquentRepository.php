@@ -349,4 +349,23 @@ class PatientSummaryEloquentRepository
 
         return false;
     }
+
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null)
+    {
+        if ( ! $defaultCodeId) {
+            $defaultCodeId = $summary->patient
+                ->primaryPractice
+                ->cpmSettings()
+                ->default_chargeable_service_id;
+        }
+
+        $sync = $summary->chargeableServices()
+                        ->sync($defaultCodeId);
+
+        if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
+            $summary->load('chargeableServices');
+        }
+
+        return $summary;
+    }
 }
