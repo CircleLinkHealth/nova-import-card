@@ -106,13 +106,10 @@ class PracticeInvoiceController extends Controller
              $result = $this->patientSummaryDBRepository
                  ->attachBillableProblems($summary->patient, $summary);
 
-             $data = $summary;
+             $summary = $this->patientSummaryDBRepository
+                 ->attachDefaultChargeableService($result);
 
-             if ($result) {
-                 $data = $result;
-             }
-
-             return ApprovableBillablePatient::make($data);
+             return ApprovableBillablePatient::make($summary);
          });
 
          return $summaries;
@@ -155,12 +152,8 @@ class PracticeInvoiceController extends Controller
                     $summary = $result;
                 }
 
-                 $sync = $summary->chargeableServices()
-                         ->sync($default_code_id);
-
-                if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
-                    $summary->load('chargeableServices');
-                }
+                 $summary = $this->service
+                     ->attachDefaultChargeableService($summary, $default_code_id);
 
                  return ApprovableBillablePatient::make($summary);
         });
