@@ -72,4 +72,8 @@ class ApproveBillablePatientsService
         return $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month);
     }
+
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null) {
+        return $this->patientSummaryRepo->attachDefaultChargeableService($summary, $defaultCodeId);
+    }
 }
