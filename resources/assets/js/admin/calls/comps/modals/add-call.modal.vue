@@ -245,7 +245,9 @@
               this.axios.post(rootUrl('callcreate'), formData).then(response => {
                 this.loaders.submit = false
                 this.formData = Object.create(defaultFormData)
+                const call = response.data
                 Event.$emit("modal-add-call:hide")
+                Event.$emit('calls:add', call)
                 console.log('add-call', response.data)
               }).catch(err => {
                 this.errors.submit = err.message
