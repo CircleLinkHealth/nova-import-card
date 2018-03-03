@@ -100,6 +100,7 @@ class UpdatePracticeAppointments extends Command
 
                 //Dummy User to indicate that the appointment is created in Athena
                 $athena = User::where('last_name', 'API')
+                              ->where('first_name', 'Athena')
                               ->first();
 
                 $providerResponse   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id,
