@@ -48,10 +48,13 @@ class UpdatePracticeAppointments extends Command
     {
         //get appointments for user in ehr
 
+
         $patients = User::with([
             'patientInfo',
             'ehrInfo'         => function ($e) {
-                $e->where('ehr_id', 2);
+                $e->whereHas('ehr', function ($q) {
+                    $q->where('name', '=', 'Athena');
+                });
             },
             'primaryPractice' => function ($practice) {
                 $practice->whereHas('ehr', function ($q) {
@@ -69,11 +72,12 @@ class UpdatePracticeAppointments extends Command
                             });
                         })
                         ->whereHas('ehrInfo', function ($e) {
-                            $e->where('ehr_id', 2);
+                            $e->whereHas('ehr', function ($q) {
+                                $q->where('name', '=', 'Athena');
+                            });
                         })
                         ->ofType('participant')
                         ->get();
-
 
 
         //updateOrCreate Appointments
@@ -98,10 +102,12 @@ class UpdatePracticeAppointments extends Command
                 $athena = User::where('last_name', 'API')
                               ->first();
 
-                $providerResponse   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id, $ehrAppointment['providerid']);
-                $provider = $providerResponse[0];
-                $departmentResponse = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id, $ehrAppointment['departmentid']);
-                $department = $departmentResponse[0];
+                $providerResponse   = $this->api->getBillingProviderName($ehrInfo->ehr_practice_id,
+                    $ehrAppointment['providerid']);
+                $provider           = $providerResponse[0];
+                $departmentResponse = $this->api->getDepartmentInfo($ehrInfo->ehr_practice_id,
+                    $ehrAppointment['departmentid']);
+                $department         = $departmentResponse[0];
 
                 $date = new Carbon($ehrAppointment['date']);
 
@@ -109,23 +115,21 @@ class UpdatePracticeAppointments extends Command
                     'patient_id'  => $patient->id,
                     'author_id'   => $athena->id,
                     'provider_id' => null,
-                    'date'          => $date->toDateString(),
-                    'time'          => $ehrAppointment['starttime'],
+                    'date'        => $date->toDateString(),
+                    'time'        => $ehrAppointment['starttime'],
                 ], [
                     'was_completed' => 0,
                     'type'          => $ehrAppointment['patientappointmenttypename'],
-                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] .  " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . " at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
+                    'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] . " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . " at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
 
 
                 $call = Call::where('inbound_cpm_id', $patient->id)->orderBy('id', 'desc')->first();
 
-                if ($call){
+                if ($call) {
                     $call->attempt_note = $appointment->comment;
                     $call->save();
                 }
-
-
 
 
             }

@@ -36,6 +36,6 @@ class Ehr extends \App\BaseModel
 
     public function targetPatient(){
 
-        return $this->belongsTo(TargetPatient::class);
+        return $this->hasMany(TargetPatient::class);
     }
 }

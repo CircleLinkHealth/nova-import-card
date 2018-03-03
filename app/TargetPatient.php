@@ -20,6 +20,6 @@ class TargetPatient extends Model
 
     public function ehr(){
 
-        return $this->hasOne(Ehr::class, 'ehr_id');
+        return $this->belongsTo(Ehr::class, 'ehr_id');
     }
 }
