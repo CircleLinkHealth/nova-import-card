@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Chargeable;
 
 class ChargeableService extends Model
 {
@@ -30,9 +29,5 @@ class ChargeableService extends Model
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
                     ->withTimestamps();
-    }
-
-    public function chargeables() {
-        return $this->hasMany(Chargeable::class);
     }
 }
