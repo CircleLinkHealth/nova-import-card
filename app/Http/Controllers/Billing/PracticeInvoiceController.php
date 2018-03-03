@@ -12,6 +12,7 @@ use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Chargeable;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
@@ -105,20 +106,17 @@ class PracticeInvoiceController extends Controller
              $result = $this->patientSummaryDBRepository
                  ->attachBillableProblems($summary->patient, $summary);
 
-             $data = $summary;
+             $summary = $this->patientSummaryDBRepository
+                 ->attachDefaultChargeableService($summary);
 
-             if ($result) {
-                 $data = $result;
-             }
-
-             return ApprovableBillablePatient::make($data);
+             return ApprovableBillablePatient::make($summary);
          });
 
          return $summaries;
      }
 
      public function updatePatientChargeableServices(Request $request) {
-         
+
      }
 
     /**
@@ -130,29 +128,37 @@ class PracticeInvoiceController extends Controller
     {
         $practice_id = $request->input('practice_id');
         $date = $request->input('date');
+        $default_code_id = $request->input('default_code_id');
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         }
         else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
-        $summaries = $this->service->billablePatientSummaries($practice_id, $date)
-            ->paginate(100);
 
-        $summaries->getCollection()->transform(function ($summary) use ($request) {
-            $result = $this->patientSummaryDBRepository
-                ->attachBillableProblems($summary->patient, $summary);
+        if (!$default_code_id || !$practice_id) {
+            return $this->badRequest('Invalid [practice_id] and [default_code_id] parameters. Must have a values');
+        }
 
-            if ($result) {
-                $summary = $result;
-            }
+        $summaries = $this->service
+            ->billablePatientSummaries($practice_id, $date)
+            ->get()
+            ->map(function ($summary) use ($default_code_id) {
+                $result = $this->patientSummaryDBRepository
+                     ->attachBillableProblems($summary->patient, $summary);
 
-            $summary->sync($request['default_code_id']);
+                if ($result) {
+                    $summary = $result;
+                }
 
-            return ApprovableBillablePatient::make($summary);
+                 $summary = $this->service
+                     ->attachDefaultChargeableService($summary, $default_code_id, false);
+
+                 return ApprovableBillablePatient::make($summary);
         });
 
-        return $summaries;
+        return response()->json($summaries);
     }
 
     public function updateSummaryChargeableServices(Request $request)
@@ -161,27 +167,26 @@ class PracticeInvoiceController extends Controller
             return response()->json('Method not allowed', 403);
         }
 
-        $reportId         = $request['report_id'];
+        $reportId = $request->input('report_id');
 
         if (!$reportId) {
             return $this->badRequest('report_id is a required field');
         }
 
         //need array of IDs
-        $chargeableServices = $request['patient_chargeable_services'];
+        $chargeableIDs = $request->input('patient_chargeable_services');
 
-        if (!is_array($chargeableServices)) {
+        if (!is_array($chargeableIDs)) {
             return $this->badRequest('patient_chargeable_services must be an array');
         }
 
-
-        $summary = PatientMonthlySummary::find($reportId);
+        $summary = PatientMonthlySummary::where('patient_id', $reportId)->first();
 
         if (!$summary) {
             return $this->badRequest("Report with id $reportId not found.");
         }
 
-        $summary->chargeableServices()->sync($chargeableServices);
+        $summary->chargeableServices()->sync($chargeableIDs);
 
         return $this->ok($summary);
 
