@@ -12,7 +12,6 @@ use App\Models\ProblemCode;
 use App\Notifications\PracticeInvoice;
 use App\PatientMonthlySummary;
 use App\Practice;
-use App\Chargeable;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\Services\PracticeReportsService;
@@ -20,7 +19,6 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Collection;
 
 
 class PracticeInvoiceController extends Controller

@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Models\CCD\Problem;
-use App\Chargeable;
 use Carbon\Carbon;
 
 /**
@@ -117,10 +116,6 @@ class PatientMonthlySummary extends \App\BaseModel
         return $this->morphToMany(ChargeableService::class, 'chargeable')
                     ->withPivot(['amount'])
                     ->withTimestamps();
-    }
-
-    public function chargeables() {
-        return $this->hasMany(Chargeable::class, 'chargeable_id', 'patient_id')->where([ 'chargeable_type' => self::class ]);
     }
 
     public function scopeGetCurrent($q)
