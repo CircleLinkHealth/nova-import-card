@@ -172,7 +172,7 @@ class LoginController extends Controller
             ->route('login')
             ->with([
                 'messages' => [
-                    'Our apologies. You have been logged out due to inactivity.'
+                    'Our apologies. The page has expired due to inactivity or a user logout on a different browser tab.'
                 ]
             ]);
     }

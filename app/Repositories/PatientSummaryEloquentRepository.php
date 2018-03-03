@@ -349,4 +349,32 @@ class PatientSummaryEloquentRepository
 
         return false;
     }
+
+    /**
+     * Attach the practice's default chargeable service to the given patient summary.
+     *
+     * @param $summary
+     * @param null $defaultCodeId | The Chargeable Service Code to attach
+     * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
+     *
+     * @return mixed
+     */
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false)
+    {
+        if ( ! $defaultCodeId) {
+            $defaultCodeId = $summary->patient
+                ->primaryPractice
+                ->cpmSettings()
+                ->default_chargeable_service_id;
+        }
+
+        $sync = $summary->chargeableServices()
+                        ->sync($defaultCodeId, $detach);
+
+        if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
+            $summary->load('chargeableServices');
+        }
+
+        return $summary;
+    }
 }

@@ -58,19 +58,19 @@ class CallController extends Controller
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
         if ( ! $patient) {
-            return response(json_encode([
+            return response([
                 'errors' => ['could not find patient'],
                 'code'   => 406,
-            ]), 406);
+            ], 406);
         }
 
         if ($patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()->where('status', '=', 'scheduled')->first();
             if ($scheduledCall) {
-                return response(json_encode([
+                return response([
                     'errors' => ['patient already has a scheduled call'],
                     'code'   => 406,
-                ]), 406);
+                ], 406);
             }
         }
 
@@ -92,7 +92,7 @@ class CallController extends Controller
         $call->scheduler       = auth()->user()->id;
         $call->save();
 
-        return response("successfully created call ", 201);
+        return response($call, 201);
         //return view('wpUsers.patient.calls.create');
     }
 
