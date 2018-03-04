@@ -124,7 +124,6 @@ class UpdatePracticeAppointments extends Command
                     'comment'       => "Appointment regarding " . $ehrAppointment['patientappointmenttypename'] . " to see " . $provider['displayname'] . " has been scheduled for " . $ehrAppointment['date'] . " at " . $ehrAppointment['starttime'] . " at " . $department['patientdepartmentname'] . ", " . $department['address'] . ", " . $department['city'] . ".",
                 ]);
 
-
                 $call = Call::where('inbound_cpm_id', $patient->id)->orderBy('id', 'desc')->first();
 
                 if ($call) {
