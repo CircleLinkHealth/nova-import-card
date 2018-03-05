@@ -24,4 +24,6 @@ export default (App, Event) => {
     Event.$on('vue-tables.filter::Scheduler', App.activateFilters)
     
     Event.$on('vue-tables.filter::DOB', App.activateFilters)
+    
+    Event.$on('vue-tables.sorted', App.activateFilters)
 }

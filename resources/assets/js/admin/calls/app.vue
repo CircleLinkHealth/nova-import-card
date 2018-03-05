@@ -150,6 +150,9 @@
             footerHeadings: true,
             texts: {
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
+            },
+            customSorting: {
+              Nurse: (ascending) => (a, b) => 0
             }
           }
         }
@@ -166,13 +169,17 @@
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
         },
         nextPageUrl () {
-            const query = this.$refs.tblCalls.$data.query
+            const $table = this.$refs.tblCalls
+            const query = $table.$data.query
             const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+            const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
+            console.log('sort:column', sortColumn)
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
             }
         },
         activateFilters () {
