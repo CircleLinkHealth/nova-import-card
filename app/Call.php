@@ -167,7 +167,7 @@ class Call extends \App\BaseModel
      * @param $builder
      */
     public function scopeScheduled($builder) {
-        $builder->where('status', '=', 'scheduled')
+        $builder->where('calls.status', '=', 'scheduled')
                 ->whereHas('inboundUser')
                 ->with([
                     'inboundUser.billingProvider.user',
