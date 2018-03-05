@@ -176,6 +176,22 @@ class CallFilters extends QueryFilters
                 $q->whereNoCallAttemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess);
             });
     }
+    
+    public function sort_nurse($term = null) {
+        if ($this->builder->has('outboundUser.nurseInfo.user')) {
+            return $this->builder->orderByJoin('outboundUser.display_name', $term);
+        }
+        else {
+            return $this->builder->orderByJoin('inboundUser.display_name', $term);
+        }
+    }
+    
+    public function sort_id($type = null) {
+        if ($type == 'desc') {
+            return $this->builder->orderByDesc('id');
+        }
+        return $this->builder->orderBy('id');
+    }
 
     public function globalFilters(): array
     {
