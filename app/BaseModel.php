@@ -2,7 +2,7 @@
 
 namespace App;
 
-
+use Fico7489\Laravel\EloquentJoin\Traits\EloquentJoinTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,5 +12,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
+    use EloquentJoinTrait;
     use \Spiritix\LadaCache\Database\LadaCacheTrait;
 }
