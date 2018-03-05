@@ -194,6 +194,10 @@ class CallFilters extends QueryFilters
         return $this->builder->orderByJoin('inboundUser.display_name', $term);
     }
     
+    public function sort_scheduledDate($term = null) {
+        return $this->builder->orderBy('scheduled_date', $term);
+    }
+    
     public function sort_id($type = null) {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');

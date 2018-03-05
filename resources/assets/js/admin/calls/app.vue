@@ -154,7 +154,14 @@
             customSorting: {
               Nurse: (ascending) => (a, b) => 0,
               'Patient ID': (ascending) => (a, b) => 0,
-              Patient: (ascending) => (a, b) => 0
+              Patient: (ascending) => (a, b) => 0,
+              'Next Call': (ascending) => (a, b) => 0,
+              'Last Call': (ascending) => (a, b) => 0,
+              'CCM Time': (ascending) => (a, b) => 0,
+              'Patient Status': (ascending) => (a, b) => 0,
+              Practice: (ascending) => (a, b) => 0,
+              'Billing Provider': (ascending) => (a, b) => 0,
+              Scheduler: (ascending) => (a, b) => 0
             }
           }
         }
