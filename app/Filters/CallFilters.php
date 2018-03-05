@@ -186,6 +186,14 @@ class CallFilters extends QueryFilters
         }
     }
     
+    public function sort_patientId($term = null) {
+        return $this->builder->join('users', 'users.id', 'calls.' . ('inbound_cpm_id'))->orderBy('users.id', $term);
+    }
+    
+    public function sort_patient($term = null) {
+        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+    }
+    
     public function sort_id($type = null) {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');

@@ -132,6 +132,10 @@ class Call extends \App\BaseModel
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
+    public function patientId() {
+        return $this->has('outboundUser.patientInfo.user') ? $this->outbound_cpm_id : $this->inbound_cpm_id;
+    }
+
     /**
      * Scope for calls for the given month
      *

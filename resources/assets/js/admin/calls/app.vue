@@ -152,7 +152,9 @@
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
             },
             customSorting: {
-              Nurse: (ascending) => (a, b) => 0
+              Nurse: (ascending) => (a, b) => 0,
+              'Patient ID': (ascending) => (a, b) => 0,
+              Patient: (ascending) => (a, b) => 0
             }
           }
         }
@@ -248,19 +250,19 @@
                                                       call.inbound_user : 
                                                 (call.outbound_user && call.outbound_user.patient_info) ?
                                                       call.outbound_user : 
-                                                      null);
+                                                      { getPractice: () => ({}), getInfo: () => ({}), getBillingProvider: () => ({ getUser: () => ({}) }) });
                       
                       const patient = call.getPatient();
                       if (patient) {
                         const emptyObject = {}
-                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
+                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || { getUser: () => ({}) });
                         patient.getPractice = () => (patient.primary_practice || {});
                         patient.getInfo = () => (patient.patient_info || {});
 
                         const billingProvider = patient.getBillingProvider();
                         billingProvider.getUser = () => (billingProvider.user || {});
 
-                        patient.getInfo().contact_windows.forEach(time_window => {
+                        (patient.getInfo().contact_windows || []).forEach(time_window => {
                           time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
                           time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
                         })
@@ -288,7 +290,7 @@
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
                                         'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
                                         'Time Zone': call.getPatient().timezone,
-                                        'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
+                                        'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
                                                                                         .map(time_window => time_window.shortDayOfWeek)
                                                                                         .reduce((obj, key) => {
                                                                                           obj[key] = key;
