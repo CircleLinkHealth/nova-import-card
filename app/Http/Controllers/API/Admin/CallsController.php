@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
 use Yajra\Datatables\Datatables;
+use Illuminate\Http\Request;
 
 
 class CallsController extends ApiController
@@ -341,10 +342,11 @@ class CallsController extends ApiController
      *   )
      * @return \Illuminate\Http\Response
      */
-    public function index(CallFilters $filters)
+    public function index(Request $request, CallFilters $filters)
     {
+        $rows = $request->input('rows');
         $calls = Call::filter($filters)
-                     ->paginate(15);
+                     ->paginate($rows ?? 15);
 
         return CallResource::collection($calls);
     }

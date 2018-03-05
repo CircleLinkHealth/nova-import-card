@@ -2,6 +2,7 @@
 
 use App\User;
 use App\Patient;
+use App\PatientSearchModel;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 use App\Services\CCD\CcdAllergyService;
@@ -43,5 +44,10 @@ class PatientService
 
     public function patients() {
         return $this->readRepo()->patients();
+    }
+
+    public function search($model) {
+        $searchModel = PatientSearchModel::create($model);
+        return $this->readRepo()->search($searchModel);
     }
 }

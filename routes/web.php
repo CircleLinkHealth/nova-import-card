@@ -132,6 +132,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('', 'MiscController');
         });
 
+        Route::get('test', 'MiscController@test');
+
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('{id}', 'API\AppointmentController@show');
             Route::resource('', 'API\AppointmentController');
@@ -482,8 +484,13 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('listing', [
-            'uses' => 'Patient\PatientController@showPatientListing',
+            'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',
             'as'   => 'patients.listing',
+        ]);
+
+        Route::get('listing/paginated', [
+            'uses' => 'Patient\PatientController@showPatientListing',
+            'as'   => 'patients.listing.paginated',
         ]);
 
         Route::get('listing/pdf', [
