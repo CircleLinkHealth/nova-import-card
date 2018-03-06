@@ -22,7 +22,7 @@
                             <option :value="patient.nurse.id" :disabled="patient.nurse.disabled" selected>{{patient.nurse.name}}</option>
                             <option v-for="(nurse, index) in patient.nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}}</option>
                         </select>
-                        <span class="is-valid" :class="{ valid: patient.isValidSelection, invalid: !patient.isValidSelection }">{{patient.isValidSelection ? '&#x2714;' : '&#x2715;'}}</span>
+                        <span class="is-valid" :class="{ valid: patient.isValidSelection(), invalid: !patient.isValidSelection() }"><span></span></span>
                         <span v-if="!patient.nurses" class="loader"></span>
                     </div>
                 </div>
@@ -34,6 +34,7 @@
 
 <script>
     import Modal from '../../../common/modal'
+    import { Event } from 'vue-tables-2'
     import { rootUrl } from '../../../../app.config'
 
     export default {
@@ -56,10 +57,12 @@
                     onChange(e, patient) {
                         if (e && patient) {
                             const selectedNurseId = e.target.value
-                            patient.isValidSelection = !!patient.nurses.find(nurse => nurse.id === selectedNurseId)
                             console.log("selected-nurse-id", selectedNurseId, patient)
-
+                            patient.selectedNurseId = ((patient.nurses.find(nurse => nurse.id == selectedNurseId) || {}).id || -1)
                         }
+                    },
+                    okHandler(e) {
+                        console.log('select-nurse:modal:ok', e)
                     }
                 }
             }
@@ -73,7 +76,7 @@
         },
         methods: {
             getNurses() {
-                return this.$nursePromise = Promise.all(this.selectedPatients.map(patient => patient.id).map(id => {
+                return this.$nursePromise = Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
                     return this.axios.get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
                         const nurses = ((response.data || {}).data || []).map(nurse => {
                             nurse.user = nurse.user || {}
@@ -85,23 +88,30 @@
                             }
                         })
                         const patient = this.patients.find(patient => patient.id === id)
-                        return patient.nurses = nurses
+                        patient.nurses = nurses
+                        return patient.nurses
                     }).catch((err) => {
                         console.error("error: get-available-nurses", id, err)
                     })
                 })).then(results => {
                     this.$nursePromise = false
+                    return (results || []).reduce((a, b) => a.concat(b), [])
                 })
             }
         },
         watch: {
             selectedPatients(patients, oldVal) {
-                this.patients = patients.map(patient => ({
+                this.patients = patients.filter(patient => patient.name).map(patient => ({
                     id: patient.id,
                     name: patient.name,
                     nurse: patient.nurse,
-                    nurses: false
+                    selectedNurseId: patient.nurse.id,
+                    nurses: [],
+                    isValidSelection() {
+                        return !!this.nurses.find(nurse => nurse.id == this.selectedNurseId)
+                    }
                 }))
+                console.log('select-nurse:patients', this.patients)
                 this.getNurses().then((nurses) => {
                     this.nurses = nurses
                 })
@@ -146,5 +156,13 @@
 
     span.is-valid.invalid {
         color: red;
+    }
+
+    span.is-valid.valid span::after {
+        content: "✔";
+    }
+
+    span.is-valid.invalid span::after {
+        content: "✕";
     }
 </style>
