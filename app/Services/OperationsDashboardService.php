@@ -14,9 +14,33 @@ use Carbon\Carbon;
 
 class OperationsDashboardService
 {
-    public function getCpmPatientTotals(Carbon $date){
+
+
+
+    /**
+     * get patients for month, the rest will be filtered in the controller?
+     *
+     * @param Carbon $date
+     */
+    public function getCpmPatientTotals(Carbon $date)
+    {
+        $fromDate = $date->startOfMonth();
+        $toDate = $date->addMonth();
+
+        //get all patients that date paused, withdrawn, or registered in month
+
+        $patients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+            $patient->where('ccm_status', 'paused')
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+        })
+                        ->get();
 
     }
+
+
+
+
 
     /**
      * @param Carbon $fromDate
@@ -40,6 +64,7 @@ class OperationsDashboardService
     }
 
 
+
     /**
      * @param $practiceId
      *
@@ -60,11 +85,12 @@ class OperationsDashboardService
         return $patientsCount;
 
 
-
-
     }
 
-    public function  getModifiedByNonClh(){
+
+
+    public function getModifiedByNonClh()
+    {
 
     }
 
@@ -74,7 +100,8 @@ class OperationsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    private function countPatientsByStatus($patients){
+    private function countPatientsByStatus($patients)
+    {
 
         $paused = $patients->whereHas('patientInfo', function ($p) {
             $p->where('ccm_status', 'paused');
@@ -89,10 +116,18 @@ class OperationsDashboardService
             $p->where('ccm_status', 'enrolled');
         })->count();
 
+        $gCodeHold = $patients->whereHas('carePlan', function ($c) {
+            $c->where('status', 'to_enroll');
+        });
 
-        return collect(['pausedPatients' => $paused,
-                        'withdrawnPatients' => $withdrawn,
-                        'enrolled' => $enrolled]);
+
+        return collect([
+            'pausedPatients'    => $paused,
+            'withdrawnPatients' => $withdrawn,
+            'enrolled'          => $enrolled,
+            'gCodeHold'         => $gCodeHold,
+        ]);
+
 
     }
 }
