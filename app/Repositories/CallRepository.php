@@ -22,6 +22,10 @@ class CallRepository
     public function count() {
         return $this->model()->select('id', DB::raw('count(*) as total'))->count();
     }
+    
+    public function call($id) {
+        return $this->model()->findOrFail($id);
+    }
 
     /**
      * Get the number of calls for a patient for a month

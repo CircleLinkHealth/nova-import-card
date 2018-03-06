@@ -91,8 +91,8 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'calls.show',
                 ]);
 
-                Route::delete('{callIds}', [
-                    'uses' => 'API\Admin\CallsController@deleteCalls',
+                Route::delete('{ids}', [
+                    'uses' => 'API\Admin\CallsController@remove',
                     'as'   => 'calls.destroy',
                 ]);
             });
