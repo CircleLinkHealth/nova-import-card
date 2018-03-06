@@ -84,7 +84,7 @@
     <text-editable :value="'Mykeels'"></text-editable>
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
-    <select-nurse-modal :selected-patients="selectedPatients"></select-nurse-modal>
+    <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
     <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
   </div>
@@ -144,12 +144,24 @@
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Patient Status', 'Practice', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
             footerHeadings: true,
             texts: {
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
+            },
+            customSorting: {
+              Nurse: (ascending) => (a, b) => 0,
+              'Patient ID': (ascending) => (a, b) => 0,
+              Patient: (ascending) => (a, b) => 0,
+              'Next Call': (ascending) => (a, b) => 0,
+              'Last Call': (ascending) => (a, b) => 0,
+              'CCM Time': (ascending) => (a, b) => 0,
+              'Patient Status': (ascending) => (a, b) => 0,
+              Practice: (ascending) => (a, b) => 0,
+              'Billing Provider': (ascending) => (a, b) => 0,
+              Scheduler: (ascending) => (a, b) => 0
             }
           }
         }
@@ -166,13 +178,17 @@
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
         },
         nextPageUrl () {
-            const query = this.$refs.tblCalls.$data.query
+            const $table = this.$refs.tblCalls
+            const query = $table.$data.query
             const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+            const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+
+            console.log('sort:column', sortColumn)
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
             }
         },
         activateFilters () {
@@ -241,19 +257,19 @@
                                                       call.inbound_user : 
                                                 (call.outbound_user && call.outbound_user.patient_info) ?
                                                       call.outbound_user : 
-                                                      null);
+                                                      { getPractice: () => ({}), getInfo: () => ({}), getBillingProvider: () => ({ getUser: () => ({}) }) });
                       
                       const patient = call.getPatient();
                       if (patient) {
                         const emptyObject = {}
-                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || emptyObject);
+                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || { getUser: () => ({}) });
                         patient.getPractice = () => (patient.primary_practice || {});
                         patient.getInfo = () => (patient.patient_info || {});
 
                         const billingProvider = patient.getBillingProvider();
                         billingProvider.getUser = () => (billingProvider.user || {});
 
-                        patient.getInfo().contact_windows.forEach(time_window => {
+                        (patient.getInfo().contact_windows || []).forEach(time_window => {
                           time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
                           time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
                         })
@@ -281,7 +297,7 @@
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
                                         'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
                                         'Time Zone': call.getPatient().timezone,
-                                        'Preferred Call Days': Object.values(call.getPatient().getInfo().contact_windows
+                                        'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
                                                                                         .map(time_window => time_window.shortDayOfWeek)
                                                                                         .reduce((obj, key) => {
                                                                                           obj[key] = key;

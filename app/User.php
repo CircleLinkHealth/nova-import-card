@@ -21,10 +21,12 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
+use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -232,6 +234,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         Impersonate,
         Notifiable,
+        SaasAccountable,
         SoftDeletes;
 
 
@@ -1351,17 +1354,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                     User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
                 ]);
-    
+
                 if ($forwards->isEmpty() && $carePerson->user) {
                     $users->push($carePerson->user);
                 }
-    
+
                 foreach ($forwards as $forwardee) {
                     if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
                         $users->push($carePerson->user);
                         $users->push($forwardee);
                     }
-    
+
                     if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
                         $users->push($forwardee);
                     }
@@ -2330,8 +2333,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function chargeableServices(){
         return $this->morphToMany(  ChargeableService::class, 'chargeable')
-            ->withPivot(['amount'])
-            ->withTimestamps();
+                    ->withPivot(['amount'])
+                    ->withTimestamps();
     }
 
     public function clinicalEmergencyContactLocations()
@@ -2614,7 +2617,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
-        return new UserNotificationList($this->id);
+        if (in_array(env('CACHE_DRIVER'), ['redis'])) {
+            return new UserNotificationList($this->id);
+        }
+
+        return new EmptyUserNotificationList();
     }
 
     public function patientSummaries()
@@ -2691,6 +2698,28 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasRole('administrator');
     }
 
+    public function isInternalUser() {
+        return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+    }
+
+    public function isPracticeStaff() {
+        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
+    public function linkToViewResource() {
+        if ($this->isInternalUser()) {
+            return route('admin.users.edit', ['id' => $this->id]);
+        }
+
+        if ($this->hasRole('participant')) {
+            return route('patient.careplan.print', ['id' => $this->id]);
+        }
+
+        if ($this->isPracticeStaff()) {
+            return route('provider.dashboard.manage.staff', ['practiceSlug' => $this->practices->first()->name]);
+        }
+    }
+
     /**
      * @return bool
      */
@@ -2735,15 +2764,19 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         ];
     }
 
-    public function saasAccount() {
-        return $this->belongsTo(SaasAccount::class);
-    }
-
-    public function isSaas() {
-        return $this->saas_account_id > 1;
-    }
-
-    public function isNotSaas() {
-        return !$this->isSaas();
+    public function saasAccountName()
+    {
+        $saasAccount = $this->saasAccount;
+        if ($saasAccount) return $saasAccount->name;
+        $saasAccount = $this->primaryPractice->saasAccount;
+        if (!$saasAccount) {
+            if (auth()->check()) $saasAccount = auth()->user()->saasAccount;
+        }
+        if ($saasAccount) {
+            $this->saasAccount()
+                 ->associate($saasAccount);
+            return $saasAccount->name;
+        }
+        return 'CircleLink Health';
     }
 }

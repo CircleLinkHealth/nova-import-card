@@ -42,6 +42,7 @@ class QueueSendAuditReports extends Command
     {
         $patients = User::ofType('participant')
             ->with('patientInfo')
+            ->with('patientSummaries')
             ->with('primaryPractice')
             ->with('primaryPractice.settings')
             ->whereHas('primaryPractice', function ($query) {

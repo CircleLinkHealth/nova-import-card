@@ -176,6 +176,46 @@ class CallFilters extends QueryFilters
                 $q->whereNoCallAttemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess);
             });
     }
+    
+    public function sort_nurse($term = null) {
+        if ($this->builder->has('outboundUser.nurseInfo.user')) {
+            return $this->builder->orderByJoin('outboundUser.display_name', $term);
+        }
+        else {
+            return $this->builder->orderByJoin('inboundUser.display_name', $term);
+        }
+    }
+    
+    public function sort_patientId($term = null) {
+        return $this->builder->join('users', 'users.id', 'calls.' . ('inbound_cpm_id'))->orderBy('users.id', $term);
+    }
+    
+    public function sort_patient($term = null) {
+        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+    }
+    
+    public function sort_scheduledDate($term = null) {
+        return $this->builder->orderBy('scheduled_date', $term);
+    }
+    
+    public function sort_patientStatus($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.ccm_status', $term);
+    }
+    
+    public function sort_practice($term = null) {
+        return $this->builder->orderByJoin('inboundUser.primaryPractice.display_name', $term);
+    }
+    
+    public function sort_scheduler($term = null) {
+        return $this->builder->orderBy('scheduler', $term);
+    }
+    
+    public function sort_id($type = null) {
+        if ($type == 'desc') {
+            return $this->builder->orderByDesc('id');
+        }
+        return $this->builder->orderBy('id');
+    }
 
     public function globalFilters(): array
     {

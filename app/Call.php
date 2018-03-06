@@ -132,6 +132,10 @@ class Call extends \App\BaseModel
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
+    public function patientId() {
+        return $this->has('outboundUser.patientInfo.user') ? $this->outbound_cpm_id : $this->inbound_cpm_id;
+    }
+
     /**
      * Scope for calls for the given month
      *
@@ -167,7 +171,7 @@ class Call extends \App\BaseModel
      * @param $builder
      */
     public function scopeScheduled($builder) {
-        $builder->where('status', '=', 'scheduled')
+        $builder->where('calls.status', '=', 'scheduled')
                 ->whereHas('inboundUser')
                 ->with([
                     'inboundUser.billingProvider.user',

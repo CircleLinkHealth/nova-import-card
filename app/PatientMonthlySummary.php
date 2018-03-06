@@ -130,7 +130,6 @@ class PatientMonthlySummary extends \App\BaseModel
         return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
     }
 
-
     //Run at beginning of month
 
     public function getPatientsOver20MinsForPracticeForMonth(

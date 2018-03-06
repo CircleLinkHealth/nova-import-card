@@ -67,7 +67,7 @@
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
                 <template slot="approved" scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
@@ -75,7 +75,7 @@
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" />
+                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>

@@ -10,10 +10,11 @@ namespace App\Repositories\Cache;
 
 
 use App\Constants;
+use App\Contracts\UserNotificationListInterface;
 use App\User;
 use Carbon\Carbon;
 
-class UserNotificationList
+class UserNotificationList implements UserNotificationListInterface
 {
     private $userId;
     private $viewHashKey;
