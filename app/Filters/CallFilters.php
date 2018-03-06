@@ -198,6 +198,10 @@ class CallFilters extends QueryFilters
         return $this->builder->orderBy('scheduled_date', $term);
     }
     
+    public function sort_patientStatus($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.ccm_status', $term);
+    }
+    
     public function sort_id($type = null) {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');
