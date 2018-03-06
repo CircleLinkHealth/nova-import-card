@@ -54,10 +54,11 @@
                                                     Edit Settings / Add Staff
                                                 </a>
 
-                                                <a href="{{ route('saas-admin.practices.destroy', array('id' => $practice->id)) }}"
-                                                   class="btn btn-xs btn btn-warning"
-                                                   style="margin-left:10px;">Remove
-                                                </a>
+
+                                                {!! Form::open(['url' => route('saas-admin.practices.destroy', array('id' => $practice->id)), 'method' => 'delete']) !!}
+                                                <input type="submit" value="Remove" class="btn btn-xs btn btn-warning"
+                                                       style="margin-left:10px;">
+                                                {!! Form::close() !!}
                                             @endif
                                         </td>
                                     </tr>

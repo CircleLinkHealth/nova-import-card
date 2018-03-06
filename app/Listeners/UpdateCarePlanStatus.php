@@ -45,7 +45,7 @@ class UpdateCarePlanStatus
             $user->carePlanStatus = 'qa_approved'; // careplan_status
             $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
 
-            if ($user->carePlan->patient->primaryPractice->settings()->first()->auto_approve_careplans) {
+            if ($user->carePlan->patient->primaryPractice->cpmSettings()->auto_approve_careplans) {
                 $user->carePlan->status = 'provider_approved';
                 $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
                 $user->carePlan->save();

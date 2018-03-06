@@ -160,9 +160,6 @@ class PracticeController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // find program
         $program = Practice::find($id);
         if (!$program) {

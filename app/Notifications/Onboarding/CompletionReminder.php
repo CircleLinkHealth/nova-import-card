@@ -56,7 +56,7 @@ class CompletionReminder extends Notification
         $program_name = $notifiable->primaryPractice->display_name;
 
         return (new MailMessage)
-            ->subject("Let’s Finish Your CircleLink Health Profile!")
+            ->subject("Let’s Finish Your".$notifiable->saasAccountName()." Profile!")
             ->greeting("Hi $notifiable->fullName:")
             ->line("We’re excited to start providing best-in-class chronic care management at $program_name but we need you to finish your profile!")
             ->line("Thanks and welcome aboard!")

@@ -61,7 +61,7 @@ class ImplementationLeadWelcome extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Welcome to CircleLink Health!")
+            ->subject('Welcome to '.$notifiable->saasAccountName().'!')
             ->greeting("Dear $notifiable->fullName:")
             ->line("{$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health just launched!")
             ->line("Please reset your password with below button.")

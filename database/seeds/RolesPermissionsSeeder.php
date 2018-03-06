@@ -47,6 +47,26 @@ class RolesPermissionsSeeder extends Seeder
     {
         return [
             [
+                'name'         => 'read-practice-chargeable-service',
+                'display_name' => 'View the ChargeableServices for a Practice.',
+                'description'  => 'Can View the ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'create-practice-chargeable-service',
+                'display_name' => 'Create a ChargeableService for a Practice.',
+                'description'  => 'Can Create ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'delete-practice-chargeable-service',
+                'display_name' => 'Delete a ChargeableService for a Practice.',
+                'description'  => 'Can Delete ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'update-practice-chargeable-service',
+                'display_name' => 'Update a ChargeableService for a Practice.',
+                'description'  => 'Can Update ChargeableServices for a Practice.',
+            ],
+            [
                 'name'         => 'practice-manage',
                 'display_name' => 'Practice Manage',
                 'description'  => 'Can Update or Delete a Practice.',
@@ -143,6 +163,7 @@ class RolesPermissionsSeeder extends Seeder
                     'users-view-self',
                     'observations-create',
                     'observations-view',
+                    'read-practice-chargeable-service',
                 ],
             ],
             [

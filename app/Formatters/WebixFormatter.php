@@ -390,7 +390,6 @@ class WebixFormatter implements ReportFormatter
             }
 
             //format super specific phone number requirements
-            
             if ($provider && $provider->primaryPhone) {
                 $phone = "P: " . preg_replace(
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',

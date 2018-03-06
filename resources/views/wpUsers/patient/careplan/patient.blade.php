@@ -333,7 +333,7 @@ $user_info = array();
                             <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
                         </div>
                         </div>
-                        @push('styles') 
+                        @push('styles')
                             <style>
                                 .no-overflow {
                                     overflow: hidden;

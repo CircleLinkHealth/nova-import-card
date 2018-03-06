@@ -95,7 +95,7 @@ class PhiMail implements DirectMail
 
             // Optionally, set the Subject of the outgoing message.
             // This will override the default message Subject set by the server.
-            $this->connector->setSubject('Message from CircleLink Health');
+            $this->connector->setSubject('Message from '.$patient->saasAccountName());
 
             if ($patient) {
                 // Add the main body of the message.
