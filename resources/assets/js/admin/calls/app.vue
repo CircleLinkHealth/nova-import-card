@@ -9,6 +9,7 @@
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
+        <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
       </div>
     </div>
     <div>
@@ -71,7 +72,10 @@
                                     ]" :class-name="'blue'"></select-editable>
         </template>
         <template slot="Next Call" scope="props">
-          <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
+          <div>
+            <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onNextCallUpdate.bind(props.row)"></date-editable>
+            <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
+          </div>
         </template>
         <template slot="Call Time Start" scope="props">
           <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
@@ -103,6 +107,7 @@
   import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
+  import Loader from '../../components/loader'
 
   export default {
       name: 'CallMgmtApp',
@@ -114,7 +119,8 @@
         'modal': Modal,
         'add-call-modal': AddCallModal,
         'select-nurse-modal': SelectNurseModal,
-        'unscheduled-patients-modal': UnscheduledPatientsModal
+        'unscheduled-patients-modal': UnscheduledPatientsModal,
+        'loader': Loader
       },
       data() {
         return {
@@ -215,9 +221,22 @@
             if (count) {
               if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
                 //perform delete action
+                this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
+                  console.log('calls:delete', response.data)
+                  response.data.forEach(id => {
+                    this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
+                  })
+                  this.activateFilters()
+                }).catch(err => {
+                  console.error('calls:delete', err)
+                })
               }
             }
           }
+        },
+        clearSelected() {
+          this.selected = false
+          this.toggleAllSelect()
         },
         assignSelectedToNurse() {
           Event.$emit('modal-select-nurse:show')
@@ -229,6 +248,7 @@
           Event.$emit('modal-unscheduled-patients:show')
         },
         next() {
+          const $vm = this
           if (!this.$nextPromise) {
             return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
               result = result.data;
@@ -310,7 +330,27 @@
                                         'Patient ID': call.getPatient().id,
                                         'Next Call': call.scheduled_date,
                                         'Call Time Start': call.window_start,
-                                        'Call Time End': call.window_end
+                                        'Call Time End': call.window_end,
+                                        loaders: {
+                                          nextCall: false
+                                        },
+                                        onNextCallUpdate (date) {
+                                          /** update the next call column */
+                                          const call = this
+                                          this.loaders.nextCall = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'scheduled_date',
+                                            value: date
+                                          }).then(response => {
+                                            console.log('calls:row:update', response.data)
+                                            call['Next Call'] = date
+                                            this.loaders.nextCall = false
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.nextCall = false
+                                          })
+                                        }
                                       }))
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
@@ -379,5 +419,10 @@
   .big-text-edit button {
       font-size: 25px;
       float: left;
+  }
+
+  div.loader.relative {
+    position: relative;
+    left: 0px;
   }
 </style>
