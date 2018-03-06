@@ -2,7 +2,7 @@
   <div>
     <div class="row">
       <div class="col-sm-6">
-        <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
+        <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
       </div>
@@ -184,18 +184,25 @@
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
         },
-        nextPageUrl () {
+        exportExcel() {
+          const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
+          console.log('calls:excel', url)
+          document.location.href = url
+        },
+        urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
             const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
             const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-
             console.log('sort:column', sortColumn)
+            return `${filters}${sortColumn}`
+        },
+        nextPageUrl () {
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
             }
         },
         activateFilters () {
