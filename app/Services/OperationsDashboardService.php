@@ -14,15 +14,24 @@ use Carbon\Carbon;
 
 class OperationsDashboardService
 {
+    public function getCpmPatientTotals(Carbon $date){
 
+    }
+
+    /**
+     * @param Carbon $fromDate
+     * @param Carbon $toDate
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
     public function getPausedPatients(Carbon $fromDate, Carbon $toDate)
     {
 
 
         $patients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
             $patient->where('ccm_status', 'paused')
-                    ->where('date_paused', '>', $fromDate)
-                    ->where('date_paused', '<', $toDate);
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
         })
                         ->get();
 
@@ -30,22 +39,60 @@ class OperationsDashboardService
 
     }
 
+
+    /**
+     * @param $practiceId
+     *
+     * @return \Illuminate\Support\Collection
+     */
     public function getPatientsByPractice($practiceId)
     {
 
+        //better to get from program id?
         $patients = User::ofType('participant')
-                        ->where([])
+                        ->whereHas('primaryPractice', function ($p) use ($practiceId) {
+                            $p->where('id', $practiceId);
+                        })
                         ->get();
 
+        $patientsCount = $this->countPatientsByStatus($patients);
 
-        foreach ($patients as $patient) {
-
-            if ($patient->status == 'paused') {
+        return $patientsCount;
 
 
-            }
 
-        }
+
+    }
+
+    public function  getModifiedByNonClh(){
+
+    }
+
+
+    /**
+     * @param $patients
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function countPatientsByStatus($patients){
+
+        $paused = $patients->whereHas('patientInfo', function ($p) {
+            $p->where('ccm_status', 'paused');
+        })->count();
+
+
+        $withdrawn = $patients->whereHas('patientInfo', function ($p) {
+            $p->where('ccm_status', 'withdrawn');
+        })->count();
+
+        $enrolled = $patients->whereHas('patientInfo', function ($p) {
+            $p->where('ccm_status', 'enrolled');
+        })->count();
+
+
+        return collect(['pausedPatients' => $paused,
+                        'withdrawnPatients' => $withdrawn,
+                        'enrolled' => $enrolled]);
 
     }
 }
