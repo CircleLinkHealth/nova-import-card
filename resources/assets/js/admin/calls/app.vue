@@ -62,14 +62,7 @@
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
         <template slot="Nurse" scope="props">
-          <select-editable :value="props.row.Nurse" :values="[
-                                      'Nurse N RN', 
-                                      'Kathryn Alchalabi RN', 
-                                      'Patricia Koeppel RN', 
-                                      'Dillenis Diaz RN', 
-                                      'Liza Herrera RN', 
-                                      'Monique Potter RN'
-                                    ]" :class-name="'blue'"></select-editable>
+          <select-editable :value="props.row.NurseId" :values="nursesForSelect" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
         <template slot="Next Call" scope="props">
           <div>
@@ -128,6 +121,10 @@
           selected: false,
           columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
+          nurses: [],
+          loaders: {
+            nurses: false
+          },
           currentDate: new Date()
         }
       },
@@ -171,6 +168,9 @@
               Scheduler: (ascending) => (a, b) => 0
             }
           }
+        },
+        nursesForSelect() {
+          return this.nurses.filter(n => !!n.display_name).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
         }
       },
       methods: {
@@ -246,6 +246,24 @@
         },
         showUnscheduledPatientsModal() {
           Event.$emit('modal-unscheduled-patients:show')
+        },
+        getNurses() {
+          this.loaders.nurses = true
+          return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
+            const pagination = (response || {}).data
+            this.nurses = ((pagination || {}).data || []).map(nurse => {
+              return {
+                id: nurse.user_id,
+                nurseId: nurse.id,
+                display_name: ((nurse.user || {}).display_name || '')
+              }
+            })
+            console.log('calls:nurses', pagination)
+            this.loaders.nurses = false
+          }).catch(err => {
+            console.error('calls:nurses', err)
+            this.loaders.nurses = false
+          })
         },
         next() {
           const $vm = this
@@ -332,7 +350,8 @@
                                         'Call Time Start': call.window_start,
                                         'Call Time End': call.window_end,
                                         loaders: {
-                                          nextCall: false
+                                          nextCall: false,
+                                          nurse: false
                                         },
                                         onNextCallUpdate (date) {
                                           /** update the next call column */
@@ -349,6 +368,25 @@
                                           }).catch(err => {
                                             console.error('calls:row:update', err)
                                             this.loaders.nextCall = false
+                                          })
+                                        },
+                                        onNurseUpdate (nurseId) {
+                                          /** update the next call column */
+                                          const call = this
+                                          this.loaders.nurse = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'outbound_cpm_id',
+                                            value: nurseId
+                                          }).then(response => {
+                                            const nurse = ($vm.nurses.find(nurse => nurse.id == nurseId) || {})
+                                            call.NurseId = nurse.id
+                                            call.Nurse = (nurse.display_name || 'unassigned')
+                                            this.loaders.nurse = false
+                                            if (response) console.log('calls:row:update', nurse)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.nurse = false
                                           })
                                         }
                                       }))
@@ -377,6 +415,7 @@
       mounted() {
         BindAppEvents(this, Event);
         this.next();
+        this.getNurses();
       }
   }
 </script>
