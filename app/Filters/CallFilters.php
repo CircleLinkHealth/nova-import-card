@@ -181,9 +181,7 @@ class CallFilters extends QueryFilters
         if ($this->builder->has('outboundUser.nurseInfo.user')) {
             return $this->builder->orderByJoin('outboundUser.display_name', $term);
         }
-        else {
-            return $this->builder->orderByJoin('inboundUser.display_name', $term);
-        }
+        return $this->builder->orderByJoin('inboundUser.display_name', $term);
     }
     
     public function sort_patientId($term = null) {
