@@ -10,6 +10,7 @@ use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User;
 use App\Services\Calls\ManagementService;
 use App\Services\NoteService;
+use App\Services\CallService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -21,11 +22,13 @@ class CallsController extends ApiController
 {
     private $service;
     private $noteService;
+    private $callService;
 
-    public function __construct(ManagementService $service, NoteService $noteService)
+    public function __construct(ManagementService $service, NoteService $noteService, CallService $callService)
     {
         $this->service     = $service;
         $this->noteService = $noteService;
+        $this->callService = $callService;
     }
 
     public function toBeDeprecatedIndex()
@@ -326,6 +329,11 @@ class CallsController extends ApiController
                              return '';
                          })
                          ->make(true);
+    }
+
+    public function show ($id) {
+        $call = $this->callService->repo()->model()->findOrFail($id);
+        return $this->json($call);
     }
 
     /**
