@@ -22,10 +22,13 @@ class OperationsDashboardService
      *
      * @param Carbon $date
      */
-    public function getCpmPatientTotals(Carbon $date)
+    public function getCpmPatientTotals(Carbon $date, $type)
     {
+
+        //logic for time
         $fromDate = $date->startOfMonth();
-        $toDate = $date->addMonth();
+        $toDate = $date->endOfMonth();
+
 
         //get all patients that date paused, withdrawn, or registered in month
 
@@ -35,6 +38,11 @@ class OperationsDashboardService
                     ->where('date_paused', '<=', $toDate);
         })
                         ->get();
+
+        $patientsCount = $this->countPatientsByStatus($patients);
+
+
+        return $patientsCount;
 
     }
 
@@ -72,6 +80,8 @@ class OperationsDashboardService
      */
     public function getPatientsByPractice($practiceId)
     {
+
+        //change this to filter total patients by practice?
 
         //better to get from program id?
         $patients = User::ofType('participant')
