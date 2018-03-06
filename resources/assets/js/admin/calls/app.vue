@@ -132,6 +132,7 @@
         selectedPatients() {
           return this.tableData.filter(row => row.selected).map(row => ({
             id: row['Patient ID'],
+            callId: row.id,
             name: row.Patient,
             nurse: {
               id: row.NurseId,
