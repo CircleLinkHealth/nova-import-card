@@ -27,6 +27,9 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-12 top-20">
+                <notifications name="select-nurse"></notifications>
+            </div>
         </div>
       </template>
     </modal>
@@ -36,6 +39,7 @@
     import Modal from '../../../common/modal'
     import { Event } from 'vue-tables-2'
     import { rootUrl } from '../../../../app.config'
+    import Notifications from '../../../../components/notifications'
 
     export default {
         name: 'select-nurse-modal',
@@ -46,9 +50,12 @@
             }
         },
         components: {
-            'modal': Modal
+            'modal': Modal,
+            'notifications': Notifications
         },
         data() {
+            const $vm = this
+
             return {
                 $nursePromise: false,
                 patients: [],
@@ -63,6 +70,19 @@
                     },
                     okHandler(e) {
                         console.log('select-nurse:modal:ok', e)
+                        const eligiblePatients = $vm.patients.filter(patient => patient.nurses.length && !patient.isValidSelection())
+                        if (eligiblePatients.every(patient => patient.isValidSelection())) {
+                            Event.$emit('notifications-select-nurse:create', {
+                                type: 'info',
+                                text: 'Patients nurses can now be modified'
+                            })
+                        }
+                        else {
+                            Event.$emit('notifications-select-nurse:create', {
+                                type: 'error',
+                                text: `Patients with names ${eligiblePatients.map(patient => patient.name).join(', ')} have not been assigned to available nurses`
+                            })
+                        }
                     }
                 }
             }
@@ -164,5 +184,9 @@
 
     span.is-valid.invalid span::after {
         content: "✕";
+    }
+
+    .top-20 {
+        margin-top: 20px;
     }
 </style>
