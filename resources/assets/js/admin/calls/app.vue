@@ -144,7 +144,7 @@
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Patient Status', 'Practice', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
             footerHeadings: true,
