@@ -142,6 +142,6 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        (new MakePhoenixHeartWelcomeCallList())->handle();
+        MakePhoenixHeartWelcomeCallList::dispatch();
     }
 }

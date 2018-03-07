@@ -412,7 +412,7 @@ class WelcomeCallListGenerator
     /**
      * Exports the Patient List to a csv file.
      */
-    public function exportToCsv($download = true, $storeOnServer = false, $filenamePrefix = null)
+    public function exportToCsv($download = true, $storeOnServer = false, $filenamePrefix = null, $returnStorageInfo = false)
     {
         $filename = "Welcome Call List";
 
@@ -477,7 +477,11 @@ class WelcomeCallListGenerator
         });
 
         if ($storeOnServer) {
-            $excel->store('xls', false, false);
+            if (!$returnStorageInfo) {
+                $excel->store('xls', false, false);
+            } else {
+                return $excel->store('xls', false, true);
+            }
         }
 
         if ($download) {

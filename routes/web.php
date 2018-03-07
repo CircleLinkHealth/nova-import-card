@@ -764,6 +764,8 @@ Route::group(['middleware' => 'auth'], function () {
     ], function () {
         Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
 
+        Route::get('eligible-lists/phoenix-heart', 'Admin\WelcomeCallListController@makePhoenixHeartCallList');
+
         Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
