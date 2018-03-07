@@ -6,6 +6,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Repositories\Cache\UserNotificationList;
+use App\Services\Cache\NotificationService;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -31,7 +32,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      * @return void
      * @throws \Exception
      */
-    public function handle(UserNotificationList $userNotificationListService)
+    public function handle(NotificationService $notificationService)
     {
         $names = PhoenixHeartName::where('processed', '=', false)
             ->take(3000)
@@ -87,7 +88,6 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
         $link = linkToDownloadFile("exports/{$storageInfo['file']}");
 
-        $userNotificationListService
-            ->push('Eligible Patient List', "Created at $now, for Phoenix Heart", $link, 'Download');
+        $notificationService->notifyAdmins('Eligible Patient List', "Created at $now, for Phoenix Heart", $link, 'Download');
     }
 }
