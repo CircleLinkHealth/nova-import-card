@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad1cb282205149041e1139c556375cb2",
+    "content-hash": "7cb1bc904ab00329958362f95d9cb365",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -6166,11 +6166,11 @@
         },
         {
             "name": "waavi/url-shortener",
-            "version": "dev-master",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:michalisantoniou6/url-shortener.git",
-                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
+                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31"
             },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -6217,7 +6217,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2018-01-09T20:43:17+00:00"
+            "time": "2017-10-06T10:09:24+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
@@ -7699,8 +7699,7 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
+                    "homepage": "http://github.com/chrisboulton"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
@@ -9281,7 +9280,6 @@
     "stability-flags": {
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
-        "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },
