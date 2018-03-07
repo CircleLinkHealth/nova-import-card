@@ -10,7 +10,7 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{displayText || text}}
+            {{displayText || frontText || text}}
         </div>
     </div>
 </template>
@@ -34,6 +34,12 @@
             return {
                 text: this.value || (this.values || [])[0] || '',
                 isEditMode: this.isEdit
+            }
+        },
+        computed: {
+            frontText() {
+                const ret = (this.values.find(item => (item && ((item.constructor.name === 'Object' && item.value) || item)) == this.text) || '')
+                return ret.text || ret
             }
         },
         methods: {

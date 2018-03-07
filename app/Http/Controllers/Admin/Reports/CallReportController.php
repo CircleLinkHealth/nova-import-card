@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
+use App\Filters\CallFilters;
 
 class CallReportController extends Controller
 {
@@ -23,11 +24,11 @@ class CallReportController extends Controller
      * export xls
      */
 
-    public function exportxls(Request $request)
+    public function exportxls(Request $request, CallFilters $filters)
     {
         $date = Carbon::now()->startOfMonth();
 
-        $calls = Call::with('inboundUser')
+        $calls = Call::filter($filters)->with('inboundUser')
             ->with('outboundUser')
             ->with('note')
             ->select(
@@ -69,7 +70,7 @@ class CallReportController extends Controller
             ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
             ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
             ->leftJoin('patient_monthly_summaries', function ($join) use ($date) {
-                $join->on('patient_monthly_summaries.patient_id', '=', 'users.id');
+                $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
                 $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
             })
             ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
@@ -85,6 +86,11 @@ class CallReportController extends Controller
             )
             ->groupBy('call_id')
             ->get();
+
+        if ($request->has('json')) {
+            /* interrupt request and return json */
+            return response()->json($calls);
+        }
 
         Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $calls) {
 

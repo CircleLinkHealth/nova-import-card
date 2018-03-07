@@ -15,11 +15,16 @@ use Carbon\Carbon;
 
 class CallRepository
 {
-    private $model;
-
-    public function __construct(Call $model)
-    {
-        $this->model = $model;
+    public function model() {
+        return app(Call::class);
+    }
+    
+    public function count() {
+        return $this->model()->select('id', DB::raw('count(*) as total'))->count();
+    }
+    
+    public function call($id) {
+        return $this->model()->findOrFail($id);
     }
 
     /**
@@ -36,7 +41,7 @@ class CallRepository
             $monthYear = Carbon::now();
         }
 
-        return $this->model
+        return $this->model()
             ->where([
                 ['inbound_cpm_id', '=', $patientUserId],
                 ['status', '!=', 'scheduled'],
@@ -59,7 +64,7 @@ class CallRepository
             $monthYear = Carbon::now();
         }
 
-        return $this->model
+        return $this->model()
             ->where([
                 ['inbound_cpm_id', '=', $patientUserId],
             ])
@@ -77,6 +82,6 @@ class CallRepository
 
     public function scheduledCalls()
     {
-        return $this->model->scheduled();
+        return $this->model()->scheduled();
     }
 }

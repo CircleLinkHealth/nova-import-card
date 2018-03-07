@@ -15,6 +15,10 @@ use Illuminate\Routing\Controller as BaseController;
 */
 class ApiController extends BaseController
 {
+    public function json($data) {
+        return response()->json($data);
+    }
+
     public function ok($data = null) {
         return response()->json($data ?? [
             'message' => 'success'
