@@ -474,13 +474,19 @@
     display: block;
     width: 20px;
     height: 20px;
-    border: 1px solid #AAA;
     border-radius: 50%;
     cursor: pointer;
+    text-align: center;
+    background-color: #008cba;
+    color: white;
   }
 
-  .VueTables__child-row-toggler.VueTables__child-row-toggler--open {
-    border-color: #0AF;
+  .VueTables__child-row-toggler::before {
+    content: "➡";
+  }
+
+  .VueTables__child-row-toggler.VueTables__child-row-toggler--open::before {
+    content: "⬇";
   }
 
   .row-select {
