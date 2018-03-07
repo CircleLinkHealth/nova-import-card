@@ -38,9 +38,7 @@ class OperationsDashboardController extends Controller
         $practices = Practice::active();
 
 
-        $totals = $this->service->getCpmPatientTotals($date);
-
-
+        $totals = $this->service->getCpmPatientTotals($date, 'day');
 
 
         return view('opsDashboard.index', compact([
@@ -65,7 +63,7 @@ class OperationsDashboardController extends Controller
 
         $patientsByPractice = null;
         if ($request['practiceId']){
-            $patientsByPractice = $this->service->getPatientsByPractice($request['practiceId']);
+            $patientsByPractice = $this->service->filterPatientsByPractice($totals, $request['practiceId']);
         }
 
 
@@ -77,6 +75,42 @@ class OperationsDashboardController extends Controller
 
     }
 
+
+    /**
+     * gets Patient list for selected column from Patient Totals table.
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    public function getList(Request $request){
+
+        $date = new Carbon($request['date']);
+
+        $fromDate = $date->startOfMonth();
+        $toDate   = $date->endOfMonth();
+
+        $total = $this->service->getTotalPatientsForMonth($fromDate, $toDate);
+
+
+        if ($request['listType'] == 'day'){
+            $patients = $this->service->filterPatients($total, $date);
+        }
+        if ($request['listType'] == 'week'){
+            $fromDate = $request['date']->startOfWeek();
+            $toDate = $request['date']->endOfWeek();
+            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
+        }
+        if ($request['listType'] == 'month'){
+            $fromDate = $request['date']->startOfMonth();
+            $toDate = $request['date']->endOfMonth();
+            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
+        }
+
+        return $patients;
+
+    }
+
     public function getPausedPatientList(Request $request){
 
     }
@@ -84,6 +118,8 @@ class OperationsDashboardController extends Controller
     public function getPatientNotesAndActivitiesPage(Request $request){
 
     }
+
+
 
 
 }

@@ -29,17 +29,7 @@ class OperationsDashboardService
         $fromDate = $date->startOfMonth();
         $toDate   = $date->endOfMonth();
 
-        //get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
-        $monthPatients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-            $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                    ->whereBetween('date_paused', [$fromDate, $toDate])
-                    ->orWhereBetween('date_withdrawn', [$fromDate, $toDate])
-                    ->orWhereBetween('registration_date', [$fromDate, $toDate]);
-        })->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
-            $c->where('status', 'to_enroll')
-              ->whereBetween('updated_at', [$fromDate, $toDate]);
-        })
-                             ->get();
+        $monthPatients = $this->getTotalPatientsForMonth($fromDate, $toDate);
 
         //If selecting specific day: go to day, show relevant week/month totals (EOW)
         if ($dateType == 'day') {
@@ -110,18 +100,18 @@ class OperationsDashboardService
 
 
     /**
+     * @param $patients
      * @param $practiceId
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getPatientsByPractice($practiceId)
+    public function filterPatientsByPractice($patients, $practiceId)
     {
 
         //change this to filter total patients by practice?
 
         //better to get from program id?
-        $patients = User::ofType('participant')
-                        ->whereHas('primaryPractice', function ($p) use ($practiceId) {
+        $filteredPatients = $patients->whereHas('primaryPractice', function ($p) use ($practiceId) {
                             $p->where('id', $practiceId);
                         })
                         ->get();
@@ -139,6 +129,30 @@ class OperationsDashboardService
 
     }
 
+    /**
+     * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
+     *
+     * @param Carbon $fromDate
+     * @param Carbon $toDate
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
+    public function getTotalPatientsForMonth(Carbon $fromDate, Carbon $toDate){
+
+        $patients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+            $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                    ->whereBetween('date_paused', [$fromDate, $toDate])
+                    ->orWhereBetween('date_withdrawn', [$fromDate, $toDate])
+                    ->orWhereBetween('registration_date', [$fromDate, $toDate]);
+        })->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
+            $c->where('status', 'to_enroll')
+              ->whereBetween('updated_at', [$fromDate, $toDate]);
+        })
+            ->get();
+
+
+        return $patients;
+    }
 
     /**
      * @param $patients
@@ -216,7 +230,6 @@ class OperationsDashboardService
         }
 
         return $filteredPatients;
-
 
     }
 }
