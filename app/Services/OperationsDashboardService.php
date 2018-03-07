@@ -16,38 +16,74 @@ class OperationsDashboardService
 {
 
 
-
     /**
-     * get patients for month, the rest will be filtered in the controller?
+     * get total patients, return count for each time category, for each status category
      *
      * @param Carbon $date
+     * @param $dateType
+     *
+     * @return \Illuminate\Support\Collection
      */
-    public function getCpmPatientTotals(Carbon $date, $type)
+    public function getCpmPatientTotals(Carbon $date, $dateType)
     {
-
-        //logic for time
         $fromDate = $date->startOfMonth();
-        $toDate = $date->endOfMonth();
+        $toDate   = $date->endOfMonth();
 
-
-        //get all patients that date paused, withdrawn, or registered in month
-
-        $patients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-            $patient->where('ccm_status', 'paused')
-                    ->where('date_paused', '>=', $fromDate)
-                    ->where('date_paused', '<=', $toDate);
+        //get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
+        $monthPatients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+            $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                    ->whereBetween('date_paused', [$fromDate, $toDate])
+                    ->orWhereBetween('date_withdrawn', [$fromDate, $toDate])
+                    ->orWhereBetween('registration_date', [$fromDate, $toDate]);
+        })->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
+            $c->where('status', 'to_enroll')
+              ->whereBetween('updated_at', [$fromDate, $toDate]);
         })
-                        ->get();
+                             ->get();
 
-        $patientsCount = $this->countPatientsByStatus($patients);
+        //If selecting specific day: go to day, show relevant week/month totals (EOW)
+        if ($dateType == 'day') {
+
+            $dayPatients = $this->filterPatients($monthPatients, $date);
+
+            $fromDate = $date->startOfWeek();
+            $toDate   = $date->endOfWeek();
+
+            $weekPatients = $this->filterPatients($monthPatients, $fromDate, $toDate);
+        }
+
+        //if selecting week:go to end of week totals, show last day of the week, month UTD totals from end of week.
+        if ($dateType == 'week') {
+
+            //last day of week for day totals
+            $dayDate = $date->endOfWeek();
+
+            $dayPatients = $this->filterPatients($monthPatients, $dayDate);
+
+            $fromDate = $date->startOfWeek();
+            $toDate   = $date->endOfWeek();
+
+            $weekPatients = $this->filterPatients($monthPatients, $fromDate, $toDate);
+        }
+
+        //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
+        if ($dateType == 'month') {
 
 
-        return $patientsCount;
+        }
+
+        $dayCount   = $this->countPatientsByStatus($dayPatients);
+        $weekCount  = $this->countPatientsByStatus($weekPatients);
+        $monthCount = $this->countPatientsByStatus($monthPatients);
+
+
+        return collect([
+            'dayCount'   => $dayCount,
+            'weekCount'  => $weekCount,
+            'monthCount' => $monthCount,
+        ]);
 
     }
-
-
-
 
 
     /**
@@ -67,10 +103,10 @@ class OperationsDashboardService
         })
                         ->get();
 
+
         return $patients;
 
     }
-
 
 
     /**
@@ -96,7 +132,6 @@ class OperationsDashboardService
 
 
     }
-
 
 
     public function getModifiedByNonClh()
@@ -137,6 +172,50 @@ class OperationsDashboardService
             'enrolled'          => $enrolled,
             'gCodeHold'         => $gCodeHold,
         ]);
+
+
+    }
+
+
+    /**
+     *
+     * filters a collection of patients according to the date(s) given.
+     *
+     * @param $patients
+     * @param Carbon $date
+     * @param Carbon|null $toDate
+     *
+     * @return mixed
+     */
+    public function filterPatients($patients, Carbon $date, Carbon $toDate = null)
+    {
+
+        if ($toDate == null) {
+            $filteredPatients = $patients->whereHas('patientInfo', function ($patient) use ($date) {
+                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                        ->where('date_paused', $date)
+                        ->orWhere('date_withdrawn', $date)
+                        ->orWhere('registration_date', $date);
+            })->orWhereHas('carePlan', function ($c) use ($date) {
+                $c->where('status', 'to_enroll')
+                  ->where('updated_at', $date);
+            })
+                                         ->get();
+        } else {
+            $filteredPatients = $patients->whereHas('patientInfo', function ($patient) use ($date, $toDate) {
+                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                        ->whereBetween('date_paused', [$date, $toDate])
+                        ->orWhereBetween('date_withdrawn', [$date, $toDate])
+                        ->orWhereBetween('registration_date', [$date, $toDate]);
+            })->orWhereHas('carePlan', function ($c) use ($date, $toDate) {
+                $c->where('status', 'to_enroll')
+                  ->whereBetween('updated_at', [$date, $toDate]);
+            })
+                                         ->get();
+
+        }
+
+        return $filteredPatients;
 
 
     }

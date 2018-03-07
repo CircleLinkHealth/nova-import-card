@@ -37,7 +37,7 @@ class OperationsDashboardController extends Controller
         //active practices for dropdown.
         $practices = Practice::active();
 
-        $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
+
         $totals = $this->service->getCpmPatientTotals($date);
 
 
@@ -46,7 +46,6 @@ class OperationsDashboardController extends Controller
         return view('opsDashboard.index', compact([
             'practices',
             'totals',
-            'pausedPatients',
         ]));
 
     }
@@ -63,8 +62,6 @@ class OperationsDashboardController extends Controller
         $practices = Practice::active();
 
         $totals = $this->service->getCpmPatientTotals($request['totalDate'], $request['totalDateType']);
-        $pausedPatients = $this->service->getPausedPatients($request['fromDate'], $request['toDate']);
-
 
         $patientsByPractice = null;
         if ($request['practiceId']){
@@ -75,9 +72,16 @@ class OperationsDashboardController extends Controller
         return view('opsDashboard.index', compact([
             'practices',
             'totals',
-            'pausedPatients',
             'patientsByPractice'
         ]));
+
+    }
+
+    public function getPausedPatientList(Request $request){
+
+    }
+
+    public function getPatientNotesAndActivitiesPage(Request $request){
 
     }
 
