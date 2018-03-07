@@ -71,10 +71,16 @@
           </div>
         </template>
         <template slot="Call Time Start" scope="props">
-          <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+          <div>
+            <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"></time-editable>
+            <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
+          </div>
         </template>
         <template slot="Call Time End" scope="props">
-          <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+          <div>
+            <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"></time-editable>
+            <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
+          </div>
         </template>
       </v-client-table>
     </div>
@@ -119,7 +125,7 @@
         return {
           pagination: null,
           selected: false,
-          columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           nurses: [],
           loaders: {
@@ -358,7 +364,9 @@
                                         'Call Time End': call.window_end,
                                         loaders: {
                                           nextCall: false,
-                                          nurse: false
+                                          nurse: false,
+                                          callTimeStart: false,
+                                          callTimeEnd: false
                                         },
                                         onNextCallUpdate (date) {
                                           /** update the next call column */
@@ -394,6 +402,40 @@
                                           }).catch(err => {
                                             console.error('calls:row:update', err)
                                             this.loaders.nurse = false
+                                          })
+                                        },
+                                        onCallTimeStartUpdate (time) {
+                                          /** update the call_time_start column */
+                                          const call = this
+                                          this.loaders.callTimeStart = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'window_start',
+                                            value: time
+                                          }).then(response => {
+                                            call['Call Time Start'] = time
+                                            this.loaders.callTimeStart = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.callTimeStart = false
+                                          })
+                                        },
+                                        onCallTimeEndUpdate (time) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.callEndStart = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'window_end',
+                                            value: time
+                                          }).then(response => {
+                                            call['Call Time End'] = time
+                                            this.loaders.callEndStart = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.callEndStart = false
                                           })
                                         }
                                       }))
