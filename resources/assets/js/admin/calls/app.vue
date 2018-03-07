@@ -22,13 +22,13 @@
                   General Comment:
                 </div>
                 <div class="col-lg-10">
-                  <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                  <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'" :on-change="props.row.onGeneralCommentUpdate.bind(props.row)"></text-editable>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg-2">Attempt Note:</div>
                 <div class="col-lg-10">
-                  <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                  <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'" :on-change="props.row.onAttemptNoteUpdate.bind(props.row)"></text-editable>
                 </div>
               </div>
               <div class="row" v-if="props.row.Notes.length > 0">
@@ -436,6 +436,40 @@
                                           }).catch(err => {
                                             console.error('calls:row:update', err)
                                             this.loaders.callEndStart = false
+                                          })
+                                        },
+                                        onGeneralCommentUpdate (comment) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.generalComment = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'general_comment',
+                                            value: comment
+                                          }).then(response => {
+                                            call.Comment = comment
+                                            this.loaders.generalComment = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.generalComment = false
+                                          })
+                                        },
+                                        onAttemptNoteUpdate (note) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.attemptNote = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'attempt_note',
+                                            value: note
+                                          }).then(response => {
+                                            call.AttemptNote = note
+                                            this.loaders.attemptNote = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.attemptNote = false
                                           })
                                         }
                                       }))
