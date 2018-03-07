@@ -5,7 +5,9 @@ namespace App\Jobs;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
+use App\Repositories\Cache\UserNotificationList;
 use App\Services\WelcomeCallListGenerator;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,21 +17,26 @@ use Illuminate\Queue\SerializesModels;
 class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    /**
+     * @var UserNotificationList
+     */
+    private $userNotificationListService;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param UserNotificationList $userNotificationListService
      */
-    public function __construct()
+    public function __construct(UserNotificationList $userNotificationListService)
     {
-        //
+        $this->userNotificationListService = $userNotificationListService;
     }
 
     /**
      * Execute the job.
      *
      * @return void
+     * @throws \Exception
      */
     public function handle()
     {
@@ -80,6 +87,14 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
         $list = (new WelcomeCallListGenerator($patientList, false, true, true, false));
 
-        $list->exportToCsv(false, true, 'Phoenix Heart');
+        $storageInfo = $list->exportToCsv(false, true, 'Phoenix Heart', true);
+
+        $now = Carbon::now()
+            ->toAtomString();
+
+        $link = linkToDownloadFile("exports/{$storageInfo['file']}");
+
+        $this->userNotificationListService
+            ->push('Eligible Patient List', "Created at $now, for Phoenix Heart", $link, 'Download');
     }
 }
