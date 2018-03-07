@@ -26,4 +26,12 @@ export default (App, Event) => {
     Event.$on('vue-tables.filter::DOB', App.activateFilters)
     
     Event.$on('vue-tables.sorted', App.activateFilters)
+
+    Event.$on('select-nurse:update', (data) => {
+        const call = App.tableData.find(row => row.id == data.callId)
+        if (call) {
+            call.Nurse = data.nurseId
+            console.log('calls:row-update', data)
+        }
+    })
 }

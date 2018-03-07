@@ -7,9 +7,10 @@ use App\Filters\CallFilters;
 use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
-use App\Http\Resources\User;
+use App\Http\Resources\User as UserResource;
 use App\Services\Calls\ManagementService;
 use App\Services\NoteService;
+use App\Services\CallService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
@@ -21,11 +22,13 @@ class CallsController extends ApiController
 {
     private $service;
     private $noteService;
+    private $callService;
 
-    public function __construct(ManagementService $service, NoteService $noteService)
+    public function __construct(ManagementService $service, NoteService $noteService, CallService $callService)
     {
         $this->service     = $service;
         $this->noteService = $noteService;
+        $this->callService = $callService;
     }
 
     public function toBeDeprecatedIndex()
@@ -350,24 +353,28 @@ class CallsController extends ApiController
 
         return CallResource::collection($calls);
     }
+    
+    public function show ($id) {
+        return $this->json($this->callService->repo()->call($id));
+    }
 
     public function patientsWithoutScheduledCalls($practiceId)
     {
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
                                   ->get();
 
-        return User::collection($patients);
+        return UserResource::collection($patients);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the calls with IDs from storage.
      *
      * @param string $ids
      *
      * @return \Illuminate\Http\Response
      *
      */
-    public function deleteCalls($ids)
+    public function remove($ids)
     {
         if (str_contains($ids, ',')) {
             $ids = explode(',', $ids);
@@ -377,7 +384,7 @@ class CallsController extends ApiController
             $ids = [$ids];
         }
 
-        Call::whereIn('id', $ids)
+        $this->callService->repo()->model()->whereIn('id', $ids)
             ->delete();
 
         return response()->json($ids);

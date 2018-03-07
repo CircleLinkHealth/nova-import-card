@@ -2,13 +2,14 @@
   <div>
     <div class="row">
       <div class="col-sm-6">
-        <a class="btn btn-primary btn-xs" :href="rootUrl('admin/reports/call')">Export Records</a>
+        <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
+        <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
       </div>
     </div>
     <div>
@@ -21,13 +22,13 @@
                   General Comment:
                 </div>
                 <div class="col-lg-10">
-                  <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                  <text-editable :value="props.row.Comment" :multi="true" :class-name="'blue big-text-edit'" :on-change="props.row.onGeneralCommentUpdate.bind(props.row)"></text-editable>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg-2">Attempt Note:</div>
                 <div class="col-lg-10">
-                  <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'"></text-editable>
+                  <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true" :class-name="'blue big-text-edit'" :on-change="props.row.onAttemptNoteUpdate.bind(props.row)"></text-editable>
                 </div>
               </div>
               <div class="row" v-if="props.row.Notes.length > 0">
@@ -61,23 +62,25 @@
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
         <template slot="Nurse" scope="props">
-          <select-editable :value="props.row.Nurse" :values="[
-                                      'Nurse N RN', 
-                                      'Kathryn Alchalabi RN', 
-                                      'Patricia Koeppel RN', 
-                                      'Dillenis Diaz RN', 
-                                      'Liza Herrera RN', 
-                                      'Monique Potter RN'
-                                    ]" :class-name="'blue'"></select-editable>
+          <select-editable :value="props.row.NurseId" :values="nursesForSelect" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
         <template slot="Next Call" scope="props">
-          <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"></date-editable>
+          <div>
+            <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onNextCallUpdate.bind(props.row)"></date-editable>
+            <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
+          </div>
         </template>
         <template slot="Call Time Start" scope="props">
-          <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+          <div>
+            <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"></time-editable>
+            <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
+          </div>
         </template>
         <template slot="Call Time End" scope="props">
-          <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"></time-editable>
+          <div>
+            <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"></time-editable>
+            <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
+          </div>
         </template>
       </v-client-table>
     </div>
@@ -103,6 +106,7 @@
   import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
+  import Loader from '../../components/loader'
 
   export default {
       name: 'CallMgmtApp',
@@ -114,14 +118,19 @@
         'modal': Modal,
         'add-call-modal': AddCallModal,
         'select-nurse-modal': SelectNurseModal,
-        'unscheduled-patients-modal': UnscheduledPatientsModal
+        'unscheduled-patients-modal': UnscheduledPatientsModal,
+        'loader': Loader
       },
       data() {
         return {
           pagination: null,
           selected: false,
-          columns: ['selected', 'Nurse','Patient ID', 'Patient','Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
+          nurses: [],
+          loaders: {
+            nurses: false
+          },
           currentDate: new Date()
         }
       },
@@ -132,6 +141,7 @@
         selectedPatients() {
           return this.tableData.filter(row => row.selected).map(row => ({
             id: row['Patient ID'],
+            callId: row.id,
             name: row.Patient,
             nurse: {
               id: row.NurseId,
@@ -164,6 +174,9 @@
               Scheduler: (ascending) => (a, b) => 0
             }
           }
+        },
+        nursesForSelect() {
+          return this.nurses.filter(n => !!n.display_name).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
         }
       },
       methods: {
@@ -177,18 +190,25 @@
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
         },
-        nextPageUrl () {
+        exportExcel() {
+          const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
+          console.log('calls:excel', url)
+          document.location.href = url
+        },
+        urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
             const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
             const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-
             console.log('sort:column', sortColumn)
+            return `${filters}${sortColumn}`
+        },
+        nextPageUrl () {
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${filters}${sortColumn}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
             }
         },
         activateFilters () {
@@ -214,9 +234,22 @@
             if (count) {
               if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
                 //perform delete action
+                this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
+                  console.log('calls:delete', response.data)
+                  response.data.forEach(id => {
+                    this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
+                  })
+                  this.activateFilters()
+                }).catch(err => {
+                  console.error('calls:delete', err)
+                })
               }
             }
           }
+        },
+        clearSelected() {
+          this.selected = false
+          this.toggleAllSelect()
         },
         assignSelectedToNurse() {
           Event.$emit('modal-select-nurse:show')
@@ -227,7 +260,26 @@
         showUnscheduledPatientsModal() {
           Event.$emit('modal-unscheduled-patients:show')
         },
+        getNurses() {
+          this.loaders.nurses = true
+          return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
+            const pagination = (response || {}).data
+            this.nurses = ((pagination || {}).data || []).map(nurse => {
+              return {
+                id: nurse.user_id,
+                nurseId: nurse.id,
+                display_name: ((nurse.user || {}).display_name || '')
+              }
+            })
+            console.log('calls:nurses', pagination)
+            this.loaders.nurses = false
+          }).catch(err => {
+            console.error('calls:nurses', err)
+            this.loaders.nurses = false
+          })
+        },
         next() {
+          const $vm = this
           if (!this.$nextPromise) {
             return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
               result = result.data;
@@ -309,7 +361,117 @@
                                         'Patient ID': call.getPatient().id,
                                         'Next Call': call.scheduled_date,
                                         'Call Time Start': call.window_start,
-                                        'Call Time End': call.window_end
+                                        'Call Time End': call.window_end,
+                                        loaders: {
+                                          nextCall: false,
+                                          nurse: false,
+                                          callTimeStart: false,
+                                          callTimeEnd: false
+                                        },
+                                        onNextCallUpdate (date) {
+                                          /** update the next call column */
+                                          const call = this
+                                          this.loaders.nextCall = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'scheduled_date',
+                                            value: date
+                                          }).then(response => {
+                                            console.log('calls:row:update', response.data)
+                                            call['Next Call'] = date
+                                            this.loaders.nextCall = false
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.nextCall = false
+                                          })
+                                        },
+                                        onNurseUpdate (nurseId) {
+                                          /** update the next call column */
+                                          const call = this
+                                          this.loaders.nurse = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'outbound_cpm_id',
+                                            value: nurseId
+                                          }).then(response => {
+                                            const nurse = ($vm.nurses.find(nurse => nurse.id == nurseId) || {})
+                                            call.NurseId = nurse.id
+                                            call.Nurse = (nurse.display_name || 'unassigned')
+                                            this.loaders.nurse = false
+                                            if (response) console.log('calls:row:update', nurse)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.nurse = false
+                                          })
+                                        },
+                                        onCallTimeStartUpdate (time) {
+                                          /** update the call_time_start column */
+                                          const call = this
+                                          this.loaders.callTimeStart = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'window_start',
+                                            value: time
+                                          }).then(response => {
+                                            call['Call Time Start'] = time
+                                            this.loaders.callTimeStart = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.callTimeStart = false
+                                          })
+                                        },
+                                        onCallTimeEndUpdate (time) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.callEndStart = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'window_end',
+                                            value: time
+                                          }).then(response => {
+                                            call['Call Time End'] = time
+                                            this.loaders.callEndStart = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.callEndStart = false
+                                          })
+                                        },
+                                        onGeneralCommentUpdate (comment) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.generalComment = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'general_comment',
+                                            value: comment
+                                          }).then(response => {
+                                            call.Comment = comment
+                                            this.loaders.generalComment = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.generalComment = false
+                                          })
+                                        },
+                                        onAttemptNoteUpdate (note) {
+                                          /** update the call_time_end column */
+                                          const call = this
+                                          this.loaders.attemptNote = true
+                                          $vm.axios.post(rootUrl('callupdate'), {
+                                            callId: this.id,
+                                            columnName: 'attempt_note',
+                                            value: note
+                                          }).then(response => {
+                                            call.AttemptNote = note
+                                            this.loaders.attemptNote = false
+                                            if (response) console.log('calls:row:update', call)
+                                          }).catch(err => {
+                                            console.error('calls:row:update', err)
+                                            this.loaders.attemptNote = false
+                                          })
+                                        }
                                       }))
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
@@ -336,6 +498,7 @@
       mounted() {
         BindAppEvents(this, Event);
         this.next();
+        this.getNurses();
       }
   }
 </script>
@@ -345,13 +508,19 @@
     display: block;
     width: 20px;
     height: 20px;
-    border: 1px solid #AAA;
     border-radius: 50%;
     cursor: pointer;
+    text-align: center;
+    background-color: #008cba;
+    color: white;
   }
 
-  .VueTables__child-row-toggler.VueTables__child-row-toggler--open {
-    border-color: #0AF;
+  .VueTables__child-row-toggler::before {
+    content: "➡";
+  }
+
+  .VueTables__child-row-toggler.VueTables__child-row-toggler--open::before {
+    content: "⬇";
   }
 
   .row-select {
@@ -378,5 +547,10 @@
   .big-text-edit button {
       font-size: 25px;
       float: left;
+  }
+
+  div.loader.relative {
+    position: relative;
+    left: 0px;
   }
 </style>

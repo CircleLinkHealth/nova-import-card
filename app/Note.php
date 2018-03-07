@@ -10,6 +10,7 @@ use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Filters\Filterable;
 
 /**
  * App\Note
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 class Note extends \App\BaseModel implements PdfReport
 {
-    use IsAddendumable,
+    use Filterable, IsAddendumable,
         PdfReportTrait;
 
     protected $table = 'notes';
