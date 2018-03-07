@@ -17,28 +17,21 @@ use Illuminate\Queue\SerializesModels;
 class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    /**
-     * @var UserNotificationList
-     */
-    private $userNotificationListService;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param UserNotificationList $userNotificationListService
-     */
-    public function __construct(UserNotificationList $userNotificationListService)
+    public function __construct()
     {
-        $this->userNotificationListService = $userNotificationListService;
+
     }
 
     /**
      * Execute the job.
      *
+     * @param UserNotificationList $userNotificationListService
+     *
      * @return void
      * @throws \Exception
      */
-    public function handle()
+    public function handle(UserNotificationList $userNotificationListService)
     {
         $names = PhoenixHeartName::where('processed', '=', false)
             ->take(3000)
@@ -94,7 +87,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
         $link = linkToDownloadFile("exports/{$storageInfo['file']}");
 
-        $this->userNotificationListService
+        $userNotificationListService
             ->push('Eligible Patient List', "Created at $now, for Phoenix Heart", $link, 'Download');
     }
 }
