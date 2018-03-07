@@ -143,5 +143,7 @@ class WelcomeCallListController extends Controller
     public function makePhoenixHeartCallList()
     {
         MakePhoenixHeartWelcomeCallList::dispatch();
+
+        return "Job dispatched";
     }
 }
