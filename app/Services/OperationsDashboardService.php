@@ -99,7 +99,11 @@ class OperationsDashboardService
     public function getPausedPatients($fromDate, $toDate)
     {
 
-        $patients = User::with('patientInfo')
+        $patients = User::with(['patientInfo' => function ($patient) use ($fromDate, $toDate) {
+            $patient->where('ccm_status', 'paused')
+                    ->where('date_paused', '>=', $fromDate)
+                    ->where('date_paused', '<=', $toDate);
+        }])
                         ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                             $patient->where('ccm_status', 'paused')
                                     ->where('date_paused', '>=', $fromDate)
@@ -155,30 +159,30 @@ class OperationsDashboardService
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                     $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
                         //switched from whereBetween
-                            ->where([['date_paused', '>', $fromDate], ['date_paused', '<', $toDate]])
-                            ->orWhere([['date_withdrawn', '>', $fromDate], ['date_withdrawn', '<', $toDate]])
-                            ->orWhere([['registration_date', '>', $fromDate], ['registration_date', '<', $toDate]]);
+                            ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]])
+                            ->orWhere([['date_withdrawn', '>=', $fromDate], ['date_withdrawn', '<=', $toDate]])
+                            ->orWhere([['registration_date', '>=', $fromDate], ['registration_date', '<=', $toDate]]);
                 },
                 'carePlan'    => function ($c) use ($fromDate, $toDate) {
                     $c->where('status', 'to_enroll')
-                      ->where([['updated_at', '>', $fromDate], ['updated_at', '<', $toDate]]);
+                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
                 },
             ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                                 $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                                        ->where([['date_paused', '>', $fromDate], ['date_paused', '<', $toDate]])
+                                        ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]])
                                         ->orWhere([
-                                            ['date_withdrawn', '>', $fromDate],
-                                            ['date_withdrawn', '<', $toDate],
+                                            ['date_withdrawn', '>=', $fromDate],
+                                            ['date_withdrawn', '<=', $toDate],
                                         ])
                                         ->orWhere([
-                                            ['registration_date', '>', $fromDate],
-                                            ['registration_date', '<', $toDate],
+                                            ['registration_date', '>=', $fromDate],
+                                            ['registration_date', '<=', $toDate],
                                         ]);
                             })
                             ->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
                                 $c->where('status', 'to_enroll')
-                                  ->where([['updated_at', '>', $fromDate], ['updated_at', '<', $toDate]]);
+                                  ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
                             })
                             ->get();
         } elseif ($fromDate and $toDate == null) {
@@ -249,7 +253,7 @@ class OperationsDashboardService
             if ($patient->patientInfo->ccm_status == 'enrolled') {
                 $enrolled[] = $patient;
             }
-            if ($patient->carePlan){
+            if ($patient->carePlan) {
                 if ($patient->carePlan->status == 'to_enroll') {
                     $gCodeHold[] = $patient;
                 }

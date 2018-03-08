@@ -55,7 +55,8 @@ class OperationsDashboardController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getPatientData(Request $request){
+    public function getTotalPatientData(Request $request){
+
 
         $date = new Carbon($request['totalDate']);
         $fromDate = $date->startOfMonth()->toDateTimeString();
@@ -90,29 +91,37 @@ class OperationsDashboardController extends Controller
      */
     public function getList(Request $request){
 
-//        $date = new Carbon($request['date']);
-//
-//        $fromDate = $date->startOfMonth()->toDateTimeString();
-//        $toDate   = $date->endOfMonth()->toDateTimeString();
-//
-//        $total = $this->service->getTotalPatients($fromDate, $toDate);
-//
+        if (!$request['totalDate']){
+            return $this->badRequest('Invalid [totalDate] parameter. Must have a value."');
+        }
+        $date = new Carbon($request['totalDate']);
 
-//        if ($request['listType'] == 'day'){
-//            $patients = $this->service->filterPatients($total, $date);
-//        }
-//        if ($request['listType'] == 'week'){
-//            $fromDate = $request['date']->startOfWeek();
-//            $toDate = $request['date']->endOfWeek();
-//            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
-//        }
-//        if ($request['listType'] == 'month'){
-//            $fromDate = $request['date']->startOfMonth();
-//            $toDate = $request['date']->endOfMonth();
-//            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
-//        }
+        if (!$request['listType']){
+            return $this->badRequest('Invalid [listType] parameter."');
+        }
 
-//        return $patients;
+
+        if ($request['listType'] == 'day'){
+            $dayDate = $date->toDateString();
+            $patients = $this->service->getTotalPatients($dayDate);
+        }
+        if ($request['listType'] == 'week'){
+            $fromDate = $date->startOfWeek()->toDateString();
+            $toDate = $date->endOfWeek()->toDateString();
+            $patients = $this->service->getTotalPatients($fromDate, $toDate);
+        }
+        if ($request['listType'] == 'month'){
+            $fromDate = $date->startOfMonth()->toDateString();
+            $toDate = $date->endOfMonth()->toDateString();
+            $patients = $this->service->getTotalPatients($fromDate, $toDate);
+        }
+        if ($request['listType'] == 'total'){
+
+            $patients = $this->service->getTotalPatients();
+        }
+
+        //return a view that contains detailed list?
+        return $patients;
 
     }
 

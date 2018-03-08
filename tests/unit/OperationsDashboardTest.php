@@ -21,33 +21,37 @@ class OperationsDashboardTest extends TestCase
      */
     public function test_it_gets_and_counts_patients()
     {
+        //date for month
         $fromDate = $this->date->startOfMonth()->toDateString();
         $toDate = $this->date->endOfMonth()->toDateString();
 
-        $cpmTotalsDay = $this->service->getCpmPatientTotals($this->date, 'day');
+        //tests getting all patients (paused, withdrawn, enrolled and those that have careplan with status to enroll)
+        $allPatients = $this->service->getTotalPatients();
+        $this->assertNotNull($allPatients);
 
+        //get data for Total Patients table when selecting date from 'select day'
+        //also tests for methods 'getTotalPatients' and 'countPatientsByStatus'
+        $cpmTotalsDay = $this->service->getCpmPatientTotals($this->date, 'day');
         $this->assertNotNull($cpmTotalsDay);
 
+        //tests method for 2 given dates
         $monthPatients = $this->service->getTotalPatients($fromDate, $toDate);
-
         $this->assertNotNull($monthPatients);
 
+        //tests count method
         $counts = $this->service->countPatientsByStatus($monthPatients);
-
         $this->assertNotNull($counts);
         $this->assertArrayHasKey('pausedPatients', $counts);
 
-        $filteredByPractice = $this->service->filterPatientsByPractice($monthPatients, 8);
-
+        //tests filtering result by practice, countPatientsByStatus, returns collection of counts
+        $filteredByPractice = $this->service->filterPatientsByPractice($monthPatients, 188);
         $this->assertNotNull($filteredByPractice);
 
-        $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
 
+        //gets all paused patients for given dates, always takes 2 dates
+        $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
         $this->assertNotNull($pausedPatients);
 
-        $allPatients = $this->service->getTotalPatients();
-
-        $this->assertNotNull($allPatients);
 
 
     }
