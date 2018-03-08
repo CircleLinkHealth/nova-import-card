@@ -29,7 +29,7 @@
                     <td>{{$data['provider']}}</td>
                     <td>{{$data['name']}}</td>
                     <td>{{$data['dob']}}</td>
-                    <td>99490</td>
+                    <td>{{$data['billing_codes']}}</td>
                     <td>{{$data['ccm_time']}}</td>
                     <td>{{$data['problem1']}}</td>
                     <td>{{$data['problem1_code']}}</td>
