@@ -18,6 +18,7 @@ class NotificationService
     public function notifyAdmins($title, $description, $link, $linkTitle)
     {
         User::ofType('administrator')
+            ->get()
             ->map(function ($userId) use ($title, $description, $link, $linkTitle) {
                 $userNotification = new UserNotificationList($userId);
 
