@@ -38,7 +38,7 @@
                   <ul>
                     <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
                       Note {{note.created_at}}: 
-                      <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
+                      <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}}bound Call</div>
                       <span style="font-weight:bold;">{{note.category}}</span> 
                       {{note.message}}
                       </li>
@@ -110,9 +110,11 @@
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
+  import VueCache from '../../util/vue-cache'
 
   export default {
       name: 'CallMgmtApp',
+      mixins: [ VueCache ],
       components: {
         'text-editable': TextEditable,
         'date-editable': DateEditable,
@@ -349,12 +351,7 @@
                                         CallWindows: call.getPatient().getInfo().contact_windows,
                                         Comment: call.getPatient().getInfo().general_comment,
                                         AttemptNote: call.attempt_note,
-                                        Notes: [{
-                                          created_at: (new Date()).toDateString(),
-                                          type: 'in',
-                                          category: 'Morning Checkup',
-                                          message: 'Demo: The Patient is responding to treatment'
-                                        }],
+                                        Notes: [],
                                         'Last Call Status': call.getPatient().getInfo().last_call_status,
                                         'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
@@ -498,6 +495,16 @@
                                           else Promise.resolve({})
                                         }
                                       }))
+                  tableCalls.forEach(call => {
+                    this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
+                      call.Notes = ((pagination || {}).data || []).map(note => ({
+                                          created_at: note.created_at,
+                                          type: 'out',
+                                          category: note.type,
+                                          message: note.body
+                                        }))
+                    })
+                  })
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
                       const total = ((this.pagination || {}).total || 0)
