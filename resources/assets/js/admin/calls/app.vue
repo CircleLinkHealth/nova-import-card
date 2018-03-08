@@ -5,6 +5,7 @@
         <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+        <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
@@ -198,6 +199,14 @@
           }
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+        },
+        clearFilters() {
+          Object.keys(this.$refs.tblCalls.query).forEach((key) => {
+            const obj = {}
+            obj[key] = ''
+            this.$refs.tblCalls.setFilter(obj)
+          })
+          this.activateFilters()
         },
         exportExcel() {
           const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)

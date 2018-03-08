@@ -113,4 +113,8 @@
         right: -25px;
         top: 2px;
     }
+
+    .pointer {
+        cursor: pointer;
+    }
 </style>

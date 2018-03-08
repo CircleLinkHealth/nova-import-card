@@ -30,6 +30,7 @@ export default (App, Event) => {
     Event.$on('unscheduled-patients-modal:filter', (value) => {
         App.$refs.tblCalls.setFilter({ Patient: value })
         App.activateFilters()
+        Event.$emit('modal-unscheduled-patients:hide')
     })
 
     Event.$on('select-nurse:update', (data) => {
