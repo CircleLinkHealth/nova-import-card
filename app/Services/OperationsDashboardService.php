@@ -26,8 +26,10 @@ class OperationsDashboardService
      */
     public function getCpmPatientTotals(Carbon $date, $dateType)
     {
-        $fromDate = $date->startOfMonth()->toDateTimeString();
-        $toDate   = $date->endOfMonth()->toDateTimeString();
+        $fromDate = $date->startOfMonth()->toDateString();
+        $toDate   = $date->endOfMonth()->toDateString();
+
+        $totalPatients = $this->getTotalPatients();
 
         $monthPatients = $this->getTotalPatients($fromDate, $toDate);
 
@@ -36,8 +38,8 @@ class OperationsDashboardService
 
             $dayPatients = $this->getTotalPatients($fromDate);
 
-            $fromDate = $date->startOfWeek();
-            $toDate   = $date->endOfWeek();
+            $fromDate = $date->startOfWeek()->toDateString();
+            $toDate   = $date->endOfWeek()->toDateString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
         }
@@ -46,18 +48,28 @@ class OperationsDashboardService
         if ($dateType == 'week') {
 
             //last day of week for day totals
-            $dayDate = $date->endOfWeek();
+            $dayDate = $date->endOfWeek()->toDateString();
 
             $dayPatients = $this->getTotalPatients($dayDate);
 
-            $fromDate = $date->startOfWeek();
-            $toDate   = $date->endOfWeek();
+            $fromDate = $date->startOfWeek()->toDateString();
+            $toDate   = $date->endOfWeek()->toDateString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
         }
 
         //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
         if ($dateType == 'month') {
+            //last day of month for day totals
+            $dayDate = $date->endOfMonth()->toDateString();
+
+            $dayPatients = $this->getTotalPatients($dayDate);
+
+            //last week of month
+            $fromDate = $date->endOfMonth()->startOfWeek()->toDateString();
+            $toDate   = $date->endOfMonth()->toDateString();
+
+            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
 
 
         }
@@ -65,12 +77,14 @@ class OperationsDashboardService
         $dayCount   = $this->countPatientsByStatus($dayPatients);
         $weekCount  = $this->countPatientsByStatus($weekPatients);
         $monthCount = $this->countPatientsByStatus($monthPatients);
+        $totalCount = $this->countPatientsByStatus($totalPatients);
 
 
         return collect([
             'dayCount'   => $dayCount,
             'weekCount'  => $weekCount,
             'monthCount' => $monthCount,
+            'totalCount' => $totalCount,
         ]);
 
     }
@@ -133,10 +147,10 @@ class OperationsDashboardService
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public function getTotalPatients($fromDate, $toDate = null)
+    public function getTotalPatients($fromDate = null, $toDate = null)
     {
 
-        if ($toDate) {
+        if ($fromDate and $toDate) {
             $patients = User::with([
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                     $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
@@ -167,8 +181,19 @@ class OperationsDashboardService
                                   ->where([['updated_at', '>', $fromDate], ['updated_at', '<', $toDate]]);
                             })
                             ->get();
-        } else {
-            $patients = User::with(['patientInfo', 'carePlan'])
+        } elseif ($fromDate and $toDate == null) {
+            $patients = User::with([
+                'patientInfo' => function ($patient) use ($fromDate) {
+                    $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                            ->where('date_paused', $fromDate)
+                            ->orWhere('date_withdrawn', $fromDate)
+                            ->orWhere('registration_date', $fromDate);
+                },
+                'carePlan'    => function ($c) use ($fromDate, $toDate) {
+                    $c->where('status', 'to_enroll')
+                      ->where('updated_at', $fromDate);
+                },
+            ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate) {
                                 $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
                                         ->where('date_paused', $fromDate)
@@ -178,6 +203,22 @@ class OperationsDashboardService
                             ->orWhereHas('carePlan', function ($c) use ($fromDate) {
                                 $c->where('status', 'to_enroll')
                                   ->where('updated_at', $fromDate);
+                            })
+                            ->get();
+        } else {
+            $patients = User::with([
+                'patientInfo' => function ($patient) {
+                    $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled']);
+                },
+                'carePlan'    => function ($c) use ($fromDate, $toDate) {
+                    $c->where('status', 'to_enroll');
+                },
+            ])
+                            ->whereHas('patientInfo', function ($patient) {
+                                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled']);
+                            })
+                            ->orWhereHas('carePlan', function ($c) {
+                                $c->where('status', 'to_enroll');
                             })
                             ->get();
         }
@@ -208,9 +249,12 @@ class OperationsDashboardService
             if ($patient->patientInfo->ccm_status == 'enrolled') {
                 $enrolled[] = $patient;
             }
-//            if ($patient->carePlan->status == 'to_enroll') {
-//                $gCodeHold[] = $patient;
-//            }
+            if ($patient->carePlan){
+                if ($patient->carePlan->status == 'to_enroll') {
+                    $gCodeHold[] = $patient;
+                }
+            }
+
         }
 
         $pausedCount    = count($paused);

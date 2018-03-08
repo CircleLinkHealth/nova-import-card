@@ -21,29 +21,33 @@ class OperationsDashboardTest extends TestCase
      */
     public function test_it_gets_and_counts_patients()
     {
-        $fromDate = $this->date->startOfMonth()->toDateTimeString();
-        $toDate = $this->date->endOfMonth()->toDateTimeString();
+        $fromDate = $this->date->startOfMonth()->toDateString();
+        $toDate = $this->date->endOfMonth()->toDateString();
 
-        $cpmTotals = $this->service->getCpmPatientTotals($this->date, 'day');
+        $cpmTotalsDay = $this->service->getCpmPatientTotals($this->date, 'day');
 
-        $this->assertNotNull($cpmTotals);
+        $this->assertNotNull($cpmTotalsDay);
 
-        $patients = $this->service->getTotalPatients($fromDate, $toDate);
+        $monthPatients = $this->service->getTotalPatients($fromDate, $toDate);
 
-        $this->assertNotNull($patients);
+        $this->assertNotNull($monthPatients);
 
-        $counts = $this->service->countPatientsByStatus($patients);
+        $counts = $this->service->countPatientsByStatus($monthPatients);
 
         $this->assertNotNull($counts);
         $this->assertArrayHasKey('pausedPatients', $counts);
 
-        $filteredByPractice = $this->service->filterPatientsByPractice($patients, 8);
+        $filteredByPractice = $this->service->filterPatientsByPractice($monthPatients, 8);
 
         $this->assertNotNull($filteredByPractice);
 
         $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
 
-        $this->assertNotNull($filteredByPractice);
+        $this->assertNotNull($pausedPatients);
+
+        $allPatients = $this->service->getTotalPatients();
+
+        $this->assertNotNull($allPatients);
 
 
     }
