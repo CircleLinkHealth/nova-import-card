@@ -8,6 +8,7 @@
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
+        <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Call Times</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
         <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
       </div>
@@ -88,6 +89,7 @@
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
+    <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
     <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
   </div>
@@ -103,6 +105,7 @@
   import Modal from '../common/modal'
   import AddCallModal from './comps/modals/add-call.modal'
   import SelectNurseModal from './comps/modals/select-nurse.modal'
+  import SelectTimesModel from './comps/modals/select-times.modal'
   import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
@@ -118,6 +121,7 @@
         'modal': Modal,
         'add-call-modal': AddCallModal,
         'select-nurse-modal': SelectNurseModal,
+        'select-times-modal': SelectTimesModel,
         'unscheduled-patients-modal': UnscheduledPatientsModal,
         'loader': Loader
       },
@@ -146,7 +150,10 @@
             nurse: {
               id: row.NurseId,
               name: row.Nurse
-            }
+            },
+            nextCall: row['Next Call'],
+            callTimeStart: row['Call Time Start'],
+            callTimeEnd: row['Call Time End']
           }))
         },
         options () {
@@ -253,6 +260,9 @@
         },
         assignSelectedToNurse() {
           Event.$emit('modal-select-nurse:show')
+        },
+        assignTimesForSelected() {
+          Event.$emit('modal-select-times:show')
         },
         addCall() {
           Event.$emit("modal-add-call:show")
@@ -372,7 +382,7 @@
                                           /** update the next call column */
                                           const call = this
                                           this.loaders.nextCall = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'scheduled_date',
                                             value: date
