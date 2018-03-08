@@ -35,15 +35,16 @@ class OperationsDashboardController extends Controller
         $toDate = $date->endOfMonth();
 
         //active practices for dropdown.
-        $practices = Practice::active();
+        $practices = Practice::active()->get();
 
 
         $totals = $this->service->getCpmPatientTotals($date, 'day');
-
+        $patientsByPractice = null;
 
         return view('opsDashboard.index', compact([
             'practices',
             'totals',
+            'patientsByPractice'
         ]));
 
     }
@@ -57,7 +58,7 @@ class OperationsDashboardController extends Controller
     public function getPatientData(Request $request){
 
 
-        $practices = Practice::active();
+        $practices = Practice::active()->get();
 
         $totals = $this->service->getCpmPatientTotals($request['totalDate'], $request['totalDateType']);
 
