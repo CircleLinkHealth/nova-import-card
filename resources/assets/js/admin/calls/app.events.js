@@ -27,6 +27,11 @@ export default (App, Event) => {
     
     Event.$on('vue-tables.sorted', App.activateFilters)
 
+    Event.$on('unscheduled-patients-modal:filter', (value) => {
+        App.$refs.tblCalls.setFilter({ Patient: value })
+        App.activateFilters()
+    })
+
     Event.$on('select-nurse:update', (data) => {
         const call = App.tableData.find(row => row.id == data.callId)
         if (call) {

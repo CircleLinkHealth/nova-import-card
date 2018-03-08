@@ -10,7 +10,7 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{frontText || displayText || text}}
+            {{frontText || displayText || text || 'Edit'}}
         </div>
     </div>
 </template>
@@ -55,6 +55,11 @@
                 if (this.noButton && this.text) {
                     this.toggleEdit(e)
                 }
+            }
+        },
+        watch: {
+            value (newValue) {
+                this.text = this.value || (this.values || [])[0] || ''
             }
         }
     }

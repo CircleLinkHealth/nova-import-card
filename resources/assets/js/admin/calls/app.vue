@@ -501,7 +501,17 @@
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
                       const total = ((this.pagination || {}).total || 0)
-                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                    id: arr.length + index + 1, 
+                                                                                                                    nurses () { return ([]) },
+                                                                                                                    onNurseUpdate() {},
+                                                                                                                    onAttemptNoteUpdate() {},
+                                                                                                                    onGeneralCommentUpdate() {},
+                                                                                                                    onCallTimeStartUpdate() {},
+                                                                                                                    onCallTimeEndUpdate() {},
+                                                                                                                    onNextCallUpdate() {},
+                                                                                                                    loaders: {}
+                                                                                                                  })) ]
                   }
                   else {
                       const from = ((this.pagination || {}).from || 0)
