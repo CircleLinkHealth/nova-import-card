@@ -1016,6 +1016,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+
+            Route::get('ops-dashboard', [
+                'uses' => 'OperationsDashboardController@index',
+                'as'   => 'OperationsDashboardController.index'
+            ]);
         });
 
         //Practice Billing
