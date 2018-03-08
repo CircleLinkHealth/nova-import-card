@@ -40,6 +40,11 @@
                     this.onChange(this.text)
                 }
             }
+        },
+        watch: {
+            value (newVal, oldVal) {
+                this.text = newVal
+            }
         }
     }
 </script>

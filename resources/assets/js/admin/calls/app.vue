@@ -399,7 +399,7 @@
                                           /** update the next call column */
                                           const call = this
                                           this.loaders.nurse = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'outbound_cpm_id',
                                             value: nurseId
@@ -418,7 +418,7 @@
                                           /** update the call_time_start column */
                                           const call = this
                                           this.loaders.callTimeStart = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'window_start',
                                             value: time
@@ -435,7 +435,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.callEndStart = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'window_end',
                                             value: time
@@ -452,7 +452,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.generalComment = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'general_comment',
                                             value: comment
@@ -469,7 +469,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.attemptNote = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'attempt_note',
                                             value: note
@@ -481,6 +481,16 @@
                                             console.error('calls:row:update', err)
                                             this.loaders.attemptNote = false
                                           })
+                                        },
+                                        updateMultiValues ({ nextCall, callTimeStart, callTimeEnd }) {
+                                          if (nextCall, callTimeStart, callTimeEnd) {
+                                            return Promise.all([
+                                              this.onNextCallUpdate(nextCall),
+                                              this.onCallTimeStartUpdate(callTimeStart),
+                                              this.onCallTimeEndUpdate(callTimeEnd)
+                                            ])
+                                          }
+                                          else Promise.resolve({})
                                         }
                                       }))
                   if (!this.tableData.length) {

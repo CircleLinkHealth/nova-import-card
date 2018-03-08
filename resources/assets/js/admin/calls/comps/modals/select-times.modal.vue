@@ -94,9 +94,17 @@
             return {
                 today: moment().add(-1, 'days').toDate(),
                 selectTimesModalInfo: {
-                    nextCall: (new Date()),
+                    nextCall: moment(new Date()).format('YYYY-MM-DD'),
                     callTimeStart: '09:00',
-                    callTimeEnd: '10:00'
+                    callTimeEnd: '10:00',
+                    okHandler () {
+                        Event.$emit('select-times-modal:change', { 
+                                callIDs: $vm.selectedPatients.map(call => call.callId), 
+                                nextCall: moment(this.nextCall).format('YYYY-MM-DD'), 
+                                callTimeStart: this.callTimeStart, 
+                                callTimeEnd: this.callTimeEnd 
+                            })
+                    }
                 }
             }
         },

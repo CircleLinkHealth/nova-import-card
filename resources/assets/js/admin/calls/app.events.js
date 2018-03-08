@@ -34,4 +34,23 @@ export default (App, Event) => {
             console.log('calls:row-update', data)
         }
     })
+
+    function selectTimesChangeHandler ({ callIDs, nextCall, callTimeStart, callTimeEnd }) {
+        console.log('select-times-change-handler', ...arguments)
+        if (callIDs && Array.isArray(callIDs)) {
+            const id = callIDs[0]
+            const $row = App.tableData.find(row => row.id == id)
+            console.log(id, $row)
+            if ($row && nextCall && callTimeStart && callTimeEnd) {
+                return $row.updateMultiValues({ nextCall, callTimeStart, callTimeEnd }).then(() => {
+                    callIDs.splice(0, 1)
+                    return selectTimesChangeHandler({ callIDs, nextCall, callTimeStart, callTimeEnd })
+                })
+            }
+            else {
+                Event.$emit('modal-select-times:hide')
+            }
+        }
+    }
+    Event.$on('select-times-modal:change', selectTimesChangeHandler)
 }
