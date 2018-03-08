@@ -1928,6 +1928,19 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this;
     }
 
+    /**
+     * (functions as an @ehrKeychain)
+     *
+     * Relates to TargetPatient class, contains all patient info for EHR
+     * (ehr_practice_id, ehr_department_id etc)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ehrInfo(){
+
+        return $this->hasOne(TargetPatient::class);
+    }
+
     public function getUCP()
     {
         $userUcp     = $this->ucp()->with([
@@ -2512,25 +2525,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function patientList()
     {
         return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo')
-            ->with([
-                'observations'    => function ($query) {
-                    $query->where('obs_key', '!=', 'Outbound');
-                    $query->orderBy('obs_date', 'DESC');
-                    $query->first();
-                },
-                'careTeamMembers' => function ($q) {
-                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                        ->with('user');
-                },
-                'phoneNumbers'    => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },'carePlan.providerApproverUser',
+                   ->ofType('participant')
+                   ->whereHas('patientInfo')
+                   ->with([
+                       'observations'    => function ($query) {
+                           $query->where('obs_key', '!=', 'Outbound');
+                           $query->orderBy('obs_date', 'DESC');
+                           $query->first();
+                       },
+                       'careTeamMembers' => function ($q) {
+                           $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                             ->with('user');
+                       },
+                       'phoneNumbers'    => function ($q) {
+                           $q->where('type', '=', PhoneNumber::HOME);
+                       },
+                       'carePlan.providerApproverUser',
                        'primaryPractice',
                        'patientInfo',
-            ])
-            ->get();
+                   ])
+                   ->get();
     }
 
     public function patientsPendingApproval()
@@ -2633,7 +2647,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->ccdProblems()
                     ->whereNotNull('cpm_problem_id')
-                    //filter out unspecified diabetes
+            //filter out unspecified diabetes
                     ->where('cpm_problem_id', '!=', 1)
                     ->with('icd10Codes')
                     ->where('billable', true);
@@ -2736,10 +2750,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
-    public function safe() {
-        $careplan = $this->carePlan()->first();
-        $observation = $this->lastObservation()->first();
-        $phone = $this->phoneNumbers()->first();
+
+    public function safe()
+    {
+        $careplan    = $this->carePlan()->first();
+        $observation = $this->observations()->orderBy('id', 'desc')->first();
+        $phone       = $this->phoneNumbers()->first();
 
         return [
             'id' => $this->id,

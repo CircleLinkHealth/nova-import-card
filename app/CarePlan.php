@@ -52,6 +52,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
+    const TO_ENROLL = 'to_enroll';
 
     // modes
     const WEB = 'web';
