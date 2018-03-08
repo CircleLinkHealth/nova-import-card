@@ -2757,6 +2757,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         if (!$summary) return '';
 
         return $summary->chargeableServices
-            ->implode('code');
+            ->implode('code', ', ');
     }
 }
