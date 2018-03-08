@@ -5,9 +5,11 @@
         <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
+        <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
+        <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Call Times</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
         <button class="btn btn-info btn-xs" @click="clearSelected">Clear Selection</button>
       </div>
@@ -37,7 +39,7 @@
                   <ul>
                     <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
                       Note {{note.created_at}}: 
-                      <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}} Call</div>
+                      <div class="label label-info" :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }" style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}}bound Call</div>
                       <span style="font-weight:bold;">{{note.category}}</span> 
                       {{note.message}}
                       </li>
@@ -62,7 +64,7 @@
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
         <template slot="Nurse" scope="props">
-          <select-editable :value="props.row.NurseId" :values="nursesForSelect" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+          <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
         <template slot="Next Call" scope="props">
           <div>
@@ -88,6 +90,7 @@
     <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
     <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
+    <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
     <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
   </div>
@@ -103,13 +106,16 @@
   import Modal from '../common/modal'
   import AddCallModal from './comps/modals/add-call.modal'
   import SelectNurseModal from './comps/modals/select-nurse.modal'
+  import SelectTimesModel from './comps/modals/select-times.modal'
   import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
   import BindAppEvents from './app.events'
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
+  import VueCache from '../../util/vue-cache'
 
   export default {
       name: 'CallMgmtApp',
+      mixins: [ VueCache ],
       components: {
         'text-editable': TextEditable,
         'date-editable': DateEditable,
@@ -118,6 +124,7 @@
         'modal': Modal,
         'add-call-modal': AddCallModal,
         'select-nurse-modal': SelectNurseModal,
+        'select-times-modal': SelectTimesModel,
         'unscheduled-patients-modal': UnscheduledPatientsModal,
         'loader': Loader
       },
@@ -146,7 +153,10 @@
             nurse: {
               id: row.NurseId,
               name: row.Nurse
-            }
+            },
+            nextCall: row['Next Call'],
+            callTimeStart: row['Call Time Start'],
+            callTimeEnd: row['Call Time End']
           }))
         },
         options () {
@@ -189,6 +199,14 @@
           }
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+        },
+        clearFilters() {
+          Object.keys(this.$refs.tblCalls.query).forEach((key) => {
+            const obj = {}
+            obj[key] = ''
+            this.$refs.tblCalls.setFilter(obj)
+          })
+          this.activateFilters()
         },
         exportExcel() {
           const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
@@ -254,6 +272,9 @@
         assignSelectedToNurse() {
           Event.$emit('modal-select-nurse:show')
         },
+        assignTimesForSelected() {
+          Event.$emit('modal-select-times:show')
+        },
         addCall() {
           Event.$emit("modal-add-call:show")
         },
@@ -268,7 +289,8 @@
               return {
                 id: nurse.user_id,
                 nurseId: nurse.id,
-                display_name: ((nurse.user || {}).display_name || '')
+                display_name: ((nurse.user || {}).display_name || ''),
+                states: nurse.states
               }
             })
             console.log('calls:nurses', pagination)
@@ -338,12 +360,7 @@
                                         CallWindows: call.getPatient().getInfo().contact_windows,
                                         Comment: call.getPatient().getInfo().general_comment,
                                         AttemptNote: call.attempt_note,
-                                        Notes: [{
-                                          created_at: (new Date()).toDateString(),
-                                          type: 'in',
-                                          category: 'Morning Checkup',
-                                          message: 'Demo: The Patient is responding to treatment'
-                                        }],
+                                        Notes: [],
                                         'Last Call Status': call.getPatient().getInfo().last_call_status,
                                         'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
                                         'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
@@ -362,6 +379,10 @@
                                         'Next Call': call.scheduled_date,
                                         'Call Time Start': call.window_start,
                                         'Call Time End': call.window_end,
+                                        state: call.getPatient().state,
+                                        nurses () {
+                                          return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
+                                        },
                                         loaders: {
                                           nextCall: false,
                                           nurse: false,
@@ -372,7 +393,7 @@
                                           /** update the next call column */
                                           const call = this
                                           this.loaders.nextCall = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'scheduled_date',
                                             value: date
@@ -389,7 +410,7 @@
                                           /** update the next call column */
                                           const call = this
                                           this.loaders.nurse = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'outbound_cpm_id',
                                             value: nurseId
@@ -408,7 +429,7 @@
                                           /** update the call_time_start column */
                                           const call = this
                                           this.loaders.callTimeStart = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'window_start',
                                             value: time
@@ -425,7 +446,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.callEndStart = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'window_end',
                                             value: time
@@ -442,7 +463,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.generalComment = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'general_comment',
                                             value: comment
@@ -459,7 +480,7 @@
                                           /** update the call_time_end column */
                                           const call = this
                                           this.loaders.attemptNote = true
-                                          $vm.axios.post(rootUrl('callupdate'), {
+                                          return $vm.axios.post(rootUrl('callupdate'), {
                                             callId: this.id,
                                             columnName: 'attempt_note',
                                             value: note
@@ -471,12 +492,42 @@
                                             console.error('calls:row:update', err)
                                             this.loaders.attemptNote = false
                                           })
+                                        },
+                                        updateMultiValues ({ nextCall, callTimeStart, callTimeEnd }) {
+                                          if (nextCall, callTimeStart, callTimeEnd) {
+                                            return Promise.all([
+                                              this.onNextCallUpdate(nextCall),
+                                              this.onCallTimeStartUpdate(callTimeStart),
+                                              this.onCallTimeEndUpdate(callTimeEnd)
+                                            ])
+                                          }
+                                          else Promise.resolve({})
                                         }
                                       }))
+                  tableCalls.forEach(call => {
+                    this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
+                      call.Notes = ((pagination || {}).data || []).map(note => ({
+                                          created_at: note.created_at,
+                                          type: 'out',
+                                          category: note.type,
+                                          message: note.body
+                                        }))
+                    })
+                  })
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
                       const total = ((this.pagination || {}).total || 0)
-                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                    id: arr.length + index + 1, 
+                                                                                                                    nurses () { return ([]) },
+                                                                                                                    onNurseUpdate() {},
+                                                                                                                    onAttemptNoteUpdate() {},
+                                                                                                                    onGeneralCommentUpdate() {},
+                                                                                                                    onCallTimeStartUpdate() {},
+                                                                                                                    onCallTimeEndUpdate() {},
+                                                                                                                    onNextCallUpdate() {},
+                                                                                                                    loaders: {}
+                                                                                                                  })) ]
                   }
                   else {
                       const from = ((this.pagination || {}).from || 0)
