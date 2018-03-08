@@ -10,7 +10,7 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{displayText || frontText || text}}
+            {{frontText || displayText || text}}
         </div>
     </div>
 </template>

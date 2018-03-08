@@ -16,7 +16,7 @@ class NurseInfo extends Resource
     public function toArray($request)
     {
         $nurse = parent::toArray($request);
-        if ($nurse['states'] && $request->has('compressed')) {
+        if (array_key_exists('states', $nurse) && $request->has('compressed')) {
             $nurse['states'] = (new Collection($nurse['states']))->map(function ($s) {
                 return $s['code'];
             });

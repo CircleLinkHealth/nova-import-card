@@ -63,7 +63,7 @@
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
         <template slot="Nurse" scope="props">
-          <select-editable :value="props.row.NurseId" :values="nursesForSelect" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
+          <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
         <template slot="Next Call" scope="props">
           <div>
@@ -278,7 +278,8 @@
               return {
                 id: nurse.user_id,
                 nurseId: nurse.id,
-                display_name: ((nurse.user || {}).display_name || '')
+                display_name: ((nurse.user || {}).display_name || ''),
+                states: nurse.states
               }
             })
             console.log('calls:nurses', pagination)
@@ -372,6 +373,10 @@
                                         'Next Call': call.scheduled_date,
                                         'Call Time Start': call.window_start,
                                         'Call Time End': call.window_end,
+                                        state: call.getPatient().state,
+                                        nurses () {
+                                          return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
+                                        },
                                         loaders: {
                                           nextCall: false,
                                           nurse: false,
