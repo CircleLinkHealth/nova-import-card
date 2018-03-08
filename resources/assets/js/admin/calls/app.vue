@@ -86,9 +86,6 @@
         </template>
       </v-client-table>
     </div>
-    <text-editable :value="'Mykeels'"></text-editable>
-    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
-    <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
     <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
