@@ -19,31 +19,41 @@ class OperationsDashboardTest extends TestCase
      *
      * @return void
      */
-    public function test_it_gets_patients()
+    public function test_it_gets_and_counts_patients()
     {
-        $toDate = $this->date->endOfMonth();
+        $fromDate = $this->date->startOfMonth()->toDateTimeString();
+        $toDate = $this->date->endOfMonth()->toDateTimeString();
 
-        $patients = $this->service->getTotalPatients($this->date, $toDate);
+        $cpmTotals = $this->service->getCpmPatientTotals($this->date, 'day');
 
-        //not retrieving patients still TODO
+        $this->assertNotNull($cpmTotals);
+
+        $patients = $this->service->getTotalPatients($fromDate, $toDate);
+
         $this->assertNotNull($patients);
-    }
 
-    public function test_it_counts_patients_by_status(){
-
-        $patients = User::with('patientInfo')->where('id', '<', 1000)->whereHas('patientinfo', function ($p){$p->where('ccm_status', 'paused');})->get();
         $counts = $this->service->countPatientsByStatus($patients);
 
         $this->assertNotNull($counts);
         $this->assertArrayHasKey('pausedPatients', $counts);
 
+        $filteredByPractice = $this->service->filterPatientsByPractice($patients, 8);
+
+        $this->assertNotNull($filteredByPractice);
+
+        $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
+
+        $this->assertNotNull($filteredByPractice);
+
+
     }
+
 
     public function setUp()
     {
         parent::setUp();
 
         $this->service = new OperationsDashboardService();
-        $this->date = Carbon::now()->subMonth();
+        $this->date = Carbon::now()->subMonth(2);
     }
 }

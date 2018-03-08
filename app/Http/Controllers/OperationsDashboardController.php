@@ -31,8 +31,8 @@ class OperationsDashboardController extends Controller
     public function index()
     {
         $date = Carbon::today();
-        $fromDate = $date->startOfMonth();
-        $toDate = $date->endOfMonth();
+        $fromDate = $date->startOfMonth()->toDateTimeString();
+        $toDate = $date->endOfMonth()->toDateTimeString();
 
         //active practices for dropdown.
         $practices = Practice::active()->get();
@@ -57,14 +57,18 @@ class OperationsDashboardController extends Controller
      */
     public function getPatientData(Request $request){
 
+        $date = new Carbon($request['totalDate']);
+        $fromDate = $date->startOfMonth()->toDateTimeString();
+        $toDate = $date->endOfMonth()->toDateTimeString();
+
 
         $practices = Practice::active()->get();
 
-        $totals = $this->service->getCpmPatientTotals($request['totalDate'], $request['totalDateType']);
+        $totals = $this->service->getCpmPatientTotals($date, $request['totalDateType']);
 
         $patientsByPractice = null;
         if ($request['practiceId']){
-            $patientsByPractice = $this->service->filterPatientsByPractice($totals, $request['practiceId']);
+            $patientsByPractice = $this->service->filterPatientsByPractice($this->service->getTotalPatients($fromDate, $toDate), $request['practiceId']);
         }
 
 
@@ -86,29 +90,29 @@ class OperationsDashboardController extends Controller
      */
     public function getList(Request $request){
 
-        $date = new Carbon($request['date']);
+//        $date = new Carbon($request['date']);
+//
+//        $fromDate = $date->startOfMonth()->toDateTimeString();
+//        $toDate   = $date->endOfMonth()->toDateTimeString();
+//
+//        $total = $this->service->getTotalPatients($fromDate, $toDate);
+//
 
-        $fromDate = $date->startOfMonth();
-        $toDate   = $date->endOfMonth();
+//        if ($request['listType'] == 'day'){
+//            $patients = $this->service->filterPatients($total, $date);
+//        }
+//        if ($request['listType'] == 'week'){
+//            $fromDate = $request['date']->startOfWeek();
+//            $toDate = $request['date']->endOfWeek();
+//            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
+//        }
+//        if ($request['listType'] == 'month'){
+//            $fromDate = $request['date']->startOfMonth();
+//            $toDate = $request['date']->endOfMonth();
+//            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
+//        }
 
-        $total = $this->service->getTotalPatientsForMonth($fromDate, $toDate);
-
-
-        if ($request['listType'] == 'day'){
-            $patients = $this->service->filterPatients($total, $date);
-        }
-        if ($request['listType'] == 'week'){
-            $fromDate = $request['date']->startOfWeek();
-            $toDate = $request['date']->endOfWeek();
-            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
-        }
-        if ($request['listType'] == 'month'){
-            $fromDate = $request['date']->startOfMonth();
-            $toDate = $request['date']->endOfMonth();
-            $patients = $this->service->filterPatients($total, $fromDate, $toDate);
-        }
-
-        return $patients;
+//        return $patients;
 
     }
 

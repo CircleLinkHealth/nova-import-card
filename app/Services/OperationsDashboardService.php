@@ -26,8 +26,8 @@ class OperationsDashboardService
      */
     public function getCpmPatientTotals(Carbon $date, $dateType)
     {
-        $fromDate = $date->startOfMonth();
-        $toDate   = $date->endOfMonth();
+        $fromDate = $date->startOfMonth()->toDateTimeString();
+        $toDate   = $date->endOfMonth()->toDateTimeString();
 
         $monthPatients = $this->getTotalPatients($fromDate, $toDate);
 
@@ -77,20 +77,20 @@ class OperationsDashboardService
 
 
     /**
-     * @param Carbon $fromDate
-     * @param Carbon $toDate
+     * @param $fromDate
+     * @param $toDate
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public function getPausedPatients(Carbon $fromDate, Carbon $toDate)
+    public function getPausedPatients($fromDate, $toDate)
     {
 
-
-        $patients = User::whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-            $patient->where('ccm_status', 'paused')
-                    ->where('date_paused', '>=', $fromDate)
-                    ->where('date_paused', '<=', $toDate);
-        })
+        $patients = User::with('patientInfo')
+                        ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
+                            $patient->where('ccm_status', 'paused')
+                                    ->where('date_paused', '>=', $fromDate)
+                                    ->where('date_paused', '<=', $toDate);
+                        })
                         ->get();
 
 
@@ -108,12 +108,10 @@ class OperationsDashboardService
     public function filterPatientsByPractice($patients, $practiceId)
     {
 
-        $filteredPatients = $patients->whereHas('primaryPractice', function ($p) use ($practiceId) {
-            $p->where('id', $practiceId);
-        })
-                                     ->get();
+        $filteredPatients = $patients->where('program_id', $practiceId)
+                                     ->all();
 
-        $patientsCount = $this->countPatientsByStatus($patients);
+        $patientsCount = $this->countPatientsByStatus($filteredPatients);
 
         return $patientsCount;
 
@@ -128,19 +126,21 @@ class OperationsDashboardService
 
     /**
      * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
+     * dates are Carbon->toDateString()
      *
-     * @param Carbon $fromDate
-     * @param Carbon $toDate
+     * @param $fromDate
+     * @param $toDate
      *
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
      */
-    public function getTotalPatients(Carbon $fromDate, Carbon $toDate = null)
+    public function getTotalPatients($fromDate, $toDate = null)
     {
 
         if ($toDate) {
             $patients = User::with([
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                     $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
+                        //switched from whereBetween
                             ->where([['date_paused', '>', $fromDate], ['date_paused', '<', $toDate]])
                             ->orWhere([['date_withdrawn', '>', $fromDate], ['date_withdrawn', '<', $toDate]])
                             ->orWhere([['registration_date', '>', $fromDate], ['registration_date', '<', $toDate]]);
@@ -164,7 +164,7 @@ class OperationsDashboardService
                             })
                             ->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
                                 $c->where('status', 'to_enroll')
-                                ->where([['updated_at', '>', $fromDate], ['updated_at', '<', $toDate]]);
+                                  ->where([['updated_at', '>', $fromDate], ['updated_at', '<', $toDate]]);
                             })
                             ->get();
         } else {
@@ -193,32 +193,30 @@ class OperationsDashboardService
      */
     public function countPatientsByStatus($patients)
     {
-        $paused = [];
+        $paused    = [];
         $withdrawn = [];
-        $enrolled = [];
+        $enrolled  = [];
         $gCodeHold = [];
 
-        foreach ($patients as $patient){
-            if ($patient->patientInfo->ccm_status == 'paused'){
+        foreach ($patients as $patient) {
+            if ($patient->patientInfo->ccm_status == 'paused') {
                 $paused[] = $patient;
             }
-            if ($patient->patientInfo->ccm_status == 'withdrawn'){
+            if ($patient->patientInfo->ccm_status == 'withdrawn') {
                 $withdrawn[] = $patient;
             }
-            if ($patient->patientInfo->ccm_status == 'enrolled'){
+            if ($patient->patientInfo->ccm_status == 'enrolled') {
                 $enrolled[] = $patient;
             }
-            if ($patient->carePlan->status == 'to_enroll'){
-                $gCodeHold[] = $patient;
-            }
+//            if ($patient->carePlan->status == 'to_enroll') {
+//                $gCodeHold[] = $patient;
+//            }
         }
 
-        $pausedCount = count($paused);
+        $pausedCount    = count($paused);
         $withdrawnCount = count($withdrawn);
-        $enrolledCount = count($enrolled);
+        $enrolledCount  = count($enrolled);
         $gCodeHoldCount = count($gCodeHold);
-
-
 
 
         return collect([
