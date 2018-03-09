@@ -178,7 +178,7 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('patient_chargeable_services must be an array');
         }
 
-        $summary = PatientMonthlySummary::where('patient_id', $reportId)->first();
+        $summary = PatientMonthlySummary::find($reportId);
 
         if (!$summary) {
             return $this->badRequest("Report with id $reportId not found.");
