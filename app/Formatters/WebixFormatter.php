@@ -186,9 +186,9 @@ class WebixFormatter implements ReportFormatter
 
         if ( ! empty($report_data)) {
             return "data:$report_data";
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     public function formatDataForViewPrintCareplanReport($users)
@@ -390,7 +390,6 @@ class WebixFormatter implements ReportFormatter
             }
 
             //format super specific phone number requirements
-            
             if ($provider && $provider->primaryPhone) {
                 $phone = "P: " . preg_replace(
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',

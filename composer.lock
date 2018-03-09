@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad1cb282205149041e1139c556375cb2",
+    "content-hash": "7cb1bc904ab00329958362f95d9cb365",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -50,16 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.16",
+            "version": "3.52.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d0c292e94d53bb131b4ec5d751d76363722d8afc"
+                "reference": "becba2be9cfb22d6394c4d7e4d8cb70807c8a6b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d0c292e94d53bb131b4ec5d751d76363722d8afc",
-                "reference": "d0c292e94d53bb131b4ec5d751d76363722d8afc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/becba2be9cfb22d6394c4d7e4d8cb70807c8a6b3",
+                "reference": "becba2be9cfb22d6394c4d7e4d8cb70807c8a6b3",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-02-23T18:27:59+00:00"
+            "time": "2018-02-27T21:06:51+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -642,16 +642,16 @@
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.6.4",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548"
+                "reference": "6678d59be48c4be64eaca6ce70bea48a09488cc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/fbe3fe878f4fe69048bb8a52783a09802004f548",
-                "reference": "fbe3fe878f4fe69048bb8a52783a09802004f548",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/6678d59be48c4be64eaca6ce70bea48a09488cc2",
+                "reference": "6678d59be48c4be64eaca6ce70bea48a09488cc2",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2017-11-14T20:44:03+00:00"
+            "time": "2018-02-28T11:41:37+00:00"
         },
         {
             "name": "fico7489/laravel-eloquent-join",
@@ -1106,16 +1106,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.47",
+            "version": "v0.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/google-api-php-client-services.git",
-                "reference": "f4ab0ea8aff4659cf67e3f733b3ab441c30baf5d"
+                "reference": "e8f3d6c4da47274ff375ee1d62b7a0ba6969d039"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/f4ab0ea8aff4659cf67e3f733b3ab441c30baf5d",
-                "reference": "f4ab0ea8aff4659cf67e3f733b3ab441c30baf5d",
+                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/e8f3d6c4da47274ff375ee1d62b7a0ba6969d039",
+                "reference": "e8f3d6c4da47274ff375ee1d62b7a0ba6969d039",
                 "shasum": ""
             },
             "require": {
@@ -1139,7 +1139,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-02-17T00:23:05+00:00"
+            "time": "2018-02-25T00:23:11+00:00"
         },
         {
             "name": "google/auth",
@@ -3000,16 +3000,16 @@
         },
         {
             "name": "mobiledetect/mobiledetectlib",
-            "version": "2.8.30",
+            "version": "2.8.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "5500bbbf312fe77ef0c7223858dad84fe49ee0c3"
+                "reference": "adb882ea3b9d154f087ecb2c333180dad6f4dd37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/5500bbbf312fe77ef0c7223858dad84fe49ee0c3",
-                "reference": "5500bbbf312fe77ef0c7223858dad84fe49ee0c3",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/adb882ea3b9d154f087ecb2c333180dad6f4dd37",
+                "reference": "adb882ea3b9d154f087ecb2c333180dad6f4dd37",
                 "shasum": ""
             },
             "require": {
@@ -3048,7 +3048,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2017-12-18T10:38:51+00:00"
+            "time": "2018-02-26T19:39:55+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6166,11 +6166,11 @@
         },
         {
             "name": "waavi/url-shortener",
-            "version": "dev-master",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:michalisantoniou6/url-shortener.git",
-                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
+                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31"
             },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -6217,7 +6217,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2018-01-09T20:43:17+00:00"
+            "time": "2017-10-06T10:09:24+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
@@ -6340,16 +6340,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "ed6ce7e2105c400ca10277643a8327957c0384b7"
+                "reference": "bf26aff803a11c5cc8eb7c4878a702c403ec67f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/ed6ce7e2105c400ca10277643a8327957c0384b7",
-                "reference": "ed6ce7e2105c400ca10277643a8327957c0384b7",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/bf26aff803a11c5cc8eb7c4878a702c403ec67f1",
+                "reference": "bf26aff803a11c5cc8eb7c4878a702c403ec67f1",
                 "shasum": ""
             },
             "require": {
@@ -6388,7 +6388,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-01-04T18:21:48+00:00"
+            "time": "2018-02-26T15:44:50+00:00"
         }
     ],
     "packages-dev": [
@@ -8098,16 +8098,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "6.5.6",
+            "version": "6.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3330ef26ade05359d006041316ed0fa9e8e3cefe"
+                "reference": "6bd77b57707c236833d2b57b968e403df060c9d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3330ef26ade05359d006041316ed0fa9e8e3cefe",
-                "reference": "3330ef26ade05359d006041316ed0fa9e8e3cefe",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6bd77b57707c236833d2b57b968e403df060c9d9",
+                "reference": "6bd77b57707c236833d2b57b968e403df060c9d9",
                 "shasum": ""
             },
             "require": {
@@ -8178,7 +8178,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-02-01T05:57:37+00:00"
+            "time": "2018-02-26T07:01:09+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -9281,7 +9281,6 @@
     "stability-flags": {
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
-        "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },

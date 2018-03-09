@@ -92,7 +92,7 @@ class PatientWriteRepository
         } else {
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
-            if ($patient->no_call_attempts_since_last_success == 5) {
+            if ($patient->no_call_attempts_since_last_success == 5 && optional($record)->no_of_successful_calls < 1) {
                 $patient->ccm_status = 'paused';
             }
         }
@@ -124,22 +124,24 @@ class PatientWriteRepository
      */
     public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)
     {
-        if (!$dateTime) {
+        if ( ! $dateTime) {
             $dateTime = Carbon::now();
         }
 
         return Patient::whereIn('user_id', $userIdsToPrint)
-            ->update([
-                'paused_letter_printed_at' => $dateTime->toDateTimeString(),
-            ]);
+                      ->update([
+                          'paused_letter_printed_at' => $dateTime->toDateTimeString(),
+                      ]);
     }
 
-    public function setStatus($userId, $status) {
-        $stati = new Collection([ Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN ]);
-        $user = User::find($userId);
+    public function setStatus($userId, $status)
+    {
+        $stati = new Collection([Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN]);
+        $user  = User::find($userId);
         if ($stati->contains($status) && $user) {
-            Patient::where([ 'user_id' => $userId ])->update([ 'ccm_status' => $status ]);
+            Patient::where(['user_id' => $userId])->update(['ccm_status' => $status]);
         }
-        return Patient::where([ 'user_id' => $userId ])->first();
+
+        return Patient::where(['user_id' => $userId])->first();
     }
 }

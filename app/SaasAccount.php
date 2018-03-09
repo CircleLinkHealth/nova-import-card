@@ -13,4 +13,18 @@ class SaasAccount extends Model
         'name',
         'logo_path',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function practices() {
+        return $this->hasMany(Practice::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function users() {
+        return $this->hasMany(User::class);
+    }
 }

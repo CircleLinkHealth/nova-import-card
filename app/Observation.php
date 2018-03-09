@@ -244,7 +244,7 @@ class Observation extends \App\BaseModel
 
         // run datamonitor if new obs
         if (!$updating) {
-            $dmService = new DatamonitorService;
+            $dmService = app(DatamonitorService::class);
             $dmService->process_obs_alerts($this->id);
         }
         // http://www.amitavroy.com/justread/content/articles/events-laravel-5-and-customize-model-save

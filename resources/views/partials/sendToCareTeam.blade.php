@@ -1,10 +1,10 @@
 <div class="form-group">
     <div class="col-sm-12">
-        <label>Send To</label>
+        <label>Send To:</label>
     </div>
     <div class="col-sm-12">
         <input type="checkbox" id="notify-circlelink-support" name="notify_circlelink_support" value="1">
-        <label for="notify-circlelink-support"><span> </span>CircleLink Support</label>
+        <label for="notify-circlelink-support"><span> </span>{{$patient->primaryPractice->saasAccountName()}} Support</label>
     </div>
     <div class="col-sm-12">
         @empty($patient->primaryPractice->cpmSettings()->notesChannels())

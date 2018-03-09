@@ -72,7 +72,7 @@ $style = [
                     <td style="{{ $style['email-masthead'] }}">
                         <a style="{{ $fontFamily }} {{ $style['email-masthead_name'] }}" href="{{ url('/') }}"
                            target="_blank">
-                            CircleLink Health
+                            {{ $saasAccountName ?? 'CircleLink Health' }}
                         </a>
                     </td>
                 </tr>
@@ -143,7 +143,7 @@ $style = [
 
                                 <!-- Salutation -->
                                     <p style="{{ $style['paragraph'] }}">
-                                        Regards,<br> CircleLink Team
+                                        Regards,<br> {{ $saasAccountName ?? 'CircleLink' }} Team
                                     </p>
 
                                     <!-- Sub Copy -->

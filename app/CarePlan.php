@@ -52,6 +52,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
+    const TO_ENROLL = 'to_enroll';
 
     // modes
     const WEB = 'web';
@@ -135,14 +136,14 @@ class CarePlan extends \App\BaseModel implements PdfReport
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
-    public function getStatusAttribute() {
-        $value = $this->attributes['status'];
-        if ($value && starts_with($value, ['{', '['])) {
-            $careplan = (array)json_decode($value);
-            return $careplan['status'];
-        }
-        return $value;
-    }
+//    public function getStatusAttribute() {
+//        $value = $this->attributes['status'];
+//        if ($value && starts_with($value, ['{', '['])) {
+//            $careplan = (array)json_decode($value);
+//            return $careplan['status'];
+//        }
+//        return $value;
+//    }
 
     /**
      * Create a PDF of this resource and return the path to it.

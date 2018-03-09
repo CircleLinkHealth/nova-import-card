@@ -2,7 +2,9 @@
 
 namespace App\Observers;
 
+use App\Enrollee;
 use App\Patient;
+use App\TargetPatient;
 use Carbon\Carbon;
 
 class PatientObserver
@@ -33,6 +35,30 @@ class PatientObserver
         ])->forward(true, false);
     }
 
+    public function attachTargetPatient(Patient $patient)
+    {
+        $user = $patient->user;
+
+        $enrollee = Enrollee::where([
+            ['mrn', '=', $patient->mrn_number],
+            ['practice_id', '=', $user->primaryPractice],
+        ])->first();
+
+
+        if ($enrollee) {
+            //find target patient with matching ehr_patient_id, update or create TargetPatient
+            $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
+                                          ->orWhere('ehr_patient_id', $enrollee->mrn)
+                                          ->first();
+
+            if ($targetPatient) {
+                $user->ehrInfo()->save($targetPatient);
+            }
+        }
+
+
+    }
+
     /**
      * Listen to the Patient updated event.
      *
@@ -55,5 +81,17 @@ class PatientObserver
         if ($patient->isDirty('date_paused')) {
             $patient->paused_letter_printed_at = null;
         }
+    }
+
+
+    /**
+     * @param Patient $patient
+     */
+    public function saving(Patient $patient)
+    {
+        if ($patient->isDirty('mrn_number')) {
+            $this->attachTargetPatient($patient);
+        }
+
     }
 }

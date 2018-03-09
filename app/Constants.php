@@ -37,4 +37,8 @@ class Constants
      */
     const CLOUD_LISTS_PROCESS_ELIGIBILITY_PATH = '/eligibility/lists';
     const CLOUD_CCDAS_PROCESS_ELIGIBILITY_PATH = '/eligibility/ccdas';
+
+    const CLH_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center', 'administrator'];
+    const SAAS_INTERNAL_USER_ROLE_NAMES = ['saas-admin', 'care-center'];
+    const PRACTICE_STAFF_ROLE_NAMES = ['provider', 'office_admin', 'med_assistant', 'registered-nurse', 'specialist'];
 }

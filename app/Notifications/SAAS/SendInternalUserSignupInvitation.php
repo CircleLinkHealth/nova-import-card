@@ -57,7 +57,7 @@ class SendInternalUserSignupInvitation extends Notification
         $channels = ['mail']
     ) {
         if (is_array($practice) || is_a($practice, Practice::class)) {
-            $practice = collect($practice);
+            $practice = collect([0 => $practice]);
         }
 
         $this->practice = $practice;
@@ -119,10 +119,12 @@ class SendInternalUserSignupInvitation extends Notification
             ->implode(', ');
         $saasAccountName = $this->saasAccount->name;
 
+        $appUrl = env('APP_URL');
+
         return [
             'subject'     => "$inviterName Invited You to {$practiceName}’s CCM Program!",
             'greeting'    => "Hello!",
-            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at www.careplanmanager.com, in partnership with {$saasAccountName}",
+            'line'        => "$inviterName has invited you to join {$practiceName}’s Chronic Care Management team at $appUrl.",
             'action_text' => 'Create password',
             'action_link' => route('get.onboarding.create.invited.user', [
                 'code' => $this->code,
@@ -136,7 +138,7 @@ class SendInternalUserSignupInvitation extends Notification
 
         return Invite::create([
             'inviter_id' => $this->sender->id,
-            'role_id'    => $notifiable->roles->first()->id,
+            'role_id'    => $notifiable->practiceOrGlobalRole()->id,
             'email'      => $notifiable->email,
             'subject'    => $arr['subject'],
             'message'    => $arr['greeting'] . PHP_EOL . $arr['line'] . PHP_EOL . $arr['action_text'] . PHP_EOL,
