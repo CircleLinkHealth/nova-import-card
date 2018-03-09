@@ -84,7 +84,7 @@
               </div>
               <div class="row form-group">
                 <div class="col-sm-12">
-                  <div class="alert alert-danger" v-if="errors.submit">{{errors.submit}}</div>
+                  <notifications ref="notificationsComponent" name="add-call-modal"></notifications>
                   <center>
                     <loader v-if="loaders.submit"></loader>
                   </center>
@@ -103,6 +103,7 @@
     import LoaderComponent from '../../../../components/loader'
     import { rootUrl } from '../../../../app.config'
     import moment from 'moment'
+    import notifications from '../../../../components/notifications'
 
     const defaultFormData = {
                               practiceId: null,
@@ -118,7 +119,8 @@
         name: 'add-call-modal',
         components: {
             'modal': Modal,
-            'loader': LoaderComponent
+            'loader': LoaderComponent,
+            notifications
         },
         data() {
             return {
@@ -177,11 +179,12 @@
                     this.loaders.patients = true
                     this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
-                        this.patients = (response.data || []).map(patient => {
+                        const pagination = response.data
+                        this.patients = ((pagination || {}).data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
                         })
-                        console.log('add-call-get-patients', response.data)
+                        console.log('add-call-get-patients', pagination)
                     }).catch(err => {
                         this.loaders.patients = false
                         this.errors.patients = err.message
@@ -242,17 +245,24 @@
                 attempt_note: this.formData.text
               }
               this.loaders.submit = true
-              this.axios.post(rootUrl('callcreate'), formData).then(response => {
-                this.loaders.submit = false
-                this.formData = Object.create(defaultFormData)
-                const call = response.data
-                Event.$emit("modal-add-call:hide")
-                Event.$emit('calls:add', call)
-                console.log('add-call', response.data)
+              this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
+                if (response) {
+                  this.loaders.submit = false
+                  this.formData = Object.create(defaultFormData)
+                  const call = response.data
+                  Event.$emit("modal-add-call:hide")
+                  Event.$emit('calls:add', call)
+                  console.log('calls:add', response.data)
+                  Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+                }
+                else {
+                  throw new Error('Could not create call. Patient already has a scheduled call')
+                }
               }).catch(err => {
                 this.errors.submit = err.message
                 this.loaders.submit = false
                 console.error('add-call', err)
+                Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
               })
             }
         },
