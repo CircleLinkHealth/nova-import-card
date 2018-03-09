@@ -315,7 +315,7 @@
                                 console.log('service-ids', serviceIDs, item)
                                 item.promises.update_chargeables = true
                                 return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updateSummaryServices'), {
-                                    report_id: item.id,
+                                    report_id: item.reportId,
                                     patient_chargeable_services: serviceIDs
                                 }).then(response => {
                                     console.log('billing:chargeable-services:update', response.data)
