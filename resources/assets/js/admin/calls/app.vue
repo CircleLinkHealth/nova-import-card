@@ -110,6 +110,7 @@
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
   import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
+  import timeDisplay from '../../util/time-display'
 
   export default {
       name: 'CallMgmtApp',
@@ -130,7 +131,7 @@
         return {
           pagination: null,
           selected: false,
-          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Next Call', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           nurses: [],
           loaders: {
@@ -350,7 +351,7 @@
                     Notes: [],
                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                     'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
-                    'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
+                    'CCM Time': timeDisplay(call.getPatient().getInfo().cur_month_activity_time),
                     'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
                     'Time Zone': call.getPatient().timezone,
                     'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])

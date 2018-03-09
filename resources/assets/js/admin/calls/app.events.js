@@ -60,8 +60,5 @@ export default (App, Event) => {
     }
     Event.$on('select-times-modal:change', selectTimesChangeHandler)
 
-    Event.$on('calls:add', (call) => {
-        const tableCall = App.setupCall(call)
-        App.tableData.unshift(tableCall)
-    })
+    Event.$on('calls:add', App.activateFilters)
 }
