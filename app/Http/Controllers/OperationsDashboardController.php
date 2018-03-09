@@ -130,7 +130,7 @@ class OperationsDashboardController extends Controller
         $str = parse_str($date, $urlDate);
 
         $urlDate = array_chunk($urlDate, 2);
-        
+
 //        if (!$request['totalDate']){
 //            return $this->badRequest('Invalid [totalDate] parameter. Must have a value."');
 //        }
@@ -159,7 +159,6 @@ class OperationsDashboardController extends Controller
             $patients = $this->service->getTotalPatients($fromDate, $toDate);
         }
         if ($type == 'total'){
-
             $patients = $this->service->getTotalPatients();
         }
 

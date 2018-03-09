@@ -36,6 +36,14 @@
     </div>
     <div class="panel-footer">
         <div class="row">
+            <select name="type">
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+            </select>
+
+            <input id="dayDate" type="date" name="dayDate" required class="form-control">
+
             <div class="col-md-4">
                 <form action="{{route('OpsDashboard.totalData')}}" method="GET" class="form-inline">
                     <div class="form-group">
