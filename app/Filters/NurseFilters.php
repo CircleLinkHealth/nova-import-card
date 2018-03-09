@@ -4,10 +4,19 @@ namespace App\Filters;
 
 
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 
 class NurseFilters extends QueryFilters
 {
+    protected $request;
+
+    public function __construct(Request $request)
+    {
+        $this->request = $request;
+        parent::__construct($request);
+    }
+
     public function globalFilters(): array
     {
         return [
@@ -173,6 +182,13 @@ class NurseFilters extends QueryFilters
      * @return Builder
      */
     public function user() {
+        if ($this->request->has('compressed')) {
+            return $this->builder->select([ 'id', 'user_id', 'status' ])->with(['user' => function ($q) {
+                return $q->select([ 'id', 'display_name' ]);
+            }])->with(['states' => function ($q) {
+                return $q->select(['code']);
+            }]);
+        }
         return $this->builder->with('user');
     }
 

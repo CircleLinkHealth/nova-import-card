@@ -75,22 +75,20 @@ class Kernel extends ConsoleKernel
         $schedule->command(QueueGenerateNurseInvoices::class)
                  ->dailyAt('04:00')
                  ->withoutOverlapping();
-                 
+
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
                 ->dailyAt('09:00')
                 ->withoutOverlapping();
 
-        $schedule->command('report:nurseDaily')
-                 ->dailyAt('23:50')
-                 ->withoutOverlapping();
+
+//        $schedule->command('ccda:determineEligibility')
+//                 ->everyFiveMinutes()
+//                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:toJson')
 //            ->everyMinute()
 //            ->withoutOverlapping();
 
-        $schedule->command('ccda:determineEligibility')
-                 ->everyFiveMinutes()
-                 ->withoutOverlapping();
 
 //        $schedule->command('ccda:process')
 //            ->everyMinute()

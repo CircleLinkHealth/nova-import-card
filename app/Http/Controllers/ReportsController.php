@@ -590,8 +590,6 @@ class ReportsController extends Controller
             return 'Careplan not found...';
         }
 
-        $patient = User::find($patientId);
-
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
 
         $skippedAssessment = $request->has('skippedAssessment');

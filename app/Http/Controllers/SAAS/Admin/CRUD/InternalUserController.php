@@ -36,6 +36,7 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.store');
         $data['submitMethod'] = 'post';
+        $data['titleVerb'] = 'Add';
 
         return view('saas.admin.user.manage', $data);
     }
@@ -78,13 +79,20 @@ class InternalUserController extends Controller
 
         $data['submitUrl']    = route('saas-admin.users.update', ['userId' => $userId]);
         $data['submitMethod'] = 'patch';
+        $data['titleVerb'] = 'Edit';
 
         return view('saas.admin.user.manage', $data);
     }
 
     public function update(StoreInternalUser $request, $userId)
     {
-        $internalUser = new InternalUser($request['user'], $request['practices'], $request['role']);
+        $userAttr = $request['user'];
+
+        if (!$request->has('user.auto_attach_programs')) {
+            $userAttr['auto_attach_programs'] = false;
+        }
+
+        $internalUser = new InternalUser($userAttr, $request['practices'], $request['role']);
         $user         = $this->userManagementService->storeInternalUser($internalUser);
 
         return redirect()->route('saas-admin.users.edit', [
@@ -123,8 +131,7 @@ class InternalUserController extends Controller
             }
         }
 
-        // role filter
-        $roles = Role::whereIn('name', [
+        $rolesArray = [
             'care-center',
             'med_assistant',
             'provider',
@@ -133,7 +140,14 @@ class InternalUserController extends Controller
             'saas-admin',
             'specialist',
             'registered-nurse',
-        ])
+        ];
+
+        if (auth()->user()->hasRole('administrator')) {
+            $rolesArray[] = 'administrator';
+        }
+
+        // role filter
+        $roles = Role::whereIn('name', $rolesArray)
                      ->orderBy('display_name')
                      ->pluck('display_name', 'name')
                      ->all();
@@ -170,12 +184,7 @@ class InternalUserController extends Controller
             });
             // providers can only see their participants
             if (Auth::user()->hasRole(['provider'])) {
-                $wpUsers->whereHas('roles', function ($q) {
-                    $q->whereHas('perms', function ($q2) {
-                        $q2->where('name', '=', 'is-participant');
-                    });
-                });
-                $wpUsers->where('program_id', '=', Auth::user()->program_id);
+                $wpUsers->ofType('participant');
             }
         }
 

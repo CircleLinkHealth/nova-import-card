@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\ChargeableService;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
@@ -9,6 +10,7 @@ use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Location;
+use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -22,6 +24,7 @@ class DashboardController extends Controller
     protected $practices;
     protected $users;
     protected $onboardingService;
+    protected $primaryPractice;
 
     public function __construct(
         InviteRepository $inviteRepository,
@@ -82,6 +85,34 @@ class DashboardController extends Controller
             'practiceSlug'      => $this->practiceSlug,
             'practiceSettings'  => $this->primaryPractice->cpmSettings(),
             'invoiceRecipients' => $invoiceRecipients,
+        ], $this->returnWithAll));
+    }
+
+    public function getCreateChargeableServices()
+    {
+        $practiceChargeableRel = $this->primaryPractice->chargeableServices;
+
+        $allChargeableServices = ChargeableService::all()
+                                                  ->map(function ($service) use ($practiceChargeableRel) {
+                                                      $existing = $practiceChargeableRel
+                                                          ->where('id', '=', $service->id)
+                                                          ->first();
+
+                                                      $service->is_on = false;
+
+                                                      if ($existing) {
+                                                          $service->amount = $existing->pivot->amount;
+                                                          $service->is_on = true;
+                                                      }
+
+                                                      return $service;
+                                                  });
+
+        return view('provider.chargableServices.create', array_merge([
+            'practice'          => $this->primaryPractice,
+            'practiceSlug'      => $this->practiceSlug,
+            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
 
@@ -188,6 +219,27 @@ class DashboardController extends Controller
         ]);
 
         return redirect()->back()->withErrors($errors);
+    }
+
+    public function postStoreChargeableServices(Request $request)
+    {
+        $services = $request['chargeable_services'];
+
+        $sync = [];
+
+        foreach ($services as $id => $service) {
+            if (array_key_exists('is_on', $service)) {
+                $sync[$id] = [
+                    'amount' => $service['amount']
+                ];
+            }
+        }
+
+        $this->primaryPractice
+            ->chargeableServices()
+            ->sync($sync);
+
+        return redirect()->back();
     }
 
     public function postStoreStaff(Request $request)

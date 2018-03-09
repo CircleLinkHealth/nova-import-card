@@ -27,6 +27,60 @@ class CallFilters extends QueryFilters
     {
         return $this->builder->scheduled();
     }
+    
+    /**
+    * Scope for nurse and patient, who may be any of inbound or outbound callers
+    *
+    * @return \Illuminate\Database\Eloquent\Builder
+    */
+    public function nurse($term)
+    {
+        return $this->builder->whereHas('outboundUser.nurseInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        })->orWhereHas('inboundUser.nurseInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        });
+    }
+
+    public function patient($term) {
+        return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        })->orWhereHas('inboundUser.patientInfo', function ($q) use ($term) {
+            $q->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%$term%");
+            });
+        });
+    }
+    
+    public function patientStatus($term) {
+        return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
+            $q->where('ccm_status', 'LIKE', "$term%");
+        })->orWhereHas('inboundUser.patientInfo', function ($q) use ($term) {
+            $q->where('ccm_status', 'LIKE', "$term%");
+        });
+    }
+
+    public function practice($term) {
+        return $this->builder->whereHas('inboundUser.primaryPractice', function ($q) use ($term) {
+            $q->where('display_name', 'LIKE', "%$term%");
+        });
+    }
+    
+    public function billingProvider($term) {
+        return $this->builder->whereHas('inboundUser.billingProvider.user', function ($q) use ($term) {
+            $q->where('display_name', 'LIKE', "%$term%");
+        });
+    }
+    
+    public function scheduler($term) {
+        return $this->builder->where('scheduler', 'LIKE', "%$term%");
+    }
 
     /**
      * Scope for calls by Caller name.
@@ -83,10 +137,10 @@ class CallFilters extends QueryFilters
      */
     public function scheduledDate($date)
     {
-        validateYYYYMMDDDateString($date);
+        //validateYYYYMMDDDateString($date);
 
         return $this->builder
-            ->whereScheduledDate($date);
+            ->where('scheduled_date', 'LIKE', '%'.$date.'%');
     }
 
     /**
@@ -121,6 +175,44 @@ class CallFilters extends QueryFilters
             ->whereHas('inboundUser.patientInfo', function ($q) use ($noCallAttemptsSinceLastSuccess) {
                 $q->whereNoCallAttemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess);
             });
+    }
+    
+    public function sort_nurse($term = null) {
+        if ($this->builder->has('outboundUser.nurseInfo.user')) {
+            return $this->builder->orderByJoin('outboundUser.display_name', $term);
+        }
+        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+    }
+    
+    public function sort_patientId($term = null) {
+        return $this->builder->join('users', 'users.id', 'calls.' . ('inbound_cpm_id'))->orderBy('users.id', $term);
+    }
+    
+    public function sort_patient($term = null) {
+        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+    }
+    
+    public function sort_scheduledDate($term = null) {
+        return $this->builder->orderBy('scheduled_date', $term);
+    }
+    
+    public function sort_patientStatus($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.ccm_status', $term);
+    }
+    
+    public function sort_practice($term = null) {
+        return $this->builder->orderByJoin('inboundUser.primaryPractice.display_name', $term);
+    }
+    
+    public function sort_scheduler($term = null) {
+        return $this->builder->orderBy('scheduler', $term);
+    }
+    
+    public function sort_id($type = null) {
+        if ($type == 'desc') {
+            return $this->builder->orderByDesc('id');
+        }
+        return $this->builder->orderBy('id');
     }
 
     public function globalFilters(): array

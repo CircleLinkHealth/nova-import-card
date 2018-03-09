@@ -86,8 +86,13 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'calls.index',
                 ]);
 
-                Route::delete('{callIds}', [
-                    'uses' => 'API\Admin\CallsController@deleteCalls',
+                Route::get('{id}', [
+                    'uses' => 'API\Admin\CallsController@show',
+                    'as'   => 'calls.show',
+                ]);
+
+                Route::delete('{ids}', [
+                    'uses' => 'API\Admin\CallsController@remove',
                     'as'   => 'calls.destroy',
                 ]);
             });
@@ -757,6 +762,10 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
+
+        Route::get('eligible-lists/phoenix-heart', 'Admin\WelcomeCallListController@makePhoenixHeartCallList');
+
         Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
@@ -893,7 +902,7 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data'
                 ]);
-                
+
                 Route::get('/services', [
                     'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
                     'as'   => 'monthly.billing.services',
@@ -918,7 +927,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                     'as'   => 'monthly.billing.count',
                 ]);
-                
+
                 Route::get('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts'
                 ]);
@@ -1533,6 +1542,16 @@ Route::group([
     ],
 ], function () {
 
+    Route::post('chargeable-services', [
+        'uses' => 'Provider\DashboardController@postStoreChargeableServices',
+        'as'   => 'provider.dashboard.store.chargeable-services',
+    ])->middleware('permission:create-practice-chargeable-service');
+
+    Route::get('chargeable-services', [
+        'uses' => 'Provider\DashboardController@getCreateChargeableServices',
+        'as'   => 'provider.dashboard.manage.chargeable-services',
+    ])->middleware('permission:read-practice-chargeable-service');
+
     Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
@@ -1742,7 +1761,7 @@ Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin']
+    'middleware' => ['auth', 'role:saas-admin|administrator']
 ], function (){
 
     Route::get('home', [
@@ -1811,7 +1830,6 @@ Route::group([
         ]);
     });
 });
-
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',

@@ -306,12 +306,22 @@ $user_info = array();
                                     <input type=hidden name=status
                                            value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12">
-                                        <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                            <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                    @if(auth()->user()->isAdmin())
+                                        <div class="form-group form-item form-item-spacing col-sm-12">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="form-group form-item form-item-spacing col-sm-12">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                                <div class="col-lg-8">{{ ucfirst($patient->ccm_status) }}</div>
+                                                <input type="hidden" value="{{$patient->ccm_status}}" name="ccm_status">
+                                            </div>
+                                        </div>
+                                    @endif
 
 
                                     <br>
@@ -333,7 +343,7 @@ $user_info = array();
                             <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
                         </div>
                         </div>
-                        @push('styles') 
+                        @push('styles')
                             <style>
                                 .no-overflow {
                                     overflow: hidden;
