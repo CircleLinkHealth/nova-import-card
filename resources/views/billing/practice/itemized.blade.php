@@ -13,7 +13,7 @@
             <th>Provider Name</th>
             <th>Patient Name</th>
             <th>DOB</th>
-            <th>CPT Code</th>
+            <th>Billing Code</th>
             <th>CCM Mins</th>
             <th>Condition I</th>
             <th>Condition I Code</th>
