@@ -407,7 +407,10 @@
                             }
                             return a
                         }, {}),
-                        data: this.tableData
+                        data: this.tableData.map(row => {
+                            row.chargeable_services = row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                                return row
+                        })
                     }
                 ])
 
