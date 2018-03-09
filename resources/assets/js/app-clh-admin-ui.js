@@ -1,5 +1,7 @@
 require('./bootstrap');
 
+
+import './prototypes/array.prototype'
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'

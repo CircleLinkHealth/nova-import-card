@@ -44,9 +44,10 @@
                 <div class="col-sm-7">
                   <select class="form-control" name="outbound_cpm_id" v-model="formData.nurseId" required>
                     <option :value="null">Unassigned</option>
-                    <option v-for="(nurse, index) in nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
+                    <option v-for="(nurse, index) in nursesForSelect" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
                   </select>
                   <loader v-if="loaders.nurses"></loader>
+                  <div class="alert alert-danger" v-if="formData.practiceId && (nursesForSelect.length == 0)">No available nurses for selected patient</div>
                 </div>
               </div>
               <div class="row form-group">
@@ -157,7 +158,16 @@
                 }
             }
         },
+        computed: {
+          nursesForSelect () {
+            const selectedPatient = this.selectedPatient()
+            return this.nurses.filter(nurse => nurse.states.indexOf((selectedPatient).state) >= 0)
+          }
+        },
         methods: {
+          selectedPatient () {
+            return (this.patients.find(patient => patient.id === this.formData.patientId) || {})
+          },
           getPractices() {
                 this.loaders.practices = true
                 this.axios.get(rootUrl(`api/practices`)).then(response => {
@@ -166,7 +176,7 @@
                       if (a.display_name < b.display_name) return -1;
                       else if (a.display_name > b.display_name) return 1
                       else return 0
-                    })
+                    }).distinct(patient => patient.id)
                     console.log('add-call-get-practices', response.data)
                 }).catch(err => {
                     this.loaders.practices = false
@@ -183,7 +193,7 @@
                         this.patients = ((pagination || {}).data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        })
+                        }).distinct(patient => patient.id)
                         console.log('add-call-get-patients', pagination)
                     }).catch(err => {
                         this.loaders.patients = false
@@ -204,7 +214,7 @@
                         this.patients = (response.data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        })
+                        }).distinct(patient => patient.id)
                         console.log('add-call-get-patients', response.data)
                     }).catch(err => {
                         this.loaders.patients = false
