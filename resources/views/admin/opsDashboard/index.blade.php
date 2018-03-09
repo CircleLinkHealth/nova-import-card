@@ -46,10 +46,10 @@
     <table>
         <label>CarePlan Manager Patient Totals</label>
         <tr>
-            <th><a href="">Daily</a></th>
-            <th><a href="">Weekly</a></th>
-            <th><a href="">Monthly</a></th>
-            <th><a href="">Total</a></th>
+            <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'day'])}}" method="GET">Daily</a></th>
+            <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'week'])}}" method="GET">Weekly</a></th>
+            <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'month'])}}" method="GET">Monthly</a></th>
+            <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'total'])}}" method="GET">Total</a></th>
         </tr>
         <tr>
             <td>Enrolled: {{$totals['dayCount']['enrolled']}}</td>
@@ -58,7 +58,7 @@
             <td>Enrolled: {{$totals['totalCount']['enrolled']}}</td>
         </tr>
         <tr>
-            <td type="number" value="{{$totals['dayCount']['pausedPatients']}}">G0506 Hold: {{$totals['dayCount']['gCodeHold']}}</td>
+            <td>G0506 Hold: {{$totals['dayCount']['gCodeHold']}}</td>
             <td>G0506 Hold: {{$totals['weekCount']['gCodeHold']}}</td>
             <td>G0506 Hold: {{$totals['monthCount']['gCodeHold']}}</td>
             <td>G0506 Hold: {{$totals['totalCount']['gCodeHold']}}</td>
@@ -83,14 +83,14 @@
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
-    <form action="{{'OperationsDashboardController.getTotalPatientData'}}" method="GET">
+    <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
         Go to a specific week:
         <input type="date" name="weekDate">
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
-    <form action="{{'ops-dashboard/total-data'}}" method="GET">
+    <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
         Go to a specific month:
         <input type="date" name="monthDate">
@@ -123,10 +123,9 @@
             <br>
             <select name="Active Practices">
                 <option value="">Active Practices</option>
-                <option value="volvo">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="fiat">Fiat</option>
-                <option value="audi">Audi</option>
+                @foreach($practices as $practice)
+                    <option name="practiceId" value="{{$practice['id']}}">{{$practice['display_name']}}</option>
+                @endforeach
             </select>
             <br>
             <input type="submit" value="Submit">
@@ -163,6 +162,27 @@
             <td>Withdrawn: {{$patientsByPractice['totalCount']['withdrawnPatients']}}</td>
         </tr>
     </table>
+    <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
+        <br>
+        Go to a specific day:
+        <input type="date" name="dayDate">
+        <br>
+        <input align="center" type="submit" value="Submit">
+    </form>
+    <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
+        <br>
+        Go to a specific week:
+        <input type="date" name="weekDate">
+        <br>
+        <input align="center" type="submit" value="Submit">
+    </form>
+    <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
+        <br>
+        Go to a specific month:
+        <input type="date" name="monthDate">
+        <br>
+        <input align="center" type="submit" value="Submit">
+    </form>
 </div>
 @endsection
 
