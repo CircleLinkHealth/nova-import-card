@@ -86,9 +86,6 @@
         </template>
       </v-client-table>
     </div>
-    <text-editable :value="'Mykeels'"></text-editable>
-    <date-editable :value="'01-20-2017'" :format="'mm-DD-YYYY'"></date-editable>
-    <select-editable :values="['One', 'Two', 'Three']"></select-editable>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
     <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
@@ -112,6 +109,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
+  import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
 
   export default {
       name: 'CallMgmtApp',
@@ -300,6 +298,93 @@
             this.loaders.nurses = false
           })
         },
+        setupCall (call) {
+          const $vm = this
+          if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
+          if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
+          call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
+                                          call.inbound_user : 
+                                    (call.outbound_user && call.outbound_user.nurse_info) ?
+                                          call.outbound_user : 
+                                          null)
+          call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
+                                          call.inbound_user : 
+                                    (call.outbound_user && call.outbound_user.patient_info) ?
+                                          call.outbound_user : 
+                                          { getPractice: () => ({}), getInfo: () => ({}), getBillingProvider: () => ({ getUser: () => ({}) }) });
+          
+          const patient = call.getPatient();
+          if (patient) {
+            const emptyObject = {}
+            patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || { getUser: () => ({}) });
+            patient.getPractice = () => (patient.primary_practice || {});
+            patient.getInfo = () => (patient.patient_info || {});
+
+            const billingProvider = patient.getBillingProvider();
+            billingProvider.getUser = () => (billingProvider.user || {});
+
+            (patient.getInfo().contact_windows || []).forEach(time_window => {
+              time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
+              time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
+            })
+          }
+          this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
+            call.Notes = ((pagination || {}).data || []).map(note => ({
+                                created_at: note.created_at,
+                                type: 'out',
+                                category: note.type,
+                                message: note.body
+                              }))
+          })
+          return ({
+                    id: call.id,
+                    selected: false,
+                    Nurse: (call.getNurse() || {}).full_name,
+                    NurseId: (call.getNurse() || {}).id,
+                    Patient: (call.getPatient() || {}).full_name,
+                    Practice: (call.getPatient() || {}).getPractice().display_name,
+                    Scheduler: call.scheduler,
+                    CallWindows: call.getPatient().getInfo().contact_windows,
+                    Comment: call.getPatient().getInfo().general_comment,
+                    AttemptNote: call.attempt_note,
+                    Notes: [],
+                    'Last Call Status': call.getPatient().getInfo().last_call_status,
+                    'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
+                    'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
+                    'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
+                    'Time Zone': call.getPatient().timezone,
+                    'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
+                                                                    .map(time_window => time_window.shortDayOfWeek)
+                                                                    .reduce((obj, key) => {
+                                                                      obj[key] = key;
+                                                                      return obj;
+                                                                    }, {})).join(','),
+                    'Patient Status': call.getPatient().getInfo().ccm_status,
+                    'DOB': call.getPatient().getInfo().birth_date,
+                    'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
+                    'Patient ID': call.getPatient().id,
+                    'Next Call': call.scheduled_date,
+                    'Call Time Start': call.window_start,
+                    'Call Time End': call.window_end,
+                    state: call.getPatient().state,
+                    nurses () {
+                      return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
+                    },
+                    loaders: {
+                      nextCall: false,
+                      nurse: false,
+                      callTimeStart: false,
+                      callTimeEnd: false
+                    },
+                    onNextCallUpdate, 
+                    onNurseUpdate, 
+                    onCallTimeStartUpdate, 
+                    onCallTimeEndUpdate, 
+                    onGeneralCommentUpdate, 
+                    onAttemptNoteUpdate, 
+                    updateMultiValues
+                  });
+        },
         next() {
           const $vm = this
           if (!this.$nextPromise) {
@@ -319,201 +404,7 @@
               if (result) {
                 const calls = result.data || [];
                 if (calls && Array.isArray(calls)) {
-                    calls.forEach(call => {
-                      if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
-                      if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;                
-                      call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
-                                                      call.inbound_user : 
-                                                (call.outbound_user && call.outbound_user.nurse_info) ?
-                                                      call.outbound_user : 
-                                                      null)
-                      call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
-                                                      call.inbound_user : 
-                                                (call.outbound_user && call.outbound_user.patient_info) ?
-                                                      call.outbound_user : 
-                                                      { getPractice: () => ({}), getInfo: () => ({}), getBillingProvider: () => ({ getUser: () => ({}) }) });
-                      
-                      const patient = call.getPatient();
-                      if (patient) {
-                        const emptyObject = {}
-                        patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || { getUser: () => ({}) });
-                        patient.getPractice = () => (patient.primary_practice || {});
-                        patient.getInfo = () => (patient.patient_info || {});
-
-                        const billingProvider = patient.getBillingProvider();
-                        billingProvider.getUser = () => (billingProvider.user || {});
-
-                        (patient.getInfo().contact_windows || []).forEach(time_window => {
-                          time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
-                          time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
-                        })
-                      }
-                    })
-                  const tableCalls = calls.map(call => ({
-                                        id: call.id,
-                                        selected: false,
-                                        Nurse: (call.getNurse() || {}).full_name,
-                                        NurseId: (call.getNurse() || {}).id,
-                                        Patient: (call.getPatient() || {}).full_name,
-                                        Practice: (call.getPatient() || {}).getPractice().display_name,
-                                        Scheduler: call.scheduler,
-                                        CallWindows: call.getPatient().getInfo().contact_windows,
-                                        Comment: call.getPatient().getInfo().general_comment,
-                                        AttemptNote: call.attempt_note,
-                                        Notes: [],
-                                        'Last Call Status': call.getPatient().getInfo().last_call_status,
-                                        'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
-                                        'CCM Time': call.getPatient().getInfo().cur_month_activity_time,
-                                        'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
-                                        'Time Zone': call.getPatient().timezone,
-                                        'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
-                                                                                        .map(time_window => time_window.shortDayOfWeek)
-                                                                                        .reduce((obj, key) => {
-                                                                                          obj[key] = key;
-                                                                                          return obj;
-                                                                                        }, {})).join(','),
-                                        'Patient Status': call.getPatient().getInfo().ccm_status,
-                                        'DOB': call.getPatient().getInfo().birth_date,
-                                        'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
-                                        'Patient ID': call.getPatient().id,
-                                        'Next Call': call.scheduled_date,
-                                        'Call Time Start': call.window_start,
-                                        'Call Time End': call.window_end,
-                                        state: call.getPatient().state,
-                                        nurses () {
-                                          return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
-                                        },
-                                        loaders: {
-                                          nextCall: false,
-                                          nurse: false,
-                                          callTimeStart: false,
-                                          callTimeEnd: false
-                                        },
-                                        onNextCallUpdate (date) {
-                                          /** update the next call column */
-                                          const call = this
-                                          this.loaders.nextCall = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'scheduled_date',
-                                            value: date
-                                          }).then(response => {
-                                            console.log('calls:row:update', response.data)
-                                            call['Next Call'] = date
-                                            this.loaders.nextCall = false
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.nextCall = false
-                                          })
-                                        },
-                                        onNurseUpdate (nurseId) {
-                                          /** update the next call column */
-                                          const call = this
-                                          this.loaders.nurse = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'outbound_cpm_id',
-                                            value: nurseId
-                                          }).then(response => {
-                                            const nurse = ($vm.nurses.find(nurse => nurse.id == nurseId) || {})
-                                            call.NurseId = nurse.id
-                                            call.Nurse = (nurse.display_name || 'unassigned')
-                                            this.loaders.nurse = false
-                                            if (response) console.log('calls:row:update', nurse)
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.nurse = false
-                                          })
-                                        },
-                                        onCallTimeStartUpdate (time) {
-                                          /** update the call_time_start column */
-                                          const call = this
-                                          this.loaders.callTimeStart = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'window_start',
-                                            value: time
-                                          }).then(response => {
-                                            call['Call Time Start'] = time
-                                            this.loaders.callTimeStart = false
-                                            if (response) console.log('calls:row:update', call)
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.callTimeStart = false
-                                          })
-                                        },
-                                        onCallTimeEndUpdate (time) {
-                                          /** update the call_time_end column */
-                                          const call = this
-                                          this.loaders.callEndStart = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'window_end',
-                                            value: time
-                                          }).then(response => {
-                                            call['Call Time End'] = time
-                                            this.loaders.callEndStart = false
-                                            if (response) console.log('calls:row:update', call)
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.callEndStart = false
-                                          })
-                                        },
-                                        onGeneralCommentUpdate (comment) {
-                                          /** update the call_time_end column */
-                                          const call = this
-                                          this.loaders.generalComment = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'general_comment',
-                                            value: comment
-                                          }).then(response => {
-                                            call.Comment = comment
-                                            this.loaders.generalComment = false
-                                            if (response) console.log('calls:row:update', call)
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.generalComment = false
-                                          })
-                                        },
-                                        onAttemptNoteUpdate (note) {
-                                          /** update the call_time_end column */
-                                          const call = this
-                                          this.loaders.attemptNote = true
-                                          return $vm.axios.post(rootUrl('callupdate'), {
-                                            callId: this.id,
-                                            columnName: 'attempt_note',
-                                            value: note
-                                          }).then(response => {
-                                            call.AttemptNote = note
-                                            this.loaders.attemptNote = false
-                                            if (response) console.log('calls:row:update', call)
-                                          }).catch(err => {
-                                            console.error('calls:row:update', err)
-                                            this.loaders.attemptNote = false
-                                          })
-                                        },
-                                        updateMultiValues ({ nextCall, callTimeStart, callTimeEnd }) {
-                                          if (nextCall, callTimeStart, callTimeEnd) {
-                                            return Promise.all([
-                                              this.onNextCallUpdate(nextCall),
-                                              this.onCallTimeStartUpdate(callTimeStart),
-                                              this.onCallTimeEndUpdate(callTimeEnd)
-                                            ])
-                                          }
-                                          else Promise.resolve({})
-                                        }
-                                      }))
-                  tableCalls.forEach(call => {
-                    this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
-                      call.Notes = ((pagination || {}).data || []).map(note => ({
-                                          created_at: note.created_at,
-                                          type: 'out',
-                                          category: note.type,
-                                          message: note.body
-                                        }))
-                    })
-                  })
+                  const tableCalls = calls.map(this.setupCall)
                   if (!this.tableData.length) {
                       const arr = this.tableData.concat(tableCalls)
                       const total = ((this.pagination || {}).total || 0)
