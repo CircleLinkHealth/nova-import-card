@@ -79,21 +79,21 @@
     <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
         Go to a specific day:
-        <input type="date" name="dayDate">
+        <input type="date" name="dayDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
     <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
         Go to a specific week:
-        <input type="date" name="weekDate">
+        <input type="date" name="weekDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
     <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
         Go to a specific month:
-        <input type="date" name="monthDate">
+        <input type="date" name="monthDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
@@ -105,9 +105,9 @@
             <label>Generate Paused Patient List</label>
             <br>
             From:
-            <input type="date" name="fromDate">
+            <input type="date" name="fromDate" required>
             To:
-            <input type="date" name="toDate">
+            <input type="date" name="toDate" required>
 
             <br>
             <input align="center" type="submit" value="Submit">
@@ -165,21 +165,21 @@
     <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
         <br>
         Go to a specific day:
-        <input type="date" name="dayDate">
+        <input type="date" name="dayDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
     <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
         <br>
         Go to a specific week:
-        <input type="date" name="weekDate">
+        <input type="date" name="weekDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
     <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET">
         <br>
         Go to a specific month:
-        <input type="date" name="monthDate">
+        <input type="date" name="monthDate" required>
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
