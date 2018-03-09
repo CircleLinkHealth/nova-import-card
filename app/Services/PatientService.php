@@ -7,6 +7,7 @@ use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
 use App\Services\CCD\CcdAllergyService;
 use App\Repositories\UserRepositoryEloquent;
+use App\Filters\PatientFilters;
 
 class PatientService
 {
@@ -42,12 +43,7 @@ class PatientService
         $this->repo()->setStatus($userId, Patient::ENROLLED);
     }
 
-    public function patients() {
-        return $this->readRepo()->patients();
-    }
-
-    public function search($model) {
-        $searchModel = PatientSearchModel::create($model);
-        return $this->readRepo()->search($searchModel);
+    public function patients(PatientFilters $filters) {
+        return $this->readRepo()->patients($filters);
     }
 }
