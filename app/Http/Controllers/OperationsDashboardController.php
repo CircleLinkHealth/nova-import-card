@@ -123,25 +123,14 @@ class OperationsDashboardController extends Controller
      *
      * @return mixed
      */
-    public function getList(Request $request){
+    public function getList(Request $request, $type){
 
-        $url = $_SERVER['HTTP_REFERER'];
+        $url = $request->server('HTTP_REFERER');
         $date = parse_url($url, PHP_URL_QUERY);
         $str = parse_str($date, $urlDate);
 
         $urlDate = array_chunk($urlDate, 2);
-
-
-
-        $link = $_SERVER['REQUEST_URI'];
-        $link_array = explode('/',$link);
-        $type = end($link_array);
-
-
-
-
-
-
+        
 //        if (!$request['totalDate']){
 //            return $this->badRequest('Invalid [totalDate] parameter. Must have a value."');
 //        }
