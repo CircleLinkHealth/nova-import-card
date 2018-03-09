@@ -1,4 +1,8 @@
+@extends('partials.adminUI')
+
+@section('content')
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -42,10 +46,10 @@
     <table>
         <label>CarePlan Manager Patient Totals</label>
         <tr>
-            <th>Daily</th>
-            <th>Weekly</th>
-            <th>Monthly</th>
-            <th>Total</th>
+            <th><a href="">Daily</a></th>
+            <th><a href="">Weekly</a></th>
+            <th><a href="">Monthly</a></th>
+            <th><a href="">Total</a></th>
         </tr>
         <tr>
             <td>Enrolled: {{$totals['dayCount']['enrolled']}}</td>
@@ -72,20 +76,44 @@
             <td>Withdrawn: {{$totals['totalCount']['withdrawnPatients']}}</td>
         </tr>
     </table>
-</div>
-<br><hr><br>
-<div align="center">
-    <form action="">
-        <label>Generate Paused Patient List</label>
+    <form action="{{route('OpsDashboard.totalData')}}" method="GET">
         <br>
-        From:
-        <input type="date" name="bday">
-        To:
-        <input type="date" name="bday">
-
+        Go to a specific day:
+        <input type="date" name="dayDate">
         <br>
         <input align="center" type="submit" value="Submit">
     </form>
+    <form action="{{'OperationsDashboardController.getTotalPatientData'}}" method="GET">
+        <br>
+        Go to a specific week:
+        <input type="date" name="weekDate">
+        <br>
+        <input align="center" type="submit" value="Submit">
+    </form>
+    <form action="{{'ops-dashboard/total-data'}}" method="GET">
+        <br>
+        Go to a specific month:
+        <input type="date" name="monthDate">
+        <br>
+        <input align="center" type="submit" value="Submit">
+    </form>
+</div>
+<br><hr><br>
+<div align="center">
+    <div>
+        <form action="{{route('OpsDashboard.pausedPatientList')}}">
+            <label>Generate Paused Patient List</label>
+            <br>
+            From:
+            <input type="date" name="fromDate">
+            To:
+            <input type="date" name="toDate">
+
+            <br>
+            <input align="center" type="submit" value="Submit">
+        </form>
+    </div>
+
 </div>
 <br><hr><br>
 <div>
@@ -136,4 +164,6 @@
         </tr>
     </table>
 </div>
+@endsection
+
 

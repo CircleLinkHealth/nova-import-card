@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Request;
 use App\Practice;
 use App\Services\OperationsDashboardService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class OperationsDashboardController extends Controller
 {
@@ -41,7 +41,7 @@ class OperationsDashboardController extends Controller
         $totals = $this->service->getCpmPatientTotals($date, 'day');
         $patientsByPractice = null;
 
-        return view('opsDashboard.index', compact([
+        return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
             'patientsByPractice'
@@ -57,23 +57,26 @@ class OperationsDashboardController extends Controller
      */
     public function getTotalPatientData(Request $request){
 
-
-        $date = new Carbon($request['totalDate']);
-        $fromDate = $date->startOfMonth()->toDateTimeString();
-        $toDate = $date->endOfMonth()->toDateTimeString();
-
+        if ($request['dayDate']){
+            $dateType = 'day';
+            $date = new Carbon($request['dayDate']);
+        }
+        if ($request['weekDate']){
+            $dateType = 'week';
+            $date = new Carbon($request['weekDate']);
+        }
+        if ($request['monthDate']){
+            $dateType = 'month';
+            $date = new Carbon($request['monthDate']);
+        }
 
         $practices = Practice::active()->get();
 
-        $totals = $this->service->getCpmPatientTotals($date, $request['totalDateType']);
+        $totals = $this->service->getCpmPatientTotals($date, $dateType);
 
         $patientsByPractice = null;
-        if ($request['practiceId']){
-            $patientsByPractice = $this->service->filterPatientsByPractice($this->service->getTotalPatients($fromDate, $toDate), $request['practiceId']);
-        }
 
-
-        return view('opsDashboard.index', compact([
+        return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
             'patientsByPractice'
@@ -127,6 +130,17 @@ class OperationsDashboardController extends Controller
 
     public function getPausedPatientList(Request $request){
 
+        $from = new Carbon($request['fromDate']);
+        $to = new Carbon($request['toDate']);
+
+        $fromDate = $from->toDateString();
+        $toDate = $to->toDateString();
+
+        $patients = $this->service->getPausedPatients($fromDate, $toDate);
+
+        return view('admin.opsDashboard.list', compact([
+            'patients'
+        ]));
     }
 
     public function getPatientNotesAndActivitiesPage(Request $request){

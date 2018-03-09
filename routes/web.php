@@ -1017,10 +1017,23 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
 
-            Route::get('ops-dashboard', [
-                'uses' => 'OperationsDashboardController@index',
-                'as'   => 'OperationsDashboardController.index'
-            ]);
+            Route::group([
+                'prefix' => 'ops-dashboard',
+            ], function () {
+                Route::get('/index', [
+                    'uses' => 'OperationsDashboardController@index',
+                    'as'   => 'OpsDashboard.index'
+                ]);
+                Route::get('/total-data', [
+                    'uses' => 'OperationsDashboardController@getTotalPatientData',
+                    'as'   => 'OpsDashboard.totalData'
+                ]);
+                Route::get('/paused-patient-list', [
+                    'uses' => 'OperationsDashboardController@getPausedPatientList',
+                    'as'   => 'OpsDashboard.pausedPatientList'
+                ]);
+            });
+
         });
 
         //Practice Billing
