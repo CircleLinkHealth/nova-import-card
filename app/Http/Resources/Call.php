@@ -17,7 +17,7 @@ class Call extends Resource
     public function toArray($request)
     {
         $schedulerName = $this->scheduler;
-        if (is_integer((int)($this->scheduler))) {
+        if (is_integer($this->scheduler)) {
             $user =  UserModel::find($this->scheduler);
             if ($user) {
                 $schedulerName = $user->display_name;
