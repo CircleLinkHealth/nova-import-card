@@ -208,6 +208,14 @@ class CallFilters extends QueryFilters
         return $this->builder->orderBy('scheduler', $term);
     }
     
+    public function sort_callTimeStart($term = null) {
+        return $this->builder->orderBy('window_start', $term);
+    }
+    
+    public function sort_callTimeEnd($term = null) {
+        return $this->builder->orderBy('window_end', $term);
+    }
+    
     public function sort_id($type = null) {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');
