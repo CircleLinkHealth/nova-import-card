@@ -208,12 +208,24 @@ class CallFilters extends QueryFilters
         return $this->builder->orderBy('scheduler', $term);
     }
     
-    public function sort_callTimeStart($term = null) {
+    public function sort_callTimeStart($term = 'asc') {
         return $this->builder->orderBy('window_start', $term);
     }
     
-    public function sort_callTimeEnd($term = null) {
+    public function sort_callTimeEnd($term = 'asc') {
         return $this->builder->orderBy('window_end', $term);
+    }
+    
+    public function sort_lastCall($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.last_contact_time', $term);
+    }
+    
+    public function sort_lastCallStatus($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.last_call_status', $term);
+    }
+    
+    public function sort_ccmTime($term = null) {
+        return $this->builder->orderByJoin('inboundUser.patientInfo.cur_month_activity_time', $term);
     }
     
     public function sort_id($type = null) {
