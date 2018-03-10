@@ -163,7 +163,7 @@
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Patient Status', 'Practice', 'Scheduler'],
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'CCM Time', 'Call Time Start', 'Call Time End', 'Patient Status', 'Practice', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
             footerHeadings: true,
@@ -175,8 +175,11 @@
               'Patient ID': (ascending) => (a, b) => 0,
               Patient: (ascending) => (a, b) => 0,
               'Next Call': (ascending) => (a, b) => 0,
+              'Last Call Status': (ascending) => (a, b) => 0,
               'Last Call': (ascending) => (a, b) => 0,
               'CCM Time': (ascending) => (a, b) => 0,
+              'Call Time Start': (ascending) => (a, b) => 0,
+              'Call Time End': (ascending) => (a, b) => 0,
               'Patient Status': (ascending) => (a, b) => 0,
               Practice: (ascending) => (a, b) => 0,
               'Billing Provider': (ascending) => (a, b) => 0,
