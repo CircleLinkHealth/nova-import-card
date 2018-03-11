@@ -130,7 +130,11 @@ class PracticeController extends Controller
     
     public function getNurses($practiceId) {
         $practice = Practice::where('id', $practiceId)->get(['id'])->first();
-        $nurses = $practice->nurses()->get([
+        $nurses = $practice->nurses()->whereHas('nurseInfo', function ($q) {
+            $q->where([
+                'status' => 'active'
+            ]);
+        })->get([
             'id',
             'first_name',
             'last_name',
