@@ -94,8 +94,8 @@ class PatientService
                         $careplan ? $careplan['status'] : null,
                         $patient ? $patient['birth_date'] : null,
                         $user['phone'],
-                        $patient ? Carbon::parse($patient['birth_date'])->age : null,
-                        $user['created_at'],
+                        $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
+                        $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
                         $patient ? gmdate('H:i:s', $patient['cur_month_activity_time']) : null
                     ]);
                     $i++;
