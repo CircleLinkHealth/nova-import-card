@@ -36,7 +36,6 @@
     import { Event } from 'vue-tables-2'
     import moment from 'moment'
     import loader from '../loader'
-    import buildReport, {styles} from '../../excel'
 
     /**
      * Determines whether to show patient name format as
@@ -253,26 +252,8 @@
                 }
             },
             exportExcel () {
-                const bytes = buildReport([
-                    {
-                        name: 'patient list',
-                        heading: [],
-                        merges: [],
-                        specification: this.columns.reduce((a, b) => {
-                            a[b] = {
-                                displayName: b,
-                                headerStyle: styles.cellNormal,
-                                width: 100
-                            }
-                            return a
-                        }, {}),
-                        data: this.tableData
-                    }
-                ])
-
-                const blob = new Blob([bytes], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
                 const link = document.createElement('a')
-                link.href = window.URL.createObjectURL(blob)
+                link.href = rootUrl('api/patients?excel')
                 link.download = `patient-list-${Date.now()}.xlsx`
                 link.click()
             }
