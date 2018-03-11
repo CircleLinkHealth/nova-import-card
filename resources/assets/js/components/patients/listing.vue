@@ -298,6 +298,8 @@
 
             Event.$on('vue-tables.filter::lastReading', this.activateFilters)
 
+            Event.$on('vue-tables.filter::provider', this.activateFilters)
+
             Event.$on('vue-tables.limit', this.activateFilters)
         }
     }
