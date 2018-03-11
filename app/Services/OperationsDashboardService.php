@@ -22,9 +22,11 @@ class OperationsDashboardService
      * @param Carbon $date
      * @param $dateType
      *
+     * @param null $practiceId
+     *
      * @return \Illuminate\Support\Collection
      */
-    public function getCpmPatientTotals(Carbon $date, $dateType)
+    public function getCpmPatientTotals(Carbon $date, $dateType, $practiceId = null)
     {
         $fromDate = $date->startOfMonth()->toDateString();
         $toDate   = $date->endOfMonth()->toDateString();
@@ -74,10 +76,19 @@ class OperationsDashboardService
 
         }
 
-        $dayCount   = $this->countPatientsByStatus($dayPatients);
-        $weekCount  = $this->countPatientsByStatus($weekPatients);
-        $monthCount = $this->countPatientsByStatus($monthPatients);
-        $totalCount = $this->countPatientsByStatus($totalPatients);
+        if($practiceId){
+            $dayCount   = $this->filterPatientsByPractice($dayPatients, $practiceId);
+            $weekCount  = $this->filterPatientsByPractice($weekPatients, $practiceId);
+            $monthCount = $this->filterPatientsByPractice($monthPatients, $practiceId);
+            $totalCount = $this->filterPatientsByPractice($totalPatients, $practiceId);
+
+
+        }else{
+            $dayCount   = $this->countPatientsByStatus($dayPatients);
+            $weekCount  = $this->countPatientsByStatus($weekPatients);
+            $monthCount = $this->countPatientsByStatus($monthPatients);
+            $totalCount = $this->countPatientsByStatus($totalPatients);
+        }
 
 
         return collect([
@@ -243,28 +254,34 @@ class OperationsDashboardService
         $enrolled  = [];
         $gCodeHold = [];
 
-        foreach ($patients as $patient) {
-            if ($patient->patientInfo->ccm_status == 'paused') {
-                $paused[] = $patient;
-            }
-            if ($patient->patientInfo->ccm_status == 'withdrawn') {
-                $withdrawn[] = $patient;
-            }
-            if ($patient->patientInfo->ccm_status == 'enrolled') {
-                $enrolled[] = $patient;
-            }
-            if ($patient->carePlan) {
-                if ($patient->carePlan->status == 'to_enroll') {
-                    $gCodeHold[] = $patient;
-                }
-            }
+        $pausedCount    = null;
+        $withdrawnCount = null;
+        $enrolledCount  = null;
+        $gCodeHoldCount = null;
 
-        }
+            foreach ($patients as $patient) {
+                    if ($patient->patientInfo->ccm_status == 'paused') {
+                        $paused[] = $patient;
+                    }
+                    if ($patient->patientInfo->ccm_status == 'withdrawn') {
+                        $withdrawn[] = $patient;
+                    }
+                    if ($patient->patientInfo->ccm_status == 'enrolled') {
+                        $enrolled[] = $patient;
+                    }
+                    if ($patient->carePlan) {
+                        if ($patient->carePlan->status == 'to_enroll') {
+                            $gCodeHold[] = $patient;
+                        }
+                    }
+
+            }
 
         $pausedCount    = count($paused);
         $withdrawnCount = count($withdrawn);
         $enrolledCount  = count($enrolled);
         $gCodeHoldCount = count($gCodeHold);
+
 
 
         return collect([

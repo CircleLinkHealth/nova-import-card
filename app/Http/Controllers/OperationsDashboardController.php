@@ -34,6 +34,7 @@ class OperationsDashboardController extends Controller
         $fromDate = $date->startOfMonth()->toDateTimeString();
         $toDate = $date->endOfMonth()->toDateTimeString();
 
+
         //active practices for dropdown.
         $practices = Practice::active()->get();
 
@@ -44,7 +45,8 @@ class OperationsDashboardController extends Controller
         return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
-            'patientsByPractice'
+            'patientsByPractice',
+            'date',
         ]));
 
     }
@@ -57,18 +59,8 @@ class OperationsDashboardController extends Controller
      */
     public function getTotalPatientData(Request $request){
 
-        if ($request['dayDate']){
-            $dateType = 'day';
-            $date = new Carbon($request['dayDate']);
-        }
-        if ($request['weekDate']){
-            $dateType = 'week';
-            $date = new Carbon($request['weekDate']);
-        }
-        if ($request['monthDate']){
-            $dateType = 'month';
-            $date = new Carbon($request['monthDate']);
-        }
+        $date = new Carbon($request['date']);
+        $dateType = $request['type'];
 
         $practices = Practice::active()->get();
 
@@ -79,38 +71,33 @@ class OperationsDashboardController extends Controller
         return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
-            'patientsByPractice'
+            'patientsByPractice',
+            'date'
+
         ]));
 
     }
 
     public function getPatientsByPractice(Request $request){
 
-        if ($request['dayDate']){
-            $dateType = 'day';
-            $date = new Carbon($request['dayDate']);
-        }
-        if ($request['weekDate']){
-            $dateType = 'week';
-            $date = new Carbon($request['weekDate']);
-        }
-        if ($request['monthDate']){
-            $dateType = 'month';
-            $date = new Carbon($request['monthDate']);
-        }
+
+
+        $date = new Carbon($request['date']);
+        $dateType = $request['type'];
 
         $practices = Practice::active()->get();
 
-        //fix date, because you need 2 dates to get totals to filter by practice
 
-        $totals = $this->service->getCpmPatientTotals($date, $dateType);
+        $totals = null;
 
-        $patientsByPractice = $this->service->filterPatientsByPractice($totals, 182);
+        $patientsByPractice = $this->service->getCpmPatientTotals($date, $dateType, $request['practice_id']);
+
 
         return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
-            'patientsByPractice'
+            'patientsByPractice',
+            'date',
         ]));
 
     }
@@ -123,24 +110,10 @@ class OperationsDashboardController extends Controller
      *
      * @return mixed
      */
-    public function getList(Request $request, $type){
+    public function getList(Request $request, $type, $date){
 
-        $url = $request->server('HTTP_REFERER');
-        $date = parse_url($url, PHP_URL_QUERY);
-        $str = parse_str($date, $urlDate);
 
-        $urlDate = array_chunk($urlDate, 2);
-
-//        if (!$request['totalDate']){
-//            return $this->badRequest('Invalid [totalDate] parameter. Must have a value."');
-//        }
-        $date = new Carbon($urlDate[0][0]);
-//        $dayDate = $date->toDateString();
-
-//        if (!$request['listType']){
-//            return $this->badRequest('Invalid [listType] parameter."');
-//        }
-
+        $date = new Carbon($date);
 
 
 

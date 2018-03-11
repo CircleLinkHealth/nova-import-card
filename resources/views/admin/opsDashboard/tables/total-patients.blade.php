@@ -3,10 +3,10 @@
     <div class="panel-body">
         <table class="table">
             <tr>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'day'])}}" method="GET">Daily</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'week'])}}" method="GET">Weekly</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'month'])}}" method="GET">Monthly</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'total'])}}" method="GET">Total</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date ])}}" method="GET">Daily</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date])}}" method="GET">Weekly</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date])}}" method="GET">Monthly</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date])}}" method="GET">Total</a></th>
             </tr>
             <tr>
                 <td>Enrolled: {{$totals['dayCount']['enrolled']}}</td>
@@ -36,38 +36,17 @@
     </div>
     <div class="panel-footer">
         <div class="row">
-            <select name="type">
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-            </select>
-
-            <input id="dayDate" type="date" name="dayDate" required class="form-control">
-
             <div class="col-md-4">
-                <form action="{{route('OpsDashboard.totalData')}}" method="GET" class="form-inline">
+                <form id="total-patients" action="{{route('OpsDashboard.totalData')}}" method="GET" class="form-inline">
                     <div class="form-group">
-                        <label for="dayDate">Go to a specific day</label>
-                        <input id="dayDate" type="date" name="dayDate" required class="form-control">
+                        <select name="type">
+                            <option name="type" value="day">Day</option>
+                            <option name="type" value="week">Week</option>
+                            <option name="type" value="month">Month</option>
+                        </select>
+                        <input id="date" type="date" name="date" required class="form-control">
+                        <input type="submit" value="Submit" class="btn btn-info">
                     </div>
-
-                    <input type="submit" value="Submit" class="btn btn-info">
-                </form>
-            </div>
-
-            <div class="col-md-4">
-                <form action="{{route('OpsDashboard.totalData')}}" method="GET">
-                    Go to a specific week:
-                    <input type="date" name="weekDate" required class="form-control">
-                    <input type="submit" value="Submit" class="btn btn-info">
-                </form>
-            </div>
-
-            <div class="col-md-4">
-                <form action="{{route('OpsDashboard.totalData')}}" method="GET">
-                    Go to a specific month:
-                    <input type="date" name="monthDate" required class="form-control">
-                    <input type="submit" value="Submit" class="btn btn-info">
                 </form>
             </div>
         </div>
