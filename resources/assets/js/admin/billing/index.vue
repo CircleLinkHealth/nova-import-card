@@ -55,8 +55,8 @@
                                     <div class="col-sm-4">
                                         <div>&nbsp;</div>
                                         <div>
-                                            <button class="btn btn-info" @click="attachChargeableService">Attach</button>
-                                            <button class="btn btn-danger" @click="detachChargeableService">Detach</button>
+                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices">Attach</button>
+                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices">Detach</button>
                                             <loader class="inline-block absolute" v-if="loaders.chargeableServices"></loader>
                                         </div>
                                     </div>
