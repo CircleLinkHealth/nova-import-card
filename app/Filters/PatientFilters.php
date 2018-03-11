@@ -83,6 +83,10 @@ class PatientFilters extends QueryFilters
         return $this->builder->orderByJoin('providerInfo.user.display_name', $type);
     }
     
+    public function sort_program($type = null) {
+        return $this->builder->orderByJoin('primaryPractice.display_name', $type);
+    }
+    
     public function sort_ccmStatus($type = null) {
         return $this->builder->orderByJoin('patientInfo.ccm_status', $type);
     }

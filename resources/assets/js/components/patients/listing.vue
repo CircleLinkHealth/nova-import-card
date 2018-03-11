@@ -102,7 +102,8 @@
                         age: (ascending) => (a, b) => 0,
                         registeredOn: (ascending) => (a, b) => 0,
                         lastReading: (ascending) => (a, b) => 0,
-                        ccm: (ascending) => (a, b) => 0
+                        ccm: (ascending) => (a, b) => 0,
+                        program: (ascending) => (a, b) => 0
                     }
                 }
             }
