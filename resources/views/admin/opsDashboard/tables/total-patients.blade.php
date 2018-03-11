@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading">CarePlan Manager Patient Totals</div>
+    <div class="panel-heading">CarePlan Manager Patient Totals for {{$displayDate}} (Specific {{$dateType}})</div>
     <div class="panel-body">
         <table class="table">
             <tr>

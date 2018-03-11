@@ -77,10 +77,10 @@ class OperationsDashboardService
         }
 
         if($practiceId){
-            $dayCount   = $this->filterPatientsByPractice($dayPatients, $practiceId);
-            $weekCount  = $this->filterPatientsByPractice($weekPatients, $practiceId);
-            $monthCount = $this->filterPatientsByPractice($monthPatients, $practiceId);
-            $totalCount = $this->filterPatientsByPractice($totalPatients, $practiceId);
+            $dayCount   = $this->countPatientsByStatus($this->filterPatientsByPractice($dayPatients, $practiceId));
+            $weekCount  = $this->countPatientsByStatus($this->filterPatientsByPractice($weekPatients, $practiceId));
+            $monthCount = $this->countPatientsByStatus($this->filterPatientsByPractice($monthPatients, $practiceId));
+            $totalCount = $this->countPatientsByStatus($this->filterPatientsByPractice($totalPatients, $practiceId));
 
 
         }else{
@@ -140,9 +140,8 @@ class OperationsDashboardService
         $filteredPatients = $patients->where('program_id', $practiceId)
                                      ->all();
 
-        $patientsCount = $this->countPatientsByStatus($filteredPatients);
 
-        return $patientsCount;
+        return $filteredPatients;
 
 
     }

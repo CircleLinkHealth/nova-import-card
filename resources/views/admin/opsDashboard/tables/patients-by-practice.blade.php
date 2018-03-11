@@ -1,12 +1,12 @@
 <div class="panel panel-default">
-    <div class="panel-heading">Patient Stats by Practice</div>
+    <div class="panel-heading">Patient Stats by Practice for {{$displayDate}} (Specific {{$dateType}}). Practice: {{$practiceName}}</div>
     <div class="panel-body">
         <table class="table">
             <tr>
-                <th>Daily</th>
-                <th>Weekly</th>
-                <th>Monthly</th>
-                <th>Total</th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date ])}}" method="GET">Daily</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date])}}" method="GET">Weekly</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date])}}" method="GET">Monthly</a></th>
+                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date])}}" method="GET">Total</a></th>
             </tr>
             <tr>
                 <td>Enrolled: {{$patientsByPractice['dayCount']['enrolled']}}</td>
