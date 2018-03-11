@@ -75,6 +75,38 @@ class PatientFilters extends QueryFilters
         });
     }
 
+    public function sort_name($type = null) {
+        return $this->builder->orderBy('display_name', $type);
+    }
+    
+    public function sort_provider($type = null) {
+        return $this->builder->orderByJoin('providerInfo.user.display_name', $type);
+    }
+    
+    public function sort_ccmStatus($type = null) {
+        return $this->builder->orderByJoin('patientInfo.ccm_status', $type);
+    }
+    
+    public function sort_careplanStatus($type = null) {
+        return $this->builder->orderByJoin('careplan.status', $type);
+    }
+    
+    public function sort_dob($type = null) {
+        return $this->builder->orderByJoin('patientInfo.birth_date', $type);
+    }
+    
+    public function sort_age($type = null) {
+        return $this->sort_dob((!$type || $type == 'asc') ? 'desc' : 'asc');
+    }
+    
+    public function sort_registeredOn($type = null) {
+        return $this->builder->orderBy('created_at', $type);
+    }
+    
+    public function sort_ccm($type = null) {
+        return $this->builder->orderByJoin('patientInfo.cur_month_activity_time', $type);
+    }
+
     public function globalFilters(): array
     {
         return [];
