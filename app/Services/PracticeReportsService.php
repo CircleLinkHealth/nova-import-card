@@ -159,10 +159,12 @@ class PracticeReportsService
             $lineUnitPrice = $chargeableServiceWithPivot->pivot->amount;
         }
 
-        if (!$lineUnitPrice && $data['practice']->clh_pppm) {
-            $lineUnitPrice = $data['practice']->clh_pppm;
-        } else {
-            $lineUnitPrice = $chargeableService->amount;
+        if (!$lineUnitPrice) {
+            if ($data['practice']->clh_pppm) {
+                $lineUnitPrice = $data['practice']->clh_pppm;
+            } else {
+                $lineUnitPrice = $chargeableService->amount;
+            }
         }
 
         $rowData = [
