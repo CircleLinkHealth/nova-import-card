@@ -377,4 +377,14 @@ class PatientSummaryEloquentRepository
 
         return $summary;
     }
+
+    public function detachDefaultChargeableService($summary, $defaultCodeId)
+    {
+        $summary->chargeableServices()->where('chargable_service_id', $defaultCodeId)
+                        ->delete();
+        
+        $summary->load('chargeableServices');
+
+        return $summary;
+    }
 }

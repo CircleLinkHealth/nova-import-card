@@ -253,36 +253,50 @@
                 this.retrieve()
                 this.getCounts()
             },
-            detachChargeableService() {
+            detachChargeableService(e) {
+                if (e) e.preventDefault()
                 const id = this.selectedService
-
+                console.log('billing:chargeable-service:default', id)
+                const service = this.chargeableServices.find(s => s.id == id)
+                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to remove ${service.code} from all chargeable services for ${practice.name} in ${this.selectedMonth}?`)) {
+                    return this.updateChargeableService(id, true)
+                }
             },
-            attachChargeableService() {
+            attachChargeableService(e) {
+                if (e) e.preventDefault()
                 const id = this.selectedService
                 console.log('billing:chargeable-service:default', id)
                 const service = this.chargeableServices.find(s => s.id == id)
                 const practice = this.practices.find(p => p.id == this.selectedPractice)
                 if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
-                    this.loaders.chargeableServices = true
-                    return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), {
-                        practice_id: this.selectedPractice,
-                        date: this.selectedMonth,
-                        default_code_id: id
-                    }).then(response => {
-                        (response.data || []).forEach(summary => {
-                            const tableItem = this.tableData.find(row => row.id == summary.id)
-                            if (tableItem) {
-                                tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
-                            }
-                        })
-                        this.loaders.chargeableServices = false
-                        console.log('billing:chargeable-services:default:update', response.data)
-                    }).catch(err => {
-                        console.error('billing:chargeable-services:default:update', err)
-                        
-                        this.loaders.chargeableServices = false
-                    })
+                    return this.updateChargeableService(id)
                 }
+            },
+            updateChargeableService(id, isDetach = false) {
+                this.loaders.chargeableServices = true
+                const data = {
+                    practice_id: this.selectedPractice,
+                    date: this.selectedMonth,
+                    default_code_id: id
+                }
+                if (isDetach) {
+                    data.detach = true
+                }
+                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), data).then(response => {
+                    (response.data || []).forEach(summary => {
+                        const tableItem = this.tableData.find(row => row.id == summary.id)
+                        if (tableItem) {
+                            tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
+                        }
+                    })
+                    this.loaders.chargeableServices = false
+                    console.log('billing:chargeable-services:default:update', response.data)
+                }).catch(err => {
+                    console.error('billing:chargeable-services:default:update', err)
+                    
+                    this.loaders.chargeableServices = false
+                })
             },
             getChargeableServices() {
                 this.loaders.chargeableServices = true
