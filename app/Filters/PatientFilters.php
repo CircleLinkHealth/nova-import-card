@@ -4,6 +4,7 @@ namespace App\Filters;
 
 use App\Repositories\PatientReadRepository;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PatientFilters extends QueryFilters
 {
@@ -58,7 +59,7 @@ class PatientFilters extends QueryFilters
     }
     
     public function age($age) {
-        $date = Carbon::now()->subYear($age + 1)->format('Y');
+        $date = Carbon::now()->subYear($age)->format('Y');
         return $this->builder->whereHas('patientInfo', function ($query) use ($date) {
            $query->where('birth_date', 'LIKE', $date . '%');
         });
