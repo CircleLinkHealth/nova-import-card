@@ -71,6 +71,7 @@
             options() {
                 return {
                     filterByColumn: true,
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: [],
@@ -90,6 +91,18 @@
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
+                    },
+                    customSorting: {
+                        name: (ascending) => (a, b) => 0,
+                        provider: (ascending) => (a, b) => 0,
+                        ccmStatus: (ascending) => (a, b) => 0,
+                        careplanStatus: (ascending) => (a, b) => 0,
+                        dob: (ascending) => (a, b) => 0,
+                        phone: (ascending) => (a, b) => 0,
+                        age: (ascending) => (a, b) => 0,
+                        registeredOn: (ascending) => (a, b) => 0,
+                        lastReading: (ascending) => (a, b) => 0,
+                        ccm: (ascending) => (a, b) => 0
                     }
                 }
             }
@@ -97,13 +110,15 @@
         methods: {
             rootUrl,
             nextPageUrl () {
-                const query = this.$refs.tblPatientList.$data.query
+                const $table = this.$refs.tblPatientList
+                const query = $table.$data.query
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${$table.orderBy.column}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
             toggleProgramColumn () {
@@ -299,6 +314,8 @@
             Event.$on('vue-tables.filter::lastReading', this.activateFilters)
 
             Event.$on('vue-tables.filter::provider', this.activateFilters)
+    
+            Event.$on('vue-tables.sorted', this.activateFilters)
 
             Event.$on('vue-tables.limit', this.activateFilters)
         }
