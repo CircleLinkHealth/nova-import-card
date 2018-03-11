@@ -153,10 +153,10 @@ class PracticeReportsService
         }
 
         //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
-        if ($data['practice']->clh_pppm) {
+        $lineUnitPrice = $chargeableService->amount;
+
+        if (!$lineUnitPrice && $data['practice']->clh_pppm) {
             $lineUnitPrice = $data['practice']->clh_pppm;
-        } else {
-            $lineUnitPrice = $chargeableService->amount;
         }
 
         $rowData = [
