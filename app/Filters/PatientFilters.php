@@ -107,6 +107,14 @@ class PatientFilters extends QueryFilters
         return $this->builder->orderByJoin('patientInfo.cur_month_activity_time', $type);
     }
 
+    public function excel() {
+        return true;
+    }
+
+    public function isExcel() {
+        return isset($this->filters()['excel']);
+    }
+
     public function globalFilters(): array
     {
         return [];
