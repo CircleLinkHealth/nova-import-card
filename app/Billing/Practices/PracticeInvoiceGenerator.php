@@ -148,6 +148,7 @@ class PracticeInvoiceGenerator
             $data['patientData'][$u->id]['dob']      = $u->birth_date;
             $data['patientData'][$u->id]['practice'] = $u->program_id;
             $data['patientData'][$u->id]['provider'] = $u->billingProviderName;
+            $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
             $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
                 ? $u->ccdProblems->where('id', $summary->problem_1)->first()

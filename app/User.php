@@ -2795,4 +2795,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         }
         return 'CircleLink Health';
     }
+
+    public function billingCodes(Carbon $monthYear) {
+        $summary = $this->patientSummaries()
+            ->where('month_year', $monthYear->toDateString())
+            ->with('chargeableServices')
+            ->has('chargeableServices')
+            ->first();
+
+        if (!$summary) return '';
+
+        return $summary->chargeableServices
+            ->implode('code', ', ');
+    }
 }
