@@ -10,7 +10,7 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{displayText || text}}
+            {{frontText || displayText || text.text || text || 'Edit'}}
         </div>
     </div>
 </template>
@@ -36,6 +36,12 @@
                 isEditMode: this.isEdit
             }
         },
+        computed: {
+            frontText() {
+                const ret = (this.values.find(item => (item && ((item.constructor.name === 'Object' && item.value) || item)) == this.text) || '')
+                return ret.text || ret
+            }
+        },
         methods: {
             toggleEdit(e) {
                 e.preventDefault();
@@ -49,6 +55,11 @@
                 if (this.noButton && this.text) {
                     this.toggleEdit(e)
                 }
+            }
+        },
+        watch: {
+            value (newValue) {
+                this.text = this.value || (this.values || [])[0] || ''
             }
         }
     }

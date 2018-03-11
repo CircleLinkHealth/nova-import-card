@@ -35,7 +35,8 @@
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
@@ -222,7 +223,7 @@
                         </li>
 
 
-                        @if ( ! Auth::guest())
+
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -241,6 +242,17 @@
                                             Patient Report</a></li>
                                 </ul>
                             </li>
+
+                        @if(auth()->user()->isSaas())
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    SaaS Accounts<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('saas-accounts.create', []) }}">Create New</a></li>
+                                </ul>
+                            </li>
                         @endif
 
                     </ul>
@@ -252,12 +264,14 @@
                             <li class="dropdown">
                                 <div id="time-tracker"></div>
                             </li>
+
                             <li class="dropdown">
                                 <a href="{{url('/jobs/completed')}}">
                                     <span class="badge">{{auth()->user()->cachedNotificationsList()->count()}}</span>
                                     Jobs Completed
                                 </a>
                             </li>
+
                             <li class="dropdown">
                                 <a href="{{ route('patients.dashboard', array()) }}"
                                    style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
@@ -298,16 +312,16 @@
 <script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
 @stack('scripts')
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/compiled/sw.js')
-    .then(function(registration) {
-      console.log('Service Worker registration successful with scope: ',
-       registration.scope);
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
-  }
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/compiled/sw.js')
+            .then(function (registration) {
+                console.log('Service Worker registration successful with scope: ',
+                    registration.scope);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
 </script>
 <div style="clear:both;height:100px;"></div>
 </body>

@@ -43,7 +43,7 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Add Internal User
+                        {{ $titleVerb ?? '' }} Internal User
                     </div>
                     <div class="panel-body">
                         <div class="row">

@@ -15,11 +15,11 @@ class InternalUser
     private $practices;
     private $role;
 
-    public function __construct($user, $practices, $role)
+    public function __construct($user, $practiceIds, $roleId)
     {
         $this->user      = $user;
-        $this->practices = $practices;
-        $this->role      = $role;
+        $this->practices = $practiceIds;
+        $this->role      = $roleId;
     }
 
     /**

@@ -19,6 +19,7 @@
 
 <script>
     import EventBus from '../admin/time-tracker/comps/event-bus'
+    import { Event } from 'vue-tables-2'
 
     export default {
         props: [ 'name' ],
@@ -37,6 +38,11 @@
                         ]
                     }
                 }
+            }
+        },
+        computed: {
+            componentName () {
+                return `notifications${this.name ? '-' + this.name : ''}`;
             }
         },
         methods: {
@@ -66,12 +72,13 @@
                     }
                     
                     this.notes.push(newNote)
-                    console.log('notifications:create', newNote)
+                    console.log(`${this.componentName}:create`, newNote)
                 }
             }
         },
         mounted() {
-            EventBus.$on('notifications:create', this.create)
+            EventBus.$on(`${this.componentName}:create`, this.create)
+            Event.$on(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args))
         }
     }
 </script>

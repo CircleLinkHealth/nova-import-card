@@ -6,6 +6,7 @@ use App\Call;
 use App\Patient;
 use App\Services\Calls\SchedulerService;
 use App\User;
+use App\Http\Resources\Call as CallResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -92,7 +93,7 @@ class CallController extends Controller
         $call->scheduler       = auth()->user()->id;
         $call->save();
 
-        return response($call, 201);
+        return response()->json(CallResource::make($call), 201);
         //return view('wpUsers.patient.calls.create');
     }
 

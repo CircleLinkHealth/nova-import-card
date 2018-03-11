@@ -30,7 +30,7 @@ class SchedulerService
     public function __construct(PatientWriteRepository $patientWriteRepository, NoteService $noteService)
     {
         $this->patientWriteRepository = $patientWriteRepository;
-        $this->noteService = $noteService;
+        $this->noteService            = $noteService;
     }
 
     /* Success is the call's status.

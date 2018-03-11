@@ -124,22 +124,24 @@ class PatientWriteRepository
      */
     public function updatePausedLetterPrintedDate(array $userIdsToPrint, Carbon $dateTime = null)
     {
-        if (!$dateTime) {
+        if ( ! $dateTime) {
             $dateTime = Carbon::now();
         }
 
         return Patient::whereIn('user_id', $userIdsToPrint)
-            ->update([
-                'paused_letter_printed_at' => $dateTime->toDateTimeString(),
-            ]);
+                      ->update([
+                          'paused_letter_printed_at' => $dateTime->toDateTimeString(),
+                      ]);
     }
 
-    public function setStatus($userId, $status) {
-        $stati = new Collection([ Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN ]);
-        $user = User::find($userId);
+    public function setStatus($userId, $status)
+    {
+        $stati = new Collection([Patient::PAUSED, Patient::ENROLLED, Patient::WITHDRAWN]);
+        $user  = User::find($userId);
         if ($stati->contains($status) && $user) {
-            Patient::where([ 'user_id' => $userId ])->update([ 'ccm_status' => $status ]);
+            Patient::where(['user_id' => $userId])->update(['ccm_status' => $status]);
         }
-        return Patient::where([ 'user_id' => $userId ])->first();
+
+        return Patient::where(['user_id' => $userId])->first();
     }
 }

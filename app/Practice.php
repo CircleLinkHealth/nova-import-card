@@ -3,6 +3,7 @@
 use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasSettings;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -75,6 +76,7 @@ use Illuminate\Notifications\Notifiable;
 class Practice extends \App\BaseModel
 {
     use HasSettings,
+        SaasAccountable,
         SoftDeletes,
         Notifiable;
 
@@ -131,7 +133,7 @@ class Practice extends \App\BaseModel
     public function providers() {
         return Practice::getProviders($this->id);
     }
-    
+
     public function nurses() {
         return $this->users()->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');

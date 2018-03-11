@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Patient\Traits;
 
 use Illuminate\Http\Request;
+use App\Filters\NoteFilters;
 
 trait NoteTraits
 {
-    public function getNotes($userId, Request $request) {
+    public function getNotes($userId, NoteFilters $filters) {
         if ($userId) {
-            $type = $request->input('type');
-            return $this->noteService->patientNotes($userId, $type);
+            return $this->noteService->patientNotes($userId, $filters);
         }
         else return $this->badRequest('"userId" is important');
     }

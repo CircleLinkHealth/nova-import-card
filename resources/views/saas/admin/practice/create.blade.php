@@ -27,29 +27,46 @@
                         Add New Practice
                     </div>
                     <div class="panel-body">
+                        @include('errors.errors')
+
                         {!! Form::open(array('url' => route('saas-admin.practices.store', array()), 'class' => 'form-horizontal')) !!}
 
                         <div class="form-group">
 
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('display_name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                <div class="col-xs-10">{!! Form::text('display_name', '', ['class' => 'form-control', 'style' => 'width:100%;', 'required' => 'required']) !!}</div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('clh_pppm', 'CPM Price') !!}</div>
-                                <div class="col-xs-3"><input class="form-control" name="clh_pppm" style="width: 100%"/>
+                                <div class="col-xs-2">
+                                    {!! Form::label('service', 'Service') !!}
+                                </div>
+                                <div class="col-xs-7">
+                                    <select class="form-control" name="service_id">
+                                        @foreach(App\ChargeableService::all() as $service)
+                                            <option value="{{$service->id}}" @if($service->code == 'CPT 99490'){{'selected'}}@endif>{{$service->code}} - {{$service->description}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
+
+                                <div class="col-xs-1">
+                                    {!! Form::label('amount', 'Price ($)') !!}
+                                </div>
+                                <div class="col-xs-2">
+                                    <input class="form-control" name="amount" type="number" step="0.01" required style="width: 100%"/>
+                                </div>
+                            </div>
+
+                            <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('term_days', 'Invoice Terms (days)') !!}</div>
-                                <div class="col-xs-3"><input class="form-control" name="term_days" style="width: 100%"
+                                <div class="col-xs-2">
+                                    <input class="form-control" name="term_days" style="width: 100%"
                                                              value="30"/>
                                 </div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('active', 'Active') !!}</div>
-                                <div class="col-xs-10">
+                                <div class="col-xs-1">{!! Form::label('active', 'Active') !!}</div>
+                                <div class="col-xs-1">
                                     <input id="active" name="active" checked type="checkbox" class="form-control">
                                     <label for="active"><span> </span></label>
                                 </div>
