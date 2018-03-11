@@ -63,7 +63,7 @@
         "tylercd100/lern": "^3.8",
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
-        "waavi/url-shortener": "^1.0",
+        "waavi/url-shortener": "dev-master",
         "yajra/laravel-datatables-oracle": "~6.0",
         "zanysoft/laravel-zip": "^1.0"
     },
