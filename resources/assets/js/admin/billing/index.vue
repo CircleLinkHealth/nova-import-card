@@ -461,10 +461,9 @@
                             }
                             return a
                         }, {}),
-                        data: this.tableData.map(row => {
-                            row.chargeable_services = row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
-                                return row
-                        })
+                        data: this.tableData.map(row => (Object.assign({}, row, {
+                                chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                            })))
                     }
                 ])
 
