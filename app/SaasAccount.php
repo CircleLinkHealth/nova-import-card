@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class SaasAccount extends Model
+class SaasAccount extends \App\BaseModel
 {
     use SoftDeletes;
 
