@@ -21,8 +21,12 @@ return [
     ],
 
     'medication_loggers' => [
+        App\Importer\Loggers\Medication\JsonListMedicationLogger::class,
+        App\Importer\Loggers\Medication\CommaDelimitedListMedicationLogger::class,
     ],
 
     'problem_loggers' => [
+        App\Importer\Loggers\Problem\JsonListProblemLogger::class,
+        App\Importer\Loggers\Problem\CommaDelimitedListProblemLogger::class,
     ],
 ];
