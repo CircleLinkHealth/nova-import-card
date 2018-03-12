@@ -18,5 +18,11 @@ return [
     'allergy_loggers' => [
         App\Importer\Loggers\Allergy\JsonAllergyListLogger::class,
         App\Importer\Loggers\Allergy\CommaDelimitedListAllergyLogger::class,
-    ]
+    ],
+
+    'medication_loggers' => [
+    ],
+
+    'problem_loggers' => [
+    ],
 ];
