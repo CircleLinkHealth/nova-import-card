@@ -150,13 +150,13 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     {
         $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
 
-        if ($this->practice_id == $phoenixHeart->id) {
+        if ($phoenixHeart && $this->practice_id == $phoenixHeart->id) {
             return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
         }
 
         $rappahannock = Practice::whereDisplayName('Rappahannock Family Physicians')->first();
 
-        if ($this->practice_id == $rappahannock->id) {
+        if ($rappahannock && $this->practice_id == $rappahannock->id) {
             return new RappaSectionsLogger($this, $rappahannock);
         }
 
