@@ -74,19 +74,34 @@ class PracticeInvoiceGenerator
 
 
 
-    public function getInvoiceData()
+    public function getInvoiceData($chargeableServiceId = null)
     {
 
         $practiceId = $this->practice->id;
 
-        $billable = User::ofType('participant')
-                        ->where('program_id', '=', $this->practice->id)
-                        ->whereHas('patientSummaries', function ($query) {
-                            $query->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
-                                  ->where('approved', '=', true);
-                        })
-                        ->count() ?? 0;
+        if ($chargeableServiceId){
+            $billable = User::ofType('participant')
+                            ->where('program_id', '=', $this->practice->id)
+                            ->whereHas('patientSummaries', function ($query) use ($chargeableServiceId) {
+                                $query->whereHas('chargeableServices', function ($query) use ($chargeableServiceId){
+                                    $query->where('id', $chargeableServiceId);
+                                })
+                                    ->where('month_year', $this->month->toDateString())
+                                      ->where('ccm_time', '>=', 1200)
+                                      ->where('approved', '=', true);
+                            })
+                            ->count() ?? 0;
+        }else{
+            $billable = User::ofType('participant')
+                            ->where('program_id', '=', $this->practice->id)
+                            ->whereHas('patientSummaries', function ($query) {
+                                $query->where('month_year', $this->month->toDateString())
+                                      ->where('ccm_time', '>=', 1200)
+                                      ->where('approved', '=', true);
+                            })
+                            ->count() ?? 0;
+        }
+
 
         return [
             'clh_address'    => $this->practice->getAddress(),
