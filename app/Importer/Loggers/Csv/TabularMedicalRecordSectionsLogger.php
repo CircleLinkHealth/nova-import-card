@@ -10,6 +10,7 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
+use App\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 {
@@ -239,9 +240,44 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
 
         $name = explode($delimiter, $this->medicalRecord->provider_name);
 
+        $matchProvider = User::ofType('provider')
+            ->ofPractice($this->practice->id)
+            ->whereFirstName($name[1] ?? '')
+            ->whereLastName($name[0] ?? '')
+            ->first();
+
+        if ($matchProvider) {
+            $provider = ProviderLog::create(array_merge([
+                'first_name' => trim($name[1] ?? ''),
+                'last_name'  => trim($name[0] ?? ''),
+                'billing_provider_id' => $matchProvider->id,
+                'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
+            ], $this->foreignKeys));
+
+            return $this;
+        }
+
+        $matchProvider = User::ofType('provider')
+                             ->ofPractice($this->practice->id)
+                             ->whereFirstName($name[0] ?? '')
+                             ->whereLastName($name[1] ?? '')
+                             ->first();
+
+        if ($matchProvider) {
+            $provider = ProviderLog::create(array_merge([
+                'first_name' => trim($name[0] ?? ''),
+                'last_name'  => trim($name[1] ?? ''),
+                'billing_provider_id' => $matchProvider->id,
+                'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
+            ], $this->foreignKeys));
+
+            return $this;
+        }
+
         $provider = ProviderLog::create(array_merge([
-            'first_name' => trim($name[1] ?? ''),
-            'last_name'  => trim($name[0] ?? ''),
+            'first_name' => trim($name[0] ?? ''),
+            'last_name'  => trim($name[1] ?? ''),
+            'location_id' => $this->practice->primary_location_id ?? optional($this->practice->locations->first())->id
         ], $this->foreignKeys));
 
         return $this;
