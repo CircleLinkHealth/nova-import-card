@@ -166,27 +166,20 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
-        $medications = explode("\n", $this->medicalRecord->medications_string);
+        $medicationsToImport = [];
 
-        $medications = array_filter($medications);
+        foreach (config('importer.medication_loggers') as $class) {
+            $class = app($class);
 
-        foreach ($medications as $medication) {
-            $explodedMed = explode(',', $medication);
-
-            $sig = '';
-
-            if (isset($explodedMed[1])) {
-                $sig = trim(str_replace('Sig:', '', $explodedMed[1]));
+            if ($class->shouldHandle($this->medicalRecord)) {
+                $medicationsToImport = $class->handle($this->medicalRecord);
+                break;
             }
+        }
 
+        foreach ($medicationsToImport as $medication) {
             $medication = MedicationLog::create(
-                array_merge([
-                    'reference_title' => trim(str_replace([
-                        'Taking',
-                        'Continue',
-                    ], '', $explodedMed[0])),
-                    'reference_sig'   => $sig,
-                ], $this->foreignKeys)
+                array_merge($medication, $this->foreignKeys)
             );
         }
 

@@ -22,7 +22,7 @@ return [
 
     'medication_loggers' => [
         App\Importer\Loggers\Medication\JsonListMedicationLogger::class,
-        App\Importer\Loggers\Medication\CommaDelimitedListMedicationLogger::class,
+        App\Importer\Loggers\Medication\NewLineDelimitedListMedicationLogger::class,
     ],
 
     'problem_loggers' => [

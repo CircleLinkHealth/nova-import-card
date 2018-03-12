@@ -16,11 +16,29 @@ class JsonListMedicationLogger implements Logger
 
     public function handle($medicalRecord): array
     {
-        // TODO: Implement handle() method.
+        $medications = json_decode($medicalRecord->medications_string, true);
+
+        if (array_key_exists('Medications', $medications)) {
+            return collect($medications['Medications'])
+                ->map(function ($medication) {
+                    return [
+                        'reference_title' => trim(str_replace([
+                            'Taking',
+                            'Continue',
+                        ], '', $medication['Name'] ?? '')),
+                        'reference_sig'   => $medication['Sig'] ?? '',
+                    ];
+                })
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        return [];
     }
 
     public function shouldHandle($medicalRecord): bool
     {
-        // TODO: Implement shouldHandle() method.
+        return starts_with($medicalRecord->medications_string, ['[', '{']);
     }
 }
