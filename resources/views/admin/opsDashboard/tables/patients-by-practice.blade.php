@@ -1,12 +1,37 @@
 <div class="panel panel-default">
-    <div class="panel-heading">Patient Stats by Practice for {{$displayDate}} (Specific {{$dateType}}). Practice: {{$practiceName}}</div>
+    <div class="panel-heading">Patient Stats by Practice for {{$date->toDateString()}} (Specific {{$dateType}}).
+        Practice: @if($practice == false) Not Selected @else {{$practice->display_name}} @endif</div>
     <div class="panel-body">
         <table class="table">
             <tr>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date ])}}" method="GET">Daily</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date])}}" method="GET">Weekly</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date])}}" method="GET">Monthly</a></th>
-                <th><a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date])}}" method="GET">Total</a></th>
+                @if($practice == false)
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date,])}}"
+                           method="GET">Daily</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, ])}}"
+                           method="GET">Weekly</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date,])}}"
+                           method="GET">Monthly</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date,])}}"
+                           method="GET">Total</a></th>
+                @else
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                           method="GET">Daily</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                           method="GET">Weekly</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                           method="GET">Monthly</a></th>
+                    <th>
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                           method="GET">Total</a></th>
+                @endif
+
             </tr>
             <tr>
                 <td>Enrolled: {{$patientsByPractice['dayCount']['enrolled']}}</td>
@@ -40,9 +65,9 @@
                 <form action="{{route('OpsDashboard.patientsByPractice')}}" method="GET" class="form-inline">
                     <div class="form-group">
                         <select name="practice_id">
-                            <option name= "practice_id" value="">Active Practices</option>
+                            <option name="practice_id" value="">Active Practices</option>
                             @foreach($practices as $practice)
-                                <option  value="{{$practice['id']}}" required>{{$practice->display_name}}</option>
+                                <option value="{{$practice['id']}}" required>{{$practice->display_name}}</option>
                             @endforeach
                         </select>
                         <select name="type">

@@ -31,7 +31,6 @@ class OperationsDashboardController extends Controller
     public function index()
     {
         $date = Carbon::today();
-
         $dateType = 'day';
 
 
@@ -41,18 +40,16 @@ class OperationsDashboardController extends Controller
 
         $totals = $this->service->getCpmPatientTotals($date, 'day');
         $patientsByPractice = null;
-        $practiceName = 'Not Selected';
-        $displayDate = $date->toDateString();
+        $practice = false;
 
 
         return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
             'patientsByPractice',
-            'practiceName',
+            'practice',
             'date',
             'dateType',
-            'displayDate'
         ]));
 
     }
@@ -65,25 +62,26 @@ class OperationsDashboardController extends Controller
      */
     public function getTotalPatientData(Request $request){
 
-        $date = new Carbon($request['date']);
+        $date = Carbon::createFromFormat('Y-m-d', $request['date']);
+//       $date = new Carbon($request['date']);
         $dateType = $request['type'];
 
         $practices = Practice::active()->get();
 
         $totals = $this->service->getCpmPatientTotals($date, $dateType);
 
+
         $patientsByPractice = null;
-        $practiceName = 'Not Selected';
-        $displayDate = $date->toDateString();
+        $practice = false;
+
 
         return view('admin.opsDashboard.index', compact([
             'practices',
             'totals',
             'patientsByPractice',
-            'practiceName',
+            'practice',
             'date',
             'dateType',
-            'displayDate'
 
         ]));
 
@@ -95,9 +93,8 @@ class OperationsDashboardController extends Controller
 
         $date = new Carbon($request['date']);
         $dateType = $request['type'];
-        $displayDate = $date->toDateString();
         $practice = Practice::find($request['practice_id']);
-        $practiceName = $practice->display_name;
+
 
         $practices = Practice::active()->get();
 
@@ -111,10 +108,9 @@ class OperationsDashboardController extends Controller
             'practices',
             'totals',
             'patientsByPractice',
-            'practiceName',
+            'practice',
             'date',
             'dateType',
-            'displayDate'
         ]));
 
     }
@@ -132,7 +128,8 @@ class OperationsDashboardController extends Controller
 
         $date = new Carbon($date);
 
-
+//
+//        dd($request);
 
         if ($type == 'day'){
             $dayDate = $date->toDateString();
@@ -152,7 +149,12 @@ class OperationsDashboardController extends Controller
             $patients = $this->service->getTotalPatients();
         }
 
-        //return a view that contains detailed list?
+        if ($practiceId){
+            $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
+        }
+
+
+
         return view('admin.opsDashboard.list', compact([
             'patients'
         ]));

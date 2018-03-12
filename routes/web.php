@@ -1032,7 +1032,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OperationsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList'
                 ]);
-                Route::get('/patient-list/{type}/{date}', [
+                Route::get('/patient-list/{type}/{date}/{practiceId?}', [
                     'uses' => 'OperationsDashboardController@getList',
                     'as'   => 'OpsDashboard.patientList'
                 ]);

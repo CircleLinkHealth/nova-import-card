@@ -1,58 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('partials.adminUI')
 
-    <title>Patient List</title>
+@section('content')
+    @push('styles')
+        <style>
+            .ops-dboard-title {
+                background-color: #eee;
+                padding: 2rem;
+            }
+        </style>
+    @endpush
+    <div class="panel panel-default">
+        <div class="panel-heading">Patient List</div>
+        <div class="panel-body">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Practice Name</th>
+                    <th>Date Registered</th>
+                    <th>Date Paused/Withdrawn</th>
+                </tr>
+                @foreach($patients as $patient)
+                    <tr>
+                        <td>{{$patient->display_name}}</td>
+                        <td>{{$patient->patientInfo->birth_date}}</td>
+                        <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
+                        <td>{{$patient->registration_date}}</td>
+                        @if($patient->patientInfo->ccm_status == 'paused')
+                            <td>Paused: {{$patient->patientInfo->date_paused}}</td>
+                        @elseif($patient->patientInfo->ccm_status == 'withdrawn')
+                            <td> Withdrawn: {{$patient->patientInfo->date_withdrawn}}</td>
+                        @else
+                            <td> -- </td>
+                        @endif
 
+                    </tr>
 
-    <style>
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
+                @endforeach
+            </table>
+        </div>
+    </div>
 
-
-        label {
-            display: block;
-            text-align: center;
-            line-height: 150%;
-            font-size: 1.85em;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
-    </style>
-</head>
-<body>
-<h1 align="center">Patient List</h1>
-<div>
-    <table>
-        <tr>
-            <th>Id</th>
-            <th>Name</th>
-            <th>Email</th>
-        </tr>
-        @foreach($patients as $patient)
-            <tr>
-                <td>{{$patient['id']}}</td>
-                <td>{{$patient['display_name']}}</td>
-                <td>{{$patient['email']}}</td>
-            </tr>
-
-        @endforeach
-    </table>
-
-</div>
-</body>
+@endsection
