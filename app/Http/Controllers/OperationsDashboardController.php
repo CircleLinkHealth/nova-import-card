@@ -125,23 +125,39 @@ class OperationsDashboardController extends Controller
      *
      * @return mixed
      */
-    public function getList(Request $request, $type, $date, $practiceId = null){
+    public function getList(Request $request, $type, $date, $dateType, $practiceId = null){
 
         $to = null;
         $date = new Carbon($date);
         $toDate = null;
 
-//
-//        dd($request);
+        //type is the column, dateType is the query type
 
         if ($type == 'day'){
-            $dayDate = $date->copy()->toDateString();
-            $patients = $this->service->getTotalPatients($dayDate);
+            if ($dateType == 'day'){
+                $dayDate = $date->copy()->toDateString();
+                $patients = $this->service->getTotalPatients($dayDate);
+            }
+            if ($dateType == 'week'){
+                $dayDate = $date->copy()->endOfWeek()->toDateString();
+                $patients = $this->service->getTotalPatients($dayDate);
+            }
+            if ($dateType == 'month'){
+                $dayDate = $date->copy()->endOfMonth()->toDateString();
+                $patients = $this->service->getTotalPatients($dayDate);
+            }
         }
         if ($type == 'week'){
-            $fromDate = $date->copy()->startOfWeek()->toDateString();
-            $toDate = $date->copy()->endOfWeek()->toDateString();
-            $patients = $this->service->getTotalPatients($fromDate, $toDate);
+            if ($dateType == 'day' || 'week'){
+                $fromDate = $date->copy()->startOfWeek()->toDateString();
+                $toDate = $date->copy()->endOfWeek()->toDateString();
+                $patients = $this->service->getTotalPatients($fromDate, $toDate);
+            }
+            if ($dateType == 'month'){
+                $fromDate = $date->copy()->endOfMonth()->startOfWeek()->toDateString();
+                $toDate = $date->copy()->endOfMonth()->toDateString();
+                $patients = $this->service->getTotalPatients($fromDate, $toDate);
+            }
         }
         if ($type == 'month'){
             $fromDate = $date->copy()->startOfMonth()->toDateString();
@@ -157,6 +173,7 @@ class OperationsDashboardController extends Controller
             $practice = Practice::find($practiceId);
             $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
         }
+
 
 
 

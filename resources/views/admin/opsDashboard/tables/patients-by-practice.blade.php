@@ -6,29 +6,29 @@
             <tr>
                 @if($practice == false)
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date,])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date, 'dateType' => $dateType])}}"
                            method="GET">Daily</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, ])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, 'dateType' => $dateType])}}"
                            method="GET">Weekly</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date,])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date, 'dateType' => $dateType])}}"
                            method="GET">Monthly</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date,])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date, 'dateType' => $dateType])}}"
                            method="GET">Total</a></th>
                 @else
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'day', 'date' => $date, 'dateType' => $dateType, 'practiceId' => $practice->id ])}}"
                            method="GET">Daily</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'week', 'date' => $date, 'dateType' => $dateType, 'practiceId' => $practice->id ])}}"
                            method="GET">Weekly</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'month', 'date' => $date, 'dateType' => $dateType, 'practiceId' => $practice->id ])}}"
                            method="GET">Monthly</a></th>
                     <th>
-                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date, 'practiceId' => $practice->id ])}}"
+                        <a href="{{route('OpsDashboard.patientList', ['type'=> 'total', 'date' => $date, 'dateType' => $dateType, 'practiceId' => $practice->id ])}}"
                            method="GET">Total</a></th>
                 @endif
 
