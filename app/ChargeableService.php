@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ChargeableService extends Model
+class ChargeableService extends \App\BaseModel
 {
 
     protected $fillable = [
