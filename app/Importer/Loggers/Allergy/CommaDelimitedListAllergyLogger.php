@@ -8,7 +8,9 @@
 
 namespace App\Importer\Loggers\Allergy;
 
-class CommaDelimitedListAllergyLogger implements AllergyLogger
+use App\Contracts\Importer\MedicalRecord\Section\Logger;
+
+class CommaDelimitedListAllergyLogger implements Logger
 {
     public function handle($medicalRecord): array
     {

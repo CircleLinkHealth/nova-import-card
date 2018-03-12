@@ -6,10 +6,10 @@
  * Time: 2:14 PM
  */
 
-namespace App\Importer\Loggers\Allergy;
+namespace App\Contracts\Importer\MedicalRecord\Section;
 
 
-interface AllergyLogger
+interface Logger
 {
     public function handle($medicalRecord) : array;
 

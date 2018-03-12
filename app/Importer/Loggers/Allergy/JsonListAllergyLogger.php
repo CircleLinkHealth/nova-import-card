@@ -9,7 +9,9 @@
 namespace App\Importer\Loggers\Allergy;
 
 
-class JsonAllergyListLogger implements AllergyLogger
+use App\Contracts\Importer\MedicalRecord\Section\Logger;
+
+class JsonListAllergyLogger implements Logger
 {
 
     public function handle($medicalRecord): array
