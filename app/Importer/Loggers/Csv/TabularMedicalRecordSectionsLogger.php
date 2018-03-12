@@ -59,13 +59,18 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        $allergies = explode(',', $this->medicalRecord->allergies_string);
+        $allergiesToImport = [];
 
-        foreach ($allergies as $allergy) {
-            if (strtolower($allergy) == 'no') {
-                continue;
+        foreach (config('importer.allergy_loggers') as $class) {
+            $class = app($class);
+
+            if ($class->shouldHandle($this->medicalRecord)) {
+                $allergiesToImport = $class->handle($this->medicalRecord);
+                break;
             }
+        }
 
+        foreach ($allergiesToImport as $allergy) {
             $allergy = AllergyLog::create(
                 array_merge([
                     'allergen_name' => trim($allergy),
@@ -240,8 +245,8 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         $name = explode($delimiter, $this->medicalRecord->provider_name);
 
         $provider = ProviderLog::create(array_merge([
-            'first_name' => trim($name[1]),
-            'last_name'  => trim($name[0]),
+            'first_name' => trim($name[1] ?? ''),
+            'last_name'  => trim($name[0] ?? ''),
         ], $this->foreignKeys));
 
         return $this;

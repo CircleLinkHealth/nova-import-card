@@ -15,4 +15,8 @@ return [
         \App\Importer\Section\Validators\ImportAllItems::class,
     ],
 
+    'allergy_loggers' => [
+        App\Importer\Loggers\Allergy\JsonAllergyListLogger::class,
+        App\Importer\Loggers\Allergy\CommaDelimitedListAllergyLogger::class,
+    ]
 ];
