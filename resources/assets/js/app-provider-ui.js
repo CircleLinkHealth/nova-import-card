@@ -103,6 +103,7 @@ Vue.component('misc-modal', MiscModalComponent)
 Vue.component('appointments', AppointmentsComponent)
 Vue.component('patient-list', PatientList)
 Vue.component('v-datepicker', Datepicker)
+Vue.component('importerTrainer', ImporterTraining)
 
 const App = new Vue({
     el: '#app',
