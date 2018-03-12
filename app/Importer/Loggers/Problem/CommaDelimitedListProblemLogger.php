@@ -16,11 +16,30 @@ class CommaDelimitedListProblemLogger implements Logger
 
     public function handle($medicalRecord): array
     {
-        // TODO: Implement handle() method.
+        $problems = explode(',', $medicalRecord->problems_string);
+
+        foreach ($problems as $problem) {
+//            @todo: implement once a use case comes up
+//            $problem = trim($problem);
+//
+//            if (ctype_alpha(str_replace([
+//                "\n",
+//                "\t",
+//                ' ',
+//            ], '', $problem))) {
+//                $problem = [
+//                    'name' => $problem,
+//                ];
+//            }
+//
+//            $problem = [
+//                'code' => $problem,
+//            ];
+        }
     }
 
     public function shouldHandle($medicalRecord): bool
     {
-        // TODO: Implement shouldHandle() method.
+        return str_contains($medicalRecord->problems_string, ',') && !starts_with($medicalRecord->problems_string, ['[', '{']);
     }
 }

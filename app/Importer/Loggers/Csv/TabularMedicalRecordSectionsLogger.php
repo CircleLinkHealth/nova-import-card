@@ -5,6 +5,7 @@ use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
 use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
+use App\Importer\Models\ItemLogs\ProblemCodeLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
@@ -29,7 +30,7 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     public function __construct(TabularMedicalRecord $tmr, Practice $practice = null)
     {
         $this->medicalRecord = $tmr;
-        $this->practice = $practice;
+        $this->practice      = $practice;
 
         $this->foreignKeys = [
             'vendor_id'           => '1',
@@ -192,32 +193,33 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
-        $problems = json_decode($this->medicalRecord->problems_string);
+        $problemsToImport = [];
 
-        if (!$problems) {
-            $problems = explode(',', $this->medicalRecord->problems_string);
+        foreach (config('importer.problem_loggers') as $class) {
+            $class = app($class);
+
+            if ($class->shouldHandle($this->medicalRecord)) {
+                $problemsToImport = $class->handle($this->medicalRecord);
+                break;
+            }
         }
 
-        foreach ($problems as $problem) {
-            $problem = trim($problem);
-
-            if (ctype_alpha(str_replace([
-                "\n",
-                "\t",
-                ' ',
-            ], '', $problem))) {
-                $problem = ProblemLog::create(
-                    array_merge([
-                        'name' => $problem,
-                    ], $this->foreignKeys)
-                );
-            }
-
-            $problem = ProblemLog::create(
+        foreach ($problemsToImport as $problem) {
+            $problemLog = ProblemLog::create(
                 array_merge([
-                    'code' => $problem,
+                    'name'                   => $problem['name'],
+                    'start'                  => $problem['start'],
+                    'end'                    => $problem['end'],
+                    'status'                 => $problem['status'],
                 ], $this->foreignKeys)
             );
+
+            $problemCodeLog = ProblemCodeLog::create([
+                'code'                   => $problem['code'],
+                'code_system_name'       => $problem['code_system_name'],
+                'problem_code_system_id' => $problem['problem_code_system_id'],
+                'ccd_problem_log_id'     => $problemLog->id,
+            ]);
         }
 
         return $this;
