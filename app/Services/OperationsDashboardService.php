@@ -133,6 +133,8 @@ class OperationsDashboardService
 
 
     /**
+     * Filters a collection of Users by practice id.
+     *
      * @param $patients
      * @param $practiceId
      *
@@ -262,6 +264,9 @@ class OperationsDashboardService
     }
 
     /**
+     *
+     * Counts a collection of Users by their status.
+     *
      * @param $patients
      *
      * @return \Illuminate\Support\Collection

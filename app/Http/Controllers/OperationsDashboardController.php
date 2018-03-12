@@ -21,16 +21,18 @@ class OperationsDashboardController extends Controller
         OperationsDashboardService $service
     ) {
         $this->service = $service;
-
     }
 
 
     /**
+     * Gets Patient Counts for table: CarePlan Manager Patient Totals,
+     * for today, for specific day.
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        $date = Carbon::today();
+        $date     = Carbon::today();
         $dateType = 'day';
 
 
@@ -38,9 +40,9 @@ class OperationsDashboardController extends Controller
         $practices = Practice::active()->get();
 
 
-        $totals = $this->service->getCpmPatientTotals($date, 'day');
+        $totals             = $this->service->getCpmPatientTotals($date, 'day');
         $patientsByPractice = null;
-        $practice = false;
+        $practice           = false;
 
 
         return view('admin.opsDashboard.index', compact([
@@ -56,26 +58,23 @@ class OperationsDashboardController extends Controller
 
 
     /**
+     * Gets Patient Counts for table: CarePlan Manager Patient Totals
+     *
      * @param Request $request
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function getTotalPatientData(Request $request){
+    public function getTotalPatientData(Request $request)
+    {
+        $practice           = false;
+        $patientsByPractice = null;
 
         $date = Carbon::createFromFormat('Y-m-d', $request['date']);
-//       $date = new Carbon($request['date']);
         $dateType = $request['type'];
 
         $practices = Practice::active()->get();
 
-//        dd([$date, $request['date']]);
-
         $totals = $this->service->getCpmPatientTotals($date, $dateType);
-
-
-        $patientsByPractice = null;
-        $practice = false;
-
 
         return view('admin.opsDashboard.index', compact([
             'practices',
@@ -89,20 +88,24 @@ class OperationsDashboardController extends Controller
 
     }
 
-    public function getPatientsByPractice(Request $request){
+    /**
+     * Gets Patient Counts for table: Patient stats by Practice.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getPatientsByPractice(Request $request)
+    {
 
+        $totals = null;
 
-
-        $date = new Carbon($request['date']);
+        $date     = new Carbon($request['date']);
         $dateType = $request['type'];
         $practice = Practice::find($request['practice_id']);
 
 
         $practices = Practice::active()->get();
-
-
-        $totals = null;
-
         $patientsByPractice = $this->service->getCpmPatientTotals($date, $dateType, $practice->id);
 
 
@@ -119,62 +122,67 @@ class OperationsDashboardController extends Controller
 
 
     /**
-     * gets Patient list for selected column from Patient Totals table.
+     * Gets Patient list for Total Patients Table, and Patients by Practice Table.
+     *
      *
      * @param Request $request
      *
+     * @param $type (type of the column (day, week, month, total)
+     * @param $date
+     * @param $dateType (type of date for the query (specific day, week, or month)
+     * @param null $practiceId
+     *
      * @return mixed
      */
-    public function getList(Request $request, $type, $date, $dateType, $practiceId = null){
+    public function getList(Request $request, $type, $date, $dateType, $practiceId = null)
+    {
 
-        $to = null;
-        $date = new Carbon($date);
+        $to     = null;
+        $date   = new Carbon($date);
         $toDate = null;
 
-        //type is the column, dateType is the query type
 
-        if ($type == 'day'){
-            if ($dateType == 'day'){
-                $dayDate = $date->copy()->toDateString();
+
+        if ($type == 'day') {
+            if ($dateType == 'day') {
+                $dayDate  = $date->copy()->toDateString();
                 $patients = $this->service->getTotalPatients($dayDate);
             }
-            if ($dateType == 'week'){
-                $dayDate = $date->copy()->endOfWeek()->toDateString();
+            if ($dateType == 'week') {
+                $dayDate  = $date->copy()->endOfWeek()->toDateString();
                 $patients = $this->service->getTotalPatients($dayDate);
             }
-            if ($dateType == 'month'){
-                $dayDate = $date->copy()->endOfMonth()->toDateString();
+            if ($dateType == 'month') {
+                $dayDate  = $date->copy()->endOfMonth()->toDateString();
                 $patients = $this->service->getTotalPatients($dayDate);
             }
         }
-        if ($type == 'week'){
-            if ($dateType == 'day' || 'week'){
+        if ($type == 'week') {
+            if ($dateType == 'day' || 'week') {
                 $fromDate = $date->copy()->startOfWeek()->toDateString();
-                $toDate = $date->copy()->endOfWeek()->toDateString();
+                $toDate   = $date->copy()->endOfWeek()->toDateString();
                 $patients = $this->service->getTotalPatients($fromDate, $toDate);
             }
-            if ($dateType == 'month'){
+            if ($dateType == 'month') {
                 $fromDate = $date->copy()->endOfMonth()->startOfWeek()->toDateString();
-                $toDate = $date->copy()->endOfMonth()->toDateString();
+                $toDate   = $date->copy()->endOfMonth()->toDateString();
                 $patients = $this->service->getTotalPatients($fromDate, $toDate);
             }
         }
-        if ($type == 'month'){
+        if ($type == 'month') {
             $fromDate = $date->copy()->startOfMonth()->toDateString();
-            $toDate = $date->copy()->endOfMonth()->toDateString();
+            $toDate   = $date->copy()->endOfMonth()->toDateString();
             $patients = $this->service->getTotalPatients($fromDate, $toDate);
         }
-        if ($type == 'total'){
+        if ($type == 'total') {
             $patients = $this->service->getTotalPatients();
         }
 
         $practice = null;
-        if ($practiceId){
+        if ($practiceId) {
             $practice = Practice::find($practiceId);
             $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
         }
-
-
 
 
         return view('admin.opsDashboard.list', compact([
@@ -182,19 +190,28 @@ class OperationsDashboardController extends Controller
             'type',
             'date',
             'practice',
-            'to'
+            'to',
         ]));
 
     }
 
-    public function getPausedPatientList(Request $request){
+
+    /**
+     * Gets Paused Patients List for two specific dates.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getPausedPatientList(Request $request)
+    {
 
         $practice = null;
-        $date = new Carbon($request['fromDate']);
-        $to = new Carbon($request['toDate']);
+        $date     = new Carbon($request['fromDate']);
+        $to       = new Carbon($request['toDate']);
 
         $fromDate = $date->toDateString();
-        $toDate = $to->toDateString();
+        $toDate   = $to->toDateString();
 
         $patients = $this->service->getPausedPatients($fromDate, $toDate);
 
@@ -202,15 +219,14 @@ class OperationsDashboardController extends Controller
             'patients',
             'practice',
             'date',
-            'to'
+            'to',
         ]));
     }
 
-    public function getPatientNotesAndActivitiesPage(Request $request){
+    public function getPatientNotesAndActivitiesPage(Request $request)
+    {
 
     }
-
-
 
 
 }

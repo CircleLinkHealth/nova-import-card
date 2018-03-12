@@ -10,7 +10,9 @@
         </style>
     @endpush
     <div class="panel panel-default">
-        <div class="panel-heading">Patient List @if(!$to)for {{$date->toDateString()}} @elseif($to) from {{$date->toDateString()}} to {{$to->toDateString()}} @endif @if($practice) for Practice: {{$practice->display_name}} @endif</div>
+        <div class="panel-heading">Patient List @if(!$to)for {{$date->toDateString()}} @elseif($to)
+                from {{$date->toDateString()}} to {{$to->toDateString()}} @endif @if($practice) for
+            Practice: {{$practice->display_name}} @endif</div>
         <div class="panel-body">
             <table class="table">
                 <tr>
@@ -33,7 +35,7 @@
                         @elseif($patient->patientInfo->ccm_status == 'withdrawn')
                             <td> Withdrawn: {{$patient->patientInfo->date_withdrawn}}</td>
                         @else
-                            <td> -- </td>
+                            <td> --</td>
                         @endif
 
                     </tr>

@@ -11,7 +11,7 @@
     @endpush
 
     <div class="container">
-        <h1 align="center">Patient Pipeline</h1>
+        <h3 align="center">Patient Pipeline</h3>
         <div class="row">
             <div class="col-md-12">
                 @include('admin.opsDashboard.tables.total-patients')
@@ -22,7 +22,7 @@
         <div class="text-center">
             <div>
                 <form action="{{route('OpsDashboard.pausedPatientList')}}">
-                    <h3 class="ops-dboard-title">Generate Paused Patient List</h3>
+                    <h4 class="ops-dboard-title">Generate Paused Patient List</h4>
                     <br>
                     From:
                     <input type="date" name="fromDate" required>
