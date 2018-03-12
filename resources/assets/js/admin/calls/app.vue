@@ -355,7 +355,7 @@
                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                     'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
                     'CCM Time': timeDisplay(call.getPatient().getInfo().cur_month_activity_time),
-                    'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
+                    'Successful Calls': (((call.getPatient().patient_summaries || []).slice(-1)[0] || {}).no_of_successful_calls || 0),
                     'Time Zone': call.getPatient().timezone,
                     'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
                                                                     .map(time_window => time_window.shortDayOfWeek)
