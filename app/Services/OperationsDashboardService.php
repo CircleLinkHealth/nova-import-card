@@ -28,8 +28,8 @@ class OperationsDashboardService
      */
     public function getCpmPatientTotals(Carbon $date, $dateType, $practiceId = null)
     {
-        $fromDate = $date->startOfMonth()->toDateString();
-        $toDate   = $date->endOfMonth()->toDateString();
+        $fromDate = $date->copy()->startOfMonth()->toDateString();
+        $toDate   = $date->copy()->endOfMonth()->toDateString();
 
         $totalPatients = $this->getTotalPatients();
 
@@ -50,12 +50,12 @@ class OperationsDashboardService
         if ($dateType == 'week') {
 
             //last day of week for day totals
-            $dayDate = $date->endOfWeek()->toDateString();
+            $dayDate = $date->copy()->endOfWeek()->toDateString();
 
             $dayPatients = $this->getTotalPatients($dayDate);
 
-            $fromDate = $date->startOfWeek()->toDateString();
-            $toDate   = $date->endOfWeek()->toDateString();
+            $fromDate = $date->copy()->startOfWeek()->toDateString();
+            $toDate   = $date->copy()->endOfWeek()->toDateString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
         }
@@ -63,13 +63,13 @@ class OperationsDashboardService
         //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
         if ($dateType == 'month') {
             //last day of month for day totals
-            $dayDate = $date->endOfMonth()->toDateString();
+            $dayDate = $date->copy()->endOfMonth()->toDateString();
 
             $dayPatients = $this->getTotalPatients($dayDate);
 
             //last week of month
-            $fromDate = $date->endOfMonth()->startOfWeek()->toDateString();
-            $toDate   = $date->endOfMonth()->toDateString();
+            $fromDate = $date->copy()->endOfMonth()->startOfWeek()->toDateString();
+            $toDate   = $date->copy()->endOfMonth()->toDateString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
 
@@ -294,45 +294,4 @@ class OperationsDashboardService
     }
 
 
-//    /**
-//     *
-//     * filters a collection of patients according to the date(s) given.
-//     *
-//     * @param $patients
-//     * @param Carbon $date
-//     * @param Carbon|null $toDate
-//     *
-//     * @return mixed
-//     */
-//    public function filterPatients($patients, Carbon $date, Carbon $toDate = null)
-//    {
-//
-//        if ($toDate == null) {
-//            $filteredPatients = $patients->whereHas('patientInfo', function ($patient) use ($date) {
-//                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-//                        ->where('date_paused', $date)
-//                        ->orWhere('date_withdrawn', $date)
-//                        ->orWhere('registration_date', $date);
-//            })->orWhereHas('carePlan', function ($c) use ($date) {
-//                $c->where('status', 'to_enroll')
-//                  ->where('updated_at', $date);
-//            })
-//                                         ->get();
-//        } else {
-//            $filteredPatients = $patients->whereHas('patientInfo', function ($patient) use ($date, $toDate) {
-//                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-//                        ->whereBetween('date_paused', [$date, $toDate])
-//                        ->orWhereBetween('date_withdrawn', [$date, $toDate])
-//                        ->orWhereBetween('registration_date', [$date, $toDate]);
-//            })->orWhereHas('carePlan', function ($c) use ($date, $toDate) {
-//                $c->where('status', 'to_enroll')
-//                  ->whereBetween('updated_at', [$date, $toDate]);
-//            })
-//                                         ->get();
-//
-//        }
-//
-//        return $filteredPatients;
-//
-//    }
 }

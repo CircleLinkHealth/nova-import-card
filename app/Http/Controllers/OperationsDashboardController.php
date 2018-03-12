@@ -68,6 +68,8 @@ class OperationsDashboardController extends Controller
 
         $practices = Practice::active()->get();
 
+//        dd([$date, $request['date']]);
+
         $totals = $this->service->getCpmPatientTotals($date, $dateType);
 
 
@@ -125,54 +127,65 @@ class OperationsDashboardController extends Controller
      */
     public function getList(Request $request, $type, $date, $practiceId = null){
 
-
+        $to = null;
         $date = new Carbon($date);
+        $toDate = null;
 
 //
 //        dd($request);
 
         if ($type == 'day'){
-            $dayDate = $date->toDateString();
+            $dayDate = $date->copy()->toDateString();
             $patients = $this->service->getTotalPatients($dayDate);
         }
         if ($type == 'week'){
-            $fromDate = $date->startOfWeek()->toDateString();
-            $toDate = $date->endOfWeek()->toDateString();
+            $fromDate = $date->copy()->startOfWeek()->toDateString();
+            $toDate = $date->copy()->endOfWeek()->toDateString();
             $patients = $this->service->getTotalPatients($fromDate, $toDate);
         }
         if ($type == 'month'){
-            $fromDate = $date->startOfMonth()->toDateString();
-            $toDate = $date->endOfMonth()->toDateString();
+            $fromDate = $date->copy()->startOfMonth()->toDateString();
+            $toDate = $date->copy()->endOfMonth()->toDateString();
             $patients = $this->service->getTotalPatients($fromDate, $toDate);
         }
         if ($type == 'total'){
             $patients = $this->service->getTotalPatients();
         }
 
+        $practice = null;
         if ($practiceId){
+            $practice = Practice::find($practiceId);
             $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
         }
 
 
 
         return view('admin.opsDashboard.list', compact([
-            'patients'
+            'patients',
+            'type',
+            'date',
+            'practice',
+            'to'
         ]));
 
     }
 
     public function getPausedPatientList(Request $request){
 
-        $from = new Carbon($request['fromDate']);
+        $practice = null;
+        $date = new Carbon($request['fromDate']);
         $to = new Carbon($request['toDate']);
 
-        $fromDate = $from->toDateString();
+        $fromDate = $date->toDateString();
         $toDate = $to->toDateString();
 
         $patients = $this->service->getPausedPatients($fromDate, $toDate);
 
         return view('admin.opsDashboard.list', compact([
-            'patients'
+            'patients',
+            'practice',
+            'date',
+            'to'
         ]));
     }
 
