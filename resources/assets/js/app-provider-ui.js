@@ -65,6 +65,7 @@ import MiscModalComponent from './components/careplan/modals/misc.modal'
 import OthersComponent from './components/careplan/others'
 import AppointmentsComponent from './components/careplan/appointments'
 import PatientList from './components/patients/listing'
+import ImporterTraining from './components/Importer/trainer'
 import Datepicker from 'vuejs-datepicker'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
