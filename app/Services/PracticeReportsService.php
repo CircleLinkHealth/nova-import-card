@@ -152,11 +152,19 @@ class PracticeReportsService
             $providerName = '-' . $provider->display_name;
         }
 
-        //if a practice has a clh_pppm charge that otherwise default to the amount of the chargeable service
-        if ($data['practice']->clh_pppm) {
-            $lineUnitPrice = $data['practice']->clh_pppm;
-        } else {
-            $lineUnitPrice = $chargeableService->amount;
+        $lineUnitPrice = '';
+
+        $chargeableServiceWithPivot = $practice->chargeableServices()->whereId($chargeableService->id)->first();
+        if ($chargeableServiceWithPivot) {
+            $lineUnitPrice = $chargeableServiceWithPivot->pivot->amount;
+        }
+
+        if (!$lineUnitPrice) {
+            if ($data['practice']->clh_pppm) {
+                $lineUnitPrice = $data['practice']->clh_pppm;
+            } else {
+                $lineUnitPrice = $chargeableService->amount;
+            }
         }
 
         $rowData = [

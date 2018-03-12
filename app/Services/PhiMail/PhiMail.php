@@ -93,11 +93,11 @@ class PhiMail implements DirectMail
             // address entered is accepted, otherwise an exception is thrown.
             $recipient = $this->connector->addRecipient($outboundRecipient);
 
-            // Optionally, set the Subject of the outgoing message.
-            // This will override the default message Subject set by the server.
-            $this->connector->setSubject('Message from '.$patient->saasAccountName());
-
             if ($patient) {
+                // Optionally, set the Subject of the outgoing message.
+                // This will override the default message Subject set by the server.
+                $this->connector->setSubject('Message from '.$patient->saasAccountName());
+
                 // Add the main body of the message.
                 $this->connector->addText("This is message regarding patient {$patient->fullName}.");
             }
