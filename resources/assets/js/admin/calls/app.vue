@@ -197,7 +197,8 @@
           const columns = {
             'Patient ID': 'patientId',
             'Next Call': 'scheduledDate',
-            'Last Call': 'lastCall'
+            'Last Call': 'lastCall',
+            'CCM Time': 'ccmTime'
           }
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
