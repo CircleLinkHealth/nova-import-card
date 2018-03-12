@@ -18,7 +18,7 @@ class JsonListMedicationLogger implements Logger
     {
         $medications = json_decode($medicalRecord->medications_string, true);
 
-        if (array_key_exists('Medications', $medications)) {
+        if (is_array($medications) && array_key_exists('Medications', $medications)) {
             return collect($medications['Medications'])
                 ->map(function ($medication) {
                     return [

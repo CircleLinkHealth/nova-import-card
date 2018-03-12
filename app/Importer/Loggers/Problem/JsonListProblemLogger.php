@@ -18,7 +18,7 @@ class JsonListProblemLogger implements Logger
     {
         $problems = json_decode($medicalRecord->problems_string, true);
 
-        if (array_key_exists('Problems', $problems)) {
+        if (is_array($problems) && array_key_exists('Problems', $problems)) {
             return collect($problems['Problems'])
                 ->map(function ($problem) {
                     return [
