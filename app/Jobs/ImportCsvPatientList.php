@@ -173,6 +173,14 @@ class ImportCsvPatientList implements ShouldQueue
                 'practice_id'         => $importedMedicalRecord->practice_id,
             ]);
 
+        $demographicsLogs = $mr->demographics->first();
+
+        if ($demographicsLogs) {
+            if (!$demographicsLogs->mrn_number) {
+                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->save();
+            }
+        }
 
         $importedMedicalRecord->save();
     }
