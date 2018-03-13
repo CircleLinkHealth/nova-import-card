@@ -19,6 +19,7 @@ use App\User;
  * @property int|null $billing_provider_id
  * @property int|null $uploaded_by
  * @property int|null $patient_id
+ * @property string|null $patient_name
  * @property string|null $first_name
  * @property string|null $last_name
  * @property \Carbon\Carbon|null $dob
@@ -171,6 +172,15 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     public function getPatient(): User
     {
         // TODO: Implement getPatient() method.
+    }
+
+    public function setPatientNameAttribute(string $value): string {
+        if ($value) {
+            $names = explode(', ', $value);
+            $this->first_name = $names[0];
+            $this->last_name = $names[1];
+        }
+        return $value;
     }
 
     public function getDocumentCustodian(): string
