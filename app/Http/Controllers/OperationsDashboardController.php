@@ -188,11 +188,7 @@ class OperationsDashboardController extends Controller
         }
 
 
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 20;
-        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $patients = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
+        $patients = $this->paginatePatients($patients);
         $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list/$type/$date/$dateType/$practiceId");
 
 
@@ -228,10 +224,8 @@ class OperationsDashboardController extends Controller
 
         $patients = $this->service->getPausedPatients($fromDate, $toDate);
 
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 20;
-        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $patients = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
+
+        $patients = $this->paginatePatients($patients);
         $patients = $patients->withPath("admin/reports/ops-dashboard/paused-patient-list");
 
         return view('admin.opsDashboard.list', compact([
@@ -240,6 +234,17 @@ class OperationsDashboardController extends Controller
             'date',
             'to',
         ]));
+    }
+
+    private function paginatePatients($patients){
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 20;
+        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $patients = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
+
+        return $patients;
+
     }
 
     public function getPatientNotesAndActivitiesPage(Request $request)
