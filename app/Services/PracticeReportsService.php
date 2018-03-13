@@ -140,7 +140,7 @@ class PracticeReportsService
 
         $link = shortenUrl(linkToDownloadFile($pathToPatientReport, true));
 
-        $data = $generator->getInvoiceData();
+        $data = $generator->getInvoiceData($chargeableService->id);
 
         $txnDate = Carbon::createFromFormat('F, Y', $data['month'])->endOfMonth()->toDateString();
 

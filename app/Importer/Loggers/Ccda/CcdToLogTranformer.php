@@ -142,12 +142,19 @@ class CcdToLogTranformer
     public function problem($problem)
     {
         return [
-            'reference'       => $problem->reference,
-            'reference_title' => trim($problem->reference_title),
-            'start'           => $problem->date_range->start,
-            'end'             => $problem->date_range->end,
-            'status'          => $problem->status,
-            'name'            => $problem->name,
+            'reference'                    => $problem->reference,
+            'reference_title'              => trim($problem->reference_title),
+            'start'                        => $problem->date_range->start,
+            'end'                          => $problem->date_range->end,
+            'status'                       => $problem->status,
+            'name'                         => $problem->name,
+            'code'                         => $problem->code,
+            'code_system'                  => $problem->code_system,
+            'code_system_name'             => $problem->code_system_name,
+            'translation_name'             => $problem->translation->name,
+            'translation_code'             => $problem->translation->code,
+            'translation_code_system'      => $problem->translation->code_system,
+            'translation_code_system_name' => $problem->translation->code_system_name,
         ];
     }
 

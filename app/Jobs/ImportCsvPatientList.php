@@ -40,6 +40,8 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $this->patientsArr = $file;
 
+        dd('here');
+
         $this->practice = Practice::whereDisplayName(explode('-', $filename)[0])->first();
 
         if (!$this->practice) {
@@ -113,9 +115,9 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $demographics = $importedMedicalRecord->demographics;
 
-        $demographics->primary_phone = $row['primary_phone'];
-        $demographics->preferred_call_times = $row['preferred_call_times'];
-        $demographics->preferred_call_days = $row['preferred_call_days'];
+        $demographics->primary_phone = $row['primary_phone'] ?? '';
+        $demographics->preferred_call_times = $row['preferred_call_times'] ?? '';
+        $demographics->preferred_call_days = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
             if ($demographics->{$phone} == $row[$phone]) {

@@ -31,6 +31,7 @@ class ProblemCodeLog extends \App\BaseModel
     protected $table = 'ccd_problem_code_logs';
 
     public $fillable = [
+        'problem_code_system_id',
         'ccd_problem_log_id',
         'code_system_name',
         'code_system_oid',
