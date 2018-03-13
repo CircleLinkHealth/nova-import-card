@@ -2,7 +2,6 @@
 
 namespace App\Billing\Practices;
 
-use App\Activity;
 use App\AppConfig;
 use App\Practice;
 use App\User;
@@ -37,7 +36,7 @@ class PracticeInvoiceGenerator
 
         if ($withItemized) {
 
-            $reportName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $reportName           = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
             $pdfPatientReportPath = $this->makePatientReportPdf($reportName);
 
             $data['Patient Report'] = $reportName . '.pdf';
@@ -49,9 +48,10 @@ class PracticeInvoiceGenerator
     }
 
 
-    public function makeInvoicePdf($reportName) {
+    public function makeInvoicePdf($reportName)
+    {
         \Storage::disk('storage')
-            ->makeDirectory('download');
+                ->makeDirectory('download');
 
         $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
         $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);
@@ -60,8 +60,8 @@ class PracticeInvoiceGenerator
     }
 
 
-
-    public function makePatientReportPdf($reportName) {
+    public function makePatientReportPdf($reportName)
+    {
 
         $path = storage_path("/download/$reportName.pdf");
 
@@ -72,28 +72,26 @@ class PracticeInvoiceGenerator
     }
 
 
-
-
     public function getInvoiceData($chargeableServiceId = null)
     {
 
         $practiceId = $this->practice->id;
 
-        if ($chargeableServiceId){
+        if ($chargeableServiceId) {
             $billable = User::ofType('participant')
-                            ->where('program_id', '=', $this->practice->id)
+                            ->ofPractice($this->practice->id)
                             ->whereHas('patientSummaries', function ($query) use ($chargeableServiceId) {
-                                $query->whereHas('chargeableServices', function ($query) use ($chargeableServiceId){
+                                $query->whereHas('chargeableServices', function ($query) use ($chargeableServiceId) {
                                     $query->where('id', $chargeableServiceId);
                                 })
-                                    ->where('month_year', $this->month->toDateString())
+                                      ->where('month_year', $this->month->toDateString())
                                       ->where('ccm_time', '>=', 1200)
                                       ->where('approved', '=', true);
                             })
                             ->count() ?? 0;
-        }else{
+        } else {
             $billable = User::ofType('participant')
-                            ->where('program_id', '=', $this->practice->id)
+                            ->ofPractice($this->practice->id)
                             ->whereHas('patientSummaries', function ($query) {
                                 $query->where('month_year', $this->month->toDateString())
                                       ->where('ccm_time', '>=', 1200)
@@ -142,7 +140,7 @@ class PracticeInvoiceGenerator
                                   ->where('approved', '=', true);
                             },
                         ])
-                        ->where('program_id', '=', $this->practice->id)
+                        ->ofPractice($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
                             $query->where('month_year', $this->month->toDateString())
                                   ->where('ccm_time', '>=', 1200)
@@ -158,11 +156,11 @@ class PracticeInvoiceGenerator
         foreach ($patients as $u) {
             $summary = $u->patientSummaries->first();
 
-            $data['patientData'][$u->id]['ccm_time'] = round($summary->ccm_time / 60, 2);
-            $data['patientData'][$u->id]['name']     = $u->fullName;
-            $data['patientData'][$u->id]['dob']      = $u->birth_date;
-            $data['patientData'][$u->id]['practice'] = $u->program_id;
-            $data['patientData'][$u->id]['provider'] = $u->billingProviderName;
+            $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
+            $data['patientData'][$u->id]['name']          = $u->fullName;
+            $data['patientData'][$u->id]['dob']           = $u->birth_date;
+            $data['patientData'][$u->id]['practice']      = $u->program_id;
+            $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
             $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
             $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
