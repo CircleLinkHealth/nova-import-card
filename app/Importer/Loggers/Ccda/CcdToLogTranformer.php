@@ -151,10 +151,10 @@ class CcdToLogTranformer
             'code'                         => $problem->code,
             'code_system'                  => $problem->code_system,
             'code_system_name'             => $problem->code_system_name,
-            'translation_name'             => $problem->translation->name ?? '',
-            'translation_code'             => $problem->translation->code ?? '',
-            'translation_code_system'      => $problem->translation->code_system ?? '',
-            'translation_code_system_name' => $problem->translation->code_system_name ?? '',
+            'translation_name'             => $problem->translations[0]->name ?? '',
+            'translation_code'             => $problem->translations[0]->code ?? '',
+            'translation_code_system'      => $problem->translations[0]->code_system ?? '',
+            'translation_code_system_name' => $problem->translations[0]->code_system_name ?? '',
         ];
     }
 
