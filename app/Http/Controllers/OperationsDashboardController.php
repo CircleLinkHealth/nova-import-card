@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Practice;
 use App\Services\OperationsDashboardService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OperationsDashboardController extends Controller
 {
@@ -182,7 +184,18 @@ class OperationsDashboardController extends Controller
         if ($practiceId) {
             $practice = Practice::find($practiceId);
             $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
+            $patients = new Collection($patients);
         }
+
+
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 20;
+        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $patients = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
+        $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list/$type/$date/$dateType/$practiceId");
+
+
 
 
         return view('admin.opsDashboard.list', compact([
@@ -214,6 +227,12 @@ class OperationsDashboardController extends Controller
         $toDate   = $to->toDateString();
 
         $patients = $this->service->getPausedPatients($fromDate, $toDate);
+
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 20;
+        $currentPageSearchResults = $patients->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $patients = new LengthAwarePaginator($currentPageSearchResults, count($patients), $perPage);
+        $patients = $patients->withPath("admin/reports/ops-dashboard/paused-patient-list");
 
         return view('admin.opsDashboard.list', compact([
             'patients',

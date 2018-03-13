@@ -41,7 +41,10 @@
                     </tr>
 
                 @endforeach
+
             </table>
+
+            {!! $patients->appends(Input::except('page'))->links() !!}
         </div>
     </div>
 
