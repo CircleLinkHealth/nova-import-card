@@ -40,8 +40,6 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $this->patientsArr = $file;
 
-        dd('here');
-
         $this->practice = Practice::whereDisplayName(explode('-', $filename)[0])->first();
 
         if (!$this->practice) {
