@@ -55,6 +55,8 @@ class RecalculateCcmTime extends Command
             ->pluck('id')
             ->all();
 
+        $this->comment(count($userIds) . ' Users to recalculate time.');
+
         $date = $this->argument('dateString') ?? null;
 
         if ($date) {
