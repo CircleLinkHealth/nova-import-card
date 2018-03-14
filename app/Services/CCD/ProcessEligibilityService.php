@@ -222,7 +222,7 @@ class ProcessEligibilityService
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 
-                        $put       = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
+                        $put       = $cloudDisk->put("{$processedDir['dirname']}/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
                         $ccda = Ccda::create([
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
@@ -242,7 +242,7 @@ class ProcessEligibilityService
                         ])->dispatch($ccda->id);
                     } else {
                         $pathWithUnderscores = str_replace('/', '_', $path);
-                        $put       = $cloudDisk->put($cloudDirName . "/processed/$pathWithUnderscores",
+                        $put       = $cloudDisk->put("{$processedDir['dirname']}/$pathWithUnderscores",
                             fopen($localDisk->path($path), 'r+'));
                     }
 
