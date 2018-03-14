@@ -147,33 +147,36 @@ class OperationsDashboardController extends Controller
 
         if ($type == 'day') {
             if ($dateType == 'day') {
-                $dayDate  = $date->copy()->toDateString();
-                $patients = $this->service->getTotalPatients($dayDate);
+                $dayFromDate  = $date->copy()->startOfDay()->toDateTimeString();
+                $dayToDate  = $date->copy()->endOfDay()->toDateTimeString();
+                $patients = $this->service->getTotalPatients($dayFromDate, $dayToDate);
             }
             if ($dateType == 'week') {
-                $dayDate  = $date->copy()->endOfWeek()->toDateString();
-                $patients = $this->service->getTotalPatients($dayDate);
+                $dayFromDate  = $date->copy()->endOfWeek()->startOfDay()->toDateTimeString();
+                $dayToDate = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
+                $patients = $this->service->getTotalPatients($dayFromDate, $dayToDate);
             }
             if ($dateType == 'month') {
-                $dayDate  = $date->copy()->endOfMonth()->toDateString();
-                $patients = $this->service->getTotalPatients($dayDate);
+                $dayFromDate  = $date->copy()->endOfMonth()->startOfDay()->toDateTimeString();
+                $dayToDate = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
+                $patients = $this->service->getTotalPatients($dayFromDate, $dayToDate);
             }
         }
         if ($type == 'week') {
             if ($dateType == 'day' || 'week') {
-                $fromDate = $date->copy()->startOfWeek()->toDateString();
-                $toDate   = $date->copy()->endOfWeek()->toDateString();
+                $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
+                $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
                 $patients = $this->service->getTotalPatients($fromDate, $toDate);
             }
             if ($dateType == 'month') {
-                $fromDate = $date->copy()->endOfMonth()->startOfWeek()->toDateString();
-                $toDate   = $date->copy()->endOfMonth()->toDateString();
+                $fromDate = $date->copy()->endOfMonth()->startOfWeek()->startOfDay()->toDateTimeString();
+                $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
                 $patients = $this->service->getTotalPatients($fromDate, $toDate);
             }
         }
         if ($type == 'month') {
-            $fromDate = $date->copy()->startOfMonth()->toDateString();
-            $toDate   = $date->copy()->endOfMonth()->toDateString();
+            $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
+            $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
             $patients = $this->service->getTotalPatients($fromDate, $toDate);
         }
         if ($type == 'total') {
