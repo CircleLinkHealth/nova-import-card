@@ -80,7 +80,7 @@ class NoteForwarded extends Notification
         return 'Please click below button to see a forwarded note regarding one of your patients, created on '
                . $this->note->performed_at->toFormattedDateString()
                . ' by '
-               . auth()->user()->fullName;
+               . optional(auth()->user())->fullName;
     }
 
     /**
