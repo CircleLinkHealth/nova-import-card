@@ -139,6 +139,7 @@
             activateFilters () {
                 this.pagination = null
                 this.tableData = []
+                this.$refs.tblPatientList.setPage(1)
                 this.getPatients()
             },
             changeNameDisplayType () {
@@ -284,9 +285,12 @@
 
 
 
-            Event.$on('vue-tables.filter::program', this.activateFilters)
 
             Event.$on('vue-tables.filter::name', this.activateFilters)
+
+            Event.$on('vue-tables.filter::provider', this.activateFilters)
+
+            Event.$on('vue-tables.filter::program', this.activateFilters)
 
             Event.$on('vue-tables.filter::ccmStatus', this.activateFilters)
 
@@ -301,8 +305,6 @@
             Event.$on('vue-tables.filter::registeredOn', this.activateFilters)
 
             Event.$on('vue-tables.filter::lastReading', this.activateFilters)
-
-            Event.$on('vue-tables.filter::provider', this.activateFilters)
     
             Event.$on('vue-tables.sorted', this.activateFilters)
 
