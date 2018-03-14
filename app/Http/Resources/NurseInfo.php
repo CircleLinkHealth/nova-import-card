@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Support\Collection;
 
 class NurseInfo extends Resource
 {
@@ -14,6 +15,12 @@ class NurseInfo extends Resource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $nurse = parent::toArray($request);
+        if (array_key_exists('states', $nurse) && $request->has('compressed')) {
+            $nurse['states'] = (new Collection($nurse['states']))->map(function ($s) {
+                return $s['code'];
+            });
+        }
+        return $nurse;
     }
 }

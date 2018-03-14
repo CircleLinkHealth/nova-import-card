@@ -127,6 +127,7 @@ class PracticeInvoiceController extends Controller
         $practice_id = $request->input('practice_id');
         $date = $request->input('date');
         $default_code_id = $request->input('default_code_id');
+        $is_detach = $request->has('detach');
 
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
@@ -142,7 +143,7 @@ class PracticeInvoiceController extends Controller
         $summaries = $this->service
             ->billablePatientSummaries($practice_id, $date)
             ->get()
-            ->map(function ($summary) use ($default_code_id) {
+            ->map(function ($summary) use ($default_code_id, $is_detach) {
                 $result = $this->patientSummaryDBRepository
                      ->attachBillableProblems($summary->patient, $summary);
 
@@ -150,8 +151,15 @@ class PracticeInvoiceController extends Controller
                     $summary = $result;
                 }
 
-                 $summary = $this->service
-                     ->attachDefaultChargeableService($summary, $default_code_id, false);
+                if (!$is_detach) {
+                    $summary = $this->service
+                    ->attachDefaultChargeableService($summary, $default_code_id, false);
+                }
+                else {
+                    $summary = $this->service
+                    ->detachDefaultChargeableService($summary, $default_code_id);
+                }
+                 
 
                  return ApprovableBillablePatient::make($summary);
         });
@@ -178,7 +186,7 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('patient_chargeable_services must be an array');
         }
 
-        $summary = PatientMonthlySummary::where('patient_id', $reportId)->first();
+        $summary = PatientMonthlySummary::find($reportId);
 
         if (!$summary) {
             return $this->badRequest("Report with id $reportId not found.");

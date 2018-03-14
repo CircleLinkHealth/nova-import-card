@@ -76,4 +76,8 @@ class ApproveBillablePatientsService
     public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false) {
         return $this->patientSummaryRepo->attachDefaultChargeableService($summary, $defaultCodeId, $detach);
     }
+    
+    public function detachDefaultChargeableService($summary, $defaultCodeId) {
+        return $this->patientSummaryRepo->detachDefaultChargeableService($summary, $defaultCodeId);
+    }
 }

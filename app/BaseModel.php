@@ -14,4 +14,10 @@ class BaseModel extends Model
 {
     use EloquentJoinTrait;
     use \Spiritix\LadaCache\Database\LadaCacheTrait;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->useTableAlias = true;
+    }
 }

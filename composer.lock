@@ -50,16 +50,17 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.23",
+            "version": "3.52.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3ce95b96c217a699168d937c4ed700e6a27ec783"
+                "reference": "e39a486cca4455f1c2294521281efbec5075a144"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3ce95b96c217a699168d937c4ed700e6a27ec783",
-                "reference": "3ce95b96c217a699168d937c4ed700e6a27ec783",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e39a486cca4455f1c2294521281efbec5075a144",
+                "reference": "e39a486cca4455f1c2294521281efbec5075a144",
+
                 "shasum": ""
             },
             "require": {
@@ -126,7 +127,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-03-08T22:51:35+00:00"
+            "time": "2018-03-12T19:40:30+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1140,7 +1141,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-03-04T00:24:05+00:00"
+            "time": "2018-03-10T00:23:06+00:00"
         },
         {
             "name": "google/auth",
@@ -7700,8 +7701,7 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
+                    "homepage": "http://github.com/chrisboulton"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",

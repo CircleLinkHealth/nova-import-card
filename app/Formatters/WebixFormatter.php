@@ -186,9 +186,9 @@ class WebixFormatter implements ReportFormatter
 
         if ( ! empty($report_data)) {
             return "data:$report_data";
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     public function formatDataForViewPrintCareplanReport($users)

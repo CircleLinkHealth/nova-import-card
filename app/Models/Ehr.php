@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Practice;
+use App\TargetPatient;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -31,5 +32,10 @@ class Ehr extends \App\BaseModel
     public function practices()
     {
         return $this->hasMany(Practice::class);
+    }
+
+    public function targetPatient(){
+
+        return $this->hasMany(TargetPatient::class);
     }
 }

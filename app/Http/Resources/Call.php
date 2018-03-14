@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\User as UserModel;
 use Illuminate\Http\Resources\Json\Resource;
 
 class Call extends Resource
@@ -15,6 +16,13 @@ class Call extends Resource
      */
     public function toArray($request)
     {
+        $schedulerName = $this->scheduler;
+        if ((int)($this->scheduler)) {
+            $user =  UserModel::find($this->scheduler);
+            if ($user) {
+                $schedulerName = $user->display_name;
+            }
+        }
         return [
             'id'                    => $this->id,
             'note_id'               => $this->note_id,
@@ -33,7 +41,7 @@ class Call extends Resource
             'scheduled_date'        => $this->scheduled_date,
             'called_date'           => $this->called_date,
             'attempt_note'          => $this->attempt_note,
-            'scheduler'             => $this->scheduler,
+            'scheduler'             => $schedulerName,
 
             'inbound_user'  => User::make($this->whenLoaded('inboundUser')),
             'outbound_user' => User::make($this->whenLoaded('outboundUser')),

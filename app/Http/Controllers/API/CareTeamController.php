@@ -382,7 +382,7 @@ class CareTeamController extends Controller
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
         }
 
-        if ($billingProvider) {
+        if (isset($billingProvider) && !empty($billingProvider)) {
             $billingProvider = $billingProvider->fresh();
             $billingProvider->formatted_type = snakeToSentenceCase($billingProvider->type);
         }
