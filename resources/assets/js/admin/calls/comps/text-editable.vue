@@ -8,7 +8,7 @@
             </form>
         </div>
         <div v-if="!isEditMode" @dblclick="toggleEdit">
-            {{text}}
+            {{text || 'Edit'}}
         </div>
     </div>
 </template>

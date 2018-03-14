@@ -185,6 +185,8 @@ class NurseFilters extends QueryFilters
         if ($this->request->has('compressed')) {
             return $this->builder->select([ 'id', 'user_id', 'status' ])->with(['user' => function ($q) {
                 return $q->select([ 'id', 'display_name' ]);
+            }])->with(['states' => function ($q) {
+                return $q->select(['code']);
             }]);
         }
         return $this->builder->with('user');

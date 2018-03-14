@@ -464,7 +464,7 @@
                             @if($patient->hasRole('care-center') && $patient->nurseInfo)
                                 <div role="tabpanel" class="tab-pane" id="nurseinfo">
                                     <h2>Nurse Info</h2>
-                                    @include('partials.admin.user.nurse-info')
+                                    @include('partials.admin.user.nurse-info', ['nurseInfo' =>  $patient->nurseInfo])
                                 </div>
                             @endif
 

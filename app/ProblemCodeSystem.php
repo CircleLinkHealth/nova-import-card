@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProblemCodeSystem whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class ProblemCodeSystem extends Model
+class ProblemCodeSystem extends \App\BaseModel
 {
     public $fillable = ['name'];
 }

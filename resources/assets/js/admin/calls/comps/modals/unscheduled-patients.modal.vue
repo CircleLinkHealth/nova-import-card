@@ -19,7 +19,11 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options"></v-client-table>
+                        <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
+                            <template slot="name" scope="props">
+                                <a class="pointer" @click="triggerParentFilter(props.row.name)">{{props.row.name}}</a>
+                            </template>
+                        </v-client-table>
                     </div>
                 </div>
             </div>
@@ -32,6 +36,7 @@
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
     import { rootUrl } from '../../../../app.config'
+    import { Event } from 'vue-tables-2'
 
     export default {
         name: 'unscheduled-patients-modal',
@@ -67,7 +72,7 @@
                 this.loaders.practices = true
                 this.axios.get(rootUrl(`api/practices`)).then(response => {
                     this.loaders.practices = false
-                    this.practices = response.data || []
+                    this.practices = (response.data || []).distinct(practice => practice.id)
                     console.log('unscheduled-patients-get-practices', response.data)
                 }).catch(err => {
                     this.loaders.practices = false
@@ -91,6 +96,9 @@
                         console.error('unscheduled-patients-get-patients', err)
                     })
                 }
+            },
+            triggerParentFilter(value) {
+                Event.$emit('unscheduled-patients-modal:filter', value)
             }
         },
         mounted() {
@@ -104,5 +112,9 @@
         position: absolute;
         right: -25px;
         top: 2px;
+    }
+
+    .pointer {
+        cursor: pointer;
     }
 </style>
