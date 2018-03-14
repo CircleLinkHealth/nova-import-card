@@ -12,12 +12,13 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
-    use EloquentJoinTrait;
     use \Spiritix\LadaCache\Database\LadaCacheTrait;
+    use EloquentJoinTrait;
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->useTableAlias = true;
     }
+
 }

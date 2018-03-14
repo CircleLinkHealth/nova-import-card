@@ -32,7 +32,7 @@ Vue.use(VueForm, {
 import CallMgmtApp from './admin/calls/app'
 import { ClientTable } from 'vue-tables-2'
 import NurseDailyHours from './components/pages/work-schedule/daily-hours'
-import ImporterTraining from './components/Importer/trainer'
+import ImporterTrainer from './components/Importer/trainer'
 import Select2Component from './components/src/select2'
 import PassportClientsComponent from './components/passport/Clients'
 import PassportAuthorizedClientsComponent from './components/passport/AuthorizedClients'
@@ -45,6 +45,7 @@ Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
 Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
+Vue.component('importer-trainer', ImporterTrainer)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
 
 const App = new Vue({

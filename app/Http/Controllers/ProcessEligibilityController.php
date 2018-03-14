@@ -20,8 +20,13 @@ class ProcessEligibilityController extends Controller
     public function fromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
     {
         $this->processEligibilityService
-            ->queueFromGoogleDirve($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
+            ->queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
 
         return "Processing eligibility has been scheduled, and will process in the background.";
+    }
+    public function fromGoogleDriveDownloadedLocally($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    {
+        return $this->processEligibilityService
+            ->handleAlreadyDownloadedZip($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
     }
 }

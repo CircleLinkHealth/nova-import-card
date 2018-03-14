@@ -442,6 +442,8 @@ class NoteService
                     ->with('notifiable')
                     ->get()
                     ->mapWithKeys(function ($notification) {
+                        if (!$notification->notifiable) return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+
                         return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
                     });
     }

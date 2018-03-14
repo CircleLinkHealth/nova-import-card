@@ -24,7 +24,7 @@ class ProcessEligibilityService
     {
         $cloudDisk = Storage::cloud();
 
-        $practice  = Practice::whereName($practiceName)->first();
+        $practice  = Practice::whereName($practiceName)->firstOrFail();
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
@@ -89,6 +89,23 @@ class ProcessEligibilityService
                         $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
 
+                        $ccda = Ccda::create([
+                            'source'   => Ccda::GOOGLE_DRIVE."_$dir",
+                            'xml'      => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+                            'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                            'imported' => false,
+                            'practice_id' => (int)$practice->id,
+                        ]);
+
+                        //for some reason it doesn't save practice_id when using Ccda::create([])
+                        $ccda->practice_id = (int)$practice->id;
+                        $ccda->save();
+
+                        ProcessCcda::withChain([
+                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
+                                (bool)$filterInsurance, (bool)$filterProblems),
+                        ])->dispatch($ccda->id);
+
                         $localDisk->delete($path);
                     }
 
@@ -103,7 +120,8 @@ class ProcessEligibilityService
             ->values();
 
         if ($zipFiles->isNotEmpty()) {
-            $contents = collect($cloudDisk->listContents($dir, $recursive));
+//            $contents = collect($cloudDisk->listContents($dir, $recursive));
+            return 'done';
         }
 
         return $contents->where('type', '=', 'file')
@@ -155,7 +173,83 @@ class ProcessEligibilityService
                         ->values();
     }
 
-    public function queueFromGoogleDirve($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+    public function queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
         ProcessEligibilityFromGoogleDrive::dispatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
+    }
+
+    public function handleAlreadyDownloadedZip($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+        $cloudDisk = Storage::cloud();
+
+        $practice  = Practice::whereName($practiceName)->firstOrFail();
+        $recursive = false; // Get subdirectories also?
+        $contents  = collect($cloudDisk->listContents($dir, $recursive));
+
+        $processedDir = $contents->where('type', '=', 'dir')
+                                 ->where('filename', '=', 'processed')
+                                 ->first();
+
+        if ( ! $processedDir) {
+            $cloudDisk->makeDirectory("$dir/processed");
+
+            $processedDir = collect($cloudDisk->listContents($dir, $recursive))
+                ->where('type', '=', 'dir')
+                ->where('filename', '=', 'processed')
+                ->first();
+        }
+
+        $zipFiles = $contents
+            ->where('type', '=', 'file')
+            ->where('mimetype', '=', 'application/zip')
+            ->map(function ($file) use (
+                $cloudDisk,
+                $practice,
+                $dir,
+                $filterLastEncounter,
+                $filterInsurance,
+                $filterProblems,
+                $processedDir
+            ) {
+                $localDisk = Storage::disk('local');
+
+                $unzipDir = "zip/$dir/unzipped";
+
+                $cloudFilePath = $file['path'];
+                $cloudFileName = $file['filename'];
+                $cloudDirName  = $file['dirname'];
+
+                foreach ($localDisk->allFiles($unzipDir) as $path) {
+                    if (str_contains($path, 'xml')) {
+                        $now       = Carbon::now()->toAtomString();
+                        $randomStr = str_random();
+
+                        $put       = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
+                            fopen($localDisk->path($path), 'r+'));
+                        $ccda = Ccda::create([
+                            'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
+                            'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+                            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                            'imported'    => false,
+                            'practice_id' => (int)$practice->id,
+                        ]);
+
+                        //for some reason it doesn't save practice_id when using Ccda::create([])
+                        $ccda->practice_id = (int)$practice->id;
+                        $ccda->save();
+
+                        ProcessCcda::withChain([
+                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
+                                (bool)$filterInsurance, (bool)$filterProblems),
+                        ])->dispatch($ccda->id);
+                    } else {
+                        $pathWithUnderscores = str_replace('/', '_', $path);
+                        $put       = $cloudDisk->put($cloudDirName . "/processed/$pathWithUnderscores",
+                            fopen($localDisk->path($path), 'r+'));
+                    }
+
+                    $localDisk->delete($path);
+                }
+            });
+
+        return true;
     }
 }

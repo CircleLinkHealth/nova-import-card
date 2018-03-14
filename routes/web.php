@@ -439,7 +439,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::get('create/remix', [
+        Route::get('', [
             'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd.remix',
         ]);
@@ -1859,5 +1859,10 @@ Route::group([
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
+    'as'   => 'process.eligibility.google.drive'
+])->middleware(['auth', 'role:administrator']);
+
+Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+    'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
     'as'   => 'process.eligibility.google.drive'
 ])->middleware(['auth', 'role:administrator']);
