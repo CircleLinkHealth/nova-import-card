@@ -131,7 +131,7 @@ class Patient extends \App\BaseModel
         'paused_letter_printed_at',
     ];
 
-    
+
 
     /**
      * The connection name for the model.
@@ -151,7 +151,52 @@ class Patient extends \App\BaseModel
      * @var string
      */
     protected $primaryKey = 'id';
-    protected $guarded = [];
+    protected $fillable = [
+        'imported_medical_record_id',
+        'user_id',
+        'ccda_id',
+        'care_plan_id',
+        'active_date',
+        'agent_name',
+        'agent_telephone',
+        'agent_email',
+        'agent_relationship',
+        'birth_date',
+        'ccm_status',
+        'paused_letter_printed_at',
+        'consent_date',
+        'cur_month_activity_time',
+        'gender',
+        'date_paused',
+        'date_withdrawn',
+        'mrn_number',
+        'preferred_cc_contact_days',
+        'preferred_contact_language',
+        'preferred_contact_location',
+        'preferred_contact_method',
+        'preferred_contact_time',
+        'preferred_contact_timezone',
+        'registration_date',
+        'daily_reminder_optin',
+        'daily_reminder_time',
+        'daily_reminder_areas',
+        'hospital_reminder_optin',
+        'hospital_reminder_time',
+        'hospital_reminder_areas',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'general_comment',
+        'preferred_calls_per_month',
+        'last_successful_contact_time',
+        'no_call_attempts_since_last_success',
+        'last_contact_time',
+        'daily_contact_window_start',
+        'daily_contact_window_end',
+        'next_call_id',
+        'family_id',
+        'date_welcomed',
+    ];
 
     public static function boot()
     {
