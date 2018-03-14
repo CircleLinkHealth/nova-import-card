@@ -222,7 +222,7 @@ class ProcessEligibilityService
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 
-                        $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
+                        $put       = $cloudDisk->put($cloudDirName . "/processed/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
                         $ccda = Ccda::create([
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
