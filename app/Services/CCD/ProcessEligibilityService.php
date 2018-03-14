@@ -241,7 +241,8 @@ class ProcessEligibilityService
                                 (bool)$filterInsurance, (bool)$filterProblems),
                         ])->dispatch($ccda->id);
                     } else {
-                        $put       = $cloudDisk->put($cloudDirName . "/$path",
+                        $pathWithUnderscores = str_replace('/', '_', $path);
+                        $put       = $cloudDisk->put($cloudDirName . "/processed/$pathWithUnderscores",
                             fopen($localDisk->path($path), 'r+'));
                     }
 
