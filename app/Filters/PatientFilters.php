@@ -28,9 +28,9 @@ class PatientFilters extends QueryFilters
         });
     }
     
-    public function program($program) {
-        return $this->builder->whereHas('primaryPractice', function ($query) use ($program) {
-            $query->where('display_name', $program);
+    public function practice($name) {
+        return $this->builder->whereHas('primaryPractice', function ($query) use ($name) {
+            $query->where('display_name', $name);
         });
     }
     
@@ -83,7 +83,7 @@ class PatientFilters extends QueryFilters
         return $this->builder->orderByJoin('providerInfo.user.display_name', $type);
     }
     
-    public function sort_program($type = null) {
+    public function sort_practice($type = null) {
         return $this->builder->orderByJoin('primaryPractice.display_name', $type);
     }
     
