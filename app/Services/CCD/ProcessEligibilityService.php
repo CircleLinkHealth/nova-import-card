@@ -24,7 +24,7 @@ class ProcessEligibilityService
     {
         $cloudDisk = Storage::cloud();
 
-        $practice  = Practice::whereName($practiceName)->first();
+        $practice  = Practice::whereName($practiceName)->firstOrFail();
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
