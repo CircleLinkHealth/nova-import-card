@@ -57,9 +57,13 @@ class PracticeReportsService
 
                 $chargeableServices = $this->getChargeableServices($practice);
 
+
                 foreach ($chargeableServices as $service) {
                     $row    = $this->makeRow($practice, $date, $service);
-                    $data[] = $row->toArray();
+
+                    if (!$row == null){
+                        $data[] = $row->toArray();
+                    }
                 }
             } else {
                 $providers = $practice->providers();
@@ -70,7 +74,9 @@ class PracticeReportsService
 
                     foreach ($chargeableServices as $service) {
                         $row    = $this->makeRow($practice, $date, $service, $provider);
-                        $data[] = $row->toArray();
+                        if (!$row == null){
+                            $data[] = $row->toArray();
+                        }
 
                     }
                 }
@@ -141,6 +147,10 @@ class PracticeReportsService
         $link = shortenUrl(linkToDownloadFile($pathToPatientReport, true));
 
         $data = $generator->getInvoiceData($chargeableService->id);
+
+        if($data['billable'] == 0){
+            return null;
+        }
 
         $txnDate = Carbon::createFromFormat('F, Y', $data['month'])->endOfMonth()->toDateString();
 
