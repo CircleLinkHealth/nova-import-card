@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Carbon\Carbon;
+use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -117,7 +118,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Patient extends \App\BaseModel
 {
 
-    use SoftDeletes;
+    use Filterable, SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     const PAUSED = 'paused';
