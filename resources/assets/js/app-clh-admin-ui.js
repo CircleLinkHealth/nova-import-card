@@ -32,7 +32,7 @@ Vue.use(VueForm, {
 import CallMgmtApp from './admin/calls/app'
 import { ClientTable } from 'vue-tables-2'
 import NurseDailyHours from './components/pages/work-schedule/daily-hours'
-import ImporterTrainer from './components/importer/trainer'
+import ImporterTrainer from './components/Importer/trainer'
 import Select2Component from './components/src/select2'
 import PassportClientsComponent from './components/passport/Clients'
 import PassportAuthorizedClientsComponent from './components/passport/AuthorizedClients'
