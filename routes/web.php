@@ -1835,3 +1835,8 @@ Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
     'as'   => 'process.eligibility.google.drive'
 ])->middleware(['auth', 'role:administrator']);
+
+Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+    'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
+    'as'   => 'process.eligibility.google.drive'
+])->middleware(['auth', 'role:administrator']);

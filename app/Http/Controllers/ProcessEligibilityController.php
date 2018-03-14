@@ -24,4 +24,9 @@ class ProcessEligibilityController extends Controller
 
         return "Processing eligibility has been scheduled, and will process in the background.";
     }
+    public function fromGoogleDriveDownloadedLocally($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    {
+        return $this->processEligibilityService
+            ->handleAlreadyDownloadedZip($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
+    }
 }
