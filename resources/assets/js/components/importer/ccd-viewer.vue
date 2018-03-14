@@ -36,7 +36,6 @@
                 <div v-if="props.row.loaders.providers">
                     <loader></loader>
                 </div>
-                <text-editable :value="props.row['Billing Provider']" :no-button="true"></text-editable>
             </template>
             <template slot="2+ Cond" scope="props">
                 <input class="row-select" v-model="props.row['2+ Cond']" type="checkbox" />
