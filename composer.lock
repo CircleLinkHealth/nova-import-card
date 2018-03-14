@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "13183a904ffcf7d9da5d5031f061d0d8",
+    "content-hash": "7cb1bc904ab00329958362f95d9cb365",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -60,6 +60,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e39a486cca4455f1c2294521281efbec5075a144",
                 "reference": "e39a486cca4455f1c2294521281efbec5075a144",
+
                 "shasum": ""
             },
             "require": {
@@ -1107,16 +1108,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.50",
+            "version": "v0.49",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/google-api-php-client-services.git",
-                "reference": "3e792254734e4444dd8a594e927926f28de2e609"
+                "reference": "7552d7d1bb92e933fc93088014c8c2555c0feab6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/3e792254734e4444dd8a594e927926f28de2e609",
-                "reference": "3e792254734e4444dd8a594e927926f28de2e609",
+                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/7552d7d1bb92e933fc93088014c8c2555c0feab6",
+                "reference": "7552d7d1bb92e933fc93088014c8c2555c0feab6",
                 "shasum": ""
             },
             "require": {
@@ -3432,16 +3433,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.24.2",
+            "version": "1.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875"
+                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/bba6c6e410c6b4317e37a9474aeaa753808c3875",
-                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
+                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
                 "shasum": ""
             },
             "require": {
@@ -3481,7 +3482,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-03-10T10:10:14+00:00"
+            "time": "2018-03-09T15:49:34+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -6167,11 +6168,11 @@
         },
         {
             "name": "waavi/url-shortener",
-            "version": "dev-master",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:michalisantoniou6/url-shortener.git",
-                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
+                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31"
             },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -6218,7 +6219,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2018-01-09T20:43:17+00:00"
+            "time": "2017-10-06T10:09:24+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
@@ -9281,7 +9282,6 @@
     "stability-flags": {
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
-        "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },

@@ -1018,6 +1018,32 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+
+            Route::group([
+                'prefix' => 'ops-dashboard',
+            ], function () {
+                Route::get('/index', [
+                    'uses' => 'OperationsDashboardController@index',
+                    'as'   => 'OpsDashboard.index'
+                ]);
+                Route::get('/total-data', [
+                    'uses' => 'OperationsDashboardController@getTotalPatientData',
+                    'as'   => 'OpsDashboard.totalData'
+                ]);
+                Route::get('/paused-patient-list', [
+                    'uses' => 'OperationsDashboardController@getPausedPatientList',
+                    'as'   => 'OpsDashboard.pausedPatientList'
+                ]);
+                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
+                    'uses' => 'OperationsDashboardController@getList',
+                    'as'   => 'OpsDashboard.patientList'
+                ]);
+                Route::get('/patients-by-practice', [
+                    'uses' => 'OperationsDashboardController@getPatientsByPractice',
+                    'as'   => 'OpsDashboard.patientsByPractice'
+                ]);
+            });
+
         });
 
         //Practice Billing
