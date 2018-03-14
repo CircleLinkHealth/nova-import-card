@@ -109,11 +109,18 @@
         },
         methods: {
             rootUrl,
+            columnMapping (name) {
+                const columns = {
+                    program: 'practice'
+                }
+                return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+            },
             nextPageUrl () {
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
-                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${item.key}=${item.value}`).join('')
-                const sortColumn = $table.orderBy.column ? `&sort_${$table.orderBy.column}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+                
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+                const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
