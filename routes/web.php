@@ -439,7 +439,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::get('create/remix', [
+        Route::get('', [
             'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd.remix',
         ]);
