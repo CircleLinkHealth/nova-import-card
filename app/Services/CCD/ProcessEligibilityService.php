@@ -218,27 +218,32 @@ class ProcessEligibilityService
                 $cloudDirName  = $file['dirname'];
 
                 foreach ($localDisk->allFiles($unzipDir) as $path) {
-                    $now       = Carbon::now()->toAtomString();
-                    $randomStr = str_random();
-                    $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
-                        fopen($localDisk->path($path), 'r+'));
+                    if (str_contains($path, 'xml')) {
+                        $now       = Carbon::now()->toAtomString();
+                        $randomStr = str_random();
 
-                    $ccda = Ccda::create([
-                        'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
-                        'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
-                        'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                        'imported'    => false,
-                        'practice_id' => (int)$practice->id,
-                    ]);
+                        $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
+                            fopen($localDisk->path($path), 'r+'));
+                        $ccda = Ccda::create([
+                            'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
+                            'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+                            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                            'imported'    => false,
+                            'practice_id' => (int)$practice->id,
+                        ]);
 
-                    //for some reason it doesn't save practice_id when using Ccda::create([])
-                    $ccda->practice_id = (int)$practice->id;
-                    $ccda->save();
+                        //for some reason it doesn't save practice_id when using Ccda::create([])
+                        $ccda->practice_id = (int)$practice->id;
+                        $ccda->save();
 
-                    ProcessCcda::withChain([
-                        new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                            (bool)$filterInsurance, (bool)$filterProblems),
-                    ])->dispatch($ccda->id);
+                        ProcessCcda::withChain([
+                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
+                                (bool)$filterInsurance, (bool)$filterProblems),
+                        ])->dispatch($ccda->id);
+                    } else {
+                        $put       = $cloudDisk->put($cloudDirName . "/$path",
+                            fopen($localDisk->path($path), 'r+'));
+                    }
 
                     $localDisk->delete($path);
                 }
