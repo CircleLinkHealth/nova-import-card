@@ -136,15 +136,6 @@ class CarePlan extends \App\BaseModel implements PdfReport
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
-    public function getStatusAttribute() {
-        $value = isset($this->attributes['status']) ? $this->attributes['status'] : null;
-        if ($value && starts_with($value, ['{', '['])) {
-            $careplan = (array)json_decode($value);
-            return isset($careplan['status']) ? $careplan['status'] : null;
-        }
-        return $value;
-    }
-
     /**
      * Create a PDF of this resource and return the path to it.
      *
