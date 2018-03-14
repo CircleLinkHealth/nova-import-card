@@ -67,6 +67,7 @@ import AppointmentsComponent from './components/careplan/appointments'
 import PatientList from './components/patients/listing'
 import ImporterTraining from './components/Importer/trainer'
 import Datepicker from 'vuejs-datepicker'
+import ImporterTrainer from './components/importer/trainer'
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -104,7 +105,8 @@ Vue.component('misc-modal', MiscModalComponent)
 Vue.component('appointments', AppointmentsComponent)
 Vue.component('patient-list', PatientList)
 Vue.component('v-datepicker', Datepicker)
-Vue.component('importerTrainer', ImporterTraining)
+Vue.component('importer-trainer', ImporterTrainer)
+
 
 const App = new Vue({
     el: '#app',

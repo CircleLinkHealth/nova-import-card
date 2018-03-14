@@ -36,7 +36,6 @@
                 <div v-if="props.row.loaders.providers">
                     <loader></loader>
                 </div>
-                <text-editable :value="props.row['Billing Provider']" :no-button="true"></text-editable>
             </template>
             <template slot="2+ Cond" scope="props">
                 <input class="row-select" v-model="props.row['2+ Cond']" type="checkbox" />
@@ -79,9 +78,13 @@
     import ErrorModal from '../../admin/billing/comps/error-modal'
     import ErrorModalButton from '../../admin/billing/comps/error-modal-button'
     import NotificationComponent from '../notifications'
+    import VueCache from '../../util/vue-cache'
 
     export default {
         name: 'ccd-viewer',
+        mixins: [
+            VueCache
+        ],
         components: {
             'text-editable': TextEditable,
             'loader': LoaderComponent,
@@ -123,7 +126,7 @@
                     record.demographics.display_name = record.demographics.first_name + ' ' + record.demographics.last_name
                 }
                 const self = this;
-                return {
+                const newRecord = {
                     id: record.id,
                     selected: false,
                     Name: record.demographics.display_name,
@@ -155,7 +158,7 @@
                     providers: [],
                     changePractice(id) {
                         self.changePractice(record.id, id)
-                        console.log('change-practice-name', record.id, id)
+                        //console.log('change-practice-name', record.id, id)
                     },
                     changeLocation(id) {
                         self.changeLocation(record.id, id)
@@ -164,6 +167,7 @@
                         self.changeProvider(record.id, id)
                     }
                 }
+                return newRecord
             },
             changePractice(recordId, practiceId) {
                 const record = this.tableData.find(row => row.id === recordId)
@@ -178,7 +182,7 @@
                         record['Billing Provider'] = null
                         record.providers = []
                         this.getLocations(practiceId).then(locations => {
-                            console.log('get-practice-locations', practiceId, locations)
+                            //console.log('get-practice-locations', practiceId, locations)
                             record.locations = locations
                             record.loaders.locations = false
                             this.changeLocation(recordId, record.Location)
@@ -226,6 +230,9 @@
                     const records = response.data || []
                     this.tableData = records.map(this.setupRecord)
                     console.log('get-records', this.tableData)
+                    this.tableData.forEach(row => {
+                        row.changePractice(row.Practice)
+                    })
                     return this.tableData
                 }).catch(err => {
                     console.error(err)
@@ -339,16 +346,17 @@
                 })
             },
             getLocations(practiceId) {
-                return this.axios.get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
-                    return (response.data || []).map(item => Object.assign(item, {
+                return this.cache().get(rootUrl(`api/practices/${practiceId}/locations`)).then(response => {
+                    console.log(response)
+                    return (response || []).map(item => Object.assign(item, {
                         value: item.id,
                         text: item.name
                     }))
                 })
             },
             getProviders(practiceId, locationId) {
-                return this.axios.get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
-                    return (response.data || []).map(item => Object.assign(item, {
+                return this.cache().get(rootUrl(`api/practices/${practiceId}/locations/${locationId}/providers`)).then(response => {
+                    return (response || []).map(item => Object.assign(item, {
                         value: item.id,
                         text: item.display_name
                     }))
