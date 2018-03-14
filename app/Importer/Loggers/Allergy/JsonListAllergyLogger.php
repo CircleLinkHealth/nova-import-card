@@ -18,7 +18,7 @@ class JsonListAllergyLogger implements Logger
     {
         $allergies = json_decode($medicalRecord->allergies_string, true);
 
-        if (array_key_exists('Allergies', $allergies)) {
+        if (is_array($allergies) && array_key_exists('Allergies', $allergies)) {
             return collect($allergies['Allergies'])
                 ->map(function ($allergy) {
                     return $allergy['Name'];

@@ -122,11 +122,15 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $demographics = $importedMedicalRecord->demographics;
 
-        $demographics->primary_phone = $row['primary_phone'];
-        $demographics->preferred_call_times = $row['preferred_call_times'];
-        $demographics->preferred_call_days = $row['preferred_call_days'];
+        $demographics->primary_phone = $row['primary_phone'] ?? '';
+        $demographics->preferred_call_times = $row['preferred_call_times'] ?? '';
+        $demographics->preferred_call_days = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
+            if (!array_key_exists($phone, $row)) {
+                continue;
+            }
+
             if ($demographics->{$phone} == $row[$phone]) {
                 continue;
             }
@@ -144,7 +148,7 @@ class ImportCsvPatientList implements ShouldQueue
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
-        if (!$importedMedicalRecord->billing_provider_id) {
+        if (!$importedMedicalRecord->billing_provider_id && array_key_exists('provider', $row)) {
             $providerName = explode(' ', $row['provider']);
 
             if (count($providerName) >= 2) {
@@ -178,6 +182,14 @@ class ImportCsvPatientList implements ShouldQueue
                 'practice_id'         => $importedMedicalRecord->practice_id,
             ]);
 
+        $demographicsLogs = $mr->demographics->first();
+
+        if ($demographicsLogs) {
+            if (!$demographicsLogs->mrn_number) {
+                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->save();
+            }
+        }
 
         $importedMedicalRecord->save();
     }

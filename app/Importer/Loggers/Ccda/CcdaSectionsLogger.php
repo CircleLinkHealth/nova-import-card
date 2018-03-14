@@ -124,7 +124,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
                 ProblemCodeLog::create($code);
             }
 
-            $this->problemLogs = $problemLog;
+            $this->problemLogs[] = $problemLog;
         }
 
         return $this;

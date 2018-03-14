@@ -72,7 +72,7 @@
                 this.loaders.practices = true
                 this.axios.get(rootUrl(`api/practices`)).then(response => {
                     this.loaders.practices = false
-                    this.practices = response.data || []
+                    this.practices = (response.data || []).distinct(practice => practice.id)
                     console.log('unscheduled-patients-get-practices', response.data)
                 }).catch(err => {
                     this.loaders.practices = false

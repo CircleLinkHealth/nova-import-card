@@ -161,7 +161,7 @@ class TabularMedicalRecord extends MedicalRecordEloquent
             return new RappaSectionsLogger($this, $rappahannock);
         }
 
-        return new TabularMedicalRecordSectionsLogger($this);
+        return new TabularMedicalRecordSectionsLogger($this, Practice::find($this->practice_id));
     }
 
     /**

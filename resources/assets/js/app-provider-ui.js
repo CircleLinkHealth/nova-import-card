@@ -65,6 +65,7 @@ import MiscModalComponent from './components/careplan/modals/misc.modal'
 import OthersComponent from './components/careplan/others'
 import AppointmentsComponent from './components/careplan/appointments'
 import PatientList from './components/patients/listing'
+import ImporterTraining from './components/Importer/trainer'
 import Datepicker from 'vuejs-datepicker'
 import ImporterTrainer from './components/importer/trainer'
 
@@ -105,6 +106,7 @@ Vue.component('appointments', AppointmentsComponent)
 Vue.component('patient-list', PatientList)
 Vue.component('v-datepicker', Datepicker)
 Vue.component('importer-trainer', ImporterTrainer)
+
 
 const App = new Vue({
     el: '#app',

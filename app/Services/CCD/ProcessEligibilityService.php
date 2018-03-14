@@ -24,7 +24,7 @@ class ProcessEligibilityService
     {
         $cloudDisk = Storage::cloud();
 
-        $practice  = Practice::whereName($practiceName)->first();
+        $practice  = Practice::whereName($practiceName)->firstOrFail();
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
@@ -89,6 +89,23 @@ class ProcessEligibilityService
                         $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
 
+                        $ccda = Ccda::create([
+                            'source'   => Ccda::GOOGLE_DRIVE."_$dir",
+                            'xml'      => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+                            'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                            'imported' => false,
+                            'practice_id' => (int)$practice->id,
+                        ]);
+
+                        //for some reason it doesn't save practice_id when using Ccda::create([])
+                        $ccda->practice_id = (int)$practice->id;
+                        $ccda->save();
+
+                        ProcessCcda::withChain([
+                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
+                                (bool)$filterInsurance, (bool)$filterProblems),
+                        ])->dispatch($ccda->id);
+
                         $localDisk->delete($path);
                     }
 
@@ -103,7 +120,8 @@ class ProcessEligibilityService
             ->values();
 
         if ($zipFiles->isNotEmpty()) {
-            $contents = collect($cloudDisk->listContents($dir, $recursive));
+//            $contents = collect($cloudDisk->listContents($dir, $recursive));
+            return 'done';
         }
 
         return $contents->where('type', '=', 'file')
@@ -155,7 +173,7 @@ class ProcessEligibilityService
                         ->values();
     }
 
-    public function queueFromGoogleDirve($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+    public function queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
         ProcessEligibilityFromGoogleDrive::dispatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
     }
 }
