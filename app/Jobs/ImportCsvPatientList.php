@@ -222,7 +222,7 @@ class ImportCsvPatientList implements ShouldQueue
         }
 
         if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
-            if (str_contains(strtolower($row['primary_phone_type']), 'cell')) {
+            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['primary_phone'];
             } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
                 $row['home_phone'] = $row['primary_phone'];
@@ -232,7 +232,7 @@ class ImportCsvPatientList implements ShouldQueue
         }
 
         if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
-            if (str_contains(strtolower($row['alt_phone_type']), 'cell')) {
+            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['alt_phone'];
             } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
                 $row['home_phone'] = $row['alt_phone'];
