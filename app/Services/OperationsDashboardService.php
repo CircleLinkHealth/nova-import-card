@@ -28,8 +28,8 @@ class OperationsDashboardService
      */
     public function getCpmPatientTotals(Carbon $date, $dateType, $practiceId = null)
     {
-        $fromDate = $date->copy()->startOfMonth()->toDateString();
-        $toDate   = $date->copy()->endOfMonth()->toDateString();
+        $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
+        $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
 
         $totalPatients = $this->getTotalPatients();
 
@@ -38,10 +38,12 @@ class OperationsDashboardService
         //If selecting specific day: go to day, show relevant week/month totals (EOW)
         if ($dateType == 'day') {
 
-            $dayPatients = $this->getTotalPatients($fromDate);
+            $dayFromDate = $date->copy()->startOfDay()->toDateTimeString();
+            $dayToDate   = $date->copy()->endOfDay()->toDateTimeString();
+            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
 
-            $fromDate = $date->copy()->startOfWeek()->toDateString();
-            $toDate   = $date->copy()->endOfWeek()->toDateString();
+            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
+            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
         }
@@ -50,12 +52,13 @@ class OperationsDashboardService
         if ($dateType == 'week') {
 
             //last day of week for day totals
-            $dayDate = $date->copy()->endOfWeek()->toDateString();
+            $dayFromDate = $date->copy()->endOfWeek()->startOfDay()->toDateTimeString();
+            $dayToDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
 
-            $dayPatients = $this->getTotalPatients($dayDate);
+            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
 
-            $fromDate = $date->copy()->startOfWeek()->toDateString();
-            $toDate   = $date->copy()->endOfWeek()->toDateString();
+            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
+            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
         }
@@ -63,13 +66,14 @@ class OperationsDashboardService
         //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
         if ($dateType == 'month') {
             //last day of month for day totals
-            $dayDate = $date->copy()->endOfMonth()->toDateString();
+            $dayFromDate = $date->copy()->endOfMonth()->startOfDay()->toDateTimeString();
+            $dayToDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
 
-            $dayPatients = $this->getTotalPatients($dayDate);
+            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
 
             //last week of month
-            $fromDate = $date->copy()->endOfMonth()->startOfWeek()->toDateString();
-            $toDate   = $date->copy()->endOfMonth()->toDateString();
+            $fromDate = $date->copy()->endOfMonth()->startOfWeek()->startOfDay()->toDateTimeString();
+            $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
 
             $weekPatients = $this->getTotalPatients($fromDate, $toDate);
 
@@ -160,7 +164,7 @@ class OperationsDashboardService
 
     /**
      * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
-     * dates are Carbon->toDateString()
+     * dates are Carbon->toDateTimeString()
      *
      * @param $fromDate
      * @param $toDate
@@ -173,18 +177,20 @@ class OperationsDashboardService
         if ($fromDate and $toDate) {
             $patients = User::with([
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
-                    $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                            ->where(function ($query) use ($fromDate, $toDate) {
-                                $query->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]])
-                                      ->orWhere([
-                                          ['date_withdrawn', '>=', $fromDate],
-                                          ['date_withdrawn', '<=', $toDate],
-                                      ])
-                                      ->orWhere([
-                                          ['registration_date', '>=', $fromDate],
-                                          ['registration_date', '<=', $toDate],
-                                      ]);
-                            });
+                    $patient->where(function ($query) use ($fromDate, $toDate) {
+                        $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                            $subQuery->where('ccm_status', 'paused')
+                                     ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]]);
+                        })
+                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                                  $subQuery->where('ccm_status', 'withdrawn')
+                                           ->where([['date_withdrawn', '>=', $fromDate], ['date_withdrawn', '<=', $toDate],]);
+                              })
+                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                                  $subQuery->where('ccm_status', 'enrolled')
+                                           ->where([['registration_date', '>=', $fromDate], ['registration_date', '<=', $toDate],]);
+                              });
+                    });
                 },
                 'carePlan'    => function ($c) use ($fromDate, $toDate) {
                     $c->where('status', 'to_enroll')
@@ -192,69 +198,47 @@ class OperationsDashboardService
                 },
             ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                                        ->where(function ($query) use ($fromDate, $toDate) {
-                                            $query->where([
-                                                ['date_paused', '>=', $fromDate],
-                                                ['date_paused', '<=', $toDate],
-                                            ])
-                                                  ->orWhere([
-                                                      ['date_withdrawn', '>=', $fromDate],
-                                                      ['date_withdrawn', '<=', $toDate],
-                                                  ])
-                                                  ->orWhere([
-                                                      ['registration_date', '>=', $fromDate],
-                                                      ['registration_date', '<=', $toDate],
-                                                  ]);
-                                        });
+                                $patient->where(function ($query) use ($fromDate, $toDate) {
+                                    $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                                        $subQuery->where('ccm_status', 'paused')
+                                                 ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate],]);
+                                    })
+                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                                              $subQuery->where('ccm_status', 'withdrawn')
+                                                       ->where([['date_withdrawn', '>=', $fromDate], ['date_withdrawn', '<=', $toDate],]);
+                                          })
+                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                                              $subQuery->where('ccm_status', 'enrolled')
+                                                       ->where([['registration_date', '>=', $fromDate], ['registration_date', '<=', $toDate],]);
+                                          });
+                                });
                             })
-                            ->orWhereHas('carePlan', function ($c) use ($fromDate, $toDate) {
-                                $c->where('status', 'to_enroll')
-                                  ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-                            })
-                            ->get();
-        } elseif ($fromDate and $toDate == null) {
-            $patients = User::with([
-                'patientInfo' => function ($patient) use ($fromDate) {
-                    $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                            ->where(function ($query) use ($fromDate) {
-                                $query->where('date_paused', $fromDate)
-                                      ->orWhere('date_withdrawn', $fromDate)
-                                      ->orWhere('registration_date', $fromDate);
-                            });
-                },
-                'carePlan'    => function ($c) use ($fromDate, $toDate) {
-                    $c->where('status', 'to_enroll')
-                      ->where('updated_at', $fromDate);
-                },
-            ])
-                            ->whereHas('patientInfo', function ($patient) use ($fromDate) {
-                                $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled'])
-                                        ->where(function ($query) use ($fromDate) {
-                                            $query->where('date_paused', $fromDate)
-                                                  ->orWhere('date_withdrawn', $fromDate)
-                                                  ->orWhere('registration_date', $fromDate);
-                                        });
-                            })
-                            ->orWhereHas('carePlan', function ($c) use ($fromDate) {
-                                $c->where('status', 'to_enroll')
-                                  ->where('updated_at', $fromDate);
+                            ->orWhere(function ($query) use ($fromDate, $toDate) {
+                                $query->has('patientInfo')
+                                      ->whereHas('carePlan', function ($c) use ($fromDate, $toDate) {
+                                          $c->where('status', 'to_enroll')
+                                            ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
+                                      });
                             })
                             ->get();
+
         } else {
             $patients = User::with([
                 'patientInfo' => function ($patient) {
                     $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled']);
                 },
-                'carePlan'    => function ($c) use ($fromDate, $toDate) {
+                'carePlan'    => function ($c) {
                     $c->where('status', 'to_enroll');
                 },
             ])
                             ->whereHas('patientInfo', function ($patient) {
                                 $patient->whereIn('ccm_status', ['paused', 'withdrawn', 'enrolled']);
                             })
-                            ->orWhereHas('carePlan', function ($c) {
-                                $c->where('status', 'to_enroll');
+                            ->orWhere(function ($query) {
+                                $query->has('patientInfo')
+                                      ->whereHas('carePlan', function ($c) {
+                                          $c->where('status', 'to_enroll');
+                                      });
                             })
                             ->get();
         }
