@@ -14,7 +14,7 @@ class TimezoneSeeder extends Seeder
         Eloquent::unguard();
         $this->command->info('timezone tables seeder begins ...');
         for ($i = 0; $i <= 2; $i++) {
-            $path = "database/seeds/sql/timezones-$i.sql";
+            $path = "database/seeds/sql/timezones/timezones-$i.sql";
             DB::unprepared(file_get_contents($path));
         }
         $this->command->info('timezone tables seeded!');
