@@ -139,6 +139,7 @@ class PracticeInvoiceGenerator
                                   ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                             },
+                            'ccdProblems'
                         ])
                         ->ofPractice($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
