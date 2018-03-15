@@ -238,12 +238,12 @@ class PracticeInvoiceController extends Controller
 
     public function createInvoices()
     {
-        $currentMonth = Carbon::now()->firstOfMonth();
+        $currentMonth = Carbon::now()->startOfMonth();
 
         $dates = [];
 
         for ($i = 0; $i <= 6; $i++) {
-            $date = $currentMonth->copy()->subMonth($i)->firstOfMonth();
+            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
 
             $dates[$date->toDateString()] = $date->format('F, Y');
         }
