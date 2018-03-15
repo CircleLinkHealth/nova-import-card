@@ -32,13 +32,14 @@ class AddTimeZones extends Migration
 
         if (!Schema::hasTable('tz_timezones')) {
             Schema::create('tz_timezones', function (Blueprint $table) {
+                $table->increments('id');
                 $table->integer('zone_id')->unsigned();
                 $table->string('abbreviation', 6);
                 $table->decimal('time_start', 11, 0);
                 $table->integer('gmt_offset');
                 $table->char('dst', 1);
-                $table->foreign('zone_id')->references('zone_id')->on('tz_zones');
                 $table->index([ 'zone_id', 'time_start' ]);
+                $table->foreign('zone_id')->references('zone_id')->on('tz_zones');
             });
         }
     }
