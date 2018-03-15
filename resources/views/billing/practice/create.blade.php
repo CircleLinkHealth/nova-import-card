@@ -60,7 +60,7 @@
                                                 name="date" id="date">
                                             @foreach($dates as $key => $val)
 
-                                                @if(\Carbon\Carbon::today()->startOfMonth()->toDateString() == $key)
+                                                @if(\Carbon\Carbon::today()->firstOfMonth()->toDateString() == $key)
                                                     <option value="{{$key}}" selected>{{$val}}</option>
                                                 @else
                                                     <option value="{{$key}}">{{$val}}</option>

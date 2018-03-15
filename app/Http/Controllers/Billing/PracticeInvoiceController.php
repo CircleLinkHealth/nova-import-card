@@ -245,7 +245,7 @@ class PracticeInvoiceController extends Controller
         for ($i = 0; $i <= 6; $i++) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
 
-            $dates[$date->format('c')] = $date->format('F, Y');
+            $dates[$date->toDateString()] = $date->format('F, Y');
         }
 
         $readyToBill = Practice::active()
@@ -269,7 +269,7 @@ class PracticeInvoiceController extends Controller
 
         $invoices = [];
 
-        $date = Carbon::createFromFormat('c', $request->input('date'));
+        $date = Carbon::parse($request->input('date'));
 
         if ($request['format'] == 'pdf') {
 
