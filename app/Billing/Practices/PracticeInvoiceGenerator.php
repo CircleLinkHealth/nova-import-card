@@ -55,6 +55,12 @@ class PracticeInvoiceGenerator
     }
 
 
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
     public function makeInvoicePdf($reportName)
     {
         \Storage::disk('storage')
@@ -71,8 +77,17 @@ class PracticeInvoiceGenerator
     }
 
 
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
     public function makePatientReportPdf($reportName)
     {
+        \Storage::disk('storage')
+                ->makeDirectory('download');
+
 
         $path = storage_path("/download/$reportName.pdf");
 
