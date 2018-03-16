@@ -2,6 +2,9 @@
 
 namespace App\Filters;
 
+use App\CarePerson;
+use App\Practice;
+use App\ProviderInfo;
 use App\Repositories\PatientReadRepository;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -80,11 +83,26 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_provider($type = null) {
-        return $this->builder->orderByJoin('providerInfo.user.display_name', $type);
+        $careTeamTable = (new CarePerson())->getTable();
+
+        return $this->builder
+            ->select('users.*')
+            ->with('billingProvider.user')
+            ->join($careTeamTable, 'users.id', '=', "$careTeamTable.user_id")
+            ->where("$careTeamTable.type", CarePerson::BILLING_PROVIDER)
+            ->join('users as providers', 'providers.id', '=', "$careTeamTable.member_user_id")
+            ->orderBy("providers.display_name", $type);
     }
     
     public function sort_practice($type = null) {
-        return $this->builder->orderByJoin('primaryPractice.display_name', $type);
+        $practicesTable = (new Practice())->getTable();
+
+        return $this->builder
+            ->select('users.*')
+            ->with('primaryPractice')
+            ->join($practicesTable, "users.program_id", '=', "$practicesTable.id")
+            ->orderBy("$practicesTable.display_name", $type)
+            ->groupBy('users.id');
     }
     
     public function sort_ccmStatus($type = null) {
