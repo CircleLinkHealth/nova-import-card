@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-sm-8">
                 <input type="button" class="btn btn-success" 
-                            :value="'Show by ' + (nameDisplayType ? 'Last' : 'First') + ' Name'" @click="changeNameDisplayType" >
+                            :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
                 <span class="pad-10"></span>
 
                 <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
@@ -143,7 +143,7 @@
                 this.getPatients()
             },
             changeNameDisplayType () {
-                if (this.nameDisplayType != NameDisplayType.FirstName) {
+                if (this.nameDisplayType !== NameDisplayType.FirstName) {
                     this.tableData.forEach(patient => {
                         patient.name = patient.firstName + ' ' + patient.lastName
                     })
