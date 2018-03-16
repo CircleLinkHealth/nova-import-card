@@ -26,6 +26,8 @@ export default (App, Event) => {
     Event.$on('vue-tables.filter::DOB', App.activateFilters)
     
     Event.$on('vue-tables.sorted', App.activateFilters)
+    
+    Event.$on('vue-tables.limit', App.activateFilters)
 
     Event.$on('unscheduled-patients-modal:filter', (value) => {
         App.$refs.tblCalls.setFilter({ Patient: value })
