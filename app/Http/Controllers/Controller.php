@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Spatie\MediaLibrary\Media;
 
 class Controller extends BaseController
 {
@@ -44,5 +45,10 @@ class Controller extends BaseController
         return response()->json([
             'message' => $message ?? 'there was a conflict'
         ], 409);
+    }
+
+    public function downloadMedia(Media $media) {
+        return  \Storage::disk('media')
+                        ->download("{$media->id}/{$media->file_name}");
     }
 }

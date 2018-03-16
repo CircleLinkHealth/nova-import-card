@@ -4,10 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
-class SaasAccount extends \App\BaseModel
+class SaasAccount extends \App\BaseModel implements HasMedia
 {
-    use SoftDeletes;
+    use HasMediaTrait,
+        SoftDeletes;
 
     protected $fillable = [
         'name',

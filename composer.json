@@ -58,6 +58,7 @@
         "propaganistas/laravel-phone": "^3.0",
         "rap2hpoutre/laravel-log-viewer": "^0.4.0",
         "spatie/laravel-google-calendar": "^2.0",
+        "spatie/laravel-medialibrary": "^6.9",
         "spiritix/lada-cache": "^2.1",
         "twilio/sdk": "5.7",
         "tylercd100/lern": "^3.8",

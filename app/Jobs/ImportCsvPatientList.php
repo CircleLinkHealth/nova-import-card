@@ -213,6 +213,34 @@ class ImportCsvPatientList implements ShouldQueue
             $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
         }
 
+        if (array_key_exists('street', $row)) {
+            $row['address'] = $row['street'];
+        }
+
+        if (array_key_exists('street_2', $row)) {
+            $row['address2'] = $row['street_2'];
+        }
+
+        if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
+            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
+                $row['home_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'work')) {
+                $row['work_phone'] = $row['primary_phone'];
+            }
+        }
+
+        if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
+            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
+                $row['home_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'work')) {
+                $row['work_phone'] = $row['alt_phone'];
+            }
+        }
+
         $exists = TabularMedicalRecord::where([
             'first_name' => $row['first_name'],
             'last_name' => $row['last_name'],

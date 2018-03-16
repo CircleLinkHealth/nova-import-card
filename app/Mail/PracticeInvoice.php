@@ -24,7 +24,7 @@ class PracticeInvoice extends Mailable
      * For an example @see: PracticeInvoiceController, method send
      *
      */
-    protected $invoiceLink;
+    protected $patientReportURL;
 
 
     /**
@@ -33,23 +33,21 @@ class PracticeInvoice extends Mailable
      * For an example @see: PracticeInvoiceController, method send
      *
      */
-    protected $filePath;
+    protected $invoiceURL;
 
 
     /**
      * Create a new message instance.
      *
+     * @param $patientReportURL
+     * @param $invoiceURL
+     *
      * @throws \Exception
-     * @return void
      */
-    public function __construct($invoiceLink, $filePath)
+    public function __construct($patientReportURL, $invoiceURL)
     {
-        $this->invoiceLink = $invoiceLink;
-
-        if (!file_exists($filePath)) {
-            throw new \Exception("File does not exist: $filePath \n\n Invoice Link: $invoiceLink");
-        }
-        $this->filePath = $filePath;
+        $this->patientReportURL = $patientReportURL;
+        $this->invoiceURL = $invoiceURL;
     }
 
     /**
@@ -60,9 +58,11 @@ class PracticeInvoice extends Mailable
     public function build()
     {
         return $this->view('billing.practice.mail')
-            ->with(['link' => $this->invoiceLink])
+            ->with([
+                'patientReportURL' => $this->patientReportURL,
+                'invoiceURL' => $this->invoiceURL,
+            ])
             ->from('billing@circlelinkhealth.com', 'CircleLink Health')
-            ->subject('Your Invoice and Billing Report from CircleLink')
-            ->attach($this->filePath);
+            ->subject('Your Invoice and Billing Report from CircleLink');
     }
 }
