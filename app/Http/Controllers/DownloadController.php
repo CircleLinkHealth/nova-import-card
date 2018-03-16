@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Spatie\MediaLibrary\Media;
+
 class DownloadController extends Controller
 {
     /**
@@ -21,7 +23,19 @@ class DownloadController extends Controller
         }
 
         if (!file_exists($path)) {
-            $filePath = base64_decode($filePath);
+            $filePath = trim(base64_decode($filePath));
+
+            if (is_json($filePath)) {
+                $decoded = json_decode($filePath, true);
+
+                if (!empty($decoded['media_id'])) {
+                    $media = Media::findOrFail($decoded['media_id']);
+
+                    return \Storage::disk('media')
+                        ->download("{$media->id}/{$media->file_name}");
+                }
+            }
+
             $path = storage_path($filePath);
         }
 
