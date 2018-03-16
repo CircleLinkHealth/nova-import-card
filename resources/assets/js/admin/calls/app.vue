@@ -163,7 +163,8 @@
             },
             nextCall: row['Next Call'],
             callTimeStart: row['Call Time Start'],
-            callTimeEnd: row['Call Time End']
+            callTimeEnd: row['Call Time End'],
+            loaders: row.loaders
           }))
         },
         options () {
@@ -404,8 +405,10 @@
         },
         next() {
           const $vm = this
-          if (!this.$nextPromise) {
-            this.loaders.calls = true
+          if (this.$nextPromise) {
+            this.$nextPromise.abort()
+          }
+          this.loaders.calls = true
             return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
               result = result.data;
               this.pagination = {
@@ -454,7 +457,6 @@
               console.error('calls:response', err)
               this.loaders.calls = false
             })
-          }
         }
       },
       mounted() {
