@@ -166,7 +166,6 @@
             sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'CCM Time', 'Call Time Start', 'Call Time End', 'Patient Status', 'Practice', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
-            footerHeadings: true,
             texts: {
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
             },
