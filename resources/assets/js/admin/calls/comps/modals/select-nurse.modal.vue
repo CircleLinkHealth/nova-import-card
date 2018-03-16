@@ -41,9 +41,13 @@
     import { rootUrl } from '../../../../app.config'
     import Notifications from '../../../../components/notifications'
     import Loader from '../../../../components/loader'
+    import VueCache from '../../../../util/vue-cache'
 
     export default {
         name: 'select-nurse-modal',
+        mixins: [
+            VueCache
+        ],
         props: {
             'selectedPatients': {
                 type: Array,
@@ -122,7 +126,7 @@
         methods: {
             getNurses() {
                 return this.$nursePromise = Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
-                    return this.axios.get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
+                    return this.cache().get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
                         const nurses = ((response.data || {}).data || []).map(nurse => {
                             nurse.user = nurse.user || {}
                             return {
