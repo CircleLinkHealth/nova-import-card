@@ -159,16 +159,17 @@
                 this.tableData = []
                 this.$refs.tblPatientList.setPage(1)
                 this.getPatients()
+                this.nameDisplayType = NameDisplayType.FirstName
             },
             changeNameDisplayType () {
                 if (this.nameDisplayType !== NameDisplayType.FirstName) {
                     this.tableData.forEach(patient => {
-                        patient.name = patient.firstName + ' ' + patient.lastName
+                        if (patient.lastName && patient.firstName) patient.name = patient.firstName + ' ' + patient.lastName
                     })
                 }
                 else {
                     this.tableData.forEach(patient => {
-                        patient.name = patient.lastName + ', ' + patient.firstName
+                        if (patient.lastName && patient.firstName) patient.name = patient.lastName + ', ' + patient.firstName
                     })
                 }
                 this.nameDisplayType = Number(!this.nameDisplayType)
