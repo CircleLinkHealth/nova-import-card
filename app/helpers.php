@@ -903,3 +903,25 @@ if (!function_exists('cast')) {
         return $ret;
     }
 }
+
+if (!function_exists('isJson')) {
+    /**
+     * Determine whether the given string is json
+     *
+     * @param $string
+     *
+     * @return bool
+     */
+    function is_json($string) {
+        if ($string === '') {
+            return false;
+        }
+
+        \json_decode($string);
+        if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
+    }
+}

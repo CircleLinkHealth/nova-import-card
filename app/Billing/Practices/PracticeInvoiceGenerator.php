@@ -24,22 +24,29 @@ class PracticeInvoiceGenerator
         $this->month    = $month->firstOfMonth();
     }
 
+    /**
+     * @param bool $withItemized
+     *
+     * @return array
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
+     */
     public function generatePdf($withItemized = true)
     {
         $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
 
-        $pdfInvoicePath = $this->makeInvoicePdf($invoiceName);
+        $pdfInvoice = $this->makeInvoicePdf($invoiceName);
 
         $data = [
-            'Invoice' => $invoiceName . '.pdf',
+            'invoice_url' => $pdfInvoice->getUrl(),
         ];
 
         if ($withItemized) {
 
             $reportName           = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
-            $pdfPatientReportPath = $this->makePatientReportPdf($reportName);
+            $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
-            $data['Patient Report'] = $reportName . '.pdf';
+            $data['patient_report_url'] = $pdfPatientReport->getUrl();
         }
 
         $data['practiceId'] = $this->practice->id;
@@ -48,6 +55,12 @@ class PracticeInvoiceGenerator
     }
 
 
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
     public function makeInvoicePdf($reportName)
     {
         \Storage::disk('storage')
@@ -56,19 +69,34 @@ class PracticeInvoiceGenerator
         $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
         $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);
 
-        return storage_path("download/$reportName.pdf");
+        $path = storage_path("download/$reportName.pdf");
+
+        return $this->practice
+            ->addMedia($path)
+            ->toMediaCollection("invoice_for_{$this->month->toDateString()}");
     }
 
 
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
     public function makePatientReportPdf($reportName)
     {
+        \Storage::disk('storage')
+                ->makeDirectory('download');
+
 
         $path = storage_path("/download/$reportName.pdf");
 
         $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
         $pdfItemized->save($path, true);
 
-        return $path;
+        return $this->practice
+            ->addMedia($path)
+            ->toMediaCollection("patient_report_for_{$this->month->toDateString()}");
     }
 
 
@@ -139,6 +167,7 @@ class PracticeInvoiceGenerator
                                   ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                             },
+                            'ccdProblems'
                         ])
                         ->ofPractice($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
