@@ -16,6 +16,7 @@ class PatientMonthlySummary extends Resource
     public function toArray($request)
     {
         return [
+            'id'                     => $this->id,
             'month_year'             => $this->month_year,
             'ccm_time'               => $this->ccm_time,
             'no_of_calls'            => $this->no_of_calls,
