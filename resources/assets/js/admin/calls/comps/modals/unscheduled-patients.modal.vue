@@ -21,7 +21,7 @@
                     <div class="col-sm-12">
                         <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
                             <template slot="name" scope="props">
-                                <a class="pointer" @click="triggerParentFilter(props.row.name)">{{props.row.name}}</a>
+                                <a class="pointer" @click="triggerParentFilter(props.row.id)">{{props.row.name}}</a>
                             </template>
                         </v-client-table>
                     </div>
@@ -97,8 +97,11 @@
                     })
                 }
             },
-            triggerParentFilter(value) {
-                Event.$emit('unscheduled-patients-modal:filter', value)
+            triggerParentFilter(id) {
+                Event.$emit('unscheduled-patients-modal:filter', {
+                    practiceId: this.practiceId,
+                    patientId: id
+                })
             }
         },
         mounted() {

@@ -153,7 +153,7 @@
           return !!this.tableData.find(row => !!row.selected)
         },
         selectedPatients() {
-          return this.tableData.filter(row => row.selected).map(row => ({
+          return this.tableData.filter(row => row.selected && row.Patient).map(row => ({
             id: row['Patient ID'],
             callId: row.id,
             name: row.Patient,
