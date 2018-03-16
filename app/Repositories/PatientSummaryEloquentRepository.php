@@ -380,8 +380,8 @@ class PatientSummaryEloquentRepository
 
     public function detachDefaultChargeableService($summary, $defaultCodeId)
     {
-        $summary->chargeableServices()->where('id', $defaultCodeId)
-                        ->delete();
+        $summary->chargeableServices()
+            ->detach($defaultCodeId);
         
         $summary->load('chargeableServices');
 
