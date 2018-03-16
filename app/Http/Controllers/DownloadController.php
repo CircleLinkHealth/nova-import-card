@@ -31,8 +31,7 @@ class DownloadController extends Controller
                 if (!empty($decoded['media_id'])) {
                     $media = Media::findOrFail($decoded['media_id']);
 
-                    return \Storage::disk('media')
-                        ->download("{$media->id}/{$media->file_name}");
+                    return $this->downloadMedia($media);
                 }
             }
 
