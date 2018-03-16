@@ -150,7 +150,7 @@
                 }
                 else {
                     this.tableData.forEach(patient => {
-                        patient.name = patient.lastName + ' ' + patient.firstName
+                        patient.name = patient.lastName + ', ' + patient.firstName
                     })
                 }
                 this.nameDisplayType = Number(!this.nameDisplayType)
