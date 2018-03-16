@@ -11,21 +11,21 @@
                 <div>(HH:MM:SS)</div>
             </template>
         </v-client-table>
-        <div class="row text-center">
-            <div class="col-sm-3">
+        <div class="row">
+            <div class="col-sm-8">
                 <input type="button" class="btn btn-success" 
-                    :value="'Show by ' + (nameDisplayType ? 'Last' : 'First') + ' Name'" @click="changeNameDisplayType" >
-            </div>
-            <div class="col-sm-3">
+                            :value="'Show by ' + (nameDisplayType ? 'Last' : 'First') + ' Name'" @click="changeNameDisplayType" >
+                <span class="pad-10"></span>
+
                 <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
-            </div>
-            <div class="col-sm-3">
+                <span class="pad-10"></span>
+
                 <input type="button" class="btn btn-success" 
-                    value="Export as Excel" @click="exportExcel" >
-            </div>
-            <div class="col-sm-3">
+                            value="Export as Excel" @click="exportExcel" >
+                <span class="pad-10"></span>
+
                 <input type="button" class="btn btn-success" 
-                    :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
+                            :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
             </div>
         </div>
     </div>
@@ -313,5 +313,9 @@
     }
 </script>
 
-<style scoped>
+<style>
+.pad-10 {
+    padding: 10px;
+}
+
 </style>
