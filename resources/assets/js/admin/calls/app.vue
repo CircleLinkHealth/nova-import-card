@@ -177,6 +177,10 @@
             texts: {
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
             },
+            perPage: 100,
+            perPageValues: [
+              10, 25, 50, 100, 150, 200
+            ],
             customSorting: {
               Nurse: (ascending) => (a, b) => 0,
               'Patient ID': (ascending) => (a, b) => 0,
