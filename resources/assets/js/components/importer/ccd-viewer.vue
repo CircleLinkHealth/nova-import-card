@@ -151,20 +151,23 @@
                         confirm: false,
                         practices: false,
                         locations: false,
-                        providers: false
+                        providers: false,
+                        update: false
                     },
                     practices: () => self.practices,
                     locations: [],
                     providers: [],
                     changePractice(id) {
                         self.changePractice(record.id, id)
-                        //console.log('change-practice-name', record.id, id)
+                        self.updateRecord(record.id)
                     },
                     changeLocation(id) {
                         self.changeLocation(record.id, id)
+                        self.updateRecord(record.id)
                     },
                     changeProvider(id) {
                         self.changeProvider(record.id, id)
+                        self.updateRecord(record.id)
                     }
                 }
                 return newRecord
@@ -225,6 +228,29 @@
                         record['Billing Provider'] = provider.id
                     }
                 }
+            },
+            updateRecord(recordId) {
+                const record = this.tableData.find(row => row.id === recordId)
+                if (record && record.Practice && record.Location && record['Billing Provider']) {
+                    const practiceId = record.Practice
+                    const locationId = record.Location
+                    const billingProviderId = record['Billing Provider']
+
+                    record.loaders.update = true
+                    this.axios.post(rootUrl('importer/train/store?json'), {
+                        imported_medical_record_id: recordId,
+                        practiceId,
+                        locationId,
+                        billingProviderId
+                    }).then(response => {
+                        record.loaders.update = false
+                        console.log('ccd-viewer:update-record', response)
+                    }).catch(err => {
+                        record.loaders.update = false
+                        console.error('ccd-viewer:update-record')
+                    })
+                } 
+                console.log('update-record', record)
             },
             getRecords() {
                 this.axios.get(this.url).then((response) => {
