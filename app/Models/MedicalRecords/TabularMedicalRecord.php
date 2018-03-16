@@ -19,6 +19,7 @@ use App\User;
  * @property int|null $billing_provider_id
  * @property int|null $uploaded_by
  * @property int|null $patient_id
+ * @property string|null $patient_name
  * @property string|null $first_name
  * @property string|null $last_name
  * @property \Carbon\Carbon|null $dob
@@ -150,17 +151,17 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     {
         $phoenixHeart = Practice::whereDisplayName('Phoenix Heart')->first();
 
-        if ($this->practice_id == $phoenixHeart->id) {
+        if ($phoenixHeart && $this->practice_id == $phoenixHeart->id) {
             return new PhoenixHeartSectionsLogger($this, $phoenixHeart);
         }
 
         $rappahannock = Practice::whereDisplayName('Rappahannock Family Physicians')->first();
 
-        if ($this->practice_id == $rappahannock->id) {
+        if ($rappahannock && $this->practice_id == $rappahannock->id) {
             return new RappaSectionsLogger($this, $rappahannock);
         }
 
-        return new TabularMedicalRecordSectionsLogger($this);
+        return new TabularMedicalRecordSectionsLogger($this, Practice::find($this->practice_id));
     }
 
     /**
@@ -171,6 +172,15 @@ class TabularMedicalRecord extends MedicalRecordEloquent
     public function getPatient(): User
     {
         // TODO: Implement getPatient() method.
+    }
+
+    public function setPatientNameAttribute(string $value): string {
+        if ($value) {
+            $names = explode(', ', $value);
+            $this->first_name = $names[0];
+            $this->last_name = $names[1];
+        }
+        return $value;
     }
 
     public function getDocumentCustodian(): string

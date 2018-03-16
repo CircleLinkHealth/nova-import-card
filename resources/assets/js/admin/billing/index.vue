@@ -11,56 +11,81 @@
             </div>
         </div>
         <div class="panel-body">
-            <div class="col-sm-12 row">
-                <div class="col-sm-4">
-                    <div>
-                        <label>Select Practice</label>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div>
+                                        <label>Select Practice</label>
+                                    </div>
+                                    <select2 class="form-control" v-model="selectedPractice">
+                                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}</option>
+                                    </select2>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div>
+                                        <label>Select Month</label>
+                                    </div>
+                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].long">
+                                        <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}</option>
+                                    </select2>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div>&nbsp;</div>
+                                    <button class="btn btn-info" @click="changePractice" :disabled="loaders.billables">Load</button>
+                                    <loader class="inline-block absolute" v-if="loaders.billables"></loader>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <form>
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <div>
+                                            <label>Set Chargeable Service</label>
+                                        </div>
+                                        <select2 class="form-control" v-model="selectedService">
+                                            <option :value="null">Set Default Code</option>
+                                            <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
+                                            </option>
+                                        </select2>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div>&nbsp;</div>
+                                        <div>
+                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices">Attach</button>
+                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices">Detach</button>
+                                            <loader class="inline-block absolute" v-if="loaders.chargeableServices"></loader>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <select2 class="form-control" v-model="selectedPractice" @change="changePractice">
-                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}
-                        </option>
-                    </select2>
-                </div>
-                <div class="col-sm-4">
-                    <div>
-                        <label>Select Month</label>
-                    </div>
-                    <select2 class="form-control" v-model="selectedMonth" @change="changePractice" :value="months[0].long">
-                        <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}
-                        </option>
-                    </select2>
-                </div>
-                <div class="col-sm-4">
-                    <div>
-                        <label>Set Chargeable Service</label>
-                    </div>
-                    <select2 class="form-control" v-model="selectedService" @change="changeService">
-                        <option :value="null">Set Default Code</option>
-                        <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
-                        </option>
-                    </select2>
                 </div>
             </div>
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
                     <strong>Approved: </strong>
-                    <div class="loading" v-if="loading"></div>
+                    <loader v-if="loaders.billables"></loader>
                     <span class="color-green">
-                        {{loading ? '' : counts.approved}}
+                        {{loaders.billables ? '' : counts.approved}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Flagged: </strong>
-                    <div class="loading" v-if="loading"></div>
+                    <loader v-if="loaders.billables"></loader>
                     <span class="color-dark-orange">
-                        {{loading ? '' : counts.flagged}}
+                        {{loaders.billables ? '' : counts.flagged}}
                     </span>
                 </div>
                 <div class="col-sm-4">
                     <strong>Rejected: </strong>
-                    <div class="loading" v-if="loading"></div>
+                    <loader v-if="loaders.billables"></loader>
                     <span class="color-dark-red">
-                        {{loading ? '' : counts.rejected}}
+                        {{loaders.billables ? '' : counts.rejected}}
                     </span>
                 </div>
             </div>
@@ -71,7 +96,7 @@
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
-                    <div class="loading" v-if="props.row.promises['approve_reject']"></div>
+                    <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
                 <template slot="rejected" scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
@@ -79,7 +104,7 @@
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
                         title="view error message"
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
-                    <div class="loading" v-if="props.row.promises['approve_reject']"></div>
+                    <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
                 <template slot="Patient" scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
@@ -88,14 +113,14 @@
                     <div>
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
-                        <div class="loading" v-if="props.row.promises['problem_1']"></div>
+                        <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
                 <template slot="Problem 2" scope="props">
                     <div>
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
-                        <div class="loading" v-if="props.row.promises['problem_2']"></div>
+                        <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
                 <template slot="chargeable_services" scope="props">
@@ -104,7 +129,7 @@
                             <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
                         </div>
                         <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
-                        <div class="loading" v-if="props.row.promises['update_chargeables']"></div>
+                        <loader v-if="props.row.promises['update_chargeables']"></loader>
                     </div>
                 </template>
             </v-client-table>
@@ -125,6 +150,7 @@
     import moment from 'moment'
     import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
+    import Loader from '../../components/loader'
 
     export default {
         name: 'billing-report',
@@ -134,7 +160,8 @@
             'patient-problem-modal': PatientProblemModal,
             'error-modal': ErrorModal,
             'select2': Select2Component,
-            'chargeable-services-modal': ChargeableServicesModal
+            'chargeable-services-modal': ChargeableServicesModal,
+            'loader': Loader
         },
         data() {
             return {
@@ -142,6 +169,11 @@
                 selectedPractice: 0,
                 selectedService: null,
                 loading: true,
+                loaders: {
+                    practices: false,
+                    billables: false,
+                    chargeableServices: false
+                },
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
                 chargeableServices: [],
@@ -221,41 +253,63 @@
                 this.retrieve()
                 this.getCounts()
             },
-            changeService(id) {
+            detachChargeableService(e) {
+                if (e) e.preventDefault()
+                const id = this.selectedService
                 console.log('billing:chargeable-service:default', id)
                 const service = this.chargeableServices.find(s => s.id == id)
                 const practice = this.practices.find(p => p.id == this.selectedPractice)
-                if (id && service && practice && !this.loading && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
-                    this.loading = true
-                    return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), {
-                        practice_id: this.selectedPractice,
-                        date: this.selectedMonth,
-                        default_code_id: id
-                    }).then(response => {
-                        (response.data || []).forEach(summary => {
-                            const tableItem = this.tableData.find(row => row.id == summary.id)
-                            if (tableItem) {
-                                tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
-                            }
-                        })
-                        this.loading = false
-                        console.log('billing:chargeable-services:default:update', response.data)
-                    }).catch(err => {
-                        console.error('billing:chargeable-services:default:update', err)
-                        
-                        this.loading = false
-                    })
+                if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to remove ${service.code} from all chargeable services for ${practice.name} in ${this.selectedMonth}?`)) {
+                    return this.updateChargeableService(id, true)
                 }
             },
+            attachChargeableService(e) {
+                if (e) e.preventDefault()
+                const id = this.selectedService
+                console.log('billing:chargeable-service:default', id)
+                const service = this.chargeableServices.find(s => s.id == id)
+                const practice = this.practices.find(p => p.id == this.selectedPractice)
+                if (id && service && practice && !this.loaders.chargeableServices && confirm(`Are you sure you want to set ${service.code} as the default chargeable service for ${practice.name} in ${this.selectedMonth}?`)) {
+                    return this.updateChargeableService(id)
+                }
+            },
+            updateChargeableService(id, isDetach = false) {
+                this.loaders.chargeableServices = true
+                const data = {
+                    practice_id: this.selectedPractice,
+                    date: this.selectedMonth,
+                    default_code_id: id
+                }
+                if (isDetach) {
+                    data.detach = true
+                }
+                return this.axios.post(rootUrl('admin/reports/monthly-billing/v2/updatePracticeServices'), data).then(response => {
+                    (response.data || []).forEach(summary => {
+                        const tableItem = this.tableData.find(row => row.id == summary.id)
+                        if (tableItem) {
+                            tableItem.chargeable_services = (summary.chargeable_services || []).map(item => item.id)
+                        }
+                    })
+                    this.loaders.chargeableServices = false
+                    console.log('billing:chargeable-services:default:update', response.data)
+                }).catch(err => {
+                    console.error('billing:chargeable-services:default:update', err)
+
+                    this.loaders.chargeableServices = false
+                })
+            },
             getChargeableServices() {
+                this.loaders.chargeableServices = true
                 return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
                     this.chargeableServices = (response.data || []).map(service => {
                         service.selected = null
                         return service
                     })
                     console.log('billing:chargeable-services', this.chargeableServices)
+                    this.loaders.chargeableServices = false
                 }).catch(err => {
                     console.error('billing:chargeable-services', err)
+                    this.loaders.chargeableServices = false
                 })
             },
             getCounts() {
@@ -268,7 +322,7 @@
                 })
             },
             retrieve() {
-                this.loading = true;
+                this.loaders.billables = true
                 this.axios.post(this.url || rootUrl(`admin/reports/monthly-billing/v2/data`), {
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
@@ -328,11 +382,11 @@
                         }
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
-                    this.loading = false;
+                    this.loaders.billables = false
                     console.log('bills-report', this.tableData.slice(0))
                 }).catch(err => {
                     console.error(err)
-                    this.loading = false
+                    this.loaders.billables = false
                 })
             },
 
@@ -407,10 +461,9 @@
                             }
                             return a
                         }, {}),
-                        data: this.tableData.map(row => {
-                            row.chargeable_services = row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
-                            return row
-                        })
+                        data: this.tableData.map(row => (Object.assign({}, row, {
+                                chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                            })))
                     }
                 ])
 
@@ -494,6 +547,10 @@
         display: inline-block;
     }
 
+    .absolute {
+        position: absolute;
+    }
+
     input[type="checkbox"] {
         display: inline-block !important;
     }
@@ -534,21 +591,6 @@
         cursor: pointer;
     }
 
-    .loading {
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid #3498db;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        animation: spin 2s linear infinite;
-        margin-left: 15px;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
     .bg-flagged {
         background-color: rgba(255, 252, 96, 0.408) !important;
     }
@@ -566,5 +608,11 @@
         cursor: pointer;
         border: 1px solid red;
         padding-bottom: 14px;
+    }
+</style>
+
+<style>
+    .select2-container {
+        width: 100% !important;
     }
 </style>

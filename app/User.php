@@ -27,6 +27,7 @@ use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use App\Traits\SaasAccountable;
+use App\Filters\Filterable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -227,7 +228,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
-    use Authenticatable,
+    use Filterable, Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
         HasApiTokens,
@@ -2794,5 +2795,18 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             return $saasAccount->name;
         }
         return 'CircleLink Health';
+    }
+
+    public function billingCodes(Carbon $monthYear) {
+        $summary = $this->patientSummaries()
+            ->where('month_year', $monthYear->toDateString())
+            ->with('chargeableServices')
+            ->has('chargeableServices')
+            ->first();
+
+        if (!$summary) return '';
+
+        return $summary->chargeableServices
+            ->implode('code', ', ');
     }
 }

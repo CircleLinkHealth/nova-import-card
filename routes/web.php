@@ -439,7 +439,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::get('create/remix', [
+        Route::get('', [
             'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd.remix',
         ]);
@@ -1018,6 +1018,32 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+
+            Route::group([
+                'prefix' => 'ops-dashboard',
+            ], function () {
+                Route::get('/index', [
+                    'uses' => 'OperationsDashboardController@index',
+                    'as'   => 'OpsDashboard.index'
+                ]);
+                Route::get('/total-data', [
+                    'uses' => 'OperationsDashboardController@getTotalPatientData',
+                    'as'   => 'OpsDashboard.totalData'
+                ]);
+                Route::get('/paused-patient-list', [
+                    'uses' => 'OperationsDashboardController@getPausedPatientList',
+                    'as'   => 'OpsDashboard.pausedPatientList'
+                ]);
+                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
+                    'uses' => 'OperationsDashboardController@getList',
+                    'as'   => 'OpsDashboard.patientList'
+                ]);
+                Route::get('/patients-by-practice', [
+                    'uses' => 'OperationsDashboardController@getPatientsByPractice',
+                    'as'   => 'OpsDashboard.patientsByPractice'
+                ]);
+            });
+
         });
 
         //Practice Billing
@@ -1833,5 +1859,10 @@ Route::group([
 
 Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
+    'as'   => 'process.eligibility.google.drive'
+])->middleware(['auth', 'role:administrator']);
+
+Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+    'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
     'as'   => 'process.eligibility.google.drive'
 ])->middleware(['auth', 'role:administrator']);

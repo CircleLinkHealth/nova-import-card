@@ -468,7 +468,9 @@ class WelcomeCallListGenerator
             return $patientArr;
         });
 
-        $excel = Excel::create("$filename - $now", function ($excel) {
+        $slug = str_slug("$filename - $now", '_');
+
+        $excel = Excel::create($slug, function ($excel) {
             $excel->sheet('Welcome Calls', function ($sheet) {
                 $sheet->fromArray(
                     $this->patientList->values()->all()

@@ -54,6 +54,8 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function handle()
     {
+        $execution_time = ini_get('max_execution_time');
+        ini_set('max_execution_time', 300);
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
                 if (stripcslashes($row['medical_record_type']) == stripcslashes(Ccda::class)) {
@@ -66,12 +68,19 @@ class ImportCsvPatientList implements ShouldQueue
                 }
             }
 
+            if (isset($row['patient_name'])) {
+                $names = explode(', ', $row['patient_name']);
+                $row['first_name'] = $names[0];
+                $row['last_name'] = $names[1];
+            }
+
             $this->createTabularMedicalRecordAndImport($row);
         }
 
         $url = url('view.files.ready.to.import');
 
         sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        ini_set('max_execution_time', $execution_time);
     }
 
     /**
@@ -113,11 +122,15 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $demographics = $importedMedicalRecord->demographics;
 
-        $demographics->primary_phone = $row['primary_phone'];
-        $demographics->preferred_call_times = $row['preferred_call_times'];
-        $demographics->preferred_call_days = $row['preferred_call_days'];
+        $demographics->primary_phone = $row['primary_phone'] ?? '';
+        $demographics->preferred_call_times = $row['preferred_call_times'] ?? '';
+        $demographics->preferred_call_days = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
+            if (!array_key_exists($phone, $row)) {
+                continue;
+            }
+
             if ($demographics->{$phone} == $row[$phone]) {
                 continue;
             }
@@ -135,7 +148,7 @@ class ImportCsvPatientList implements ShouldQueue
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
-        if (!$importedMedicalRecord->billing_provider_id) {
+        if (!$importedMedicalRecord->billing_provider_id && array_key_exists('provider', $row)) {
             $providerName = explode(' ', $row['provider']);
 
             if (count($providerName) >= 2) {
@@ -169,6 +182,14 @@ class ImportCsvPatientList implements ShouldQueue
                 'practice_id'         => $importedMedicalRecord->practice_id,
             ]);
 
+        $demographicsLogs = $mr->demographics->first();
+
+        if ($demographicsLogs) {
+            if (!$demographicsLogs->mrn_number) {
+                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->save();
+            }
+        }
 
         $importedMedicalRecord->save();
     }
