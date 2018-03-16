@@ -163,7 +163,8 @@
             },
             nextCall: row['Next Call'],
             callTimeStart: row['Call Time Start'],
-            callTimeEnd: row['Call Time End']
+            callTimeEnd: row['Call Time End'],
+            loaders: row.loaders
           }))
         },
         options () {

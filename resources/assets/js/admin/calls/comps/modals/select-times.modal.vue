@@ -53,6 +53,7 @@
                             </div>
                             <div class="col-sm-2">
                                 {{patient.callTimeEnd}}
+                                <loader v-if="patient.loaders.nextCall"></loader>
                             </div>
                         </div>
                     </div>
