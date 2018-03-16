@@ -109,29 +109,29 @@
                     <label for="email_note_was_forwarded">Email Note Was Forwarded</label>
                 </div>
 
-                {{--<div class="input-field col s6">--}}
-                    {{--<input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"--}}
-                           {{--value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>--}}
-                    {{--<label for="email_weekly_report">MDs Receive Weekly Reports</label>--}}
-                {{--</div>--}}
+                <div class="input-field col s6">
+                    <input name="settings[email_weekly_report]" type="checkbox" id="email_weekly_report"
+                           value="1" @if($practiceSettings->email_weekly_report){{'checked'}}@endif>
+                    <label for="email_weekly_report">MDs Receive Weekly Reports</label>
+                </div>
 
-                {{--<div class="input-field col s12" style="margin-top: 3rem;">--}}
-                    {{--<textarea id="invoice-recipients" name="invoice_recipients"--}}
-                              {{--class="materialize-textarea">{{$practice->invoice_recipients}}</textarea>--}}
-                    {{--<label for="invoice-recipients">Invoice Recipients (comma separated, w/ spaces after comma)</label>--}}
-                    {{--@if($invoiceRecipients)--}}
-                        {{--<small>The emails above will receive invoices, in addition to {{$invoiceRecipients}}.</small>--}}
-                    {{--@else--}}
-                        {{--<small>The emails above will receive invoices.</small>--}}
-                    {{--@endif--}}
-                {{--</div>--}}
+                <div class="input-field col s12" style="margin-top: 3rem;">
+                    <textarea id="invoice-recipients" name="invoice_recipients"
+                              class="materialize-textarea">{{$practice->invoice_recipients}}</textarea>
+                    <label for="invoice-recipients">Invoice Recipients (comma separated, w/ spaces after comma)</label>
+                    @if($invoiceRecipients)
+                        <small>The emails above will receive invoices, in addition to {{$invoiceRecipients}}.</small>
+                    @else
+                        <small>The emails above will receive invoices.</small>
+                    @endif
+                </div>
 
-                {{--<div class="input-field col s12" style="margin-top: 3rem;">--}}
-                    {{--<textarea id="wekly-summary-recipients" name="weekly_report_recipients"--}}
-                              {{--class="materialize-textarea">{{$practice->weekly_report_recipients}}</textarea>--}}
-                    {{--<label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)</label>--}}
-                    {{--<small>The emails above will receive weekly summary reports.</small>--}}
-                {{--</div>--}}
+                <div class="input-field col s12" style="margin-top: 3rem;">
+                    <textarea id="wekly-summary-recipients" name="weekly_report_recipients"
+                              class="materialize-textarea">{{$practice->weekly_report_recipients}}</textarea>
+                    <label for="wekly-summary-recipients">Weekly Organization Summary Recipients (comma separated, w/ spaces after comma)</label>
+                    <small>The emails above will receive weekly summary reports.</small>
+                </div>
             </div>
         </div>
 
