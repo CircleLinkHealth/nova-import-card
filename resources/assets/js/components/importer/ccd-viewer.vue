@@ -135,7 +135,7 @@
                     practice_name: ((record.practice || {}).display_name || null),
                     Location: ((record.location || {}).id || null),
                     location_name: ((record.location || {}).display_name || null),
-                    'Billing Provider': ((record.billing_provider || {}).id || null),
+                    'Billing Provider': record.billing_provider_id,
                     '2+ Cond': false,
                     Medicare: false,
                     'Supplemental Ins': false,
@@ -179,7 +179,6 @@
                         //record.Location = null
                         record.locations = []
                         record.loaders.locations = true
-                        record['Billing Provider'] = null
                         record.providers = []
                         this.getLocations(practiceId).then(locations => {
                             //console.log('get-practice-locations', practiceId, locations)
@@ -202,11 +201,13 @@
                         record.Location = location.id;
                         record.location_name = location.name
                         record.providers = []
-                        //record['Billing Provider'] = null
                         record.loaders.providers = true
                         this.getProviders(record.Practice, locationId).then(providers => {
                             record.providers = providers
                             record.loaders.providers = false
+                            if (!record.providers.find(provider => provider.id == record['Billing Provider'])) {
+                                record['Billing Provider'] = null
+                            }
                             console.log('get-practice-location-providers', providers)
                         }).catch(err => {
                             record.loaders.providers = false
