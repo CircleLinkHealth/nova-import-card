@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Fico7489\Laravel\EloquentJoin\Traits\EloquentJoinTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,12 +12,4 @@ use Illuminate\Database\Eloquent\Model;
 class BaseModel extends Model
 {
     use \Spiritix\LadaCache\Database\LadaCacheTrait;
-    use EloquentJoinTrait;
-
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->useTableAlias = true;
-    }
-
 }

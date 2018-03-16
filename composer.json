@@ -30,7 +30,6 @@
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-snappy": "*",
         "dionera/laravel-beanstalkd-ui": "*",
-        "fico7489/laravel-eloquent-join": "*",
         "fideloper/proxy": "~3.3",
         "gemorroj/archive7z": "^3.0",
         "genealabs/laravel-caffeine": "^0.5.0",

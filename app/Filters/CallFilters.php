@@ -11,7 +11,9 @@ namespace App\Filters;
 use App\Patient;
 use App\PatientContactWindow;
 use App\PatientMonthlySummary;
+use App\Practice;
 use App\Repositories\CallRepository;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -191,10 +193,14 @@ class CallFilters extends QueryFilters
     public function sort_nurse($term = null)
     {
         if ($this->builder->has('outboundUser.nurseInfo.user')) {
-            return $this->builder->orderByJoin('outboundUser.display_name', $term);
+            return $this->builder
+                ->join('users', 'users.id', '=', 'calls.outbound_cpm_id')
+                ->orderBy('users.display_name', $term);
         }
 
-        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+        return $this->builder
+            ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
+            ->orderBy('users.display_name', $term);
     }
 
     public function sort_patientId($term = null)
@@ -247,12 +253,26 @@ class CallFilters extends QueryFilters
 
     public function sort_patientStatus($term = null)
     {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.ccm_status', $term);
+        $patientInfoTable = (new Patient)->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.ccm_status", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
 
     public function sort_practice($term = null)
     {
-        return $this->builder->orderByJoin('inboundUser.primaryPractice.display_name', $term);
+        $practicesTable = (new Practice())->getTable();
+        $usersTable     = (new User())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.primaryPractice')
+            ->join($usersTable, 'calls.inbound_cpm_id', '=', "$usersTable.id")
+            ->join($practicesTable, "$usersTable.program_id", '=', "$practicesTable.id")
+            ->orderBy("$practicesTable.display_name", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
 
     public function sort_scheduler($term = null)
@@ -272,29 +292,52 @@ class CallFilters extends QueryFilters
 
     public function sort_lastCall($term = null)
     {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.last_contact_time', $term);
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.last_contact_time", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
 
     public function sort_lastCallStatus($term = null)
     {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.last_call_status', $term);
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.no_call_attempts_since_last_success", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
 
     public function sort_ccmTime($term = null)
     {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.cur_month_activity_time', $term);
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.cur_month_activity_time", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
 
-    public function sort_preferredCallDays($term = null) {
-        return $this->builder->selectRaw('calls.*, '." $term(".(new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
-                ->with('inboundUser.patientInfo.contactWindows')
-                ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=', (new Patient)->getTable() . '.user_id')
-                ->join((new PatientContactWindow)->getTable(), (new PatientContactWindow)->getTable() . '.patient_info_id', '=', (new Patient)->getTable() . '.id')
-                ->orderBy('sort_day', $term)
-                ->groupBy('calls.inbound_cpm_id');
+    public function sort_preferredCallDays($term = null)
+    {
+        return $this->builder->selectRaw('calls.*, ' . " $term(" . (new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
+                             ->with('inboundUser.patientInfo.contactWindows')
+                             ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=',
+                                 (new Patient)->getTable() . '.user_id')
+                             ->join((new PatientContactWindow)->getTable(),
+                                 (new PatientContactWindow)->getTable() . '.patient_info_id', '=',
+                                 (new Patient)->getTable() . '.id')
+                             ->orderBy('sort_day', $term)
+                             ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_id($type = null) {
+
+    public function sort_id($type = null)
+    {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');
         }

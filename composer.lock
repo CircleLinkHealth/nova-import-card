@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cb1bc904ab00329958362f95d9cb365",
+    "content-hash": "9a67a5fc5cca364c245a7d968cb53825",
     "packages": [
         {
             "name": "arcturial/clickatell",
@@ -50,17 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.24",
+            "version": "3.52.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e39a486cca4455f1c2294521281efbec5075a144"
+                "reference": "2ff982460d5c5eb0a57b7c38bd9ad4e9c2f05c86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e39a486cca4455f1c2294521281efbec5075a144",
-                "reference": "e39a486cca4455f1c2294521281efbec5075a144",
-
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2ff982460d5c5eb0a57b7c38bd9ad4e9c2f05c86",
+                "reference": "2ff982460d5c5eb0a57b7c38bd9ad4e9c2f05c86",
                 "shasum": ""
             },
             "require": {
@@ -127,20 +126,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-03-12T19:40:30+00:00"
+            "time": "2018-03-15T19:43:26+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
-            "version": "v3.1.3",
+            "version": "v3.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-debugbar.git",
-                "reference": "664fa434e26febf04d60df0368303cf0fe14f63a"
+                "reference": "7a91480cc6e597caed5117a3c5d685f06d35c5a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/664fa434e26febf04d60df0368303cf0fe14f63a",
-                "reference": "664fa434e26febf04d60df0368303cf0fe14f63a",
+                "url": "https://api.github.com/repos/barryvdh/laravel-debugbar/zipball/7a91480cc6e597caed5117a3c5d685f06d35c5a1",
+                "reference": "7a91480cc6e597caed5117a3c5d685f06d35c5a1",
                 "shasum": ""
             },
             "require": {
@@ -195,7 +194,7 @@
                 "profiler",
                 "webprofiler"
             ],
-            "time": "2018-02-25T13:31:58+00:00"
+            "time": "2018-03-06T08:35:31+00:00"
         },
         {
             "name": "barryvdh/laravel-snappy",
@@ -688,56 +687,6 @@
             "time": "2018-03-08T01:11:30+00:00"
         },
         {
-            "name": "fico7489/laravel-eloquent-join",
-            "version": "2.1.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fico7489/laravel-eloquent-join.git",
-                "reference": "fedd6d8d2990b434dd0b3ef5a8fcfde556cf75f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fico7489/laravel-eloquent-join/zipball/fedd6d8d2990b434dd0b3ef5a8fcfde556cf75f4",
-                "reference": "fedd6d8d2990b434dd0b3ef5a8fcfde556cf75f4",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "5.5.*"
-            },
-            "require-dev": {
-                "orchestra/testbench": "~3.5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Fico7489\\Laravel\\EloquentJoin\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Filip Horvat",
-                    "email": "filip.horvat@am2studio.hr",
-                    "homepage": "http://am2studio.hr",
-                    "role": "Developer"
-                }
-            ],
-            "description": "This package introduces the join capability for sorting and filtering on eloquent relations.",
-            "homepage": "https://github.com/fico7489/laravel-eloquent-join",
-            "keywords": [
-                "laravel",
-                "laravel eloquent join",
-                "laravel join relation",
-                "laravel join relations",
-                "laravel sort join",
-                "laravel where join"
-            ],
-            "time": "2018-02-23T16:13:56+00:00"
-        },
-        {
             "name": "fideloper/proxy",
             "version": "3.3.4",
             "source": {
@@ -932,16 +881,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.9.1",
+            "version": "8.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "f50b45cc50d9058797c037fc15e34d0511a4423e"
+                "reference": "dc06ec4f106568fcd79be56e2574a51759d73f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/f50b45cc50d9058797c037fc15e34d0511a4423e",
-                "reference": "f50b45cc50d9058797c037fc15e34d0511a4423e",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/dc06ec4f106568fcd79be56e2574a51759d73f67",
+                "reference": "dc06ec4f106568fcd79be56e2574a51759d73f67",
                 "shasum": ""
             },
             "require": {
@@ -955,7 +904,7 @@
                 "pear/versioncontrol_git": "^0.5",
                 "phing/phing": "^2.7",
                 "phpunit/phpunit": "^4.8|^5.0",
-                "satooshi/php-coveralls": "^1.0",
+                "satooshi/php-coveralls": "^1.0|^2.0",
                 "symfony/console": "^2.8|^3.0"
             },
             "type": "library",
@@ -996,7 +945,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-03-07T12:33:46+00:00"
+            "time": "2018-03-14T18:52:28+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1108,16 +1057,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.49",
+            "version": "v0.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/google-api-php-client-services.git",
-                "reference": "7552d7d1bb92e933fc93088014c8c2555c0feab6"
+                "reference": "3e792254734e4444dd8a594e927926f28de2e609"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/7552d7d1bb92e933fc93088014c8c2555c0feab6",
-                "reference": "7552d7d1bb92e933fc93088014c8c2555c0feab6",
+                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/3e792254734e4444dd8a594e927926f28de2e609",
+                "reference": "3e792254734e4444dd8a594e927926f28de2e609",
                 "shasum": ""
             },
             "require": {
@@ -3433,16 +3382,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.24.1",
+            "version": "1.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41"
+                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
-                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/bba6c6e410c6b4317e37a9474aeaa753808c3875",
+                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875",
                 "shasum": ""
             },
             "require": {
@@ -3482,7 +3431,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-03-09T15:49:34+00:00"
+            "time": "2018-03-10T10:10:14+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -6168,11 +6117,11 @@
         },
         {
             "name": "waavi/url-shortener",
-            "version": "1.0.7",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:michalisantoniou6/url-shortener.git",
-                "reference": "15301d166765681929e1bdc25eb2c1e01d416f31"
+                "reference": "6c5717a4dd2e2b974f01bd9af0abbf96f28d5dd0"
             },
             "require": {
                 "illuminate/config": "5.1.x|5.2.x|5.3.*|5.4.*|5.5.*",
@@ -6219,7 +6168,7 @@
                 "url shortener",
                 "waavi"
             ],
-            "time": "2017-10-06T10:09:24+00:00"
+            "time": "2018-01-09T20:43:17+00:00"
         },
         {
             "name": "yajra/laravel-datatables-oracle",
@@ -9282,6 +9231,7 @@
     "stability-flags": {
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
+        "waavi/url-shortener": 20,
         "orangehill/iseed": 20,
         "xethron/migrations-generator": 20
     },
