@@ -8,6 +8,8 @@
 
 namespace App\Filters;
 
+use App\Patient;
+use App\PatientContactWindow;
 use App\Repositories\CallRepository;
 use Illuminate\Http\Request;
 
@@ -226,6 +228,15 @@ class CallFilters extends QueryFilters
     
     public function sort_ccmTime($term = null) {
         return $this->builder->orderByJoin('inboundUser.patientInfo.cur_month_activity_time', $term);
+    }
+
+    public function sort_preferredCallDays($term = null) {
+        return $this->builder->selectRaw('calls.*, '." $term(".(new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
+                ->with('inboundUser.patientInfo.contactWindows')
+                ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=', (new Patient)->getTable() . '.user_id')
+                ->join((new PatientContactWindow)->getTable(), (new PatientContactWindow)->getTable() . '.patient_info_id', '=', (new Patient)->getTable() . '.id')
+                ->orderBy('sort_day', $term)
+                ->groupBy('calls.inbound_cpm_id');
     }
     
     public function sort_id($type = null) {
