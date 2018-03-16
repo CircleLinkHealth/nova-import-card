@@ -234,7 +234,7 @@
         activateFilters () {
             this.pagination = null
             this.tableData = []
-            this.$refs.tblPatientList.setPage(1)
+            this.$refs.tblCalls.setPage(1)
             this.next()
         },
         toggleAllSelect(e) {
