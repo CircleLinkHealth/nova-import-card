@@ -15,6 +15,8 @@ use App\User;
 use App\ValueObjects\QuickBooksRow;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\Exceptions\InvalidConversion;
 
 class PracticeReportsService
 {
@@ -23,6 +25,8 @@ class PracticeReportsService
      * @param Carbon $date
      *
      * @return array
+     * @throws InvalidConversion
+     * @throws FileCannotBeAdded
      */
     public function getPdfInvoiceAndPatientReport(array $practices, Carbon $date)
     {
@@ -31,7 +35,13 @@ class PracticeReportsService
         foreach ($practices as $practiceId) {
             $practice = Practice::find($practiceId);
 
-            $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
+            try {
+                $data = (new PracticeInvoiceGenerator($practice, $date))->generatePdf();
+            } catch (FileCannotBeAdded $e) {
+                throw $e;
+            } catch (InvalidConversion $e) {
+                throw $e;
+            }
 
             $invoices[$practice->display_name] = $data;
         }
@@ -96,12 +106,17 @@ class PracticeReportsService
      */
     private function makeQuickbookReport($rows, $format, Carbon $date)
     {
-        return Excel::create("Billable Patients Report - $date", function ($excel) use ($rows) {
+        $report = Excel::create("Billable Patients Report - $date", function ($excel) use ($rows) {
             $excel->sheet('Billable Patients', function ($sheet) use ($rows) {
                 $sheet->fromArray($rows);
             });
         })
                     ->store($format, false, true);
+
+        return auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("quickbooks_report_for_{$date->toDateString()}");
     }
 
     /**
@@ -142,9 +157,9 @@ class PracticeReportsService
 
         $reportName = $practice->name . '-' . $date->format('Y-m') . '-patients';
 
-        $pathToPatientReport = $generator->makePatientReportPdf($reportName);
+        $patientReport = $generator->makePatientReportPdf($reportName);
 
-        $link = shortenUrl(linkToDownloadFile($pathToPatientReport, true));
+        $link = shortenUrl($patientReport->getUrl());
 
         $data = $generator->getInvoiceData($chargeableService->id);
 
