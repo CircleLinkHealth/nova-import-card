@@ -159,11 +159,9 @@
                     providers: [],
                     changePractice(id) {
                         self.changePractice(record.id, id)
-                        self.updateRecord(record.id)
                     },
                     changeLocation(id) {
                         self.changeLocation(record.id, id)
-                        self.updateRecord(record.id)
                     },
                     changeProvider(id) {
                         self.changeProvider(record.id, id)
