@@ -6,6 +6,7 @@
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+        <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
@@ -86,6 +87,11 @@
         </template>
       </v-client-table>
     </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <loader class="absolute" v-if="loaders.calls"></loader>
+      </div>
+    </div>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
     <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
@@ -135,9 +141,11 @@
           tableData: [],
           nurses: [],
           loaders: {
-            nurses: false
+            nurses: false,
+            calls: false
           },
-          currentDate: new Date()
+          currentDate: new Date(),
+          $nextPromise: null
         }
       },
       computed: {
@@ -393,6 +401,7 @@
         next() {
           const $vm = this
           if (!this.$nextPromise) {
+            this.loaders.calls = true
             return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
               result = result.data;
               this.pagination = {
@@ -433,11 +442,13 @@
                       }
                   }
                   delete this.$nextPromise;
+                  this.loaders.calls = false
                   return tableCalls;
                 }
               }
             }).catch(function (err) {
               console.error('calls:response', err)
+              this.loaders.calls = false
             })
           }
         }
