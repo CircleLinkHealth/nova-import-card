@@ -159,6 +159,9 @@ class PracticeInvoiceGenerator
 
     public function getItemizedPatientData()
     {
+        $data          = [];
+        $data['name']  = $this->practice->display_name;
+        $data['month'] = $this->month->toDateString();
 
         $patients = User::ofType('participant')
                         ->with([
@@ -167,7 +170,8 @@ class PracticeInvoiceGenerator
                                   ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                             },
-                            'ccdProblems'
+                            'patientSummaries.billableProblem1',
+                            'patientSummaries.billableProblem2',
                         ])
                         ->ofPractice($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
@@ -176,38 +180,34 @@ class PracticeInvoiceGenerator
                                   ->where('approved', '=', true);
                         })
                         ->orderBy('updated_at', 'desc')
-                        ->get();
+                        ->chunk(100, function ($patients) use (&$data){
+                            foreach ($patients as $u) {
+                                $summary = $u->patientSummaries->first();
 
-        $data          = [];
-        $data['name']  = $this->practice->display_name;
-        $data['month'] = $this->month->toDateString();
+                                $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
+                                $data['patientData'][$u->id]['name']          = $u->fullName;
+                                $data['patientData'][$u->id]['dob']           = $u->birth_date;
+                                $data['patientData'][$u->id]['practice']      = $u->program_id;
+                                $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
+                                $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
-        foreach ($patients as $u) {
-            $summary = $u->patientSummaries->first();
+                                $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
+                                    ? $summary->billableProblem1
+                                    : null;
+                                $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
+                                    ? $problem1->icd10Code()
+                                    : null;
+                                $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
 
-            $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
-            $data['patientData'][$u->id]['name']          = $u->fullName;
-            $data['patientData'][$u->id]['dob']           = $u->birth_date;
-            $data['patientData'][$u->id]['practice']      = $u->program_id;
-            $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
-            $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
-
-            $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
-                ? $u->ccdProblems->where('id', $summary->problem_1)->first()
-                : null;
-            $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
-                ? $problem1->icd10Code()
-                : null;
-            $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
-
-            $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
-                ? $u->ccdProblems->where('id', $summary->problem_2)->first()
-                : null;
-            $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
-                ? $problem2->icd10Code()
-                : null;
-            $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
-        }
+                                $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
+                                    ? $summary->billableProblem2
+                                    : null;
+                                $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
+                                    ? $problem2->icd10Code()
+                                    : null;
+                                $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
+                            }
+                        });
 
         $data['patientData'] = array_key_exists('patientData', $data)
             ? $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC)
