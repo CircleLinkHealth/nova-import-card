@@ -44,6 +44,10 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        if ($summary->actor_id) {
+            return $summary;
+        }
+
         $approved = $this->approveIfShouldApprove($patient, $summary);
 
         if ($approved) {
