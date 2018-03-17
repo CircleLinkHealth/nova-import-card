@@ -113,7 +113,6 @@ class PracticeInvoiceGenerator
                                     $query->where('id', $chargeableServiceId);
                                 })
                                       ->where('month_year', $this->month->toDateString())
-                                      ->where('ccm_time', '>=', 1200)
                                       ->where('approved', '=', true);
                             })
                             ->count() ?? 0;
@@ -122,7 +121,6 @@ class PracticeInvoiceGenerator
                             ->ofPractice($this->practice->id)
                             ->whereHas('patientSummaries', function ($query) {
                                 $query->where('month_year', $this->month->toDateString())
-                                      ->where('ccm_time', '>=', 1200)
                                       ->where('approved', '=', true);
                             })
                             ->count() ?? 0;
@@ -167,20 +165,16 @@ class PracticeInvoiceGenerator
                         ->with([
                             'patientSummaries' => function ($q) {
                                 $q->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
-                            },
-                            'patientSummaries.billableProblem1',
-                            'patientSummaries.billableProblem2',
+                            }
                         ])
                         ->ofPractice($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
                             $query->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                         })
                         ->orderBy('display_name', 'asc')
-                        ->chunk(100, function ($patients) use (&$data){
+                        ->chunk(500, function ($patients) use (&$data) {
                             foreach ($patients as $u) {
                                 $summary = $u->patientSummaries->first();
 
@@ -191,21 +185,11 @@ class PracticeInvoiceGenerator
                                 $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
                                 $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
-                                $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
-                                    ? $summary->billableProblem1
-                                    : null;
-                                $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
-                                    ? $problem1->icd10Code()
-                                    : null;
-                                $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
+                                $data['patientData'][$u->id]['problem1_code'] = $summary->billable_problem1_code;
+                                $data['patientData'][$u->id]['problem1']      = $summary->billable_problem1;
 
-                                $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
-                                    ? $summary->billableProblem2
-                                    : null;
-                                $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
-                                    ? $problem2->icd10Code()
-                                    : null;
-                                $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
+                                $data['patientData'][$u->id]['problem2_code'] = $summary->billable_problem2_code;
+                                $data['patientData'][$u->id]['problem2']      = $summary->billable_problem2;
                             }
                         });
 
