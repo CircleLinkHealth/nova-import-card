@@ -212,7 +212,14 @@ class PracticeStaffController extends Controller
         $staff = User::find($userId);
 
         if ($staff) {
-            $staff->delete();
+            $staff
+                ->practices()
+                ->detach($practiceId);
+
+            if ($staff->program_id == $practiceId) {
+                $staff->program_id = null;
+                $staff->save();
+            }
         }
 
         return response()->json($staff);
