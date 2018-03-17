@@ -354,22 +354,25 @@ class PatientSummaryEloquentRepository
      * Attach the practice's default chargeable service to the given patient summary.
      *
      * @param $summary
-     * @param null $defaultCodeId | The Chargeable Service Code to attach
+     * @param null $chargeableServiceId | The Chargeable Service Code to attach
      * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
-    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false)
+    public function attachDefaultChargeableService($summary, $chargeableServiceId = null, $detach = false)
     {
-        if ( ! $defaultCodeId) {
-            $defaultCodeId = $summary->patient
-                ->primaryPractice
-                ->cpmSettings()
-                ->default_chargeable_service_id;
+        if ( ! $chargeableServiceId) {
+            return $summary;
+
+//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
+//            $chargeableServiceId = $summary->patient
+//                ->primaryPractice
+//                ->cpmSettings()
+//                ->updateSummaryChargeableServices;
         }
 
         $sync = $summary->chargeableServices()
-                        ->sync($defaultCodeId, $detach);
+                        ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $summary->load('chargeableServices');
@@ -380,7 +383,7 @@ class PatientSummaryEloquentRepository
 
     public function detachDefaultChargeableService($summary, $defaultCodeId)
     {
-        $summary->chargeableServices()
+        $detached = $summary->chargeableServices()
             ->detach($defaultCodeId);
         
         $summary->load('chargeableServices');

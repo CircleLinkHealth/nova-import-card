@@ -104,17 +104,14 @@ class PracticeInvoiceController extends Controller
              $result = $this->patientSummaryDBRepository
                  ->attachBillableProblems($summary->patient, $summary);
 
-             $summary = $this->patientSummaryDBRepository
-                 ->attachDefaultChargeableService($summary);
+//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
+//             $summary = $this->patientSummaryDBRepository
+//                 ->attachDefaultChargeableService($summary);
 
              return ApprovableBillablePatient::make($summary);
          });
 
          return $summaries;
-     }
-
-     public function updatePatientChargeableServices(Request $request) {
-
      }
 
     /**
