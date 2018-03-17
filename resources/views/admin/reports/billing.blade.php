@@ -10,7 +10,7 @@
             }
 
             tr.bg-flagged {
-                background-color: #ffff0052;
+                background-color: #ffff0052 !important;
             }
         </style>
 
