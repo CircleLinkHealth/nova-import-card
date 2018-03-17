@@ -9157,16 +9157,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.12.9",
+            "version": "v3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "83232dc2d8d4bd27cb1b38e310db885e45f80f60"
+                "reference": "14ef0cc3796e60f446fffb82343c20aecfadddca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/83232dc2d8d4bd27cb1b38e310db885e45f80f60",
-                "reference": "83232dc2d8d4bd27cb1b38e310db885e45f80f60",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/14ef0cc3796e60f446fffb82343c20aecfadddca",
+                "reference": "14ef0cc3796e60f446fffb82343c20aecfadddca",
                 "shasum": ""
             },
             "type": "library",
@@ -9210,7 +9210,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-03-03T05:13:00+00:00"
+            "time": "2018-03-17T07:27:24+00:00"
         },
         {
             "name": "symfony/class-loader",
