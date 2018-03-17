@@ -346,10 +346,6 @@ class PatientSummaryEloquentRepository
     }
     
     public function determineStatusAndSave(PatientMonthlySummary $summary) {
-        if ($summary->approved && !$summary->isDirty('approved')) {
-            return $summary;
-        }
-
         if (! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
@@ -367,6 +363,10 @@ class PatientSummaryEloquentRepository
 
         if ($summary->needs_qa) {
             $summary->approved = $summary->rejected = false;
+        }
+
+        if (($summary->approved && !$summary->isDirty('approved')) || ($summary->rejected && !$summary->isDirty('rejected')) || ($summary->needs_qa && !$summary->isDirty('needs_qa'))) {
+            return $summary;
         }
 
         $summary->save();
