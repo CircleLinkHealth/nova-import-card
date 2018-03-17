@@ -53,12 +53,15 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     use HasProblemCodes;
 
     protected $fillable = [
+        'is_monitored',
+        'problem_import_id',
         'ccda_id',
+        'patient_id',
         'ccd_problem_log_id',
         'name',
+        'billable',
         'cpm_problem_id',
-        'patient_id',
-        'billable'
+        'cpm_instruction_id',
     ];
 
     protected $table = 'ccd_problems';

@@ -48,6 +48,7 @@ class PatientWriteRepository
                 ? null
                 : $args['cpm_problem_id'],
             'billable'       => $args['billable'] ?? null,
+            'is_monitored'     => $args['is_monitored'] ?? false,
         ]);
 
         if ($args['code']) {

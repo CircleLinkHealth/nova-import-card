@@ -61,9 +61,14 @@ class PatientMonthlySummary extends \App\BaseModel
         'is_ccm_complex',
         'approved',
         'rejected',
+        'needs_qa',
         'actor_id',
         'problem_1',
         'problem_2',
+        'billable_problem1',
+        'billable_problem1_code',
+        'billable_problem2',
+        'billable_problem2_code',
     ];
 
     //updates Call info for patient

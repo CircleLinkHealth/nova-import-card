@@ -41,7 +41,8 @@ class BillablePatientsServiceTest extends TestCase
         $problem4 = $this->createProblem(false, 2);
 
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+            ->getCollection();
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
@@ -54,7 +55,8 @@ class BillablePatientsServiceTest extends TestCase
     public function test_it_summary_problems_are_null_if_no_billable_problems()
     {
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+            ->getCollection();
 
         //Assert
         $this->summary  = $this->summary->fresh();
@@ -103,9 +105,11 @@ class BillablePatientsServiceTest extends TestCase
      */
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
-        return $patient->patientSummaries()->create([
+        return $patient->patientSummaries()->updateOrCreate([
             'month_year' => $monthYear->startOfMonth()->toDateString(),
+        ], [
             'ccm_time'   => $ccmTime,
+            'no_of_successful_calls'   => 2,
         ]);
     }
 
@@ -157,7 +161,8 @@ class BillablePatientsServiceTest extends TestCase
         $problem4 = $this->createProblem(false, 2);
 
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+            ->getCollection();
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
@@ -173,7 +178,8 @@ class BillablePatientsServiceTest extends TestCase
         $this->patient->cpmProblems()->attach(7);
 
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+            ->getCollection();
 
         $this->summary  = $this->summary->fresh();
         $problem1 = $this->summary->billableProblem1;
@@ -198,7 +204,8 @@ class BillablePatientsServiceTest extends TestCase
         $problem1 = $this->createProblem(true, 33);
 
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now());
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+            ->getCollection();
 
         $this->summary  = $this->summary->fresh();
         $problem1 = $this->summary->billableProblem1;

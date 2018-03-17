@@ -100,7 +100,8 @@ class PracticeInvoiceController extends Controller
          $summaries = $this->service->billablePatientSummaries($practice_id, $date)
                                     ->paginate(100);
 
-         $summaries->getCollection()->transform(function ($summary) {
+         $summaries->getCollection()
+                   ->transform(function ($summary) {
              $result = $this->patientSummaryDBRepository
                  ->attachBillableProblems($summary->patient, $summary);
 
@@ -307,6 +308,7 @@ class PracticeInvoiceController extends Controller
                     'code'             => $request['code'],
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    'is_monitored'     => !empty($request['cpm_problem_id'])
                 ])->id;
             }
 
