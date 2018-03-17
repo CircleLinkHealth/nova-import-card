@@ -8,6 +8,10 @@
             .select2-container {
                 width: 300px !important;
             }
+
+            tr.bg-flagged {
+                background-color: #ffff0052;
+            }
         </style>
 
         <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
