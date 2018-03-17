@@ -179,7 +179,7 @@ class PracticeInvoiceGenerator
                                   ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                         })
-                        ->orderBy('updated_at', 'desc')
+                        ->orderBy('display_name', 'asc')
                         ->chunk(100, function ($patients) use (&$data){
                             foreach ($patients as $u) {
                                 $summary = $u->patientSummaries->first();
