@@ -449,11 +449,19 @@ class PatientSummaryEloquentRepository
             throw new InvalidArgumentException('Problem number must be an integer between 1 and 2.', 422);
         }
 
-        $problem = $summary->patient
-            ->ccdProblems
-            ->firstWhere('id', $summary->{"problem_$problemNumber"});
+        if (!$summary->{"problem_$problemNumber"}) {
+            return $summary;
+        }
+
+        $problem = null;
+
+        if ($summary->patient && $summary->patient->ccdProblems) {
+            $problem = $summary->patient->ccdProblems
+                ->firstWhere('id', $summary->{"problem_$problemNumber"});
+        }
 
         if (!$problem) {
+            //this will never be reached @todo: confirm
             $problem     = $summary->{"billableProblem$problemNumber"};
         }
 
