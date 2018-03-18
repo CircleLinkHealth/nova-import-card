@@ -69,7 +69,7 @@
                 return this.cpmProblems.distinct(p => p.name)
             },
             ccdMonitoredProblems() {
-                return this.ccdProblems.filter(problem => !this.cpmProblems.find(cp => cp.name == problem.name) && problem.is_monitored).distinct(p => p.name)
+                return this.ccdProblems.filter(problem => problem.is_monitored).distinct(p => p.name)
             },
             ccdProblemsForListing() {
                 return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id))).distinct(p => p.name)
