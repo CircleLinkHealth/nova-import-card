@@ -346,10 +346,6 @@ class PatientSummaryEloquentRepository
     }
     
     public function determineStatusAndSave(PatientMonthlySummary $summary) {
-        if ($summary->approved && !$summary->isDirty('approved')) {
-            return $summary;
-        }
-
         if (! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
@@ -367,6 +363,10 @@ class PatientSummaryEloquentRepository
 
         if ($summary->needs_qa) {
             $summary->approved = $summary->rejected = false;
+        }
+
+        if (($summary->approved && !$summary->isDirty('approved')) || ($summary->rejected && !$summary->isDirty('rejected')) || ($summary->needs_qa && !$summary->isDirty('needs_qa'))) {
+            return $summary;
         }
 
         $summary->save();
@@ -449,11 +449,19 @@ class PatientSummaryEloquentRepository
             throw new InvalidArgumentException('Problem number must be an integer between 1 and 2.', 422);
         }
 
-        $problem = $summary->patient
-            ->ccdProblems
-            ->firstWhere('id', $summary->{"problem_$problemNumber"});
+        if (!$summary->{"problem_$problemNumber"}) {
+            return $summary;
+        }
+
+        $problem = null;
+
+        if ($summary->patient && $summary->patient->ccdProblems) {
+            $problem = $summary->patient->ccdProblems
+                ->firstWhere('id', $summary->{"problem_$problemNumber"});
+        }
 
         if (!$problem) {
+            //this will never be reached @todo: confirm
             $problem     = $summary->{"billableProblem$problemNumber"};
         }
 

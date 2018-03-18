@@ -5,6 +5,7 @@ namespace App\Billing\Practices;
 use App\AppConfig;
 use App\Models\CCD\Problem;
 use App\Practice;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -15,7 +16,18 @@ class PracticeInvoiceGenerator
     private $practice;
     private $month;
     private $patients;
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
+    private $patientSummaryEloquentRepository;
 
+    /**
+     * PracticeInvoiceGenerator constructor.
+     *
+     * @param Practice $practice
+     * @param Carbon $month
+     * @param PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+     */
     public function __construct(
         Practice $practice,
         Carbon $month
@@ -23,6 +35,7 @@ class PracticeInvoiceGenerator
 
         $this->practice = $practice;
         $this->month    = $month->firstOfMonth();
+        $this->patientSummaryEloquentRepository = app(PatientSummaryEloquentRepository::class);
     }
 
     /**
@@ -114,7 +127,6 @@ class PracticeInvoiceGenerator
                                     $query->where('id', $chargeableServiceId);
                                 })
                                       ->where('month_year', $this->month->toDateString())
-                                      ->where('ccm_time', '>=', 1200)
                                       ->where('approved', '=', true);
                             })
                             ->count() ?? 0;
@@ -123,7 +135,6 @@ class PracticeInvoiceGenerator
                             ->ofPractice($this->practice->id)
                             ->whereHas('patientSummaries', function ($query) {
                                 $query->where('month_year', $this->month->toDateString())
-                                      ->where('ccm_time', '>=', 1200)
                                       ->where('approved', '=', true);
                             })
                             ->count() ?? 0;
@@ -164,26 +175,28 @@ class PracticeInvoiceGenerator
         $data['name']  = $this->practice->display_name;
         $data['month'] = $this->month->toDateString();
 
-        $patients = User::ofType('participant')
+        $patients = User::orderBy('first_name', 'asc')
+                        ->ofType('participant')
                         ->with([
                             'patientSummaries' => function ($q) {
                                 $q->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                             },
-                            'patientSummaries.billableProblem1',
-                            'patientSummaries.billableProblem2',
+                            'billingProvider'
                         ])
-                        ->ofPractice($this->practice->id)
+                        ->whereProgramId($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
                             $query->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
                                   ->where('approved', '=', true);
                         })
-                        ->orderBy('display_name', 'asc')
-                        ->chunk(100, function ($patients) use (&$data){
+                        ->chunk(500, function ($patients) use (&$data) {
                             foreach ($patients as $u) {
                                 $summary = $u->patientSummaries->first();
+
+                                if (!$this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
+                                    $summary = $this->patientSummaryEloquentRepository->fillBillableProblemsNameAndCode($summary);
+                                    $summary->save();
+                                }
 
                                 $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
                                 $data['patientData'][$u->id]['name']          = $u->fullName;
@@ -192,21 +205,11 @@ class PracticeInvoiceGenerator
                                 $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
                                 $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
-                                $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
-                                    ? $summary->billableProblem1
-                                    : null;
-                                $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
-                                    ? $problem1->icd10Code()
-                                    : null;
-                                $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
+                                $data['patientData'][$u->id]['problem1_code'] = $summary->billable_problem1_code;
+                                $data['patientData'][$u->id]['problem1']      = $summary->billable_problem1;
 
-                                $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
-                                    ? $summary->billableProblem2
-                                    : null;
-                                $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
-                                    ? $problem2->icd10Code()
-                                    : null;
-                                $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
+                                $data['patientData'][$u->id]['problem2_code'] = $summary->billable_problem2_code;
+                                $data['patientData'][$u->id]['problem2']      = $summary->billable_problem2;
                             }
                         });
 

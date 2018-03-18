@@ -114,14 +114,14 @@ class CpmBiometricUserRepository
 
     public function addPatientBiometric($userId, $biometricId) {
         if (!CpmBiometric::find($biometricId)) {
-            throw new Exception('invalid biometric id "' . $biometricId . '"');
+            throw new \Exception('invalid biometric id "' . $biometricId . '"');
         }
         else if (!User::find($userId)) {
-            throw new Exception('invalid user id "' . $userId . '"');
+            throw new \Exception('invalid user id "' . $userId . '"');
         }
         else {
             if ($this->model()->where([ 'patient_id' => $userId, 'cpm_biometric_id' => $biometricId ])->first()) {
-                throw new Exception('mapping between user "' . $userId . '" and biometric "' . $biometricId . '" already exists');
+                throw new \Exception('mapping between user "' . $userId . '" and biometric "' . $biometricId . '" already exists');
             }
             else {
                 $biometricUser = new CpmBiometricUser();

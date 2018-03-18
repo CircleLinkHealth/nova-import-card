@@ -33,10 +33,10 @@ const transformHealthGoal = (goal) => {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
                     
-                    if (start > 130) {
+                    if (parseInt(start) > 130) {
                         return 'Decrease'
                     }
-                    else if (!goal.info.starting || (start > 80 && start <= 130)) {
+                    else if (!goal.info.starting || (parseInt(start) > 80 && parseInt(start) <= 130)) {
                         return 'Regulate'
                     }
                     else {
@@ -59,10 +59,10 @@ const transformHealthGoal = (goal) => {
                     const start = (goal.start().split('/')[0] || 0)
                     const end = (goal.end().split('/')[0] || 0)
                     
-                    if (goal.info.starting == 'N/A' || goal.info.target == 'TBD' || !goal.info.starting || start < 130) {
+                    if (goal.info.starting == 'N/A' || goal.info.target == 'TBD' || !goal.info.starting || parseInt(start) < 130) {
                         return 'Regulate'
                     }
-                    else if (start >= 130) {
+                    else if (parseInt(start) >= 130) {
                         return 'Decrease'
                     }
                 }
@@ -71,25 +71,27 @@ const transformHealthGoal = (goal) => {
         else {
             Object.defineProperty(goal.info, 'verb', {
                 get () {
-                    const start = (goal.start().split('/')[0] || 0)
-                    const end = (goal.end().split('/')[0] || 0)
-
+                    let start = (goal.start().split('/')[0] || 0)
+                    let end = (goal.end().split('/')[0] || 0)
 
                     if (!goal.info.starting || goal.info.starting == 'N/A' || !goal.info.target || (goal.name == 'Weight' && (goal.info.target == '0'))) {
                         return 'Regulate'
                     }
-                    
+
+                    start = parseInt(start)
+                    end = parseInt(end)
+
                     if (start > end) {
                         return 'Decrease'
                     }
-                    else {
-                        if (start < end) {
-                            return  'Increase'
-                        }
-                        else {
-                            return 'Regulate'
-                        }
+
+                    if (start < end) {
+                        return  'Increase'
                     }
+                    else {
+                        return 'Regulate'
+                    }
+
                 }
             })
         }
