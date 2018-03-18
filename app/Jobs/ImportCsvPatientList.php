@@ -54,8 +54,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function handle()
     {
-        $execution_time = ini_get('max_execution_time');
-        ini_set('max_execution_time', 300);
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
                 if (stripcslashes($row['medical_record_type']) == stripcslashes(Ccda::class)) {
@@ -80,7 +78,6 @@ class ImportCsvPatientList implements ShouldQueue
         $url = url('view.files.ready.to.import');
 
         sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
-        ini_set('max_execution_time', $execution_time);
     }
 
     /**
