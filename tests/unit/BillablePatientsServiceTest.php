@@ -42,7 +42,7 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
@@ -56,10 +56,10 @@ class BillablePatientsServiceTest extends TestCase
     {
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
-        $this->summary  = $this->summary->fresh();
+        $this->summary = $this->summary->fresh();
 
         $this->assertTrue($list->count() == 1);
 
@@ -108,8 +108,8 @@ class BillablePatientsServiceTest extends TestCase
         return $patient->patientSummaries()->updateOrCreate([
             'month_year' => $monthYear->startOfMonth()->toDateString(),
         ], [
-            'ccm_time'   => $ccmTime,
-            'no_of_successful_calls'   => 2,
+            'ccm_time'               => $ccmTime,
+            'no_of_successful_calls' => 2,
         ]);
     }
 
@@ -152,6 +152,90 @@ class BillablePatientsServiceTest extends TestCase
     /**
      * This test assumes that the patient has 2 billable ccd problems, which should be selected for the monthly summary.
      */
+    public function test_it_sets_patient_without_billable_ccd_problems_to_qa()
+    {
+        $problems = collect([
+            [
+                'is_monitored'   => 0,
+                'name'           => 'Coronary Heart Disease',
+                'billable'       => 0,
+                'cpm_problem_id' => 4,
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Aortic regurgitation',
+                'billable'     => 0,
+
+            ],
+            [
+                'is_monitored'   => 1,
+                'name'           => 'Atrial Fibrillation',
+                'billable'       => 0,
+                'cpm_problem_id' => 3,
+
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Peripheral Vascular Disease',
+                'billable'     => 0,
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'D V T',
+                'billable'     => 0,
+
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Varicose veins, lower extremities',
+                'billable'     => 0,
+
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Carotid bruit',
+                'billable'     => 0,
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Family History of Hyperlipidemia:',
+                'billable'     => 0,
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'ICD in Situ',
+                'billable'     => 0,
+            ],
+            [
+                'is_monitored' => 0,
+                'name'         => 'Coronary Stent',
+                'billable'     => 0,
+            ],
+            [
+                'is_monitored'   => 1,
+                'name'           => 'Afib',
+                'billable'       => 0,
+                'cpm_problem_id' => 3,
+
+            ],
+        ])
+            ->map(function ($p) {
+                return $this->patient
+                    ->ccdProblems()
+                    ->create($p);
+            });
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+                              ->getCollection();
+
+        //Assert
+        $this->assertMonthlySummary($this->summary, $problems[0], $problems[2], $list);
+    }
+
+    /**
+     * This test assumes that the patient has 2 billable ccd problems, which should be selected for the monthly summary.
+     */
     public function test_it_selects_billable_ccd_problems()
     {
         //Set up
@@ -179,14 +263,14 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
-        $this->summary  = $this->summary->fresh();
-        $problem1 = $this->summary->billableProblem1;
-        $problem2 = $this->summary->billableProblem2;
+        $this->summary = $this->summary->fresh();
+        $problem1      = $this->summary->billableProblem1;
+        $problem2      = $this->summary->billableProblem2;
 
-        $this->assertTrue(in_array($problem1->cpm_problem_id, [2,7]));
-        $this->assertTrue(in_array($problem2->cpm_problem_id, [2,7]));
+        $this->assertTrue(in_array($problem1->cpm_problem_id, [2, 7]));
+        $this->assertTrue(in_array($problem2->cpm_problem_id, [2, 7]));
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
@@ -194,7 +278,8 @@ class BillablePatientsServiceTest extends TestCase
 
     /**
      * This test assumes that the patient has 1 billable ccd problem, and cpm problems.
-     * In this case, the billable ccd problem will be selected, and a new billable problem will be created from a cpm problem.
+     * In this case, the billable ccd problem will be selected, and a new billable problem will be created from a cpm
+     * problem.
      */
     public function test_it_creates_billable_ccd_problem_from_cpm_problem_and_selects_billable_problem()
     {
@@ -205,11 +290,11 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
-        $this->summary  = $this->summary->fresh();
-        $problem1 = $this->summary->billableProblem1;
-        $problem2 = $this->summary->billableProblem2;
+        $this->summary = $this->summary->fresh();
+        $problem1      = $this->summary->billableProblem1;
+        $problem2      = $this->summary->billableProblem2;
 
         $this->assertTrue($problem1->cpm_problem_id == 33);
         $this->assertTrue($problem2->cpm_problem_id == 2);
@@ -218,16 +303,17 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
-    public function test_it_stores_ccd_problem_with_cpm_id() {
+    public function test_it_stores_ccd_problem_with_cpm_id()
+    {
         $uri = route('monthly.billing.store-problem');
 
         $params = [
-            'problem_no' => 'problem_1',
-            'id' => 'New',
-            'name' => 'Test problem',
+            'problem_no'     => 'problem_1',
+            'id'             => 'New',
+            'name'           => 'Test problem',
             'cpm_problem_id' => '33',
-            'code' => 'code',
-            'report_id' => $this->summary->id,
+            'code'           => 'code',
+            'report_id'      => $this->summary->id,
         ];
 
         $response = $this->call('POST', $uri, $params);

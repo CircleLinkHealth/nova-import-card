@@ -4,6 +4,7 @@ namespace App\Billing\Practices;
 
 use App\AppConfig;
 use App\Practice;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -14,7 +15,18 @@ class PracticeInvoiceGenerator
     private $practice;
     private $month;
     private $patients;
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
+    private $patientSummaryEloquentRepository;
 
+    /**
+     * PracticeInvoiceGenerator constructor.
+     *
+     * @param Practice $practice
+     * @param Carbon $month
+     * @param PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+     */
     public function __construct(
         Practice $practice,
         Carbon $month
@@ -22,6 +34,7 @@ class PracticeInvoiceGenerator
 
         $this->practice = $practice;
         $this->month    = $month->firstOfMonth();
+        $this->patientSummaryEloquentRepository = app(PatientSummaryEloquentRepository::class);
     }
 
     /**
@@ -161,22 +174,28 @@ class PracticeInvoiceGenerator
         $data['name']  = $this->practice->display_name;
         $data['month'] = $this->month->toDateString();
 
-        $patients = User::ofType('participant')
+        $patients = User::orderBy('first_name', 'asc')
+                        ->ofType('participant')
                         ->with([
                             'patientSummaries' => function ($q) {
                                 $q->where('month_year', $this->month->toDateString())
                                   ->where('approved', '=', true);
-                            }
+                            },
+                            'billingProvider'
                         ])
-                        ->ofPractice($this->practice->id)
+                        ->whereProgramId($this->practice->id)
                         ->whereHas('patientSummaries', function ($query) {
                             $query->where('month_year', $this->month->toDateString())
                                   ->where('approved', '=', true);
                         })
-                        ->orderBy('display_name', 'asc')
                         ->chunk(500, function ($patients) use (&$data) {
                             foreach ($patients as $u) {
                                 $summary = $u->patientSummaries->first();
+
+                                if (!$this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
+                                    $summary = $this->patientSummaryEloquentRepository->fillBillableProblemsNameAndCode($summary);
+                                    $summary->save();
+                                }
 
                                 $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
                                 $data['patientData'][$u->id]['name']          = $u->fullName;
