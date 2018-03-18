@@ -308,7 +308,7 @@ class PracticeInvoiceController extends Controller
                     'code'             => $request['code'],
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
-                    'is_monitored'     => !empty($request['cpm_problem_id'])
+                    'is_monitored'     => true
                 ])->id;
             }
 
@@ -326,6 +326,7 @@ class PracticeInvoiceController extends Controller
                        ->update([
                            'billable' => true,
                            'name'     => $request['name'],
+                           'is_monitored'     => true
                        ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
@@ -351,6 +352,14 @@ class PracticeInvoiceController extends Controller
             if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
+
+            $problemNumber = extractNumbers($key);
+
+            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
+                $summary->{"billable_problem$problemNumber"} = $request['name'];
+                $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
+            }
+
 
             $summary->save();
 
