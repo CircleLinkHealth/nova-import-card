@@ -168,17 +168,21 @@
 
 
 
-                                <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Programs</a></h2>
+                                <h2><a data-toggle="collapse" data-target="#programCollapse" class="">Practices</a></h2>
 
                                 <div id="programCollapse" class="collapse in" style="background:#888;padding:20px;">
                                     <div class="form-group">
                                         <div class="col-xs-2">{!! Form::label('program_id', 'Practice') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
+                                        <div class="col-xs-2">
+                                            {!! Form::checkbox('auto_attach_programs', $patient->auto_attach_programs ?? 0, $patient->auto_attach_programs) !!}
+                                        </div>
                                     </div>
 
 
                                     <a class="btn btn-info panel-title" href="#" id="togglePrograms"><strong>Toggle
-                                            Programs list</strong></a><br/><br/>
+                                            Practices list</strong></a><br/><br/>
                                     <div id="programs" style="display:none;">
                                         <button class="btn-primary btn-xs" id="programsCheckAll">Check All</button>
                                         |
