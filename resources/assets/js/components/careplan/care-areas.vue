@@ -20,7 +20,7 @@
                     <!--</li>-->
                     <li class='subareas__item inline-block col-sm-6 print-row' 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
-                        {{problem.name}}
+                        {{ccdProblemName(problem)}}
                     </li>
                 </ul>
             </div>
@@ -99,6 +99,13 @@
             },
             showModal() {
                 Event.$emit('modal-care-areas:show')
+            },
+            ccdProblemName(ccdProblem) {
+                let p = this.cpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
+                if (p) {
+                    return p.name
+                }
+                return ccdProblem.name
             }
         },
         mounted() {
