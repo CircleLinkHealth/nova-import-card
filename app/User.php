@@ -2618,8 +2618,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function hasProblem($problem)
     {
-        return ! $this->cpmProblems->where('id', '=', $problem)->isEmpty()
-               || ! $this->cpmProblems->where('name', '=', $problem)->isEmpty();
+        return ! $this->ccdProblems->where('cpm_problem_id', '=', $problem)->isEmpty();
     }
 
     /**
