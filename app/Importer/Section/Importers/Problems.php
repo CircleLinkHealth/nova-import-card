@@ -18,95 +18,124 @@ class Problems extends BaseImporter
 {
     use ConsolidatesProblemInfo;
 
+    private $cpmProblems;
+
+    public function __construct()
+    {
+        $this->cpmProblems = CpmProblem::all();
+    }
+
     public function import(
         $medicalRecordId,
         $medicalRecordType,
         ImportedMedicalRecord $importedMedicalRecord
     ) {
-        $itemLogs = ProblemLog::where('medical_record_type', '=', $medicalRecordType)
-            ->where('medical_record_id', '=', $medicalRecordId)
-            ->get();
+        $problemsGroups = ProblemLog::where('medical_record_type', '=', $medicalRecordType)
+                                    ->where('medical_record_id', '=', $medicalRecordId)
+                                    ->get()
+                                    ->unique(function ($itemLog) {
+                                        return $itemLog->name ?? $itemLog->reference_title;
+                                    })
+                                    ->values()
+                                    ->mapToGroups(function ($itemLog) use (
+                                        $medicalRecordType,
+                                        $medicalRecordId,
+                                        $importedMedicalRecord
+                                    ) {
+                                        if ( ! $this->validate($itemLog)) {
+                                            return ['do_not_import' => $itemLog->id];
+                                        }
 
-        $problemsList = [];
+                                        /**
+                                         * Check if the information is in the Translation Section of BB
+                                         */
+                                        $problemCodes = $this->consolidateProblemInfo($itemLog);
 
-        foreach ($itemLogs as $itemLog) {
-            if (!$this->validate($itemLog)) {
-                continue;
-            }
+                                        if ( ! validProblemName($problemCodes->cons_name)) {
+                                            return ['do_not_import' => $itemLog->id];
+                                        }
 
-            $itemLog->import = true;
-            $itemLog->save();
+                                        $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
 
-            /**
-             * Check if the information is in the Translation Section of BB
-             */
-            $problemCodes = $this->consolidateProblemInfo($itemLog);
+                                        if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
+                                            $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 2')->id;
+                                        }
+                                        if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
+                                            $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 1')->id;
+                                        }
 
-            $problemsList[] = ProblemImport::updateOrCreate([
-                'medical_record_type'        => $medicalRecordType,
-                'medical_record_id'          => $medicalRecordId,
-                'imported_medical_record_id' => $importedMedicalRecord->id,
-                'ccd_problem_log_id'         => $itemLog->id,
-                'name'                       => $problemCodes->cons_name,
-            ]);
-        }
+                                        $problem = [
+                                            'attributes' => [
+                                                'medical_record_type'        => $medicalRecordType,
+                                                'medical_record_id'          => $medicalRecordId,
+                                                'imported_medical_record_id' => $importedMedicalRecord->id,
+                                                'ccd_problem_log_id'         => $itemLog->id,
+                                                'name'                       => $problemCodes->cons_name,
+                                                'cpm_problem_id'             => $cpmProblemId,
+                                            ],
+                                            'itemLog'    => $itemLog,
+                                        ];
 
-        $this->activateBillableProblems($problemsList);
+                                        $key = $cpmProblemId
+                                            ? 'monitored'
+                                            : 'not_monitored';
 
-        return $problemsList;
+                                        return [$key => $problem];
+                                    });
+
+        $callback = function ($monitored) {
+            $monitored['itemLog']->import = true;
+            $monitored['itemLog']->save();
+
+            return ProblemImport::updateOrCreate($monitored['attributes']);
+        };
+
+        $monitored = $problemsGroups->get('monitored')
+                                    ->unique(function($p) {
+                                        return $p['attributes']['cpm_problem_id'];
+                                    })
+                                    ->map($callback);
+
+        $notMonitored = $problemsGroups->get('not_monitored')
+                                       ->unique(function($p) {
+                                           return $p['attributes']['name'];
+                                       })
+                                       ->map($callback);
     }
 
-    /*
-    * Figure out which CPMProblems to activate on the CarePlan
-    */
-    public function activateBillableProblems(array $problemImports)
+    private function getCpmProblemId(ProblemLog $itemLog, $problemName)
     {
-        $cpmProblems = CpmProblem::all();
+        if ( ! validProblemName($problemName)) {
+            return null;
+        }
 
-        $problemsToActivate = [];
+        $map = $itemLog
+            ->codeMap();
 
-        foreach ($problemImports as $importedProblem) {
-            if (!validProblemName($importedProblem->name)) {
-                continue;
-            }
+        foreach ($map as $codeSystemName => $code) {
+            $problemMap = SnomedToCpmIcdMap::where($codeSystemName, '=', $code)
+                                           ->first();
 
-            $map = $importedProblem->ccdLog
-                ->first()
-                ->codeMap();
-
-            foreach ($map as $codeSystemName => $code) {
-                $problemMap = SnomedToCpmIcdMap::where($codeSystemName, '=', $code)
-                    ->first();
-
-                if ($problemMap) {
-                    array_push($problemsToActivate, $problemMap->cpm_problem_id);
-                    $importedProblem->cpm_problem_id = $problemMap->cpm_problem_id;
-                    $importedProblem->save();
-                    continue;
-                }
-            }
-
-            /*
-             * Try to match keywords
-             */
-            foreach ($cpmProblems as $cpmProblem) {
-                $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
-
-                foreach ($keywords as $keyword) {
-                    if (empty($keyword)) {
-                        continue;
-                    }
-
-                    if (str_contains(strtolower($importedProblem->name), strtolower($keyword))) {
-                        array_push($problemsToActivate, $cpmProblem->id);
-                        $importedProblem->cpm_problem_id = $cpmProblem->id;
-                        $importedProblem->save();
-                        continue 3;
-                    }
-                }
+            if ($problemMap) {
+                return $problemMap->cpm_problem_id;
             }
         }
 
-        return $problemsToActivate;
+        /*
+         * Try to match keywords
+         */
+        foreach ($this->cpmProblems as $cpmProblem) {
+            $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
+
+            foreach ($keywords as $keyword) {
+                if (empty($keyword)) {
+                    continue;
+                }
+
+                if (str_contains(strtolower($problemName), strtolower($keyword))) {
+                    return $cpmProblem->id;
+                }
+            }
+        }
     }
 }

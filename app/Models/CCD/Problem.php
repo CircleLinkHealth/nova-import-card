@@ -10,6 +10,7 @@ use App\Scopes\WithNonImported;
 use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\CCD\Problem
@@ -50,7 +51,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
-    use HasProblemCodes;
+    use HasProblemCodes, SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
         'is_monitored',
