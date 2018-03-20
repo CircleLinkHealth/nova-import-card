@@ -268,6 +268,7 @@ class CarePlanHelper
             'preferred_contact_location' => $this->importedMedicalRecord->location_id,
             'preferred_contact_method'   => 'CCT',
             'user_id'                    => $this->user->id,
+            'registration_date'          => $this->user->user_registered,
         ]);
 
         return $this;
