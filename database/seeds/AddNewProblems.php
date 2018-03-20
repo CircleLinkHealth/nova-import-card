@@ -18,7 +18,10 @@ class AddNewProblems extends Seeder
 
         foreach ($this->problems() as $name => $codes) {
             //Does a CPMProblem exist?
-            $cpmProblem = CpmProblem::firstOrCreate(['name' => $name]);
+            $cpmProblem = CpmProblem::firstOrCreate([
+                'name' => $name,
+                'default_icd_10_code' => $codes['icd10'][0] ?? null,
+            ]);
 
             if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
                 $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
