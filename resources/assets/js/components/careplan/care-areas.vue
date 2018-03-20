@@ -101,7 +101,7 @@
                 Event.$emit('modal-care-areas:show')
             },
             ccdProblemName(ccdProblem) {
-                let p = this.cpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
+                let p = this.allCpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
                 if (p) {
                     return p.name
                 }
