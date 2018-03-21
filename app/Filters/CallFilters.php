@@ -329,7 +329,8 @@ class CallFilters extends QueryFilters
 
     public function sort_preferredCallDays($term = null)
     {
-        return $this->builder->selectRaw('calls.*, ' . " $term(" . (new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
+        $aggregate = $term == 'asc' ? 'max' : 'min';
+        return $this->builder->selectRaw('calls.*, ' . " $aggregate(" . (new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
                              ->with('inboundUser.patientInfo.contactWindows')
                              ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=',
                                  (new Patient)->getTable() . '.user_id')
