@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\CarePerson;
+use App\CarePlan;
 use App\Practice;
 use App\ProviderInfo;
 use App\Patient;
@@ -108,7 +109,7 @@ class PatientFilters extends QueryFilters
     
     public function sort_ccmStatus($type = null) {
         $patientTable = (new Patient())->getTable();
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.ccm_status", $type)->groupBy('users.id');
     }
     
     public function sort_careplanStatus($type = null) {
@@ -129,7 +130,8 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_ccm($type = null) {
-        return $this->builder->orderByJoin('patientInfo.cur_month_activity_time', $type);
+        $patientTable = (new Patient())->getTable();
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
     }
 
     public function excel() {
