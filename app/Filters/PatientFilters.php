@@ -5,6 +5,7 @@ namespace App\Filters;
 use App\CarePerson;
 use App\Practice;
 use App\ProviderInfo;
+use App\Patient;
 use App\Repositories\PatientReadRepository;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -106,7 +107,8 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_ccmStatus($type = null) {
-        return $this->builder->orderByJoin('patientInfo.ccm_status', $type);
+        $patientTable = (new Patient())->getTable();
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
     }
     
     public function sort_careplanStatus($type = null) {
