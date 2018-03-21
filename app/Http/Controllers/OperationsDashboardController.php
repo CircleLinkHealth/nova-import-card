@@ -222,8 +222,8 @@ class OperationsDashboardController extends Controller
         $date     = new Carbon($request['fromDate']);
         $to       = new Carbon($request['toDate']);
 
-        $fromDate = $date->toDateString();
-        $toDate   = $to->toDateString();
+        $fromDate = $date->startOfDay()->toDateTimeString();
+        $toDate   = $to->endOfDay()->toDateTimeString();
 
         $patients = $this->service->getPausedPatients($fromDate, $toDate);
 

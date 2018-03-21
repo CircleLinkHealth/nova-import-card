@@ -75,7 +75,7 @@
                             <option name="type" value="week">Week</option>
                             <option name="type" value="month">Month</option>
                         </select>
-                        <input id="date" type="date" name="date" required class="form-control">
+                        <input id="date" type="date" name="date" value="{{$date->toDateString()}}" required class="form-control">
                         <input type="submit" value="Submit" class="btn btn-info">
                     </div>
                 </form>
