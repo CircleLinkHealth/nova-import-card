@@ -9,6 +9,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -238,6 +239,8 @@ class ImporterController extends Controller
             $ids = $request->input('imported_medical_record_ids');
         }
 
+        $records = new Collection();
+
         foreach ($ids as $mrId) {
             $imr                      = ImportedMedicalRecord::find($mrId);
             $imr->practice_id         = $practiceId;
@@ -268,6 +271,12 @@ class ImporterController extends Controller
                                     'location_id'         => $locationId,
                                     'billing_provider_id' => $billingProviderId,
                                 ]);
+
+            $records->push($imr);
+        }
+
+        if ($request->has('json')) {
+            return response()->json($records);
         }
 
         return redirect()->route('view.files.ready.to.import');
