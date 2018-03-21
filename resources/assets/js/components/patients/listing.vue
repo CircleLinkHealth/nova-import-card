@@ -10,22 +10,40 @@
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
+            <template slot="h__ccmStatus" scope="props">
+                CCM Status
+            </template>
+            <template slot="h__careplanStatus" scope="props">
+                Careplan Status
+            </template>
+            <template slot="h__dob" scope="props">
+                Date of Birth
+            </template>
+            <template slot="h__registeredOn" scope="props">
+                Registered On
+            </template>
+            <template slot="h__lastReading" scope="props">
+                Last Reading
+            </template>
+            <template slot="h__ccm" scope="props">
+                CCM
+            </template>
         </v-client-table>
-        <div class="row text-center">
-            <div class="col-sm-3">
+        <div class="row">
+            <div class="col-sm-8">
                 <input type="button" class="btn btn-success" 
-                    :value="'Show by ' + (nameDisplayType ? 'Last' : 'First') + ' Name'" @click="changeNameDisplayType" >
-            </div>
-            <div class="col-sm-3">
+                            :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
+                <span class="pad-10"></span>
+
                 <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
-            </div>
-            <div class="col-sm-3">
+                <span class="pad-10"></span>
+
                 <input type="button" class="btn btn-success" 
-                    value="Export as Excel" @click="exportExcel" >
-            </div>
-            <div class="col-sm-3">
+                            value="Export as Excel" @click="exportExcel" >
+                <span class="pad-10"></span>
+
                 <input type="button" class="btn btn-success" 
-                    :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
+                            :value="(columns.includes('program') ? 'Hide' : 'Show') + ' Program'" @click="toggleProgramColumn" >
             </div>
         </div>
     </div>
@@ -141,16 +159,17 @@
                 this.tableData = []
                 this.$refs.tblPatientList.setPage(1)
                 this.getPatients()
+                this.nameDisplayType = NameDisplayType.FirstName
             },
             changeNameDisplayType () {
-                if (this.nameDisplayType != NameDisplayType.FirstName) {
+                if (this.nameDisplayType !== NameDisplayType.FirstName) {
                     this.tableData.forEach(patient => {
-                        patient.name = patient.firstName + ' ' + patient.lastName
+                        if (patient.lastName && patient.firstName) patient.name = patient.firstName + ' ' + patient.lastName
                     })
                 }
                 else {
                     this.tableData.forEach(patient => {
-                        patient.name = patient.lastName + ' ' + patient.firstName
+                        if (patient.lastName && patient.firstName) patient.name = patient.lastName + ', ' + patient.firstName
                     })
                 }
                 this.nameDisplayType = Number(!this.nameDisplayType)
@@ -313,5 +332,9 @@
     }
 </script>
 
-<style scoped>
+<style>
+.pad-10 {
+    padding: 10px;
+}
+
 </style>
