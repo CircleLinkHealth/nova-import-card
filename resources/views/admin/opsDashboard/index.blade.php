@@ -25,9 +25,9 @@
                     <h4 class="ops-dboard-title">Generate Paused Patient List</h4>
                     <br>
                     From:
-                    <input type="date" name="fromDate" required>
+                    <input type="date" name="fromDate" value="{{$date->toDateString()}}" required>
                     To:
-                    <input type="date" name="toDate" required>
+                    <input type="date" name="toDate" value="{{$date->toDateString()}}" required>
 
                     <br>
                     <input align="center" type="submit" value="Submit">
