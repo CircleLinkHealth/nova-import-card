@@ -116,7 +116,8 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_dob($type = null) {
-        return $this->builder->orderByJoin('patientInfo.birth_date', $type);
+        $patientTable = (new Patient())->getTable();
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.birth_date", $type)->groupBy('users.id');
     }
     
     public function sort_age($type = null) {
