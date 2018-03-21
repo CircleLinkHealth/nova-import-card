@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
                      <div class="row top-20">
-                        <div class="col-sm-12" v-if="selectedProblem.is_monitored">
+                        <div class="col-sm-12">
                             <form @submit="editCcdProblem">
                                 <div class="row">
                                     <div class="col-sm-12 top-20">

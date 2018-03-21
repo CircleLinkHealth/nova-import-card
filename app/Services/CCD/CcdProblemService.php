@@ -105,6 +105,8 @@ class CcdProblemService
             else {
                 $instructionData = $this->instructionService->create($instruction);
             }
+
+            $problem['instruction'] = $instructionData;
             
             $this->repo()->model()->where([
                 'id' => $ccdId
