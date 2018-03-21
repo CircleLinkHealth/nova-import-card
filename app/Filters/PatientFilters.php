@@ -113,7 +113,8 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_careplanStatus($type = null) {
-        return $this->builder->orderByJoin('careplan.status', $type);
+        $careplanTable = (new CarePlan())->getTable();
+        return $this->builder->select('users.*')->with('carePlan')->join($careplanTable, 'users.id', '=', "$careplanTable.user_id")->orderBy("$careplanTable.status", $type)->groupBy('users.id');
     }
     
     public function sort_dob($type = null) {
