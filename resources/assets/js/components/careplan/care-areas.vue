@@ -102,10 +102,7 @@
             },
             ccdProblemName(ccdProblem) {
                 let p = this.allCpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
-                if (p) {
-                    return p.name
-                }
-                return ccdProblem.name
+                return p ? p.name : ccdProblem.name
             }
         },
         mounted() {
