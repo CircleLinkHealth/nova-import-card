@@ -354,11 +354,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 <div class="text-center">No Problems at this time</div>
                             @else
                                 <ul class="row">
-                                    @foreach ($cpmProblemsForListing as $problem)
-                                        <li class='top-10 col-sm-6'>
-                                            {{$problem['name']}}
-                                        </li>
-                                    @endforeach
                                     @foreach ($ccdMonitoredProblems as $problem)
                                         <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
