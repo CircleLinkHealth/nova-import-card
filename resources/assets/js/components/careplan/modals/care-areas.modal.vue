@@ -11,7 +11,7 @@
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name}}
-                            <span class="delete" title="remove this cpm problem" @click="removeCpmProblem">x</span>
+                            <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
@@ -44,37 +44,10 @@
                     
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
-                        <form @submit="addInstruction">
-                            <div class="col-sm-12">
-                                <textarea class="form-control height-200" 
-                                    v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
-                            </div>
-                            <div class="col-sm-12 text-right top-20">
-                                <loader v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
-                                    title="add this instruction for this problem" />
-                            </div>
-                        </form>
-                    </div>
-                     <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
+                     <div class="row top-20">
                         <div class="col-sm-12" v-if="selectedProblem.is_monitored">
                             <form @submit="editCcdProblem">
                                 <div class="row">
-                                    <!-- <div class="col-sm-6">
-                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" 
-                                            :class="{ error: patientHasSelectedProblem }" 
-                                            :title="patientHasSelectedProblem ? 'Problem with this name already exists' : null" required />
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
-                                            :options="cpmProblemsForSelect"></v-select>
-                                    </div>
-                                    <div class="col-sm-6 font-14">
-                                        <label class="form-control">
-                                            <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
-                                        </label>
-                                    </div> -->
                                     <div class="col-sm-12 top-20">
                                         <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
@@ -225,45 +198,7 @@
                 this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
                 this.newProblem.cpm_problem_id = (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).id
             },
-            addInstruction(e) {
-                e.preventDefault()
-                if (((this.selectedProblem || {}).instruction || {}).name) {
-                    this.loaders.addInstruction = true
-                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: ((this.selectedProblem || {}).instruction || {}).name }).then(response => {
-                        console.log('care-areas:add-instruction', response.data)
-                        return this.addInstructionToCpmProblem(response.data)
-                    }).catch(err => {
-                        console.error('care-areas:add-instruction', err)
-                        this.loaders.addInstruction = false
-                    })
-                }
-            },
-            addInstructionToCpmProblem(instruction) {
-                if (((this.selectedProblem || {}).instruction || {}).name) {
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
-                        console.log('care-areas:add-instruction-to-problem', response.data)
-                        this.selectedProblem.instruction = instruction
-                        this.loaders.addInstruction = false
-                    }).catch(err => {
-                        console.error('care-areas:add-instruction-to-problem', err)
-                        this.loaders.addInstruction = false
-                    })
-                }
-            },
-            addCpmProblem() {
-                if (this.newCpmProblem && this.newCpmProblem.value) {
-                    this.loaders.addProblem = true
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.newCpmProblem.value }).then(response => {
-                        console.log('care-areas:add-problem', response.data)
-                        this.loaders.addProblem = false
-                        Event.$emit('care-areas:problems', response.data)
-                    }).catch(err => {
-                        console.error('care-areas:add-problem', err)
-                        this.loaders.addProblem = false
-                    })
-                }
-            },
-            removeCpmProblem() {
+            removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     const url = `api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}`
@@ -277,23 +212,6 @@
                         this.loaders.removeProblem = false
                     })
                 }
-            },
-            getCpmProblems(page = 1) {
-                if (page === 1) {
-                    this.cpmProblems = []
-                }
-                return this.axios.get(rootUrl(`api/problems/cpm?page=${page}`)).then(response => {
-                    console.log('care-areas:get-cpm-problems', response.data)
-                    const pageInfo = response.data
-                    if (pageInfo.next_page_url) {
-                        return this.getCpmProblems(page + 1)
-                    }
-                    else {
-                        this.cpmProblems = this.cpmProblems.concat(pageInfo.data)
-                    }
-                }).catch(err => {
-                    console.error('care-areas:get-cpm-problems', err)
-                })
             },
             selectInstruction(index) {
                 if (!this.loaders.removeInstruction) {
@@ -382,7 +300,6 @@
         },
         mounted() {
             this.cpmProblems = this.careplan().allCpmProblems || []
-            this.getCpmProblems(2)
             this.getSystemCodes()
         }
     }
