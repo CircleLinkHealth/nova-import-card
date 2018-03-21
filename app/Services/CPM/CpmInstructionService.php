@@ -48,6 +48,14 @@ class CpmInstructionService
             return $instruction;
         }
     }
+    
+    public function edit($id, $text) {
+        if ($id && $text) {
+            $query = CpmInstruction::where('id', $id);
+            $query->update(['name' => $text ]);
+            return $query->first();
+        }
+    }
 
     function setupInstruction($value) {
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {

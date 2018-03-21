@@ -97,9 +97,17 @@ class CcdProblemService
         $problem = $this->setupProblem($this->repo()->editPatientCcdProblem($userId, $ccdId, $name, $problemCode, $is_monitored));
 
         if ($instruction) {
-            $instructionData = $this->instructionService->create($instruction);
+            $instructionData = null;
+            if ($problem['instruction']) {
+                $instructionId = $problem['instruction']->id;
+                $instructionData = $this->instructionService->edit($instructionId, $instruction);
+            }
+            else {
+                $instructionData = $this->instructionService->create($instruction);
+            }
+            
             $this->repo()->model()->where([
-                'id' => $problem['id']
+                'id' => $ccdId
             ])->update([
                 'cpm_instruction_id' => $instructionData->id
             ]);

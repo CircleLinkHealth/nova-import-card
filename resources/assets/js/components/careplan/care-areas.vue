@@ -14,10 +14,6 @@
                 </slot>
                 
                 <ul class="subareas__list" v-if="(cpmProblems && cpmProblems.length > 0) || (ccdMonitoredProblems.length > 0)">
-                    <!--<li class='subareas__item inline-block col-sm-6 print-row'-->
-                        <!--v-for="(problem, index) in cpmProblemsForListing" :key="index">-->
-                        <!--{{problem.name}}-->
-                    <!--</li>-->
                     <li class='subareas__item inline-block col-sm-6 print-row' 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
                         {{ccdProblemName(problem)}}
@@ -63,7 +59,7 @@
         },
         computed: {
             problems() {
-                return [ ...this.cpmProblems, ...this.ccdProblems ]
+                return [ ...this.ccdMonitoredProblems, ...this.ccdProblemsForListing ]
             },
             cpmProblemsForListing() {
                 return this.cpmProblems.distinct(p => p.name)
