@@ -16,6 +16,8 @@ class JsonListProblemLogger implements Logger
 
     public function handle($medicalRecord): array
     {
+//        Expected format
+//        {"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
         $problems = json_decode($medicalRecord->problems_string, true);
 
         if (is_array($problems) && array_key_exists('Problems', $problems)) {
