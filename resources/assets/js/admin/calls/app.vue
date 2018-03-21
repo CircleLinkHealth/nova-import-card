@@ -251,8 +251,11 @@
             this.next()
         },
         toggleAllSelect(e) {
+          const $elem = this.$refs.tblCalls
+          const filteredData = $elem.filteredData
+          const fiteredDataIDs = filteredData.map(row => row.id)
           this.tableData = this.tableData.map(row => {
-            row.selected = this.selected;
+            if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
             return row;
           })
         },
