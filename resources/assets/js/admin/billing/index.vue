@@ -28,8 +28,8 @@
                                     <div>
                                         <label>Select Month</label>
                                     </div>
-                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].value">
-                                        <option v-for="(month, index) in months" :key="index" :value="month.value">{{month.label}}</option>
+                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].label">
+                                        <option v-for="(month, index) in months" :key="index" :value="month.label">{{month.label}}</option>
                                     </select2>
                                 </div>
                                 <div class="col-sm-4">
@@ -165,7 +165,7 @@
         },
         data() {
             return {
-                selectedMonth: '',
+                selectedMonth: null,
                 selectedPractice: 0,
                 selectedService: null,
                 loading: true,
@@ -501,7 +501,7 @@
         },
         mounted() {
             this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa)
-            this.selectedMonth = this.months[0]
+            this.selectedMonth = (this.months[0] || {}).label
             this.selectedPractice = this.practices[0].id
             this.retrieve()
             this.getChargeableServices()
