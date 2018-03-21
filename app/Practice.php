@@ -7,6 +7,8 @@ use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Practice
@@ -73,9 +75,10 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
  * @mixin \Eloquent
  */
-class Practice extends \App\BaseModel
+class Practice extends \App\BaseModel implements HasMedia
 {
-    use HasSettings,
+    use HasMediaTrait,
+        HasSettings,
         SaasAccountable,
         SoftDeletes,
         Notifiable;

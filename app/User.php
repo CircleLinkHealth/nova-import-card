@@ -42,6 +42,8 @@ use Illuminate\Support\Collection;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\User
@@ -220,7 +222,7 @@ use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, Serviceable
+class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
@@ -233,6 +235,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         CerberusSiteUserTrait,
         HasApiTokens,
         HasEmrDirectAddress,
+        HasMediaTrait,
         Impersonate,
         Notifiable,
         SaasAccountable,

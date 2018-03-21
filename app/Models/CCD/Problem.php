@@ -10,6 +10,7 @@ use App\Scopes\WithNonImported;
 use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\CCD\Problem
@@ -50,15 +51,25 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
-    use HasProblemCodes;
+    use HasProblemCodes, SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
+        'is_monitored',
+        'problem_import_id',
         'ccda_id',
+        'patient_id',
         'ccd_problem_log_id',
         'name',
+        'billable',
         'cpm_problem_id',
-        'patient_id',
-        'billable'
+        'cpm_instruction_id',
     ];
 
     protected $table = 'ccd_problems';

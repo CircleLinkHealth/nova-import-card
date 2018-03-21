@@ -818,7 +818,7 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection']);
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection', 'vaccine', 'vaccination', 'vaccin']);
     }
 }
 
@@ -901,5 +901,27 @@ if (!function_exists('cast')) {
             $ret[$key] = $value;
         }
         return $ret;
+    }
+}
+
+if (!function_exists('isJson')) {
+    /**
+     * Determine whether the given string is json
+     *
+     * @param $string
+     *
+     * @return bool
+     */
+    function is_json($string) {
+        if ($string === '') {
+            return false;
+        }
+
+        \json_decode($string);
+        if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
     }
 }

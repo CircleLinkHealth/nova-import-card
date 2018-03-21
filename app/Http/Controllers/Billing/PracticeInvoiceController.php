@@ -100,21 +100,19 @@ class PracticeInvoiceController extends Controller
          $summaries = $this->service->billablePatientSummaries($practice_id, $date)
                                     ->paginate(100);
 
-         $summaries->getCollection()->transform(function ($summary) {
+         $summaries->getCollection()
+                   ->transform(function ($summary) {
              $result = $this->patientSummaryDBRepository
                  ->attachBillableProblems($summary->patient, $summary);
 
-             $summary = $this->patientSummaryDBRepository
-                 ->attachDefaultChargeableService($summary);
+//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
+//             $summary = $this->patientSummaryDBRepository
+//                 ->attachDefaultChargeableService($summary);
 
              return ApprovableBillablePatient::make($summary);
          });
 
          return $summaries;
-     }
-
-     public function updatePatientChargeableServices(Request $request) {
-
      }
 
     /**
@@ -238,12 +236,12 @@ class PracticeInvoiceController extends Controller
 
     public function createInvoices()
     {
-        $currentMonth = Carbon::now()->firstOfMonth();
+        $currentMonth = Carbon::now()->startOfMonth();
 
         $dates = [];
 
         for ($i = 0; $i <= 6; $i++) {
-            $date = $currentMonth->copy()->subMonth($i)->firstOfMonth();
+            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
 
             $dates[$date->toDateString()] = $date->format('F, Y');
         }
@@ -264,6 +262,13 @@ class PracticeInvoiceController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
+     */
     public function makeInvoices(Request $request)
     {
 
@@ -279,12 +284,10 @@ class PracticeInvoiceController extends Controller
 
         } elseif ($request['format'] == 'csv' or 'xls') {
 
-            $invoices = $this->practiceReportsService->getQuickbooksReport($request['practices'], $request['format'],
+            $report = $this->practiceReportsService->getQuickbooksReport($request['practices'], $request['format'],
                 $date);
 
-            return response()->download($invoices['full'], $invoices['file'], [
-                'Content-Length: ' . filesize($invoices['full']),
-            ]);
+            return $this->downloadMedia($report);
         }
     }
 
@@ -305,6 +308,7 @@ class PracticeInvoiceController extends Controller
                     'code'             => $request['code'],
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
+                    'is_monitored'     => true
                 ])->id;
             }
 
@@ -322,6 +326,7 @@ class PracticeInvoiceController extends Controller
                        ->update([
                            'billable' => true,
                            'name'     => $request['name'],
+                           'is_monitored'     => true
                        ]);
 
                 $updated = ProblemCode::where('problem_id', $problemId)
@@ -347,6 +352,14 @@ class PracticeInvoiceController extends Controller
             if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
             }
+
+            $problemNumber = extractNumbers($key);
+
+            if ((int) $problemNumber > 0 && (int) $problemNumber < 3) {
+                $summary->{"billable_problem$problemNumber"} = $request['name'];
+                $summary->{"billable_problem{$problemNumber}_code"} = $request['code'];
+            }
+
 
             $summary->save();
 
@@ -375,19 +388,6 @@ class PracticeInvoiceController extends Controller
         return response()->json($counts);
     }
 
-    public function downloadInvoice(
-        $practice,
-        $name
-    ) {
-        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->hasRole('administrator')) {
-            return abort(403, 'Unauthorized action.');
-        }
-
-        return response()->download(storage_path('/download/' . $name), $name, [
-            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
-        ]);
-    }
-
     public function send(Request $request)
     {
 
@@ -400,16 +400,8 @@ class PracticeInvoiceController extends Controller
 
             $data = (array)$value;
 
-            $patientReport = $data['Patient Report'];
-            $invoicePath   = storage_path('/download/' . $data['Invoice']);
-
-            $invoiceLink = route(
-                'monthly.billing.download',
-                [
-                    'name'     => $patientReport,
-                    'practice' => $practice->id,
-                ]
-            );
+            $patientReportUrl = $data['patient_report_url'];
+            $invoiceURL   = $data['invoice_url'];
 
             if ($practice->invoice_recipients != '') {
                 $recipients = $practice->getInvoiceRecipientsArray();
@@ -423,7 +415,7 @@ class PracticeInvoiceController extends Controller
                 foreach ($recipients as $recipient) {
                     $user = User::whereEmail($recipient)->first();
 
-                    $notification = new PracticeInvoice($invoiceLink, $invoicePath);
+                    $notification = new PracticeInvoice($patientReportUrl, $invoiceURL);
 
                     if ($user) {
                         $user->notify($notification);

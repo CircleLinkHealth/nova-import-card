@@ -194,19 +194,23 @@ class CallFilters extends QueryFilters
     {
         if ($this->builder->has('outboundUser.nurseInfo.user')) {
             return $this->builder
+                ->select('calls.*')
                 ->join('users', 'users.id', '=', 'calls.outbound_cpm_id')
                 ->orderBy('users.display_name', $term);
         }
 
         return $this->builder
+            ->select('calls.*')
             ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
             ->orderBy('users.display_name', $term);
     }
 
     public function sort_patientId($term = null)
     {
-        return $this->builder->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
-                             ->orderBy('users.id', $term);
+        return $this->builder
+            ->select('calls.*')
+            ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
+             ->orderBy('users.id', $term);
     }
 
     public function sort_patient_contact_windows($term = null)

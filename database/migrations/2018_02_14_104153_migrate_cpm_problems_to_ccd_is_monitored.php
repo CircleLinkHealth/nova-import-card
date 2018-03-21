@@ -16,8 +16,23 @@ class MigrateCpmProblemsToCcdIsMonitored extends Migration
     {
         DB::table('cpm_problems_users')->orderBy('id')->chunk(1000, function ($cpmProblemUsers) {
             foreach ($cpmProblemUsers as $cpmProblemUser) {
-                Problem::updateOrCreate([
-                    'cpm_problem_id' => $cpmProblemUser->id,
+                $exists = App\Models\CCD\Problem::whereCpmProblemId($cpmProblemUser->id)
+                    ->wherePatientId($cpmProblemUser->patient_id)
+                    ->first();
+
+                if ($exists) {
+                    $exists->cpm_problem_id = $cpmProblemUser->cpm_problem_id;
+                    $exists->is_monitored       = true;
+                    $exists->cpm_instruction_id = $cpmProblemUser->cpm_instruction_id;
+
+                    $exists->save();
+
+                    continue;
+                }
+
+
+                App\Models\CCD\Problem::updateOrCreate([
+                    'cpm_problem_id' => $cpmProblemUser->cpm_problem_id,
                     'patient_id'     => $cpmProblemUser->patient_id,
                 ], [
                     'is_monitored'       => true,

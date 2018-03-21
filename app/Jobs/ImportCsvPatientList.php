@@ -54,8 +54,6 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function handle()
     {
-        $execution_time = ini_get('max_execution_time');
-        ini_set('max_execution_time', 300);
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
                 if (stripcslashes($row['medical_record_type']) == stripcslashes(Ccda::class)) {
@@ -80,7 +78,6 @@ class ImportCsvPatientList implements ShouldQueue
         $url = url('view.files.ready.to.import');
 
         sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
-        ini_set('max_execution_time', $execution_time);
     }
 
     /**
@@ -211,6 +208,34 @@ class ImportCsvPatientList implements ShouldQueue
 
         if (array_key_exists('consent_date', $row)) {
             $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
+        }
+
+        if (array_key_exists('street', $row)) {
+            $row['address'] = $row['street'];
+        }
+
+        if (array_key_exists('street_2', $row)) {
+            $row['address2'] = $row['street_2'];
+        }
+
+        if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
+            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
+                $row['home_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'work')) {
+                $row['work_phone'] = $row['primary_phone'];
+            }
+        }
+
+        if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
+            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
+                $row['home_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'work')) {
+                $row['work_phone'] = $row['alt_phone'];
+            }
         }
 
         $exists = TabularMedicalRecord::where([

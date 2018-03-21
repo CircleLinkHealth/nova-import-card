@@ -299,7 +299,9 @@ class ActivityController extends Controller
             $activity->meta()->saveMany($metaArray);
         }
 
-        $this->activityService->processMonthlyActivityTime($input['patient_id']);
+        $performedAt = Carbon::parse($activity->performed_at);
+
+        $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
 
         if ($nurse) {
             $activity = Activity::find($actId);
