@@ -45,26 +45,27 @@ class Problem
                 $cpmProblem = $this->cpmProblems->firstWhere('name', $name);
                 $ccdProblem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
-                $problem = collect([$ccdProblem, $problemCodes]);
+                $ccdProblem->codes = $problemCodes;
 
             } else {
                 $ccdProblem = $this->ccdProblems->random();
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
-                $problem = collect([$ccdProblem, $problemCodes]);
+
+                $ccdProblem->codes = $problemCodes;
             }
 
-            return $problem;
+            return $ccdProblem;
 
         } else {
             if ($name) {
                 $cpmProblem = $this->cpmProblems->firstWhere('name', $name);
-                $problem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
+                $ccdProblem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
 
             } else {
-                $problem = $this->ccdProblems->random();
+                $ccdProblem = $this->ccdProblems->random();
             }
 
-            return $problem;
+            return $ccdProblem;
 
         }
 
@@ -91,9 +92,10 @@ class Problem
             foreach ($ccdProblems as $ccdProblem){
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
                 if ($problemCodes){
-                    $problemSet[] = collect([$ccdProblem, $problemCodes]);
+                    $ccdProblem->codes = $problemCodes;
+                    $problemSet[] = $ccdProblem;
                 }else{
-                    $problemSet[] = collect($ccdProblem);
+                    $problemSet[] = $ccdProblem;
                 }
 
             }
@@ -117,8 +119,12 @@ class Problem
      */
     public function attachProblemSet(User $patient)
     {
+        $problemSet = $this->problemSet();
 
-        //need way to attach relationship to Model without saving to database
+//        $patient->ccdProblems = $problemSet;
+
+        return $patient;
+
 
     }
 
