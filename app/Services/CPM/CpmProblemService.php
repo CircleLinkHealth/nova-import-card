@@ -11,6 +11,7 @@ namespace App\Services\CPM;
 use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
 use App\User;
+use App\Models\CCD\Problem;
 use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CpmProblemRepository;
 use App\Repositories\Criteria\CriteriaFactory;
@@ -106,20 +107,6 @@ class CpmProblemService implements CpmModel
      */
     public function getDetails(User $patient)
     {
-        $carePlan = $patient->service()->firstOrDefaultCarePlan($patient);
-
-        //get the template
-        $cptId = $carePlan->care_plan_template_id;
-        $cpt = CarePlanTemplate::find($cptId);
-
-        //get template's cpmProblems
-        $cptProblems = $cpt->cpmProblems()->get();
-
-        //get the User's cpmProblems
-        $patientProblems = $patient->cpmProblems()->get();
-
-        $intersection = $patientProblems->intersect($cptProblems)->pluck('name');
-
-        return $intersection;
+        return Problem::where([ 'patient_id' => $patient->id, 'is_monitored' => 1 ])->pluck('name');
     }
 }
