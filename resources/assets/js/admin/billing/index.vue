@@ -250,6 +250,7 @@
             },
             changePractice() {
                 this.tableData = []
+                this.$refs.tblBillingReport.setPage(1)
                 this.retrieve()
                 this.getCounts()
             },
@@ -489,7 +490,7 @@
                     'Sep',
                     'Oct',
                     'Nov',
-                    'Dev'
+                    'Dec'
                     ]
                 let currentMonth = (new Date()).getMonth()
                 let currentYear = (new Date()).getFullYear()
