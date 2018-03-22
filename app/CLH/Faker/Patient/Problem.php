@@ -116,12 +116,14 @@ class Problem
      * attaches problems to user
      *
      * @param User $patient
+     *
+     * @return User
      */
     public function attachProblemSet(User $patient)
     {
         $problemSet = $this->problemSet();
 
-//        $patient->ccdProblems = $problemSet;
+        $patient->ccdProblems()->saveMany($problemSet);
 
         return $patient;
 
@@ -131,7 +133,8 @@ class Problem
     public function getCcdProblems(): Collection
     {
 
-        $ccdProblems = CcdProblem::all();
+        //taking 2000 to save memory
+        $ccdProblems = CcdProblem::take(2000)->get();
 
         return $ccdProblems;
     }
@@ -139,7 +142,7 @@ class Problem
     public function getCpmProblems(): Collection
     {
 
-        $cpmProblems = CpmProblem::all();
+        $cpmProblems = CpmProblem::take(2000)->get();
 
         return $cpmProblems;
     }
@@ -147,7 +150,7 @@ class Problem
     public function getProblemCodes(): Collection
     {
 
-        $problemCodes = ProblemCode::all();
+        $problemCodes = ProblemCode::take(2000)->get();
 
         return $problemCodes;
     }
