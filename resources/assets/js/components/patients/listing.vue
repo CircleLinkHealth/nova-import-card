@@ -104,7 +104,7 @@
                                             { id: 'to_enroll', text: 'to_enroll' }, 
                                             { id: 'patient_withdrawn', text: 'patient_withdrawn' }
                                         ],
-                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name }))
+                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
