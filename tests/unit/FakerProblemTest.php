@@ -21,6 +21,8 @@ class FakerProblemTest extends TestCase
 
         $problemWithCodes = $this->faker->problem();
 
+        $problemSet = $this->faker->problemSet();
+
         $this->assertTrue(true);
     }
 

@@ -50,7 +50,6 @@ class Problem
             } else {
                 $ccdProblem = $this->ccdProblems->random();
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
-                $ccdProblem->codes()->createMany($problemCodes);
                 $problem = collect([$ccdProblem, $problemCodes]);
             }
 
@@ -77,9 +76,36 @@ class Problem
      * returns array of `ccd_problem` for sample patients
      *
      * @param bool $withCodes
+     *
+     * @return array
      */
     public function problemSet($withCodes = true)
     {
+        $patientIds = $this->ccdProblems->pluck('patient_id');
+        $patientId = $patientIds->random();
+        $problemSet = [];
+
+        if ($withCodes){
+
+            $ccdProblems = $this->ccdProblems->where('patient_id', $patientId)->all();
+            foreach ($ccdProblems as $ccdProblem){
+                $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
+                if ($problemCodes){
+                    $problemSet[] = collect([$ccdProblem, $problemCodes]);
+                }else{
+                    $problemSet[] = collect($ccdProblem);
+                }
+
+            }
+
+            return $problemSet;
+
+        }else{
+
+            $problemSet[] = $this->ccdProblems->where('patient_id', $patientId)->all();
+            return $problemSet;
+
+        }
 
     }
 
@@ -92,7 +118,7 @@ class Problem
     public function attachProblemSet(User $patient)
     {
 
-        //Search for attach problem on User model
+        //need way to attach relationship to Model without saving to database
 
     }
 
