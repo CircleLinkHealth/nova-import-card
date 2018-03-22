@@ -314,30 +314,18 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             return $problem;
                         });
 
-                        $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
-                        });
-
-                        $problemsWithInstructions = $cpmProblemsForListing->filter(function ($cpm) {
-                            return $cpm['instruction']['name'];
-                        })->concat($ccdProblems->filter(function ($ccd) {
+                        $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
                             return $ccd['instruction']['name'];
-                        }))->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
                         });
 
-                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'];
-                            }) && $problem['is_monitored'];
+                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+                            return $problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
                         
-                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$problem['is_monitored'] && !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'] || $cpm['id'] == $problem['id'];
-                            });
+                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
+                            return !$problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
@@ -350,8 +338,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
-                                <div class="text-center">No Problems at this time</div>
+                            @if (!$ccdMonitoredProblems->count()) 
+                                <div class="text-center">No Monitored Problems at this time</div>
                             @else
                                 <ul class="row">
                                     @foreach ($ccdMonitoredProblems as $problem)
