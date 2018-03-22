@@ -1,7 +1,7 @@
 <?php
 
 
-namespace CLH\Faker\Patient;
+namespace App\CLH\Faker\Patient;
 
 
 use App\Models\CCD\Problem as CcdProblem;
@@ -45,13 +45,13 @@ class Problem
                 $cpmProblem = $this->cpmProblems->firstWhere('name', $name);
                 $ccdProblem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
-
-                $problem = $ccdProblem->merge($problemCodes);
+                $problem = collect([$ccdProblem, $problemCodes]);
 
             } else {
                 $ccdProblem = $this->ccdProblems->random();
                 $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
-                $problem = $ccdProblem->merge($problemCodes);
+                $ccdProblem->codes()->createMany($problemCodes);
+                $problem = collect([$ccdProblem, $problemCodes]);
             }
 
             return $problem;
