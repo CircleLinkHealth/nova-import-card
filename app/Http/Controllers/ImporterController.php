@@ -238,7 +238,9 @@ class ImporterController extends Controller
         if ($request->filled('imported_medical_record_ids')) {
             $ids = $request->input('imported_medical_record_ids');
         }
+
         $records = new Collection();
+
         foreach ($ids as $mrId) {
             $imr                      = ImportedMedicalRecord::find($mrId);
             $imr->practice_id         = $practiceId;
@@ -269,6 +271,7 @@ class ImporterController extends Controller
                                     'location_id'         => $locationId,
                                     'billing_provider_id' => $billingProviderId,
                                 ]);
+
             $records->push($imr);
         }
 

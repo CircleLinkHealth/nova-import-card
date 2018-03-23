@@ -56,7 +56,7 @@ class NoteForwarded extends Notification
         $saasAccountName = $notifiable->saasAccountName();
         $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
 
-        return (new MailMessage())
+        $mail = (new MailMessage())
             ->view('vendor.notifications.email', [
                 'greeting'        => $this->getBody(),
                 'actionText'      => 'View Note',
@@ -68,6 +68,16 @@ class NoteForwarded extends Notification
             ])
             ->from("no-reply@$slugSaasAccountName.com", $saasAccountName)
             ->subject($this->getSubject());
+
+        if ($notifiable->saasAccount->slug == 'circlelink-health') {
+            return $mail->bcc([
+                'raph@circlelinkhealth.com',
+                'chelsea@circlelinkhealth.com',
+                'sheller@circlelinkhealth.com',
+            ]);
+        }
+
+        return $mail;
     }
 
     /**

@@ -28,8 +28,8 @@
                                     <div>
                                         <label>Select Month</label>
                                     </div>
-                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].long">
-                                        <option v-for="(month, index) in months" :key="index" :value="month.long">{{month.long}}</option>
+                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].label">
+                                        <option v-for="(month, index) in months" :key="index" :value="month.label">{{month.label}}</option>
                                     </select2>
                                 </div>
                                 <div class="col-sm-4">
@@ -165,7 +165,7 @@
         },
         data() {
             return {
-                selectedMonth: '',
+                selectedMonth: null,
                 selectedPractice: 0,
                 selectedService: null,
                 loading: true,
@@ -477,31 +477,7 @@
         },
         computed: {
             months() {
-                let dates = []
-                const months = [
-                    'Jan',
-                    'Feb',
-                    'Mar',
-                    'Apr',
-                    'May',
-                    'Jun',
-                    'Jul',
-                    'Aug',
-                    'Sep',
-                    'Oct',
-                    'Nov',
-                    'Dec'
-                    ]
-                let currentMonth = (new Date()).getMonth()
-                let currentYear = (new Date()).getFullYear()
-                for (let i = 0; i >= -6; i--) {
-                    let mDate = moment(new Date())
-                    const month = months[currentMonth < 0 ? 12 + currentMonth : currentMonth];
-                    const year = currentMonth < 0 ? currentYear - 1 : currentYear
-                    dates.push({ long: month + ', ' + year, selected: i === 0 })
-                    currentMonth--;
-                }
-                return dates
+                return window.dates
             },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice)
@@ -526,7 +502,7 @@
         },
         mounted() {
             this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa)
-            this.selectedMonth = this.months[0].long
+            this.selectedMonth = (this.months[0] || {}).label
             this.selectedPractice = this.practices[0].id
             this.retrieve()
             this.getChargeableServices()

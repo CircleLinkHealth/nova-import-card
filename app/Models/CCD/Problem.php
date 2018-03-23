@@ -114,12 +114,17 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function codes()
     {
         return $this->hasMany(ProblemCode::class);
+    }
+
+    public function getNameAttribute($name) {
+        if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
+
+        return $name;
     }
 }

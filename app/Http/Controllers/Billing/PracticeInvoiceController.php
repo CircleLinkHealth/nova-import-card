@@ -69,10 +69,28 @@ class PracticeInvoiceController extends Controller
 
         $chargeableServices = ChargeableService::all();
 
+        $currentMonth = Carbon::now()->startOfMonth();
+
+        $dates = [];
+
+        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
+
+        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+
+        for ($i = 0; $i <= $numberOfMonths; $i++) {
+            $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
+
+            $dates[] = [
+                'label' => $date->format('F, Y'),
+                'value' => $date->toDateString(),
+            ];
+        }
+
         return view('admin.reports.billing', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',
+            'dates'
         ]));
     }
 
@@ -240,7 +258,11 @@ class PracticeInvoiceController extends Controller
 
         $dates = [];
 
-        for ($i = 0; $i <= 6; $i++) {
+        $oldestSummary = PatientMonthlySummary::orderBy('created_at', 'asc')->first();
+
+        $numberOfMonths = $currentMonth->diffInMonths($oldestSummary->created_at) ?? 12;
+
+        for ($i = 0; $i <= $numberOfMonths; $i++) {
             $date = $currentMonth->copy()->subMonth($i)->startOfMonth();
 
             $dates[$date->toDateString()] = $date->format('F, Y');
@@ -432,5 +454,26 @@ class PracticeInvoiceController extends Controller
         }
 
         return $logger;
+    }
+
+    /**
+     * @deprecated This will be phased out. It's here only to support older links
+     *
+     * @param $practice
+     * @param $name
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|void
+     */
+    public function downloadInvoice(
+        $practice,
+        $name
+    ) {
+        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->hasRole('administrator')) {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        return response()->download(storage_path('/download/' . $name), $name, [
+            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+        ]);
     }
 }
