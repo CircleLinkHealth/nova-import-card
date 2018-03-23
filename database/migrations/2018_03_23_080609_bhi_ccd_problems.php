@@ -13,9 +13,11 @@ class BhiCcdProblems extends Migration
      */
     public function up()
     {
-        Schema::table('ccd_problems', function (Blueprint $table) {
-            $table->boolean('is_behavioral')->default(false)->after('cpm_instruction_id');
-        });
+        if (!Schema::hasColumn('cpm_problems', 'is_behavioral')) {
+            Schema::table('cpm_problems', function (Blueprint $table) {
+                $table->boolean('is_behavioral')->default(false)->after('contains');
+            });
+        }
     }
 
     /**
@@ -25,8 +27,8 @@ class BhiCcdProblems extends Migration
      */
     public function down()
     {
-        if (Schema::hasColumn('ccd_problems', 'is_behavioral')) {
-            Schema::table('ccd_problems', function (Blueprint $table) {
+        if (Schema::hasColumn('cpm_problems', 'is_behavioral')) {
+            Schema::table('cpm_problems', function (Blueprint $table) {
                 $table->dropColumn('is_behavioral');
             });
         }
