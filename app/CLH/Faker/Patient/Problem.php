@@ -13,22 +13,6 @@ use Illuminate\Database\Eloquent\Collection;
 class Problem
 {
 
-    protected $ccdProblems;
-    protected $cpmProblems;
-    protected $problemCodes;
-
-
-    /**
-     * Problem constructor.
-     */
-    public function __construct()
-    {
-        $this->ccdProblems  = $this->getCcdProblems();
-        $this->cpmProblems  = $this->getCpmProblems();
-        $this->problemCodes = $this->getProblemCodes();
-
-    }
-
 
     /**
      * returns `ccd_problem`
@@ -42,14 +26,13 @@ class Problem
     {
         if ($withCodes == true) {
             if ($name) {
-                $cpmProblem = $this->cpmProblems->firstWhere('name', $name);
-                $ccdProblem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
-                $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
+                $cpmProblem = $this->getCpmProblems()->firstWhere('name', $name);
+                $ccdProblem    = $this->getCcdProblems()->firstWhere('cpm_problem_id', $cpmProblem->id);
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
                 $ccdProblem->codes = $problemCodes;
-
             } else {
-                $ccdProblem = $this->ccdProblems->random();
-                $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
+                $ccdProblem = $this->getCcdProblems()->random();
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
 
                 $ccdProblem->codes = $problemCodes;
             }
@@ -58,11 +41,11 @@ class Problem
 
         } else {
             if ($name) {
-                $cpmProblem = $this->cpmProblems->firstWhere('name', $name);
-                $ccdProblem    = $this->ccdProblems->firstWhere('cpm_problem_id', $cpmProblem->id);
+                $cpmProblem = $this->getCpmProblems()->firstWhere('name', $name);
+                $ccdProblem    = $this->getCcdProblems()->firstWhere('cpm_problem_id', $cpmProblem->id);
 
             } else {
-                $ccdProblem = $this->ccdProblems->random();
+                $ccdProblem = $this->getCcdProblems()->random();
             }
 
             return $ccdProblem;
@@ -82,15 +65,15 @@ class Problem
      */
     public function problemSet($withCodes = true)
     {
-        $patientIds = $this->ccdProblems->pluck('patient_id');
+        $patientIds = $this->getCcdProblems()->pluck('patient_id');
         $patientId = $patientIds->random();
         $problemSet = [];
 
         if ($withCodes){
 
-            $ccdProblems = $this->ccdProblems->where('patient_id', $patientId)->all();
+            $ccdProblems = $this->getCcdProblems()->where('patient_id', $patientId)->all();
             foreach ($ccdProblems as $ccdProblem){
-                $problemCodes = $this->problemCodes->where('problem_id', $ccdProblem->id)->all();
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
                 if ($problemCodes){
                     $ccdProblem->codes = $problemCodes;
                     $problemSet[] = $ccdProblem;
@@ -104,7 +87,7 @@ class Problem
 
         }else{
 
-            $problemSet[] = $this->ccdProblems->where('patient_id', $patientId)->all();
+            $problemSet[] = $this->getCcdProblems()->where('patient_id', $patientId)->all();
             return $problemSet;
 
         }
@@ -123,6 +106,7 @@ class Problem
     {
         $problemSet = $this->problemSet();
 
+        //sometimes returns error TODO
         $patient->ccdProblems()->saveMany($problemSet);
 
         return $patient;
