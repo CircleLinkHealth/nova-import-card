@@ -275,32 +275,50 @@ class OpsDashboardService
 
 
     /**
-     * @param $practices
+     * @param $practice
      * @param $patients
      * @param $fromDate
      * @param $toDate
      *
      * @return array
      */
-    public function getPracticeCcmTotalCounts($practices, $patients, $fromDate, $toDate){
+    public function getPracticeCcmTotalCounts($practice, $fromDate, $toDate){
 
-        $totals = [];
-
-        foreach ($practices as $practice){
-            $filteredPatients = $this->filterPatientsByPractice($patients, $practice->id);
+            $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
+            $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
             $counts = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
-            if (!$counts == null){
-                $totals[$practice->display_name] = $counts;
-            }
-        }
 
-        return $totals;
+        return $counts;
+    }
+
+    /**
+     * @param $practice
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getPracticeCountsByStatus($practice, $fromDate, $toDate){
+        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate, $toDate);
+        $filteredPatients = $this->filterPatientsByPractice($patientsByStatus, $practice->id);
+        $counts = $this->countPatientsByStatus($filteredPatients);
+
+        return $counts;
+
     }
 
 
-    public function dailyReportRow($fromDate, $toDate){
+    public function dailyReportRow($practice, $fromDate, $toDate){
 
-        //make complete Row including CCM counts, and paused/withdrawn/enrolled counts
+
+        $ccmCounts = $this->getPracticeCcmTotalCounts($practice, $fromDate, $toDate);
+        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
+
+        return collect([
+            'ccmCounts'    => $ccmCounts,
+            'countsByStatus' => $countsByStatus,
+
+        ]);
 
     }
 

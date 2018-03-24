@@ -80,7 +80,11 @@ class OpsDashboardTest extends TestCase
 
 
         $practices = Practice::active()->get();
-        $totals = $this->service->getPracticeCcmTotalCounts($practices, $enrolledPatients, $fromDate, $toDate);
+        $totals = [];
+        foreach ($practices as $practice){
+            $totals[$practice->display_name] = $this->service->dailyReportRow($practice, $fromDate, $toDate);
+        }
+
         $this->assertNotNull($totals);
     }
 
