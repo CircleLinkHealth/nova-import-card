@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
 use App\User;
@@ -77,6 +78,10 @@ class OpsDashboardTest extends TestCase
 
         $this->assertNotNull($countsByCcmTime);
 
+
+        $practices = Practice::active()->get();
+        $totals = $this->service->getPracticeCcmTotalCounts($practices, $enrolledPatients, $fromDate, $toDate);
+        $this->assertNotNull($totals);
     }
 
 

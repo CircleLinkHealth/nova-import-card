@@ -17,7 +17,15 @@ use App\User;
 class OpsDashboardPatientEloquentRepository
 {
 
-
+    /**
+     * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
+     * dates are Carbon->toDateTimeString()
+     *
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
+     */
     public function getPatientsByStatus($fromDate = null, $toDate = null)
     {
         //may not need case where no dates are given

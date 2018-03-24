@@ -35,85 +35,85 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getCpmPatientTotals(Carbon $date, $dateType, $practiceId = null)
-    {
-        $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
-        $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-
-        $totalPatients = $this->getTotalPatients();
-
-        $monthPatients = $this->getTotalPatients($fromDate, $toDate);
-
-        //If selecting specific day: go to day, show relevant week/month totals (EOW)
-        if ($dateType == 'day') {
-
-            $dayFromDate = $date->copy()->startOfDay()->toDateTimeString();
-            $dayToDate   = $date->copy()->endOfDay()->toDateTimeString();
-            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
-
-            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
-            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
-
-            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
-        }
-
-        //if selecting week:go to end of week totals, show last day of the week, month UTD totals from end of week.
-        if ($dateType == 'week') {
-
-            //last day of week for day totals
-            $dayFromDate = $date->copy()->endOfWeek()->startOfDay()->toDateTimeString();
-            $dayToDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
-
-            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
-
-            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
-            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
-
-            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
-        }
-
-        //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
-        if ($dateType == 'month') {
-            //last day of month for day totals
-            $dayFromDate = $date->copy()->endOfMonth()->startOfDay()->toDateTimeString();
-            $dayToDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-
-            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
-
-            //last week of month
-            $fromDate = $date->copy()->endOfMonth()->startOfWeek()->startOfDay()->toDateTimeString();
-            $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
-
-            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
-
-
-        }
-
-        if ($practiceId) {
-            $dayCount   = $this->countPatientsByStatus($this->filterPatientsByPractice($dayPatients, $practiceId));
-            $weekCount  = $this->countPatientsByStatus($this->filterPatientsByPractice($weekPatients, $practiceId));
-            $monthCount = $this->countPatientsByStatus($this->filterPatientsByPractice($monthPatients, $practiceId));
-            $totalCount = $this->countPatientsByStatus($this->filterPatientsByPractice($totalPatients, $practiceId));
-
-
-        } else {
-            $dayCount   = $this->countPatientsByStatus($dayPatients);
-            $weekCount  = $this->countPatientsByStatus($weekPatients);
-            $monthCount = $this->countPatientsByStatus($monthPatients);
-            $totalCount = $this->countPatientsByStatus($totalPatients);
-        }
-
-//        dd([$weekPatients, $weekCount]);
-
-
-        return collect([
-            'dayCount'   => $dayCount,
-            'weekCount'  => $weekCount,
-            'monthCount' => $monthCount,
-            'totalCount' => $totalCount,
-        ]);
-
-    }
+//    public function getCpmPatientTotals(Carbon $date, $dateType, $practiceId = null)
+//    {
+//        $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
+//        $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
+//
+//        $totalPatients = $this->getTotalPatients();
+//
+//        $monthPatients = $this->getTotalPatients($fromDate, $toDate);
+//
+//        //If selecting specific day: go to day, show relevant week/month totals (EOW)
+//        if ($dateType == 'day') {
+//
+//            $dayFromDate = $date->copy()->startOfDay()->toDateTimeString();
+//            $dayToDate   = $date->copy()->endOfDay()->toDateTimeString();
+//            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
+//
+//            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
+//            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
+//
+//            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
+//        }
+//
+//        //if selecting week:go to end of week totals, show last day of the week, month UTD totals from end of week.
+//        if ($dateType == 'week') {
+//
+//            //last day of week for day totals
+//            $dayFromDate = $date->copy()->endOfWeek()->startOfDay()->toDateTimeString();
+//            $dayToDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
+//
+//            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
+//
+//            $fromDate = $date->copy()->startOfWeek()->startOfDay()->toDateTimeString();
+//            $toDate   = $date->copy()->endOfWeek()->endOfDay()->toDateTimeString();
+//
+//            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
+//        }
+//
+//        //if selecting monthly:show EOM totals, show totals for last day of week, last week of month
+//        if ($dateType == 'month') {
+//            //last day of month for day totals
+//            $dayFromDate = $date->copy()->endOfMonth()->startOfDay()->toDateTimeString();
+//            $dayToDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
+//
+//            $dayPatients = $this->getTotalPatients($dayFromDate, $dayToDate);
+//
+//            //last week of month
+//            $fromDate = $date->copy()->endOfMonth()->startOfWeek()->startOfDay()->toDateTimeString();
+//            $toDate   = $date->copy()->endOfMonth()->endOfDay()->toDateTimeString();
+//
+//            $weekPatients = $this->getTotalPatients($fromDate, $toDate);
+//
+//
+//        }
+//
+//        if ($practiceId) {
+//            $dayCount   = $this->countPatientsByStatus($this->filterPatientsByPractice($dayPatients, $practiceId));
+//            $weekCount  = $this->countPatientsByStatus($this->filterPatientsByPractice($weekPatients, $practiceId));
+//            $monthCount = $this->countPatientsByStatus($this->filterPatientsByPractice($monthPatients, $practiceId));
+//            $totalCount = $this->countPatientsByStatus($this->filterPatientsByPractice($totalPatients, $practiceId));
+//
+//
+//        } else {
+//            $dayCount   = $this->countPatientsByStatus($dayPatients);
+//            $weekCount  = $this->countPatientsByStatus($weekPatients);
+//            $monthCount = $this->countPatientsByStatus($monthPatients);
+//            $totalCount = $this->countPatientsByStatus($totalPatients);
+//        }
+//
+////        dd([$weekPatients, $weekCount]);
+//
+//
+//        return collect([
+//            'dayCount'   => $dayCount,
+//            'weekCount'  => $weekCount,
+//            'monthCount' => $monthCount,
+//            'totalCount' => $totalCount,
+//        ]);
+//
+//    }
 
 
     /**
@@ -155,123 +155,13 @@ class OpsDashboardService
      */
     public function filterPatientsByPractice($patients, $practiceId)
     {
-
         $filteredPatients = $patients->where('program_id', $practiceId)
                                      ->all();
 
-
         return $filteredPatients;
 
-
     }
 
-
-
-    /**
-     * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
-     * dates are Carbon->toDateTimeString()
-     *
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
-     */
-    public function getTotalPatients($fromDate = null, $toDate = null)
-    {
-
-        if ($fromDate and $toDate) {
-            $patients = User::with([
-                'patientInfo' => function ($patient) use ($fromDate, $toDate) {
-                    $patient->where(function ($query) use ($fromDate, $toDate) {
-                        $query->where(function ($subQuery) use ($fromDate, $toDate) {
-                            $subQuery->ccmStatus(Patient::PAUSED)
-                                     ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]]);
-                        })
-                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                  $subQuery->ccmStatus(Patient::WITHDRAWN)
-                                           ->where([
-                                               ['date_withdrawn', '>=', $fromDate],
-                                               ['date_withdrawn', '<=', $toDate],
-                                           ]);
-                              })
-                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                  $subQuery->ccmStatus(Patient::ENROLLED)
-                                           ->where([
-                                               ['registration_date', '>=', $fromDate],
-                                               ['registration_date', '<=', $toDate],
-                                           ]);
-                              });
-                    });
-                },
-                'carePlan'    => function ($c) use ($fromDate, $toDate) {
-                    $c->where('status', CarePlan::TO_ENROLL)
-                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-                },
-            ])
-                            ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                                $patient->where(function ($query) use ($fromDate, $toDate) {
-                                    $query->where(function ($subQuery) use ($fromDate, $toDate) {
-                                        $subQuery->ccmStatus(Patient::PAUSED)
-                                                 ->where([
-                                                     ['date_paused', '>=', $fromDate],
-                                                     ['date_paused', '<=', $toDate],
-                                                 ]);
-                                    })
-                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                              $subQuery->ccmStatus(Patient::WITHDRAWN)
-                                                       ->where([
-                                                           ['date_withdrawn', '>=', $fromDate],
-                                                           ['date_withdrawn', '<=', $toDate],
-                                                       ]);
-                                          })
-                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                              $subQuery->ccmStatus(Patient::ENROLLED)
-                                                       ->where([
-                                                           ['registration_date', '>=', $fromDate],
-                                                           ['registration_date', '<=', $toDate],
-                                                       ]);
-                                          });
-                                });
-                            })
-                            ->orWhere(function ($query) use ($fromDate, $toDate) {
-                                $query->whereHas('patientInfo', function ($patient) {
-                                    $patient->whereIn('ccm_status', [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                                })
-                                      ->whereHas('carePlan', function ($c) use ($fromDate, $toDate) {
-                                          $c->where('status', CarePlan::TO_ENROLL)
-                                            ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-                                      });
-                            })
-                            ->get();
-
-        } else {
-            $patients = User::with([
-                'patientInfo' => function ($patient) {
-                    $patient->whereIn('ccm_status', [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                },
-                'carePlan'    => function ($c) {
-                    $c->where('status', CarePlan::TO_ENROLL);
-                },
-            ])
-                            ->whereHas('patientInfo', function ($patient) {
-                                $patient->whereIn('ccm_status',
-                                    [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                            })
-                            ->orWhere(function ($query) {
-                                $query->whereHas('patientInfo', function ($patient) {
-                                    $patient->whereIn('ccm_status',
-                                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                                })
-                                      ->whereHas('carePlan', function ($c) {
-                                          $c->where('status', CarePlan::TO_ENROLL);
-                                      });
-                            })
-                            ->get();
-        }
-
-
-        return $patients;
-    }
 
     /**
      *
@@ -331,10 +221,14 @@ class OpsDashboardService
     }
 
 
-
-
+    /**
+     * @param $patients
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return mixed
+     */
     public function countPatientsByCcmTime($patients, $fromDate, $toDate){
-
 
         $count['zero'] = 0;
         $count['0to5'] = 0;
@@ -342,8 +236,7 @@ class OpsDashboardService
         $count['10to15'] = 0;
         $count['15to20'] = 0;
         $count['20plus'] = 0;
-
-
+        $count['total'] = 0;
 
         foreach ($patients as $patient){
 
@@ -372,8 +265,43 @@ class OpsDashboardService
                 $count['zero'] += 1;
             }
         }
+        $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
+        if ($count['total'] == 0){
+            return null;
+        }
 
         return $count;
+    }
+
+
+    /**
+     * @param $practices
+     * @param $patients
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return array
+     */
+    public function getPracticeCcmTotalCounts($practices, $patients, $fromDate, $toDate){
+
+        $totals = [];
+
+        foreach ($practices as $practice){
+            $filteredPatients = $this->filterPatientsByPractice($patients, $practice->id);
+            $counts = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
+            if (!$counts == null){
+                $totals[$practice->display_name] = $counts;
+            }
+        }
+
+        return $totals;
+    }
+
+
+    public function dailyReportRow($fromDate, $toDate){
+
+        //make complete Row including CCM counts, and paused/withdrawn/enrolled counts
+
     }
 
 
