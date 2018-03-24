@@ -1023,23 +1023,23 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'ops-dashboard',
             ], function () {
                 Route::get('/index', [
-                    'uses' => 'OperationsDashboardController@index',
+                    'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
                 Route::get('/total-data', [
-                    'uses' => 'OperationsDashboardController@getTotalPatientData',
+                    'uses' => 'OpsDashboardController@getTotalPatientData',
                     'as'   => 'OpsDashboard.totalData'
                 ]);
                 Route::get('/paused-patient-list', [
-                    'uses' => 'OperationsDashboardController@getPausedPatientList',
+                    'uses' => 'OpsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList'
                 ]);
                 Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-                    'uses' => 'OperationsDashboardController@getList',
+                    'uses' => 'OnsDashboardController@getList',
                     'as'   => 'OpsDashboard.patientList'
                 ]);
                 Route::get('/patients-by-practice', [
-                    'uses' => 'OperationsDashboardController@getPatientsByPractice',
+                    'uses' => 'OpsDashboardController@getPatientsByPractice',
                     'as'   => 'OpsDashboard.patientsByPractice'
                 ]);
             });

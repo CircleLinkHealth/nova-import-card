@@ -11,12 +11,19 @@ namespace App\Services;
 
 use App\CarePlan;
 use App\Patient;
+use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
 
-class OperationsDashboardService
+class OpsDashboardService
 {
 
+    private $repo;
+
+    public function __construct()
+    {
+        $this->repo = new OpsDashboardPatientEloquentRepository();
+    }
 
     /**
      * get total patients, return count for each time category, for each status category
@@ -159,10 +166,6 @@ class OperationsDashboardService
     }
 
 
-    public function getModifiedByNonClh()
-    {
-
-    }
 
     /**
      * get all patients that date paused, withdrawn, or registered in month(same for all dateTypes)
@@ -325,6 +328,52 @@ class OperationsDashboardService
         ]);
 
 
+    }
+
+
+
+
+    public function countPatientsByCcmTime($patients, $fromDate, $toDate){
+
+
+        $count['zero'] = 0;
+        $count['0to5'] = 0;
+        $count['5to10'] = 0;
+        $count['10to15'] = 0;
+        $count['15to20'] = 0;
+        $count['20plus'] = 0;
+
+
+
+        foreach ($patients as $patient){
+
+            if ($patient->activities){
+
+                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate, false);
+                if ($ccmTime == 0){
+                    $count['zero'] += 1;
+                }
+                if ($ccmTime > 0 and $ccmTime <= 300){
+                    $count['0to5'] += 1;
+                }
+                if ($ccmTime > 300 and $ccmTime <= 600){
+                    $count['5to10'] += 1;
+                }
+                if ($ccmTime > 600 and $ccmTime <= 900){
+                    $count['10to15'] += 1;
+                }
+                if ($ccmTime > 900 and $ccmTime <= 1200){
+                    $count['15to20'] += 1;
+                }
+                if ($ccmTime > 1200){
+                    $count['20plus'] += 1;
+                }
+            }else{
+                $count['zero'] += 1;
+            }
+        }
+
+        return $count;
     }
 
 

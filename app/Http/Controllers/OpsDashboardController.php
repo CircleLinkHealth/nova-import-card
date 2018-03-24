@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
-use App\Services\OperationsDashboardService;
+use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class OperationsDashboardController extends Controller
+class OpsDashboardController extends Controller
 {
 
     private $service;
@@ -17,10 +17,10 @@ class OperationsDashboardController extends Controller
     /**
      * OperationsDashboardController constructor.
      *
-     * @param OperationsDashboardService $service
+     * @param OpsDashboardService $service
      */
     public function __construct(
-        OperationsDashboardService $service
+        OpsDashboardService $service
     ) {
         $this->service = $service;
     }
