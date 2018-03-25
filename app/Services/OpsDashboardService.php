@@ -9,7 +9,6 @@
 namespace App\Services;
 
 
-use App\CarePlan;
 use App\Patient;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
@@ -115,8 +114,10 @@ class OpsDashboardService
 //
 //    }
 
-
     /**
+     *
+     *
+     *
      * @param $fromDate
      * @param $toDate
      *
@@ -159,6 +160,13 @@ class OpsDashboardService
                                      ->all();
 
         return $filteredPatients;
+
+    }
+
+
+
+    public function filterPatientsByStatus($patients, $status)
+    {
 
     }
 
@@ -208,6 +216,7 @@ class OpsDashboardService
         $withdrawnCount = count($withdrawn);
         $enrolledCount  = count($enrolled);
         $gCodeHoldCount = count($gCodeHold);
+        $delta          = $this->calculateDelta($enrolledCount, $pausedCount, $withdrawnCount);
 
 
         return collect([
@@ -215,6 +224,7 @@ class OpsDashboardService
             'withdrawnPatients' => $withdrawnCount,
             'enrolled'          => $enrolledCount,
             'gCodeHold'         => $gCodeHoldCount,
+            'delta'             => $delta,
         ]);
 
 
@@ -222,51 +232,54 @@ class OpsDashboardService
 
 
     /**
+     * categorizes patient count by ccmTime
+     *
      * @param $patients
      * @param $fromDate
      * @param $toDate
      *
      * @return mixed
      */
-    public function countPatientsByCcmTime($patients, $fromDate, $toDate){
+    public function countPatientsByCcmTime($patients, $fromDate, $toDate)
+    {
 
-        $count['zero'] = 0;
-        $count['0to5'] = 0;
-        $count['5to10'] = 0;
+        $count['zero']   = 0;
+        $count['0to5']   = 0;
+        $count['5to10']  = 0;
         $count['10to15'] = 0;
         $count['15to20'] = 0;
         $count['20plus'] = 0;
-        $count['total'] = 0;
+        $count['total']  = 0;
 
-        foreach ($patients as $patient){
+        foreach ($patients as $patient) {
 
-            if ($patient->activities){
+            if ($patient->activities) {
 
                 $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate, false);
-                if ($ccmTime == 0){
+                if ($ccmTime == 0) {
                     $count['zero'] += 1;
                 }
-                if ($ccmTime > 0 and $ccmTime <= 300){
+                if ($ccmTime > 0 and $ccmTime <= 300) {
                     $count['0to5'] += 1;
                 }
-                if ($ccmTime > 300 and $ccmTime <= 600){
+                if ($ccmTime > 300 and $ccmTime <= 600) {
                     $count['5to10'] += 1;
                 }
-                if ($ccmTime > 600 and $ccmTime <= 900){
+                if ($ccmTime > 600 and $ccmTime <= 900) {
                     $count['10to15'] += 1;
                 }
-                if ($ccmTime > 900 and $ccmTime <= 1200){
+                if ($ccmTime > 900 and $ccmTime <= 1200) {
                     $count['15to20'] += 1;
                 }
-                if ($ccmTime > 1200){
+                if ($ccmTime > 1200) {
                     $count['20plus'] += 1;
                 }
-            }else{
+            } else {
                 $count['zero'] += 1;
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
-        if ($count['total'] == 0){
+        if ($count['total'] == 0) {
             return null;
         }
 
@@ -275,6 +288,8 @@ class OpsDashboardService
 
 
     /**
+     * Returns counts categorised by ccmTime ranges for a single practice, for a given date range
+     *
      * @param $practice
      * @param $patients
      * @param $fromDate
@@ -282,44 +297,81 @@ class OpsDashboardService
      *
      * @return array
      */
-    public function getPracticeCcmTotalCounts($practice, $fromDate, $toDate){
+    public function getPracticeCcmTotalCounts($practice, $fromDate, $toDate)
+    {
 
-            $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
-            $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
-            $counts = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
+        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
+        $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
+        $counts           = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
 
         return $counts;
     }
 
     /**
+     * Returns counts for enrolled, paused, withdrawn and delta for a single practice
+     *
      * @param $practice
      * @param $fromDate
      * @param $toDate
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getPracticeCountsByStatus($practice, $fromDate, $toDate){
+    public function getPracticeCountsByStatus($practice, $fromDate, $toDate)
+    {
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate, $toDate);
         $filteredPatients = $this->filterPatientsByPractice($patientsByStatus, $practice->id);
-        $counts = $this->countPatientsByStatus($filteredPatients);
+        $counts           = $this->countPatientsByStatus($filteredPatients);
 
         return $counts;
 
     }
 
 
-    public function dailyReportRow($practice, $fromDate, $toDate){
+    /**
+     * Returns all the data needed for a row(for a single practice) in Daily Tab.
+     *
+     * @param $practice
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function dailyReportRow($practice, $fromDate, $toDate)
+    {
 
-
+        //ccm from date must be start of month
         $ccmCounts = $this->getPracticeCcmTotalCounts($practice, $fromDate, $toDate);
+        //total for day before
+        $priorDay = new Carbon($toDate);
+        $priorDay->copy()->subDay(1)->toDateTimeString();
+        $priorDayCcmCounts           = $this->getPracticeCcmTotalCounts($practice, $fromDate, $priorDay);
+        $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
+        $ccmTotal                    = collect($ccmCounts);
+
         $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
 
         return collect([
-            'ccmCounts'    => $ccmCounts,
+            'ccmCounts'      => $ccmTotal,
             'countsByStatus' => $countsByStatus,
-
         ]);
 
+    }
+
+    /**
+     * Gcode hold not calculated at the moment, to be added
+     *
+     * @param $enrolled
+     * @param $paused
+     * @param $withdrawn
+     *
+     * @return mixed
+     */
+    public function calculateDelta($enrolled, $paused, $withdrawn)
+    {
+
+        $delta = $enrolled - $paused - $withdrawn;
+
+        return $delta;
     }
 
 
