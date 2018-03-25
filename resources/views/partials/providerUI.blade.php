@@ -11,6 +11,8 @@
     <meta name="base-url" content="{{ url('/') }}">
     <base href="{{asset('')}}">
 
+    @include('partials.hotjar-code')
+
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
             window.heap.appid = e, window.heap.config = t = t || {};

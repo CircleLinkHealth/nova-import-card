@@ -11,6 +11,8 @@
 
     <base href="{{asset('')}}">
 
+    @include('partials.hotjar-code')
+
     <!-- Stylesheets -->
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
