@@ -154,7 +154,7 @@ class OpsDashboardPatientEloquentRepository
                             $q->where([['performed_at', '>=', $fromDate], ['performed_at', '<=', $toDate]]);
                         })
             //memory running out
-                        ->take(100)
+                        ->take(10)
                         ->get();
 
         return $patients;
@@ -191,10 +191,17 @@ class OpsDashboardPatientEloquentRepository
                             $patient->where('ccm_status', Patient::ENROLLED);
                         })
             //memory running out
-                        ->take(100)
+                        ->take(10)
                         ->get();
 
         return $patients;
+    }
+
+    public function getTotalActivePatientCount()
+    {
+        $patients = User::whereHas('primaryPractice', function($q){
+            $q->active();
+        })->count();
     }
 
 }

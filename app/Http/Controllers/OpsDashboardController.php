@@ -35,25 +35,21 @@ class OpsDashboardController extends Controller
     public function index()
     {
         $date     = Carbon::today();
-        $dateType = 'day';
+        $date->subDay(1)->setTimeFromTimeString('23:00');
 
-
-        //active practices for dropdown.
+        $hoursBehind = $this->service->calculateHoursBehind($date->toDateTimeString());
         $practices = Practice::active()->get();
+        $rows = [];
+        foreach ($practices as $practice){
+            $rows[$practice->display_name]= $this->service->dailyReportRow($practice, $date);
+        }
 
 
-        $totals             = $this->service->getCpmPatientTotals($date, 'day');
-        $patientsByPractice = null;
-        $practice           = false;
-
-
-        return view('admin.opsDashboard.index', compact([
-            'practices',
-            'totals',
-            'patientsByPractice',
-            'practice',
+        return view('admin.opsDashboard.daily', compact([
             'date',
-            'dateType',
+            'hoursBehind',
+            'rows',
+//            'totalRow',
         ]));
 
     }

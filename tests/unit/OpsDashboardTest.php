@@ -61,8 +61,18 @@ class OpsDashboardTest extends TestCase
     public function test_new_repository()
     {
 
+        $from = Carbon::now()->startOfDay()->toDateTimeString();
+        $to = Carbon::now()->startOfMonth()->startOfDay()->toDateTimeString();
+
+        $weekdays = $this->service->calculateWeekdays($from, $to);
+
+        $this->assertNotNull($weekdays);
+
         $fromDate = $this->date->copy()->subYear(2)->startOfYear()->startOfDay()->toDateTimeString();
         $toDate = $this->date->copy()->subYear(2)->endOfYear()->endOfDay()->toDateTimeString();
+
+        $hoursBehind = $this->service->calculateHoursBehind($toDate);
+        $this->assertNotNull($hoursBehind);
 
         $ccmPatients = $this->repo->getPatientsByCcmTime($fromDate, $toDate);
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $ccmPatients);

@@ -10,6 +10,7 @@ namespace App\Services;
 
 
 use App\Patient;
+use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
@@ -300,8 +301,7 @@ class OpsDashboardService
     public function getPracticeCcmTotalCounts($practice, $fromDate, $toDate)
     {
 
-        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
-        $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
+        $filteredPatients = $this->getEnrolledPatientsFilteredByPractice($practice, $fromDate, $toDate);
         $counts           = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
 
         return $counts;
@@ -331,29 +331,79 @@ class OpsDashboardService
      * Returns all the data needed for a row(for a single practice) in Daily Tab.
      *
      * @param $practice
-     * @param $fromDate
-     * @param $toDate
+     * @param $date
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($practice, $fromDate, $toDate)
+    public function dailyReportRow($practice, $date)
     {
+        $date = new Carbon($date);
+        $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
 
         //ccm from date must be start of month
-        $ccmCounts = $this->getPracticeCcmTotalCounts($practice, $fromDate, $toDate);
+        $ccmCounts = $this->getPracticeCcmTotalCounts($practice, $fromDate, $date->toDateTimeString());
         //total for day before
-        $priorDay = new Carbon($toDate);
-        $priorDay->copy()->subDay(1)->toDateTimeString();
+        $priorDay = $date->copy()->subDay(1)->toDateTimeString();
+
         $priorDayCcmCounts           = $this->getPracticeCcmTotalCounts($practice, $fromDate, $priorDay);
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);
 
-        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
+        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $date->toDateTimeString());
 
         return collect([
             'ccmCounts'      => $ccmTotal,
             'countsByStatus' => $countsByStatus,
         ]);
+
+    }
+
+    public function getCcmTimeAverageByPractice(){
+
+    }
+
+    public function getEnrolledPatientsFilteredByPractice($practice, $fromDate, $toDate){
+        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
+        $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
+
+        return $filteredPatients;
+    }
+
+    public function calculateHoursBehind($date){
+        $date = new Carbon($date);
+
+        //(AvgMinT - AvgMinA)*TotActPt/60
+        $totActPt = $this->repo->getTotalActivePatientCount();
+
+        //date current day or last day completed 11:00 pm?
+        $startOfMonth = $date->copy()->startOfMonth()->startOfDay();
+        $endOfMonth = $date->copy()->endOfMonth()->endOfDay();
+        $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
+        $workingDaysMonth = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $endOfMonth->toDateTimeString());
+        $avgMinT = $workingDaysElapsed/$workingDaysMonth * 35;
+
+        $totalCcm = [];
+        $practices = Practice::active()->get();
+        foreach ($practices as $practice){
+            $patients = $this->getEnrolledPatientsFilteredByPractice($practice, $startOfMonth->toDateTimeString(), $date->toDateTimeString());
+            foreach ($patients as $patient){
+                $totalCcm[] = $this->repo->totalTimeForPatient($patient, $startOfMonth->toDateTimeString(), $date->toDateTimeString());
+            }
+        }
+        $totalCcm = array_filter($totalCcm);
+        if (!count($totalCcm) == 0){
+            $average = array_sum($totalCcm)/count($totalCcm);
+            $avgMinA = $average;
+        }else{
+            $avgMinA = 0;
+        }
+
+
+
+        $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
+
+        return $hoursBehind;
+
 
     }
 
@@ -372,6 +422,21 @@ class OpsDashboardService
         $delta = $enrolled - $paused - $withdrawn;
 
         return $delta;
+    }
+
+
+    /**
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @return int
+     */
+    public function calculateWeekdays($fromDate, $toDate){
+
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function(Carbon $date) {
+            return !$date->isWeekend();
+        }, new Carbon($toDate));
+
     }
 
 
