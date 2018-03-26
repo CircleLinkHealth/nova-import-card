@@ -64,6 +64,8 @@
         FirstName: 0,
         LastName: 1
     }
+
+    const createCustomSort = (prop, ascending) => (a, b) => ((!a[prop] && (a[prop] !== 0)) ? 1 : ((!b[prop] && (b[prop] !== 0)) ? -1 : ascending ? (a[prop] < b[prop] ? -1 : 1) : (a[prop] < b[prop] ? 1 : -1)))
     
     export default {
         name: 'PatientList',
@@ -97,7 +99,7 @@
                                         { id: 'paused', text: 'paused' }, 
                                         { id: 'withdrawn', text: 'withdrawn' } 
                                     ],
-                        careplanStatus: [ 
+                        careplanStatus: [
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
@@ -110,17 +112,17 @@
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     },
                     customSorting: {
-                        name: (ascending) => (a, b) => 0,
-                        provider: (ascending) => (a, b) => 0,
-                        ccmStatus: (ascending) => (a, b) => 0,
-                        careplanStatus: (ascending) => (a, b) => 0,
-                        dob: (ascending) => (a, b) => 0,
-                        phone: (ascending) => (a, b) => 0,
-                        age: (ascending) => (a, b) => 0,
-                        registeredOn: (ascending) => (a, b) => 0,
-                        lastReading: (ascending) => (a, b) => 0,
-                        ccm: (ascending) => (a, b) => 0,
-                        program: (ascending) => (a, b) => 0
+                        name: (ascending) => createCustomSort('name', ascending),
+                        provider: (ascending) => createCustomSort('provider', ascending),
+                        ccmStatus: (ascending) => createCustomSort('ccmStatus', ascending),
+                        careplanStatus: (ascending) => createCustomSort('careplanStatus', ascending),
+                        dob: (ascending) => createCustomSort('sort_dob', ascending),
+                        phone: (ascending) => createCustomSort('phone', ascending),
+                        age: (ascending) => createCustomSort('age', ascending),
+                        registeredOn: (ascending) => createCustomSort('sort_registeredOn', ascending),
+                        lastReading: (ascending) => createCustomSort('lastReading', ascending),
+                        ccm: (ascending) => createCustomSort('sort_ccm', ascending),
+                        program: (ascending) => createCustomSort('program', ascending)
                     }
                 }
             }
@@ -220,10 +222,11 @@
                             }
                             if (patient.patient_info) {
                                 if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
-                                patient.patient_info.age = Math.floor((new Date() - new Date(patient.patient_info.birth_date)) / (1000 * 60 * 60 * 24 * 365))
+                                patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? Math.floor((new Date() - new Date(patient.patient_info.birth_date)) / (1000 * 60 * 60 * 24 * 365)) : (new Date()).getFullYear()
                                 
                                 const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                                 const seconds = patient.patient_info.cur_month_activity_time || 0
+                                patient.patient_info.ccm = seconds
                                 patient.patient_info.cur_month_activity_time = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                             }
                             return patient
@@ -232,14 +235,17 @@
                             patient.firstName = patient.name.split(' ')[0]
                             patient.lastName = patient.name.split(' ').slice(1).join(' ')
                             patient.provider = patient.billing_provider_name
-                            patient.ccmStatus = (patient.patient_info || {}).ccm_status || ''
-                            patient.careplanStatus = (patient.careplan || {}).status || ''
+                            patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
+                            patient.careplanStatus = (patient.careplan || {}).status || 'none'
                             patient.dob = (patient.patient_info || {}).birth_date || ''
+                            patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
                             patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
-                            patient.age = patient.patient_info.age || ''
+                            patient.age = (patient.patient_info || {}).age || ''
                             patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
+                            patient.sort_registeredOn = new Date(patient.created_at)
                             patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
                             patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
+                            patient.sort_ccm = (patient.patient_info || {}).ccm
                             return patient
                         }).map(patient => {
                             const loadColumnList = (list = [], item = null) => {
@@ -283,6 +289,27 @@
                 link.href = rootUrl('api/patients?excel')
                 link.download = `patient-list-${Date.now()}.xlsx`
                 link.click()
+            },
+            createHumanReadableFilterNames () {
+                /**
+                 * make sure the filter input placeholders have human readable text like "CCM Status" instead of "ccmStatus"
+                 */
+                const patientListElem = this.$refs.tblPatientList.$el
+
+                const ccmStatusSelect = patientListElem.querySelector('select[name="vf__ccmStatus"]')
+                ccmStatusSelect.querySelector('option').innerText = 'Select CCM Status'
+
+                const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]')
+                careplanStatusSelect.querySelector('option').innerText = 'Select Careplan Status'
+
+                const dobInput = patientListElem.querySelector('input[name="vf__dob"]')
+                dobInput.setAttribute('placeholder', 'Filter by Date of Birth')
+
+                const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
+                registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
+
+                const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
+                lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')
             }
         },
         mounted() {
@@ -301,8 +328,6 @@
             Event.$on('vue-tables.pagination', (page) => {
                 this.getPatients()
             })
-
-
 
 
             Event.$on('vue-tables.filter::name', this.activateFilters)
@@ -328,6 +353,8 @@
             Event.$on('vue-tables.sorted', this.activateFilters)
 
             Event.$on('vue-tables.limit', this.activateFilters)
+
+            this.createHumanReadableFilterNames()
         }
     }
 </script>
