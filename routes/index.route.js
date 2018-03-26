@@ -1,18 +1,22 @@
 var express = require('express');
 var router = express.Router();
 
-const swaggerSpec = require('../swagger')
+// const swaggerSpec = require('../swagger')
 
-router.get('/swagger.json', function(req, res) {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerSpec);
-});
+// router.get('/swagger.json', function(req, res) {
+//     res.setHeader('Content-Type', 'application/json');
+//     res.send(swaggerSpec);
+// });
 
-/* GET home page. */
-require('express-swagger-ui')({
-  app       : app,
-  swaggerUrl: '/swagger.json',  // this is the default value 
-  localPath : '/'       // this is the default value 
-});
+// /* GET home page. */
+// require('express-swagger-ui')({
+//   app       : app,
+//   swaggerUrl: '/swagger.json',  // this is the default value 
+//   localPath : '/'       // this is the default value 
+// });
+
+router.get('/', (req, res) => {
+  res.send({ message: 'Time Tracker' })
+})
 
 module.exports = router;
