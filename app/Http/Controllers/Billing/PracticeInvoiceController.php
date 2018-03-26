@@ -243,6 +243,50 @@ class PracticeInvoiceController extends Controller
         ]);
     }
 
+    /** open patient-monthly-summaries in a practice */
+    public function openMonthlySummaryStatus(Request $request)
+    {
+        $practice_id = $request->input('practice_id');
+        $date = $request->input('date');
+        $user =  auth()->user();
+
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
+        }
+
+        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
+            return $q->where('program_id', $practice_id);
+        })->where('month_year', $date->startOfMonth());
+
+        $summaries->update([
+            'actor_id' => null
+        ]);
+
+        return response()->json($summaries->get());
+    }
+
+    /** open patient-monthly-summaries in a practice */
+    public function closeMonthlySummaryStatus(Request $request)
+    {
+        $practice_id = $request->input('practice_id');
+        $date = $request->input('date');
+        $user =  auth()->user();
+
+        if ($date) {
+            $date = Carbon::createFromFormat('M, Y', $date);
+        }
+
+        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
+            return $q->where('program_id', $practice_id);
+        })->where('month_year', $date->startOfMonth());
+
+        $summaries->update([
+            'actor_id' => $user->id
+        ]);
+
+        return response()->json($summaries->get());
+    }
+
     public function getCounts(
         $date,
         $practice

@@ -918,6 +918,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.summary.services',
                 ]);
 
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ]);
+
+                Route::post('/close', [
+                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.close.month',
+                ]);
+
                 Route::post('/status/update', [
                     'uses' => 'Billing\PracticeInvoiceController@updateStatus',
                     'as'   => 'monthly.billing.status.update',
