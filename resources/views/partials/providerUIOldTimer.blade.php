@@ -120,7 +120,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                     var data = {
                         "patientId": '<?php echo $patientId; ?>',
                         "providerId": '<?php echo Auth::user()->id ?>',
-                        "totalTime": totalTime,
+                        "totalTime": Math.ceil(totalTime / 1000),
                         "programId": '<?php echo $patientProgramId; ?>',
                         "startTime": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>',
                         "urlFull": '<?php echo Request::url(); ?>',
@@ -133,7 +133,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                             {
                                 "name": $('#activityName').val(),
                                 "title": '<?php echo $title; ?>',
-                                "duration": totalTime,
+                                "duration": Math.ceil(totalTime / 1000),
                                 "url": '<?php echo Request::url(); ?>',
                                 "url_short": '<?php echo $urlShort; ?>',
                                 "start_time": '<?php echo Carbon::now()->subSeconds(8)->toDateTimeString(); ?>'
