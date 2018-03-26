@@ -140,10 +140,7 @@ if (isset($patient) && !empty($patient) && is_a($patient, App\User::class)) {
                             }
                         ]
                     };
-    //                console.log('endTime');
-    //                console.log(endTime);
-    //                console.log('totalTime');
-    //                console.log(totalTime / 1000);
+                    
                     $.ajax({
                         type: "POST",
                         url: '<?php echo URL::route('api.pagetracking'); ?>',

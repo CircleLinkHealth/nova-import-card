@@ -3,7 +3,7 @@ use App\Patient;
 ?>
 <input type="hidden" name="activityName" id="activityName" value="@yield('activity')">
 
-@if (isset($useOldTimeTracker) || true) 
+@if (isset($useOldTimeTracker) || true)
     @include('partials.providerUIOldTimer')
 
     <script>
