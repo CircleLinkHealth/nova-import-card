@@ -120,4 +120,8 @@ router.get('/keys', function (req, res, next) {
   res.send(timeTracker.keys())
 })
 
+router.get('/', (req, res) => {
+  res.send({ message: 'Time Tracker' })
+})
+
 module.exports = router;
