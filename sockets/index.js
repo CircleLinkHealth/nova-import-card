@@ -184,7 +184,7 @@ module.exports = app => {
         user.inactiveSeconds += 1
       }
 
-      if (!user.noLiveCount) {
+      if (!user.noLiveCount && process.env.NODE_ENV !== 'production') {
         console.log(
           'key:', user.key,
           'activities:', user.activities.filter(activity => activity.isActive).length, 
