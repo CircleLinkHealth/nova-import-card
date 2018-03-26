@@ -132,7 +132,8 @@ class PatientFilters extends QueryFilters
     
     public function sort_ccm($type = null) {
         $patientTable = (new Patient())->getTable();
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")
+                    ->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
     }
 
     public function excel() {
