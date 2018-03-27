@@ -36,7 +36,7 @@ class CheckWebSocketServer
             }
         }
 
-        view()->share('useOldTimeTracker', !cache()->get('ws:server:working'));
+        view()->share('useOldTimeTracker', $request->has('useOldTimeTracker') ?? !cache()->get('ws:server:working'));
         return $next($request);
     }
 }
