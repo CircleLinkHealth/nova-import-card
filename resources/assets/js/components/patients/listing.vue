@@ -6,7 +6,7 @@
             </div>
         </div>
         <div class="top-10">
-            <loader v-if="loaders.next || loaders.practices"></loader>
+            <loader v-if="loaders.next || loaders.practices || loaders.providers"></loader>
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
             <template slot="name" scope="props">
@@ -83,12 +83,13 @@
                 pagination: null,
                 tableData: [],
                 practices: [],
+                providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 loaders: {
                     next: null,
                     practices: null,
-                    providers: null
+                    providers: false
                 }
             }
         },
@@ -99,7 +100,7 @@
                     sortable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
                     filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
-                        provider: [],
+                        provider: this.providersForSelect,
                         ccmStatus: [ 
                                         { id: 'enrolled', text: 'enrolled' }, 
                                         { id: 'paused', text: 'paused' }, 
@@ -194,14 +195,15 @@
                 })
             },
             getProviders() {
-                return this.loaders.providers = this.axios.get(rootUrl('api/providers')).then(response => {
+                this.loaders.providers = true
+                return this.axios.get(rootUrl('api/providers/list')).then(response => {
                     console.log('patient-list:providers', response.data)
-                    this.providers = response.data
-                    this.loaders.providers = null
-                    return this.providers
+                    this.providersForSelect = (response.data || []).map(provider => ({ id: provider.name, text: provider.name })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.loaders.providers = false
+                    return this.providersForSelect
                 }).catch(err => {
                     console.error('patient-list:providers', err)
-                    this.loaders.providers = null
+                    this.loaders.providers = false
                 })
             },
             getPatients () {
@@ -346,6 +348,8 @@
             this.getPractices().then(() => {
                 this.getPatients()
             })
+
+            this.getProviders()
 
             /**
              * listen to table pagination event and ...
