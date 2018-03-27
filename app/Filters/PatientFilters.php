@@ -64,9 +64,9 @@ class PatientFilters extends QueryFilters
     }
     
     public function age($age) {
-        $date = Carbon::now()->subYear($age)->format('Y');
-        return $this->builder->whereHas('patientInfo', function ($query) use ($date) {
-           $query->where('birth_date', 'LIKE', $date . '%');
+        $year = Carbon::now()->subYear($age)->format('Y');
+        return $this->builder->whereHas('patientInfo', function ($query) use ($year) {
+           $query->where('birth_date', '>=', "$year-01-01")->where('birth_date', '<=', "$year-12-31");
         });
     }
     
