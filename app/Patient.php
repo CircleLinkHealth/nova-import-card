@@ -423,6 +423,34 @@ class Patient extends \App\BaseModel
         return $query->where('ccm_status', 'enrolled');
     }
 
+    public function scopeByStatus($query, $fromDate, $toDate) {
+
+        return $query->where(function ($query) use ($fromDate, $toDate) {
+            $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                $subQuery->ccmStatus(Patient::PAUSED)
+                         ->where([
+                             ['date_paused', '>=', $fromDate],
+                             ['date_paused', '<=', $toDate],
+                         ]);
+            })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                               ->where([
+                                   ['date_withdrawn', '>=', $fromDate],
+                                   ['date_withdrawn', '<=', $toDate],
+                               ]);
+                  })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::ENROLLED)
+                               ->where([
+                                   ['registration_date', '>=', $fromDate],
+                                   ['registration_date', '<=', $toDate],
+                               ]);
+                  });
+        });
+    }
+
+
     /**
      * Import Patient's Call Window from the sheet, or save default.
      *

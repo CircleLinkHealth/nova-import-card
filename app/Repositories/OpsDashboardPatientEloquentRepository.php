@@ -34,26 +34,7 @@ class OpsDashboardPatientEloquentRepository
         if ($fromDate and $toDate) {
             $patients = User::with([
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
-                    $patient->where(function ($query) use ($fromDate, $toDate) {
-                        $query->where(function ($subQuery) use ($fromDate, $toDate) {
-                            $subQuery->ccmStatus(Patient::PAUSED)
-                                     ->where([['date_paused', '>=', $fromDate], ['date_paused', '<=', $toDate]]);
-                        })
-                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                  $subQuery->ccmStatus(Patient::WITHDRAWN)
-                                           ->where([
-                                               ['date_withdrawn', '>=', $fromDate],
-                                               ['date_withdrawn', '<=', $toDate],
-                                           ]);
-                              })
-                              ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                  $subQuery->ccmStatus(Patient::ENROLLED)
-                                           ->where([
-                                               ['registration_date', '>=', $fromDate],
-                                               ['registration_date', '<=', $toDate],
-                                           ]);
-                              });
-                    });
+                    $patient->byStatus($fromDate, $toDate);
                 },
                 'carePlan'    => function ($c) use ($fromDate, $toDate) {
                     $c->where('status', CarePlan::TO_ENROLL)
@@ -61,29 +42,7 @@ class OpsDashboardPatientEloquentRepository
                 },
             ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
-                                $patient->where(function ($query) use ($fromDate, $toDate) {
-                                    $query->where(function ($subQuery) use ($fromDate, $toDate) {
-                                        $subQuery->ccmStatus(Patient::PAUSED)
-                                                 ->where([
-                                                     ['date_paused', '>=', $fromDate],
-                                                     ['date_paused', '<=', $toDate],
-                                                 ]);
-                                    })
-                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                              $subQuery->ccmStatus(Patient::WITHDRAWN)
-                                                       ->where([
-                                                           ['date_withdrawn', '>=', $fromDate],
-                                                           ['date_withdrawn', '<=', $toDate],
-                                                       ]);
-                                          })
-                                          ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
-                                              $subQuery->ccmStatus(Patient::ENROLLED)
-                                                       ->where([
-                                                           ['registration_date', '>=', $fromDate],
-                                                           ['registration_date', '<=', $toDate],
-                                                       ]);
-                                          });
-                                });
+                                $patient->byStatus($fromDate, $toDate);
                             })
                             ->orWhere(function ($query) use ($fromDate, $toDate) {
                                 $query->whereHas('patientInfo', function ($patient) {
@@ -181,6 +140,7 @@ class OpsDashboardPatientEloquentRepository
     public function getEnrolledPatients($fromDate, $toDate)
     {
 
+        //need to apply case using dates?TODO
         $patients = User::with([
             'patientInfo' => function ($patient) {
                 $patient->where('ccm_status', Patient::ENROLLED);

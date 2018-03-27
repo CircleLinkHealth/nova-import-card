@@ -1026,6 +1026,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
+                Route::get('/lost-added-index', [
+                    'uses' => 'OpsDashboardController@getLostAddedIndex',
+                    'as'   => 'OpsDashboard.lostAddedIndex'
+                ]);
                 Route::get('/total-data', [
                     'uses' => 'OpsDashboardController@getTotalPatientData',
                     'as'   => 'OpsDashboard.totalData'
@@ -1035,7 +1039,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'OpsDashboard.pausedPatientList'
                 ]);
                 Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-                    'uses' => 'OnsDashboardController@getList',
+                    'uses' => 'OpsDashboardController@getList',
                     'as'   => 'OpsDashboard.patientList'
                 ]);
                 Route::get('/patients-by-practice', [

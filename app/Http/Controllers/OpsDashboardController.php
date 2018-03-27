@@ -35,7 +35,7 @@ class OpsDashboardController extends Controller
     public function index()
     {
         $date     = Carbon::today();
-        $date->subDay(1)->setTimeFromTimeString('23:00');
+        $date = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
 
         $hoursBehind = $this->service->calculateHoursBehind($date->toDateTimeString());
         $practices = Practice::active()->get();
@@ -43,6 +43,7 @@ class OpsDashboardController extends Controller
         foreach ($practices as $practice){
             $rows[$practice->display_name]= $this->service->dailyReportRow($practice, $date);
         }
+        $rows = collect($rows);
 
 
         return view('admin.opsDashboard.daily', compact([
@@ -50,6 +51,55 @@ class OpsDashboardController extends Controller
             'hoursBehind',
             'rows',
 //            'totalRow',
+        ]));
+
+    }
+
+    public function dailyReport(Request $request)
+    {
+        $date     = new Carbon($request['date']);
+        $date = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
+
+        $hoursBehind = $this->service->calculateHoursBehind($date->toDateTimeString());
+        $practices = Practice::active()->get();
+        $rows = [];
+        foreach ($practices as $practice){
+            $rows[$practice->display_name]= $this->service->dailyReportRow($practice, $date);
+        }
+        $rows = collect($rows);
+
+
+        return view('admin.opsDashboard.daily', compact([
+            'date',
+            'hoursBehind',
+            'rows',
+            //            'totalRow',
+        ]));
+
+    }
+
+    public function getLostAddedIndex(){
+
+        $date     = Carbon::today();
+        $toDate = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
+        $fromDate = $toDate->copy()->subDay(1);
+
+
+        $rows = [];
+        $practices = Practice::active()->get();
+        foreach($practices as $practice){
+            $rows[$practice->display_name]= $this->service->lostAddedRow($practice, $fromDate->toDateTimeString(), $toDate->toDateTimeString());
+        }
+
+
+        $rows = collect($rows);
+        $total = 0;
+
+        return view('admin.opsDashboard.lost-added', compact([
+            'fromDate',
+            'toDate',
+            'rows',
+            //            'totalRow',
         ]));
 
     }
