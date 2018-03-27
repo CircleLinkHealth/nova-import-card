@@ -12,6 +12,9 @@
             <template slot="name" scope="props">
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')" target="_blank">{{props.row.name}}</a></div>
             </template>
+            <template slot="careplanStatus" scope="props">
+                {{ (({ qa_approved: 'QA Approved', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+            </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
@@ -113,8 +116,8 @@
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
-                                            { id: 'to_enroll', text: 'to_enroll' }, 
-                                            { id: 'patient_withdrawn', text: 'patient_withdrawn' }
+                                            { id: 'to_enroll', text: 'to_enroll' },
+                                            { id: 'draft', text: 'draft' }
                                         ],
                         program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
                     },
@@ -331,8 +334,18 @@
                 const ccmStatusSelect = patientListElem.querySelector('select[name="vf__ccmStatus"]')
                 ccmStatusSelect.querySelector('option').innerText = 'Select CCM Status'
 
-                const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]')
-                careplanStatusSelect.querySelector('option').innerText = 'Select Careplan Status'
+                const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]');
+
+                ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
+                    option.innerText = ({
+                        qa_approved: 'QA Approved',
+                        to_enroll: 'To Enroll',
+                        provider_approved: 'Provider Approved',
+                        none: 'None',
+                        draft: 'Draft',
+                        'Select careplanStatus': 'Select Careplan Status'
+                    })[option.innerText] || option.innerText
+                })
 
                 const dobInput = patientListElem.querySelector('input[name="vf__dob"]')
                 dobInput.setAttribute('placeholder', 'Filter by Date of Birth')
