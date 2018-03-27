@@ -56,7 +56,8 @@
                                     <div class="col-sm-12 top-20 text-right font-14">
                                         <div class="row">
                                             <div class="col-sm-7">
-                                                <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored" required>
+                                                <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
+                                                    <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
                                                 </select>
                                             </div>
