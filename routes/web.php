@@ -1030,6 +1030,12 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@getLostAddedIndex',
                     'as'   => 'OpsDashboard.lostAddedIndex'
                 ]);
+                Route::get('/patient-list-index', [
+                    'uses' => 'OpsDashboardController@getPatientListIndex',
+                    'as'   => 'OpsDashboard.patientListIndex'
+                ]);
+
+                //old dashboard
                 Route::get('/total-data', [
                     'uses' => 'OpsDashboardController@getTotalPatientData',
                     'as'   => 'OpsDashboard.totalData'

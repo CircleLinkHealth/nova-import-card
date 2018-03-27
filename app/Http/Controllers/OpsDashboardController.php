@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Practice;
+use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,16 +14,20 @@ class OpsDashboardController extends Controller
 {
 
     private $service;
+    private $repo;
 
     /**
-     * OperationsDashboardController constructor.
+     * OpsDashboardController constructor.
      *
      * @param OpsDashboardService $service
+     * @param OpsDashboardPatientEloquentRepository $repo
      */
     public function __construct(
-        OpsDashboardService $service
+        OpsDashboardService $service,
+        OpsDashboardPatientEloquentRepository $repo
     ) {
         $this->service = $service;
+        $this->repo = $repo;
     }
 
 
@@ -100,6 +105,28 @@ class OpsDashboardController extends Controller
             'toDate',
             'rows',
             //            'totalRow',
+        ]));
+
+    }
+
+    public function getPatientListIndex(){
+
+        $toDate = Carbon::today();
+        $fromDate = $toDate->copy()->subYear(1);
+
+        $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
+
+
+        $patients = $this->paginatePatients($patients);
+        $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list-index");
+
+
+
+
+        return view('admin.opsDashboard.patient-list', compact([
+            'patients',
+            'fromDate',
+            'toDate',
         ]));
 
     }

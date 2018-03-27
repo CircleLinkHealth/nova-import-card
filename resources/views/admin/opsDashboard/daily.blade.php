@@ -31,9 +31,6 @@
         {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
         <div class="panel-body">
             <table class="table-condensed">
-                <a href="{{route('OpsDashboard.lostAddedIndex')}}" method="GET">
-                    Lost/Added Patients
-                </a>
                 <thead>
                     <tr>
                         <th>Active Accounts</th>
