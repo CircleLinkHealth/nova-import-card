@@ -66,7 +66,8 @@
     }
 
     const createCustomSort = (prop, ascending) => (a, b) => ((!a[prop] && (a[prop] !== 0)) ? 1 : ((!b[prop] && (b[prop] !== 0)) ? -1 : ascending ? (a[prop] < b[prop] ? -1 : 1) : (a[prop] < b[prop] ? 1 : -1)))
-    
+    const iSort = (a, b) => (a.i - b.i)
+
     export default {
         name: 'PatientList',
         components: {
@@ -112,17 +113,17 @@
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     },
                     customSorting: {
-                        name: (ascending) => createCustomSort('name', ascending),
-                        provider: (ascending) => createCustomSort('provider', ascending),
-                        ccmStatus: (ascending) => createCustomSort('ccmStatus', ascending),
-                        careplanStatus: (ascending) => createCustomSort('careplanStatus', ascending),
-                        dob: (ascending) => createCustomSort('sort_dob', ascending),
-                        phone: (ascending) => createCustomSort('phone', ascending),
-                        age: (ascending) => createCustomSort('age', ascending),
-                        registeredOn: (ascending) => createCustomSort('sort_registeredOn', ascending),
-                        lastReading: (ascending) => createCustomSort('lastReading', ascending),
-                        ccm: (ascending) => createCustomSort('sort_ccm', ascending),
-                        program: (ascending) => createCustomSort('program', ascending)
+                        name: (ascending) => iSort,
+                        provider: (ascending) => iSort,
+                        ccmStatus: (ascending) => iSort,
+                        careplanStatus: (ascending) => iSort,
+                        dob: (ascending) => iSort,
+                        phone: (ascending) => iSort,
+                        age: (ascending) => iSort,
+                        registeredOn: (ascending) => iSort,
+                        lastReading: (ascending) => iSort,
+                        ccm: (ascending) => iSort,
+                        program: (ascending) => iSort
                     }
                 }
             }
@@ -264,17 +265,30 @@
                         })
 
                         if (!this.tableData.length) {
-                            const arr = this.tableData.concat(patients)
+                            const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
                             const total = ((this.pagination || {}).total || 0)
-                            this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ id: arr.length + index + 1 })) ]
+                            this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ i: arr.length + index + 1, id: arr.length + index })) ]
                         }
                         else {
                             const from = ((this.pagination || {}).from || 0)
                             const to = ((this.pagination || {}).to || 0)
-                            console.log(patients)
-                            for (let i = from - 1; i < to; i++) {
-                                this.tableData[i] = patients[i - from + 1]
-                            }
+
+                            let counterIndex = (from + 0)
+
+                            this.tableData = this.tableData.map((row, i) => {
+                                if (row.i === counterIndex) {
+                                    const patient = patients[counterIndex - from]
+                                    if (patient) {
+                                        patient.i = (i + 1)
+                                        counterIndex += 1
+                                        return patient
+                                    }
+                                    else return row
+                                }
+                                else {
+                                    return row
+                                }
+                            })
                         }
                         
                         this.loaders.next = null
