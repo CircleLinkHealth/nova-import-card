@@ -1,6 +1,11 @@
 <template>
     <div>
-        <div>
+        <div class="row">
+            <div class="col-sm-12 text-right pad-10">
+                <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+            </div>
+        </div>
+        <div class="top-10">
             <loader v-if="loaders.next || loaders.practices"></loader>
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
@@ -324,6 +329,14 @@
 
                 const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
                 lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')
+            },
+            clearFilters() {
+                Object.keys(this.$refs.tblPatientList.query).forEach((key) => {
+                    const obj = {}
+                    obj[key] = ''
+                    this.$refs.tblPatientList.setFilter(obj)
+                })
+                this.activateFilters()
             }
         },
         mounted() {
