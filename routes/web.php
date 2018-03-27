@@ -1026,13 +1026,26 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
+                Route::get('/daily-report', [
+                    'uses' => 'OpsDashboardController@getDailyReport',
+                    'as'   => 'OpsDashboard.dailyReport'
+                ]);
                 Route::get('/lost-added-index', [
                     'uses' => 'OpsDashboardController@getLostAddedIndex',
                     'as'   => 'OpsDashboard.lostAddedIndex'
                 ]);
+                Route::get('/lost-added', [
+                    'uses' => 'OpsDashboardController@getLostAdded',
+                    'as'   => 'OpsDashboard.lostAdded'
+                ]);
                 Route::get('/patient-list-index', [
                     'uses' => 'OpsDashboardController@getPatientListIndex',
                     'as'   => 'OpsDashboard.patientListIndex'
+                ]);
+
+                Route::get('/patient-list', [
+                    'uses' => 'OpsDashboardController@getPatientList',
+                    'as'   => 'OpsDashboard.patientList'
                 ]);
 
                 //old dashboard
@@ -1044,10 +1057,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList'
                 ]);
-                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-                    'uses' => 'OpsDashboardController@getList',
-                    'as'   => 'OpsDashboard.patientList'
-                ]);
+//                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
+//                    'uses' => 'OpsDashboardController@getList',
+//                    'as'   => 'OpsDashboard.patientList'
+//                ]);
                 Route::get('/patients-by-practice', [
                     'uses' => 'OpsDashboardController@getPatientsByPractice',
                     'as'   => 'OpsDashboard.patientsByPractice'

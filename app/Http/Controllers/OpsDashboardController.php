@@ -60,7 +60,7 @@ class OpsDashboardController extends Controller
 
     }
 
-    public function dailyReport(Request $request)
+    public function getDailyReport(Request $request)
     {
         $date     = new Carbon($request['date']);
         $date = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
@@ -109,9 +109,34 @@ class OpsDashboardController extends Controller
 
     }
 
+    public function getLostAdded(Request $request){
+
+        $toDate = new Carbon($request['toDate']);
+        $fromDate = new Carbon($request['fromDate']);
+
+        $rows = [];
+        $practices = Practice::active()->get();
+        foreach($practices as $practice){
+            $rows[$practice->display_name]= $this->service->lostAddedRow($practice, $fromDate->startOfDay()->toDateTimeString(), $toDate->startOfDay()->toDateTimeString());
+        }
+
+
+        $rows = collect($rows);
+        $total = 0;
+
+        return view('admin.opsDashboard.lost-added', compact([
+            'fromDate',
+            'toDate',
+            'rows',
+            //            'totalRow',
+        ]));
+
+    }
+
     public function getPatientListIndex(){
 
         $toDate = Carbon::today();
+        //fix later TODO
         $fromDate = $toDate->copy()->subYear(1);
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
@@ -121,6 +146,30 @@ class OpsDashboardController extends Controller
         $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list-index");
 
 
+
+
+        return view('admin.opsDashboard.patient-list', compact([
+            'patients',
+            'fromDate',
+            'toDate',
+        ]));
+
+    }
+
+    public function getPatientList(Request $request){
+
+        $toDate = new Carbon($request['toDate']);
+        $fromDate = new Carbon($request['fromDate']);
+        $status = $request['status'];
+
+        $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(), $toDate->endOfDay()->toDateTimeString());
+
+        if ($status !== 'all'){
+            $patients = $this->service->filterPatientsByStatus($patients, $status);
+        }
+
+        $patients = $this->paginatePatients($patients);
+        $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list");
 
 
         return view('admin.opsDashboard.patient-list', compact([

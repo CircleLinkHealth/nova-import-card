@@ -78,6 +78,18 @@ class OpsDashboardService
     public function filterPatientsByStatus($patients, $status)
     {
 
+        $filteredPatients = [];
+
+        foreach ($patients as $patient) {
+            if ($patient->patientInfo) {
+                if ($patient->patientInfo->ccm_status == $status) {
+                    $filteredPatients[] = $patient;
+                }
+            }
+        }
+
+        return collect($filteredPatients);
+
     }
 
 

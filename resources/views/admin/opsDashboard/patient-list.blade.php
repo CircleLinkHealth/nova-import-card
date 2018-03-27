@@ -12,21 +12,33 @@
     <div class="col-md-12">
         @include('admin.opsDashboard.panel')
     </div>
-    <div class="input-group input-group-sm">
-        <div>
-            <form action="">
-                <br>
-                <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
-                From:
-                <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" required>
-                To:
-                <input type="date" name="toDate" value="{{$toDate->toDateString()}}" required>
+    <div class="">
+        <div class="input-group">
+            <div>
+                <form action="{{route('OpsDashboard.patientList')}}" method="GET">
+                    <br>
+                    <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
+                    From:
+                    <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" required>
+                    To:
+                    <input type="date" name="toDate" value="{{$toDate->toDateString()}}" required>
 
-                <br>
-                <input align="center" type="submit" value="Submit">
-            </form>
+                    Filter by Status:
+                    <select name="status">
+                        <option name="status" value="all">All</option>
+                        <option name="status" value="enrolled">Added</option>
+                        <option name="status" value="paused">Paused</option>
+                        <option name="status" value="withdrawn">Withdrawn</option>
+                    </select>
+
+                    <br>
+                    <input align="center" type="submit" value="Submit" class="btn btn-info">
+                    <br>
+                </form>
+            </div>
         </div>
     </div>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             Patient List from {{$fromDate->toDateString()}} to {{$toDate->toDateString()}}.

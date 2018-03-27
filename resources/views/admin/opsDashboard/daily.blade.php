@@ -15,9 +15,11 @@
             @include('admin.opsDashboard.panel')
         </div>
         <div class="input-group input-group-sm">
-            <article>Active Patients as of 11pm ET on:</article>
-            <input id="date" type="date" name="date" value="{{$date->toDateString()}}"required class="form-control">
-            <input type="submit" value="Submit" class="btn btn-info">
+            <form action="{{route('OpsDashboard.dailyReport')}}" method="GET">
+                <article>Active Patients as of 11pm ET on:</article>
+                <input id="date" type="date" name="date" value="{{$date->toDateString()}}"required class="form-control">
+                <input type="submit" value="Submit" class="btn btn-info">
+            </form>
         </div>
         <div class="col-md-4">
             <div>

@@ -16,7 +16,7 @@
         </div>
         <div class="input-group input-group-sm">
             <div>
-                <form action="">
+                <form action="{{route('OpsDashboard.lostAdded')}}">
                     <br>
                     <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
                     From:
