@@ -87,9 +87,12 @@
                 nameDisplayType: NameDisplayType.FirstName,
                 columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 loaders: {
-                    next: null,
+                    next: false,
                     practices: null,
                     providers: false
+                },
+                requests: {
+                    next: null
                 }
             }
         },
@@ -207,103 +210,111 @@
                 })
             },
             getPatients () {
-                if (!this.loaders.next) {
-                    const self = this
-                    this.loaders.next = this.axios.get(this.nextPageUrl()).then(response => {
-                        console.log('patient-list', response.data)
-                        const pagination = response.data
-                        const ids = this.tableData.map(patient => patient.id)
-                        this.pagination = {
-                            current_page: pagination.current_page,
-                            from: pagination.from,
-                            last_page: pagination.last_page,
-                            last_page_url: pagination.last_page_url,
-                            next_page_url: pagination.next_page_url,
-                            path: pagination.path,
-                            per_page: pagination.per_page,
-                            to: pagination.to,
-                            total: pagination.total
+                const self = this
+                this.loaders.next = true
+                return this.requests.next = this.axios.get(this.nextPageUrl(), {
+                    before(request) {
+                        if (this.requests.next) {
+                            this.requests.next.abort()
                         }
-                        const patients = (pagination.data || []).map(patient => {
-                            if (((patient.careplan || {}).status || '').startsWith('{')) {
-                                (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
-                            }
-                            if (patient.patient_info) {
-                                if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
-                                patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? Math.floor((new Date() - new Date(patient.patient_info.birth_date)) / (1000 * 60 * 60 * 24 * 365)) : (new Date()).getFullYear()
-                                
-                                const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
-                                const seconds = patient.patient_info.cur_month_activity_time || 0
-                                patient.patient_info.ccm = seconds
-                                patient.patient_info.cur_month_activity_time = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
-                            }
-                            return patient
-                        }).map(patient => {
-                            patient.name = (patient.name || '').trim()
-                            patient.firstName = patient.name.split(' ')[0]
-                            patient.lastName = patient.name.split(' ').slice(1).join(' ')
-                            patient.provider = patient.billing_provider_name
-                            patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
-                            patient.careplanStatus = (patient.careplan || {}).status || 'none'
-                            patient.dob = (patient.patient_info || {}).birth_date || ''
-                            patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                            patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
-                            patient.age = (patient.patient_info || {}).age || ''
-                            patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
-                            patient.sort_registeredOn = new Date(patient.created_at)
-                            patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
-                            patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
-                            patient.sort_ccm = (patient.patient_info || {}).ccm
-                            return patient
-                        }).map(patient => {
-                            const loadColumnList = (list = [], item = null) => {
-                                if ((item || '').trim() && !list.find(orb => orb.text == item)) {
-                                    list.push({
-                                        id: item,
-                                        text: item
-                                    })
-                                }
-                            }
-                            loadColumnList(this.options.listColumns.provider, patient.provider)
-                            loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
-                            loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                            loadColumnList(this.options.listColumns.program, patient.program)
-                            return patient
-                        })
-
-                        if (!this.tableData.length) {
-                            const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
-                            const total = ((this.pagination || {}).total || 0)
-                            this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ i: arr.length + index + 1, id: arr.length + index })) ]
+                        this.requests.next = request
+                    }
+                }).then(response => {
+                    console.log('patient-list', response.data)
+                    const pagination = response.data
+                    const ids = this.tableData.map(patient => patient.id)
+                    this.pagination = {
+                        current_page: pagination.current_page,
+                        from: pagination.from,
+                        last_page: pagination.last_page,
+                        last_page_url: pagination.last_page_url,
+                        next_page_url: pagination.next_page_url,
+                        path: pagination.path,
+                        per_page: pagination.per_page,
+                        to: pagination.to,
+                        total: pagination.total
+                    }
+                    const patients = (pagination.data || []).map(patient => {
+                        if (((patient.careplan || {}).status || '').startsWith('{')) {
+                            (patient.careplan || {}).status = JSON.parse((patient.careplan || {}).status).status
                         }
-                        else {
-                            const from = ((this.pagination || {}).from || 0)
-                            const to = ((this.pagination || {}).to || 0)
-
-                            let counterIndex = (from + 0)
-
-                            this.tableData = this.tableData.map((row, i) => {
-                                if (row.i === counterIndex) {
-                                    const patient = patients[counterIndex - from]
-                                    if (patient) {
-                                        patient.i = (i + 1)
-                                        counterIndex += 1
-                                        return patient
-                                    }
-                                    else return row
-                                }
-                                else {
-                                    return row
-                                }
-                            })
+                        if (patient.patient_info) {
+                            if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
+                            patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? ((new Date()).getFullYear() - (new Date(patient.patient_info.birth_date)).getFullYear()) : (new Date()).getFullYear()
+                            
+                            const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
+                            const seconds = patient.patient_info.cur_month_activity_time || 0
+                            patient.patient_info.ccm = seconds
+                            patient.patient_info.cur_month_activity_time = pad(Math.floor(seconds / 3600), 2) + ':' + pad(Math.floor(seconds / 60) % 60, 2) + ':' + pad(seconds % 60, 2);
                         }
-                        
-                        this.loaders.next = null
-                    }).catch(err => {
-                        console.error('patient-list', err)
-                        this.loaders.next = null
+                        return patient
+                    }).map(patient => {
+                        patient.name = (patient.name || '').trim()
+                        patient.firstName = patient.name.split(' ')[0]
+                        patient.lastName = patient.name.split(' ').slice(1).join(' ')
+                        patient.provider = patient.billing_provider_name
+                        patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
+                        patient.careplanStatus = (patient.careplan || {}).status || 'none'
+                        patient.dob = (patient.patient_info || {}).birth_date || ''
+                        patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
+                        patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.age = (patient.patient_info || {}).age || ''
+                        patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
+                        patient.sort_registeredOn = new Date(patient.created_at)
+                        patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
+                        patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
+                        patient.sort_ccm = (patient.patient_info || {}).ccm
+                        return patient
+                    }).map(patient => {
+                        const loadColumnList = (list = [], item = null) => {
+                            if ((item || '').trim() && !list.find(orb => orb.text == item)) {
+                                list.push({
+                                    id: item,
+                                    text: item
+                                })
+                            }
+                        }
+                        loadColumnList(this.options.listColumns.provider, patient.provider)
+                        loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
+                        loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
+                        loadColumnList(this.options.listColumns.program, patient.program)
+                        return patient
                     })
-                }
+
+                    if (!this.tableData.length) {
+                        const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
+                        const total = ((this.pagination || {}).total || 0)
+                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ i: arr.length + index + 1, id: arr.length + index })) ]
+                    }
+                    else {
+                        const from = ((this.pagination || {}).from || 0)
+                        const to = ((this.pagination || {}).to || 0)
+
+                        let counterIndex = (from + 0)
+
+                        this.tableData = this.tableData.map((row, i) => {
+                            if (row.i === counterIndex) {
+                                const patient = patients[counterIndex - from]
+                                if (patient) {
+                                    patient.i = (i + 1)
+                                    counterIndex += 1
+                                    return patient
+                                }
+                                else return row
+                            }
+                            else {
+                                return row
+                            }
+                        })
+                    }
+                    
+                    this.loaders.next = false
+                    this.requests.next = null
+                }).catch(err => {
+                    console.error('patient-list', err)
+                    this.loaders.next = false
+                    this.requests.next = null
+                })
             },
             exportExcel () {
                 const link = document.createElement('a')
