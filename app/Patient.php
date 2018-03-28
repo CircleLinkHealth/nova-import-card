@@ -561,6 +561,7 @@ class Patient extends \App\BaseModel
             'user_id' => $this->user_id,
             'ccm_status' => $this->ccm_status,
             'birth_date' => $this->birth_date,
+            'age' => $this->birth_date ? Carbon::parse($this->birth_date)->age: 0,
             'gender' => $this->gender,
             'created_at' => $this->created_at->format('c'),
             'updated_at' => $this->updated_at->format('c'),
