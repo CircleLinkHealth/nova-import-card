@@ -121,4 +121,10 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     {
         return $this->hasMany(ProblemCode::class);
     }
+
+    public function getNameAttribute($name) 
+    {
+        if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
+        return $name;
+    }
 }
