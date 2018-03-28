@@ -243,7 +243,7 @@
                         }
                         if (patient.patient_info) {
                             if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
-                            patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? ((new Date()).getFullYear() - (new Date(patient.patient_info.birth_date)).getFullYear()) : (new Date()).getFullYear()
+                            // patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? ((new Date()).getFullYear() - (new Date(patient.patient_info.birth_date)).getFullYear()) : (new Date()).getFullYear()
                             
                             const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                             const seconds = patient.patient_info.cur_month_activity_time || 0
