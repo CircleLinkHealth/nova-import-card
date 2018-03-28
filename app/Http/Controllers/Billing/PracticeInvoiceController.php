@@ -18,6 +18,7 @@ use App\Services\PracticeReportsService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Notification;
 
 
@@ -115,22 +116,19 @@ class PracticeInvoiceController extends Controller
          else {
              return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
          }
-         $summaries = $this->service->billablePatientSummaries($practice_id, $date)
-                                    ->paginate(100);
 
-         $summaries->getCollection()
-                   ->transform(function ($summary) {
-             $result = $this->patientSummaryDBRepository
-                 ->attachBillableProblems($summary->patient, $summary);
+         $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
 
-//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
-//             $summary = $this->patientSummaryDBRepository
-//                 ->attachDefaultChargeableService($summary);
-
+         $summaries->getCollection()->transform(function ($summary) {
+             $result = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
              return ApprovableBillablePatient::make($summary);
          });
 
-         return $summaries;
+         $isClosed = !!$summaries->getCollection()->every(function ($summary) {
+             return !!$summary->actor_id;
+         });
+
+         return response($summaries)->header('is-closed', (int)$isClosed);
      }
 
     /**

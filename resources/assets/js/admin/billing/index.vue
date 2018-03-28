@@ -66,6 +66,12 @@
                     </div>
                 </div>
             </div>
+            <div class="col-sm-12 text-right" v-if="tableData.length > 0">
+               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                <loader v-if="loaders.closeMonth"></loader>
+               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                <loader v-if="loaders.openMonth"></loader>
+            </div>
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
                     <strong>Approved: </strong>
@@ -134,9 +140,9 @@
                 </template>
             </v-client-table>
             <div class="col-sm-12 text-right" v-if="tableData.length > 0">
-               <button class="btn btn-danger" @click="closeMonth">Close Month</button>
+               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
                 <loader v-if="loaders.closeMonth"></loader>
-               <button class="btn btn-success" @click="openMonth">Open Month</button>
+               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
@@ -211,7 +217,8 @@
                     'approved',
                     'rejected',
                     'chargeable_services'],
-                tableData: []
+                tableData: [],
+                isClosed: false
             }
         },
         methods: {
@@ -336,9 +343,11 @@
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
+                    console.log('billables:response', response)
                     const pagination = response.data || []
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
+                    this.isClosed = !!Number(response.headers['is-closed'])
                     this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         const item = {
                             id: patient.id,
