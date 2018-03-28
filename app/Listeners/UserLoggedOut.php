@@ -44,9 +44,5 @@ class UserLoggedOut
             $activity->program_id = $user->program_id;
             $activity->save();
         }
-        else {
-            dd($event);
-            throw new \Exception('event:logout: user not found');
-        }
     }
 }
