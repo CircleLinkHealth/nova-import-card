@@ -151,7 +151,7 @@ class OpsDashboardPatientEloquentRepository
                             $patient->where('ccm_status', Patient::ENROLLED);
                         })
             //memory running out
-                        ->take(10)
+                        ->take(50)
                         ->get();
 
         return $patients;
