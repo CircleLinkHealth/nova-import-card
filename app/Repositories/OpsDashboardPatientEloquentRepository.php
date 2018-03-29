@@ -151,7 +151,7 @@ class OpsDashboardPatientEloquentRepository
                             $patient->where('ccm_status', Patient::ENROLLED);
                         })
             //memory running out
-                        ->take(50)
+                        ->take(20)
                         ->get();
 
         return $patients;
@@ -159,9 +159,13 @@ class OpsDashboardPatientEloquentRepository
 
     public function getTotalActivePatientCount()
     {
-        $patients = User::whereHas('primaryPractice', function($q){
-            $q->active();
-        })->count();
+        $patients = User::with('primaryPractice')
+            ->whereHas('primaryPractice', function($q){
+            $q->where('active', 1);
+        })->take(100)
+          ->count();
+
+        return $patients;
     }
 
 }

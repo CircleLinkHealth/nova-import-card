@@ -27,6 +27,7 @@ class OpsDashboardService
 
     /**
      *
+     * Old dashboard
      *
      *
      * @param $fromDate
@@ -341,7 +342,7 @@ class OpsDashboardService
             $avgMinA = 0;
         }
 
-
+        //make to 1 decimal TODO
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 
         return $hoursBehind;
