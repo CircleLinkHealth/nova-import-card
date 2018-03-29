@@ -58,8 +58,8 @@
                         <td>{{$patient->display_name}}</td>
                         <td>{{$patient->patientInfo->birth_date}}</td>
                         <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
-                        <td>{{$patient->patientInfo->ccm_status}} @if($patient->carePlan) @if($patient->carePlan->status == \App\CarePlan::TO_ENROLL)  (G0506 Hold) @endif @endif</td>
-                        <td>{{$patient->registration_date}}</td>
+                        <td>@if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled')added - @endif {{$patient->patientInfo->ccm_status}} </td>
+                        <td>{{$patient->patientInfo->registration_date}}</td>
                         @if($patient->patientInfo->ccm_status == 'paused')
                             <td>Paused: {{$patient->patientInfo->date_paused}}</td>
                         @elseif($patient->patientInfo->ccm_status == 'withdrawn')

@@ -44,16 +44,16 @@ class OpsDashboardPatientEloquentRepository
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                                 $patient->byStatus($fromDate, $toDate);
                             })
-                            ->orWhere(function ($query) use ($fromDate, $toDate) {
-                                $query->whereHas('patientInfo', function ($patient) {
-                                    $patient->whereIn('ccm_status',
-                                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                                })
-                                      ->whereHas('carePlan', function ($c) use ($fromDate, $toDate) {
-                                          $c->where('status', CarePlan::TO_ENROLL)
-                                            ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-                                      });
-                            })
+//                            ->orWhere(function ($query) use ($fromDate, $toDate) {
+//                                $query->whereHas('patientInfo', function ($patient) {
+//                                    $patient->whereIn('ccm_status',
+//                                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
+//                                })
+//                                      ->whereHas('carePlan', function ($c) use ($fromDate, $toDate) {
+//                                          $c->where('status', CarePlan::TO_ENROLL)
+//                                            ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
+//                                      });
+//                            })
                             ->get();
 
         } else {
@@ -69,15 +69,15 @@ class OpsDashboardPatientEloquentRepository
                                 $patient->whereIn('ccm_status',
                                     [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
                             })
-                            ->orWhere(function ($query) {
-                                $query->whereHas('patientInfo', function ($patient) {
-                                    $patient->whereIn('ccm_status',
-                                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
-                                })
-                                      ->whereHas('carePlan', function ($c) {
-                                          $c->where('status', CarePlan::TO_ENROLL);
-                                      });
-                            })
+//                            ->orWhere(function ($query) {
+//                                $query->whereHas('patientInfo', function ($patient) {
+//                                    $patient->whereIn('ccm_status',
+//                                        [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
+//                                })
+//                                      ->whereHas('carePlan', function ($c) {
+//                                          $c->where('status', CarePlan::TO_ENROLL);
+//                                      });
+//                            })
                             ->get();
         }
 
@@ -119,6 +119,20 @@ class OpsDashboardPatientEloquentRepository
         return $patients;
     }
 
+
+    /**
+     *
+     * if format = false, returns time in seconds,
+     * if format = true, returns time in minutes
+     *
+     * @param User $p
+     * @param $fromDate
+     * @param $toDate
+     *
+     * @param bool $format
+     *
+     * @return float|mixed
+     */
     public function totalTimeForPatient(
         User $p,
         $fromDate,

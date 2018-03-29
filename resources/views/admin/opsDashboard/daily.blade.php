@@ -64,8 +64,8 @@
                             <td>{{$value['ccmCounts']['total']}}</td>
                             <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
                             <td>{{$value['countsByStatus']['enrolled']}}</td>
-                            <td>{{$value['countsByStatus']['pausedPatients']}}</td>
-                            <td>{{$value['countsByStatus']['withdrawnPatients']}}</td>
+                            <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
+                            <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
                             <td>{{$value['countsByStatus']['delta']}}</td>
                             <td>{{$value['countsByStatus']['gCodeHold']}}</td>
                         </tr>

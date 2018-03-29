@@ -46,7 +46,10 @@ class OpsDashboardController extends Controller
         $practices   = Practice::active()->get();
         $rows        = [];
         foreach ($practices as $practice) {
-            $rows[$practice->display_name] = $this->service->dailyReportRow($practice, $date);
+            $row = $this->service->dailyReportRow($practice, $date);
+            if ($row != null){
+                $rows[$practice->display_name] = $row;
+            }
         }
         $rows['CircleLinkTotal'] = $this->calculateDailyTotalRow($rows);
         $rows                    = collect($rows);
@@ -69,7 +72,10 @@ class OpsDashboardController extends Controller
         $practices   = Practice::active()->get();
         $rows        = [];
         foreach ($practices as $practice) {
-            $rows[$practice->display_name] = $this->service->dailyReportRow($practice, $date);
+            $row = $this->service->dailyReportRow($practice, $date);
+            if ($row != null){
+                $rows[$practice->display_name] = $row;
+            }
         }
 
         $rows['CircleLinkTotal'] = $this->calculateDailyTotalRow($rows);
@@ -95,8 +101,12 @@ class OpsDashboardController extends Controller
         $rows      = [];
         $practices = Practice::active()->get();
         foreach ($practices as $practice) {
-            $rows[$practice->display_name] = $this->service->lostAddedRow($practice, $fromDate->toDateTimeString(),
+            $row = $this->service->lostAddedRow($practice, $fromDate->toDateTimeString(),
                 $toDate->toDateTimeString());
+            if ($row != null){
+                $rows[$practice->display_name] = $row;
+            }
+
         }
 
         $rows['Total'] = $this->calculateLostAddedRow($rows);
@@ -119,8 +129,12 @@ class OpsDashboardController extends Controller
         $rows      = [];
         $practices = Practice::active()->get();
         foreach ($practices as $practice) {
-            $rows[$practice->display_name] = $this->service->lostAddedRow($practice,
-                $fromDate->startOfDay()->toDateTimeString(), $toDate->startOfDay()->toDateTimeString());
+            $row = $this->service->lostAddedRow($practice, $fromDate->toDateTimeString(),
+                $toDate->toDateTimeString());
+            if ($row != null){
+                $rows[$practice->display_name] = $row;
+            }
+
         }
 
         $rows['Total'] = $this->calculateLostAddedRow($rows);

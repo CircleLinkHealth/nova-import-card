@@ -155,7 +155,7 @@ class OpsDashboardService
 
 
     /**
-     * categorizes patient count by ccmTime
+     * categorizes patient count by ccmTime(seconds)
      *
      * @param $patients
      * @param $fromDate
@@ -178,7 +178,7 @@ class OpsDashboardService
 
             if ($patient->activities) {
 
-                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate, false);
+                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate);
                 if ($ccmTime == 0) {
                     $count['zero'] += 1;
                 }
@@ -202,9 +202,6 @@ class OpsDashboardService
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
-//        if ($count['total'] == 0) {
-//            return null;
-//        }
 
         return $count;
     }
@@ -271,7 +268,17 @@ class OpsDashboardService
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);
 
+
         $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $date->toDateTimeString());
+
+        if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
+            $countsByStatus['enrolled'] == 0 &&
+            $countsByStatus['pausedPatients'] == 0 &&
+            $countsByStatus['withdrawnPatients'] == 0 &&
+            $countsByStatus['gCodeHold'] == 0){
+            return null;
+        }
+
 
         return collect([
             'ccmCounts'      => $ccmTotal,
@@ -283,6 +290,13 @@ class OpsDashboardService
     public function lostAddedRow($practice, $fromDate, $toDate){
 
         $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
+
+        if ($countsByStatus['enrolled'] == 0 &&
+            $countsByStatus['pausedPatients'] == 0 &&
+            $countsByStatus['withdrawnPatients'] == 0 &&
+            $countsByStatus['gCodeHold'] == 0){
+            return null;
+        }
 
         return collect($countsByStatus);
     }
@@ -330,12 +344,13 @@ class OpsDashboardService
             $patients = $this->getEnrolledPatientsFilteredByPractice($practice, $startOfMonth->toDateTimeString(),
                 $date->toDateTimeString());
             foreach ($patients as $patient) {
+                //format true to get minutes
                 $totalCcm[] = $this->repo->totalTimeForPatient($patient, $startOfMonth->toDateTimeString(),
-                    $date->toDateTimeString());
+                    $date->toDateTimeString(), true);
             }
         }
         $totalCcm = array_filter($totalCcm);
-        if ( ! count($totalCcm) == 0) {
+        if ( count($totalCcm) !== 0) {
             $average = array_sum($totalCcm) / count($totalCcm);
             $avgMinA = $average;
         } else {
@@ -345,7 +360,7 @@ class OpsDashboardService
         //make to 1 decimal TODO
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 
-        return $hoursBehind;
+        return round($hoursBehind, 1);
 
 
     }
