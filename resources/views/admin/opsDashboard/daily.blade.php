@@ -7,6 +7,17 @@
                 background-color: #eee;
                 padding: 2rem;
             }
+            .row.vdivide [class*='col-']:not(:last-child):after {
+                background: #e0e0e0;
+                width: 1px;
+                content: "";
+                display:block;
+                position: absolute;
+                top:0;
+                bottom: 0;
+                right: 0;
+                min-height: 70px;
+            }
         </style>
     @endpush
 
@@ -32,7 +43,7 @@
     <div class="panel panel-default">
         {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
         <div class="panel-body">
-            <table class="table-condensed">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Active Accounts</th>
@@ -53,22 +64,25 @@
                 </thead>
                 <tbody>
                     @foreach($rows as $key => $value)
-                        <tr>
-                            <td>{{$key}}</td>
-                            <td>{{$value['ccmCounts']['zero']}}</td>
-                            <td>{{$value['ccmCounts']['0to5']}}</td>
-                            <td>{{$value['ccmCounts']['5to10']}}</td>
-                            <td>{{$value['ccmCounts']['10to15']}}</td>
-                            <td>{{$value['ccmCounts']['15to20']}}</td>
-                            <td>{{$value['ccmCounts']['20plus']}}</td>
-                            <td>{{$value['ccmCounts']['total']}}</td>
-                            <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
-                            <td>{{$value['countsByStatus']['enrolled']}}</td>
-                            <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
-                            <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
-                            <td>{{$value['countsByStatus']['delta']}}</td>
-                            <td>{{$value['countsByStatus']['gCodeHold']}}</td>
-                        </tr>
+                        <div class="row vdivide">
+                            <tr>
+                                <td>{{$key}}</td>
+                                <td>{{$value['ccmCounts']['zero']}}</td>
+                                <td>{{$value['ccmCounts']['0to5']}}</td>
+                                <td>{{$value['ccmCounts']['5to10']}}</td>
+                                <td>{{$value['ccmCounts']['10to15']}}</td>
+                                <td>{{$value['ccmCounts']['15to20']}}</td>
+                                <td>{{$value['ccmCounts']['20plus']}}</td>
+                                <td>{{$value['ccmCounts']['total']}}</td>
+                                <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
+                                <td>{{$value['countsByStatus']['enrolled']}}</td>
+                                <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
+                                <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
+                                <td>{{$value['countsByStatus']['delta']}}</td>
+                                <td>{{$value['countsByStatus']['gCodeHold']}}</td>
+                            </tr>
+                        </div>
+
                     @endforeach
                 </tbody>
             </table>

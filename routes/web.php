@@ -1056,6 +1056,10 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@getPatientList',
                     'as'   => 'OpsDashboard.patientList'
                 ]);
+                Route::post('/make-excel', [
+                    'uses' => 'OpsDashboardController@makeExcelPatientReport',
+                    'as'   => 'OpsDashboard.makeExcel',
+                ]);
 
                 //old dashboard
                 Route::get('/total-data', [

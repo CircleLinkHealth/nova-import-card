@@ -12,7 +12,7 @@
     <div class="col-md-12">
         @include('admin.opsDashboard.panel')
     </div>
-    <div class="">
+    <div class="col-md-6">
         <div class="input-group">
             <div>
                 <form action="{{route('OpsDashboard.patientList')}}" method="GET">
@@ -38,6 +38,22 @@
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="input-group">
+            <div>
+                <form action="{{route('OpsDashboard.makeExcel')}}" method="POST">
+                    <br>
+                    {{ csrf_field() }}
+                    <p>Make Excel</p>
+                    <input type="hidden" name="fromDate" value="{{$fromDate->toDateString()}}">
+                    <input type="hidden" name="toDate" value="{{$toDate->toDateString()}}">
+                    <input type="hidden" name="status" value="all">
+                    <input align="center" type="submit" value="Submit" class="btn btn-info">
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -52,6 +68,7 @@
                     <th>Status</th>
                     <th>Date Registered</th>
                     <th>Date Paused/Withdrawn</th>
+                    <th>Enroller</th>
                 </tr>
                 @foreach($patients as $patient)
                     <tr>
@@ -67,6 +84,7 @@
                         @else
                             <td> --</td>
                         @endif
+                        <td> - </td>
 
                     </tr>
 

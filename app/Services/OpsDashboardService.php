@@ -14,6 +14,7 @@ use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardService
 {
@@ -24,6 +25,88 @@ class OpsDashboardService
     {
         $this->repo = new OpsDashboardPatientEloquentRepository();
     }
+
+
+    /**
+     * @param $practices
+     * @param $format
+     * @param Carbon $date
+     *
+     * @return mixed
+     */
+    public function getExcelReport($fromDate, $toDate, $status = null)
+    {
+        $data = [];
+
+
+        $patients = $this->repo->getPatientsByStatus($fromDate, $toDate);
+
+        if ($status == 'paused' || $status == 'withdrawn') {
+            $patients = $this->filterPatientsByStatus($patients, $status);
+        }
+
+        foreach ($patients as $patient) {
+            //collection
+            $row = $this->makeExcelRow($patient, $fromDate, $toDate);
+            if ($row != null) {
+                $data[] = $row->toArray();
+            }
+        }
+
+        return $this->makeExcelReport($data, $fromDate, $toDate);
+
+    }
+
+    public function makeExcelReport($rows, $fromDate, $toDate){
+
+        $report = Excel::create("Ops Dashboard Patients Report - $fromDate to $toDate", function ($excel) use ($rows) {
+            $excel->sheet('Ops Dashboard Patients', function ($sheet) use ($rows) {
+                $sheet->fromArray($rows);
+            });
+        })
+                       ->store('xls', false, true);
+
+        return auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("excel_report_for_{$fromDate->toDateString()}_to{$toDate->toDateString()}");
+    }
+
+    public function makeExcelRow($patient, $fromDate, $toDate)
+    {
+
+
+        if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled'){
+            $status = $patient->patientInfo->ccm_status;
+            $statusColumn = "Added - $status ";
+        }else{
+            $statusColumn = $patient->patientInfo->ccm_status;
+        }
+
+        if($patient->patientInfo->ccm_status == 'paused'){
+            $statusDate = $patient->patientInfo->date_paused;
+            $statusDateColumn = "Paused: $statusDate";
+        }elseif($patient->patientInfo->ccm_status == 'withdrawn'){
+            $statusDate = $patient->patientInfo->date_withdrawn;
+            $statusDateColumn = "Withdrawn: $statusDate";
+        }else{
+            $statusDateColumn = '-';
+        }
+
+        $rowData = [
+            'Name'   => $patient->display_name,
+            'DOB' => $patient->patientInfo->birth_date,
+            'Practice Name' => $patient->getPrimaryPracticeNameAttribute(),
+            'Status' => $statusColumn,
+            'Date Registered' => $patient->patientInfo->registration_date,
+            'Date Paused/Withdrawn' => $statusDateColumn,
+            'Enroller' => '-',
+        ];
+
+        return collect($rowData);
+
+    }
+
 
     /**
      *
@@ -275,7 +358,7 @@ class OpsDashboardService
             $countsByStatus['enrolled'] == 0 &&
             $countsByStatus['pausedPatients'] == 0 &&
             $countsByStatus['withdrawnPatients'] == 0 &&
-            $countsByStatus['gCodeHold'] == 0){
+            $countsByStatus['gCodeHold'] == 0) {
             return null;
         }
 
@@ -287,14 +370,15 @@ class OpsDashboardService
 
     }
 
-    public function lostAddedRow($practice, $fromDate, $toDate){
+    public function lostAddedRow($practice, $fromDate, $toDate)
+    {
 
         $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
 
         if ($countsByStatus['enrolled'] == 0 &&
             $countsByStatus['pausedPatients'] == 0 &&
             $countsByStatus['withdrawnPatients'] == 0 &&
-            $countsByStatus['gCodeHold'] == 0){
+            $countsByStatus['gCodeHold'] == 0) {
             return null;
         }
 
@@ -350,7 +434,7 @@ class OpsDashboardService
             }
         }
         $totalCcm = array_filter($totalCcm);
-        if ( count($totalCcm) !== 0) {
+        if (count($totalCcm) !== 0) {
             $average = array_sum($totalCcm) / count($totalCcm);
             $avgMinA = $average;
         } else {

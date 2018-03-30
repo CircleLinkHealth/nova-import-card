@@ -347,7 +347,10 @@ class OpsDashboardController extends Controller
 
 
     /**
+     *
+     * Old dashboard
      * Gets Paused Patients List for two specific dates.
+     *
      *
      * @param Request $request
      *
@@ -389,9 +392,17 @@ class OpsDashboardController extends Controller
 
     }
 
-    public function getPatientNotesAndActivitiesPage(Request $request)
-    {
 
+    public function makeExcelPatientReport(Request $request)
+    {
+        $toDate   = new Carbon($request['toDate']);
+        $fromDate = new Carbon($request['fromDate']);
+        $status   = $request['status'];
+
+
+        $report = $this->service->getExcelReport($fromDate, $toDate, $status);
+
+            return $this->downloadMedia($report);
     }
 
     public function calculateLostAddedRow($rows)

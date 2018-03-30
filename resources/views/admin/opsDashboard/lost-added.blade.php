@@ -49,6 +49,7 @@
                         <td>{{$value['pausedPatients']}}</td>
                         <td>{{$value['withdrawnPatients']}}</td>
                         <td>{{$value['delta']}}</td>
+                    </tr>
                 @endforeach
             </table>
         </div>
