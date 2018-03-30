@@ -147,7 +147,7 @@
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
 
-            if (this.info.disabled) {
+            if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
             }
             else {

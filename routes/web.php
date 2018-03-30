@@ -560,9 +560,8 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => 'patientProgramSecurity',
+        'middleware' => [ 'patientProgramSecurity', 'checkWebSocketServer' ],
     ], function () {
-
         // base
         //Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
         Route::get('summary', [
@@ -916,6 +915,16 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/updateSummaryServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
                     'as'   => 'monthly.billing.summary.services',
+                ]);
+
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ]);
+
+                Route::post('/close', [
+                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.close.month',
                 ]);
 
                 Route::post('/status/update', [

@@ -22,7 +22,7 @@ class PatientFilters extends QueryFilters
     }
 
     public function name($term) {
-        return $this->builder->where('display_name', 'LIKE', "%$term%");
+        return $this->builder->where('users.display_name', 'LIKE', "%$term%");
     }
 
     public function provider($provider) {
@@ -64,14 +64,14 @@ class PatientFilters extends QueryFilters
     }
     
     public function age($age) {
-        $date = Carbon::now()->subYear($age)->format('Y');
-        return $this->builder->whereHas('patientInfo', function ($query) use ($date) {
-           $query->where('birth_date', 'LIKE', $date . '%');
+        $year = Carbon::now()->subYear($age)->format('Y');
+        return $this->builder->whereHas('patientInfo', function ($query) use ($year) {
+           $query->where('birth_date', '>=', "$year-01-01")->where('birth_date', '<=', "$year-12-31");
         });
     }
     
     public function registeredOn($on) {
-        return $this->builder->where('created_at', 'LIKE', '%' . $on . '%');
+        return $this->builder->where('users.created_at', 'LIKE', '%' . $on . '%');
     }
     
     public function lastReading($reading) {
@@ -81,7 +81,7 @@ class PatientFilters extends QueryFilters
     }
 
     public function sort_name($type = null) {
-        return $this->builder->orderBy('display_name', $type);
+        return $this->builder->orderBy('users.display_name', $type);
     }
     
     public function sort_provider($type = null) {
@@ -127,12 +127,13 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_registeredOn($type = null) {
-        return $this->builder->orderBy('created_at', $type);
+        return $this->builder->orderBy('users,created_at', $type);
     }
     
     public function sort_ccm($type = null) {
         $patientTable = (new Patient())->getTable();
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=', "$patientTable.user_id")
+                    ->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
     }
 
     public function excel() {

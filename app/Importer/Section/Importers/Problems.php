@@ -90,13 +90,13 @@ class Problems extends BaseImporter
             return ProblemImport::updateOrCreate($monitored['attributes']);
         };
 
-        $monitored = $problemsGroups->get('monitored')
+        $monitored = $problemsGroups->get('monitored', collect())
                                     ->unique(function($p) {
                                         return $p['attributes']['cpm_problem_id'];
                                     })
                                     ->map($callback);
 
-        $notMonitored = $problemsGroups->get('not_monitored')
+        $notMonitored = $problemsGroups->get('not_monitored', collect())
                                        ->unique(function($p) {
                                            return $p['attributes']['name'];
                                        })

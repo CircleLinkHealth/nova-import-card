@@ -50,16 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.33",
+            "version": "3.52.29",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d8e6d52af2517360c2146ed6c0d43156284a4b84"
+                "reference": "51efd3a7cda92f245ccf39fea03227e0eb473c93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d8e6d52af2517360c2146ed6c0d43156284a4b84",
-                "reference": "d8e6d52af2517360c2146ed6c0d43156284a4b84",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/51efd3a7cda92f245ccf39fea03227e0eb473c93",
+                "reference": "51efd3a7cda92f245ccf39fea03227e0eb473c93",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-03-26T21:49:03+00:00"
+            "time": "2018-03-20T21:15:39+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1057,16 +1057,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.52",
+            "version": "v0.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/google-api-php-client-services.git",
-                "reference": "0241c1f3fde173a8c08c4ba23d6078b21c129fe2"
+                "reference": "c3d936baf3eacc002f6183530355fe4fba19b0fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/0241c1f3fde173a8c08c4ba23d6078b21c129fe2",
-                "reference": "0241c1f3fde173a8c08c4ba23d6078b21c129fe2",
+                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/c3d936baf3eacc002f6183530355fe4fba19b0fb",
+                "reference": "c3d936baf3eacc002f6183530355fe4fba19b0fb",
                 "shasum": ""
             },
             "require": {
@@ -1090,7 +1090,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-03-24T00:23:04+00:00"
+            "time": "2018-03-18T00:23:20+00:00"
         },
         {
             "name": "google/auth",
@@ -1141,16 +1141,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.3.2",
+            "version": "6.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90"
+                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/68d0ea14d5a3f42a20e87632a5f84931e2709c90",
-                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f4db5a78a5ea468d4831de7f0bf9d9415e348699",
+                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
                 "shasum": ""
             },
             "require": {
@@ -1160,7 +1160,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4",
+                "phpunit/phpunit": "^4.0 || ^5.0",
                 "psr/log": "^1.0"
             },
             "suggest": {
@@ -1169,7 +1169,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.3-dev"
+                    "dev-master": "6.2-dev"
                 }
             },
             "autoload": {
@@ -1202,7 +1202,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2018-03-26T16:33:04+00:00"
+            "time": "2017-06-22T18:50:49+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1679,20 +1679,20 @@
         },
         {
             "name": "jeremeamia/SuperClosure",
-            "version": "2.4.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jeremeamia/super_closure.git",
-                "reference": "5707d5821b30b9a07acfb4d76949784aaa0e9ce9"
+                "reference": "443c3df3207f176a1b41576ee2a66968a507b3db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/5707d5821b30b9a07acfb4d76949784aaa0e9ce9",
-                "reference": "5707d5821b30b9a07acfb4d76949784aaa0e9ce9",
+                "url": "https://api.github.com/repos/jeremeamia/super_closure/zipball/443c3df3207f176a1b41576ee2a66968a507b3db",
+                "reference": "443c3df3207f176a1b41576ee2a66968a507b3db",
                 "shasum": ""
             },
             "require": {
-                "nikic/php-parser": "^1.2|^2.0|^3.0|^4.0",
+                "nikic/php-parser": "^1.2|^2.0|^3.0",
                 "php": ">=5.4",
                 "symfony/polyfill-php56": "^1.0"
             },
@@ -1702,7 +1702,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
@@ -1733,7 +1733,7 @@
                 "serialize",
                 "tokenizer"
             ],
-            "time": "2018-03-21T22:21:57+00:00"
+            "time": "2016-12-07T09:37:55+00:00"
         },
         {
             "name": "jeremykenedy/slack",
@@ -2315,16 +2315,16 @@
         },
         {
             "name": "laravelcollective/html",
-            "version": "v5.5.4",
+            "version": "v5.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LaravelCollective/html.git",
-                "reference": "04c596a69975b901f2223eb6eb4adf55354121c2"
+                "reference": "b79edc7acf574144c9811277286b4cafee8a07cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/04c596a69975b901f2223eb6eb4adf55354121c2",
-                "reference": "04c596a69975b901f2223eb6eb4adf55354121c2",
+                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/b79edc7acf574144c9811277286b4cafee8a07cc",
+                "reference": "b79edc7acf574144c9811277286b4cafee8a07cc",
                 "shasum": ""
             },
             "require": {
@@ -2342,9 +2342,7 @@
             },
             "type": "library",
             "extra": {
-                "branch-alias": {
-                    "dev-master": "5.5-dev"
-                },
+                "branch-alias": [],
                 "laravel": {
                     "providers": [
                         "Collective\\Html\\HtmlServiceProvider"
@@ -2379,7 +2377,7 @@
             ],
             "description": "HTML and Form Builders for the Laravel Framework",
             "homepage": "https://laravelcollective.com",
-            "time": "2018-03-24T00:39:21+00:00"
+            "time": "2018-02-12T14:19:55+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -9160,16 +9158,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.13.1",
+            "version": "v3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "003ec46ef5ec1c7f218387a26e9fc053dc145a7c"
+                "reference": "14ef0cc3796e60f446fffb82343c20aecfadddca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/003ec46ef5ec1c7f218387a26e9fc053dc145a7c",
-                "reference": "003ec46ef5ec1c7f218387a26e9fc053dc145a7c",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/14ef0cc3796e60f446fffb82343c20aecfadddca",
+                "reference": "14ef0cc3796e60f446fffb82343c20aecfadddca",
                 "shasum": ""
             },
             "type": "library",
@@ -9213,7 +9211,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-03-24T21:20:45+00:00"
+            "time": "2018-03-17T07:27:24+00:00"
         },
         {
             "name": "symfony/class-loader",

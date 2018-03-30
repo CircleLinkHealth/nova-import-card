@@ -16,6 +16,8 @@ class JsonListMedicationLogger implements Logger
 
     public function handle($medicalRecord): array
     {
+        //Expects format
+//        {"Medications":[{"Name":"","Sig":"","StartDate":"","StopDate":"","Status":""}]}
         $medications = json_decode($medicalRecord->medications_string, true);
 
         if (is_array($medications) && array_key_exists('Medications', $medications)) {

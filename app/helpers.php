@@ -825,15 +825,15 @@ if (!function_exists('validProblemName')) {
 if (!function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
-        if (!$noShow && $patient
-            && is_a($patient, User::class)
-            && $patient->hasProblem('Diabetes')
-            && !$patient->hasProblem('Diabetes Type 1')
-            && !$patient->hasProblem('Diabetes Type 2')
-            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
-        ) {
-            return true;
-        }
+//        if (!$noShow && $patient
+//            && is_a($patient, User::class)
+//            && $patient->hasProblem(1)
+//            && !$patient->hasProblem(32)
+//            && !$patient->hasProblem(33)
+//            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+//        ) {
+//            return true;
+//        }
 
         return false;
     }

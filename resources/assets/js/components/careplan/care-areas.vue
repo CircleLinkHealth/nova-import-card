@@ -14,10 +14,6 @@
                 </slot>
                 
                 <ul class="subareas__list" v-if="(cpmProblems && cpmProblems.length > 0) || (ccdMonitoredProblems.length > 0)">
-                    <!--<li class='subareas__item inline-block col-sm-6 print-row'-->
-                        <!--v-for="(problem, index) in cpmProblemsForListing" :key="index">-->
-                        <!--{{problem.name}}-->
-                    <!--</li>-->
                     <li class='subareas__item inline-block col-sm-6 print-row' 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
                         {{ccdProblemName(problem)}}
@@ -63,7 +59,7 @@
         },
         computed: {
             problems() {
-                return [ ...this.cpmProblems, ...this.ccdProblems ]
+                return [ ...this.ccdMonitoredProblems, ...this.ccdProblemsForListing ]
             },
             cpmProblemsForListing() {
                 return this.cpmProblems.distinct(p => p.name)
@@ -72,7 +68,7 @@
                 return this.ccdProblems.filter(problem => problem.is_monitored).distinct(p => p.name)
             },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id))).distinct(p => p.name)
+                return this.ccdProblems.filter(problem => !problem.is_monitored).distinct(p => p.name)
             }
         },
         methods: {
@@ -102,10 +98,7 @@
             },
             ccdProblemName(ccdProblem) {
                 let p = this.allCpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
-                if (p) {
-                    return p.name
-                }
-                return ccdProblem.name
+                return p ? p.name : ccdProblem.name
             }
         },
         mounted() {

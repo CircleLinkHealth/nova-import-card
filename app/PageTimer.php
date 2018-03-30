@@ -102,7 +102,7 @@ class PageTimer extends \App\BaseModel
         'user_agent',
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'start_time', 'end_time'];
 
     public function logger()
     {

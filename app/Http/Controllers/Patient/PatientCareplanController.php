@@ -231,7 +231,7 @@ class PatientCareplanController extends Controller
         }
 
         // merge to final file
-        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, base_path($storageDirectory . $datetimePrefix . "-merged.pdf"));
+        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, $fileNameWithPath);
 
         return response()->file($mergedFileNameWithPath);
     }

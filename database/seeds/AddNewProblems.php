@@ -21,6 +21,7 @@ class AddNewProblems extends Seeder
             $cpmProblem = CpmProblem::firstOrCreate([
                 'name' => $name,
                 'default_icd_10_code' => $codes['icd10'][0] ?? null,
+                'is_behavioral' => true
             ]);
 
             if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
