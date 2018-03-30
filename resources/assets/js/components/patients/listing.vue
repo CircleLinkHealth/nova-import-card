@@ -18,22 +18,22 @@
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
-            <template slot="h__ccmStatus" scope="props">
+            <template slot="h__ccmStatus" slot-scope="props">
                 CCM Status
             </template>
-            <template slot="h__careplanStatus" scope="props">
+            <template slot="h__careplanStatus" slot-scope="props">
                 Careplan Status
             </template>
-            <template slot="h__dob" scope="props">
+            <template slot="h__dob" slot-scope="props">
                 Date of Birth
             </template>
-            <template slot="h__registeredOn" scope="props">
+            <template slot="h__registeredOn" slot-scope="props">
                 Registered On
             </template>
-            <template slot="h__lastReading" scope="props">
+            <template slot="h__lastReading" slot-scope="props">
                 Last Reading
             </template>
-            <template slot="h__ccm" scope="props">
+            <template slot="h__ccm" slot-scope="props">
                 CCM
             </template>
         </v-client-table>
