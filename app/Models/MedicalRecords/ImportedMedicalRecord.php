@@ -66,6 +66,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'billing_provider_id',
         'location_id',
         'practice_id',
+        'duplicate_id',
     ];
 
     public function allergies()
