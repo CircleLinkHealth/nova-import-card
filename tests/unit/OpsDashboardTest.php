@@ -103,7 +103,7 @@ class OpsDashboardTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new OpsDashboardService();
+        $this->service = app(OpsDashboardService::class);
         $this->repo = new OpsDashboardPatientEloquentRepository();
         $this->date = Carbon::now()->subMonth(2);
     }

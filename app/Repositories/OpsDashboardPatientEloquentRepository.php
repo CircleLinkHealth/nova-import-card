@@ -12,6 +12,7 @@ namespace App\Repositories;
 use App\Activity;
 use App\CarePlan;
 use App\Patient;
+use App\Practice;
 use App\User;
 
 class OpsDashboardPatientEloquentRepository
@@ -36,10 +37,10 @@ class OpsDashboardPatientEloquentRepository
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                     $patient->byStatus($fromDate, $toDate);
                 },
-                'carePlan'    => function ($c) use ($fromDate, $toDate) {
-                    $c->where('status', CarePlan::TO_ENROLL)
-                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-                },
+//                'carePlan'    => function ($c) use ($fromDate, $toDate) {
+//                    $c->where('status', CarePlan::TO_ENROLL)
+//                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
+//                },
             ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                                 $patient->byStatus($fromDate, $toDate);
@@ -139,7 +140,7 @@ class OpsDashboardPatientEloquentRepository
         $toDate,
         $format = false
     ) {
-        $raw = Activity::where('patient_id', $p->id)
+        $raw = $p->activities->where('patient_id', $p->id)
                        ->where('performed_at', '>', $fromDate)
                        ->where('performed_at', '<', $toDate)
                        ->sum('duration');
@@ -164,7 +165,6 @@ class OpsDashboardPatientEloquentRepository
                         ->whereHas('patientInfo', function ($patient) {
                             $patient->where('ccm_status', Patient::ENROLLED);
                         })
-            //memory running out
                         ->take(20)
                         ->get();
 

@@ -9,8 +9,8 @@
 namespace App\Services;
 
 
+use App\Activity;
 use App\Patient;
-use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
@@ -21,9 +21,9 @@ class OpsDashboardService
 
     private $repo;
 
-    public function __construct()
+    public function __construct(OpsDashboardPatientEloquentRepository $repo)
     {
-        $this->repo = new OpsDashboardPatientEloquentRepository();
+        $this->repo = $repo;
     }
 
 
@@ -57,7 +57,8 @@ class OpsDashboardService
 
     }
 
-    public function makeExcelReport($rows, $fromDate, $toDate){
+    public function makeExcelReport($rows, $fromDate, $toDate)
+    {
 
         $report = Excel::create("Ops Dashboard Patients Report - $fromDate to $toDate", function ($excel) use ($rows) {
             $excel->sheet('Ops Dashboard Patients', function ($sheet) use ($rows) {
@@ -76,31 +77,31 @@ class OpsDashboardService
     {
 
 
-        if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled'){
-            $status = $patient->patientInfo->ccm_status;
+        if ($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled') {
+            $status       = $patient->patientInfo->ccm_status;
             $statusColumn = "Added - $status ";
-        }else{
+        } else {
             $statusColumn = $patient->patientInfo->ccm_status;
         }
 
-        if($patient->patientInfo->ccm_status == 'paused'){
-            $statusDate = $patient->patientInfo->date_paused;
+        if ($patient->patientInfo->ccm_status == 'paused') {
+            $statusDate       = $patient->patientInfo->date_paused;
             $statusDateColumn = "Paused: $statusDate";
-        }elseif($patient->patientInfo->ccm_status == 'withdrawn'){
-            $statusDate = $patient->patientInfo->date_withdrawn;
+        } elseif ($patient->patientInfo->ccm_status == 'withdrawn') {
+            $statusDate       = $patient->patientInfo->date_withdrawn;
             $statusDateColumn = "Withdrawn: $statusDate";
-        }else{
+        } else {
             $statusDateColumn = '-';
         }
 
         $rowData = [
-            'Name'   => $patient->display_name,
-            'DOB' => $patient->patientInfo->birth_date,
-            'Practice Name' => $patient->getPrimaryPracticeNameAttribute(),
-            'Status' => $statusColumn,
-            'Date Registered' => $patient->patientInfo->registration_date,
+            'Name'                  => $patient->display_name,
+            'DOB'                   => $patient->patientInfo->birth_date,
+            'Practice Name'         => $patient->getPrimaryPracticeNameAttribute(),
+            'Status'                => $statusColumn,
+            'Date Registered'       => $patient->patientInfo->registration_date,
             'Date Paused/Withdrawn' => $statusDateColumn,
-            'Enroller' => '-',
+            'Enroller'              => '-',
         ];
 
         return collect($rowData);
@@ -261,7 +262,19 @@ class OpsDashboardService
 
             if ($patient->activities) {
 
-                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate);
+//                $raw = $p->activities->where('patient_id', $p->id)
+//                                     ->where('performed_at', '>', $fromDate)
+//                                     ->where('performed_at', '<', $toDate)
+//                                     ->sum('duration');
+//                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate);
+                //what if patient no activities?
+                if ($patient->activities){
+                    $ccmTime = $patient->activities->sum('duration');
+                }else{
+                    $ccmTime = 0;
+                }
+
+//                $ccmTime = $patient->activities->where([['performed_at', '>', $fromDate], ['performed_at', '<', $toDate]])->sum('duration');
                 if ($ccmTime == 0) {
                     $count['zero'] += 1;
                 }
@@ -300,10 +313,10 @@ class OpsDashboardService
      *
      * @return array
      */
-    public function getPracticeCcmTotalCounts($practice, $fromDate, $toDate)
+    public function getPracticeCcmTotalCounts($fromDate, $toDate, $enrolledPatients)
     {
 
-        $filteredPatients = $this->getEnrolledPatientsFilteredByPractice($practice, $fromDate, $toDate);
+        $filteredPatients = $enrolledPatients;
         $counts           = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
 
         return $counts;
@@ -318,7 +331,7 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getPracticeCountsByStatus($practice, $fromDate, $toDate)
+    public function getPracticeCountsByStatus($practice, $fromDate, $toDate, $filteredPatients)
     {
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate, $toDate);
         $filteredPatients = $this->filterPatientsByPractice($patientsByStatus, $practice->id);
@@ -337,22 +350,30 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($practice, $date)
+    public function dailyReportRow($practice, $date, $enrolledPatients, $patientsByStatus)
     {
         $date     = new Carbon($date);
         $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
 
         //ccm from date must be start of month
-        $ccmCounts = $this->getPracticeCcmTotalCounts($practice, $fromDate, $date->toDateTimeString());
+//        $ccmCounts = $this->getPracticeCcmTotalCounts($fromDate, $date->toDateTimeString(), $enrolledPatients);
+        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $date->toDateTimeString());
         //total for day before
         $priorDay = $date->copy()->subDay(1)->toDateTimeString();
 
-        $priorDayCcmCounts           = $this->getPracticeCcmTotalCounts($practice, $fromDate, $priorDay);
+        //abandon by Practice functions
+//        $priorDayCcmCounts           = $this->getPracticeCcmTotalCounts($fromDate, $priorDay, $enrolledPatients);
+        $priorDayCcmCounts           = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $priorDay);
+
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);
 
 
-        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $date->toDateTimeString());
+        //fromDate here must be prior to day? yes
+//        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $date->toDateTimeString(),
+//            $patientsByStatus);
+
+        $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
 
         if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
             $countsByStatus['enrolled'] == 0 &&
@@ -370,10 +391,11 @@ class OpsDashboardService
 
     }
 
-    public function lostAddedRow($practice, $fromDate, $toDate)
+    public function lostAddedRow($patientsByPractice)
     {
 
-        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $toDate);
+        $countsByStatus = $this->countPatientsByStatus($patientsByPractice);
+
 
         if ($countsByStatus['enrolled'] == 0 &&
             $countsByStatus['pausedPatients'] == 0 &&
@@ -407,46 +429,30 @@ class OpsDashboardService
      *
      * @return float|int
      */
-    public function calculateHoursBehind($date)
+    public function calculateHoursBehind(Carbon $date, $enrolledPatients)
     {
-
-        $date = new Carbon($date);
-
-        $totActPt = $this->repo->getTotalActivePatientCount();
+        $totActPt = $enrolledPatients->count();
 
         //date current day or last day completed 11:00 pm?
-        $startOfMonth       = $date->copy()->startOfMonth()->startOfDay();
-        $endOfMonth         = $date->copy()->endOfMonth()->endOfDay();
+        $startOfMonth       = $date->copy()->startOfMonth();
+        $endOfMonth         = $date->copy()->endOfMonth();
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
         $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
             $endOfMonth->toDateTimeString());
         $avgMinT            = $workingDaysElapsed / $workingDaysMonth * 35;
 
-        $totalCcm  = [];
-        $practices = Practice::active()->get();
-        foreach ($practices as $practice) {
-            $patients = $this->getEnrolledPatientsFilteredByPractice($practice, $startOfMonth->toDateTimeString(),
-                $date->toDateTimeString());
-            foreach ($patients as $patient) {
-                //format true to get minutes
-                $totalCcm[] = $this->repo->totalTimeForPatient($patient, $startOfMonth->toDateTimeString(),
-                    $date->toDateTimeString(), true);
-            }
-        }
-        $totalCcm = array_filter($totalCcm);
-        if (count($totalCcm) !== 0) {
-            $average = array_sum($totalCcm) / count($totalCcm);
-            $avgMinA = $average;
-        } else {
-            $avgMinA = 0;
-        }
+        $allPatients = $enrolledPatients->pluck('id')->unique()->all();
+
+        $sum = Activity::whereIn('patient_id', $allPatients)
+                           ->where('performed_at', '>', $startOfMonth->toDateString())
+                           ->where('performed_at', '<', $date->toDateString())
+                           ->sum('duration');
+        $avgMinA = round($sum / 60, 2);
 
         //make to 1 decimal TODO
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 
         return round($hoursBehind, 1);
-
-
     }
 
     /**
