@@ -7,6 +7,16 @@
                 background-color: #eee;
                 padding: 2rem;
             }
+            .nav-tabs > li, .nav-pills > li {
+                float:none;
+                display:inline-block;
+                *display:inline; /* ie7 fix */
+                zoom:1; /* hasLayout ie7 trigger */
+            }
+
+            .nav-tabs, .nav-pills {
+                text-align:center;
+            }
         </style>
     @endpush
 

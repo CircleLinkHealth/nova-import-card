@@ -212,7 +212,8 @@ class OpsDashboardController extends Controller
 
         $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
         $fromDate = $toDate->copy()->subDay(1);
-
+        $status = 'all';
+        $practiceId = 'all';
         $practices = Practice::activeBillable()->get();
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
@@ -229,6 +230,8 @@ class OpsDashboardController extends Controller
             'fromDate',
             'toDate',
             'maxDate',
+            'status',
+            'practiceId',
         ]));
 
     }
@@ -273,7 +276,7 @@ class OpsDashboardController extends Controller
             'toDate',
             'maxDate',
             'status',
-            'practiceId'
+            'practiceId',
         ]));
 
     }
