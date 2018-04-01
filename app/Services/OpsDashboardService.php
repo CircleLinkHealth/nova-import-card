@@ -294,44 +294,6 @@ class OpsDashboardService
     }
 
 
-    /**
-     * Returns counts categorised by ccmTime ranges for a single practice, for a given date range
-     *
-     * @param $practice
-     * @param $patients
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return array
-     */
-    public function getPracticeCcmTotalCounts($fromDate, $toDate, $enrolledPatients)
-    {
-
-        $filteredPatients = $enrolledPatients;
-        $counts           = $this->countPatientsByCcmTime($filteredPatients, $fromDate, $toDate);
-
-        return $counts;
-    }
-
-    /**
-     * Returns counts for enrolled, paused, withdrawn and delta for a single practice
-     *
-     * @param $practice
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getPracticeCountsByStatus($practice, $fromDate, $toDate, $filteredPatients)
-    {
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate, $toDate);
-        $filteredPatients = $this->filterPatientsByPractice($patientsByStatus, $practice->id);
-        $counts           = $this->countPatientsByStatus($filteredPatients);
-
-        return $counts;
-
-    }
-
 
     /**
      * Returns all the data needed for a row(for a single practice) in Daily Tab.
@@ -346,23 +308,17 @@ class OpsDashboardService
         $date     = new Carbon($date);
         $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
 
-        //ccm from date must be start of month
-//        $ccmCounts = $this->getPracticeCcmTotalCounts($fromDate, $date->toDateTimeString(), $enrolledPatients);
         $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $date->toDateTimeString());
         //total for day before
         $priorDay = $date->copy()->subDay(1)->toDateTimeString();
 
-        //abandon by Practice functions
-//        $priorDayCcmCounts           = $this->getPracticeCcmTotalCounts($fromDate, $priorDay, $enrolledPatients);
+
         $priorDayCcmCounts           = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $priorDay);
 
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);
 
 
-        //fromDate here must be prior to day? yes
-//        $countsByStatus = $this->getPracticeCountsByStatus($practice, $fromDate, $date->toDateTimeString(),
-//            $patientsByStatus);
 
         $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
 
@@ -396,21 +352,6 @@ class OpsDashboardService
         }
 
         return collect($countsByStatus);
-    }
-
-    /**
-     * @param $practice
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getEnrolledPatientsFilteredByPractice($practice, $fromDate, $toDate)
-    {
-        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
-        $filteredPatients = $this->filterPatientsByPractice($enrolledPatients, $practice->id);
-
-        return $filteredPatients;
     }
 
     /**

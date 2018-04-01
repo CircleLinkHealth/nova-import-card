@@ -34,7 +34,7 @@
     <div class="panel panel-default">
         {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
         <div class="panel-body">
-            <table class="table table-striped table-curved table-condensed table-hover">
+            <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                 <tr>
                     <th>Active Accounts</th>
                     <th>Added</th>

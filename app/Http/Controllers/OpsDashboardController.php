@@ -280,6 +280,8 @@ class OpsDashboardController extends Controller
 
 
     /**
+     * Old dashboard
+     *
      * Gets Patient Counts for table: CarePlan Manager Patient Totals
      *
      * @param Request $request
@@ -311,6 +313,8 @@ class OpsDashboardController extends Controller
     }
 
     /**
+     * Old dashboard
+     *
      * Gets Patient Counts for table: Patient stats by Practice.
      *
      * @param Request $request

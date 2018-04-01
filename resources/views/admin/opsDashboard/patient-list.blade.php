@@ -70,7 +70,7 @@
             Patient List from {{$fromDate->toDateString()}} to {{$toDate->toDateString()}}.
         </div>
         <div class="panel-body">
-            <table class="table table-striped table-curved table-condensed table-hover">
+            <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                 <tr>
                     <th>Name</th>
                     <th>DOB</th>
