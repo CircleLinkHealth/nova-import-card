@@ -44,11 +44,12 @@
         </div>
 
     </div>
-    <div class="panel panel-default">
-        {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
-        <div class="panel-body">
-            <table class="table table-striped table-bordered table-curved table-condensed table-hover">
-                <thead>
+    <div class="container">
+        <div class="panel panel-default">
+            {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
+            <div class="panel-body">
+                <table class="table table-striped table-bordered table-curved table-condensed table-hover">
+                    <thead>
                     <tr>
                         <th>Active Accounts</th>
                         <th>0 mins</th>
@@ -65,8 +66,8 @@
                         <th>DELTA</th>
                         <th>Backlog/Gcode Hold</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     @foreach($rows as $key => $value)
                         @if($key == 'CircleLink Total')
                             <div class="row vdivide">
@@ -87,7 +88,7 @@
                                     <td>{{$value['countsByStatus']['gCodeHold']}}</td>
                                 </tr>
                             </div>
-                            @else
+                        @else
                             <div class="row vdivide">
                                 <tr>
                                     <td>{{$key}}</td>
@@ -106,20 +107,23 @@
                                     <td>{{$value['countsByStatus']['gCodeHold']}}</td>
                                 </tr>
                             </div>
-                            @endif
+                        @endif
 
 
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="panel-footer">
-            <div class="row">
-                <div class="col-md-4">
+                    </tbody>
+                </table>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-4">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+
 @endsection
 
 

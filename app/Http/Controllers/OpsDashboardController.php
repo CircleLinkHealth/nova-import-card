@@ -59,13 +59,11 @@ class OpsDashboardController extends Controller
 
         //used by query to get Patients by status
         $fromDate = $date->copy()->subDay();
+        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $date->toDateTimeString());
 
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $date->toDateTimeString());
-//        $statusPatientsByPactice = $patientsByStatus->groupBy('program_id');
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-        //make query scope?
         $allPractices = Practice::activeBillable()->get();
 
         $rows        = [];
@@ -113,7 +111,6 @@ class OpsDashboardController extends Controller
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-        //make query scope?
         $allPractices = Practice::activeBillable()->get();
         $rows        = [];
         foreach ($allPractices as $practice) {
@@ -247,6 +244,7 @@ class OpsDashboardController extends Controller
 
 
         $status   = $request['status'];
+        $practiceId = $request['practice_id'];
 
 
 
@@ -257,8 +255,8 @@ class OpsDashboardController extends Controller
 
         $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
 
-        if ($request['practice_id'] != 'all'){
-            $patients = $this->service->filterPatientsByPractice($patients, $request['practice_id']);
+        if ($practiceId != 'all'){
+            $patients = $this->service->filterPatientsByPractice($patients, $practiceId);
         }
         if ($status !== 'all') {
             $patients = $this->service->filterPatientsByStatus($patients, $status);
@@ -274,6 +272,8 @@ class OpsDashboardController extends Controller
             'fromDate',
             'toDate',
             'maxDate',
+            'status',
+            'practiceId'
         ]));
 
     }
@@ -483,9 +483,10 @@ class OpsDashboardController extends Controller
         $toDate   = new Carbon($request['toDate']);
         $fromDate = new Carbon($request['fromDate']);
         $status   = $request['status'];
+        $practiceId = $request['practice_id'];
 
 
-        $report = $this->service->getExcelReport($fromDate, $toDate, $status);
+        $report = $this->service->getExcelReport($fromDate, $toDate, $status, $practiceId);
 
             return $this->downloadMedia($report);
     }

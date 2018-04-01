@@ -57,7 +57,8 @@
                         {{ csrf_field() }}
                         <input type="hidden" name="fromDate" value="{{$fromDate->toDateString()}}">
                         <input type="hidden" name="toDate" value="{{$toDate->toDateString()}}">
-                        <input type="hidden" name="status" value="all">
+                        <input type="hidden" name="status" value="{{$status}}">
+                        <input type="hidden" name="practice_id" value="{{$practiceId}}">
                         <input align="center" type="submit" value="Make Excel File" class="btn btn-info">
                         <br>
                     </form>
@@ -65,45 +66,48 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            Patient List from {{$fromDate->toDateString()}} to {{$toDate->toDateString()}}.
-        </div>
-        <div class="panel-body">
-            <table class="table table-striped table-bordered table-curved table-condensed table-hover">
-                <tr>
-                    <th>Name</th>
-                    <th>DOB</th>
-                    <th>Practice Name</th>
-                    <th>Status</th>
-                    <th>Date Registered</th>
-                    <th>Date Paused/Withdrawn</th>
-                    <th>Enroller</th>
-                </tr>
-                @foreach($patients as $patient)
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Patient List from {{$fromDate->toDateString()}} to {{$toDate->toDateString()}}.
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                     <tr>
-                        <td>{{$patient->display_name}}</td>
-                        <td>{{$patient->patientInfo->birth_date}}</td>
-                        <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
-                        <td>@if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled')added - @endif {{$patient->patientInfo->ccm_status}} </td>
-                        <td>{{$patient->patientInfo->registration_date}}</td>
-                        @if($patient->patientInfo->ccm_status == 'paused')
-                            <td>Paused: {{$patient->patientInfo->date_paused}}</td>
-                        @elseif($patient->patientInfo->ccm_status == 'withdrawn')
-                            <td> Withdrawn: {{$patient->patientInfo->date_withdrawn}}</td>
-                        @else
-                            <td> --</td>
-                        @endif
-                        <td> - </td>
-
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Practice Name</th>
+                        <th>Status</th>
+                        <th>Date Registered</th>
+                        <th>Date Paused/Withdrawn</th>
+                        <th>Enroller</th>
                     </tr>
+                    @foreach($patients as $patient)
+                        <tr>
+                            <td>{{$patient->display_name}}</td>
+                            <td>{{$patient->patientInfo->birth_date}}</td>
+                            <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
+                            <td>@if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled')added - @endif {{$patient->patientInfo->ccm_status}} </td>
+                            <td>{{$patient->patientInfo->registration_date}}</td>
+                            @if($patient->patientInfo->ccm_status == 'paused')
+                                <td>Paused: {{$patient->patientInfo->date_paused}}</td>
+                            @elseif($patient->patientInfo->ccm_status == 'withdrawn')
+                                <td> Withdrawn: {{$patient->patientInfo->date_withdrawn}}</td>
+                            @else
+                                <td> --</td>
+                            @endif
+                            <td> - </td>
 
-                @endforeach
+                        </tr>
 
-            </table>
+                    @endforeach
 
-            {!! $patients->appends(Input::except('page'))->links() !!}
+                </table>
+
+                {!! $patients->appends(Input::except('page'))->links() !!}
+            </div>
         </div>
     </div>
+
 
 @endsection

@@ -34,12 +34,15 @@ class OpsDashboardService
      *
      * @return mixed
      */
-    public function getExcelReport($fromDate, $toDate, $status = null)
+    public function getExcelReport($fromDate, $toDate, $status, $practiceId)
     {
         $data = [];
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate, $toDate);
+        if ($practiceId != 'all'){
+            $patients = $this->filterPatientsByPractice($patients, $practiceId);
+        }
 
         if ($status == 'paused' || $status == 'withdrawn') {
             $patients = $this->filterPatientsByStatus($patients, $status);
