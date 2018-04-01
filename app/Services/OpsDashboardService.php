@@ -250,7 +250,7 @@ class OpsDashboardService
      *
      * @return mixed
      */
-    public function countPatientsByCcmTime($patients, $fromDate, $toDate)
+    public function countPatientsByCcmTime($patients, $toDate)
     {
 
         $count['zero']   = 0;
@@ -265,8 +265,10 @@ class OpsDashboardService
 
             if ($patient->activities) {
 
-                if ($patient->activities->count() != 0){
-                    $ccmTime = $patient->activities->sum('duration');
+                $activities = $patient->activities->where('performed_at', '<=', $toDate);
+
+                if ($activities->count() != 0){
+                    $ccmTime = $activities->sum('duration');
                 }else{
                     $ccmTime = null;
                 }
@@ -309,14 +311,13 @@ class OpsDashboardService
     public function dailyReportRow($practice, $date, $enrolledPatients, $patientsByStatus)
     {
         $date     = new Carbon($date);
-        $fromDate = $date->copy()->startOfMonth()->startOfDay()->toDateTimeString();
 
-        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $date->toDateTimeString());
+        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
         //total for day before
         $priorDay = $date->copy()->subDay(1)->toDateTimeString();
 
 
-        $priorDayCcmCounts           = $this->countPatientsByCcmTime($enrolledPatients, $fromDate, $priorDay);
+        $priorDayCcmCounts           = $this->countPatientsByCcmTime($enrolledPatients, $priorDay);
 
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);

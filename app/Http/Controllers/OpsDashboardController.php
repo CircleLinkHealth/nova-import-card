@@ -107,16 +107,16 @@ class OpsDashboardController extends Controller
         $fromDate = $date->copy()->subDay();
 
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $date->toDateTimeString());
-//        $statusPatientsByPactice = $patientsByStatus->groupBy('program_id');
+
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         $allPractices = Practice::activeBillable()->get();
         $rows        = [];
         foreach ($allPractices as $practice) {
-            $statusPatientsByPactice = $patientsByStatus->where('program_id', $practice->id);
+            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $patientsByPractice = $enrolledPatients->where('program_id', $practice->id);
-            $row = $this->service->dailyReportRow($practice, $date, $patientsByPractice, $statusPatientsByPactice);
+            $row = $this->service->dailyReportRow($practice, $date, $patientsByPractice, $statusPatientsByPractice);
             if ($row != null){
                 $rows[$practice->display_name] = $row;
             }
