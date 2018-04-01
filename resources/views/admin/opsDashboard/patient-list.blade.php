@@ -17,6 +17,10 @@
             .nav-tabs, .nav-pills {
                 text-align:center;
             }
+
+            /*.table td {*/
+                /*text-align: center;*/
+            /*}*/
         </style>
     @endpush
     <div class="container">

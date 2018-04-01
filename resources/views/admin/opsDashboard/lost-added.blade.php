@@ -17,6 +17,10 @@
             .nav-tabs, .nav-pills {
                 text-align:center;
             }
+
+            /*.table td {*/
+                /*text-align: center;*/
+            /*}*/
         </style>
     @endpush
 
@@ -56,7 +60,7 @@
                     </tr>
                     @foreach($rows as $key => $value)
                         <tr>
-                            <td>{{$key}}</td>
+                            <th>{{$key}}</th>
                             <td>{{$value['enrolled']}}</td>
                             <td>{{$value['pausedPatients']}}</td>
                             <td>{{$value['withdrawnPatients']}}</td>

@@ -29,6 +29,10 @@
                 text-align:center;
             }
 
+            .table td {
+                text-align: center;
+            }
+
         </style>
     @endpush
 
@@ -83,7 +87,7 @@
                         @if($key == 'CircleLink Total')
                             <div class="row vdivide">
                                 <tr class="table-info">
-                                    <td>{{$key}}</td>
+                                    <td><strong>{{$key}}</strong></td>
                                     <td>{{$value['ccmCounts']['zero']}}</td>
                                     <td>{{$value['ccmCounts']['0to5']}}</td>
                                     <td>{{$value['ccmCounts']['5to10']}}</td>
@@ -102,7 +106,7 @@
                         @else
                             <div class="row vdivide">
                                 <tr>
-                                    <td>{{$key}}</td>
+                                    <th>{{$key}}</th>
                                     <td>{{$value['ccmCounts']['zero']}}</td>
                                     <td>{{$value['ccmCounts']['0to5']}}</td>
                                     <td>{{$value['ccmCounts']['5to10']}}</td>
