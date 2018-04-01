@@ -27,9 +27,13 @@
         </div>
         <div class="input-group input-group-sm">
             <form action="{{route('OpsDashboard.dailyReport')}}" method="GET">
-                <article>Active Patients as of 11pm ET on:</article>
-                <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
-                <input type="submit" value="Submit" class="btn btn-info">
+                <div class="form-group">
+                    <article>Active Patients as of 11pm ET on:</article>
+                    <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-info">
+                </div>
             </form>
         </div>
         <div class="col-md-4">

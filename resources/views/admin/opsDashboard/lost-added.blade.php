@@ -17,15 +17,16 @@
         <div class="input-group input-group-sm">
             <div>
                 <form action="{{route('OpsDashboard.lostAdded')}}">
-                    <br>
-                    <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
-                    From:
-                    <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" max="{{$maxDate->copy()->subDay(1)->toDateString()}}"required>
-                    To:
-                    <input type="date" name="toDate" value="{{$toDate->toDateString()}}" max="{{$maxDate->toDateString()}}" required>
-
-                    <br>
-                    <input align="center" type="submit" value="Submit" class="btn btn-info">
+                    <div class="form-group">
+                        <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
+                        From:
+                        <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" max="{{$maxDate->copy()->subDay(1)->toDateString()}}"required>
+                        To:
+                        <input type="date" name="toDate" value="{{$toDate->toDateString()}}" max="{{$maxDate->toDateString()}}" required>
+                    </div>
+                    <div class="form-group">
+                        <input align="center" type="submit" value="Submit" class="btn btn-info">
+                    </div>
                 </form>
             </div>
         </div>

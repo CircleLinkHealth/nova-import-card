@@ -17,14 +17,14 @@
             <div class="input-group">
                 <div>
                     <form action="{{route('OpsDashboard.patientList')}}" method="GET">
-                        <div>
+                        <div class="form-group">
                             <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
                             From:
                             <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" max="{{$maxDate->copy()->subDay(1)->toDateString()}}"required>
                             To:
                             <input type="date" name="toDate" value="{{$toDate->toDateString()}}" max="{{$maxDate->toDateString()}}" required>
                         </div>
-                        <div>
+                        <div class="form-group">
                             Filter by Status:
                             <select name="status">
                                 <option name="status" value="all">All</option>
@@ -33,7 +33,7 @@
                                 <option name="status" value="withdrawn">Withdrawn</option>
                             </select>
                         </div>
-                        <div>
+                        <div class="form-group">
                             Filter by Practice:
                             <select name="practice_id">
                                 <option name="practice_id" value="all">All</option>
