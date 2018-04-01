@@ -28,7 +28,7 @@
         <div class="input-group input-group-sm">
             <form action="{{route('OpsDashboard.dailyReport')}}" method="GET">
                 <article>Active Patients as of 11pm ET on:</article>
-                <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{date('Y-m-d')}}" required class="form-control">
+                <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
                 <input type="submit" value="Submit" class="btn btn-info">
             </form>
         </div>
@@ -43,7 +43,7 @@
     <div class="panel panel-default">
         {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-striped table-curved table-condensed table-hover">
                 <thead>
                     <tr>
                         <th>Active Accounts</th>
@@ -64,24 +64,46 @@
                 </thead>
                 <tbody>
                     @foreach($rows as $key => $value)
-                        <div class="row vdivide">
-                            <tr>
-                                <td>{{$key}}</td>
-                                <td>{{$value['ccmCounts']['zero']}}</td>
-                                <td>{{$value['ccmCounts']['0to5']}}</td>
-                                <td>{{$value['ccmCounts']['5to10']}}</td>
-                                <td>{{$value['ccmCounts']['10to15']}}</td>
-                                <td>{{$value['ccmCounts']['15to20']}}</td>
-                                <td>{{$value['ccmCounts']['20plus']}}</td>
-                                <td>{{$value['ccmCounts']['total']}}</td>
-                                <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
-                                <td>{{$value['countsByStatus']['enrolled']}}</td>
-                                <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
-                                <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
-                                <td>{{$value['countsByStatus']['delta']}}</td>
-                                <td>{{$value['countsByStatus']['gCodeHold']}}</td>
-                            </tr>
-                        </div>
+                        @if($key == 'CircleLink Total')
+                            <div class="row vdivide">
+                                <tr class="table-info">
+                                    <td>{{$key}}</td>
+                                    <td>{{$value['ccmCounts']['zero']}}</td>
+                                    <td>{{$value['ccmCounts']['0to5']}}</td>
+                                    <td>{{$value['ccmCounts']['5to10']}}</td>
+                                    <td>{{$value['ccmCounts']['10to15']}}</td>
+                                    <td>{{$value['ccmCounts']['15to20']}}</td>
+                                    <td>{{$value['ccmCounts']['20plus']}}</td>
+                                    <td>{{$value['ccmCounts']['total']}}</td>
+                                    <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
+                                    <td>{{$value['countsByStatus']['enrolled']}}</td>
+                                    <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
+                                    <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
+                                    <td>{{$value['countsByStatus']['delta']}}</td>
+                                    <td>{{$value['countsByStatus']['gCodeHold']}}</td>
+                                </tr>
+                            </div>
+                            @else
+                            <div class="row vdivide">
+                                <tr>
+                                    <td>{{$key}}</td>
+                                    <td>{{$value['ccmCounts']['zero']}}</td>
+                                    <td>{{$value['ccmCounts']['0to5']}}</td>
+                                    <td>{{$value['ccmCounts']['5to10']}}</td>
+                                    <td>{{$value['ccmCounts']['10to15']}}</td>
+                                    <td>{{$value['ccmCounts']['15to20']}}</td>
+                                    <td>{{$value['ccmCounts']['20plus']}}</td>
+                                    <td>{{$value['ccmCounts']['total']}}</td>
+                                    <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
+                                    <td>{{$value['countsByStatus']['enrolled']}}</td>
+                                    <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
+                                    <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
+                                    <td>{{$value['countsByStatus']['delta']}}</td>
+                                    <td>{{$value['countsByStatus']['gCodeHold']}}</td>
+                                </tr>
+                            </div>
+                            @endif
+
 
                     @endforeach
                 </tbody>

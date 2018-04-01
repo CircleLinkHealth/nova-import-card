@@ -50,16 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.52.36",
+            "version": "3.53.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "f1d453c2c090ef7a8d4887c7d121bdd0cb7b7613"
+                "reference": "225593974bb6f6b1c13ddf946d3736d3e39119e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f1d453c2c090ef7a8d4887c7d121bdd0cb7b7613",
-                "reference": "f1d453c2c090ef7a8d4887c7d121bdd0cb7b7613",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/225593974bb6f6b1c13ddf946d3736d3e39119e5",
+                "reference": "225593974bb6f6b1c13ddf946d3736d3e39119e5",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-03-29T22:20:51+00:00"
+            "time": "2018-03-30T20:22:38+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -9160,16 +9160,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.13.1",
+            "version": "v3.13.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "003ec46ef5ec1c7f218387a26e9fc053dc145a7c"
+                "reference": "2c4327bfd890f78430f5b17b4f01922aea5e69eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/003ec46ef5ec1c7f218387a26e9fc053dc145a7c",
-                "reference": "003ec46ef5ec1c7f218387a26e9fc053dc145a7c",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/2c4327bfd890f78430f5b17b4f01922aea5e69eb",
+                "reference": "2c4327bfd890f78430f5b17b4f01922aea5e69eb",
                 "shasum": ""
             },
             "type": "library",
@@ -9213,7 +9213,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-03-24T21:20:45+00:00"
+            "time": "2018-03-31T04:55:58+00:00"
         },
         {
             "name": "symfony/class-loader",

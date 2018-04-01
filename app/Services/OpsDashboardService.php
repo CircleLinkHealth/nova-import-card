@@ -152,8 +152,8 @@ class OpsDashboardService
      */
     public function filterPatientsByPractice($patients, $practiceId)
     {
-        $filteredPatients = $patients->where('program_id', $practiceId)
-                                     ->all();
+        $filteredPatients = $patients->where('program_id', $practiceId);
+
 
         return $filteredPatients;
 
@@ -262,20 +262,13 @@ class OpsDashboardService
 
             if ($patient->activities) {
 
-//                $raw = $p->activities->where('patient_id', $p->id)
-//                                     ->where('performed_at', '>', $fromDate)
-//                                     ->where('performed_at', '<', $toDate)
-//                                     ->sum('duration');
-//                $ccmTime = $this->repo->totalTimeForPatient($patient, $fromDate, $toDate);
-                //what if patient no activities?
-                if ($patient->activities){
+                if ($patient->activities->count() != 0){
                     $ccmTime = $patient->activities->sum('duration');
                 }else{
-                    $ccmTime = 0;
+                    $ccmTime = null;
                 }
 
-//                $ccmTime = $patient->activities->where([['performed_at', '>', $fromDate], ['performed_at', '<', $toDate]])->sum('duration');
-                if ($ccmTime == 0) {
+                if ($ccmTime === 0) {
                     $count['zero'] += 1;
                 }
                 if ($ccmTime > 0 and $ccmTime <= 300) {
@@ -293,8 +286,6 @@ class OpsDashboardService
                 if ($ccmTime > 1200) {
                     $count['20plus'] += 1;
                 }
-            } else {
-                $count['zero'] += 1;
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
@@ -449,7 +440,6 @@ class OpsDashboardService
                            ->sum('duration');
         $avgMinA = round($sum / 60, 2);
 
-        //make to 1 decimal TODO
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 
         return round($hoursBehind, 1);

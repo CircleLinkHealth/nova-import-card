@@ -41,20 +41,23 @@ class OpsDashboardController extends Controller
      */
     public function index()
     {
-        $date = Carbon::today();
-        //here is reason why the page displays 1 day before TODO
-        $date = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
+
+        //used by query to get patients with CCM time
+        $date = $maxDate->copy()->setTimeFromTimeString('23:00');
 
 
         $enrolledPatients = User::ofType('participant')
                                 ->with(['activities' => function ($activity) use ($date){
-                                    $activity->where('performed_at', '>', $date->copy()->startOfMonth()->toDateTimeString())
-                                             ->where('performed_at', '<', $date->toDateTimeString());
+                                    $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay()->toDateTimeString())
+                                             ->where('performed_at', '<=', $date->toDateTimeString());
     }])
                                 ->whereHas('patientInfo', function ($patient) {
                 $patient->where('ccm_status', Patient::ENROLLED);
             })->get();
 
+        //used by query to get Patients by status
         $fromDate = $date->copy()->subDay();
 
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $date->toDateTimeString());
@@ -63,7 +66,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         //make query scope?
-        $allPractices = Practice::active()->get();
+        $allPractices = Practice::activeBillable()->get();
 
         $rows        = [];
         foreach ($allPractices as $practice) {
@@ -74,12 +77,13 @@ class OpsDashboardController extends Controller
                 $rows[$practice->display_name] = $row;
             }
         }
-        $rows['CircleLinkTotal'] = $this->calculateDailyTotalRow($rows);
+        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                    = collect($rows);
 
 
         return view('admin.opsDashboard.daily', compact([
             'date',
+            'maxDate',
             'hoursBehind',
             'rows',
         ]));
@@ -88,13 +92,15 @@ class OpsDashboardController extends Controller
 
     public function getDailyReport(Request $request)
     {
-        $date = new Carbon($request['date']);
-        $date = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
+        $requestDate = new Carbon($request['date']);
+        $date = $requestDate->copy()->setTimeFromTimeString('23:00');
 
         $enrolledPatients = User::ofType('participant')
                                 ->with(['activities' => function ($activity) use ($date){
-                                    $activity->where('performed_at', '>', $date->copy()->startOfMonth()->toDateTimeString())
-                                             ->where('performed_at', '<', $date->toDateTimeString());
+                                    $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->toDateTimeString())
+                                             ->where('performed_at', '<=', $date->toDateTimeString());
                                 }])
                                 ->whereHas('patientInfo', function ($patient) {
                                     $patient->where('ccm_status', Patient::ENROLLED);
@@ -108,7 +114,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         //make query scope?
-        $allPractices = Practice::active()->get();
+        $allPractices = Practice::activeBillable()->get();
         $rows        = [];
         foreach ($allPractices as $practice) {
             $statusPatientsByPactice = $patientsByStatus->where('program_id', $practice->id);
@@ -119,12 +125,13 @@ class OpsDashboardController extends Controller
             }
         }
 
-        $rows['CircleLinkTotal'] = $this->calculateDailyTotalRow($rows);
+        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                    = collect($rows);
 
 
         return view('admin.opsDashboard.daily', compact([
             'date',
+            'maxDate',
             'hoursBehind',
             'rows',
         ]));
@@ -134,14 +141,16 @@ class OpsDashboardController extends Controller
     public function getLostAddedIndex()
     {
 
-        $date     = Carbon::today();
-        $toDate   = $date->copy()->subDay(1)->setTimeFromTimeString('23:00');
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
+
+        $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
         $fromDate = $toDate->copy()->subDay(1);
 
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $toDate->toDateTimeString());
 
         $rows      = [];
-        $allPractices = Practice::active()->get();
+        $allPractices = Practice::activeBillable()->get();
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $row = $this->service->lostAddedRow($statusPatientsByPractice);
@@ -157,6 +166,7 @@ class OpsDashboardController extends Controller
         return view('admin.opsDashboard.lost-added', compact([
             'fromDate',
             'toDate',
+            'maxDate',
             'rows',
         ]));
 
@@ -164,14 +174,17 @@ class OpsDashboardController extends Controller
 
     public function getLostAdded(Request $request)
     {
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
 
-        $toDate   = new Carbon($request['toDate']);
+        $requestToDate   = new Carbon($request['toDate']);
+        $toDate = $requestToDate->copy()->setTimeFromTimeString('23:00');
         $fromDate = new Carbon($request['fromDate']);
 
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $toDate->toDateTimeString());
+        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
 
         $rows      = [];
-        $allPractices = Practice::active()->get();
+        $allPractices = Practice::activeBillable()->get();
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $row = $this->service->lostAddedRow($statusPatientsByPractice);
@@ -188,6 +201,7 @@ class OpsDashboardController extends Controller
         return view('admin.opsDashboard.lost-added', compact([
             'fromDate',
             'toDate',
+            'maxDate',
             'rows',
         ]));
 
@@ -196,12 +210,17 @@ class OpsDashboardController extends Controller
     public function getPatientListIndex()
     {
 
-        $toDate = Carbon::today();
-        //fix later TODO
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
+
+        $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
         $fromDate = $toDate->copy()->subDay(1);
+
+        $practices = Practice::activeBillable()->get();
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
 
+        $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
 
         $patients = $this->paginatePatients($patients);
         $patients = $patients->withPath("admin/reports/ops-dashboard/patient-list-index");
@@ -209,22 +228,38 @@ class OpsDashboardController extends Controller
 
         return view('admin.opsDashboard.patient-list', compact([
             'patients',
+            'practices',
             'fromDate',
             'toDate',
+            'maxDate',
         ]));
 
     }
 
     public function getPatientList(Request $request)
     {
+        $today = Carbon::today();
+        $maxDate = $today->copy()->subDay(1);
 
-        $toDate   = new Carbon($request['toDate']);
+        $requestToDate   = new Carbon($request['toDate']);
+        $toDate = $requestToDate->copy()->setTimeFromTimeString('23:00');
         $fromDate = new Carbon($request['fromDate']);
+
+
         $status   = $request['status'];
+
+
+
+        $practices = Practice::activeBillable()->get();
 
         $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
             $toDate->endOfDay()->toDateTimeString());
 
+        $patients = $patients->whereIn('program_id', $practices->pluck('id')->all());
+
+        if ($request['practice_id'] != 'all'){
+            $patients = $this->service->filterPatientsByPractice($patients, $request['practice_id']);
+        }
         if ($status !== 'all') {
             $patients = $this->service->filterPatientsByStatus($patients, $status);
         }
@@ -235,8 +270,10 @@ class OpsDashboardController extends Controller
 
         return view('admin.opsDashboard.patient-list', compact([
             'patients',
+            'practices',
             'fromDate',
             'toDate',
+            'maxDate',
         ]));
 
     }

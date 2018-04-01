@@ -290,6 +290,12 @@ class Practice extends \App\BaseModel implements HasMedia
         return $q->whereActive(1);
     }
 
+    public function scopeActiveBillable($q)
+    {
+        return $q->whereActive(1)
+                 ->whereNotIn('name', ['demo', 'testdrive']);
+    }
+
     public function scopeAuthUserCanAccess($q)
     {
         return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());

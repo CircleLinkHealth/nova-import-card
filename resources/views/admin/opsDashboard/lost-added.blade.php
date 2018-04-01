@@ -20,12 +20,12 @@
                     <br>
                     <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
                     From:
-                    <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" required>
+                    <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" max="{{$maxDate->copy()->subDay(1)->toDateString()}}"required>
                     To:
-                    <input type="date" name="toDate" value="{{$toDate->toDateString()}}" required>
+                    <input type="date" name="toDate" value="{{$toDate->toDateString()}}" max="{{$maxDate->toDateString()}}" required>
 
                     <br>
-                    <input align="center" type="submit" value="Submit">
+                    <input align="center" type="submit" value="Submit" class="btn btn-info">
                 </form>
             </div>
         </div>
@@ -34,7 +34,7 @@
     <div class="panel panel-default">
         {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-striped table-curved table-condensed table-hover">
                 <tr>
                     <th>Active Accounts</th>
                     <th>Added</th>

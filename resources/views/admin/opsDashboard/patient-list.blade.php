@@ -9,58 +9,68 @@
             }
         </style>
     @endpush
-    <div class="col-md-12">
-        @include('admin.opsDashboard.panel')
-    </div>
-    <div class="col-md-6">
-        <div class="input-group">
-            <div>
-                <form action="{{route('OpsDashboard.patientList')}}" method="GET">
-                    <br>
-                    <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
-                    From:
-                    <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" required>
-                    To:
-                    <input type="date" name="toDate" value="{{$toDate->toDateString()}}" required>
-
-                    Filter by Status:
-                    <select name="status">
-                        <option name="status" value="all">All</option>
-                        <option name="status" value="enrolled">Added</option>
-                        <option name="status" value="paused">Paused</option>
-                        <option name="status" value="withdrawn">Withdrawn</option>
-                    </select>
-
-                    <br>
-                    <input align="center" type="submit" value="Submit" class="btn btn-info">
-                    <br>
-                </form>
+    <div class="container">
+        <div class="col-md-12">
+            @include('admin.opsDashboard.panel')
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <div>
+                    <form action="{{route('OpsDashboard.patientList')}}" method="GET">
+                        <div>
+                            <p>Time frame for Added/Paused/Withdrawn/DELTA:</p>
+                            From:
+                            <input type="date" name="fromDate" value="{{$fromDate->toDateString()}}" max="{{$maxDate->copy()->subDay(1)->toDateString()}}"required>
+                            To:
+                            <input type="date" name="toDate" value="{{$toDate->toDateString()}}" max="{{$maxDate->toDateString()}}" required>
+                        </div>
+                        <div>
+                            Filter by Status:
+                            <select name="status">
+                                <option name="status" value="all">All</option>
+                                <option name="status" value="enrolled">Added</option>
+                                <option name="status" value="paused">Paused</option>
+                                <option name="status" value="withdrawn">Withdrawn</option>
+                            </select>
+                        </div>
+                        <div>
+                            Filter by Practice:
+                            <select name="practice_id">
+                                <option name="practice_id" value="all">All</option>
+                                @foreach($practices as $practice)
+                                <option name="practice_id" value="{{$practice->id}}">{{$practice->display_name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <input align="center" type="submit" value="Submit" class="btn btn-info">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <div>
+                    <form action="{{route('OpsDashboard.makeExcel')}}" method="POST">
+                        <br>
+                        {{ csrf_field() }}
+                        <input type="hidden" name="fromDate" value="{{$fromDate->toDateString()}}">
+                        <input type="hidden" name="toDate" value="{{$toDate->toDateString()}}">
+                        <input type="hidden" name="status" value="all">
+                        <input align="center" type="submit" value="Make Excel File" class="btn btn-info">
+                        <br>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="input-group">
-            <div>
-                <form action="{{route('OpsDashboard.makeExcel')}}" method="POST">
-                    <br>
-                    {{ csrf_field() }}
-                    <p>Make Excel</p>
-                    <input type="hidden" name="fromDate" value="{{$fromDate->toDateString()}}">
-                    <input type="hidden" name="toDate" value="{{$toDate->toDateString()}}">
-                    <input type="hidden" name="status" value="all">
-                    <input align="center" type="submit" value="Submit" class="btn btn-info">
-                    <br>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <div class="panel panel-default">
         <div class="panel-heading">
             Patient List from {{$fromDate->toDateString()}} to {{$toDate->toDateString()}}.
         </div>
         <div class="panel-body">
-            <table class="table">
+            <table class="table table-striped table-curved table-condensed table-hover">
                 <tr>
                     <th>Name</th>
                     <th>DOB</th>
