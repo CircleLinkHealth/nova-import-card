@@ -33,6 +33,7 @@
                 text-align: center;
             }
 
+            table { white-space: nowrap; }
         </style>
     @endpush
 

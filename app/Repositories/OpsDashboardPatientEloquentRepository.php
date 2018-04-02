@@ -37,10 +37,10 @@ class OpsDashboardPatientEloquentRepository
                 'patientInfo' => function ($patient) use ($fromDate, $toDate) {
                     $patient->byStatus($fromDate, $toDate);
                 },
-//                'carePlan'    => function ($c) use ($fromDate, $toDate) {
-//                    $c->where('status', CarePlan::TO_ENROLL)
-//                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
-//                },
+                //                'carePlan'    => function ($c) use ($fromDate, $toDate) {
+                //                    $c->where('status', CarePlan::TO_ENROLL)
+                //                      ->where([['updated_at', '>=', $fromDate], ['updated_at', '<=', $toDate]]);
+                //                },
             ])
                             ->whereHas('patientInfo', function ($patient) use ($fromDate, $toDate) {
                                 $patient->byStatus($fromDate, $toDate);
@@ -86,100 +86,5 @@ class OpsDashboardPatientEloquentRepository
         return $patients;
     }
 
-
-    /**
-     * gets all patients that have any CCM Time for the given date range
-     *
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|static[]
-     */
-    public function getPatientsByCcmTime($fromDate, $toDate)
-    {
-        //we may not need this
-        //need with 0 time as well
-        $patients = User::with([
-            'patientInfo' => function ($patient) {
-                $patient->where('ccm_status', Patient::ENROLLED);
-            },
-            'activities'  => function ($q) use ($fromDate, $toDate) {
-                $q->where([['performed_at', '>=', $fromDate], ['performed_at', '<=', $toDate]]);
-            },
-        ])
-                        ->whereHas('patientInfo', function ($patient) {
-                            $patient->where('ccm_status', Patient::ENROLLED);
-                        })
-                        ->whereHas('activities', function ($q) use ($fromDate, $toDate) {
-                            $q->where([['performed_at', '>=', $fromDate], ['performed_at', '<=', $toDate]]);
-                        })
-            //memory running out
-                        ->take(10)
-                        ->get();
-
-        return $patients;
-    }
-
-
-    /**
-     *
-     * if format = false, returns time in seconds,
-     * if format = true, returns time in minutes
-     *
-     * @param User $p
-     * @param $fromDate
-     * @param $toDate
-     *
-     * @param bool $format
-     *
-     * @return float|mixed
-     */
-    public function totalTimeForPatient(
-        User $p,
-        $fromDate,
-        $toDate,
-        $format = false
-    ) {
-        $raw = $p->activities->where('patient_id', $p->id)
-                       ->where('performed_at', '>', $fromDate)
-                       ->where('performed_at', '<', $toDate)
-                       ->sum('duration');
-
-        if ($format) {
-            return round($raw / 60, 2);
-        }
-
-        return $raw;
-    }
-
-    public function getEnrolledPatients($fromDate, $toDate)
-    {
-
-        //need to apply case using dates?TODO
-        $patients = User::with([
-            'patientInfo' => function ($patient) {
-                $patient->where('ccm_status', Patient::ENROLLED);
-            },
-            'activities',
-        ])
-                        ->whereHas('patientInfo', function ($patient) {
-                            $patient->where('ccm_status', Patient::ENROLLED);
-                        })
-                        ->take(20)
-                        ->get();
-
-        return $patients;
-    }
-
-    public function getTotalActivePatientCount()
-    {
-        $patients = User::with('primaryPractice')
-            ->whereHas('primaryPractice', function($q){
-            $q->where('active', 1);
-        })->take(100)
-          ->count();
-
-        return $patients;
-    }
-
 }
+
