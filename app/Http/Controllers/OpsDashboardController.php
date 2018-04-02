@@ -64,7 +64,10 @@ class OpsDashboardController extends Controller
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
+
         $allPractices = Practice::activeBillable()->get();
+
+
 
         $rows        = [];
         foreach ($allPractices as $practice) {
@@ -111,7 +114,11 @@ class OpsDashboardController extends Controller
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
+
         $allPractices = Practice::activeBillable()->get();
+
+
+
         $rows        = [];
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
@@ -147,7 +154,13 @@ class OpsDashboardController extends Controller
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(), $toDate->toDateTimeString());
 
         $rows      = [];
+
+
+
         $allPractices = Practice::activeBillable()->get();
+
+
+
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $row = $this->service->lostAddedRow($statusPatientsByPractice);
@@ -181,7 +194,11 @@ class OpsDashboardController extends Controller
         $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
 
         $rows      = [];
+
+
         $allPractices = Practice::activeBillable()->get();
+
+
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $row = $this->service->lostAddedRow($statusPatientsByPractice);
@@ -214,7 +231,10 @@ class OpsDashboardController extends Controller
         $fromDate = $toDate->copy()->subDay(1);
         $status = 'all';
         $practiceId = 'all';
+
+
         $practices = Practice::activeBillable()->get();
+
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
 
@@ -251,7 +271,9 @@ class OpsDashboardController extends Controller
 
 
 
+
         $practices = Practice::activeBillable()->get();
+
 
         $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
             $toDate->endOfDay()->toDateTimeString());
