@@ -64,11 +64,9 @@ class OpsDashboardController extends Controller
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $allPractices = Practice::active()->get();
-        }else{
-            $allPractices = Practice::activeBillable()->get();
-        }
+
+        $allPractices = Practice::activeBillable()->get();
+
 
 
         $rows        = [];
@@ -116,11 +114,9 @@ class OpsDashboardController extends Controller
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $allPractices = Practice::active()->get();
-        }else{
-            $allPractices = Practice::activeBillable()->get();
-        }
+
+        $allPractices = Practice::activeBillable()->get();
+
 
 
         $rows        = [];
@@ -160,11 +156,9 @@ class OpsDashboardController extends Controller
         $rows      = [];
 
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $allPractices = Practice::active()->get();
-        }else{
-            $allPractices = Practice::activeBillable()->get();
-        }
+
+        $allPractices = Practice::activeBillable()->get();
+
 
 
         foreach ($allPractices as $practice) {
@@ -201,11 +195,9 @@ class OpsDashboardController extends Controller
 
         $rows      = [];
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $allPractices = Practice::active()->get();
-        }else{
-            $allPractices = Practice::activeBillable()->get();
-        }
+
+        $allPractices = Practice::activeBillable()->get();
+
 
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
@@ -240,11 +232,9 @@ class OpsDashboardController extends Controller
         $status = 'all';
         $practiceId = 'all';
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $practices = Practice::active()->get();
-        }else{
-            $practices = Practice::activeBillable()->get();
-        }
+
+        $practices = Practice::activeBillable()->get();
+
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
 
@@ -281,11 +271,9 @@ class OpsDashboardController extends Controller
 
 
 
-        if (app()->environment(['local', 'staging', 'testing'])){
-            $practices = Practice::active()->get();
-        }else{
-            $practices = Practice::activeBillable()->get();
-        }
+
+        $practices = Practice::activeBillable()->get();
+
 
         $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
             $toDate->endOfDay()->toDateTimeString());

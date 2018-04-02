@@ -292,8 +292,13 @@ class Practice extends \App\BaseModel implements HasMedia
 
     public function scopeActiveBillable($q)
     {
-        return $q->whereActive(1)
-                 ->whereNotIn('name', ['demo', 'testdrive']);
+        if (app()->environment(['local', 'staging', 'testing'])){
+            return $q->whereActive(1);
+        }else{
+            return $q->whereActive(1)
+                     ->whereNotIn('name', ['demo', 'testdrive']);
+        }
+
     }
 
     public function scopeAuthUserCanAccess($q)
