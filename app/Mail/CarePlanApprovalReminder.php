@@ -27,10 +27,6 @@ class CarePlanApprovalReminder extends Mailable
             $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($recipient);
         }
 
-        if ($numberOfCareplans < 1) {
-            return false;
-        }
-
         $this->recipient = $recipient;
         $this->numberOfCareplans = $numberOfCareplans;
     }
@@ -38,10 +34,14 @@ class CarePlanApprovalReminder extends Mailable
     /**
      * Build the message.
      *
-     * @return $this
+     * @return CarePlanApprovalReminder|bool
      */
     public function build()
     {
+        if ($this->numberOfCareplans > 1) {
+            return false;
+        }
+
         $data = [
             'numberOfCareplans' => $this->numberOfCareplans,
             'recipient'         => $this->recipient,

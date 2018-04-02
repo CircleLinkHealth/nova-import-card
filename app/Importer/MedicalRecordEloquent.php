@@ -65,7 +65,6 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         return $this->importedMedicalRecord;
     }
 
-
     public function raiseConcerns() {
 
     }

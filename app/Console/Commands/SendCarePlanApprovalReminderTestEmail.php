@@ -40,9 +40,9 @@ class SendCarePlanApprovalReminderTestEmail extends Command
      */
     public function handle()
     {
-        $testerEmail = $this->argument('userId');
+        $tester = $this->argument('userId');
 
-        $user = User::findOrFail($testerEmail);
+        $user = User::findOrFail($tester);
 
         Mail::send(new CarePlanApprovalReminder($user));
 

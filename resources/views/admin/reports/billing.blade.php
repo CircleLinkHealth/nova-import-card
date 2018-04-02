@@ -96,6 +96,7 @@
                                     return problem
                                 })
                                 var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\&quot;/g, '"'))
+                                var dates = JSON.parse("{{json_encode($dates)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>

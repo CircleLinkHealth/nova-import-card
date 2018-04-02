@@ -560,9 +560,8 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => 'patientProgramSecurity',
+        'middleware' => [ 'patientProgramSecurity', 'checkWebSocketServer' ],
     ], function () {
-
         // base
         //Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
         Route::get('summary', [
@@ -918,6 +917,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.summary.services',
                 ]);
 
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ]);
+
+                Route::post('/close', [
+                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.close.month',
+                ]);
+
                 Route::post('/status/update', [
                     'uses' => 'Billing\PracticeInvoiceController@updateStatus',
                     'as'   => 'monthly.billing.status.update',
@@ -1023,23 +1032,50 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'ops-dashboard',
             ], function () {
                 Route::get('/index', [
-                    'uses' => 'OperationsDashboardController@index',
+                    'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
+                Route::get('/daily-report', [
+                    'uses' => 'OpsDashboardController@getDailyReport',
+                    'as'   => 'OpsDashboard.dailyReport'
+                ]);
+                Route::get('/lost-added-index', [
+                    'uses' => 'OpsDashboardController@getLostAddedIndex',
+                    'as'   => 'OpsDashboard.lostAddedIndex'
+                ]);
+                Route::get('/lost-added', [
+                    'uses' => 'OpsDashboardController@getLostAdded',
+                    'as'   => 'OpsDashboard.lostAdded'
+                ]);
+                Route::get('/patient-list-index', [
+                    'uses' => 'OpsDashboardController@getPatientListIndex',
+                    'as'   => 'OpsDashboard.patientListIndex'
+                ]);
+
+                Route::get('/patient-list', [
+                    'uses' => 'OpsDashboardController@getPatientList',
+                    'as'   => 'OpsDashboard.patientList'
+                ]);
+                Route::post('/make-excel', [
+                    'uses' => 'OpsDashboardController@makeExcelPatientReport',
+                    'as'   => 'OpsDashboard.makeExcel',
+                ]);
+
+                //old dashboard
                 Route::get('/total-data', [
-                    'uses' => 'OperationsDashboardController@getTotalPatientData',
+                    'uses' => 'OpsDashboardController@getTotalPatientData',
                     'as'   => 'OpsDashboard.totalData'
                 ]);
                 Route::get('/paused-patient-list', [
-                    'uses' => 'OperationsDashboardController@getPausedPatientList',
+                    'uses' => 'OpsDashboardController@getPausedPatientList',
                     'as'   => 'OpsDashboard.pausedPatientList'
                 ]);
-                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
-                    'uses' => 'OperationsDashboardController@getList',
-                    'as'   => 'OpsDashboard.patientList'
-                ]);
+//                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
+//                    'uses' => 'OpsDashboardController@getList',
+//                    'as'   => 'OpsDashboard.patientList'
+//                ]);
                 Route::get('/patients-by-practice', [
-                    'uses' => 'OperationsDashboardController@getPatientsByPractice',
+                    'uses' => 'OpsDashboardController@getPatientsByPractice',
                     'as'   => 'OpsDashboard.patientsByPractice'
                 ]);
             });

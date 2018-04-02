@@ -423,6 +423,34 @@ class Patient extends \App\BaseModel
         return $query->where('ccm_status', 'enrolled');
     }
 
+    public function scopeByStatus($query, $fromDate, $toDate) {
+
+        return $query->where(function ($query) use ($fromDate, $toDate) {
+            $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                $subQuery->ccmStatus(Patient::PAUSED)
+                         ->where([
+                             ['date_paused', '>=', $fromDate],
+                             ['date_paused', '<=', $toDate],
+                         ]);
+            })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                               ->where([
+                                   ['date_withdrawn', '>=', $fromDate],
+                                   ['date_withdrawn', '<=', $toDate],
+                               ]);
+                  })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::ENROLLED)
+                               ->where([
+                                   ['registration_date', '>=', $fromDate],
+                                   ['registration_date', '<=', $toDate],
+                               ]);
+                  });
+        });
+    }
+
+
     /**
      * Import Patient's Call Window from the sheet, or save default.
      *
@@ -561,6 +589,7 @@ class Patient extends \App\BaseModel
             'user_id' => $this->user_id,
             'ccm_status' => $this->ccm_status,
             'birth_date' => $this->birth_date,
+            'age' => $this->birth_date ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year): 0,
             'gender' => $this->gender,
             'created_at' => $this->created_at->format('c'),
             'updated_at' => $this->updated_at->format('c'),
