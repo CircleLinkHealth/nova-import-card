@@ -294,10 +294,10 @@ class Practice extends \App\BaseModel implements HasMedia
     {
         if (app()->environment(['local', 'staging', 'testing'])){
             return $q->whereActive(1);
-        }else{
-            return $q->whereActive(1)
-                     ->whereNotIn('name', ['demo', 'testdrive']);
         }
+        return $q->whereActive(1)
+                     ->whereNotIn('name', ['demo', 'testdrive']);
+
 
     }
 
