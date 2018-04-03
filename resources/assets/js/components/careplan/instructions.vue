@@ -79,6 +79,7 @@
                 problem.related = (function () {
                     return this.allCpmProblems.find(cpm => cpm.id === problem.cpm_id)
                 }).bind(this)
+                problem.title = () => `${(problem.icd10 || (problem.related() || {}).code) || ''} ${problem.original_name}`
                 return problem
             },
             getCcdProblems() {
