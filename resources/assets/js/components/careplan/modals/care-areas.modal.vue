@@ -21,6 +21,11 @@
                     <div class="row">
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
+                                <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
+                                    Condition is already in care plan. Please add a new condition.
+                                </label>
+                            </div>
+                            <div class="col-sm-12 top-10">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
                                     :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
                                     @input="resolveIcd10Code">
