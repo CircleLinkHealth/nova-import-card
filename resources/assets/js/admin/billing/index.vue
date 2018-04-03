@@ -255,6 +255,7 @@
                             this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
                             this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
                         }
+                        tablePatient.actorId = (response.data || {}).actor_id
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
@@ -529,9 +530,10 @@
                 return this.practices.find(p => p.id == this.selectedPractice)
             },
             options() {
+                const $vm = this
                 return {
                     rowClassCallback(row) {
-                        if (row.actorId) return 'bg-closed'
+                        if ($vm.isClosed) return 'bg-closed'
                         if (row.qa) return 'bg-flagged'
                         return ''
                     },
