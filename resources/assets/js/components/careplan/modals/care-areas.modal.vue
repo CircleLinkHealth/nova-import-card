@@ -52,21 +52,26 @@
                                         <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                        <div class="font-14 color-blue">
+                                            Full Name: {{ selectedProblem.original_name }}
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
                                         <div class="row">
                                             <div class="col-sm-7">
+                                                <label class="color-red" v-if="selectedProblem.is_monitored">Mapped To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3 text-right">
-                                                <label>
+                                                <label class="top-30">
                                                     <input type="checkbox" :value="true" v-model="selectedProblem.is_monitored"> We are managing
                                                 </label>
                                             </div>
                                             <div class="col-sm-2">
+                                                <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
                                                     title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
@@ -257,8 +262,8 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
-                        name: this.selectedProblem.name, 
-                        cpm_problem_id: this.selectedProblem.cpm_id,
+                        name: this.selectedProblem.original_name, 
+                        cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
                         instruction: this.selectedProblem.instruction.name
@@ -351,7 +356,15 @@
     }
 
     .top-20 {
-        margin-top: 20px
+        margin-top: 20px;
+    }
+
+    .top-30 {
+        margin-top: 30px;
+    }
+
+    .color-red {
+        color: red;
     }
 
     input[type='button'].right-0 {
