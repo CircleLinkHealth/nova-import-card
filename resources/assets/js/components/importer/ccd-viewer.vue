@@ -2,7 +2,7 @@
     <div>
         <notifications>
             <template scope="props">
-               <a :href="props.note.href">{{props.note.message}}</a>
+               <a :href="props.note.href" target="_blank">{{props.note.message}}</a>
             </template>
         </notifications>
 
@@ -10,19 +10,19 @@
             <template slot="selected" scope="props">
                 <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
             </template>
-            <template slot="h__selected" scope="props">
+            <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" scope="props">
                 <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
                     <option value="">Select Practice</option>
-                    <option v-for="(practice, index) in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
+                    <option v-for="practice in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
                 </select>
             </template>
             <template slot="Location" scope="props">
                 <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
                     <option :value="null">Select Location</option>
-                    <option v-for="(location, index) in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
+                    <option v-for="location in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
                 </select>
                 <div v-if="props.row.loaders.locations">
                     <loader></loader>
@@ -31,7 +31,7 @@
             <template slot="Billing Provider" scope="props">
                 <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
                     <option :value="null">Select Billing Provider</option>
-                    <option v-for="(provider, index) in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
+                    <option v-for="provider in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
                 </select>
                 <div v-if="props.row.loaders.providers">
                     <loader></loader>
@@ -46,7 +46,10 @@
             <template slot="Supplemental Ins" scope="props">
                 <input class="row-select" v-model="props.row['Supplemental Ins']" type="checkbox" />
             </template>
-            <template slot="h__Remove" scope="props">
+            <template slot="duplicate" scope="props">
+                <a :href="rootUrl(`manage-patients/${props.row.duplicate_id}/view-careplan`)" target="_blank" v-if="props.row.duplicate_id">View</a>
+            </template>
+            <template slot="h__Remove">
                 <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
             </template>
             <template slot="Remove" scope="props">
@@ -55,7 +58,7 @@
                     <loader></loader>
                 </div>
             </template>
-            <template slot="h__Submit" scope="props">
+            <template slot="h__Submit">
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" scope="props">
@@ -96,7 +99,7 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB']
@@ -118,6 +121,7 @@
             }
         },
         methods: {
+            rootUrl,
             getRowErrors(id) {
                 return () => this.tableData.find(record => record.id === id).errors
             },
@@ -139,6 +143,7 @@
                     '2+ Cond': false,
                     Medicare: false,
                     'Supplemental Ins': false,
+                    duplicate_id: record.duplicate_id,
                     errors: {
                         delete: null,
                         confirm: null,
@@ -317,25 +322,27 @@
             submitOne(id) {
                 const record = this.tableData.find(r => r.id === id)
                 if (record) {
-                    record.loaders.confirm = true
-                    return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                        record.loaders.confirm = false
-                        if ((response.data || []).some(item => item.id === id && item.completed)) {
-                            this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                        }
-                        console.log('submit-one', record, response.data)
-                        const patient = (((response.data || [])[0] || {}).patient || {})
-                        EventBus.$emit('notifications:create', { 
-                            message: `Patient Created (${patient.id}): ${patient.display_name}`, 
-                            href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                            noTimeout: true
+                    if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                        record.loaders.confirm = true
+                        return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                            record.loaders.confirm = false
+                            if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                            }
+                            console.log('submit-one', record, response.data)
+                            const patient = (((response.data || [])[0] || {}).patient || {})
+                            EventBus.$emit('notifications:create', { 
+                                message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                noTimeout: true
+                            })
+                            return response
+                        }).catch((err) => {
+                            record.loaders.confirm = false
+                            record.errors.confirm = err.message
+                            console.error('submit-one', record, err)
                         })
-                        return response
-                    }).catch((err) => {
-                        record.loaders.confirm = false
-                        record.errors.confirm = err.message
-                        console.error('submit-one', record, err)
-                    })
+                    }
                 }
                 else {
                     record.errors.confirm = 'record not found'

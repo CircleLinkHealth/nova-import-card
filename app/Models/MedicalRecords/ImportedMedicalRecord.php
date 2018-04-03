@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $billing_provider_id
  * @property int|null $location_id
  * @property int|null $practice_id
+ * @property int|null $duplicate_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -66,7 +67,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'billing_provider_id',
         'location_id',
         'practice_id',
-        'duplicate_id',
+        'duplicate_id'
     ];
 
     public function allergies()
