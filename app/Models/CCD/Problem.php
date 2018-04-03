@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $patient_id
  * @property int|null $ccd_problem_log_id
  * @property string|null $name
+ * @property string|null $original_name
  * @property int|null $cpm_problem_id
  * @property int|null $cpm_instruction_id
  * @property string|null $deleted_at
@@ -124,6 +125,7 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
 
     public function getNameAttribute($name) 
     {
+        $this->original_name = $name;
         if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
         return $name;
     }
