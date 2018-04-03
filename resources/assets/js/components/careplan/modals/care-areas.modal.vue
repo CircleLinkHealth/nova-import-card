@@ -371,7 +371,7 @@
     }
 
     .problem-buttons {
-        width: 2000px;
+        width: 100%;
     }
 
     .modal-care-areas .instructions {
