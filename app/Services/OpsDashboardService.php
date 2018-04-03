@@ -180,6 +180,17 @@ class OpsDashboardService
 
     }
 
+    public function filterSummariesByPractice($summaries, $practiceId){
+        $filteredSummaries = [];
+
+        foreach ($summaries as $summary){
+            if ($summary->patient->program_id == $practiceId){
+                $filteredSummaries[] = $summary;
+            }
+        }
+
+        return collect($filteredSummaries);
+    }
 
     /**
      *
@@ -337,6 +348,12 @@ class OpsDashboardService
             'ccmCounts'      => $ccmTotal,
             'countsByStatus' => $countsByStatus,
         ]);
+
+    }
+
+    public function billingChurnRow($summaries, $fromDate){
+
+        return true;
 
     }
 
