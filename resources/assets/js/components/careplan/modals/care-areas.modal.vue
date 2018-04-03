@@ -174,7 +174,7 @@
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).concat(this.problems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
