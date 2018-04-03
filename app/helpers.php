@@ -904,7 +904,7 @@ if (!function_exists('cast')) {
     }
 }
 
-if (!function_exists('isJson')) {
+if (!function_exists('is_json')) {
     /**
      * Determine whether the given string is json
      *

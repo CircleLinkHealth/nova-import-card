@@ -53,10 +53,26 @@
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                     </div>
-                                    <div class="col-sm-12 top-20 text-right" >
-                                        <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                        <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                    <div class="col-sm-12 top-20 text-right font-14">
+                                        <div class="row">
+                                            <div class="col-sm-7">
+                                                <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
+                                                    <option :value="null">Selected a Related Condition</option>
+                                                    <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3 text-right">
+                                                <label>
+                                                    <input type="checkbox" :value="true" v-model="selectedProblem.is_monitored"> We are managing
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <loader class="absolute" v-if="loaders.editProblem"></loader>
+                                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
+                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </form>
@@ -355,7 +371,7 @@
     }
 
     .problem-buttons {
-        width: 2000px;
+        width: 100%;
     }
 
     .modal-care-areas .instructions {

@@ -296,7 +296,7 @@
     }
 
     .problem-buttons {
-        width: 2000px;
+        width: 100%;
     }
 
     .modal-full-conditions .instructions {
