@@ -28,11 +28,11 @@ class Problem
             if ($name) {
                 $cpmProblem = $this->getCpmProblems()->firstWhere('name', $name);
                 $ccdProblem    = $this->getCcdProblems()->firstWhere('cpm_problem_id', $cpmProblem->id);
-                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id);
                 $ccdProblem->codes = $problemCodes;
             } else {
                 $ccdProblem = $this->getCcdProblems()->random();
-                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id);
 
                 $ccdProblem->codes = $problemCodes;
             }
@@ -71,9 +71,9 @@ class Problem
 
         if ($withCodes){
 
-            $ccdProblems = $this->getCcdProblems()->where('patient_id', $patientId)->all();
+            $ccdProblems = $this->getCcdProblems()->where('patient_id', $patientId);
             foreach ($ccdProblems as $ccdProblem){
-                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id)->all();
+                $problemCodes = $this->getProblemCodes()->where('problem_id', $ccdProblem->id);
                 if ($problemCodes){
                     $ccdProblem->codes = $problemCodes;
                     $problemSet[] = $ccdProblem;
@@ -87,7 +87,7 @@ class Problem
 
         }else{
 
-            $problemSet[] = $this->getCcdProblems()->where('patient_id', $patientId)->all();
+            $problemSet = $this->getCcdProblems()->where('patient_id', $patientId);
             return $problemSet;
 
         }
@@ -104,7 +104,7 @@ class Problem
      */
     public function attachProblemSet(User $patient)
     {
-        $problemSet = $this->problemSet();
+        $problemSet = $this->problemSet(false);
 
         //sometimes returns error TODO
         $patient->ccdProblems()->saveMany($problemSet);
