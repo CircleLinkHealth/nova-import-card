@@ -17,8 +17,10 @@ use App\Importer\Section\Importers\Insurance;
 use App\Importer\Section\Importers\Medications;
 use App\Importer\Section\Importers\Problems;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
+use App\Patient;
 use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
@@ -66,7 +68,31 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     public function raiseConcerns() {
+        $demos = $this->demographics->first();
 
+        if ($demos) {
+            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+
+            if ($patient) {
+                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
+                $this->importedMedicalRecord->save();
+
+                return true;
+            }
+
+            $user = User::whereFirstName($demos->first_name)
+                ->whereLastName($demos->last_name)
+                ->whereHas('patientInfo', function ($q) use ($demos) {
+                    $q->whereBirthDate($demos->dob);
+                })->first();
+
+            if ($user) {
+                $this->importedMedicalRecord->duplicate_id = $user->id;
+                $this->importedMedicalRecord->save();
+
+                return true;
+            }
+        }
     }
 
     /**
