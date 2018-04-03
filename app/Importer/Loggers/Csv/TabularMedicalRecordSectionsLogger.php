@@ -199,8 +199,8 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         foreach (config('importer.problem_loggers') as $class) {
             $class = app($class);
 
-            if ($class->shouldHandle($this->medicalRecord)) {
-                $problemsToImport = $class->handle($this->medicalRecord);
+            if ($class->shouldHandle($this->medicalRecord->problems_string)) {
+                $problemsToImport = $class->handle($this->medicalRecord->problems_string);
                 break;
             }
         }
