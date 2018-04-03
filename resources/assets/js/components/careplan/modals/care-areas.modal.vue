@@ -52,7 +52,7 @@
                                         <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
-                                        <div class="font-14 color-blue">
+                                        <div class="font-14 color-blue" v-if="selectedProblem.original_name">
                                             Full Name: {{ selectedProblem.original_name }}
                                         </div>
                                     </div>
@@ -166,7 +166,7 @@
                 else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
             },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
+                return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
                 return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).concat(this.problems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
