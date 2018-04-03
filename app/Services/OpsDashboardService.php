@@ -265,13 +265,11 @@ class OpsDashboardService
 
             if ($patient->activities) {
 
+                //filtering needed for prior day results
                 $activities = $patient->activities->where('performed_at', '<=', $toDate);
 
-                if ($activities->count() != 0){
-                    $ccmTime = $activities->sum('duration');
-                }else{
-                    $ccmTime = null;
-                }
+
+                $ccmTime = $activities->sum('duration');
 
                 if ($ccmTime === 0) {
                     $count['zero'] += 1;
