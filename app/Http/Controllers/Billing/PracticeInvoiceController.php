@@ -238,6 +238,7 @@ class PracticeInvoiceController extends Controller
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
+            'actor_id' => $summary->actor_id
         ]);
     }
 
