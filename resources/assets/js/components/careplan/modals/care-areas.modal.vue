@@ -1,6 +1,6 @@
 <template>
     <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
