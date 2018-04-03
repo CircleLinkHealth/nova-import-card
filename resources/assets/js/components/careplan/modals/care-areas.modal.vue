@@ -1,6 +1,6 @@
 <template>
     <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
@@ -21,6 +21,11 @@
                     <div class="row">
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
+                                <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
+                                    Condition is already in care plan. Please add a new condition.
+                                </label>
+                            </div>
+                            <div class="col-sm-12 top-10">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
                                     :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
                                     @input="resolveIcd10Code">
@@ -52,21 +57,26 @@
                                         <textarea class="form-control height-200"
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                        <div class="font-14 color-blue" v-if="selectedProblem.original_name">
+                                            Full Name: {{ selectedProblem.original_name }}
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
                                         <div class="row">
                                             <div class="col-sm-7">
+                                                <label class="color-red" v-if="selectedProblem.is_monitored">Mapped To:</label>
                                                 <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
                                                     <option :value="null">Selected a Related Condition</option>
                                                     <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-3 text-right">
-                                                <label>
+                                                <label class="top-30">
                                                     <input type="checkbox" :value="true" v-model="selectedProblem.is_monitored"> We are managing
                                                 </label>
                                             </div>
                                             <div class="col-sm-2">
+                                                <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
                                                     title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
@@ -161,10 +171,10 @@
                 else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
             },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
+                return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).concat(this.problems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -257,8 +267,8 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
-                        name: this.selectedProblem.name, 
-                        cpm_problem_id: this.selectedProblem.cpm_id,
+                        name: this.selectedProblem.original_name, 
+                        cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
                         instruction: this.selectedProblem.instruction.name
@@ -351,7 +361,15 @@
     }
 
     .top-20 {
-        margin-top: 20px
+        margin-top: 20px;
+    }
+
+    .top-30 {
+        margin-top: 30px;
+    }
+
+    .color-red {
+        color: red;
     }
 
     input[type='button'].right-0 {

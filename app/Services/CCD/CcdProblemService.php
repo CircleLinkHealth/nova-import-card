@@ -40,6 +40,7 @@ class CcdProblemService
             $problem = [
                 'id'    => $p->id,
                 'name'  => $p->name,
+                'original_name' => $p->original_name,
                 'cpm_id'  => $p->cpm_problem_id,
                 'codes' => $p->codes()->get(),
                 'is_monitored' => $p->is_monitored,
