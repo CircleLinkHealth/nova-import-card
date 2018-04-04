@@ -76,6 +76,10 @@
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
+                problem.related = (function () {
+                    return this.allCpmProblems.find(cpm => cpm.id === problem.cpm_id)
+                }).bind(this)
+                problem.title = () => `${(problem.icd10 || (problem.related() || {}).code) || ''} ${problem.original_name}`
                 return problem
             },
             getCcdProblems() {
