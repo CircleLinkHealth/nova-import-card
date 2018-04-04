@@ -21,12 +21,8 @@ class CarePlanApprovalReminder extends Mailable
      * @param User $recipient
      * @param $numberOfCareplans
      */
-    public function __construct(User $recipient, $numberOfCareplans = null)
+    public function __construct(User $recipient, $numberOfCareplans)
     {
-        if ( ! $numberOfCareplans) {
-            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($recipient);
-        }
-
         $this->recipient         = $recipient;
         $this->numberOfCareplans = $numberOfCareplans;
     }
@@ -38,10 +34,6 @@ class CarePlanApprovalReminder extends Mailable
      */
     public function build()
     {
-        if ($this->numberOfCareplans < 1) {
-            return false;
-        }
-
         return $this
             ->view('emails.careplansPendingApproval')
             ->from('notifications@careplanmanager.com', 'CircleLink Health')

@@ -111,6 +111,8 @@ trait UserHelpers
             ]);
         }
 
+        $user->load('practices');
+
         return $user;
     }
 
