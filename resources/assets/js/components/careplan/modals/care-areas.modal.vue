@@ -167,8 +167,8 @@
                 return this.problems.distinct((p) => p.name)
             },
             patientHasSelectedProblem() {
-                if (!this.selectedProblem) return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
-                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
+                if (!this.selectedProblem) return this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
+                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
