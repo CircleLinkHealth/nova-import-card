@@ -315,7 +315,9 @@ class OpsDashboardController extends Controller
         $date = Carbon::today();
 
         //default date range
-        $fromDate = $date->subMonth(6)->startOfMonth()->startOfDay();
+        $months = 6;
+        $fromDate = $date->subMonth($months)->startOfMonth()->startOfDay();
+        $months = $this->getMonths($date, $months);
 
         //get Monthly Summaries that are approved and have actorId
         $summaries = PatientMonthlySummary::with('patient')
@@ -330,7 +332,7 @@ class OpsDashboardController extends Controller
         $rows = [];
         foreach ($practices as $practice) {
             $practiceSummaries = $this->service->filterSummariesByPractice($summaries, $practice->id);
-            $rows[]            = $this->service->billingChurnRow($practiceSummaries, $fromDate);
+            $rows[]            = $this->service->billingChurnRow($practiceSummaries, $months, $fromDate);
         }
         $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows);
         $rows                     = collect($rows);
@@ -541,6 +543,16 @@ class OpsDashboardController extends Controller
 
     }
 
+    private function getMonths(Carbon $date, $number){
+
+        $months = [];
+        //create for loop
+        for ($x = $number; $x > 0; $x--) {
+
+            $months[] = $date->copy()->startOfMonth()->subMonth($x);
+
+        }
+    }
 
     public function makeExcelPatientReport(Request $request)
     {
