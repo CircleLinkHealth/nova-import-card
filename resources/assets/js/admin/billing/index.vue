@@ -46,7 +46,7 @@
                                         <div>
                                             <label>Set Chargeable Service</label>
                                         </div>
-                                        <select2 class="form-control" v-model="selectedService">
+                                        <select2 class="form-control" v-model="selectedService" :disabled="isClosed">
                                             <option :value="null">Set Default Code</option>
                                             <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
                                             </option>
@@ -55,8 +55,8 @@
                                     <div class="col-sm-4">
                                         <div>&nbsp;</div>
                                         <div>
-                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices">Attach</button>
-                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices">Detach</button>
+                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices || isClosed">Attach</button>
+                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices || isClosed">Detach</button>
                                             <loader class="inline-block absolute" v-if="loaders.chargeableServices"></loader>
                                         </div>
                                     </div>
