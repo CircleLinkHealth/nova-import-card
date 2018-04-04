@@ -9,9 +9,11 @@
 namespace App\Services;
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
+use App\Constants;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Practice;
+use App\Services\Eligibility\Models\ProblemSet;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -85,16 +87,16 @@ class WelcomeCallListGenerator
         $medicalRecordType = null,
         $medicalRecordId = null
     ) {
-        $this->patientList = $patientList;
+        $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
 
         $this->filterLastEncounter = $filterLastEncounter;
-        $this->filterInsurance = $filterInsurance;
-        $this->filterProblems = $filterProblems;
-        $this->createEnrollees = $createEnrollees;
-        $this->practice = $practice;
-        $this->medicalRecordType = $medicalRecordType;
-        $this->medicalRecordId = $medicalRecordId;
+        $this->filterInsurance     = $filterInsurance;
+        $this->filterProblems      = $filterProblems;
+        $this->createEnrollees     = $createEnrollees;
+        $this->practice            = $practice;
+        $this->medicalRecordType   = $medicalRecordType;
+        $this->medicalRecordId     = $medicalRecordId;
 
         $this->filterPatientList();
 
@@ -104,82 +106,81 @@ class WelcomeCallListGenerator
     protected function filterPatientList()
     {
         $this->byLastEncounter()
-            ->byInsurance()
-            ->byNumberOfProblems();
+             ->byInsurance()
+             ->byNumberOfProblems();
     }
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
     {
-        if (!$this->filterProblems) {
+        if ( ! $this->filterProblems) {
             return $this;
         }
+
         $cpmProblems = CpmProblem::all();
+        $snomedToIcdMap = SnomedToCpmIcdMap::all();
+        $icd9Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        $icd10Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        $snomedMap = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        $cpmProblemsMap = $cpmProblems->pluck('name', 'id');
 
         $patientList = $this->patientList->map(function ($row) use (
-            $cpmProblems
+            $cpmProblems,$icd9Map, $icd10Map, $snomedMap, $cpmProblemsMap
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
-            $row['cpm_problem_1'] = '';
-            $row['cpm_problem_2'] = '';
+            $row['cpm_problem_1']   = '';
+            $row['cpm_problem_2']   = '';
 
-            if (is_string($row['problems'])) {
-                $problems = new Collection(explode(',', $row['problems']));
-            } elseif (is_a($row['problems'], Collection::class)) {
-                $problems = $row['problems'];
-            } elseif (is_array($row['problems'])) {
-                $problems = collect($row['problems']);
-            } else {
-                dd('Problems is not a string or collection.');
+            $problems = [];
+
+            foreach (config('importer.problem_loggers') as $class) {
+                $class = app($class);
+
+                if ($class->shouldHandle($row['problems'])) {
+                    $problems = $class->handle($row['problems']);
+                    break;
+                }
             }
 
             $qualifyingProblems = [];
             //the cpm_problem_id for qualifying problems
             $qualifyingProblemsCpmIdStack = [];
 
-            foreach ($problems as $problemCode) {
-                if (!$problemCode) {
-                    continue;
+            foreach ($problems as $p) {
+                $codeType = getProblemCodeSystemName([$p['code_system_name']]);
+
+                if ( ! $codeType) {
+                    $codeType = 'all';
                 }
 
-                $problemCode = trim($problemCode);
+                if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
+                    $cpmProblemId = $icd9Map->get($p['code']);
 
-                //This was used for a list where problems where written as such: ICD-209: Diabetes,
-                $from = strpos($problemCode, '-');
-                $to = strpos($problemCode, ':');
-
-                if ($from !== false && $to !== false) {
-                    $problemCode = substr($problemCode, ++$from, $to - $from);
+                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
+                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                        continue;
+                    }
                 }
 
-                //try icd 9
-                $problem = SnomedToCpmIcdMap::where('icd_9_code', '=', $problemCode)
-                    ->first();
+                if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
+                    $cpmProblemId = $icd10Map->get($p['code']);
 
-                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD9: $problemCode";
-                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
-                    continue;
+                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                        continue;
+                    }
                 }
 
-                //try icd 10
-                $problem = SnomedToCpmIcdMap::where('icd_10_code', '=', $problemCode)
-                    ->first();
+                if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
+                    $cpmProblemId = $snomedMap->get($p['code']);
 
-                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD10: $problemCode";
-                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
-                    continue;
-                }
-
-                //try snomed
-                $problem = SnomedToCpmIcdMap::where('snomed_code', '=', $problemCode)
-                    ->first();
-
-                if ($problem && !in_array($problem->cpm_problem_id, $qualifyingProblemsCpmIdStack)) {
-                    $qualifyingProblems[] = "{$problem->cpmProblem->name}, ICD10: $problemCode";
-                    $qualifyingProblemsCpmIdStack[] = $problem->cpm_problem_id;
-                    continue;
+                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                        continue;
+                    }
                 }
 
                 /*
@@ -193,14 +194,14 @@ class WelcomeCallListGenerator
                             continue;
                         }
 
-                        if (str_contains(strtolower($problemCode), strtolower($keyword))
-                            && !in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                        if (str_contains(strtolower($p['name']), strtolower($keyword))
+                            && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
                         ) {
                             $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
-                                ->whereCpmProblemId($problem->id)
-                                ->get()
-                                ->sortByDesc('icd_9_avg_usage')
-                                ->first();
+                                                     ->whereCpmProblemId($problem->id)
+                                                     ->get()
+                                                     ->sortByDesc('icd_9_avg_usage')
+                                                     ->first();
 
                             if ($code) {
                                 if ($code->icd_9_code) {
@@ -208,14 +209,14 @@ class WelcomeCallListGenerator
                                 }
                             }
 
-                            if (!$code) {
+                            if ( ! $code) {
                                 $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
-                                    ->whereCpmProblemId($problem->id)
-                                    ->first();
+                                                         ->whereCpmProblemId($problem->id)
+                                                         ->first();
                                 $code = "ICD10: $code->icd_10_code";
                             }
 
-                            $qualifyingProblems[] = "{$problem->name}, $code";
+                            $qualifyingProblems[]           = "{$problem->name}, $code";
                             $qualifyingProblemsCpmIdStack[] = $problem->id;
                         }
                     }
@@ -246,32 +247,33 @@ class WelcomeCallListGenerator
 
     protected function byInsurance(): WelcomeCallListGenerator
     {
-        if (!$this->filterInsurance) {
+        if ( ! $this->filterInsurance) {
             return $this;
         }
 
         $this->patientList = $this->patientList->reject(function ($record) {
             if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
-                return !$this->validateInsuranceWithPrimaryAndSecondary($record);
+                return ! $this->validateInsuranceWithPrimaryAndSecondary($record);
             }
 
             if (isset($record['insurances'])) {
-                return !$this->validateInsuranceWithCollection($record);
+                return ! $this->validateInsuranceWithCollection($record);
             }
         });
 
         return $this;
     }
 
-    private function validateInsuranceWithCollection($record) {
+    private function validateInsuranceWithCollection($record)
+    {
         $eligibleInsurances = [];
 
         foreach ($record['insurances'] as $insurance) {
             if (str_contains(strtolower($insurance['type']), [
-                    'medicare b',
-                    'medicare part b',
-                    'medicare',
-                ])
+                'medicare b',
+                'medicare part b',
+                'medicare',
+            ])
             ) {
                 $eligibleInsurances[] = $insurance;
             }
@@ -286,8 +288,9 @@ class WelcomeCallListGenerator
         return true;
     }
 
-    private function validateInsuranceWithPrimaryAndSecondary($record) {
-        $primary = strtolower($record['primary_insurance'] ?? null);
+    private function validateInsuranceWithPrimaryAndSecondary($record)
+    {
+        $primary   = strtolower($record['primary_insurance'] ?? null);
         $secondary = strtolower($record['secondary_insurance'] ?? null);
 
         //Change none to an empty string
@@ -330,7 +333,7 @@ class WelcomeCallListGenerator
      */
     protected function byLastEncounter(): WelcomeCallListGenerator
     {
-        if (!$this->filterLastEncounter) {
+        if ( ! $this->filterLastEncounter) {
             return $this;
         }
 
@@ -338,13 +341,13 @@ class WelcomeCallListGenerator
             //Anything past this date is valid
             $minEligibleDate = Carbon::now()->subYear();
 
-            if (!isset($row['last_encounter'])) {
+            if ( ! isset($row['last_encounter'])) {
                 $this->ineligiblePatients->push($row);
 
                 return true;
             }
 
-            if (!$row['last_encounter']) {
+            if ( ! $row['last_encounter']) {
                 $this->ineligiblePatients->push($row);
 
                 return true;
@@ -373,7 +376,7 @@ class WelcomeCallListGenerator
      */
     protected function createEnrollees()
     {
-        if (!$this->createEnrollees) {
+        if ( ! $this->createEnrollees) {
             return $this;
         }
 
@@ -397,11 +400,11 @@ class WelcomeCallListGenerator
                 $args['email'] = 'noEmail@noEmail.com';
             }
 
-            $args['address'] = $args['street'];
+            $args['address']   = $args['street'];
             $args['address_2'] = $args['street2'] ?? '';
 
             $args['medical_record_type'] = $this->medicalRecordType;
-            $args['medical_record_id'] = $this->medicalRecordId;
+            $args['medical_record_id']   = $this->medicalRecordId;
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'] ?? $args['mrn_number'],
@@ -412,8 +415,12 @@ class WelcomeCallListGenerator
     /**
      * Exports the Patient List to a csv file.
      */
-    public function exportToCsv($download = true, $storeOnServer = false, $filenamePrefix = null, $returnStorageInfo = false)
-    {
+    public function exportToCsv(
+        $download = true,
+        $storeOnServer = false,
+        $filenamePrefix = null,
+        $returnStorageInfo = false
+    ) {
         $filename = "Welcome Call List";
 
         if ($filenamePrefix) {
@@ -456,7 +463,7 @@ class WelcomeCallListGenerator
             $keys = $patient->keys();
 
             foreach ($requiredKeys as $k) {
-                if (!$keys->contains($k)) {
+                if ( ! $keys->contains($k)) {
                     $patient->put($k, '');
                 }
             }
@@ -479,7 +486,7 @@ class WelcomeCallListGenerator
         });
 
         if ($storeOnServer) {
-            if (!$returnStorageInfo) {
+            if ( ! $returnStorageInfo) {
                 $excel->store('xls', false, false);
             } else {
                 return $excel->store('xls', false, true);
@@ -532,7 +539,7 @@ class WelcomeCallListGenerator
             $keys = $patient->keys();
 
             foreach ($requiredKeys as $k) {
-                if (!$keys->contains($k)) {
+                if ( ! $keys->contains($k)) {
                     $patient->put($k, '');
                 }
             }

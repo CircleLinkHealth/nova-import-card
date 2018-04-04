@@ -14,11 +14,11 @@ use App\Contracts\Importer\MedicalRecord\Section\Logger;
 class JsonListProblemLogger implements Logger
 {
 
-    public function handle($medicalRecord): array
+    public function handle($problemsString): array
     {
 //        Expected format
 //        {"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
-        $problems = json_decode($medicalRecord->problems_string, true);
+        $problems = json_decode($problemsString, true);
 
         if (is_array($problems) && array_key_exists('Problems', $problems)) {
             return collect($problems['Problems'])
@@ -41,8 +41,8 @@ class JsonListProblemLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($medicalRecord): bool
+    public function shouldHandle($problemsString): bool
     {
-        return starts_with($medicalRecord->problems_string, ['[', '{']);
+        return is_json($problemsString);
     }
 }
