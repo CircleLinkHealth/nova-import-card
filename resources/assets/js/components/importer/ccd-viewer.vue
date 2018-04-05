@@ -401,8 +401,19 @@
 
             EventBus.$on('vdropzone:success', (records) => {
                 this.tableData = records.map(this.setupRecord)
-                if (this.tableData.length > 0) this.changePractice(this.tableData[0].id, this.tableData[0].Practice)
+                this.tableData.forEach(row => {
+                    row.changePractice(row.Practice)
+                })
                 EventBus.$emit('vdropzone:remove-all-files')
+
+                this.tableData.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
+                    EventBus.$emit('notifications:create', { 
+                        message: `Imported Patient "${row.Name}" is a possible duplicate`, 
+                        href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                        noTimeout: true,
+                        type: 'error'
+                    })
+                })
             })
         }
     }
