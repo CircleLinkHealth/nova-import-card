@@ -72,7 +72,7 @@
                     <tr>
                         <th> </th>
                         @foreach($months as $month)
-                            <th>{{$month->format('m, Y')}}</th>
+                            <th>{{$month->format('F, Y')}}</th>
                         @endforeach
                     </tr>
                     </thead>
@@ -81,7 +81,7 @@
 
                             <div class="row vdivide">
                                 <tr>
-                                    <th>{{$practice}} billed:</th>
+                                    <td><strong>{{$practice}}</strong> billed:</td>
                                     @foreach($patients['Billed'] as $month => $count)
 
                                         <td>{{$count}}</td>
@@ -89,7 +89,7 @@
                                     @endforeach
                                 </tr>
                                 <tr>
-                                    <th>Added to billing:</th>
+                                    <td>Added to billing:</td>
 
                                     @foreach($patients['Added to Billing'] as $month => $count)
 
@@ -99,7 +99,7 @@
 
                                 </tr>
                                 <tr>
-                                    <th>Lost from Billing</th>
+                                    <td>Lost from Billing</td>
 
                                     @foreach($patients['Lost from Billing'] as $month => $count)
 
