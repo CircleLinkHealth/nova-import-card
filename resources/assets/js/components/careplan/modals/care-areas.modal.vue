@@ -107,7 +107,7 @@
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" :disabled="!code.id" />
                                             </div>
                                         </li>
                                         <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
@@ -177,7 +177,7 @@
                 return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
-                return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
+                return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
             },
             codesForSelect() {
                 return this.codes.map(p => ({ label: p.name, value: p.id }))
