@@ -62,7 +62,7 @@
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" scope="props">
-                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" />
+                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
                 <div v-if="props.row.loaders.confirm">
                     <loader></loader>
                 </div>
@@ -171,6 +171,10 @@
                     changeProvider(id) {
                         self.changeProvider(record.id, id)
                         self.updateRecord(record.id)
+                    },
+                    validate () {
+                        const record = this
+                        return (!!record.Practice && !!record['Billing Provider'] && !!record.Location)
                     }
                 }
                 return newRecord
@@ -322,26 +326,31 @@
             submitOne(id) {
                 const record = this.tableData.find(r => r.id === id)
                 if (record) {
-                    if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
-                        record.loaders.confirm = true
-                        return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                            record.loaders.confirm = false
-                            if ((response.data || []).some(item => item.id === id && item.completed)) {
-                                this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                            }
-                            console.log('submit-one', record, response.data)
-                            const patient = (((response.data || [])[0] || {}).patient || {})
-                            EventBus.$emit('notifications:create', { 
-                                message: `Patient Created (${patient.id}): ${patient.display_name}`, 
-                                href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                noTimeout: true
+                    if (!!record.Practice && !!record['Billing Provider'] && !!record.Location) {
+                        if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                            record.loaders.confirm = true
+                            return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                                record.loaders.confirm = false
+                                if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                    this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                                }
+                                console.log('submit-one', record, response.data)
+                                const patient = (((response.data || [])[0] || {}).patient || {})
+                                EventBus.$emit('notifications:create', { 
+                                    message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                    href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                    noTimeout: true
+                                })
+                                return response
+                            }).catch((err) => {
+                                record.loaders.confirm = false
+                                record.errors.confirm = err.message
+                                console.error('submit-one', record, err)
                             })
-                            return response
-                        }).catch((err) => {
-                            record.loaders.confirm = false
-                            record.errors.confirm = err.message
-                            console.error('submit-one', record, err)
-                        })
+                        }
+                    }
+                    else {
+                        record.errors.confirm = 'select a practice, location and provider'
                     }
                 }
                 else {
