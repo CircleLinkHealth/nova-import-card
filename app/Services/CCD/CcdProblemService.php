@@ -115,6 +115,14 @@ class CcdProblemService
                 'cpm_instruction_id' => $instructionData->id
             ]);
         }
+        else {
+            $this->repo()->model()->where([
+                'id' => $ccdId
+            ])->update([
+                'cpm_instruction_id' => null
+            ]);
+            $problem['instruction'] = null;
+        }
 
         if ($icd10) {
             $problemCode = new ProblemCode();

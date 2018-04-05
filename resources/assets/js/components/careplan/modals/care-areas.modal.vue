@@ -55,7 +55,7 @@
                                 <div class="row">
                                     <div class="col-sm-12 top-20">
                                         <textarea class="form-control height-200"
-                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
+                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
                                             Full Name: {{ selectedProblem.original_name }}
@@ -107,7 +107,7 @@
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" :disabled="!code.id" />
                                             </div>
                                         </li>
                                         <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
@@ -167,8 +167,8 @@
                 return this.problems.distinct((p) => p.name)
             },
             patientHasSelectedProblem() {
-                if (!this.selectedProblem) return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
-                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
+                if (!this.selectedProblem) return this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
+                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
@@ -177,7 +177,7 @@
                 return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
-                return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
+                return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
             },
             codesForSelect() {
                 return this.codes.map(p => ({ label: p.name, value: p.id }))
