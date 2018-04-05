@@ -36,7 +36,7 @@
             table { white-space: nowrap; }
         </style>
     @endpush
-
+    <h3 align="center">Billing Churn Dashboard</h3>
     <div class="container">
         {{--<div class="col-md-12">--}}
             {{--@include('admin.opsDashboard.panel')--}}
@@ -54,6 +54,7 @@
                             <option name="months" value="4">4</option>
                             <option name="months" value="5">5</option>
                             <option name="months" value="6">6</option>
+                            <option name="months" value="7">7</option>
                         </select>
                     </div>
                 </div>
@@ -65,7 +66,7 @@
     </div>
     <div class="container">
         <div class="panel panel-default">
-            {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
+            {{--<div class="panel-heading">Billing Churn Dashboard</div>--}}
             <div class="panel-body">
                 <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                     <thead>
@@ -107,6 +108,9 @@
 
                                     @endforeach
 
+                                </tr>
+                                <tr>
+                                    <td> </td>
                                 </tr>
                             </div>
                     @endforeach

@@ -31,7 +31,7 @@ class PatientMonthlySummariesSeeder extends Seeder
             $u->save();
             $u->patientInfo()->create();
             $u->patientSummaries()->create([
-                'month_year' => Carbon::now()->subMonth($months->random())->startOfMonth()->toDateString(),
+                'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
                 'ccm_time'   => 1400,
                 'approved'   => 1,
                 'actor_id'   => 1,

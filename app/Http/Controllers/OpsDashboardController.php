@@ -356,7 +356,7 @@ class OpsDashboardController extends Controller
         $months = $request['months'];
         //default date range
         if ($months == 'all') {
-            $months = 12;
+            $months = 8;
         }
 
         $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
@@ -367,7 +367,7 @@ class OpsDashboardController extends Controller
                                           ->whereHas('patient')
                                           ->where('actor_id', '!=', null)
                                           ->where('approved', 1)
-                                          ->where('month_year', '>=', $fromDate->toDateString())
+                                          ->where('month_year', '>=', $fromDate)
                                           ->get();
 
         $practices = Practice::activeBillable()->get();
