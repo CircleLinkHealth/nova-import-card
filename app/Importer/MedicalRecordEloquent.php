@@ -71,23 +71,30 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         $demos = $this->demographics->first();
 
         if ($demos) {
-            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+            $practiceId = optional($demos->ccda)->practice_id;
 
-            if ($patient) {
-                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
+            $query = User::whereFirstName($demos->first_name)
+                        ->whereLastName($demos->last_name)
+                        ->whereHas('patientInfo', function ($q) use ($demos) {
+                            $q->whereBirthDate($demos->dob);
+                        });
+            if ($practiceId) {
+                $query = $query->where('program_id', $practiceId);
+            }
+
+            $user = $query->first();
+
+            if ($user) {
+                $this->importedMedicalRecord->duplicate_id = $user->id;
                 $this->importedMedicalRecord->save();
 
                 return true;
             }
 
-            $user = User::whereFirstName($demos->first_name)
-                ->whereLastName($demos->last_name)
-                ->whereHas('patientInfo', function ($q) use ($demos) {
-                    $q->whereBirthDate($demos->dob);
-                })->first();
+            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
 
-            if ($user) {
-                $this->importedMedicalRecord->duplicate_id = $user->id;
+            if ($patient) {
+                $this->importedMedicalRecord->duplicate_id = $patient->user_id;
                 $this->importedMedicalRecord->save();
 
                 return true;
