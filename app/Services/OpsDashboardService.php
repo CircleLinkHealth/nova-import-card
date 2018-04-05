@@ -350,7 +350,7 @@ class OpsDashboardService
 
     }
 
-    public function billingChurnRow($summaries, $months, $fromDate)
+    public function billingChurnRow($summaries, $months)
     {
 
         $row = [];
@@ -389,10 +389,8 @@ class OpsDashboardService
         $fromDate = $month->copy()->startOfMonth();
         $toDate   = $month->copy()->endOfMonth();
 
-        $filteredSummaries = $summaries->where([
-            ['month_year', '>=', $fromDate->format('Y-m-d')],
-            ['month_year', '>=', $toDate->format('Y-m-d')],
-        ]);
+        $filteredSummaries = $summaries->where('month_year', '>=', $fromDate->format('Y-m-d'))
+                                       ->where('month_year', '>=', $toDate->format('Y-m-d'));
 
         return $filteredSummaries->count();
     }
@@ -405,17 +403,14 @@ class OpsDashboardService
         $fromDate = $month->copy()->startOfMonth();
         $toDate   = $month->copy()->endOfMonth();
 
-        $filteredSummaries = $summaries->where([
-            ['month_year', '>=', $fromDate->format('Y-m-d')],
-            ['month_year', '>=', $toDate->format('Y-m-d')],
-        ]);
+        $filteredSummaries = $summaries->where('month_year', '>=', $fromDate->format('Y-m-d'))
+                                       ->where('month_year', '>=', $toDate->format('Y-m-d'));
+
 
         foreach ($filteredSummaries as $summary) {
             //check if sub month dates are correct, or if it needs end of month
-            $priorMonthSummary = $summaries->where([
-                ['month_year', '>=', $fromDate->copy()->subMonth()->format('Y-m-d')],
-                ['month_year', '>=', $toDate->copy()->subMonth()->format('Y-m-d')],
-            ])
+            $priorMonthSummary = $summaries->where('month_year', '>=', $fromDate->copy()->subMonth()->format('Y-m-d'))
+                                           ->where('month_year', '>=', $toDate->copy()->subMonth()->format('Y-m-d'))
                                            ->where('patient_id', $summary->patient_id);
             if ($priorMonthSummary == null) {
                 $added += 1;
@@ -433,18 +428,14 @@ class OpsDashboardService
         $fromDate = $month->copy()->startOfMonth();
         $toDate   = $month->copy()->endOfMonth();
 
-        $filteredSummaries = $summaries->where([
-            ['month_year', '>=', $fromDate->copy()->subMonth()->format('Y-m-d')],
-            ['month_year', '>=', $toDate->copy()->subMonth()->format('Y-m-d')],
-        ]);
+        $filteredSummaries = $summaries->where('month_year', '>=', $fromDate->copy()->subMonth()->format('Y-m-d'))
+                                       ->where('month_year', '>=', $toDate->copy()->subMonth()->format('Y-m-d'));
 
-        foreach ($filteredSummaries as $summary){
-            $nextMonthSummary = $summaries->where([
-                ['month_year', '>=', $fromDate->format('Y-m-d')],
-                ['month_year', '>=', $toDate->format('Y-m-d')],
-            ])
+        foreach ($filteredSummaries as $summary) {
+            $nextMonthSummary = $summaries->where('month_year', '>=', $fromDate->format('Y-m-d'))
+                                          ->where('month_year', '>=', $toDate->format('Y-m-d'))
                                           ->where('patient_id', $summary->patient_id);
-            if ($nextMonthSummary == null){
+            if ($nextMonthSummary == null) {
                 $lost += 1;
             }
         }

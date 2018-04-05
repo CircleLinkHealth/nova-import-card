@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Http\Controllers\OpsDashboardController;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\Services\OpsDashboardService;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class OpsDashboardTest extends TestCase
 {
+    private $controller;
     private $service;
     private $repo;
     private $date;
@@ -58,44 +60,48 @@ class OpsDashboardTest extends TestCase
 //
 //    }
 
-    public function test_new_repository()
-    {
+//    public function test_new_repository()
+//    {
+//
+//        $from = Carbon::now()->startOfDay()->toDateTimeString();
+//        $to = Carbon::now()->startOfMonth()->startOfDay()->toDateTimeString();
+//
+//        $weekdays = $this->service->calculateWeekdays($from, $to);
+//
+//        $this->assertNotNull($weekdays);
+//
+//        $fromDate = $this->date->copy()->subYear(2)->startOfYear()->startOfDay()->toDateTimeString();
+//        $toDate = $this->date->copy()->subYear(2)->endOfYear()->endOfDay()->toDateTimeString();
+//
+//        $hoursBehind = $this->service->calculateHoursBehind($toDate);
+//        $this->assertNotNull($hoursBehind);
+//
+//
+//        $totalPatients = $this->repo->getPatientsByStatus($fromDate, $toDate);
+//        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $totalPatients);
+//        $this->assertNotNull($totalPatients);
+//
+//        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
+//        $countsByCcmTime = $this->service->countPatientsByCcmTime($enrolledPatients, $fromDate, $toDate);
+//
+//        $this->assertNotNull($countsByCcmTime);
+//
+//
+//        $practices = Practice::active()->get();
+//        $totals = [];
+//        foreach ($practices as $practice){
+//            $totals[$practice->display_name] = $this->service->dailyReportRow($practice, $fromDate, $toDate);
+//        }
+//
+//        $this->assertNotNull($totals);
+//    }
 
-        $from = Carbon::now()->startOfDay()->toDateTimeString();
-        $to = Carbon::now()->startOfMonth()->startOfDay()->toDateTimeString();
+    public function test_billing_churn(){
 
-        $weekdays = $this->service->calculateWeekdays($from, $to);
+        $row = $this->controller->getBillingChurnIndex();
 
-        $this->assertNotNull($weekdays);
+        $this->assertNotNull($row);
 
-        $fromDate = $this->date->copy()->subYear(2)->startOfYear()->startOfDay()->toDateTimeString();
-        $toDate = $this->date->copy()->subYear(2)->endOfYear()->endOfDay()->toDateTimeString();
-
-        $hoursBehind = $this->service->calculateHoursBehind($toDate);
-        $this->assertNotNull($hoursBehind);
-
-        $ccmPatients = $this->repo->getPatientsByCcmTime($fromDate, $toDate);
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $ccmPatients);
-        $this->assertNotNull($ccmPatients);
-
-
-        $totalPatients = $this->repo->getPatientsByStatus($fromDate, $toDate);
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $totalPatients);
-        $this->assertNotNull($totalPatients);
-
-        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
-        $countsByCcmTime = $this->service->countPatientsByCcmTime($enrolledPatients, $fromDate, $toDate);
-
-        $this->assertNotNull($countsByCcmTime);
-
-
-        $practices = Practice::active()->get();
-        $totals = [];
-        foreach ($practices as $practice){
-            $totals[$practice->display_name] = $this->service->dailyReportRow($practice, $fromDate, $toDate);
-        }
-
-        $this->assertNotNull($totals);
     }
 
 
@@ -103,6 +109,7 @@ class OpsDashboardTest extends TestCase
     {
         parent::setUp();
 
+        $this->controller = app(OpsDashboardController::class);
         $this->service = app(OpsDashboardService::class);
         $this->repo = new OpsDashboardPatientEloquentRepository();
         $this->date = Carbon::now()->subMonth(2);

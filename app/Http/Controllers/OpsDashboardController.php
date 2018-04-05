@@ -74,10 +74,10 @@ class OpsDashboardController extends Controller
 
         $rows = [];
         foreach ($allPractices as $practice) {
-            $statusPatientsByPactice = $patientsByStatus->where('program_id', $practice->id);
-            $patientsByPractice      = $enrolledPatients->where('program_id', $practice->id);
-            $row                     = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
-                $statusPatientsByPactice);
+            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
+            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
+            $row                      = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
+                $statusPatientsByPractice);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -314,35 +314,79 @@ class OpsDashboardController extends Controller
 
         $date = Carbon::today();
 
-        //default date range
-        $months = 6;
-        $fromDate = $date->subMonth($months)->startOfMonth()->startOfDay();
-        $months = $this->getMonths($date, $months);
 
-        //get Monthly Summaries that are approved and have actorId
+        //default date range
+        $months   = 6;
+        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
+        $months   = $this->getMonths($date, $months);
+
+
         $summaries = PatientMonthlySummary::with('patient')
+                                          ->whereHas('patient')
                                           ->where('actor_id', '!=', null)
                                           ->where('approved', 1)
                                           ->where('month_year', '>=', $fromDate->toDateString())
                                           ->get();
 
-        $practices = Practice::activeBillable();
+        $practices = Practice::activeBillable()->get();
 
-        //each row(practice) has 3 rows (billable, added to billing, lost from billing)
+
         $rows = [];
         foreach ($practices as $practice) {
-            $practiceSummaries = $this->service->filterSummariesByPractice($summaries, $practice->id);
-            $rows[]            = $this->service->billingChurnRow($practiceSummaries, $months, $fromDate);
+            $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
+            $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
         }
-        $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows);
+        $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows, $months);
         $rows                     = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
             'date',
             'fromDate',
             'rows',
+            'months',
         ]));
 
+    }
+
+    public function getBillingChurn(Request $request)
+    {
+
+        $date = Carbon::today();
+
+        $months = $request['months'];
+        //default date range
+        if ($months == 'all') {
+            $months = 12;
+        }
+
+        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
+        $months   = $this->getMonths($date, $months);
+
+
+        $summaries = PatientMonthlySummary::with('patient')
+                                          ->whereHas('patient')
+                                          ->where('actor_id', '!=', null)
+                                          ->where('approved', 1)
+                                          ->where('month_year', '>=', $fromDate->toDateString())
+                                          ->get();
+
+        $practices = Practice::activeBillable()->get();
+
+
+        $rows = [];
+        foreach ($practices as $practice) {
+            $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
+            $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
+        }
+        $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows, $months);
+        $rows                     = collect($rows);
+
+        return view('admin.opsDashboard.billing-churn', compact([
+            'date',
+            'fromDate',
+            'rows',
+            'months',
+        ]));
     }
 
     /**
@@ -543,15 +587,18 @@ class OpsDashboardController extends Controller
 
     }
 
-    private function getMonths(Carbon $date, $number){
+    private function getMonths(Carbon $date, $number)
+    {
 
         $months = [];
-        //create for loop
+
         for ($x = $number; $x > 0; $x--) {
 
-            $months[] = $date->copy()->startOfMonth()->subMonth($x);
+            $months[] = $date->copy()->subMonth($x)->startOfMonth();
 
         }
+
+        return collect($months);
     }
 
     public function makeExcelPatientReport(Request $request)
@@ -645,7 +692,37 @@ class OpsDashboardController extends Controller
 
     }
 
-    public function calculateBillingChurnTotalRow($rows){}
+    public function calculateBillingChurnTotalRow($rows, $months)
+    {
+
+        $total['Billed']            = [];
+        $total['Added to Billing']  = [];
+        $total['Lost from Billing'] = [];
+
+        foreach ($rows as $practice => $patients) {
+            foreach ($patients['Billed'] as $month => $count) {
+                $total['Billed'][$month][] = $count;
+            }
+
+            foreach ($patients['Added to Billing'] as $month => $count) {
+                $total['Added to Billing'][$month][] = $count;
+            }
+
+            foreach ($patients['Lost from Billing'] as $month => $count) {
+                $total['Lost from Billing'][$month][] = $count;
+            }
+        }
+
+        foreach ($months as $month){
+            $totalRow['Billed'][$month->format('m, Y')]       = array_sum($total['Billed'][$month->format('m, Y')]);
+            $totalRow['Added to Billing'][$month->format('m, Y')]  = array_sum($total['Added to Billing'][$month->format('m, Y')]);
+            $totalRow['Lost from Billing'][$month->format('m, Y')]  = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
+        }
+
+        return collect($totalRow);
+
+
+    }
 
 
 }
