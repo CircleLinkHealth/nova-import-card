@@ -8,6 +8,7 @@
 
 namespace App\Services\Eligibility\Processables;
 
+use App\Jobs\ProcessSinglePatientEligibility;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
 use Illuminate\Http\File;
@@ -23,19 +24,13 @@ class Csv extends BaseProcessable
      */
     public function processEligibility()
     {
-        $csv         = parseCsvToArray($this->getFilePath());
-        $patientList = new Collection($csv);
-
-        $list = new WelcomeCallListGenerator(
-            $patientList,
-            $this->filterLastEncounter,
-            $this->filterInsurance,
-            $this->filterProblems,
-            $this->createEnrollees,
-            $this->practice
-        );
-
-        return $list;
+        collect(parseCsvToArray($this->getFilePath()))
+            ->map(function ($patient) {
+                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $this->practice,
+                    $this->filterLastEncounter,
+                    $this->filterInsurance,
+                    $this->filterProblems);
+            });
     }
 
     /**
@@ -48,7 +43,7 @@ class Csv extends BaseProcessable
             $date     = Carbon::now()->toDateString();
 
             $this->getFilePath()->move(storage_path($date), $fileName);
-            \Storage::disk('storage')->setVisibility("$date/$fileName",'public');
+            \Storage::disk('storage')->setVisibility("$date/$fileName", 'public');
 
             $this->setFile(storage_path("$date/$fileName"));
         }

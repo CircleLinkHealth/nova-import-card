@@ -45,7 +45,7 @@ class WelcomeCallListController extends Controller
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
-        $createEnrollees     = (boolean)$request->input('createEnrollees');
+        $createEnrollees     = true;
         $practice            = Practice::find($practiceId);
 
         return $this->eligibilityService->processEligibility($file, $practice, $filterLastEncounter,
