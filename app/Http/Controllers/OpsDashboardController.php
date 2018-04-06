@@ -69,7 +69,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get();
+        $allPractices = Practice::activeBillable()->get()->sortBy('name');
 
 
         $rows = [];
@@ -123,7 +123,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get();
+        $allPractices = Practice::activeBillable()->get()->sortBy('name');
 
 
         $rows = [];
@@ -165,7 +165,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get();
+        $allPractices = Practice::activeBillable()->get()->sortBy('name');
 
 
         foreach ($allPractices as $practice) {
@@ -204,7 +204,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get();
+        $allPractices = Practice::activeBillable()->get()->sortBy('name');
 
 
         foreach ($allPractices as $practice) {
@@ -328,7 +328,8 @@ class OpsDashboardController extends Controller
                                           ->where('month_year', '>=', $fromDate->toDateString())
                                           ->get();
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('name');
+
 
 
         $rows = [];
@@ -370,7 +371,8 @@ class OpsDashboardController extends Controller
                                           ->where('month_year', '>=', $fromDate)
                                           ->get();
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('name');
+
 
 
         $rows = [];
