@@ -14,6 +14,7 @@ use App\Location;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
+use App\Patient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -161,5 +162,40 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
     public function billingProvider()
     {
         return $this->belongsTo(User::class, 'billing_provider_id', 'id');
+    }
+
+    public function checkDuplicity() {
+        $demos = $this->demographics->first();
+
+        if ($demos) {
+            $practiceId = optional($demos->ccda)->practice_id;
+
+            $query = User::whereFirstName($demos->first_name)
+                        ->whereLastName($demos->last_name)
+                        ->whereHas('patientInfo', function ($q) use ($demos) {
+                            $q->whereBirthDate($demos->dob);
+                        });
+            if ($practiceId) {
+                $query = $query->where('program_id', $practiceId);
+            }
+
+            $user = $query->first();
+
+            if ($user) {
+                $this->duplicate_id = $user->id;
+
+                return $user->id;
+            }
+
+            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+
+            if ($patient) {
+                $this->duplicate_id = $patient->user_id;
+
+                return $patient->user_id;
+            }
+
+            return null;
+        }
     }
 }

@@ -6,6 +6,13 @@
             </template>
         </notifications>
 
+
+        <div v-if="loaders.records">
+            <center>
+                <loader></loader>
+            </center>
+        </div>
+
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" scope="props">
                 <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
@@ -111,7 +118,8 @@
                 },
                 loaders: {
                     delete: false,
-                    confirm: false
+                    confirm: false,
+                    records: false
                 }
             }
         },
@@ -260,16 +268,19 @@
                 console.log('update-record', record)
             },
             getRecords() {
-                this.axios.get(this.url).then((response) => {
+                this.loaders.records = true
+                return this.axios.get(this.url).then((response) => {
                     const records = response.data || []
                     this.tableData = records.map(this.setupRecord)
                     console.log('get-records', this.tableData)
                     this.tableData.forEach(row => {
                         row.changePractice(row.Practice)
                     })
+                    this.loaders.records = false
                     return this.tableData
                 }).catch(err => {
                     console.error(err)
+                    this.loaders.records = false
                 })
             },
             select(e, id) {
@@ -341,7 +352,7 @@
                                     href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
                                     noTimeout: true
                                 })
-                                return response
+                                return this.getRecords()
                             }).catch((err) => {
                                 record.loaders.confirm = false
                                 record.errors.confirm = err.message
