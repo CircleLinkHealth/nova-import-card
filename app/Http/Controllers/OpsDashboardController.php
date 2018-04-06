@@ -337,7 +337,7 @@ class OpsDashboardController extends Controller
             $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
             $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
         }
-        $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows, $months);
+        $total = $this->calculateBillingChurnTotalRow($rows, $months);
         $rows                     = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
@@ -345,6 +345,7 @@ class OpsDashboardController extends Controller
             'fromDate',
             'rows',
             'months',
+            'total',
         ]));
 
     }
@@ -380,7 +381,7 @@ class OpsDashboardController extends Controller
             $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
             $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
         }
-        $rows['CircleLink Total'] = $this->calculateBillingChurnTotalRow($rows, $months);
+        $total = $this->calculateBillingChurnTotalRow($rows, $months);
         $rows                     = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
@@ -388,6 +389,7 @@ class OpsDashboardController extends Controller
             'fromDate',
             'rows',
             'months',
+            'total'
         ]));
     }
 

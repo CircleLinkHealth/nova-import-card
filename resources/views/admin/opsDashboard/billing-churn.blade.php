@@ -78,6 +78,39 @@
                     </tr>
                     </thead>
                     <tbody>
+                    <div class="row vdivide">
+                        <tr>
+                            <td><strong>CircleLink Total</strong> billed:</td>
+                            @foreach($total['Billed'] as $month => $count)
+
+                                <td>{{$count}}</td>
+
+                            @endforeach
+                        </tr>
+                        <tr>
+                            <td>Added to billing:</td>
+
+                            @foreach($total['Added to Billing'] as $month => $count)
+
+                                <td>{{$count}}</td>
+
+                            @endforeach
+
+                        </tr>
+                        <tr>
+                            <td>Lost from Billing</td>
+
+                            @foreach($total['Lost from Billing'] as $month => $count)
+
+                                <td>{{$count}}</td>
+
+                            @endforeach
+
+                        </tr>
+                        <tr>
+                            <td> </td>
+                        </tr>
+                    </div>
                     @foreach($rows as $practice => $patients)
 
                             <div class="row vdivide">
