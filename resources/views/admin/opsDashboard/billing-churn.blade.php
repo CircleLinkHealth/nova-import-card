@@ -104,7 +104,7 @@
 
                             @foreach($total['Added to Billing'] as $month => $count)
 
-                                <td>{{$count}}</td>
+                                <td class="color-green">{{$count}}</td>
 
                             @endforeach
 
@@ -114,7 +114,7 @@
 
                             @foreach($total['Lost from Billing'] as $month => $count)
 
-                                <td>{{$count}}</td>
+                                <td class="color-red">{{$count}}</td>
 
                             @endforeach
 
