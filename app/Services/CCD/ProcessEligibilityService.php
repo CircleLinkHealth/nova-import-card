@@ -28,19 +28,6 @@ class ProcessEligibilityService
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
-        $processedDir = $contents->where('type', '=', 'dir')
-                                 ->where('filename', '=', 'processed')
-                                 ->first();
-
-        if ( ! $processedDir) {
-            $cloudDisk->makeDirectory("$dir/processed");
-
-            $processedDir = collect($cloudDisk->listContents($dir, $recursive))
-                ->where('type', '=', 'dir')
-                ->where('filename', '=', 'processed')
-                ->first();
-        }
-
         $zipFiles = $contents
             ->where('type', '=', 'file')
             ->where('mimetype', '=', 'application/zip')
@@ -50,18 +37,11 @@ class ProcessEligibilityService
                 $dir,
                 $filterLastEncounter,
                 $filterInsurance,
-                $filterProblems,
-                $processedDir
+                $filterProblems
             ) {
                 $cloudFilePath = $file['path'];
                 $cloudFileName = $file['filename'];
                 $cloudDirName  = $file['dirname'];
-
-                if (str_contains($cloudFileName, ['processed'])) {
-                    $cloudDisk->move($cloudFilePath, "{$processedDir['path']}/{$cloudFileName}");
-
-                    return $file;
-                }
 
                 $localDisk = Storage::disk('local');
 
@@ -84,6 +64,12 @@ class ProcessEligibilityService
                     $zip->close();
 
                     foreach ($localDisk->allFiles($unzipDir) as $path) {
+                        if (Zip::check($localDisk->path($path))) {
+                            $zip = Zip::open($localDisk->path($path));
+                            $zip->extract($localDisk->path($unzipDir));
+                            $zip->close();
+                        }
+
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
                         $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
@@ -120,7 +106,6 @@ class ProcessEligibilityService
             ->values();
 
         if ($zipFiles->isNotEmpty()) {
-//            $contents = collect($cloudDisk->listContents($dir, $recursive));
             return 'done';
         }
 
@@ -135,18 +120,11 @@ class ProcessEligibilityService
                             $dir,
                             $filterLastEncounter,
                             $filterInsurance,
-                            $filterProblems,
-                            $processedDir
+                            $filterProblems
                         ) {
                             $driveFilePath = $file['path'];
 
                             $rawData = $cloudDisk->get($driveFilePath);
-
-                            if (str_contains($file['filename'], ['processed'])) {
-                                $cloudDisk->move($file['path'], "{$processedDir['path']}/{$file['filename']}");
-
-                                return $file;
-                            }
 
                             $ccda = Ccda::create([
                                 'source'   => Ccda::GOOGLE_DRIVE."_$dir",
@@ -163,9 +141,6 @@ class ProcessEligibilityService
                                 new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
                                     (bool)$filterInsurance, (bool)$filterProblems),
                             ])->dispatch($ccda->id);
-
-                            $cloudDisk->move($file['path'],
-                                "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
 
                             return $file;
                         })
@@ -184,19 +159,6 @@ class ProcessEligibilityService
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
-        $processedDir = $contents->where('type', '=', 'dir')
-                                 ->where('filename', '=', 'processed')
-                                 ->first();
-
-        if ( ! $processedDir) {
-            $cloudDisk->makeDirectory("$dir/processed");
-
-            $processedDir = collect($cloudDisk->listContents($dir, $recursive))
-                ->where('type', '=', 'dir')
-                ->where('filename', '=', 'processed')
-                ->first();
-        }
-
         $zipFiles = $contents
             ->where('type', '=', 'file')
             ->where('mimetype', '=', 'application/zip')
@@ -206,8 +168,7 @@ class ProcessEligibilityService
                 $dir,
                 $filterLastEncounter,
                 $filterInsurance,
-                $filterProblems,
-                $processedDir
+                $filterProblems
             ) {
                 $localDisk = Storage::disk('local');
 
@@ -222,8 +183,6 @@ class ProcessEligibilityService
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 
-                        $put       = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
-                            fopen($localDisk->path($path), 'r+'));
                         $ccda = Ccda::create([
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
                             'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
@@ -240,10 +199,6 @@ class ProcessEligibilityService
                             new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
                                 (bool)$filterInsurance, (bool)$filterProblems),
                         ])->dispatch($ccda->id);
-                    } else {
-                        $pathWithUnderscores = str_replace('/', '_', $path);
-                        $put       = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
-                            fopen($localDisk->path($path), 'r+'));
                     }
 
                     $localDisk->delete($path);

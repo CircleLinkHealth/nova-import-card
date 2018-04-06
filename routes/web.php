@@ -1831,12 +1831,12 @@ Route::group([
     });
 });
 
-Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+Route::post('process-eligibility/drive/', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
     'as'   => 'process.eligibility.google.drive'
 ])->middleware(['auth', 'role:administrator']);
 
 Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
     'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
-    'as'   => 'process.eligibility.google.drive'
+    'as'   => 'process.eligibility.local.zip'
 ])->middleware(['auth', 'role:administrator']);
