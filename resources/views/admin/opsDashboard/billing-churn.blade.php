@@ -38,6 +38,14 @@
             }
 
             table { white-space: nowrap; }
+
+            .color-green {
+                color: green;
+            }
+
+            .color-red {
+                color: red;
+            }
         </style>
     @endpush
     <h3 align="center">Billing Churn Dashboard</h3>
@@ -83,40 +91,47 @@
                     </thead>
                     <tbody>
                     @foreach($rows as $practice => $patients)
+                        
+                        <?php
+                            $billedMonths = $patients['Billed'];
+                            $profitBilledMonths = $patients['Added to Billing'];
+                            $lossBilledMonths = $patients['Lost from Billing'];
+                        ?>
 
-                            <div class="row vdivide">
-                                <tr>
-                                    <td><strong>{{$practice}}</strong> billed:</td>
-                                    @foreach($patients['Billed'] as $month => $count)
+                        <div class="row vdivide">
+                            <tr>
+                                <td><strong>{{$practice}}</strong> billed:</td>
+                                
+                                @foreach($patients['Billed'] as $month => $count)
 
-                                        <td>{{$count}}</td>
+                                    <td>{{ ($count == 0 && !$profitBilledMonths[$month] && !$lossBilledMonths[$month]) ? '' : $count}}</td>
 
-                                    @endforeach
-                                </tr>
-                                <tr>
-                                    <td>Added to billing:</td>
+                                @endforeach
+                            </tr>
+                            <tr>
+                                <td>Added to billing:</td>
 
-                                    @foreach($patients['Added to Billing'] as $month => $count)
+                                @foreach($patients['Added to Billing'] as $month => $count)
 
-                                        <td>{{$count}}</td>
+                                    <td class="color-green">{{ ($count == 0 && !$billedMonths[$month] && !$lossBilledMonths[$month]) ? '' : $count}}</td>
 
-                                    @endforeach
+                                @endforeach
 
-                                </tr>
-                                <tr>
-                                    <td>Lost from Billing</td>
+                            </tr>
+                            <tr>
+                                <td>Lost from Billing</td>
 
-                                    @foreach($patients['Lost from Billing'] as $month => $count)
+                                @foreach($patients['Lost from Billing'] as $month => $count)
 
-                                        <td>{{$count}}</td>
+                                    <td class="color-red">{{ ($count == 0 && !$billedMonths[$month] && !$profitBilledMonths[$month]) ? '' : $count}}</td>
 
-                                    @endforeach
+                                @endforeach
 
-                                </tr>
-                                <tr>
-                                    <td> </td>
-                                </tr>
-                            </div>
+                            </tr>
+                            <tr>
+                                <td> </td>
+                            </tr>
+                        </div>
                     @endforeach
                     </tbody>
                 </table>
