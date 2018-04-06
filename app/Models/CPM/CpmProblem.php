@@ -142,6 +142,10 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
     }
 
+    public function isDuplicateOf($name) {
+        return $this->where('contains', 'LIKE', "%$name%");
+    }
+
     /**
      * Get this Model's Service Class
      *
