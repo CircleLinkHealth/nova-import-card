@@ -387,7 +387,8 @@ class OpsDashboardService
     public function calculateBilledPatients($summaries, Carbon $month)
     {
 
-        $filteredSummaries = $summaries->where('month_year', $month);
+        $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                        ->where('month_year','<=', $month->copy()->endOfMonth());
 
         return $filteredSummaries->count();
     }
@@ -397,11 +398,13 @@ class OpsDashboardService
 
         $added = 0;
 
-        $filteredSummaries = $summaries->where('month_year', $month);
+        $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                         ->where('month_year','<=', $month->copy()->endOfMonth());
 
         if ($filteredSummaries->count() > 0){
             foreach ($filteredSummaries as $summary) {
-                $priorMonthSummary = $summaries->where('month_year', $month->copy()->subMonth())
+                $priorMonthSummary = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
+                                                ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
                                                ->where('patient_id', $summary->patient_id);
                 if ($priorMonthSummary->count() == 0) {
                     $added += 1;
@@ -421,11 +424,13 @@ class OpsDashboardService
         $fromDate = $month->copy()->startOfMonth();
         $toDate   = $month->copy()->endOfMonth();
 
-        $pastMonthSummaries = $summaries->where('month_year', $month->copy()->subMonth());
+        $pastMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
+                                        ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth());
 
         if ($pastMonthSummaries->count() > 0){
             foreach ($pastMonthSummaries as $summary) {
-                $thisMonthSummaries = $summaries->where('month_year', $month)
+                $thisMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                                ->where('month_year','<=', $month->copy()->endOfMonth())
                                                 ->where('patient_id', $summary->patient_id);
                 if ($thisMonthSummaries->count() == 0) {
                     $lost += 1;
