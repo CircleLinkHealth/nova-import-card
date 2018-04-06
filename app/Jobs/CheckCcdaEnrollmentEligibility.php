@@ -37,8 +37,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
     public function __construct(
         $ccda,
         Practice $practice,
-        $filterLastEncounter = null,
-        $filterInsurance = null,
+        $filterLastEncounter = false,
+        $filterInsurance = false,
         $filterProblems = true
     ) {
         if (is_a($ccda, Ccda::class)) {
