@@ -60,8 +60,11 @@ class Problems extends BaseImporter
                                         if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 2')->id;
                                         }
-                                        if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
+                                        else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 1')->id;
+                                        }
+                                        else if ($cpmProblemId == 1) {
+                                            return ['do_not_import' => $itemLog->id];
                                         }
 
                                         $problem = [
