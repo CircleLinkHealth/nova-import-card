@@ -128,11 +128,13 @@ class Problems extends BaseImporter
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
-                if (empty($keyword)) {
+                if (!$keyword || empty($keyword)) {
                     continue;
                 }
 
-                if (str_contains(strtolower($problemName), strtolower($keyword))) {
+                $keyword = trim($keyword);
+
+                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(strtolower($keyword), strtolower($problemName))) {
                     return $cpmProblem->id;
                 }
             }
