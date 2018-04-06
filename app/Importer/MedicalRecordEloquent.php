@@ -68,7 +68,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     }
 
     public function raiseConcerns() {
-        $demos = $this->demographics->first();
+        $demos = $this->demographics()->first();
 
         if ($demos) {
             $practiceId = optional($demos->ccda)->practice_id;
