@@ -33,6 +33,10 @@
                 text-align: center;
             }
 
+            .panel-body {
+                overflow-x: auto;
+            }
+
             table { white-space: nowrap; }
         </style>
     @endpush
