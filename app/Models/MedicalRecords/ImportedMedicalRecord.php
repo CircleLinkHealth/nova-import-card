@@ -165,10 +165,10 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
     }
 
     public function checkDuplicity() {
-        $demos = $this->demographics->first();
+        $demos = $this->demographics()->first();
 
         if ($demos) {
-            $practiceId = optional($demos->ccda)->practice_id;
+            $practiceId = $this->practice_id;
 
             $query = User::whereFirstName($demos->first_name)
                         ->whereLastName($demos->last_name)
