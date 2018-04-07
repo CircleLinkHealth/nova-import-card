@@ -80,13 +80,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             })->values();
 
             foreach ($codes as $code) {
-                if ($code['code']) {
-                    return $code['code'];
-                } elseif ($problem['name']) {
-                    return $problem['name'];
-                } elseif ($code['name']) {
-                    return $code['name'];
-                }
+                return [
+                    'name'                   => $problem['name'] ?? $code['name'],
+                    'code'                   => $code['code'],
+                    'code_system_name'       => null,
+                    'problem_code_system_id' => null,
+                    'start'                  => null,
+                    'end'                    => null,
+                    'status'                 => null,
+                ];
             }
 
             return '';

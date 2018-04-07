@@ -116,22 +116,26 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $cpmProblems = CpmProblem::all();
+        $cpmProblems    = CpmProblem::all();
         $snomedToIcdMap = SnomedToCpmIcdMap::all();
-        $icd9Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
-        $icd10Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
-        $snomedMap = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        $icd9Map        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        $icd10Map       = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        $snomedMap      = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
         $cpmProblemsMap = $cpmProblems->pluck('name', 'id');
 
         $patientList = $this->patientList->map(function ($row) use (
-            $cpmProblems,$icd9Map, $icd10Map, $snomedMap, $cpmProblemsMap
+            $cpmProblems,
+            $icd9Map,
+            $icd10Map,
+            $snomedMap,
+            $cpmProblemsMap
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
             $row['cpm_problem_1']   = '';
             $row['cpm_problem_2']   = '';
 
-            $problems = [];
+            $problems = $row['problems'];
 
             foreach (config('importer.problem_loggers') as $class) {
                 $class = app($class);
@@ -153,33 +157,35 @@ class WelcomeCallListGenerator
                     $codeType = 'all';
                 }
 
-                if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
-                    $cpmProblemId = $icd9Map->get($p['code']);
+                if ($p['code']) {
+                    if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
+                        $cpmProblemId = $icd9Map->get($p['code']);
 
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                            $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
+                            $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            continue;
+                        }
                     }
-                }
 
-                if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
-                    $cpmProblemId = $icd10Map->get($p['code']);
+                    if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
+                        $cpmProblemId = $icd10Map->get($p['code']);
 
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                            $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                            $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            continue;
+                        }
                     }
-                }
 
-                if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
-                    $cpmProblemId = $snomedMap->get($p['code']);
+                    if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
+                        $cpmProblemId = $snomedMap->get($p['code']);
 
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
+                        if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                            $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                            $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            continue;
+                        }
                     }
                 }
 
@@ -405,7 +411,7 @@ class WelcomeCallListGenerator
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
-            $args['last_encounter']   = Carbon::parse($args['last_encounter']);
+            $args['last_encounter']      = Carbon::parse($args['last_encounter']);
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'] ?? $args['mrn_number'],

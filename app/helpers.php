@@ -913,7 +913,7 @@ if (!function_exists('is_json')) {
      * @return bool
      */
     function is_json($string) {
-        if ($string === '') {
+        if ($string === '' || !is_string($string)) {
             return false;
         }
 
