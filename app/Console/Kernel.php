@@ -90,9 +90,9 @@ class Kernel extends ConsoleKernel
 //            ->withoutOverlapping();
 
 
-//        $schedule->command('ccda:process')
-//            ->everyMinute()
-//            ->withoutOverlapping();
+        $schedule->command('ccda:process')
+            ->everyMinute()
+            ->withoutOverlapping();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
