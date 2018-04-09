@@ -405,6 +405,7 @@ class WelcomeCallListGenerator
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
+            $args['last_encounter']   = Carbon::parse($args['last_encounter']);
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'] ?? $args['mrn_number'],

@@ -40,7 +40,7 @@ class OpsDashboardService
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate, $toDate);
-        if ($practiceId != 'all'){
+        if ($practiceId != 'all') {
             $patients = $this->filterPatientsByPractice($patients, $practiceId);
         }
 
@@ -180,6 +180,18 @@ class OpsDashboardService
 
     }
 
+    public function filterSummariesByPractice($summaries, $practiceId)
+    {
+        $filteredSummaries = [];
+
+        foreach ($summaries as $summary) {
+            if ($summary->patient->program_id == $practiceId) {
+                $filteredSummaries[] = $summary;
+            }
+        }
+
+        return collect($filteredSummaries);
+    }
 
     /**
      *
@@ -297,7 +309,6 @@ class OpsDashboardService
     }
 
 
-
     /**
      * Returns all the data needed for a row(for a single practice) in Daily Tab.
      *
@@ -308,18 +319,17 @@ class OpsDashboardService
      */
     public function dailyReportRow($practice, $date, $enrolledPatients, $patientsByStatus)
     {
-        $date     = new Carbon($date);
+        $date = new Carbon($date);
 
         $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
         //total for day before
         $priorDay = $date->copy()->subDay(1)->toDateTimeString();
 
 
-        $priorDayCcmCounts           = $this->countPatientsByCcmTime($enrolledPatients, $priorDay);
+        $priorDayCcmCounts = $this->countPatientsByCcmTime($enrolledPatients, $priorDay);
 
         $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
         $ccmTotal                    = collect($ccmCounts);
-
 
 
         $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
@@ -340,6 +350,23 @@ class OpsDashboardService
 
     }
 
+    public function billingChurnRow($summaries, $months)
+    {
+
+        $row = [];
+
+        //where month is carbon object
+        foreach ($months as $month) {
+            $row['Billed'][$month->format('m, Y')]            = $this->calculateBilledPatients($summaries, $month);
+            $row['Added to Billing'][$month->format('m, Y')]  = $this->calculateAddedToBilling($summaries, $month);
+            $row['Lost from Billing'][$month->format('m, Y')] = $this->calculateLostFromBilling($summaries, $month);
+        }
+
+
+        return collect($row);
+
+    }
+
     public function lostAddedRow($patientsByPractice)
     {
 
@@ -354,6 +381,64 @@ class OpsDashboardService
         }
 
         return collect($countsByStatus);
+    }
+
+
+    public function calculateBilledPatients($summaries, Carbon $month)
+    {
+
+        $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                        ->where('month_year','<=', $month->copy()->endOfMonth());
+
+        return $filteredSummaries->count();
+    }
+
+    public function calculateAddedToBilling($summaries, Carbon $month)
+    {
+
+        $added = 0;
+
+        $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                         ->where('month_year','<=', $month->copy()->endOfMonth());
+
+        if ($filteredSummaries->count() > 0){
+            foreach ($filteredSummaries as $summary) {
+                $priorMonthSummary = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
+                                                ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
+                                               ->where('patient_id', $summary->patient_id);
+                if ($priorMonthSummary->count() == 0) {
+                    $added += 1;
+                }
+            }
+        }
+
+
+        return $added;
+
+    }
+
+    public function calculateLostFromBilling($summaries, Carbon $month)
+    {
+        $lost = 0;
+
+        $fromDate = $month->copy()->startOfMonth();
+        $toDate   = $month->copy()->endOfMonth();
+
+        $pastMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
+                                        ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth());
+
+        if ($pastMonthSummaries->count() > 0){
+            foreach ($pastMonthSummaries as $summary) {
+                $thisMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
+                                                ->where('month_year','<=', $month->copy()->endOfMonth())
+                                                ->where('patient_id', $summary->patient_id);
+                if ($thisMonthSummaries->count() == 0) {
+                    $lost += 1;
+                }
+            }
+        }
+        return $lost;
+
     }
 
     /**
@@ -377,7 +462,7 @@ class OpsDashboardService
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
-        $sum = Activity::whereIn('patient_id', $allPatients)
+        $sum     = Activity::whereIn('patient_id', $allPatients)
                            ->where('performed_at', '>', $startOfMonth->toDateString())
                            ->where('performed_at', '<', $date->toDateString())
                            ->sum('duration');
