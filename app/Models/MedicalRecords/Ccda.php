@@ -173,16 +173,12 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             return false;
         }
 
-        $key = "ccda:{$this->id}:json";
+        if (!$this->json) {
+            $this->json = $this->parseToJson($this->xml);
+            $this->save();
+        }
 
-        return Cache::remember($key, 7000, function () {
-            if (!$this->json) {
-                $this->json = $this->parseToJson($this->xml);
-                $this->save();
-            }
-
-            return json_decode($this->json);
-        });
+        return json_decode($this->json);
     }
 
     protected function parseToJson($xml)

@@ -151,7 +151,11 @@ class WelcomeCallListGenerator
             $qualifyingProblemsCpmIdStack = [];
 
             foreach ($problems as $p) {
-                $codeType = getProblemCodeSystemName([$p['code_system_name']]);
+                $codeType = null;
+
+                if ($p['code_system_name']) {
+                    $codeType = getProblemCodeSystemName([$p['code_system_name']]);
+                }
 
                 if ( ! $codeType) {
                     $codeType = 'all';
@@ -192,38 +196,40 @@ class WelcomeCallListGenerator
                 /*
                  * Try to match keywords
                  */
-                foreach ($cpmProblems as $problem) {
-                    $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
+                if ($p['name']) {
+                    foreach ($cpmProblems as $problem) {
+                        $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
 
-                    foreach ($keywords as $keyword) {
-                        if (empty($keyword)) {
-                            continue;
-                        }
-
-                        if (str_contains(strtolower($p['name']), strtolower($keyword))
-                            && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
-                        ) {
-                            $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
-                                                     ->whereCpmProblemId($problem->id)
-                                                     ->get()
-                                                     ->sortByDesc('icd_9_avg_usage')
-                                                     ->first();
-
-                            if ($code) {
-                                if ($code->icd_9_code) {
-                                    $code = "ICD9: $code->icd_9_code";
-                                }
+                        foreach ($keywords as $keyword) {
+                            if (empty($keyword)) {
+                                continue;
                             }
 
-                            if ( ! $code) {
-                                $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
+                            if (str_contains(strtolower($p['name']), strtolower($keyword))
+                                && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                            ) {
+                                $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
                                                          ->whereCpmProblemId($problem->id)
+                                                         ->get()
+                                                         ->sortByDesc('icd_9_avg_usage')
                                                          ->first();
-                                $code = "ICD10: $code->icd_10_code";
-                            }
 
-                            $qualifyingProblems[]           = "{$problem->name}, $code";
-                            $qualifyingProblemsCpmIdStack[] = $problem->id;
+                                if ($code) {
+                                    if ($code->icd_9_code) {
+                                        $code = "ICD9: $code->icd_9_code";
+                                    }
+                                }
+
+                                if ( ! $code) {
+                                    $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
+                                                             ->whereCpmProblemId($problem->id)
+                                                             ->first();
+                                    $code = "ICD10: $code->icd_10_code";
+                                }
+
+                                $qualifyingProblems[]           = "{$problem->name}, $code";
+                                $qualifyingProblemsCpmIdStack[] = $problem->id;
+                            }
                         }
                     }
                 }
