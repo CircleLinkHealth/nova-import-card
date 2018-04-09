@@ -2,7 +2,11 @@
     <div>
         <notifications>
             <template scope="props">
-               <a :href="props.note.href" target="_blank">{{props.note.message}}</a>
+               <a :href="props.note.href" target="_blank" v-if="props.note.href">{{props.note.message}}</a>
+               <span v-if="!props.note.href">
+                   {{props.note.message}}
+                   <a :href="props.note.link.href" target="_blank" v-if="props.note.link">{{props.note.link.text}}</a>
+               </span>
             </template>
         </notifications>
 
@@ -428,8 +432,11 @@
 
                 this.tableData.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
                     EventBus.$emit('notifications:create', { 
-                        message: `Imported Patient "${row.Name}" is a possible duplicate`, 
-                        href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                        message: `Imported Patient "${row.Name}" is a possible duplicate of`,
+                        link: {
+                            href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                            text: ` existing patient with ID [${row.duplicate_id}]`
+                        },
                         noTimeout: true,
                         type: 'error'
                     })
