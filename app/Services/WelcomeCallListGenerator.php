@@ -150,6 +150,10 @@ class WelcomeCallListGenerator
             //the cpm_problem_id for qualifying problems
             $qualifyingProblemsCpmIdStack = [];
 
+            if (!is_array($problems)) {
+                $problems = [$problems];
+            }
+
             foreach ($problems as $p) {
                 $codeType = null;
 
