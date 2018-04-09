@@ -435,7 +435,7 @@
                         message: `Imported Patient "${row.Name}" is a possible duplicate of`,
                         link: {
                             href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
-                            text: ` existing patient with ID [${row.duplicate_id}]`
+                            text: ` existing patient with ID ${row.duplicate_id}`
                         },
                         noTimeout: true,
                         type: 'error'
