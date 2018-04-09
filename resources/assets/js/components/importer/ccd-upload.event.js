@@ -10,13 +10,11 @@ export default (App, VueDropZone) => {
     VueDropZone.$on('vdropzone-error', (file, data, xhr) => {
         console.error("vdropzone-error", file, data, xhr)
 
-        if (xhr) {
-            EventBus.$emit('notifications:create', { 
-                message: `An error occurred in processing ccda`,
-                type: 'warning',
-                timeout: 5000
-            })
-        }
+        EventBus.$emit('notifications:create', { 
+            message: `An error occurred in processing ccda`,
+            type: 'warning',
+            timeout: 5000
+        })
         
 
         if (!!(data || {}).message) {
