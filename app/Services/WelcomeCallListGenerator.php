@@ -159,7 +159,7 @@ class WelcomeCallListGenerator
                 foreach ($problems as $p) {
                     $codeType = null;
 
-                    if ($p['code_system_name']) {
+                    if (array_key_exists('code_system_name', $p)) {
                         $codeType = getProblemCodeSystemName([$p['code_system_name']]);
                     }
 
