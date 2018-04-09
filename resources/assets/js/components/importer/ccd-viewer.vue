@@ -429,7 +429,8 @@
                 this.tableData.forEach(row => {
                     row.changePractice(row.Practice)
                 })
-                EventBus.$emit('vdropzone:remove-all-files')
+                
+                //EventBus.$emit('vdropzone:remove-all-files')
 
                 newRecords.map(this.setupRecord).filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
                     EventBus.$emit('notifications:create', { 

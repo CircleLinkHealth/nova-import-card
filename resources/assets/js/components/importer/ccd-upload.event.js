@@ -12,8 +12,10 @@ export default (App, VueDropZone) => {
 
         EventBus.$emit('notifications:create', { 
             message: `An error occurred in processing ccda`,
+            type: 'warning',
             noTimeout: true
         })
+        
 
         if (!!(data || {}).message) {
             const messageElem = (file.previewElement || document.createElement('div'))
