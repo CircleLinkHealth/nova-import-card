@@ -424,13 +424,14 @@
             this.getRecords()
 
             EventBus.$on('vdropzone:success', (records) => {
+                const newRecords = records.filter(record => !this.tableData.find(row => row.id == record.id))
                 this.tableData = records.map(this.setupRecord)
                 this.tableData.forEach(row => {
                     row.changePractice(row.Practice)
                 })
                 EventBus.$emit('vdropzone:remove-all-files')
 
-                this.tableData.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
+                newRecords.map(this.setupRecord).filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
                     EventBus.$emit('notifications:create', { 
                         message: `Imported Patient "${row.Name}" is a possible duplicate of`,
                         link: {
