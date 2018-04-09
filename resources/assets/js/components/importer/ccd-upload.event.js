@@ -13,7 +13,7 @@ export default (App, VueDropZone) => {
         EventBus.$emit('notifications:create', { 
             message: `An error occurred in processing ccda`,
             type: 'warning',
-            timeout: 5000
+            noTimeout: true
         })
         
 
