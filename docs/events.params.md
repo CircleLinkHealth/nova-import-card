@@ -6,7 +6,7 @@ The `message` key tells the ws server what action to perform and can take any of
 
 When a client navigates to a CLH-providerUI page, the client sends a **client:start** event to the wss. This event contains the info:
 
-```json
+```js
 {
   message: "client:start",
   info: { ... } /**timeTrackerInfo**/
