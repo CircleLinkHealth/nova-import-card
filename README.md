@@ -28,11 +28,14 @@ Start the Node App at `http://localhost:3000`
 npm start
 ```
 
-or if you use Nodemon,
+## Available Endpoints
 
-```bash
-nodemon app.js
-```
+| Endpoint | Type | What it does |
+| ------ |:---:| ----:|
+|  ~/  | GET | Shows swagger UI |
+|  ~/keys  | GET |Returns a list of practitionerId-patientId keys currently active |
+|  ~/:practitionerId/:patientId  | GET | Returns a practitioner-patient time activities |
+|  ~/:practitionerId/:patientId  | PUT | Modifies latent properties in practiioner-patient time activities, such as adding to startTime |
 
 ## WS Structure
 
@@ -47,35 +50,14 @@ The ws server exists at `http://localhost:3000/time`, and messages are usually a
 }
 ```
 
-### `"id"`
+| Parameter | Meaning|
+| ------ | ----:|
+|  id  | The practitionerId of the Nurse or Doctor making use of the page which must be set |
+|  patientId  | The id of the patient being administered to. Default value is `"0"`. `NULL` or `UNDEFINED` will not be accepted |
+|  message  | The `message` key tells the ws server what action to perform |
+|  info  | The `"info"` value contains other details about the current session |
 
-The `"id"` value is the user id of the Nurse or Doctor making use of the page which must be set. 
-
-### `"patientId"`
-
-The `"patientId"` value is the id of the patient the Nurse or Doctor is administering currently, which may or may not be set.
-
-If the `patientId` field is not set, be sure to give it a default value of `"0"`. Note that `null` or `undefined` values for the `patientId` field will NOT be accepted.
-
-The user is identified by a concatenation of the `"id"` and `"patientId"` values, so you should specify them correctly.
-
-### `"message"`
-
-The `message` key tells the ws server what action to perform and can take any of the following values:
-
-- start
-
-[Start] is usually triggered to tell the server to start tracking time when the user focuses on the page
-
-- stop
-
-[Stop] is triggered to tell the server to stop tracking time when the user performs an action like leaving the page
-
-- update
-
-[Update] is triggered to create or modify the tracking information which is given in the `"info"` value
-
-### `"info"`
+### The `"info"` parameter
 
 The `"info"` value contains more information about the current session and takes the following structure:
 
@@ -119,3 +101,57 @@ Where:
 `submitUrl` => The location of API to submit the time-track log to
 
 `startTime` => The Time when the Tracking started (8 seconds after server page render)
+
+## Key Structure
+
+The user is identified a key which is a concatenation of the `"id"` (practitionerId) and `"patientId"` values, so you should specify them correctly.
+
+## Messages / Events
+
+The `message` key tells the ws server what action to perform and can take any of the following values:
+
+- client:start
+
+When a client navigates to a CLH-providerUI page, the client sends a **client:start** event to the wss. This event contains the info:
+
+```json
+{
+  message: "client:start",
+  info: { ... } /**timeTrackerInfo**/
+}
+```
+
+If this is the first connection in the session, the wss creates a tracker for this.
+
+- client:leave
+
+When a client's focus leaves a CLH-providerUI page, the client sends a **client:leave** event to the wss. This contains the same info as above, but with the **message** field as "client:leave".
+
+When the wss detects this, it sets the **active** variable on the web socket instance for that connection to **false**.
+
+- client:enter
+
+When a client focuses on a CLH-providerUI page, the client sends a **client:enter** event to the wss. This contains the same info as above, but with the **message** field as "client:enter"
+
+When the wss detects this, it sets the **active** variable on the web socket instance for that connection to **true**.
+
+The wss also sends a *server:sync* to all clients, to correct their time.
+
+- server:sync
+
+The **server:sync** event is sent from wss to client to correct the livecount time of the client which might be out of sync with the server, because of the known inaccuracies of **setInterval**
+
+- server:modal
+
+The server instructs the client to show the modal popup, asking the user if they were inactive because of a patient or not. 
+
+- If the user clicks yes, the client sends **client:modal:yes** to the wss
+- If the user clicks no, the client sends **client:modal:no** to the wss
+
+- client:modal:yes
+
+(See above). When received by the wss, it adds the inactiveTime to the activity duration. The inactiveTime is set to 0.
+
+- client:modal:no
+
+(See above). When received by the wss, it only adds 30 seconds to the activity duration, and the inactiveTime is set to 0
