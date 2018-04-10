@@ -136,6 +136,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         let activity = user.activities.find(item => item.name == info.activity)
         if (!activity) {
             activity = getActivity(info)
+            activity.sockets.push(ws)
             user.activities.push(activity)
         }
         else if (activity) {

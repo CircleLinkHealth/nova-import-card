@@ -1,9 +1,11 @@
 const assert = require('chai').assert
-require('./prototypes/array.prototype')
-require('./prototypes/date.prototype')
+require('../prototypes/array.prototype')
+require('../prototypes/date.prototype')
 
-const TimeTracker = require('./time-tracker')
+const TimeTracker = require('../time-tracker')
 const TimeTrackerUser = TimeTracker.TimeTrackerUser
+
+const WebSocket = require('./stubs/ws.stub')
 
 const TimeTrackerInfo = function () {
     return {
@@ -24,10 +26,6 @@ const TimeTrackerInfo = function () {
             return `${this.patientId}-${this.providerId}`
         }
     }
-}
-
-function WebSocket() {
-    this.active = false
 }
 
 const info = (new TimeTrackerInfo())
@@ -102,6 +100,7 @@ describe('TimeTrackerUser', () => {
             user.leave(ws)
     
             assert.isFalse(ws.active)
+            console.log(user.activities)
             assert.isFalse(user.activities[0].sockets[0].active)
         })
     })
