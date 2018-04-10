@@ -158,4 +158,5 @@ The server instructs the client to show the modal popup, asking the user if they
 
 ## Related Documents
 
+- [Functional Requirements](./docs/functional-requirements.md)
 - [User Story](./docs/user-story.md)
