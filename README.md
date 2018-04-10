@@ -13,7 +13,7 @@ git clone https://github.com/CircleLinkHealth/time-tracker.git
 Navigate to the Directory
 
 ```bash
-    cd time-tracker
+cd time-tracker
 ```
 
 Install NPM Dependencies
