@@ -151,7 +151,7 @@ class WelcomeCallListGenerator
             $qualifyingProblemsCpmIdStack = [];
 
 
-            if ( ! is_array($problems)) {
+            if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
                 $problems = [$problems];
             }
 
