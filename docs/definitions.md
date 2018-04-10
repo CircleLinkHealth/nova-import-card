@@ -12,7 +12,7 @@ An **event** is a string message that was sent between the client and server to 
 
 This is an object that is maintained on the wss, containing information about the session. It looks like:
 
-```json
+```js
 {
    key: "{patient-id}-{provider-id}",
    inactiveTime: 0, //inactiveTime in seconds
@@ -35,7 +35,7 @@ This is an object that is maintained on the wss, containing information about th
 
 When a client navigates to a CLH-providerUI page, the client sends a **client:start** event to the wss. This event contains the info:
 
-```json
+```js
 {
   message: "client:start",
   info: { ... } /**timeTrackerInfo**/
