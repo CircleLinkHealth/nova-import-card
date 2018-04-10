@@ -24,12 +24,6 @@ class OpsDashboardTest extends TestCase
     private $service;
     private $repo;
     private $date;
-    private $practice;
-    private $location;
-    private $provider;
-    private $patient;
-    private $total;
-
 
 
     public function test_billing_churn(){
@@ -71,11 +65,5 @@ class OpsDashboardTest extends TestCase
 
         $this->date = Carbon::today();
 
-        //to test SetupTestCustomer Trait
-        $this->practice = $this->createPractice();
-        $this->location = $this->createLocation($this->practice);
-        $this->patient = $this->createPatient($this->practice);
-        $this->provider = $this->createProvider($this->practice);
-        $this->total = $this->createTestCustomerData();
     }
 }
