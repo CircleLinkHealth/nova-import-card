@@ -155,3 +155,7 @@ The server instructs the client to show the modal popup, asking the user if they
 - client:modal:no
 
 (See above). When received by the wss, it only adds 30 seconds to the activity duration, and the inactiveTime is set to 0
+
+## Related Documents
+
+- [User Story](./docs/user-story.md)
