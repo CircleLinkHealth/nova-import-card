@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Services\CCD\ProcessEligibilityService;
+use Illuminate\Http\Request;
 
 class ProcessEligibilityController extends Controller
 {
@@ -17,13 +18,19 @@ class ProcessEligibilityController extends Controller
         $this->processEligibilityService = $processEligibilityService;
     }
 
-    public function fromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    public function fromGoogleDrive(Request $request)
     {
-        $this->processEligibilityService
-            ->queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
+        if ($request['localDir']) {
+            $this->processEligibilityService
+                ->handleAlreadyDownloadedZip($request['dir'], $request['practiceName'], $request['filterLastEncounter'], $request['filterInsurance'], $request['filterProblems']);
+        } else {
+            $this->processEligibilityService
+                ->queueFromGoogleDrive($request['dir'], $request['practiceName'], $request['filterLastEncounter'], $request['filterInsurance'], $request['filterProblems']);
+        }
 
         return "Processing eligibility has been scheduled, and will process in the background.";
     }
+
     public function fromGoogleDriveDownloadedLocally($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
     {
         return $this->processEligibilityService

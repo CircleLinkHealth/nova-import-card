@@ -116,22 +116,26 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $cpmProblems = CpmProblem::all();
+        $cpmProblems    = CpmProblem::all();
         $snomedToIcdMap = SnomedToCpmIcdMap::all();
-        $icd9Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
-        $icd10Map = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
-        $snomedMap = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        $icd9Map        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        $icd10Map       = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        $snomedMap      = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
         $cpmProblemsMap = $cpmProblems->pluck('name', 'id');
 
         $patientList = $this->patientList->map(function ($row) use (
-            $cpmProblems,$icd9Map, $icd10Map, $snomedMap, $cpmProblemsMap
+            $cpmProblems,
+            $icd9Map,
+            $icd10Map,
+            $snomedMap,
+            $cpmProblemsMap
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
             $row['cpm_problem_1']   = '';
             $row['cpm_problem_2']   = '';
 
-            $problems = [];
+            $problems = $row['problems'];
 
             foreach (config('importer.problem_loggers') as $class) {
                 $class = app($class);
@@ -146,82 +150,98 @@ class WelcomeCallListGenerator
             //the cpm_problem_id for qualifying problems
             $qualifyingProblemsCpmIdStack = [];
 
-            foreach ($problems as $p) {
-                $codeType = getProblemCodeSystemName([$p['code_system_name']]);
 
-                if ( ! $codeType) {
-                    $codeType = 'all';
-                }
+            if ( ! is_array($problems)) {
+                $problems = [$problems];
+            }
 
-                if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
-                    $cpmProblemId = $icd9Map->get($p['code']);
+            if ($problems) {
+                foreach ($problems as $p) {
+                    $codeType = null;
 
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
+                    if (array_key_exists('code_system_name', $p)) {
+                        $codeType = getProblemCodeSystemName([$p['code_system_name']]);
                     }
-                }
 
-                if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
-                    $cpmProblemId = $icd10Map->get($p['code']);
-
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
+                    if ( ! $codeType) {
+                        $codeType = 'all';
                     }
-                }
 
-                if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
-                    $cpmProblemId = $snomedMap->get($p['code']);
+                    if ($p['code']) {
+                        if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
+                            $cpmProblemId = $icd9Map->get($p['code']);
 
-                    if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                        $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
-                        $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
-                        continue;
-                    }
-                }
-
-                /*
-                 * Try to match keywords
-                 */
-                foreach ($cpmProblems as $problem) {
-                    $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
-
-                    foreach ($keywords as $keyword) {
-                        if (empty($keyword)) {
-                            continue;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
+                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                                continue;
+                            }
                         }
 
-                        if (str_contains(strtolower($p['name']), strtolower($keyword))
-                            && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
-                        ) {
-                            $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
-                                                     ->whereCpmProblemId($problem->id)
-                                                     ->get()
-                                                     ->sortByDesc('icd_9_avg_usage')
-                                                     ->first();
+                        if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
+                            $cpmProblemId = $icd10Map->get($p['code']);
 
-                            if ($code) {
-                                if ($code->icd_9_code) {
-                                    $code = "ICD9: $code->icd_9_code";
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                                continue;
+                            }
+                        }
+
+                        if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
+                            $cpmProblemId = $snomedMap->get($p['code']);
+
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                                continue;
+                            }
+                        }
+                    }
+
+                    /*
+                     * Try to match keywords
+                     */
+                    if ($p['name']) {
+                        foreach ($cpmProblems as $problem) {
+                            $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
+
+                            foreach ($keywords as $keyword) {
+                                if (empty($keyword)) {
+                                    continue;
+                                }
+
+                                if (str_contains(strtolower($p['name']), strtolower($keyword))
+                                    && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                                ) {
+                                    $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
+                                                             ->whereCpmProblemId($problem->id)
+                                                             ->get()
+                                                             ->sortByDesc('icd_9_avg_usage')
+                                                             ->first();
+
+                                    if ($code) {
+                                        if ($code->icd_9_code) {
+                                            $code = "ICD9: $code->icd_9_code";
+                                        }
+                                    }
+
+                                    if ( ! $code) {
+                                        $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
+                                                                 ->whereCpmProblemId($problem->id)
+                                                                 ->first();
+                                        $code = "ICD10: $code->icd_10_code";
+                                    }
+
+                                    $qualifyingProblems[]           = "{$problem->name}, $code";
+                                    $qualifyingProblemsCpmIdStack[] = $problem->id;
                                 }
                             }
-
-                            if ( ! $code) {
-                                $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
-                                                         ->whereCpmProblemId($problem->id)
-                                                         ->first();
-                                $code = "ICD10: $code->icd_10_code";
-                            }
-
-                            $qualifyingProblems[]           = "{$problem->name}, $code";
-                            $qualifyingProblemsCpmIdStack[] = $problem->id;
                         }
                     }
                 }
             }
+
 
             $qualifyingProblems = array_unique($qualifyingProblems);
 
@@ -405,7 +425,7 @@ class WelcomeCallListGenerator
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
-            $args['last_encounter']   = Carbon::parse($args['last_encounter']);
+            $args['last_encounter']      = Carbon::parse($args['last_encounter']);
 
             $this->enrollees = Enrollee::updateOrCreate([
                 'mrn' => $args['mrn'] ?? $args['mrn_number'],

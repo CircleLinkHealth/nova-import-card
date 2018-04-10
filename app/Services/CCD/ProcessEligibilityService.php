@@ -120,7 +120,6 @@ class ProcessEligibilityService
             ->values();
 
         if ($zipFiles->isNotEmpty()) {
-//            $contents = collect($cloudDisk->listContents($dir, $recursive));
             return 'done';
         }
 

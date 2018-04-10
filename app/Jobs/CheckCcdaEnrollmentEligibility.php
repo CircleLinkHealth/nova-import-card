@@ -37,8 +37,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
     public function __construct(
         $ccda,
         Practice $practice,
-        $filterLastEncounter = null,
-        $filterInsurance = null,
+        $filterLastEncounter = false,
+        $filterInsurance = false,
         $filterProblems = true
     ) {
         if (is_a($ccda, Ccda::class)) {
@@ -80,13 +80,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             })->values();
 
             foreach ($codes as $code) {
-                if ($code['code']) {
-                    return $code['code'];
-                } elseif ($problem['name']) {
-                    return $problem['name'];
-                } elseif ($code['name']) {
-                    return $code['name'];
-                }
+                return [
+                    'name'                   => $problem['name'] ?? $code['name'],
+                    'code'                   => $code['code'],
+                    'code_system_name'       => null,
+                    'problem_code_system_id' => null,
+                    'start'                  => null,
+                    'end'                    => null,
+                    'status'                 => null,
+                ];
             }
 
             return '';
