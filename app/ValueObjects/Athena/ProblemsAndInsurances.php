@@ -67,7 +67,7 @@ class ProblemsAndInsurances
 
         foreach ($this->getProblems() as $problem) {
             if (!array_key_exists('events', $problem)) {
-                $codes[] = $problem['code'];
+                $codes[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $problem['code']]);
 
                 continue;
             }
@@ -82,7 +82,7 @@ class ProblemsAndInsurances
                         continue;
                     }
 
-                    $codes[] = $diagnosis['code'];
+                    $codes[] = \App\Services\Eligibility\Entities\Problem::create(['code' => $diagnosis['code']]);
 
                     continue 3;
                 }
