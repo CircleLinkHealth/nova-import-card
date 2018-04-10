@@ -2,14 +2,16 @@ require('./prototypes/date.prototype')
 require('./prototypes/array.prototype')
 const moment = require('moment')
 
+const validateInfo = (info) => {
+    if (!info || !['Object', 'TimeTrackerInfo'].includes(info.constructor.name)) throw new Error('[info] must be a valid object')
+}
+
 function TimeTracker(now = () => (new Date())) {
     const users = {}
 
     this.key = (info) => `${info.providerId}-${info.patientId}`
 
-    this.validateInfo = (info) => {
-        if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
-    }
+    this.validateInfo = validateInfo
 
     this.get = (info) => {
 
@@ -59,14 +61,10 @@ function TimeTracker(now = () => (new Date())) {
 }
 
 function TimeTrackerUser(info, now = () => (new Date())) {
-
-    if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
+    
+    validateInfo(info)
 
     const key = `${info.providerId}-${info.patientId}`
-
-    const validateInfo = (info) => {
-        if (!info || info.constructor.name !== 'Object') throw new Error('[info] must be a valid object')
-    }
     
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')

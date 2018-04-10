@@ -7,28 +7,8 @@ const TimeTrackerUser = TimeTracker.TimeTrackerUser
 
 const WebSocket = require('./stubs/ws.stub')
 
-const TimeTrackerInfo = function () {
-    return {
-        patientId: "344",
-        providerId: "3864",
-        totalTime: 339,
-        wsUrl: "ws://localhost:3000/time",
-        programId: "8",
-        urlFull: "https://cpm-web.dev/manage-patients/344/notes",
-        urlShort: "/manage-patients/344/notes",
-        ipAddr: "127.0.0.1",
-        activity: "Notes/Offline Activities Review",
-        title: "patient.note.index",
-        submitUrl: "https://cpm-web.dev/api/v2.1/pagetimer",
-        startTime: "2017-11-21 04:01:10",
-        disabled: false,
-        createKey() {
-            return `${this.patientId}-${this.providerId}`
-        }
-    }
-}
-
-const info = (new TimeTrackerInfo())
+const TimeTrackerInfo = require('./stubs/time-tracker-info.stub')
+const info = new TimeTrackerInfo()
 const key = (new TimeTrackerInfo()).createKey()
 const ws = new WebSocket()
 const activity1 = { name: 'patient-notes-1', urlFull: 'http://cpm-web.com/x/y/z', urlShort: '/x/y/z' }
@@ -100,7 +80,6 @@ describe('TimeTrackerUser', () => {
             user.leave(ws)
     
             assert.isFalse(ws.active)
-            console.log(user.activities)
             assert.isFalse(user.activities[0].sockets[0].active)
         })
     })
