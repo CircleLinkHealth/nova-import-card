@@ -275,6 +275,8 @@ class PatientCareplanController extends Controller
             'id'
         )->all();
 
+        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck('display_name', 'id')->all();
+
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
@@ -374,6 +376,7 @@ class PatientCareplanController extends Controller
             'insurancePolicies',
             'contact_days_array',
             'contactWindows',
+            'billingProviders'
         ]));
     }
 
@@ -481,9 +484,13 @@ class PatientCareplanController extends Controller
                 'display_name'    => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles'           => [$role->id],
                 'ccm_status'      => 'enrolled',
-                'careplan_status' => 'draft',
+                'careplan_status' => 'to_enroll',
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
+                
+            if ($request->has('provider_id')) {
+                $newUser->billing_provider_id = $request->input('provider_id');
+            }
 
             if ($newUser) {
                 //Update patient info changes
