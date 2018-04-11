@@ -40,6 +40,8 @@ class TestHelpersTest extends TestCase
         $this->assertInstanceOf('App\Practice', $this->total['practice']);
         foreach ($this->total['patients'] as $patient){
             $this->assertInstanceOf('App\User', $patient);
+            $this->assertEquals($patient->program_id, $this->total['practice']->id);
+            $this->assertEquals($patient->billingProvider->first()->member_user_id, $this->total['provider']->id);
         }
 
     }
@@ -53,8 +55,9 @@ class TestHelpersTest extends TestCase
         //to test SetupTestCustomer Trait
         $this->practice = $this->createPractice();
         $this->location = $this->createLocation($this->practice);
-        $this->patient = $this->createPatient($this->practice);
         $this->provider = $this->createProvider($this->practice);
+        $this->patient = $this->createPatient($this->practice, $this->provider->id);
+
         $this->total = $this->createTestCustomerData();
     }
 }

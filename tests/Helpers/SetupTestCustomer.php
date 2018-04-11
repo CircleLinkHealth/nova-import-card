@@ -88,7 +88,7 @@ trait SetupTestCustomer
      *
      * @return \App\User
      */
-    public function createPatient(Practice $practice)
+    public function createPatient(Practice $practice, $providerId)
     {
 
 
@@ -144,6 +144,8 @@ trait SetupTestCustomer
             ],
         ]);
 
+        $patient->setBillingProviderIdAttribute($providerId);
+
 
         $patient->load(
             'patientInfo',
@@ -151,7 +153,8 @@ trait SetupTestCustomer
             'patientSummaries',
             'cpmProblems',
             'chargeableServices',
-            'carePlan');
+            'carePlan',
+            'billingProvider');
 
         return $patient;
 
@@ -185,7 +188,7 @@ trait SetupTestCustomer
 
 
         for ($x = $patientCount; $x > 0; $x--) {
-            $patients[] = $this->createPatient($practice);
+            $patients[] = $this->createPatient($practice, $provider->id);
         }
 
         $patients = collect($patients);
