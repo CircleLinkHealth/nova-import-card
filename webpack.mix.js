@@ -1,4 +1,7 @@
 let mix = require('laravel-mix')
+const path = require('path')
+const WorkboxPlugin = require('workbox-webpack-plugin')
+const DIST_DIR = 'public'
 
 const webpackConfig = {
     devtool: "#cheap-module-source-map",
@@ -10,7 +13,13 @@ const webpackConfig = {
             './cptable': 'var cptable'
         }
     ],
-    plugins: []
+    plugins: [
+        new WorkboxPlugin({
+            globDirectory: DIST_DIR,
+            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css'],
+            swDest: path.join(DIST_DIR, 'sw.js')
+        }),
+    ]
 }
 
 mix.webpackConfig(webpackConfig)
