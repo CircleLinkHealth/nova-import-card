@@ -20,21 +20,23 @@ class ApproveBillablePatientsService
 
     public function counts($practiceId, Carbon $month)
     {
-        $count['approved'] = 0;
-        $count['toQA']     = 0;
-        $count['rejected'] = 0;
+        $count['approved'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('approved', '=', true)
+            ->where('rejected', '=', false)
+            ->count();
 
-        foreach ($this->approvePatientsRepo->patientsWithSummaries($practiceId, $month)->get() as $patient) {
-            $report = $patient->patientSummaries->first();
+        $count['toQA'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('approved', '=', false)
+            ->where('rejected', '=', false)
+            ->count();
 
-            if (($report->rejected == 0 && $report->approved == 0) || $this->patientSummaryRepo->lacksProblems($report)) {
-                $count['toQA'] += 1;
-            } else if ($report->rejected == 1) {
-                $count['rejected'] += 1;
-            } else if ($report->approved == 1) {
-                $count['approved'] += 1;
-            }
-        }
+        $count['rejected'] = $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month)
+            ->where('rejected', '=', true)
+            ->where('approved', '=', false)
+            ->count();
 
         return $count;
     }
@@ -43,17 +45,21 @@ class ApproveBillablePatientsService
     {
         $summaries = $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month)
-                                         ->paginate();
+            ->paginate();
         $summaries->getCollection()->transform(function ($summary) {
+            $summary = $this->patientSummaryRepo
+                ->attachDefaultChargeableService($summary);
+
             return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
         });
 
         return $summaries;
     }
 
-    public function transformPatientsToApprove($practiceId, Carbon $month) {
+    public function transformPatientsToApprove($practiceId, Carbon $month)
+    {
         $summaries = $this->patientsToApprove($practiceId, $month);
-        
+
         $summaries->getCollection()->transform(function ($summary) {
             return ApprovableBillablePatient::make($summary);
         });
@@ -61,8 +67,17 @@ class ApproveBillablePatientsService
         return $summaries;
     }
 
-    public function billablePatientSummaries($practiceId, Carbon $month) {
+    public function billablePatientSummaries($practiceId, Carbon $month)
+    {
         return $this->approvePatientsRepo
             ->billablePatientSummaries($practiceId, $month);
+    }
+
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false) {
+        return $this->patientSummaryRepo->attachDefaultChargeableService($summary, $defaultCodeId, $detach);
+    }
+    
+    public function detachDefaultChargeableService($summary, $defaultCodeId) {
+        return $this->patientSummaryRepo->detachDefaultChargeableService($summary, $defaultCodeId);
     }
 }

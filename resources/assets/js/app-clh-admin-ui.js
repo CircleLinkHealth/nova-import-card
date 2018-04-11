@@ -1,5 +1,7 @@
 require('./bootstrap')
 
+
+import './prototypes/array.prototype'
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
@@ -41,10 +43,10 @@ Vue.use(ClientTable, {}, false)
 
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('nurseDailyHours', NurseDailyHours)
-Vue.component('importerTrainer', ImporterTraining)
 Vue.component('select2', Select2Component)
 Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
+Vue.component('importer-trainer', ImporterTrainer)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
 
 const App = new Vue({

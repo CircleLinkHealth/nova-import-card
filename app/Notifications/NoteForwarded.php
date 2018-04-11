@@ -53,21 +53,31 @@ class NoteForwarded extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage())
+        $saasAccountName = $notifiable->saasAccountName();
+        $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
+
+        $mail = (new MailMessage())
             ->view('vendor.notifications.email', [
-                'greeting'   => $this->getBody(),
-                'actionText' => 'View Note',
-                'actionUrl'  => $this->note->link(),
-                'introLines' => [],
-                'outroLines' => [],
-                'level'      => '',
+                'greeting'        => $this->getBody(),
+                'actionText'      => 'View Note',
+                'actionUrl'       => $this->note->link(),
+                'introLines'      => [],
+                'outroLines'      => [],
+                'level'           => '',
+                'saasAccountName' => $saasAccountName,
             ])
-            ->subject($this->getSubject())
-            ->bcc([
+            ->from("no-reply@$slugSaasAccountName.com", $saasAccountName)
+            ->subject($this->getSubject());
+
+        if ($notifiable->saasAccount->slug == 'circlelink-health') {
+            return $mail->bcc([
                 'raph@circlelinkhealth.com',
                 'chelsea@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
             ]);
+        }
+
+        return $mail;
     }
 
     /**
@@ -80,7 +90,7 @@ class NoteForwarded extends Notification
         return 'Please click below button to see a forwarded note regarding one of your patients, created on '
                . $this->note->performed_at->toFormattedDateString()
                . ' by '
-               . auth()->user()->fullName;
+               . optional(auth()->user())->fullName;
     }
 
     /**
@@ -91,7 +101,7 @@ class NoteForwarded extends Notification
     public function getSubject()
     {
         if ($this->note->isTCM) {
-            return 'Urgent Patient Note from CircleLink Health';
+            return 'Urgent Patient Note from ' . $this->note->patient->saasAccountName();
         }
 
         return 'You have been forwarded a note from CarePlanManager';
@@ -155,9 +165,9 @@ class NoteForwarded extends Notification
         return [
             'channels' => $this->channels,
 
-            'sender_id'    => auth()->user()->id,
+            'sender_id'    => auth()->id(),
             'sender_type'  => User::class,
-            'sender_email' => auth()->user()->email,
+            'sender_email' => optional(auth()->user())->email,
 
             'receiver_type'  => $notifiable->id,
             'receiver_id'    => get_class($notifiable),
@@ -166,7 +176,7 @@ class NoteForwarded extends Notification
             'body'    => $this->getBody(),
             'subject' => $this->getSubject(),
 
-            'note_id'   => $this->note->id,
+            'note_id' => $this->note->id,
 
             'pathToPdf' => $this->pathToPdf,
         ];

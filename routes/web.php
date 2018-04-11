@@ -53,6 +53,7 @@ Route::group([
     Auth::routes();
 
     Route::get('logout', 'Auth\LoginController@logout');
+    Route::get('inactivity-logout', 'Auth\LoginController@inactivityLogout');
 });
 
 /****************************/
@@ -85,8 +86,13 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'calls.index',
                 ]);
 
-                Route::delete('{callIds}', [
-                    'uses' => 'API\Admin\CallsController@deleteCalls',
+                Route::get('{id}', [
+                    'uses' => 'API\Admin\CallsController@show',
+                    'as'   => 'calls.show',
+                ]);
+
+                Route::delete('{ids}', [
+                    'uses' => 'API\Admin\CallsController@remove',
                     'as'   => 'calls.destroy',
                 ]);
             });
@@ -130,6 +136,8 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{id}/patients', 'MiscController@patients');
             Route::resource('', 'MiscController');
         });
+
+        Route::get('test', 'MiscController@test');
 
         Route::group(['prefix' => 'appointments'], function () {
             Route::get('{id}', 'API\AppointmentController@show');
@@ -431,7 +439,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'import.ccd',
         ]);
 
-        Route::get('create/remix', [
+        Route::get('', [
             'uses' => 'ImporterController@remix',
             'as'   => 'import.ccd.remix',
         ]);
@@ -481,13 +489,13 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('listing', [
-            'uses' => 'Patient\PatientController@showPatientListing',
+            'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',
             'as'   => 'patients.listing',
         ]);
 
-        Route::get('listing/remix', [
-            'uses' => 'Patient\PatientController@showPatientListingRemix',
-            'as'   => 'patients.listing.remix',
+        Route::get('listing/paginated', [
+            'uses' => 'Patient\PatientController@showPatientListing',
+            'as'   => 'patients.listing.paginated',
         ]);
 
         Route::get('listing/pdf', [
@@ -552,9 +560,8 @@ Route::group(['middleware' => 'auth'], function () {
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
-        'middleware' => 'patientProgramSecurity',
+        'middleware' => [ 'patientProgramSecurity', 'checkWebSocketServer' ],
     ], function () {
-
         // base
         //Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
         Route::get('summary', [
@@ -754,6 +761,10 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
+
+        Route::get('eligible-lists/phoenix-heart', 'Admin\WelcomeCallListController@makePhoenixHeartCallList');
+
         Route::view('api-clients', 'admin.manage-api-clients');
 
         Route::resource('medication-groups-maps', 'MedicationGroupsMapController');
@@ -891,6 +902,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'Billing\PracticeInvoiceController@data'
                 ]);
 
+                Route::get('/services', [
+                    'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
+                    'as'   => 'monthly.billing.services',
+                ]);
+
                 Route::post('/updatePracticeServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
                     'as'   => 'monthly.billing.practice.services',
@@ -901,6 +917,16 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'monthly.billing.summary.services',
                 ]);
 
+                Route::post('/open', [
+                    'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.open.month',
+                ]);
+
+                Route::post('/close', [
+                    'uses' => 'Billing\PracticeInvoiceController@closeMonthlySummaryStatus',
+                    'as'   => 'monthly.billing.close.month',
+                ]);
+
                 Route::post('/status/update', [
                     'uses' => 'Billing\PracticeInvoiceController@updateStatus',
                     'as'   => 'monthly.billing.status.update',
@@ -909,6 +935,10 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/counts', [
                     'uses' => 'Billing\PracticeInvoiceController@counts',
                     'as'   => 'monthly.billing.count',
+                ]);
+
+                Route::get('/counts', [
+                    'uses' => 'Billing\PracticeInvoiceController@counts'
                 ]);
 
                 Route::post('/storeProblem', [
@@ -997,6 +1027,70 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+
+            Route::group([
+                'prefix' => 'ops-dashboard',
+            ], function () {
+                Route::get('/index', [
+                    'uses' => 'OpsDashboardController@index',
+                    'as'   => 'OpsDashboard.index'
+                ]);
+                Route::get('/daily-report', [
+                    'uses' => 'OpsDashboardController@getDailyReport',
+                    'as'   => 'OpsDashboard.dailyReport'
+                ]);
+                Route::get('/lost-added-index', [
+                    'uses' => 'OpsDashboardController@getLostAddedIndex',
+                    'as'   => 'OpsDashboard.lostAddedIndex'
+                ]);
+                Route::get('/lost-added', [
+                    'uses' => 'OpsDashboardController@getLostAdded',
+                    'as'   => 'OpsDashboard.lostAdded'
+                ]);
+                Route::get('/patient-list-index', [
+                    'uses' => 'OpsDashboardController@getPatientListIndex',
+                    'as'   => 'OpsDashboard.patientListIndex'
+                ]);
+
+                Route::get('/patient-list', [
+                    'uses' => 'OpsDashboardController@getPatientList',
+                    'as'   => 'OpsDashboard.patientList'
+                ]);
+                Route::post('/make-excel', [
+                    'uses' => 'OpsDashboardController@makeExcelPatientReport',
+                    'as'   => 'OpsDashboard.makeExcel',
+                ]);
+
+                //billing churn
+                Route::get('/billing-churn-index', [
+                    'uses' => 'OpsDashboardController@getBillingChurnIndex',
+                    'as'   => 'OpsDashboard.billingChurnIndex'
+                ]);
+
+                Route::get('/billing-churn', [
+                    'uses' => 'OpsDashboardController@getBillingChurn',
+                    'as'   => 'OpsDashboard.billingChurn'
+                ]);
+
+                //old dashboard
+                Route::get('/total-data', [
+                    'uses' => 'OpsDashboardController@getTotalPatientData',
+                    'as'   => 'OpsDashboard.totalData'
+                ]);
+                Route::get('/paused-patient-list', [
+                    'uses' => 'OpsDashboardController@getPausedPatientList',
+                    'as'   => 'OpsDashboard.pausedPatientList'
+                ]);
+//                Route::get('/patient-list/{type}/{date}/{dateType}/{practiceId?}', [
+//                    'uses' => 'OpsDashboardController@getList',
+//                    'as'   => 'OpsDashboard.patientList'
+//                ]);
+                Route::get('/patients-by-practice', [
+                    'uses' => 'OpsDashboardController@getPatientsByPractice',
+                    'as'   => 'OpsDashboard.patientsByPractice'
+                ]);
+            });
+
         });
 
         //Practice Billing
@@ -1521,6 +1615,16 @@ Route::group([
     ],
 ], function () {
 
+    Route::post('chargeable-services', [
+        'uses' => 'Provider\DashboardController@postStoreChargeableServices',
+        'as'   => 'provider.dashboard.store.chargeable-services',
+    ])->middleware('permission:create-practice-chargeable-service');
+
+    Route::get('chargeable-services', [
+        'uses' => 'Provider\DashboardController@getCreateChargeableServices',
+        'as'   => 'provider.dashboard.manage.chargeable-services',
+    ])->middleware('permission:read-practice-chargeable-service');
+
     Route::post('invite', [
         'uses' => 'Provider\DashboardController@postStoreInvite',
         'as'   => 'post.store.invite',
@@ -1730,7 +1834,7 @@ Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin']
+    'middleware' => ['auth', 'role:saas-admin|administrator']
 ], function (){
 
     Route::get('home', [
@@ -1800,8 +1904,12 @@ Route::group([
     });
 });
 
-
-Route::get('process-eligibility/drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+Route::post('process-eligibility/drive/', [
     'uses' => 'ProcessEligibilityController@fromGoogleDrive',
     'as'   => 'process.eligibility.google.drive'
+])->middleware(['auth', 'role:administrator']);
+
+Route::get('process-eligibility/local-zip-from-drive/{dir}/{practiceName}/{filterLastEncounter}/{filterInsurance}/{filterProblems}', [
+    'uses' => 'ProcessEligibilityController@fromGoogleDriveDownloadedLocally',
+    'as'   => 'process.eligibility.local.zip'
 ])->middleware(['auth', 'role:administrator']);

@@ -10,6 +10,7 @@ use App\Scopes\WithNonImported;
 use App\Traits\HasProblemCodes;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\CCD\Problem
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $patient_id
  * @property int|null $ccd_problem_log_id
  * @property string|null $name
+ * @property string|null $original_name
  * @property int|null $cpm_problem_id
  * @property int|null $cpm_instruction_id
  * @property string|null $deleted_at
@@ -50,15 +52,25 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Problem
 {
-    use HasProblemCodes;
+    use HasProblemCodes, SoftDeletes;
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     protected $fillable = [
+        'is_monitored',
+        'problem_import_id',
         'ccda_id',
+        'patient_id',
         'ccd_problem_log_id',
         'name',
+        'billable',
         'cpm_problem_id',
-        'patient_id',
-        'billable'
+        'cpm_instruction_id',
     ];
 
     protected $table = 'ccd_problems';
@@ -103,12 +115,18 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         return $this->cpmProblem->default_icd_10_code ?? null;
     }
 
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function codes()
     {
         return $this->hasMany(ProblemCode::class);
+    }
+
+    public function getNameAttribute($name) 
+    {
+        $this->original_name = $name;
+        if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
+        return $name;
     }
 }

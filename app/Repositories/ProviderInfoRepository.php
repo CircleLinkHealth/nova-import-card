@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\User;
 use App\ProviderInfo;
+use Carbon\Carbon;
 
 class ProviderInfoRepository
 {
@@ -21,7 +22,11 @@ class ProviderInfoRepository
     }
 
     public function list() {
-        $providers = $this->model()->orderBy('id', 'desc')->with([ 'user' ])->get()->map(function ($p) {
+        $program_id = auth()->user()->program_id;
+        $providers = $this->model()
+                            ->join('users', 'provider_info.user_id', '=', 'users.id')
+                            ->where('users.program_id', $program_id)
+                            ->orderBy('provider_info.id', 'desc')->with([ 'user' ])->get()->map(function ($p) {
             return [
                 'id' => $p->id,
                 'user_id' => $p->user_id,
@@ -41,8 +46,8 @@ class ProviderInfoRepository
             'address' => $providerUser->address,
             'status' => $providerUser->status,
             'locations' => $providerUser->locations()->get(),
-            'created_at' => $providerUser->created_at->format('c'),
-            'updated_at' => $providerUser->updated_at->format('c')
+            'created_at' => optional($providerUser->created_at)->format('c') ?? null,
+            'updated_at' => optional($providerUser->updated_at)->format('c') ?? null
         ];
     }
 

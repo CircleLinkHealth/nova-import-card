@@ -171,7 +171,6 @@ class PatientCareplanController extends Controller
             ]);
 
         $storageDirectory = 'storage/pdfs/careplans/';
-        $datetimePrefix   = date('Y-m-dH:i:s');
         $pageFileNames    = [];
 
         $fileNameWithPathBlankPage = $this->pdfService->blankPage();
@@ -180,6 +179,7 @@ class PatientCareplanController extends Controller
         $p = 1;
         foreach ($users as $user_id) {
             // add p to datetime prefix
+            $datetimePrefix   = date('Y-m-d-' . $user_id . '-H-i-s');
             $prefix   = $datetimePrefix . '-' . $p;
             $user     = User::find($user_id);
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
@@ -189,6 +189,7 @@ class PatientCareplanController extends Controller
             }
 
             $fileNameWithPath = base_path($storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf');
+            $pageCount = 0;
             try {
                 //HTML render to help us with debugging
                 if ($request->filled('render') && $request->input('render') == 'html') {
@@ -210,11 +211,11 @@ class PatientCareplanController extends Controller
                     'careTeam'     => $user->careTeamMembers,
                     'data'         => $careplanService->careplan($user_id)
                 ], $fileNameWithPath);
+
+                $pageCount = $this->pdfService->countPages($fileNameWithPath);
             } catch (\Exception $e) {
                 \Log::critical($e);
             }
-            $pageCount = $this->pdfService->countPages($fileNameWithPath);
-
             // append blank page if needed
             if ((count($users) > 1) && $pageCount % 2 != 0) {
                 $fileNameWithPath         = $this->pdfService->mergeFiles([
@@ -230,7 +231,7 @@ class PatientCareplanController extends Controller
         }
 
         // merge to final file
-        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, base_path($storageDirectory . $datetimePrefix . "-merged.pdf"));
+        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, $fileNameWithPath);
 
         return response()->file($mergedFileNameWithPath);
     }

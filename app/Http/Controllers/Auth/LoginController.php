@@ -154,4 +154,26 @@ class LoginController extends Controller
 
         return response()->redirectTo($this->redirectPath());
     }
+
+    /**
+     * Logout due to inactivity
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function inactivityLogout(Request $request)
+    {
+        $this->guard()->logout();
+
+        $request->session()->invalidate();
+
+        return redirect()
+            ->route('login')
+            ->with([
+                'messages' => [
+                    'Our apologies. The page has expired due to inactivity or a user logout on a different browser tab.'
+                ]
+            ]);
+    }
 }

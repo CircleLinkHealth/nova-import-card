@@ -61,6 +61,37 @@ class Calls
     }
 
     /**
+     * Gets Information about a single patient's appointments
+     * set $showPast to false to get future appointments only
+     *
+     * @param $practiceId
+     * @param $patientId
+     * @param bool $showPast
+     * @param bool $showCancelled
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getPatientAppointments(
+        $practiceId,
+        $patientId,
+        $showPast = true,
+        $showCancelled = false
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("patients/{$patientId}/appointments",
+            [
+                'showpast'      => $showPast,
+                'showcancelled' => $showCancelled,
+
+            ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
      * Checks if the response contains errors. If it does, it logs the response and throws an Exception
      *
      * @throws \Exception
@@ -216,10 +247,12 @@ class Calls
         return $this->response($response);
     }
 
-    public function getBillingProviderName($practiceId, $providerId){
+    public function getBillingProviderName($practiceId, $providerId)
+    {
+        $this->api->setPracticeId($practiceId);
 
-        $response = $this->api->GET("$practiceId/providers/$providerId", [
-            'showallproviderids' => true
+        $response = $this->api->GET("providers/$providerId", [
+            'showallproviderids' => true,
         ]);
 
         return $this->response($response);
@@ -258,6 +291,18 @@ class Calls
         ]);
 
         return $this->response($response);
+    }
+
+    public  function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
+    {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("departments/$departmentId", [
+            'providerlist' => $providerList,
+        ]);
+
+        return $this->response($response);
+
     }
 
     /**
@@ -343,6 +388,7 @@ class Calls
         $practiceId,
         $attachmentContent,
         $departmentId,
+        $appointmentId = null,
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     ) {
@@ -364,11 +410,72 @@ class Calls
          * HACK
          * @todo: Figure out why the above doesn't work
          */
-        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $appointmentField = $appointmentId
+            ? "-F appointmentid=$appointmentId"
+            : '';
+
+        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId $appointmentField -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
 
         return $this->response($response);
+    }
+
+
+    /**
+     * Add a note for an appointment.
+     * Can be desplayed on homescreen.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showOnDesplay
+     * @param $noteText
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function postAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $noteText,
+        $showOnDisplay = false
+
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->POST("appointments/{$appointmentId}/notes", [
+            'displayonschedule' => $showOnDisplay,
+            'notetext' => $noteText,
+            ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
+     * Retrieve notes for an appointment.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showDeleted
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $showDeleted = false
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("appointments/{$appointmentId}/notes", [
+            'showdeleted' => $showDeleted,
+        ]);
+
+        return $this->response($response);
+
+
     }
 
 
@@ -487,17 +594,19 @@ class Calls
         $patientId,
         $providerId,
         $appointmentId,
-        $reasonId = null
+        $reasonId
     ) {
         $this->api->setPracticeId($practiceId);
 
         $response = $this->api->PUT("appointments/$appointmentId", [
-            'practiceid'      => $practiceId,
-            'departmentid'    => $departmentId,
-            'patientid'    => $patientId,
-            'providerid'      => $providerId,
-            'appointmentid' => $appointmentId,
-            'reasonid'        => $reasonId,
+            'practiceid'                  => $practiceId,
+            'departmentid'                => $departmentId,
+            'patientid'                   => $patientId,
+            'providerid'                  => $providerId,
+            'appointmentid'               => $appointmentId,
+            'reasonid'                    => $reasonId,
+            'Content-Type'                => 'application/x-www-form-urlencoded',
+            'ignoreschedulablepermission' => false,
         ]);
 
         return $this->response($response);

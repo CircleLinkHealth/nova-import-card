@@ -2,14 +2,37 @@
 
 namespace Tests\Unit;
 
+use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
+use App\Patient;
 use App\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Notification;
+use Tests\Helpers\CarePlanHelpers;
+use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CarePlanApprovalReminderTest extends TestCase
 {
+    use CarePlanHelpers, DatabaseTransactions, UserHelpers;
+
+    private $provider;
+    private $patient;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        
+        $this->provider = $this->createUser(8, 'provider');
+        $this->patient = $this->createUser(8, 'participant');
+
+        $this->patient->billing_provider_id = $this->provider->id;
+        $this->patient->ccm_status = Patient::ENROLLED;
+
+        $this->assertEquals($this->provider->id, $this->patient->billing_provider_id);
+    }
+
     /**
      * A basic test example.
      *
@@ -20,19 +43,20 @@ class CarePlanApprovalReminderTest extends TestCase
         //Set
         Notification::fake();
 
-        $recipient = User::find(357);
-        $numberOfCareplans = 10;
+        $this->patient->care_plan_status = CarePlan::QA_APPROVED;
+        
+        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this->provider);
 
         //send notification
-        $recipient->notify(new CarePlanApprovalReminder($numberOfCareplans));
+        $this->provider->sendCarePlanApprovalReminderEmail();
 
         //assert set
         Notification::assertSentTo(
-            $recipient,
+            $this->provider,
             CarePlanApprovalReminder::class,
-            function ($notification) use ($recipient, $numberOfCareplans) {
-                $this->checkToMail($notification, $recipient, $numberOfCareplans);
-                $this->checkToDatabase($notification, $recipient, $numberOfCareplans);
+            function ($notification) use ($numberOfCareplans) {
+                $this->checkToMail($notification, $this->provider, $numberOfCareplans);
+                $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 
                 return true;
             }

@@ -52,6 +52,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
+    const TO_ENROLL = 'to_enroll';
 
     // modes
     const WEB = 'web';
@@ -97,10 +98,10 @@ class CarePlan extends \App\BaseModel implements PdfReport
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
                     ->whereHas('carePlan', function ($q) {
-                        $q->whereStatus('qa_approved');
+                        $q->whereStatus(CarePlan::QA_APPROVED);
                     })
                     ->whereHas('patientInfo', function ($q) {
-                        $q->whereCcmStatus('enrolled');
+                        $q->whereCcmStatus(Patient::ENROLLED);
                     })
                     ->whereHas('careTeamMembers', function ($q) use
                         (

@@ -54,6 +54,11 @@
                     this.onChange(this.text, this.moment)
                 }
             }
+        },
+        watch: {
+            value (newVal, oldVal) {
+                this.date = moment(newVal, this.format).format(INPUT_DATE_FORMAT)
+            }
         }
     }
 </script>

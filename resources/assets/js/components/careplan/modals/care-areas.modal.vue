@@ -1,6 +1,6 @@
 <template>
     <modal name="care-areas" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
@@ -11,7 +11,7 @@
                         <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name}}
-                            <span class="delete" title="remove this cpm problem" @click="removeCpmProblem">x</span>
+                            <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </button>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
@@ -21,6 +21,11 @@
                     <div class="row">
                         <form @submit="addCcdProblem">
                             <div class="col-sm-12">
+                                <label class="label label-danger font-14" v-if="patientHasSelectedProblem">
+                                    Condition is already in care plan. Please add a new condition.
+                                </label>
+                            </div>
+                            <div class="col-sm-12 top-10">
                                 <v-complete placeholder="Enter a Condition" :required="true" v-model="newProblem.name" :value="newProblem.name" :limit="15"
                                     :suggestions="cpmProblemsForAutoComplete" :class="{ error: patientHasSelectedProblem }" :threshold="0.5"
                                     @input="resolveIcd10Code">
@@ -44,46 +49,40 @@
                     
                 </div>
                 <div class="col-sm-12 top-20" v-if="selectedProblem">
-                    <div class="row instructions top-20" v-if="selectedProblem.type == 'cpm'">
-                        <form @submit="addInstruction">
-                            <div class="col-sm-12">
-                                <textarea class="form-control height-200" 
-                                    v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
-                            </div>
-                            <div class="col-sm-12 text-right top-20">
-                                <loader v-if="loaders.addInstruction"></loader>
-                                <input type="submit" class="btn btn-secondary right-0 instruction-add selected" value="Save" 
-                                    title="add this instruction for this problem" />
-                            </div>
-                        </form>
-                    </div>
-                     <div class="row top-20" v-if="selectedProblem.type == 'ccd'">
-                        <div class="col-sm-12" v-if="selectedProblem.is_monitored">
+                     <div class="row top-20">
+                        <div class="col-sm-12">
                             <form @submit="editCcdProblem">
                                 <div class="row">
-                                    <!-- <div class="col-sm-6">
-                                        <input class="form-control" v-model="selectedProblem.name" placeholder="Problem Name" 
-                                            :class="{ error: patientHasSelectedProblem }" 
-                                            :title="patientHasSelectedProblem ? 'Problem with this name already exists' : null" required />
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <v-select class="form-control" v-model="selectedProblem.cpm" :value="selectedProblem.cpm_id" 
-                                            :options="cpmProblemsForSelect"></v-select>
-                                    </div>
-                                    <div class="col-sm-6 font-14">
-                                        <label class="form-control">
-                                            <input type="checkbox" v-model="selectedProblem.is_monitored" /> Monitor Problem
-                                        </label>
-                                    </div> -->
                                     <div class="col-sm-12 top-20">
                                         <textarea class="form-control height-200"
-                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions" required></textarea>
+                                            v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
+                                        <div class="font-14 color-blue" v-if="selectedProblem.original_name">
+                                            Full Name: {{ selectedProblem.original_name }}
+                                        </div>
                                     </div>
-                                    <div class="col-sm-12 top-20 text-right" >
-                                        <loader class="absolute" v-if="loaders.editProblem"></loader>
-                                        <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                            title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                    <div class="col-sm-12 top-20 text-right font-14">
+                                        <div class="row">
+                                            <div class="col-sm-7">
+                                                <label class="color-red" v-if="selectedProblem.is_monitored">Mapped To:</label>
+                                                <select class="form-control" v-model="selectedProblem.cpm_id" v-if="selectedProblem.is_monitored">
+                                                    <option :value="null">Selected a Related Condition</option>
+                                                    <option v-for="problem in cpmProblemsForSelect" :key="problem.value" :value="problem.value">{{problem.label}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3 text-right">
+                                                <label class="top-30">
+                                                    <input type="checkbox" :value="true" v-model="selectedProblem.is_monitored"> We are managing
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <br>
+                                                <loader class="absolute" v-if="loaders.editProblem"></loader>
+                                                <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
+                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
                             </form>
@@ -108,7 +107,7 @@
                                             </div>
                                             <div class="col-sm-2 text-right">
                                                 <loader class="absolute" v-if="loaders.removeCode"></loader>
-                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" />
+                                                <input type="button" class="btn btn-danger margin-0" value="-" @click="removeCode(selectedProblem.id, code.id)" :disabled="!code.id" />
                                             </div>
                                         </li>
                                         <li class="row list-group-item" v-if="selectedProblem.codes.length === 0">
@@ -168,17 +167,17 @@
                 return this.problems.distinct((p) => p.name)
             },
             patientHasSelectedProblem() {
-                if (!this.selectedProblem) return this.problems.findIndex(problem => problem.name == this.newProblem.name) >= 0
-                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && (problem.name == this.selectedProblem.name)) >= 0
+                if (!this.selectedProblem) return this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
+                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
-                return this.cpmProblems.map(p => ({ label: p.name, value: p.id }))
+                return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.map(p => ({ name: p.name, id: p.id })).concat(this.problems.map(p => ({ name: p.name, id: p.id }))).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
-                return !!this.selectedProblem.codes.find(code => code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
+                return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
             },
             codesForSelect() {
                 return this.codes.map(p => ({ label: p.name, value: p.id }))
@@ -225,45 +224,7 @@
                 this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
                 this.newProblem.cpm_problem_id = (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).id
             },
-            addInstruction(e) {
-                e.preventDefault()
-                if (((this.selectedProblem || {}).instruction || {}).name) {
-                    this.loaders.addInstruction = true
-                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: ((this.selectedProblem || {}).instruction || {}).name }).then(response => {
-                        console.log('care-areas:add-instruction', response.data)
-                        return this.addInstructionToCpmProblem(response.data)
-                    }).catch(err => {
-                        console.error('care-areas:add-instruction', err)
-                        this.loaders.addInstruction = false
-                    })
-                }
-            },
-            addInstructionToCpmProblem(instruction) {
-                if (((this.selectedProblem || {}).instruction || {}).name) {
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}/instructions`), { instructionId: instruction.id }).then(response => {
-                        console.log('care-areas:add-instruction-to-problem', response.data)
-                        this.selectedProblem.instruction = instruction
-                        this.loaders.addInstruction = false
-                    }).catch(err => {
-                        console.error('care-areas:add-instruction-to-problem', err)
-                        this.loaders.addInstruction = false
-                    })
-                }
-            },
-            addCpmProblem() {
-                if (this.newCpmProblem && this.newCpmProblem.value) {
-                    this.loaders.addProblem = true
-                    return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems`), { cpmProblemId: this.newCpmProblem.value }).then(response => {
-                        console.log('care-areas:add-problem', response.data)
-                        this.loaders.addProblem = false
-                        Event.$emit('care-areas:problems', response.data)
-                    }).catch(err => {
-                        console.error('care-areas:add-problem', err)
-                        this.loaders.addProblem = false
-                    })
-                }
-            },
-            removeCpmProblem() {
+            removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
                     this.loaders.removeProblem = true
                     const url = `api/patients/${this.patientId}/problems/${this.selectedProblem.type}/${this.selectedProblem.id}`
@@ -278,23 +239,6 @@
                     })
                 }
             },
-            getCpmProblems(page = 1) {
-                if (page === 1) {
-                    this.cpmProblems = []
-                }
-                return this.axios.get(rootUrl(`api/problems/cpm?page=${page}`)).then(response => {
-                    console.log('care-areas:get-cpm-problems', response.data)
-                    const pageInfo = response.data
-                    if (pageInfo.next_page_url) {
-                        return this.getCpmProblems(page + 1)
-                    }
-                    else {
-                        this.cpmProblems = this.cpmProblems.concat(pageInfo.data)
-                    }
-                }).catch(err => {
-                    console.error('care-areas:get-cpm-problems', err)
-                })
-            },
             selectInstruction(index) {
                 if (!this.loaders.removeInstruction) {
                     this.selectedInstruction = this.selectedProblem.instructions[index]
@@ -305,7 +249,7 @@
                 this.loaders.addProblem = true
                 return this.axios.post(rootUrl(`api/patients/${this.patientId}/problems/ccd`), { 
                                     name: this.newProblem.name, 
-                                    cpm_problem_id: (this.newProblem.problem || {}).value,
+                                    cpm_problem_id: this.newProblem.cpm_problem_id,
                                     is_monitored: this.newProblem.is_monitored,
                                     icd10: this.newProblem.icd10
                                 }).then(response => {
@@ -323,8 +267,8 @@
                 e.preventDefault()
                 this.loaders.editProblem = true
                 return this.axios.put(rootUrl(`api/patients/${this.patientId}/problems/ccd/${this.selectedProblem.id}`), { 
-                        name: this.selectedProblem.name, 
-                        cpm_problem_id: (this.selectedProblem.cpm || {}).value,
+                        name: this.selectedProblem.original_name, 
+                        cpm_problem_id: this.selectedProblem.is_monitored ? this.selectedProblem.cpm_id : null,
                         is_monitored: this.selectedProblem.is_monitored,
                         icd10: this.selectedProblem.icd10,
                         instruction: this.selectedProblem.instruction.name
@@ -382,7 +326,6 @@
         },
         mounted() {
             this.cpmProblems = this.careplan().allCpmProblems || []
-            this.getCpmProblems(2)
             this.getSystemCodes()
         }
     }
@@ -390,7 +333,9 @@
 
 <style>
     .modal-care-areas .modal-container {
-        width: 700px;
+        width: 900px;
+        max-height: 100%;
+        overflow-y: auto;
     }
 
     .modal-care-areas .modal-footer {
@@ -418,7 +363,15 @@
     }
 
     .top-20 {
-        margin-top: 20px
+        margin-top: 20px;
+    }
+
+    .top-30 {
+        margin-top: 30px;
+    }
+
+    .color-red {
+        color: red;
     }
 
     input[type='button'].right-0 {
@@ -438,7 +391,7 @@
     }
 
     .problem-buttons {
-        width: 2000px;
+        width: 100%;
     }
 
     .modal-care-areas .instructions {

@@ -4,11 +4,13 @@ use App\CareAmbassador;
 use App\CarePlan;
 use App\Nurse;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
 use App\Role;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -44,6 +46,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // participant info
         if ($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
+            $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
         // provider info
@@ -424,5 +427,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             ) {
                 $q->where('name', '=', $role);
             })->get();
+    }
+
+    public function saveOrUpdatePatientMonthlySummary($user)
+    {
+        return PatientMonthlySummary::updateOrCreate([
+            'patient_id' => $user->id,
+            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
+        ]);
     }
 }

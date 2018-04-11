@@ -818,22 +818,22 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection']);
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection', 'vaccine', 'vaccination', 'vaccin']);
     }
 }
 
 if (!function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
-        if (!$noShow && $patient
-            && is_a($patient, User::class)
-            && $patient->hasProblem('Diabetes')
-            && !$patient->hasProblem('Diabetes Type 1')
-            && !$patient->hasProblem('Diabetes Type 2')
-            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
-        ) {
-            return true;
-        }
+//        if (!$noShow && $patient
+//            && is_a($patient, User::class)
+//            && $patient->hasProblem(1)
+//            && !$patient->hasProblem(32)
+//            && !$patient->hasProblem(33)
+//            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+//        ) {
+//            return true;
+//        }
 
         return false;
     }
@@ -901,5 +901,27 @@ if (!function_exists('cast')) {
             $ret[$key] = $value;
         }
         return $ret;
+    }
+}
+
+if (!function_exists('is_json')) {
+    /**
+     * Determine whether the given string is json
+     *
+     * @param $string
+     *
+     * @return bool
+     */
+    function is_json($string) {
+        if ($string === '' || !is_string($string)) {
+            return false;
+        }
+
+        \json_decode($string);
+        if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -9,6 +9,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
 class ImporterController extends Controller
@@ -80,7 +81,7 @@ class ImporterController extends Controller
      */
     public function create()
     {
-        return view('CCDUploader.uploader');
+        return view('saas.importer.create');
     }
     
     /**
@@ -117,9 +118,11 @@ class ImporterController extends Controller
                         return $m->first_name . $m->last_name;
                     });
 
-                    if ($providers->count() > 1) {
+                    if ($providers->count() > 1 ||  !$mr->location_id || !$mr->location_id || !$mr->billing_provider_id) {
                         $summary['flag'] = true;
                     }
+
+                    $summary->checkDuplicity();
 
                     return $summary;
                 })->filter()
@@ -238,6 +241,8 @@ class ImporterController extends Controller
             $ids = $request->input('imported_medical_record_ids');
         }
 
+        $records = new Collection();
+
         foreach ($ids as $mrId) {
             $imr                      = ImportedMedicalRecord::find($mrId);
             $imr->practice_id         = $practiceId;
@@ -268,6 +273,12 @@ class ImporterController extends Controller
                                     'location_id'         => $locationId,
                                     'billing_provider_id' => $billingProviderId,
                                 ]);
+
+            $records->push($imr);
+        }
+
+        if ($request->has('json')) {
+            return response()->json($records);
         }
 
         return redirect()->route('view.files.ready.to.import');

@@ -186,9 +186,9 @@ class WebixFormatter implements ReportFormatter
 
         if ( ! empty($report_data)) {
             return "data:$report_data";
-        } else {
-            return '';
         }
+
+        return '';
     }
 
     public function formatDataForViewPrintCareplanReport($users)
@@ -208,8 +208,10 @@ class WebixFormatter implements ReportFormatter
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
-        if ( ! empty($other_problems)) {
-            $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
+        if ( ! empty($other_problems) && isset($careplanReport[$user->id]) && isset($careplanReport[$user->id]['problems'])) {
+            if (!is_string($careplanReport[$user->id]['problems'])) {
+                $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
+            }
         }
 
         //Get Biometrics with Values
@@ -390,7 +392,6 @@ class WebixFormatter implements ReportFormatter
             }
 
             //format super specific phone number requirements
-            
             if ($provider && $provider->primaryPhone) {
                 $phone = "P: " . preg_replace(
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',

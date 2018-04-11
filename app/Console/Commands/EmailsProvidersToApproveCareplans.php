@@ -146,26 +146,9 @@ class EmailsProvidersToApproveCareplans extends Command
 
     public function sendEmail(User $recipient, $numberOfCareplans, User $providerUser, bool $pretend)
     {
-        $settings = $providerUser->emailSettings()->firstOrNew([]);
-
-        $send = $settings->frequency == EmailSettings::DAILY
-            ? true
-            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
-                ? true
-                : ($settings->frequency == EmailSettings::MWF) &&
-                (Carbon::today()->dayOfWeek == 1
-                    || Carbon::today()->dayOfWeek == 3
-                    || Carbon::today()->dayOfWeek == 5)
-                    ? true
-                    : false;
-
-        if (!$send) {
-            return false;
-        }
-
         if (!$pretend) {
-            if ($send && $recipient->email) {
-                $recipient->notify(new CarePlanApprovalReminder($numberOfCareplans));
+            if ($recipient->email) {
+                $recipient->sendCarePlanApprovalReminderEmail();
             }
         }
     }

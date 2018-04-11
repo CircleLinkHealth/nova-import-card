@@ -8,6 +8,10 @@
             .select2-container {
                 width: 300px !important;
             }
+
+            tr.bg-flagged {
+                background-color: #ffff0052 !important;
+            }
         </style>
 
         <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
@@ -91,6 +95,8 @@
                                     problem.name = decodeHTML(problem.name)
                                     return problem
                                 })
+                                var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\&quot;/g, '"'))
+                                var dates = JSON.parse("{{json_encode($dates)}}".replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>

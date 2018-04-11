@@ -90,9 +90,7 @@
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
-                                                @foreach($wpUser->roles as $role)
-                                                    {{ $role->display_name }}
-                                                @endforeach
+                                                {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}
                                             @endif
                                         </td>
                                         <td>{{ $wpUser->email }}</td>

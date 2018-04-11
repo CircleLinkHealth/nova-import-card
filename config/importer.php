@@ -15,4 +15,18 @@ return [
         \App\Importer\Section\Validators\ImportAllItems::class,
     ],
 
+    'allergy_loggers' => [
+        App\Importer\Loggers\Allergy\JsonListAllergyLogger::class,
+        App\Importer\Loggers\Allergy\CommaDelimitedListAllergyLogger::class,
+    ],
+
+    'medication_loggers' => [
+        App\Importer\Loggers\Medication\JsonListMedicationLogger::class,
+        App\Importer\Loggers\Medication\NewLineDelimitedListMedicationLogger::class,
+    ],
+
+    'problem_loggers' => [
+        App\Importer\Loggers\Problem\JsonListProblemLogger::class,
+//        App\Importer\Loggers\Problem\CommaDelimitedListProblemLogger::class, @todo: implement once a use case comes up
+    ],
 ];

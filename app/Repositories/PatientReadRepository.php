@@ -10,6 +10,8 @@ namespace App\Repositories;
 
 
 use App\User;
+use App\PatientSearchModel;
+use App\Filters\PatientFilters;
 
 class PatientReadRepository
 {
@@ -26,12 +28,21 @@ class PatientReadRepository
         return $this->user;
     }
 
-    public function patients() {
-        $users = $this->model()->whereHas('patientInfo')->paginate();
-        $users->getCollection()->transform(function ($user) {
-            $user = optional($user)->safe();
-            return $user;
-        });
+    public function patients(PatientFilters $filters) {
+        $users = $this->model()->filter($filters)->whereHas('patientInfo');
+        if (!$filters->isExcel()) { //check that an excel file is not requested
+            $users = $users->paginate($filters->filters()['rows'] ?? 15);
+            $users->getCollection()->transform(function ($user) {
+                $user = optional($user)->safe();
+                return $user;
+            });
+        }
+        else {
+            $users = $users->get()->map(function ($user) {
+                $user = optional($user)->safe();
+                return $user;
+            });
+        }
         return $users;
     }
 
@@ -75,5 +86,9 @@ class PatientReadRepository
         }
 
         return $result;
+    }
+
+    public function search(PatientSearchModel $searchModel) {
+        return $searchModel->results();
     }
 }

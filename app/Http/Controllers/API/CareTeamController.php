@@ -246,6 +246,8 @@ class CareTeamController extends Controller
 
         $patient = User::find($patientId);
 
+        $carePerson = CarePerson::find($request['id']);
+
         $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
@@ -288,7 +290,7 @@ class CareTeamController extends Controller
 
                 $oldBillingProvider->save();
             }
-            
+
             $billingProvider = $oldBillingProviders->first();
 
             //If the Billing Provider has changed, we want to reflect that change on the front end.
@@ -310,22 +312,13 @@ class CareTeamController extends Controller
             $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
-        if (str_contains($input['id'], 'new')) {
-            $carePerson = CarePerson::create([
-                'alert'          => $alert,
-                'type'           => $type,
-                'user_id'        => $patientId,
-                'member_user_id' => $providerUser->id,
-            ]);
-        } else {
-            $carePerson = CarePerson::where('id', '=', $input['id'])
-                ->with('user')
-                ->first();
-
-            $carePerson->alert = $alert;
-            $carePerson->type = $type;
-            $carePerson->save();
-        }
+        $carePerson = CarePerson::updateOrCreate([
+            'user_id'        => $patientId,
+            'member_user_id' => $providerUser->id,
+        ],[
+            'alert'          => $alert,
+            'type'           => $type,
+        ]);
 
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];
@@ -387,6 +380,11 @@ class CareTeamController extends Controller
         if (is_object($carePerson)) {
             $carePerson->load('user');
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
+        }
+
+        if (isset($billingProvider) && !empty($billingProvider)) {
+            $billingProvider = $billingProvider->fresh();
+            $billingProvider->formatted_type = snakeToSentenceCase($billingProvider->type);
         }
 
         return response()->json([

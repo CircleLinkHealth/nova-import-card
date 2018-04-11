@@ -1,3 +1,6 @@
+<?php
+    use Carbon\Carbon;
+?>
 @extends('partials.providerUI')
 
 @section('title', 'Input Appointments')
@@ -20,6 +23,11 @@
                 height: 42px;
                 position: relative;
             }
+
+            .margin-20 {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
         </style>
     @endpush
 
@@ -41,14 +49,14 @@
                         <div class="row">
                             <div class="form-block col-md-6">
                                 <div class="row">
-                                    <div class="new-observation-item">
+                                    <div class="col-sm-12 form-group margin-20">
                                         <div class="form-group">
-                                            <div class="col-sm-12 provider-label" id="provider-label">
+                                            <div class="provider-label" id="provider-label">
                                                 <div id="v-create-appointments-add-care-person">
                                                     <create-appointments-add-care-person></create-appointments-add-care-person>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-12" id="providerDiv">
+                                            <div class="" id="providerDiv">
                                                 <div class="form-group providerBox" id="providerBox">
                                                     <select id="provider" name="provider"
                                                             class="provider selectpickerX dropdownValid form-control"
@@ -62,101 +70,63 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="new-observation-item">
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <label for="date">
-                                                    Appointment Date:
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <input name="date" type="date" id="date"
-                                                           class="selectpickerX form-control"
-                                                           value=""
-                                                           data-field="date" data-format="yyyy-MM-dd" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <label for="time">
-                                                    Appointment Time:
-                                                </label>
-                                            </div>
-                                            <div class="col-sm-12">
-                                                <div class="form-group">
-                                                    <input name="time" id="time" type="time"
-                                                           class="selectpickerX form-control"
-                                                           value="12:00"
-                                                           data-field="time" data-format="H:i" required>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="new-observation-item">
-                                            <div class="form-group">
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <div class="radio-inline"><input type="checkbox"
-                                                                                         name="is_completed"
-                                                                                         id="is_completed"/><label
-                                                                    for="is_completed"><span> </span>Attended</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div class="col-sm-12 form-group margin-20">
+                                        <label for="date">
+                                            Appointment Date:
+                                        </label>
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" required></v-datepicker>
+                                    </div>
+                                    <div class="col-sm-12 form-group margin-20">
+                                        <label for="time">
+                                            Appointment Time:
+                                        </label>
+                                        <input name="time" id="time" type="time"
+                                            class="selectpickerX form-control"
+                                            value="12:00"
+                                            data-field="time" data-format="H:i" required>
+                                    </div>
+                                    <div class="col-sm-12 form-group margin-20">
+                                        <div class="radio-inline">
+                                            <input type="checkbox" name="is_completed" id="is_completed"/>
+                                            <label for="is_completed">
+                                                <span> </span>Attended
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-block col-md-6">
-                                <div class="new-observation-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label for="observationSource">
-                                                Appointment Type:
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-12" style="margin-top: -11px;">
-                                            <div class="form-group">
-                                        <textarea class="form-control" id="appointment_type" name="appointment_type"
-                                                  placeholder="Please specify appointment type..."
-                                                  rows="1" maxlength="50" required></textarea>
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-sm-12 form-group margin-20">
+
+                                        <label for="observationSource">
+                                            Appointment Type:
+                                        </label>
+                                        <input class="form-control" id="appointment_type" name="appointment_type"
+                                        placeholder="Please specify appointment type..." maxlength="50" required />
                                     </div>
-                                </div>
-                                <div class="new-observation-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label for="observationSource">
-                                                Additional Details:
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-12" style="margin-top: -11px;">
-                                            <div class="form-group">
+                                    <div class="col-sm-12 form-group margin-20">
+                                        <label for="observationSource">
+                                            Additional Details:
+                                        </label>
                                         <textarea class="form-control" id="comment" name="comment"
-                                                  placeholder="Please enter appointment details..." rows="4"></textarea>
-                                            </div>
-                                        </div>
+                                        placeholder="Please enter appointment details..." rows="4"></textarea>
+                                    </div>
+                                    <div class="col-sm-12 form-group margin-20">
+                                        <input type="hidden" name="patientId" id="patientId"
+                                            value="{{ $patient->id }}">
+                                    </div>
+                                    <div class="col-sm-12 form-group margin-20">
+                                        {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn')) !!}
                                     </div>
                                 </div>
-                                <div class="row" style="margin:30px 0px;">
-                                    <div class="col-lg-12">
-                                        <div class="text-center" style="margin-right:20px; text-align: right">
-
-                                            <input type="hidden" name="patientId" id="patientId"
-                                                   value="{{ $patient->id }}">
-
-                                            {!! Form::submit('Save', array('name' => 'save','class' => 'btn btn-primary save-btn')) !!}
-                                        </div>
-                                    </div>
-                                </div>
+                                
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+        <div class="col-sm-12" style="padding: 100px"></div>
     </div>
 @endsection

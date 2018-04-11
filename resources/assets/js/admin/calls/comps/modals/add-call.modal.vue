@@ -2,8 +2,11 @@
     <modal name="add-call" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
       <template slot="title">
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-sm-6">
             Add New Call
+          </div>
+          <div class="col-sm-6 text-right">
+            <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">Show Unscheduled Patients</button>
           </div>
         </div>
       </template>
@@ -44,9 +47,10 @@
                 <div class="col-sm-7">
                   <select class="form-control" name="outbound_cpm_id" v-model="formData.nurseId" required>
                     <option :value="null">Unassigned</option>
-                    <option v-for="(nurse, index) in nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
+                    <option v-for="(nurse, index) in nursesForSelect" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
                   </select>
                   <loader v-if="loaders.nurses"></loader>
+                  <div class="alert alert-danger" v-if="formData.practiceId && (nursesForSelect.length == 0)">No available nurses for selected patient</div>
                 </div>
               </div>
               <div class="row form-group">
@@ -84,7 +88,7 @@
               </div>
               <div class="row form-group">
                 <div class="col-sm-12">
-                  <div class="alert alert-danger" v-if="errors.submit">{{errors.submit}}</div>
+                  <notifications ref="notificationsComponent" name="add-call-modal"></notifications>
                   <center>
                     <loader v-if="loaders.submit"></loader>
                   </center>
@@ -103,6 +107,7 @@
     import LoaderComponent from '../../../../components/loader'
     import { rootUrl } from '../../../../app.config'
     import moment from 'moment'
+    import notifications from '../../../../components/notifications'
 
     const defaultFormData = {
                               practiceId: null,
@@ -118,7 +123,8 @@
         name: 'add-call-modal',
         components: {
             'modal': Modal,
-            'loader': LoaderComponent
+            'loader': LoaderComponent,
+            notifications
         },
         data() {
             return {
@@ -155,7 +161,16 @@
                 }
             }
         },
+        computed: {
+          nursesForSelect () {
+            const selectedPatient = this.selectedPatient()
+            return this.nurses.filter(nurse => nurse.states.indexOf((selectedPatient).state) >= 0)
+          }
+        },
         methods: {
+          selectedPatient () {
+            return (this.patients.find(patient => patient.id === this.formData.patientId) || {})
+          },
           getPractices() {
                 this.loaders.practices = true
                 this.axios.get(rootUrl(`api/practices`)).then(response => {
@@ -164,7 +179,7 @@
                       if (a.display_name < b.display_name) return -1;
                       else if (a.display_name > b.display_name) return 1
                       else return 0
-                    })
+                    }).distinct(patient => patient.id)
                     console.log('add-call-get-practices', response.data)
                 }).catch(err => {
                     this.loaders.practices = false
@@ -177,11 +192,12 @@
                     this.loaders.patients = true
                     this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
-                        this.patients = (response.data || []).map(patient => {
+                        const pagination = response.data
+                        this.patients = ((pagination || {}).data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        })
-                        console.log('add-call-get-patients', response.data)
+                        }).distinct(patient => patient.id)
+                        console.log('add-call-get-patients', pagination)
                     }).catch(err => {
                         this.loaders.patients = false
                         this.errors.patients = err.message
@@ -201,7 +217,7 @@
                         this.patients = (response.data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        })
+                        }).distinct(patient => patient.id)
                         console.log('add-call-get-patients', response.data)
                     }).catch(err => {
                         this.loaders.patients = false
@@ -242,20 +258,45 @@
                 attempt_note: this.formData.text
               }
               this.loaders.submit = true
-              this.axios.post(rootUrl('callcreate'), formData).then(response => {
-                this.loaders.submit = false
-                this.formData = Object.create(defaultFormData)
-                Event.$emit("modal-add-call:hide")
-                console.log('add-call', response.data)
+              this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
+                if (response) {
+                  this.loaders.submit = false
+                  this.formData = Object.create(defaultFormData)
+                  const call = response.data
+                  Event.$emit("modal-add-call:hide")
+                  Event.$emit('calls:add', call)
+                  console.log('calls:add', response.data)
+                  Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+                }
+                else {
+                  throw new Error('Could not create call. Patient already has a scheduled call')
+                }
               }).catch(err => {
                 this.errors.submit = err.message
                 this.loaders.submit = false
                 console.error('add-call', err)
+                Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
               })
+            },
+            showUnscheduledPatients () {
+              Event.$emit('modal-add-call:hide')
+              Event.$emit('modal-unscheduled-patients:show')
             }
         },
         mounted() {
           this.getPractices()
+
+          Event.$on('add-call-modals:set', (data) => {
+            if (data) {
+              if (data.practiceId) {
+                this.formData.practiceId = data.practiceId
+                this.changePractice()
+              }
+              if (data.patientId) {
+                this.formData.patientId = data.patientId
+              }
+            }
+          })
         }
     }
 </script>

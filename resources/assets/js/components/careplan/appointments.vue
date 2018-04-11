@@ -70,11 +70,11 @@
         },
         methods: {
             setupAppointment(appointment) {
-                const dt = moment(new Date(appointment.date + ' ' + appointment.time))
-                appointment.at = new Date(appointment.date + ' ' + appointment.time)
+                const dt = moment(appointment.date + ' ' + appointment.time)
+                appointment.at = dt.toDate()
                 appointment.datetime = dt.format('YYYY-MM-DD') + ' at ' + dt.format('h:mm A')
-                appointment.created_at = new Date(appointment.created_at)
-                appointment.updated_at = new Date(appointment.updated_at)
+                appointment.created_at = moment(appointment.created_at).toDate()
+                appointment.updated_at = moment(appointment.updated_at).toDate()
                 appointment.provider = () => ({ user: {}, location: () => ({}) })
                 appointment.isPending = () => (appointment.at > new Date())
 

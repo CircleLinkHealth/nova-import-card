@@ -19,7 +19,7 @@ trait AppointmentTraits
         if ($userId && $appointment->author_id && $appointment->type && $appointment->comment) {
             return response()->json($this->appointmentService->repo()->create($appointment));
         }
-        else return $this->badRequest('"userId", "author_id", "type", "comment" and "provider_id" are is important');
+        else return $this->badRequest('"user_id", "author_id", "type", "comment" and "provider_id" are required');
     }
 
     public function getAppointments($userId) {

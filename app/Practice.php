@@ -3,9 +3,12 @@
 use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasSettings;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Practice
@@ -72,9 +75,11 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
  * @mixin \Eloquent
  */
-class Practice extends \App\BaseModel
+class Practice extends \App\BaseModel implements HasMedia
 {
-    use HasSettings,
+    use HasMediaTrait,
+        HasSettings,
+        SaasAccountable,
         SoftDeletes,
         Notifiable;
 
@@ -119,27 +124,31 @@ class Practice extends \App\BaseModel
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
-    public function patients() {
+    public function patients()
+    {
         return $this->users()->whereHas('roles', function ($q) {
             $q->whereName('participant');
         });
     }
 
-    public function providers() {
+    public function providers()
+    {
         return Practice::getProviders($this->id);
     }
-    
-    public function nurses() {
+
+    public function nurses()
+    {
         return $this->users()->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
         });
     }
 
-    public function chargeableServices(){
-        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+    public function chargeableServices()
+    {
+        return $this->morphToMany(ChargeableService::class, 'chargeable')
                     ->withPivot(['amount'])
                     ->withTimestamps();
     }
@@ -202,21 +211,20 @@ class Practice extends \App\BaseModel
     public function enrollmentByProgram(
         Carbon $start,
         Carbon $end
-    )
-    {
+    ) {
 
         $patients = Patient::whereHas('user', function ($q) {
 
             $q->where('program_id', $this->id);
         })
-            ->whereNotNull('ccm_status')
-            ->get();
+                           ->whereNotNull('ccm_status')
+                           ->get();
 
         $data = [
 
             'withdrawn' => 0,
-            'paused' => 0,
-            'added' => 0,
+            'paused'    => 0,
+            'added'     => 0,
 
         ];
 
@@ -250,7 +258,7 @@ class Practice extends \App\BaseModel
             $primary = $this->locations()->first();
         }
 
-        if (is_null($primary)){
+        if (is_null($primary)) {
             throw new \Exception('This Practice does not have a location.', 500);
         }
 
@@ -282,6 +290,17 @@ class Practice extends \App\BaseModel
         return $q->whereActive(1);
     }
 
+    public function scopeActiveBillable($q)
+    {
+        if (app()->environment(['local', 'staging', 'testing'])){
+            return $q->whereActive(1);
+        }
+        return $q->whereActive(1)
+                     ->whereNotIn('name', ['demo', 'testdrive']);
+
+
+    }
+
     public function scopeAuthUserCanAccess($q)
     {
         return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());
@@ -299,11 +318,13 @@ class Practice extends \App\BaseModel
             : $this->settings->first();
     }
 
-    public function getWeeklyReportRecipientsArray() {
+    public function getWeeklyReportRecipientsArray()
+    {
         return array_map('trim', explode(',', $this->weekly_report_recipients));
     }
 
-    public function getInvoiceRecipientsArray() {
+    public function getInvoiceRecipientsArray()
+    {
         return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
     }
 
@@ -312,7 +333,23 @@ class Practice extends \App\BaseModel
      *
      * @return string
      */
-    public function getNumberWithDashesAttribute() {
+    public function getNumberWithDashesAttribute()
+    {
         return (new StringManipulation())->formatPhoneNumber($this->outgoing_phone_number);
+    }
+
+    public function scopeEnrolledPatients($builder)
+    {
+        return $builder->with([
+            'patients' => function ($q) {
+                $q->with([
+                    'patientInfo',
+                    'activities',
+                ])
+                  ->whereHas('patientInfo', function ($patient) {
+                      $patient->where('ccm_status', Patient::ENROLLED);
+                  });
+            },
+        ]);
     }
 }

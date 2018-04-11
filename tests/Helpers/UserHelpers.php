@@ -73,6 +73,8 @@ trait UserHelpers
 
             //phones
             'home_phone_number' => $workPhone,
+
+            'ccm_status' => 'enrolled'
         ]);
 
         //create a user
@@ -108,6 +110,8 @@ trait UserHelpers
                 'status' => 'draft',
             ]);
         }
+
+        $user->load('practices');
 
         return $user;
     }

@@ -14,6 +14,7 @@ use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmMisc;
+use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\ProblemCode;
@@ -267,6 +268,7 @@ class CarePlanHelper
             'preferred_contact_location' => $this->importedMedicalRecord->location_id,
             'preferred_contact_method'   => 'CCT',
             'user_id'                    => $this->user->id,
+            'registration_date'          => $this->user->user_registered,
         ]);
 
         return $this;
@@ -399,12 +401,17 @@ class CarePlanHelper
         }
 
         foreach ($this->problemsImport as $problem) {
+            $cpmProblem = CpmProblem::find($problem->cpm_problem_id);
+            $defaultInstruction = optional($cpmProblem)->instruction();
+
             $ccdProblem = Problem::create([
+                'is_monitored'       => (boolean) $problem->cpm_problem_id,
                 'problem_import_id'  => $problem->id,
                 'ccd_problem_log_id' => $problem->ccd_problem_log_id,
                 'name'               => $problem->name,
                 'cpm_problem_id'     => $problem->cpm_problem_id,
                 'patient_id'         => $this->user->id,
+                'cpm_instruction_id' => $defaultInstruction->id ?? null,
             ]);
 
             $problemLog = $problem->ccdLog;

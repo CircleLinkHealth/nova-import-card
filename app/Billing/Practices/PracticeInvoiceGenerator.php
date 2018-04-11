@@ -2,9 +2,10 @@
 
 namespace App\Billing\Practices;
 
-use App\Activity;
 use App\AppConfig;
+use App\Models\CCD\Problem;
 use App\Practice;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
@@ -15,7 +16,18 @@ class PracticeInvoiceGenerator
     private $practice;
     private $month;
     private $patients;
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
+    private $patientSummaryEloquentRepository;
 
+    /**
+     * PracticeInvoiceGenerator constructor.
+     *
+     * @param Practice $practice
+     * @param Carbon $month
+     * @param PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+     */
     public function __construct(
         Practice $practice,
         Carbon $month
@@ -23,24 +35,32 @@ class PracticeInvoiceGenerator
 
         $this->practice = $practice;
         $this->month    = $month->firstOfMonth();
+        $this->patientSummaryEloquentRepository = app(PatientSummaryEloquentRepository::class);
     }
 
+    /**
+     * @param bool $withItemized
+     *
+     * @return array
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
+     */
     public function generatePdf($withItemized = true)
     {
         $invoiceName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-invoice';
 
-        $pdfInvoicePath = $this->makeInvoicePdf($invoiceName);
+        $pdfInvoice = $this->makeInvoicePdf($invoiceName);
 
         $data = [
-            'Invoice' => $invoiceName . '.pdf',
+            'invoice_url' => $pdfInvoice->getUrl(),
         ];
 
         if ($withItemized) {
 
-            $reportName = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
-            $pdfPatientReportPath = $this->makePatientReportPdf($reportName);
+            $reportName           = trim($this->practice->name) . '-' . $this->month->toDateString() . '-patients';
+            $pdfPatientReport = $this->makePatientReportPdf($reportName);
 
-            $data['Patient Report'] = $reportName . '.pdf';
+            $data['patient_report_url'] = $pdfPatientReport->getUrl();
         }
 
         $data['practiceId'] = $this->practice->id;
@@ -49,42 +69,77 @@ class PracticeInvoiceGenerator
     }
 
 
-    public function makeInvoicePdf($reportName) {
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
+    public function makeInvoicePdf($reportName)
+    {
+        \Storage::disk('storage')
+                ->makeDirectory('download');
 
         $pdfInvoice = PDF::loadView('billing.practice.invoice', $this->getInvoiceData());
         $pdfInvoice->save(storage_path("download/$reportName.pdf"), true);
 
-        return storage_path("download/$reportName.pdf");
+        $path = storage_path("download/$reportName.pdf");
+
+        return $this->practice
+            ->addMedia($path)
+            ->toMediaCollection("invoice_for_{$this->month->toDateString()}");
     }
 
 
+    /**
+     * @param $reportName
+     *
+     * @return \Spatie\MediaLibrary\Media
+     * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
+     */
+    public function makePatientReportPdf($reportName)
+    {
+        \Storage::disk('storage')
+                ->makeDirectory('download');
 
-    public function makePatientReportPdf($reportName) {
 
         $path = storage_path("/download/$reportName.pdf");
 
         $pdfItemized = PDF::loadView('billing.practice.itemized', $this->getItemizedPatientData());
         $pdfItemized->save($path, true);
 
-        return $path;
+        return $this->practice
+            ->addMedia($path)
+            ->toMediaCollection("patient_report_for_{$this->month->toDateString()}");
     }
 
 
-
-
-    public function getInvoiceData()
+    public function getInvoiceData($chargeableServiceId = null)
     {
 
         $practiceId = $this->practice->id;
 
-        $billable = User::ofType('participant')
-                        ->where('program_id', '=', $this->practice->id)
-                        ->whereHas('patientSummaries', function ($query) {
-                            $query->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
-                                  ->where('approved', '=', true);
-                        })
-                        ->count() ?? 0;
+        if ($chargeableServiceId) {
+            $billable = User::ofType('participant')
+                            ->ofPractice($this->practice->id)
+                            ->whereHas('patientSummaries', function ($query) use ($chargeableServiceId) {
+                                $query->whereHas('chargeableServices', function ($query) use ($chargeableServiceId) {
+                                    $query->where('id', $chargeableServiceId);
+                                })
+                                      ->where('month_year', $this->month->toDateString())
+                                      ->where('approved', '=', true);
+                            })
+                            ->count() ?? 0;
+        } else {
+            $billable = User::ofType('participant')
+                            ->ofPractice($this->practice->id)
+                            ->whereHas('patientSummaries', function ($query) {
+                                $query->where('month_year', $this->month->toDateString())
+                                      ->where('approved', '=', true);
+                            })
+                            ->count() ?? 0;
+        }
+
 
         return [
             'clh_address'    => $this->practice->getAddress(),
@@ -116,53 +171,47 @@ class PracticeInvoiceGenerator
 
     public function getItemizedPatientData()
     {
-
-        $patients = User::ofType('participant')
-                        ->with([
-                            'patientSummaries' => function ($q) {
-                                $q->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
-                                  ->where('approved', '=', true);
-                            },
-                        ])
-                        ->where('program_id', '=', $this->practice->id)
-                        ->whereHas('patientSummaries', function ($query) {
-                            $query->where('month_year', $this->month->toDateString())
-                                  ->where('ccm_time', '>=', 1200)
-                                  ->where('approved', '=', true);
-                        })
-                        ->orderBy('updated_at', 'desc')
-                        ->get();
-
         $data          = [];
         $data['name']  = $this->practice->display_name;
         $data['month'] = $this->month->toDateString();
 
-        foreach ($patients as $u) {
-            $summary = $u->patientSummaries->first();
+        $patients = User::orderBy('first_name', 'asc')
+                        ->ofType('participant')
+                        ->with([
+                            'patientSummaries' => function ($q) {
+                                $q->where('month_year', $this->month->toDateString())
+                                  ->where('approved', '=', true);
+                            },
+                            'billingProvider'
+                        ])
+                        ->whereProgramId($this->practice->id)
+                        ->whereHas('patientSummaries', function ($query) {
+                            $query->where('month_year', $this->month->toDateString())
+                                  ->where('approved', '=', true);
+                        })
+                        ->chunk(500, function ($patients) use (&$data) {
+                            foreach ($patients as $u) {
+                                $summary = $u->patientSummaries->first();
 
-            $data['patientData'][$u->id]['ccm_time'] = round($summary->ccm_time / 60, 2);
-            $data['patientData'][$u->id]['name']     = $u->fullName;
-            $data['patientData'][$u->id]['dob']      = $u->birth_date;
-            $data['patientData'][$u->id]['practice'] = $u->program_id;
-            $data['patientData'][$u->id]['provider'] = $u->billingProviderName;
+                                if (!$this->patientSummaryEloquentRepository->hasBillableProblemsNameAndCode($summary)) {
+                                    $summary = $this->patientSummaryEloquentRepository->fillBillableProblemsNameAndCode($summary);
+                                    $summary->save();
+                                }
 
-            $problem1                                     = isset($summary->problem_1) && $u->ccdProblems
-                ? $u->ccdProblems->where('id', $summary->problem_1)->first()
-                : null;
-            $data['patientData'][$u->id]['problem1_code'] = isset($problem1)
-                ? $problem1->icd10Code()
-                : null;
-            $data['patientData'][$u->id]['problem1']      = $problem1->name ?? null;
+                                $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
+                                $data['patientData'][$u->id]['name']          = $u->fullName;
+                                $data['patientData'][$u->id]['dob']           = $u->birth_date;
+                                $data['patientData'][$u->id]['practice']      = $u->program_id;
+                                $data['patientData'][$u->id]['provider']      = $u->billingProviderName;
+                                $data['patientData'][$u->id]['billing_codes'] = $u->billingCodes($this->month);
 
-            $problem2                                     = isset($summary->problem_2) && $u->ccdProblems
-                ? $u->ccdProblems->where('id', $summary->problem_2)->first()
-                : null;
-            $data['patientData'][$u->id]['problem2_code'] = isset($problem2)
-                ? $problem2->icd10Code()
-                : null;
-            $data['patientData'][$u->id]['problem2']      = $problem2->name ?? null;
-        }
+                                $data['patientData'][$u->id]['problem1_code'] = $summary->billable_problem1_code;
+                                $data['patientData'][$u->id]['problem1']      = $summary->billable_problem1;
+
+                                $data['patientData'][$u->id]['problem2_code'] = $summary->billable_problem2_code;
+                                $data['patientData'][$u->id]['problem2']      = $summary->billable_problem2;
+                            }
+                        });
 
         $data['patientData'] = array_key_exists('patientData', $data)
             ? $this->array_orderby($data['patientData'], 'provider', SORT_ASC, 'name', SORT_ASC)

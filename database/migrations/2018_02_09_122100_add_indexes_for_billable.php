@@ -13,17 +13,17 @@ class AddIndexesForBillable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedInteger('program_id')
-                ->nullable()
-                ->change();
-
-            $table->index('program_id');
-        });
-
-        Schema::table('patient_care_team_members', function (Blueprint $table) {
-            $table->index('type');
-        });
+//        Schema::table('users', function (Blueprint $table) {
+//            $table->unsignedInteger('program_id')
+//                ->nullable()
+//                ->change();
+//
+////            $table->index('program_id');
+//        });
+//
+//        Schema::table('patient_care_team_members', function (Blueprint $table) {
+//            $table->index('type');
+//        });
 
     }
 

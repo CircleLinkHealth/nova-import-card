@@ -292,6 +292,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <?php
+                    $allCpmProblems = new Collection($data['allCpmProblems']);
                     $cpmProblems = new Collection($data['cpmProblems']);
                     $ccdProblems = new Collection($data['ccdProblems']);
                     $healthGoals = new Collection($data['healthGoals']);
@@ -301,30 +302,30 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- CARE AREAS -->
                 <div class="patient-info__subareas">
                     <?php
-                        $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
+                        $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
+                            if (!$problem['instruction']) {
+                                $cpmProblem =  $allCpmProblems->first(function ($cpm) use ($problem) {
+                                    return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
+                                });
+                                if ($cpmProblem) {
+                                    $problem['instruction'] = $cpmProblem['instruction'];
+                                }
+                            }
+                            return $problem;
                         });
 
-                        $problemsWithInstructions = $cpmProblemsForListing->filter(function ($cpm) {
-                            return $cpm['instruction']['name'];
-                        })->concat($ccdProblems->filter(function ($ccd) {
+                        $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
                             return $ccd['instruction']['name'];
-                        }))->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
                         });
 
-                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'];
-                            }) && $problem['is_monitored'];
+                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+                            return $problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
                         
-                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$problem['is_monitored'] && !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'] || $cpm['id'] == $problem['id'];
-                            });
+                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
+                            return !$problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
@@ -337,15 +338,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
-                                <div class="text-center">No Problems at this time</div>
+                            @if (!$ccdMonitoredProblems->count()) 
+                                <div class="text-center">No Monitored Problems at this time</div>
                             @else
                                 <ul class="row">
-                                    @foreach ($cpmProblemsForListing as $problem)
-                                        <li class='top-10 col-sm-6'>
-                                            {{$problem['name']}}
-                                        </li>
-                                    @endforeach
                                     @foreach ($ccdMonitoredProblems as $problem)
                                         <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
@@ -376,15 +372,23 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             return $goal['enabled'];
                         })->map(function ($goal) {
                             $start = $goal['info']['starting'];
-                            $start = (int)($start ? explode('/', $start)[0] : 0);
+                            $start = (int)($start ? explode('/', $start)[0] : 'N/A');
                             $end = $goal['info']['target'];
                             $end = (int)($end ? explode('/', $end)[0] : 0);
 
+                            if ($goal['info']['starting'] == '') {
+                                $goal['info']['starting'] = 'N/A';
+                            }
+
                             if ($goal['name'] == 'Blood Sugar') {
-                                if ($start > 130) {
-                                    $goal['verb'] = $end < $start ? 'Decrease' : 'Increase';
+                                $goal['info']['target'] = $goal['info']['target'] ?? '120';
+                                if ($goal['info']['target'] == '0') {
+                                    $goal['info']['target'] = '120';
                                 }
-                                else if ($start >= 80 && $end <= 130) {
+                                if ($start > 130) {
+                                    $goal['verb'] = 'Decrease';
+                                }
+                                else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
                                     $goal['verb'] = 'Regulate';
                                 }
                                 else {
@@ -392,35 +396,30 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 }
                             }
                             else if ($goal['name'] == 'Blood Pressure') {
-                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD') {
+                                $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
+                                if ($goal['info']['target'] == '0') {
+                                    $goal['info']['target'] = '130/80';
+                                }
+
+                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start < 130)) {
                                     $goal['verb'] = 'Regulate';
                                 }
-                                else if ($start < 100) {
-                                    if ($end <= 130) {
-                                        $goal['verb'] = 'Regulate';
-                                    }
-                                    else {
-                                        $goal['verb'] = 'Decrease';
-                                    }
-                                }
-                                else {
-                                    if ($start > $end) {
-                                        $goal['verb'] = 'Decrease';
-                                    }
-                                    else {
-                                        if ($start < 90) {
-                                            $goal['verb'] = 'Increase';
-                                        }
-                                        else {
-                                            $goal['verb'] = 'Regulate';
-                                        }
-                                    }
+                                else if ($start >= 130) {
+                                    $goal['verb'] = 'Decrease';
                                 }
                             }
                             else {
-                                $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                    (($start > 0 && $start < $end) ? 'Increase' :
+                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || !$goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                    if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                        $goal['info']['target'] = 'N/A';
+                                    }
+                                    $goal['verb'] = 'Regulate';
+                                }
+                                else {
+                                    $goal['verb'] = ($start > $end) ? 'Decrease' : 
+                                    (($start < $end) ? 'Increase' :
                                     'Regulate');
+                                }
                             }
                             $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
                             return $goal;

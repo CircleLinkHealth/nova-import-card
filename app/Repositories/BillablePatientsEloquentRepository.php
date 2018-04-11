@@ -50,7 +50,8 @@ class BillablePatientsEloquentRepository
     {
         $month = $date->startOfMonth()->toDateString();
 
-        $result = PatientMonthlySummary::where('month_year', $month)
+        $result = PatientMonthlySummary::orderBy('needs_qa', 'desc')
+                                       ->where('month_year', $month)
                                        ->where('ccm_time', '>=', 1200)
                                        ->with([
                                            'patient' => function ($q) use ($month, $practiceId) {
@@ -66,6 +67,7 @@ class BillablePatientsEloquentRepository
                                                    },
                                                ]);
                                            },
+                                           'chargeableServices'
                                        ])
                                        ->has('patient.patientInfo')
                                        ->whereHas('patient.practices', function ($q) use ($practiceId) {

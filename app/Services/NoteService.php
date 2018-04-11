@@ -10,6 +10,7 @@ use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
 use App\CareplanAssessment;
+use App\Filters\NoteFilters;
 use App\Repositories\NoteRepository;
 use App\Repositories\CareplanAssessmentRepository;
 use App\CLH\Repositories\UserRepository;
@@ -34,12 +35,13 @@ class NoteService
         return $this->noteRepo;
     }
 
-    public function patientNotes($userId, $type = null) {
-        if ($type) {
-            $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
-            return $assessments->map([$this, 'createNoteFromAssessment']);
-        }
-        return $this->repo()->patientNotes($userId, $type);
+    public function patientNotes($userId, NoteFilters $filters) {
+        return $this->repo()->patientNotes($userId, $filters);
+    }
+
+    public function patientBiometricNotes($userId) {
+        $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
+        return $assessments->map([$this, 'createNoteFromAssessment']);
     }
 
     function createNoteFromAssessment($assessment) {
@@ -440,6 +442,8 @@ class NoteService
                     ->with('notifiable')
                     ->get()
                     ->mapWithKeys(function ($notification) {
+                        if (!$notification->notifiable) return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+
                         return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
                     });
     }

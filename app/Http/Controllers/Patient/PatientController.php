@@ -88,6 +88,7 @@ class PatientController extends Controller
                   ->orderBy('obs_date', 'desc')
                   ->take(100);
             },
+            'patientSummaries',
         ])
                       ->where('id', $patientId)
                       ->first();
@@ -265,17 +266,22 @@ class PatientController extends Controller
      *
      * @return Response
      */
-    public function showPatientListing()
+    public function showPatientListing() {
+        return view('wpUsers.patient.listing');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @return Response
+     */
+    public function toDeprecateShowPatientListing()
     {
         $data = $this->formatter->patientListing();
 
-        return view('wpUsers.patient.listing', $data);
+        return view('wpUsers.patient.listingToDeprecate', $data);
     }
 
-    public function showPatientListingRemix() {
-        return view('wpUsers.patient.listing-remix');
-    }
-    
     public function showPatientListingPdf() {
         $storageDirectory = 'storage/pdfs/patients/';
         $datetimePrefix   = date('Y-m-dH:i:s');

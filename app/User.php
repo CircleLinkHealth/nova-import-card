@@ -3,6 +3,7 @@
 use App\Contracts\Serviceable;
 use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -21,10 +22,13 @@ use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
+use App\Repositories\Cache\EmptyUserNotificationList;
 use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\SaasAccountable;
+use App\Filters\Filterable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -36,9 +40,12 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\User
@@ -217,7 +224,7 @@ use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, Serviceable
+class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
@@ -225,13 +232,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
-    use Authenticatable,
+    use Filterable, Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
         HasApiTokens,
         HasEmrDirectAddress,
+        HasMediaTrait,
         Impersonate,
         Notifiable,
+        SaasAccountable,
         SoftDeletes;
 
 
@@ -1351,17 +1360,17 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                     User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
                 ]);
-    
+
                 if ($forwards->isEmpty() && $carePerson->user) {
                     $users->push($carePerson->user);
                 }
-    
+
                 foreach ($forwards as $forwardee) {
                     if ($forwardee->pivot->name == User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER) {
                         $users->push($carePerson->user);
                         $users->push($forwardee);
                     }
-    
+
                     if ($forwardee->pivot->name == User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER) {
                         $users->push($forwardee);
                     }
@@ -1449,20 +1458,23 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function setBillingProviderIdAttribute($value)
     {
         if (empty($value)) {
-            $this->careTeamMembers()->where('type', 'billing_provider')->delete();
+            $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->delete();
 
             return true;
         }
-        $careTeamMember = $this->careTeamMembers()->where('type', 'billing_provider')->first();
+        $careTeamMember = $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->first();
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
             $careTeamMember                 = new CarePerson();
             $careTeamMember->user_id        = $this->id;
             $careTeamMember->member_user_id = $value;
-            $careTeamMember->type           = 'billing_provider';
+            $careTeamMember->type           = CarePerson::BILLING_PROVIDER;
         }
         $careTeamMember->save();
+
+        $this->load('billingProvider');
+        $this->load('careTeamMembers');
 
         return true;
     }
@@ -1782,6 +1794,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->carePlan->status = $value;
         $this->carePlan->save();
 
+        $this->load('carePlan');
+
         return true;
     }
 
@@ -1831,6 +1845,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 $this->dateWithdrawn = date("Y-m-d H:i:s");
             };
         }
+
+        $this->load('patientInfo');
 
         return true;
     }
@@ -1923,6 +1939,19 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->save();
 
         return $this;
+    }
+
+    /**
+     * (functions as an @ehrKeychain)
+     *
+     * Relates to TargetPatient class, contains all patient info for EHR
+     * (ehr_practice_id, ehr_department_id etc)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function ehrInfo(){
+
+        return $this->hasOne(TargetPatient::class);
     }
 
     public function getUCP()
@@ -2330,8 +2359,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function chargeableServices(){
         return $this->morphToMany(  ChargeableService::class, 'chargeable')
-            ->withPivot(['amount'])
-            ->withTimestamps();
+                    ->withPivot(['amount'])
+                    ->withTimestamps();
     }
 
     public function clinicalEmergencyContactLocations()
@@ -2509,25 +2538,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function patientList()
     {
         return User::intersectPracticesWith($this)
-            ->ofType('participant')
-            ->whereHas('patientInfo')
-            ->with([
-                'observations'    => function ($query) {
-                    $query->where('obs_key', '!=', 'Outbound');
-                    $query->orderBy('obs_date', 'DESC');
-                    $query->first();
-                },
-                'careTeamMembers' => function ($q) {
-                    $q->where('type', '=', CarePerson::BILLING_PROVIDER)
-                        ->with('user');
-                },
-                'phoneNumbers'    => function ($q) {
-                    $q->where('type', '=', PhoneNumber::HOME);
-                },'carePlan.providerApproverUser',
+                   ->ofType('participant')
+                   ->whereHas('patientInfo')
+                   ->with([
+                       'observations'    => function ($query) {
+                           $query->where('obs_key', '!=', 'Outbound');
+                           $query->orderBy('obs_date', 'DESC');
+                           $query->first();
+                       },
+                       'careTeamMembers' => function ($q) {
+                           $q->where('type', '=', CarePerson::BILLING_PROVIDER)
+                             ->with('user');
+                       },
+                       'phoneNumbers'    => function ($q) {
+                           $q->where('type', '=', PhoneNumber::HOME);
+                       },
+                       'carePlan.providerApproverUser',
                        'primaryPractice',
                        'patientInfo',
-            ])
-            ->get();
+                   ])
+                   ->get();
     }
 
     public function patientsPendingApproval()
@@ -2598,8 +2628,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function hasProblem($problem)
     {
-        return ! $this->cpmProblems->where('id', '=', $problem)->isEmpty()
-               || ! $this->cpmProblems->where('name', '=', $problem)->isEmpty();
+        return ! $this->ccdProblems->where('cpm_problem_id', '=', $problem)->isEmpty();
     }
 
     /**
@@ -2614,7 +2643,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
-        return new UserNotificationList($this->id);
+        if (in_array(env('CACHE_DRIVER'), ['redis'])) {
+            return new UserNotificationList($this->id);
+        }
+
+        return new EmptyUserNotificationList();
     }
 
     public function patientSummaries()
@@ -2626,7 +2659,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->ccdProblems()
                     ->whereNotNull('cpm_problem_id')
-                    //filter out unspecified diabetes
+            //filter out unspecified diabetes
                     ->where('cpm_problem_id', '!=', 1)
                     ->with('icd10Codes')
                     ->where('billable', true);
@@ -2691,6 +2724,28 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasRole('administrator');
     }
 
+    public function isInternalUser() {
+        return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
+    }
+
+    public function isPracticeStaff() {
+        return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
+    }
+
+    public function linkToViewResource() {
+        if ($this->isInternalUser()) {
+            return route('admin.users.edit', ['id' => $this->id]);
+        }
+
+        if ($this->hasRole('participant')) {
+            return route('patient.careplan.print', ['id' => $this->id]);
+        }
+
+        if ($this->isPracticeStaff()) {
+            return route('provider.dashboard.manage.staff', ['practiceSlug' => $this->practices->first()->name]);
+        }
+    }
+
     /**
      * @return bool
      */
@@ -2703,10 +2758,16 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->display_name ?? ($this->first_name . $this->last_name);
     }
 
-    public function safe() {
-        $careplan = $this->carePlan()->first();
+    public function lastObservation() {
+        return $this->observations()->orderBy('id', 'desc');
+    }
+
+
+    public function safe()
+    {
+        $careplan    = $this->carePlan()->first();
         $observation = $this->observations()->orderBy('id', 'desc')->first();
-        $phone = $this->phoneNumbers()->first();
+        $phone       = $this->phoneNumbers()->first();
 
         return [
             'id' => $this->id,
@@ -2725,19 +2786,80 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'billing_provider_name' => $this->billing_provider_name,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
-            'phone' => $this->phone ?? optional($phone)->number
+            'phone' => $this->phone ?? optional($phone)->number,
+            'created_at' => optional($this->created_at)->format('c') ?? null,
+            'updated_at' => optional($this->updated_at)->format('c') ?? null
         ];
     }
 
-    public function saasAccount() {
-        return $this->belongsTo(SaasAccount::class);
+    public function saasAccountName()
+    {
+        $saasAccount = $this->saasAccount;
+        if ($saasAccount) return $saasAccount->name;
+        $saasAccount = $this->primaryPractice->saasAccount;
+        if (!$saasAccount) {
+            if (auth()->check()) $saasAccount = auth()->user()->saasAccount;
+        }
+        if ($saasAccount) {
+            $this->saasAccount()
+                 ->associate($saasAccount);
+            return $saasAccount->name;
+        }
+        return 'CircleLink Health';
     }
 
-    public function isSaas() {
-        return $this->saas_account_id > 1;
+    public function billingCodes(Carbon $monthYear) {
+        $summary = $this->patientSummaries()
+            ->where('month_year', $monthYear->toDateString())
+            ->with('chargeableServices')
+            ->has('chargeableServices')
+            ->first();
+
+        if (!$summary) return '';
+
+        return $summary->chargeableServices
+            ->implode('code', ', ');
     }
 
-    public function isNotSaas() {
-        return !$this->isSaas();
+    /**
+     * Send a CarePlan Approval reminder, if there are CarePlans pending approval
+     *
+     * @param bool $force
+     *
+     * @return bool
+     */
+    public function sendCarePlanApprovalReminderEmail($force = false) {
+        if (!$this->shouldSendCarePlanApprovalReminderEmail() && !$force) {
+            return false;
+        }
+
+        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this);
+
+        if ($numberOfCareplans < 1) {
+            return false;
+        }
+
+        $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldSendCarePlanApprovalReminderEmail()
+    {
+        $settings = $this->emailSettings()->firstOrNew([]);
+
+        return $settings->frequency == EmailSettings::DAILY
+            ? true
+            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                ? true
+                : ($settings->frequency == EmailSettings::MWF) &&
+                  (Carbon::today()->dayOfWeek == 1
+                   || Carbon::today()->dayOfWeek == 3
+                   || Carbon::today()->dayOfWeek == 5)
+                    ? true
+                    : false;
     }
 }

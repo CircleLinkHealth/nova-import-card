@@ -166,7 +166,9 @@
 
 <style>
     .modal-medications .modal-container {
-        width: 700px;
+        width: 900px;
+        max-height: 100%;
+        overflow-y: auto;
     }
 
     .medication-container {
@@ -174,7 +176,14 @@
     }
 
     .medication-buttons {
-        width: 2000px;
+        width: auto;
+    }
+
+    .btn.btn-secondary.medication-button {
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .medication-button span.delete {
@@ -186,8 +195,8 @@
         padding: 1px 5px;
         border-radius: 50%;
         position: absolute;
-        top: -8px;
-        right: -10px;
+        top: 0px;
+        right: 0px;
         cursor: pointer;
         display: none;
     }

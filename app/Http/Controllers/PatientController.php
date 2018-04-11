@@ -38,6 +38,8 @@ use App\Http\Controllers\Patient\Traits\MiscTraits;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+use App\Filters\PatientFilters;
+
 
 class PatientController extends Controller
 {
@@ -103,9 +105,9 @@ class PatientController extends Controller
     /**
      * returns a list of CPM Problems in the system
      */
-    public function index()
+    public function index(Request $request, PatientFilters $filters)
     {
-        return response()->json($this->patientService->patients());
+        return $this->patientService->patients($filters);
     }
 
     public function getPatient($userId) {

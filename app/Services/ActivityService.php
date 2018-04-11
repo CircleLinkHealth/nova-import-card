@@ -55,11 +55,11 @@ class ActivityService
                 $summary->save();
             }
 
-            if ($monthYear->eq(Carbon::now()->startOfMonth())) {
+            if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
                 $info = Patient::updateOrCreate([
                     'user_id' => $id,
                 ], [
-                    'cur_month_activity_time' => $ccmTime,
+                    'cur_month_activity_time' => (int) $ccmTime,
                 ]);
             }
         }

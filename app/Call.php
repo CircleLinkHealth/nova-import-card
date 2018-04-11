@@ -96,9 +96,15 @@ class Call extends \App\BaseModel
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
+        }
+
         // get record for month
-        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientSummaries->where('month_year', $day_start)->first();
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
         if (!$record) {
             return 0;
         }
@@ -107,10 +113,15 @@ class Call extends \App\BaseModel
 
     public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
     {
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
+        }
 
         // get record for month
-        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientSummaries->where('month_year', $day_start)->first();
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
         if (!$record) {
             return 0;
         }
@@ -130,6 +141,10 @@ class Call extends \App\BaseModel
     public function inboundUser()
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
+    }
+
+    public function patientId() {
+        return $this->has('outboundUser.patientInfo.user') ? $this->outbound_cpm_id : $this->inbound_cpm_id;
     }
 
     /**
@@ -167,7 +182,7 @@ class Call extends \App\BaseModel
      * @param $builder
      */
     public function scopeScheduled($builder) {
-        $builder->where('status', '=', 'scheduled')
+        $builder->where('calls.status', '=', 'scheduled')
                 ->whereHas('inboundUser')
                 ->with([
                     'inboundUser.billingProvider.user',

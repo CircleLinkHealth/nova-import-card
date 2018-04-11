@@ -226,7 +226,7 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'Circlelink Health notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               header: 'CarePlan Manager notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
@@ -240,7 +240,7 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'Circlelink Health notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               header:'CarePlan Manager notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',

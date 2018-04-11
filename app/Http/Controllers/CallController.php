@@ -6,6 +6,7 @@ use App\Call;
 use App\Patient;
 use App\Services\Calls\SchedulerService;
 use App\User;
+use App\Http\Resources\Call as CallResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,19 +59,19 @@ class CallController extends Controller
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
         if ( ! $patient) {
-            return response(json_encode([
+            return response([
                 'errors' => ['could not find patient'],
                 'code'   => 406,
-            ]), 406);
+            ], 406);
         }
 
         if ($patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()->where('status', '=', 'scheduled')->first();
             if ($scheduledCall) {
-                return response(json_encode([
+                return response([
                     'errors' => ['patient already has a scheduled call'],
                     'code'   => 406,
-                ]), 406);
+                ], 406);
             }
         }
 
@@ -92,7 +93,7 @@ class CallController extends Controller
         $call->scheduler       = auth()->user()->id;
         $call->save();
 
-        return response("successfully created call ", 201);
+        return response()->json(CallResource::make($call), 201);
         //return view('wpUsers.patient.calls.create');
     }
 

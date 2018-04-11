@@ -129,12 +129,9 @@
                                                     <div class="row">
                                                         <div class="col-xs-2">{!! Form::label('program_id', 'Primary Practice:') !!}</div>
                                                         <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, '', ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                                        <div class="col-xs-2"><strong>Practice Config:</strong><br/>Auto attach to
-                                                            new programs
-                                                        </div>
-                                                        <div class="col-xs-4">
-                                                            <br />
-                                                            <input id="auto_attach_programs" name="auto_attach_programs" value="1" type="checkbox">
+                                                        <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
+                                                        <div class="col-xs-2">
+                                                            {!! Form::checkbox('auto_attach_programs', 0, 0) !!}
                                                         </div>
                                                     </div>
                                                 </div>

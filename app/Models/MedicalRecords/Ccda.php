@@ -80,6 +80,8 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     const EMR_DIRECT = 'emr_direct';
     const IMPORTER = 'importer';
     const SFTP_DROPBOX = 'sftp_dropbox';
+    const UPLOADED = 'uploaded';
+    const GOOGLE_DRIVE = 'google_drive';
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
@@ -171,16 +173,12 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             return false;
         }
 
-        $key = "ccda:{$this->id}:json";
+        if (!$this->json) {
+            $this->json = $this->parseToJson($this->xml);
+            $this->save();
+        }
 
-        return Cache::remember($key, 7000, function () {
-            if (!$this->json) {
-                $this->json = $this->parseToJson($this->xml);
-                $this->save();
-            }
-
-            return json_decode($this->json);
-        });
+        return json_decode($this->json);
     }
 
     protected function parseToJson($xml)
@@ -189,12 +187,12 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
         ]);
 
-        $response = $client->request('POST', '/ccda/parse', [
+        $response = $client->request('POST', '/api/parser', [
             'headers' => ['Content-Type' => 'text/xml'],
             'body'    => $xml,
         ]);
 
-        if ($response->getStatusCode() != 200) {
+        if (!in_array($response->getStatusCode(), [200,201])) {
             return [
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

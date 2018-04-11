@@ -7,6 +7,7 @@ use App\Location;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
+use App\Filters\NurseFilters;
 
 class PracticeController extends Controller
 {
@@ -41,7 +42,10 @@ class PracticeController extends Controller
     * get list of available practices
     */
     public function getPractices() {
-        $practicesCollection = Practice::get([
+        $practicesCollection = auth()->user()
+                                ->practices()
+                                ->with('locations')
+                                ->get([
                                             'id',
                                             'display_name',
                                         ]);
@@ -102,7 +106,7 @@ class PracticeController extends Controller
     }
 
     public function getPatients($practiceId) {
-        $practice = Practice::where('id', $practiceId)->get(['id'])->first();
+        $practice = Practice::find($practiceId);
         $patients = $practice->patients()->get([
             'id',
             'first_name',
@@ -126,7 +130,11 @@ class PracticeController extends Controller
     
     public function getNurses($practiceId) {
         $practice = Practice::where('id', $practiceId)->get(['id'])->first();
-        $nurses = $practice->nurses()->get([
+        $nurses = $practice->nurses()->whereHas('nurseInfo', function ($q) {
+            $q->where([
+                'status' => 'active'
+            ]);
+        })->get([
             'id',
             'first_name',
             'last_name',
@@ -134,14 +142,22 @@ class PracticeController extends Controller
             'city',
             'state'
         ])->map(function ($nurse) {
+            $info = $nurse->nurseInfo()->first();
+            $states = ($info ? $info->states()->get() : new Collection())->map(function ($state) {
+                return $state->code;
+            });
+            if ($nurse->state && !$states->contains($nurse->state)) {
+                $states->push($nurse->state);
+            }
             return [
                 'id' =>  $nurse->id,
                 'first_name' =>  $nurse->first_name,
                 'last_name' =>  $nurse->last_name,
                 'suffix' =>  $nurse->suffix,
-                'full_name' => $nurse->first_name . ' ' . $nurse->last_name . ' ' . $nurse->suffix,
+                'full_name' => $nurse->display_name ?? ($nurse->first_name . ' ' . $nurse->last_name . ' ' . $nurse->suffix),
                 'city' =>  $nurse->city,
-                'state' =>  $nurse->state
+                'state' =>  $nurse->state,
+                'states' => $states
             ];
         })->toArray();
         return response()->json($nurses);

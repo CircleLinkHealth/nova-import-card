@@ -167,11 +167,11 @@ trait ValidatesQAImportOutput
         $qaSummary = new ImportedMedicalRecord();
         $qaSummary->ccda_id = $ccda->id;
         $qaSummary->name = $fullName;
-        $qaSummary->medications = $medications;
-        $qaSummary->problems = $problems;
-        $qaSummary->allergies = $allergies;
+//        $qaSummary->medications = $medications;
+//        $qaSummary->problems = $problems;
+//        $qaSummary->allergies = $allergies;
         $qaSummary->provider = $provider();
-        $qaSummary->location = $location();
+//        $qaSummary->location = $location();
         $qaSummary->duplicate_id = $duplicatePatient->id ?? null;
         $qaSummary->has_street_address = $hasStreetAddress();
         $qaSummary->has_zip = $hasZip();

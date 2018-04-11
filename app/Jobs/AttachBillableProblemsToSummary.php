@@ -36,6 +36,9 @@ class AttachBillableProblemsToSummary implements ShouldQueue
     {
         $summary = $repo->attachBillableProblems($this->summary->patient, $this->summary);
 
+//        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
+//        $summary = $repo->attachDefaultChargeableService($summary, null, false);
+
         if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();
         }

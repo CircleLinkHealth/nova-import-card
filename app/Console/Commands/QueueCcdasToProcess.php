@@ -43,7 +43,7 @@ class QueueCcdasToProcess extends Command
         $ccdas = Ccda::where('status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
             ->whereNull('mrn')
             ->inRandomOrder()
-            ->limit(100)
+            ->limit(5)
             ->get(['id'])
             ->map(function ($ccda) {
                 $job = (new ProcessCcda($ccda))

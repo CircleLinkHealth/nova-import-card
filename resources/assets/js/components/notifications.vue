@@ -2,10 +2,10 @@
     <div class="row">
         <div class="col-sm-12" v-for="(note, index) in notes" :key="index">
             <div class="alert" :class="{ 
-                                    'alert-success': note.type === 'success', 
-                                    'alert-warning': ['warning', 'warn'].includes(note.type), 
-                                    'alert-info': note.type === 'info', 
-                                    'alert-danger': ['error', 'danger'].includes(note.type)
+                                    'alert-success': types.success.includes(note.type), 
+                                    'alert-warning': types.warning.includes(note.type), 
+                                    'alert-info': !types.all().includes(note.type), 
+                                    'alert-danger': types.error.includes(note.type)
                                 }">
                 <slot :note="note">
                     {{note.text}}
@@ -19,17 +19,34 @@
 
 <script>
     import EventBus from '../admin/time-tracker/comps/event-bus'
+    import { Event } from 'vue-tables-2'
 
     export default {
-        name: 'notifications',
-        props: [],
+        props: [ 'name' ],
         data() {
             return {
-                notes: []
+                notes: [],
+                types: {
+                    success: ['success'],
+                    warning: ['warning', 'warn'],
+                    error: ['danger', 'error'],
+                    all () {
+                        return [
+                            ...this.success,
+                            ...this.warning,
+                            ...this.error
+                        ]
+                    }
+                }
             }
         },
-        mounted() {
-            EventBus.$on('notifications:create', (note) => {
+        computed: {
+            componentName () {
+                return `notifications${this.name ? '-' + this.name : ''}`;
+            }
+        },
+        methods: {
+            create(note) {
                 if (note) {
                     const id = ((this.notes.map(note => note.id)[this.notes.length - 1] || 0) + 1)
                     const newNote = {
@@ -55,9 +72,13 @@
                     }
                     
                     this.notes.push(newNote)
-                    console.log('notifications:create', newNote)
+                    console.log(`${this.componentName}:create`, newNote)
                 }
-            })
+            }
+        },
+        mounted() {
+            EventBus.$on(`${this.componentName}:create`, this.create)
+            Event.$on(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args))
         }
     }
 </script>

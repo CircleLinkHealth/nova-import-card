@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 
 use App\Note;
+use App\Filters\NoteFilters;
 use Exception;
 use Carbon\Carbon;
 
@@ -21,16 +22,11 @@ class NoteRepository
         return !!$this->model()->find($id);
     }
 
-    public function patientNotes($userId, $type = null) {
-        $query = $this->model()->orderBy('id', 'desc')->where([
+    public function patientNotes($userId, NoteFilters $filters) {
+        $query = $this->model()->where([
             'patient_id' => $userId
-        ]);
-        if ($type) {
-            $query = $query->where([
-                'type' => $type
-            ]);
-        }
-        return $query->paginate();
+        ])->filter($filters);
+        return $query->paginate($filters->filters()['rows'] ?? 15);
     }
 
     public function addOrEdit(Note $note) {

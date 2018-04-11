@@ -7,12 +7,13 @@
                     <span class="btn btn-primary glyphicon glyphicon-edit" @click="showModal" aria-hidden="true"></span>
                 </h2>
             </div>
-        </div>
-        <slot v-if="medications.length === 0">
-            <div class="col-xs-12 text-center">
-                No Medications at this time
+             <div class="col-xs-12 text-center" v-if="medications.length === 0">
+                 <p>
+                     No Medications at this time
+                 </p>
             </div>
-        </slot>
+        </div>
+
         <div class="row gutter" v-if="medications.length > 0">
             <div class="col-xs-12">
                 <ul v-if="medications.length">

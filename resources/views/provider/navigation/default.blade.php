@@ -29,6 +29,12 @@
         Staff
     </a>
 </li>
+<li>
+    <a class="" href="{{ route('provider.dashboard.manage.chargeable-services', ['practiceSlug' => $practiceSlug]) }}">
+        <i class=" material-icons">account_balance_wallet</i>
+        Chargeable Services
+    </a>
+</li>
 
 
 {{--<li>--}}

@@ -1,6 +1,6 @@
 <p>Thank you for choosing CircleLink for your CCM program!</p>
 
-<p>For paying CircleLink and billing the appropriate Medicare or Medicare Advantage plan, i) a CircleLink invoice for the most recent month is attached and ii) a billing report can be downloaded <a href="{{$link}}"> here</a>. (Login required)
+<p>For paying CircleLink and billing the appropriate Medicare or Medicare Advantage plan, i) a CircleLink invoice for the most recent month can be downloaded <a href="{{$invoiceURL}}"> here</a> (Login required) and ii) a billing report can be downloaded <a href="{{$patientReportURL}}"> here</a>. (Login required)
 
 <p>Finally, we have some billing tips below. Please let us know if you need anything else!</p>
 
@@ -15,7 +15,7 @@
     <li><b>Billing Location:</b> Billing provider’s location. CMS: “where the billing practitioner would furnish a
         face-to-face
         office visit with the patient”
-    <li><b>Include a Chronic Condition:</b> The <a href="{{$link}}">billing report</a> has a
+    <li><b>Include a Chronic Condition:</b> The <a href="{{$patientReportURL}}">billing report</a> has a
         condition for
         each patient that we recommend submitting with your claim to Medicare
     <li><b>Billing Provider:</b> Main provider of patient. Always use an MD if possible
