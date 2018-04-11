@@ -336,7 +336,7 @@ $user_info = array();
                                     <input type=hidden name=status
                                            value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
-                                    @if(auth()->user()->isAdmin())
+                                    @if(auth()->user()->isAdmin() || auth()->user()->hasRole('provider'))
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
                                                 <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
