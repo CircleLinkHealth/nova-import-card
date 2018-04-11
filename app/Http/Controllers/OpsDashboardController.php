@@ -591,7 +591,7 @@ class OpsDashboardController extends Controller
 
     }
 
-    private function getMonths(Carbon $date, $number)
+    public function getMonths(Carbon $date, $number)
     {
 
         $months = [];
