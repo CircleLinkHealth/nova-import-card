@@ -13,5 +13,5 @@ interface Logger
 {
     public function handle($medicalRecord) : array;
 
-    public function shouldHandle($medicalRecord) : bool;
+    public function shouldHandle($medicalRecord);
 }

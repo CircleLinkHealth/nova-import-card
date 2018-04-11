@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -75,23 +76,15 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $problems     = collect($json->problems)->map(function ($prob) {
             $problem = array_merge($this->transformer->problem($prob));
 
-            $codes = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
-                return $code['code'];
-            })->values();
+            $code = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
+                return empty($code['code']) ? false : $code['code'];
+            })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null,];
 
-            foreach ($codes as $code) {
-                return [
-                    'name'                   => $problem['name'] ?? $code['name'],
-                    'code'                   => $code['code'],
-                    'code_system_name'       => null,
-                    'problem_code_system_id' => null,
-                    'start'                  => null,
-                    'end'                    => null,
-                    'status'                 => null,
-                ];
-            }
-
-            return '';
+            return Problem::create([
+                'name'                   => $problem['name'] ?? $code['name'],
+                'code'                   => $code['code'],
+                'code_system_name'       => $code['code_system_name'],
+            ]);
         });
         $insurance    = collect($json->payers)->map(function ($payer) {
             if (empty($payer->insurance)) {

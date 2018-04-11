@@ -910,11 +910,15 @@ if (!function_exists('is_json')) {
      *
      * @param $string
      *
-     * @return bool
+     * @return bool|null
+     *
+     * true: the string is valid json
+     * null: the string is an empty string, or not a string at all
+     * false: the string is invalid json
      */
     function is_json($string) {
         if ($string === '' || !is_string($string)) {
-            return false;
+            return null;
         }
 
         \json_decode($string);

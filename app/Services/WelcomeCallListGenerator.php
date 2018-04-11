@@ -13,7 +13,7 @@ use App\Constants;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Practice;
-use App\Services\Eligibility\Models\ProblemSet;
+use App\Services\Eligibility\Entities\Problem;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -151,48 +151,52 @@ class WelcomeCallListGenerator
             $qualifyingProblemsCpmIdStack = [];
 
 
-            if ( ! is_array($problems)) {
+            if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
                 $problems = [$problems];
             }
 
             if ($problems) {
                 foreach ($problems as $p) {
+                    if (!is_a($p, Problem::class)) {
+                        break;
+                    }
+
                     $codeType = null;
 
-                    if (array_key_exists('code_system_name', $p)) {
-                        $codeType = getProblemCodeSystemName([$p['code_system_name']]);
+                    if ($p->getCodeSystemName()) {
+                        $codeType = getProblemCodeSystemName([$p->getCodeSystemName()]);
                     }
 
                     if ( ! $codeType) {
                         $codeType = 'all';
                     }
 
-                    if ($p['code']) {
+                    if ($p->getCode()) {
                         if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
-                            $cpmProblemId = $icd9Map->get($p['code']);
+                            $cpmProblemId = $icd9Map->get($p->getCode());
 
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p['name']}";
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
                                 continue;
                             }
                         }
 
                         if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
-                            $cpmProblemId = $icd10Map->get($p['code']);
+                            $cpmProblemId = $icd10Map->get($p->getCode());
 
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
                                 continue;
                             }
                         }
 
                         if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
-                            $cpmProblemId = $snomedMap->get($p['code']);
+                            $cpmProblemId = $snomedMap->get($p->getCode());
 
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p['name']}";
+                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
                                 continue;
                             }
@@ -202,7 +206,7 @@ class WelcomeCallListGenerator
                     /*
                      * Try to match keywords
                      */
-                    if ($p['name']) {
+                    if ($p->getName()) {
                         foreach ($cpmProblems as $problem) {
                             $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
 
@@ -211,7 +215,7 @@ class WelcomeCallListGenerator
                                     continue;
                                 }
 
-                                if (str_contains(strtolower($p['name']), strtolower($keyword))
+                                if (str_contains(strtolower($p->getName()), strtolower($keyword))
                                     && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
                                 ) {
                                     $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
@@ -273,7 +277,7 @@ class WelcomeCallListGenerator
 
         $this->patientList = $this->patientList->reject(function ($record) {
             if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
-                return ! $this->validateInsuranceWithPrimaryAndSecondary($record);
+                return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
             }
 
             if (isset($record['insurances'])) {
@@ -308,17 +312,21 @@ class WelcomeCallListGenerator
         return true;
     }
 
-    private function validateInsuranceWithPrimaryAndSecondary($record)
+    private function validateInsuranceWithPrimarySecondaryTertiary($record)
     {
         $primary   = strtolower($record['primary_insurance'] ?? null);
         $secondary = strtolower($record['secondary_insurance'] ?? null);
+        $tertiary = strtolower($record['tertiary_insurance'] ?? null);
 
         //Change none to an empty string
         if (str_contains($primary, 'none')) {
             $primary = '';
         }
         if (str_contains($secondary, ['none', 'no secondary plan'])) {
-            $primary = '';
+            $secondary = '';
+        }
+        if (str_contains($tertiary, ['none', 'no tertiary plan'])) {
+            $tertiary = '';
         }
 
         //Keep the patient if they have medicaid
@@ -328,7 +336,7 @@ class WelcomeCallListGenerator
 
         $eligibleInsurances = [];
 
-        foreach ([$primary, $secondary] as $insurance) {
+        foreach ([$primary, $secondary, $tertiary] as $insurance) {
             if (str_contains(strtolower($insurance), [
                 'medicare',
             ])

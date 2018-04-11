@@ -10,6 +10,7 @@ namespace App\Importer\Loggers\Problem;
 
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use App\Services\Eligibility\Entities\Problem;
 
 class JsonListProblemLogger implements Logger
 {
@@ -23,7 +24,7 @@ class JsonListProblemLogger implements Logger
         if (is_array($problems) && array_key_exists('Problems', $problems)) {
             return collect($problems['Problems'])
                 ->map(function ($problem) {
-                    return [
+                    return Problem::create([
                         'name'                   => $problem['Name'],
                         'code'                   => $problem['Code'],
                         'code_system_name'       => $problem['CodeType'],
@@ -31,7 +32,7 @@ class JsonListProblemLogger implements Logger
                         'start'                  => $problem['AddedDate'],
                         'end'                    => $problem['ResolveDate'],
                         'status'                 => $problem['Status'],
-                    ];
+                    ]);
                 })
                 ->filter()
                 ->values()
@@ -41,8 +42,14 @@ class JsonListProblemLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($problemsString): bool
+    public function shouldHandle($problemsString)
     {
-        return is_json($problemsString);
+        $check = is_json($problemsString);
+
+        if ($check === false) {
+            throw new \Exception("The string contains invalid json. String: `$problemsString`");
+        }
+
+        return $check;
     }
 }
