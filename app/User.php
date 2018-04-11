@@ -2566,7 +2566,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->ofType('participant')
                    ->whereHas('patientInfo')
                    ->whereHas('carePlan', function ($q) {
-                       $q->where('status', '=', CarePlan::QA_APPROVED);
+                       $q->whereIn('status', [ CarePlan::QA_APPROVED, CarePlan::TO_ENROLL ]);
                    })
                    ->whereHas('careTeamMembers', function ($q) {
                        $q->where([
