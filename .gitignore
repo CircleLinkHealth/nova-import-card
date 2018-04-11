@@ -9,3 +9,8 @@ _ide_helper.php
 /bower_components/
 launch.json
 .DS_Store
+public/*.js
+public/*.js.map
+/storage/
+/tests/Browser/
+.phpstorm.meta.php
