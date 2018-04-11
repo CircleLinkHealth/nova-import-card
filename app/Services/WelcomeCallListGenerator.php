@@ -157,7 +157,7 @@ class WelcomeCallListGenerator
 
             if ($problems) {
                 foreach ($problems as $p) {
-                    if (!is_a($p, Problem::class)) {
+                    if ( ! is_a($p, Problem::class)) {
                         break;
                     }
 
@@ -316,7 +316,7 @@ class WelcomeCallListGenerator
     {
         $primary   = strtolower($record['primary_insurance'] ?? null);
         $secondary = strtolower($record['secondary_insurance'] ?? null);
-        $tertiary = strtolower($record['tertiary_insurance'] ?? null);
+        $tertiary  = strtolower($record['tertiary_insurance'] ?? null);
 
         //Change none to an empty string
         if (str_contains($primary, 'none')) {
@@ -408,7 +408,7 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        foreach ($this->patientList as $patient) {
+        $this->patientList->reject(function ($patient) {
             $args = $patient;
 
 //            $args['status'] = Enrollee::TO_CALL;
@@ -435,10 +435,37 @@ class WelcomeCallListGenerator
             $args['medical_record_id']   = $this->medicalRecordId;
             $args['last_encounter']      = Carbon::parse($args['last_encounter']);
 
-            $this->enrollees = Enrollee::updateOrCreate([
-                'mrn' => $args['mrn'] ?? $args['mrn_number'],
-            ], $args);
-        }
+            $exists = Enrollee::where([
+                [
+                    'practice_id',
+                    '=',
+                    $args['practice_id'],
+                ],
+                [
+                    'first_name',
+                    '=',
+                    $args['first_name'],
+                ],
+                [
+                    'last_name',
+                    '=',
+                    $args['last_name'],
+                ],
+                [
+                    'dob',
+                    '=',
+                    $args['dob'],
+                ],
+            ])->first();
+
+            if ( ! $exists) {
+                $this->enrollees = Enrollee::create($args);
+
+                return false;
+            }
+
+            return true;
+        });
     }
 
     /**
