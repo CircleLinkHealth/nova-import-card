@@ -5,9 +5,9 @@
                 {{ csrf_field() }}
                 <div class="form-group">
                     <div class="form-group">
-                        <select name="practiceName" class="col-sm-12 form-control" required>
+                        <select name="practiceName" class="col-sm-12 form-control select2" required>
                             <option value="" disabled selected>Select Practice</option>
-                            @foreach(App\Practice::get()->sortBy('name')->values() as $practice)
+                            @foreach(App\Practice::active()->orderBy('display_name')->get() as $practice)
                                 <option value="{{$practice->name}}">{{$practice->display_name}}</option>
                             @endforeach
                         </select>

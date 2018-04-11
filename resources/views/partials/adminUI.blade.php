@@ -310,6 +310,11 @@
 
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>
 @stack('scripts')
 <script>
     if ('serviceWorker' in navigator) {
