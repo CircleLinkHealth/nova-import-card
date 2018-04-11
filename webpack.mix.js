@@ -85,6 +85,7 @@ mix.combine([
 /** end fixing admin-ui */
 
 //apps
+mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
 
