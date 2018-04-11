@@ -31,5 +31,4 @@ class CreateUsermetaTable extends Migration
     {
         Schema::drop('usermeta');
     }
-
 }

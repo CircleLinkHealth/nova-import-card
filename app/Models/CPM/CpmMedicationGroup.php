@@ -8,7 +8,28 @@ use App\Services\CPM\CpmMedicationGroupService;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmMedicationGroup extends Model implements Serviceable{
+/**
+ * App\Models\CPM\CpmMedicationGroup
+ *
+ * @property int $id
+ * @property int|null $care_item_id
+ * @property string $name
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\CareItem $carePlanItemIdDeprecated
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $carePlanTemplates
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmInstruction[] $cpmInstructions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\Medication[] $medications
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCareItemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\CpmMedicationGroup whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class CpmMedicationGroup extends \App\BaseModel implements Serviceable
+{
     
     use Instructable;
 
@@ -27,7 +48,7 @@ class CpmMedicationGroup extends Model implements Serviceable{
      */
     public function medications()
     {
-        return $this->hasMany(Medication::class);
+        return $this->hasMany(Medication::class, 'medication_group_id');
     }
     
     public function carePlanItemIdDeprecated()

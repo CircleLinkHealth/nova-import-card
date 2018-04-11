@@ -56,7 +56,9 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
 
         $vitals = $jsonDecodedCcda->vitals;
 
-        if (empty($vitals)) return;
+        if (empty($vitals)) {
+            return;
+        }
 
         foreach ($vitals as $vital) {
             foreach ($vital->results as $result) {
@@ -68,7 +70,9 @@ class BloodPressure extends BaseStorageStrategy implements StorageStrategy
                     $diastolic = $result->value;
                 }
                 
-                if (!empty($systolic) && !empty($diastolic)) return "{$systolic}/{$diastolic}";
+                if (!empty($systolic) && !empty($diastolic)) {
+                    return "{$systolic}/{$diastolic}";
+                }
             }
         }
 

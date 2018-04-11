@@ -6,7 +6,9 @@ class RepresentedOrganizationId extends BaseIdentificationStrategy
 {
     public function identify()
     {
-        if (empty($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root)) return false;
+        if (empty($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root)) {
+            return false;
+        }
 
         $ehrOid = $this->parseEhrOid($this->ccd->document->legal_authenticator->representedOrganization->ids[0]->root);
 

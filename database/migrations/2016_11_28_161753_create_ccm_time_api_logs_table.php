@@ -30,5 +30,4 @@ class CreateCcmTimeApiLogsTable extends Migration
     {
         Schema::drop('ccm_time_api_logs');
     }
-
 }

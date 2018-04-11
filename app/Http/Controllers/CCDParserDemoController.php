@@ -14,12 +14,12 @@ class CCDParserDemoController extends Controller
     {
         $patientId = 308;
         $reportService = new ReportsService();
-        $careplan = $reportService->carePlanGenerator( [$patientId] );
+        $careplan = $reportService->carePlanGenerator([$patientId]);
 
-        $pdf = App::make( 'snappy.pdf.wrapper' );
+        $pdf = App::make('snappy.pdf.wrapper');
 
-        $pdf->loadView( 'wpUsers.patient.careplan.print', [
-            'patient' => User::find( $patientId ),
+        $pdf->loadView('wpUsers.patient.careplan.print', [
+            'patient' => User::find($patientId),
             'treating' => $careplan[ $patientId ][ 'treating' ],
             'biometrics' => $careplan[ $patientId ][ 'bio_data' ],
             'symptoms' => $careplan[ $patientId ][ 'symptoms' ],
@@ -31,12 +31,8 @@ class CCDParserDemoController extends Controller
             'appointments' => $careplan[ $patientId ][ 'appointments' ],
             'other' => $careplan[ $patientId ][ 'other' ],
             'isPdf' => true,
-        ] );
+        ]);
 
-        $pdf->save( base_path( 'storage/pdfs/hello.pdf' ), true );
-
-
-
+        $pdf->save(base_path('storage/pdfs/hello.pdf'), true);
     }
-
 }

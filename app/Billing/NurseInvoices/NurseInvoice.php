@@ -26,7 +26,5 @@ abstract class NurseInvoice
         $this->nurse = $nurse;
         $this->start = $start;
         $this->end = $end;
-
     }
-
 }

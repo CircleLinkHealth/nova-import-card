@@ -2,6 +2,7 @@
 
 use App\CarePlanTemplate;
 use App\User;
+use App\Repositories\UserRepositoryEloquent;
 
 /**
  * Created by PhpStorm.
@@ -11,6 +12,16 @@ use App\User;
  */
 class UserService
 {
+    private $userRepo;
+
+    public function __construct(UserRepositoryEloquent $userRepo) {
+        $this->userRepo = $userRepo;
+    }
+
+    public function repo() {
+        return $this->userRepo;
+    }
+
     /**
      * Get the User's first CarePlan, or relate the User to CLH's default CarePlan.
      *

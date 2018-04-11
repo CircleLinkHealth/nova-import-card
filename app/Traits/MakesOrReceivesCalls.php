@@ -127,7 +127,8 @@ trait MakesOrReceivesCalls
         return $this->successfulCallsFor(Carbon::now());
     }
 
-    public function successfulCallsfor(Carbon $date) {
+    public function successfulCallsfor(Carbon $date)
+    {
         $calls = $this->calls()
             ->where([
                 ['called_date', '>=', $date->startOfDay()->toDateTimeString()],

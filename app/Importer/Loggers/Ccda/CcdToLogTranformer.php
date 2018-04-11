@@ -2,7 +2,6 @@
 
 namespace App\Importer\Loggers\Ccda;
 
-
 use App\Facades\UserMetaParserHelpers;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -87,6 +86,25 @@ class CcdToLogTranformer
     }
 
     /**
+     * @see InsuranceLog
+     *
+     * @param $payer
+     *
+     * @return array
+     */
+    public function insurance($payer)
+    {
+        return [
+            'name'       => $payer->insurance,
+            'type'       => $payer->policy_type,
+            'policy_id'  => $payer->policy_id,
+            'relation'   => $payer->relation,
+            'subscriber' => $payer->subscriber,
+        ];
+    }
+
+
+    /**
      * @see @see App\Importer\Models\ItemLogs\MedicationLog
      *
      * @param $medication
@@ -133,11 +151,48 @@ class CcdToLogTranformer
             'code'                         => $problem->code,
             'code_system'                  => $problem->code_system,
             'code_system_name'             => $problem->code_system_name,
-            'translation_name'             => $problem->translation->name,
-            'translation_code'             => $problem->translation->code,
-            'translation_code_system'      => $problem->translation->code_system,
-            'translation_code_system_name' => $problem->translation->code_system_name,
+            'translation_name'             => $problem->translations[0]->name ?? '',
+            'translation_code'             => $problem->translations[0]->code ?? '',
+            'translation_code_system'      => $problem->translations[0]->code_system ?? '',
+            'translation_code_system_name' => $problem->translations[0]->code_system_name ?? '',
         ];
+    }
+
+    public function problemCodes($ccdProblem)
+    {
+        $codes = [];
+
+        if (!$ccdProblem->code_system_name) {
+            $ccdProblem->code_system_name = getProblemCodeSystemName([$ccdProblem->code_system]);
+        }
+
+        if ($ccdProblem->code_system_name) {
+            $codes[] = [
+                'code_system_name'   => $ccdProblem->code_system_name,
+                'code_system_oid'    => $ccdProblem->code_system,
+                'code'               => $ccdProblem->code,
+                'name'               => $ccdProblem->name,
+            ];
+        }
+
+        foreach ($ccdProblem->translations as $translation) {
+            if (!$translation->code_system_name) {
+                $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
+
+                if (!$translation->code_system_name) {
+                    continue;
+                }
+            }
+
+            $codes[] = [
+                'code_system_name'   => $translation->code_system_name,
+                'code_system_oid'    => $translation->code_system,
+                'code'               => $translation->code,
+                'name'               => $translation->name,
+            ];
+        }
+
+        return $codes;
     }
 
     /**
@@ -178,5 +233,4 @@ class CcdToLogTranformer
             'work_phone'   => $phones['work'][0],
         ];
     }
-
 }

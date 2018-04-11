@@ -22,7 +22,6 @@ class AddFkCareAmbassador extends Migration
                 ->on('care_ambassadors')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
-
         });
     }
 
@@ -36,7 +35,6 @@ class AddFkCareAmbassador extends Migration
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
 
             $table->dropForeign('enroller_id');
-
         });
     }
 }

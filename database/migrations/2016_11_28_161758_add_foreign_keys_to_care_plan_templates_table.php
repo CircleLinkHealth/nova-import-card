@@ -30,5 +30,4 @@ class AddForeignKeysToCarePlanTemplatesTable extends Migration
             $table->dropForeign('care_plan_templates_program_id_foreign');
         });
     }
-
 }

@@ -30,5 +30,4 @@ class AddForeignKeysToNurseMonthlySummariesTable extends Migration
             $table->dropForeign('nurse_monthly_summaries_nurse_id_foreign');
         });
     }
-
 }

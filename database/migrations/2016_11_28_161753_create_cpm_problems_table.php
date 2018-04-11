@@ -35,5 +35,4 @@ class CreateCpmProblemsTable extends Migration
     {
         Schema::drop('cpm_problems');
     }
-
 }

@@ -1,19 +1,137 @@
 <?php namespace App;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use App\Filters\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Patient extends Model
+/**
+ * App\Patient
+ *
+ * @property int $id
+ * @property int|null $imported_medical_record_id
+ * @property int $user_id
+ * @property int|null $ccda_id
+ * @property int|null $care_plan_id
+ * @property string|null $active_date
+ * @property string|null $agent_name
+ * @property string|null $agent_telephone
+ * @property string|null $agent_email
+ * @property string|null $agent_relationship
+ * @property string|null $birth_date
+ * @property string|null $ccm_status
+ * @property string|null $consent_date
+ * @property string|null $cur_month_activity_time
+ * @property string|null $gender
+ * @property \Carbon\Carbon|null $date_paused
+ * @property \Carbon\Carbon|null $date_withdrawn
+ * @property string|null $mrn_number
+ * @property string|null $preferred_cc_contact_days
+ * @property string|null $preferred_contact_language
+ * @property string|null $preferred_contact_location
+ * @property string|null $preferred_contact_method
+ * @property string|null $preferred_contact_time
+ * @property string|null $preferred_contact_timezone
+ * @property string|null $registration_date
+ * @property string|null $daily_reminder_optin
+ * @property string|null $daily_reminder_time
+ * @property string|null $daily_reminder_areas
+ * @property string|null $hospital_reminder_optin
+ * @property string|null $hospital_reminder_time
+ * @property string|null $hospital_reminder_areas
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property string $general_comment
+ * @property int $preferred_calls_per_month
+ * @property string $last_successful_contact_time
+ * @property int|null $no_call_attempts_since_last_success
+ * @property string $last_contact_time
+ * @property string $daily_contact_window_start
+ * @property string $daily_contact_window_end
+ * @property int|null $next_call_id
+ * @property int|null $family_id
+ * @property string|null $date_welcomed
+ * @property-read \App\Family|null $family
+ * @property mixed $address
+ * @property mixed $city
+ * @property-read mixed $current_month_c_c_m_time
+ * @property mixed $first_name
+ * @property mixed $last_name
+ * @property mixed $state
+ * @property mixed $zip
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
+ * @method static \Illuminate\Database\Query\Builder|\App\Patient onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereActiveDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentRelationship($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereAgentTelephone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereBirthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCarePlanId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCcdaId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCcmStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereConsentDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereCurMonthActivityTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyContactWindowEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyContactWindowStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderAreas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderOptin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDailyReminderTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDatePaused($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDateWelcomed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDateWithdrawn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereFamilyId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereGeneralComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderAreas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderOptin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereHospitalReminderTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereImportedMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereLastContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereLastSuccessfulContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereMrnNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereNextCallId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereNoCallAttemptsSinceLastSuccess($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredCallsPerMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredCcContactDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactLanguage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient wherePreferredContactTimezone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereRegistrationDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient whereUserId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Patient withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
+ * @mixin \Eloquent
+ */
+class Patient extends \App\BaseModel
 {
 
-    use SoftDeletes;
+    use Filterable, SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
+
+    const PAUSED = 'paused';
+    const ENROLLED = 'enrolled';
+    const WITHDRAWN = 'withdrawn';
 
     protected $dates = [
         'date_withdrawn',
         'date_paused',
+        'paused_letter_printed_at',
     ];
+
+
 
     /**
      * The connection name for the model.
@@ -33,7 +151,52 @@ class Patient extends Model
      * @var string
      */
     protected $primaryKey = 'id';
-    protected $guarded = [];
+    protected $fillable = [
+        'imported_medical_record_id',
+        'user_id',
+        'ccda_id',
+        'care_plan_id',
+        'active_date',
+        'agent_name',
+        'agent_telephone',
+        'agent_email',
+        'agent_relationship',
+        'birth_date',
+        'ccm_status',
+        'paused_letter_printed_at',
+        'consent_date',
+        'cur_month_activity_time',
+        'gender',
+        'date_paused',
+        'date_withdrawn',
+        'mrn_number',
+        'preferred_cc_contact_days',
+        'preferred_contact_language',
+        'preferred_contact_location',
+        'preferred_contact_method',
+        'preferred_contact_time',
+        'preferred_contact_timezone',
+        'registration_date',
+        'daily_reminder_optin',
+        'daily_reminder_time',
+        'daily_reminder_areas',
+        'hospital_reminder_optin',
+        'hospital_reminder_time',
+        'hospital_reminder_areas',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'general_comment',
+        'preferred_calls_per_month',
+        'last_successful_contact_time',
+        'no_call_attempts_since_last_success',
+        'last_contact_time',
+        'daily_contact_window_start',
+        'daily_contact_window_end',
+        'next_call_id',
+        'family_id',
+        'date_welcomed',
+    ];
 
     public static function boot()
     {
@@ -72,7 +235,6 @@ class Patient extends Model
             }
 
             return '';
-
         };
 
         $days = explode(',', $string);
@@ -80,7 +242,6 @@ class Patient extends Model
         $formatted = array_map($mapper, $days);
 
         return implode(',', $formatted);
-
     }
 
     public function user()
@@ -88,14 +249,9 @@ class Patient extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function patientContactWindows()
+    public function contactWindows()
     {
-        return $this->hasMany(PatientContactWindow::class, 'patient_info_id', 'id');
-    }
-
-    public function patientSummaries()
-    {
-        return $this->hasMany(PatientMonthlySummary::class, 'patient_info_id', 'id');
+        return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
     // END RELATIONSHIPS
@@ -109,7 +265,6 @@ class Patient extends Model
     {
 
         return $this->belongsTo(Family::class, 'family_id');
-
     }
 
     public function getFirstNameAttribute()
@@ -202,20 +357,18 @@ class Patient extends Model
 
     public function setCcmStatusAttribute($value)
     {
-        $statusBefore = $this->ccm_status;
+        $statusBefore                   = $this->ccm_status;
         $this->attributes['ccm_status'] = $value;
-        // update date tracking
+
         if ($statusBefore !== $value) {
             if ($value == 'paused') {
-                $this->attributes['date_paused'] = date("Y-m-d H:i:s");
+                $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             };
             if ($value == 'withdrawn') {
-                $this->attributes['date_withdrawn'] = date("Y-m-d H:i:s");
+                $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
             };
         }
         $this->save();
-
-        return true;
     }
 
 
@@ -227,7 +380,6 @@ class Patient extends Model
         $family = $patient->family;
 
         if (is_object($family)) {
-
             $members = $family->patients()->get();
 
             //remove the patient from the family itself
@@ -237,18 +389,30 @@ class Patient extends Model
         }
 
         return [];
-
     }
 
     public function getCurrentMonthCCMTimeAttribute()
     {
-        $seconds = $this->cur_month_activity_time;
-        $H = floor($seconds / 3600);
-        $i = ($seconds / 60) % 60;
-        $s = $seconds % 60;
+        $seconds     = $this->cur_month_activity_time;
+        $H           = floor($seconds / 3600);
+        $i           = ($seconds / 60) % 60;
+        $s           = $seconds % 60;
         $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
 
         return $monthlyTime;
+    }
+
+    public function getLastCallStatusAttribute()
+    {
+        if ( ! $this->no_call_attempts_since_last_success) {
+            return 'n/a';
+        }
+
+        if ($this->no_call_attempts_since_last_success > 0) {
+            return $this->no_call_attempts_since_last_success . 'x Attempts';
+        }
+
+        return 'Success';
     }
 
     //Query Scopes:
@@ -257,8 +421,35 @@ class Patient extends Model
     {
 
         return $query->where('ccm_status', 'enrolled');
-
     }
+
+    public function scopeByStatus($query, $fromDate, $toDate) {
+
+        return $query->where(function ($query) use ($fromDate, $toDate) {
+            $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                $subQuery->ccmStatus(Patient::PAUSED)
+                         ->where([
+                             ['date_paused', '>=', $fromDate],
+                             ['date_paused', '<=', $toDate],
+                         ]);
+            })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                               ->where([
+                                   ['date_withdrawn', '>=', $fromDate],
+                                   ['date_withdrawn', '<=', $toDate],
+                               ]);
+                  })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::ENROLLED)
+                               ->where([
+                                   ['registration_date', '>=', $fromDate],
+                                   ['registration_date', '<=', $toDate],
+                               ]);
+                  });
+        });
+    }
+
 
     /**
      * Import Patient's Call Window from the sheet, or save default.
@@ -270,9 +461,9 @@ class Patient extends Model
      * @return array of PatientContactWindows
      */
     public function attachNewOrDefaultCallWindows(
-        array $days,
-        $fromTime,
-        $toTime
+        array $days = [],
+        $fromTime = null,
+        $toTime = null
     ) {
         $daysNumber = [
             1,
@@ -282,17 +473,17 @@ class Patient extends Model
             5,
         ];
 
-        if (!empty($days)) {
+        if ( ! empty($days)) {
             $daysNumber = $days;
         }
 
         $timeFrom = '09:00:00';
-        $timeTo = '17:00:00';
+        $timeTo   = '17:00:00';
 
-        if (!empty($fromTime)) {
+        if ( ! empty($fromTime)) {
             $timeFrom = Carbon::parse($fromTime)->format('H:i:s');
         }
-        if (!empty($toTime)) {
+        if ( ! empty($toTime)) {
             $timeTo = Carbon::parse($toTime)->format('H:i:s');
         }
 
@@ -308,7 +499,6 @@ class Patient extends Model
     {
 
         return $query->whereNotNull('family_id');
-
     }
 
     public function lastReachedNurse()
@@ -318,25 +508,31 @@ class Patient extends Model
                    ->whereNotNull('called_date')
                    ->orderBy('called_date', 'desc')
                    ->first()['outbound_cpm_id'];
-
     }
 
     public function lastNurseThatPerformedActivity()
     {
 
         $id = Activity::where('patient_id', $this->user_id)
-                  ->whereHas('provider', function ($q) {
-                      $q->whereHas('roles', function ($k) {
-                          $k->where('name', 'care-center');
-                      });
-                  })
-                  ->orderBy('created_at', 'desc')
-                  ->first()['provider_id'];
+                      ->whereHas('provider', function ($q) {
+                          $q->ofType('care-center');
+                      })
+                      ->orderBy('created_at', 'desc')
+                      ->first()['provider_id'];
 
         return Nurse::where('user_id', $id)->first();
-
     }
 
+    /**
+     * Scope by ccm_status
+     *
+     * @param $builder
+     * @param $status
+     * @param string $operator
+     */
+    public function scopeCcmStatus($builder, $status, $operator = '=') {
+        $builder->where('ccm_status', $operator, $status);
+    }
 
     /**
      * Returns nurseInfos that have:
@@ -353,14 +549,12 @@ class Patient extends Model
         $nurses = Nurse::whereHas('user', function ($q) {
 
             $q->where('user_status', 1);
-
         })->get();
 
         //Result array with Nurses
         $result = [];
 
         foreach ($nurses as $nurse) {
-
             //get all locations for nurse
             $nurse_programs = $nurse->user->viewableProgramIds();
 //                dd();
@@ -374,20 +568,32 @@ class Patient extends Model
             if ($intersection) { //&& $future_windows->count() > 0
                 $result[] = $nurse->user_id;
             }
-
         }
 
         return $result;
-
     }
 
-    public function isCCMComplex()
+    /**
+     * Get the patient's Location
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function location()
     {
-        return $this->patientSummaries
-                ->where('month_year', Carbon::now()->firstOfMonth())
-                ->first()
-                ->is_ccm_complex ?? false;
+        return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
 
-
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'ccm_status' => $this->ccm_status,
+            'birth_date' => $this->birth_date,
+            'age' => $this->birth_date ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year): 0,
+            'gender' => $this->gender,
+            'created_at' => $this->created_at->format('c'),
+            'updated_at' => $this->updated_at->format('c'),
+            'cur_month_activity_time' => $this->cur_month_activity_time
+        ];
+    }
 }

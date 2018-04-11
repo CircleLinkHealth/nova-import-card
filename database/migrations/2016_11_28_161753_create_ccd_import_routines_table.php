@@ -31,5 +31,4 @@ class CreateCcdImportRoutinesTable extends Migration
     {
         Schema::drop('ccd_import_routines');
     }
-
 }

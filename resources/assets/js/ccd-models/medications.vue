@@ -26,7 +26,7 @@
                     }
                 };
 
-                window.axios.get('/CCDModels/Items/MedicationListItem', params).then(function (response) {
+                this.axios.get('/CCDModels/Items/MedicationListItem', params).then(function (response) {
                     self.medications = response.data;
                 }, function (response) {
                     console.log(response);
@@ -41,7 +41,7 @@
                         'medication': this.medication
                     };
 
-                    window.axios.post('/CCDModels/Items/MedicationListItem/store', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/MedicationListItem/store', payload).then(function (response) {
                         let id = response.data.id.id;
 
                         self.medications.push({
@@ -79,7 +79,7 @@
                     'medication': this.medications[index]
                 };
 
-                window.axios.post('/CCDModels/Items/MedicationListItem/update', payload).then(function (response) {
+                this.axios.post('/CCDModels/Items/MedicationListItem/update', payload).then(function (response) {
                     // show text
                     $('#medication-name-' + index).toggle();
                     $('#medication-sig-' + index).toggle();
@@ -106,7 +106,7 @@
                         'medication': this.medications[index]
                     };
 
-                    window.axios.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/MedicationListItem/destroy', payload).then(function (response) {
                         self.medications.splice(index, 1);
                     }, function (response) {
                         console.log(response);
@@ -115,7 +115,7 @@
             },
 
             postEvents: function (index, e) {
-                window.axios.post('/CCDModels/Items/MedicationListItem/store', this.medications).then(function (response) {
+                this.axios.post('/CCDModels/Items/MedicationListItem/store', this.medications).then(function (response) {
                 }, function (response) {
                     console.log(response);
                 });
@@ -131,8 +131,9 @@
     <div class="row" id="medications">
         <div class="col-sm-12">
             <div class="list-group">
-                <template v-for="(medicationitem, index) in medications">
-                    <div class="list-group-item" v-on:submit.prevent v-if="medicationitem.name || medicationitem.sig"
+                <template>
+                    <div v-for="(medicationitem, index) in medications" :key="index">
+                        <div class="list-group-item" v-on:submit.prevent v-if="medicationitem.name || medicationitem.sig"
                          style="padding:5px;font-size:12px;">
                         <div class="row">
                             <div class="col-sm-10">
@@ -144,9 +145,9 @@
                                     <span :id="'medication-sig-'+index"><br/>{{ medicationitem.sig }}</span>
 
                                     <textarea v-model="medicationitem.name" :id="'medication-edit-'+index"
-                                              style="display:none;" rows="5">{{ medicationitem.name }}</textarea>
+                                              style="display:none;" rows="5"></textarea>
                                     <textarea v-model="medicationitem.sig" :id="'medication-edit-sig-'+index"
-                                              style="display:none;" rows="5">{{ medicationitem.sig }}</textarea>
+                                              style="display:none;" rows="5"></textarea>
                                     <input type="hidden" name="id" :value="'medicationitem.id'">
                                     <input type="hidden" name="patient_id" :value="medicationitem.patient_id">
                                 </div>
@@ -170,6 +171,7 @@
                                 </button>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </template>
 

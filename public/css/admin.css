@@ -47,3 +47,15 @@ a {
     padding: 0 5px 0 5px;
     display: inline-block;
 }
+
+.modal-dialog {
+    z-index: 1051;
+}
+
+.vdp-datepicker.form-control {
+  padding: 0px;
+}
+
+.vdp-datepicker.form-control input[type='text'] {
+    height: 33px;
+}

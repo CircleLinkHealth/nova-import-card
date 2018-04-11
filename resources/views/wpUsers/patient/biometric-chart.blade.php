@@ -5,6 +5,7 @@
 
 @section('content')
     <div class="row" style="margin-top:60px;">
+        @push('scripts')
         <script>
             $(document).ready(function () {
                 $(".chartDiv").hide();
@@ -28,6 +29,7 @@
 
             });
         </script>
+        @endpush
         <div class="main-form-container col-lg-8 col-lg-offset-2">
             <div class="row">
                 <div class="main-form-title col-lg-12">
@@ -66,7 +68,7 @@
                             <div class="row">
                                 <div class="col-xs-6">
                                             <span class="text-right"><a class="btn btn-green btn-sm submit-chart-select"
-                                                                        href="{{URL::route('patient.summary', array('patient' => $patient->id))}}"><<
+                                                                        href="{{route('patient.summary', array('patient' => $patient->id))}}"><<
                                                     Return</a></span>
                                 </div>
                             </div>
@@ -79,11 +81,7 @@
                             @if($biometrics_array['Blood_Sugar']['data'] != '')
                                 <div id="chartDivBlood_Sugar" class="chartDiv"
                                      style="width:600px;height:300px;margin:10px auto;border:0px solid red"></div>
-                                <script src="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.js"
-                                        type="text/javascript"></script>
-                                <link rel="stylesheet"
-                                      href="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.css"
-                                      type="text/css">
+                                @push('scripts')
                                 <script>
                                     webix.ui({
                                         view: "chart",
@@ -113,6 +111,7 @@
                                         ]
                                     });
                                 </script>
+                                @endpush
                             @else
                                 <div id="chartDivBlood_Sugar" class="chartDiv"
                                      style="width:600px;height:300px;margin:10px auto;border:0px solid red">
@@ -122,11 +121,7 @@
                         @if($biometrics_array['Blood_Pressure']['data'] != '')
                             <div id="chartDivBlood_Pressure" class="chartDiv"
                                  style="width:600px;height:300px;margin:10px auto;border:0px solid red"></div>
-                            <script src="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.js"
-                                    type="text/javascript"></script>
-                            <link rel="stylesheet"
-                                  href="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.css"
-                                  type="text/css">
+                            @push('scripts')
                             <script>
                                 webix.ui({
                                     view: "chart",
@@ -154,9 +149,11 @@
                                     data: [
 
                                         {!! $biometrics_array['Blood_Pressure']['data'] !!}
-                                     ]
+                                    ]
                                 });
-                            </script>@else
+                            </script>
+                            @endpush
+                        @else
                             <div id="chartDivBlood_Pressure" class="chartDiv"
                                  style="width:600px;height:300px;margin:10px auto;border:0px solid red">
                                 <div style="text-align:center;margin:50px;">There is no data to display</div>
@@ -165,11 +162,7 @@
                     @if($biometrics_array['Weight']['data'] != '')
                         <div id="chartDivWeight" class="chartDiv"
                              style="width:600px;height:300px;margin:10px auto;border:0px solid red"></div>
-                        <script src="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.js"
-                                type="text/javascript"></script>
-                        <link rel="stylesheet"
-                              href="http://testcrisfield.careplanmanager.com/wp-content/themes/CLH_Provider/respo/webix/codebase/webix.css"
-                              type="text/css">
+                        @push('scripts')
                         <script>
                             webix.ui({
                                 view: "chart",
@@ -197,9 +190,11 @@
                                 data: [
 
                                     {!! $biometrics_array['Weight']['data'] !!}
-                                    ]
+                                ]
                             });
-                        </script>@else
+                        </script>
+                        @endpush
+                    @else
                         <div id="chartDivWeight" class="chartDiv"
                              style="width:600px;height:300px;margin:10px auto;border:0px solid red">
                             <div style="text-align:center;margin:50px;">There is no data to display</div>

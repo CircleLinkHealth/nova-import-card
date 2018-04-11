@@ -56,7 +56,9 @@ class Weight extends BaseStorageStrategy implements StorageStrategy
 
         $vitals = $jsonDecodedCcda->vitals;
 
-        if (empty($vitals)) return;
+        if (empty($vitals)) {
+            return;
+        }
 
         foreach ($vitals as $vital) {
             foreach ($vital->results as $result) {

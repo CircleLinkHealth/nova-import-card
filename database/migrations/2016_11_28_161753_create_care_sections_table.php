@@ -33,5 +33,4 @@ class CreateCareSectionsTable extends Migration
     {
         Schema::drop('care_sections');
     }
-
 }

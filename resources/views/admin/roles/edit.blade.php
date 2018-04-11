@@ -1,8 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    {!! Form::open(array('url' => URL::route('roles.update', array('id' => $role->id)), 'method' => 'patch', 'class' => 'form-horizontal')) !!}
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    @endpush
+    {!! Form::open(array('url' => route('roles.update', array('id' => $role->id)), 'method' => 'patch', 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -29,7 +31,7 @@
                             </thead>
                             <tbody>
                             <tr>
-                                <td><a href="{{ URL::route('roles.show', array('id' => $role->id)) }}"
+                                <td><a href="{{ route('roles.show', array('id' => $role->id)) }}"
                                        class="btn btn-primary">{{ $role->id }} Detail</a></td>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
@@ -75,17 +77,15 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('roles.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('roles.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Role', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

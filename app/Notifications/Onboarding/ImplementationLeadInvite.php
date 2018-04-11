@@ -51,7 +51,6 @@ class ImplementationLeadInvite extends Notification
                 'code' => $this->invite->code,
             ]))
             ->line("If you have any questions, please <a href=\"mailto:contact@circlelinkhealth.com\">email us</a>.");
-
     }
 
     /**

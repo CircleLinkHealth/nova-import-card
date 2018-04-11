@@ -34,5 +34,4 @@ class AddForeignKeysToCarePlanTemplatesCpmSymptomsTable extends Migration
             $table->dropForeign('care_plan_templates_cpm_symptoms_cpm_symptom_id_foreign');
         });
     }
-
 }

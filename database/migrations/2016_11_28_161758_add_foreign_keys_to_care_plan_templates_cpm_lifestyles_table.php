@@ -34,5 +34,4 @@ class AddForeignKeysToCarePlanTemplatesCpmLifestylesTable extends Migration
             $table->dropForeign('care_plan_templates_cpm_lifestyles_cpm_lifestyle_id_foreign');
         });
     }
-
 }

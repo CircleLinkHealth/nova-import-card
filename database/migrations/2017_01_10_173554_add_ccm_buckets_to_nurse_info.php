@@ -24,7 +24,6 @@ class AddCcmBucketsToNurseInfo extends Migration
                 $table->integer('accrued_towards_ccm')->default(0)->after('month_year');
                 $table->integer('accrued_after_ccm')->default(0)->after('month_year');
             }
-
         });
     }
 
@@ -41,7 +40,6 @@ class AddCcmBucketsToNurseInfo extends Migration
             $table->integer('ccm_time');
             $table->dropColumn('accrued_towards_ccm');
             $table->dropColumn('accrued_after_ccm');
-
         });
     }
 }

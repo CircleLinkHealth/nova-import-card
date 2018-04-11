@@ -36,5 +36,4 @@ class CreateLvRulesActionsTable extends Migration
     {
         Schema::drop('lv_rules_actions');
     }
-
 }

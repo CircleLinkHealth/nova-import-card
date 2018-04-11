@@ -18,9 +18,7 @@ class AddFieldsToPractices extends Migration
 
             $table->text('invoice_recipients')->after('weekly_report_recipients');
             $table->text('bill_to_name')->after('invoice_recipients');
-
         });
-
     }
 
     /**
@@ -35,8 +33,6 @@ class AddFieldsToPractices extends Migration
 
             $table->dropColumn('invoice_recipients');
             $table->dropColumn('bill_to_name');
-
         });
-
     }
 }

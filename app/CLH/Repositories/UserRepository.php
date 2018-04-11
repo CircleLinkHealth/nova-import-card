@@ -4,17 +4,26 @@ use App\CareAmbassador;
 use App\CarePlan;
 use App\Nurse;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
 use App\Role;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
+    public function model() {
+        return app(User::class);
+    }
+
+    public function exists($id) {
+        return !!$this->model()->find($id);
+    }
 
     public function createNewUser(
         User $user,
@@ -31,15 +40,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // roles
         $this->saveOrUpdateRoles($user, $params);
 
-        // programs
-        $this->saveOrUpdatePrograms($user, $params);
-
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
         // participant info
         if ($user->hasRole('participant')) {
             $this->saveOrUpdatePatientInfo($user, $params);
+            $this->saveOrUpdatePatientMonthlySummary($user);
         }
 
         // provider info
@@ -49,16 +56,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // nurse info
         if ($user->hasRole('care-center')) {
-
             $this->saveOrUpdateNurseInfo($user, $params);
-
         }
 
         // care ambassador info
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         //Add Email Notification
@@ -87,9 +90,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         } else {
             $user->access_disabled = 0; // 0 = good, 1 = disabled
         }
-        $user->program_id = $params->get('program_id');
-
-        $user->attachPractice($params->get('program_id'));
 
         $user->auto_attach_programs = $params->get('auto_attach_programs');
         if ($params->get('first_name')) {
@@ -126,20 +126,22 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        // support for both single or array or roles
-        if (!empty($params->get('role'))) {
-            $user->roles()->sync([$params->get('role')]);
-            $user->save();
-            $user->load('roles');
-        }
+        $practices = $this->saveAndGetPractice($user, $params);
 
-        if (!empty($params->get('roles'))) {
-            // support if one role is passed in as a string
-            if (!is_array($params->get('roles'))) {
-                $roleId = $params->get('roles');
-                $user->roles()->sync([$roleId]);
-            } else {
-                $user->roles()->sync($params->get('roles'));
+        foreach ($practices as $practiceId) {
+            if (!empty($params->get('role'))) {
+                $user->detachRolesForSite([], $practiceId);
+                $user->attachRoleForSite($params->get('role'), $practiceId);
+            }
+
+            if (!empty($params->get('roles'))) {
+                $user->detachRolesForSite([], $practiceId);
+                // support if one role is passed in as a string
+                if (!is_array($params->get('roles'))) {
+                    $user->attachRoleForSite($params->get('roles'), $practiceId);
+                } else {
+                    $user->attachRolesForSite($params->get('roles'), $practiceId);
+                }
             }
         }
 
@@ -168,50 +170,33 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
     }
 
-    public function saveOrUpdatePrograms(
-        User $wpUser,
+    public function saveAndGetPractice(
+        User $user,
         ParameterBag $params
     ) {
         // get selected programs
         $userPrograms = [];
-        if ($params->get('programs')) { // && ($wpUser->practices->count() > 0)
+        if ($params->get('programs')) {
             $userPrograms = $params->get('programs');
+            $user->practices()->sync($userPrograms);
         }
+
         if ($params->get('program_id')) {
             if (!in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
             }
         }
 
-        //dd($userPrograms);
-
         // if still empty at this point, no program_id or program param
         if (empty($userPrograms)) {
-            return true;
+            return false;
         }
 
         // set primary program
-        $wpUser->program_id = $params->get('program_id');
-        $wpUser->save();
+        $user->program_id = $params->get('program_id');
+        $user->save();
 
-        // get role
-        $roleId = $params->get('role');
-        if ($roleId) {
-            $role = Role::find($roleId);
-        } else {
-            // default to participant
-            $role = Role::where('name', '=', 'participant')->first();
-        }
-
-        // first detatch relationship
-        $wpUser->practices()->detach();
-
-        $wpBlogs = Practice::orderBy('id', 'desc')->pluck('id')->all();
-        foreach ($wpBlogs as $wpBlogId) {
-            if (in_array($wpBlogId, $userPrograms)) {
-                $wpUser->practices()->attach($wpBlogId);
-            }
-        }
+        return $userPrograms;
     }
 
     public function saveOrUpdatePhoneNumbers(
@@ -296,8 +281,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         foreach ($patientInfo as $key => $value) {
             // hack for date_paused and date_withdrawn
-            if (
-                $key == 'date_paused'
+            if ($key == 'date_paused'
                 || $key == 'date_withdrawn'
             ) {
                 continue 1;
@@ -343,15 +327,12 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
 
         if ($user->careAmbassador != null) {
-
             $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
             $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
                 ? 1
                 : 0;
             $user->careAmbassador->save();
-
         } else {
-
             $ambassador = CareAmbassador::create([
                 'user_id' => $user->id,
             ]);
@@ -359,11 +340,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $ambassador->save();
 
             $user->careAmbassador()->save($ambassador);
-
-
         }
-
-
     }
 
     public function adminEmailNotify(
@@ -402,7 +379,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $message->from('no-reply@careplanmanager.com', 'CircleLink Health');
             $message->to($recipients)->subject($email_subject);
         });
-
     }
 
     public function editUser(
@@ -415,9 +391,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // roles
         $this->saveOrUpdateRoles($user, $params);
 
-        // programs
-        $this->saveOrUpdatePrograms($user, $params);
-
         // phone numbers
         $this->saveOrUpdatePhoneNumbers($user, $params);
 
@@ -428,9 +401,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // care ambassador
         if ($user->hasRole('care-ambassador')) {
-
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
-
         }
 
         // provider info
@@ -446,108 +417,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         return $user;
     }
 
-    public function saveOrUpdateUserMeta(
-        User $user,
-        ParameterBag $params
-    ) {
-        /*
-        $userMetaTemplate = (new UserMetaTemplate())->getArray();
-
-        foreach($userMetaTemplate as $key => $defaultValue)
-        {
-            $paramValue = $params->get($key);
-
-            //serialize arrays
-            if($paramValue && is_array($paramValue)) {
-                $paramValue = serialize($paramValue);
-            } else if($defaultValue && is_array($defaultValue)) {
-                $defaultValue = serialize($defaultValue);
-            }
-
-            // use existing value if form input wasnt passed in (only updating partial data)
-            if(!$params->get($key)) {
-                $meta = $user->meta->where('meta_key', $key)->first();
-                if (!empty($meta)) {
-                    $paramValue = $meta->meta_value;
-                    $params->add(array($key => $paramValue));
-                }
-            }
-
-
-            // set new value
-            $newValue = $defaultValue;
-            if($params->get($key)) {
-                $newValue = $paramValue;
-            }
-
-            // since first/last name are now on user model
-            if($key == 'first_name' ||
-                $key == 'last_name' ||
-                $key == 'city' ||
-                $key == 'state' ||
-                $key == 'address' ||
-                $key == 'address2' ||
-                $key == 'zip') {
-                $user->$key = $newValue;
-                $user->save();
-                continue 1;
-            }
-
-            // the rest of the attributes
-            if($params->get($key)) {
-                $user->setUserAttributeByKey($key, $newValue);
-            }
-        }
-        */
-    }
-
-    public function updateUserConfig(
-        User $wpUser,
-        ParameterBag $params
-    ) {
-        /*
-        // meta
-        $userMeta = UserMeta::where('user_id', '=', $wpUser->id)->pluck('meta_value', 'meta_key')->all();
-
-        // config
-        $userConfig = (new UserConfigTemplate())->getArray();
-        if (isset($userMeta['wp_' . $wpUser->program_id . '_user_config'])) {
-            $userConfig = unserialize($userMeta['wp_' . $wpUser->program_id . '_user_config']);
-            $userConfig = array_merge((new UserConfigTemplate())->getArray(), $userConfig);
-        }
-
-        // contact days checkbox formatting
-        if($params->get('contact_days')) {
-            $contactDays = $params->get('contact_days');
-            $contactDaysDelmited = '';
-            for($i=0; $i < count($contactDays); $i++){
-                $contactDaysDelmited .= (count($contactDays) == $i+1) ? $contactDays[$i] : $contactDays[$i] . ', ';
-            }
-            $params->add(array('preferred_cc_contact_days' => $contactDaysDelmited));
-        }
-
-        foreach($userConfig as $key => $value)
-        {
-            $paramValue = $params->get($key);
-
-            //serialize arrays
-            if($paramValue && is_array($paramValue)) {
-                $paramValue = serialize($paramValue);
-            } else if($value && is_array($value)) {
-                $value = serialize($value);
-            }
-
-            // set new value
-            $newValue = $value;
-            if($params->get($key)) {
-                $newValue = $paramValue;
-            }
-
-            $wpUser->setUserAttributeByKey($key, $newValue);
-        }
-        */
-    }
-
     public function findByRole(
         $role,
         $select = '*'
@@ -558,5 +427,13 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             ) {
                 $q->where('name', '=', $role);
             })->get();
+    }
+
+    public function saveOrUpdatePatientMonthlySummary($user)
+    {
+        return PatientMonthlySummary::updateOrCreate([
+            'patient_id' => $user->id,
+            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
+        ]);
     }
 }

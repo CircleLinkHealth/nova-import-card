@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
 
-
 /**
  * ImportedSections are CcdaSections that have been imported and stored in
  *

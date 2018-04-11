@@ -3,9 +3,10 @@
         <option value=""
                 disabled
         >{{ selectText }}</option>
-        <option v-for="item in items"
+        <option v-for="(item, index) in items"
                 v-bind:value="item.id"
                 v-text="item[textField]"
+                :key="item.id || item[textField] || index"
         ></option>
         <slot></slot>
     </select>

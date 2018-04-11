@@ -246,6 +246,8 @@ class CareTeamController extends Controller
 
         $patient = User::find($patientId);
 
+        $carePerson = CarePerson::find($request['id']);
+
         $providerUser = User::updateOrCreate([
             'id' => $input['user']['id'],
         ], [
@@ -262,9 +264,7 @@ class CareTeamController extends Controller
             'email'      => $input['user']['email'],
         ]);
 
-        $type = $input['is_billing_provider']
-            ? CarePerson::BILLING_PROVIDER
-            : snake_case($input['formatted_type']);
+        $type = snake_case($input['formatted_type']);
 
         if ($type == CarePerson::BILLING_PROVIDER) {
             $billingProvider = CarePerson::where('user_id', '=', $patientId)
@@ -280,11 +280,18 @@ class CareTeamController extends Controller
                 $oldBillingProvider->type = 'external';
 
                 if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
-                    $oldBillingProvider->type = $oldBillingProvider->user->practiceOrGlobalRole();
+                    // $role = optional($oldBillingProvider->user->practiceOrGlobalRole())->name ?? '';
+                    // if ($role == 'provider') {
+                    //     $role = 'billing_provider';
+                    // }
+                    // $oldBillingProvider->type = str_replace('-', '_', $role);
+                    $oldBillingProvider->type = 'internal';
                 }
 
                 $oldBillingProvider->save();
             }
+
+            $billingProvider = $oldBillingProviders->first();
 
             //If the Billing Provider has changed, we want to reflect that change on the front end.
             //If it's the same, we'll return null
@@ -305,22 +312,13 @@ class CareTeamController extends Controller
             $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
-        if (str_contains($input['id'], 'new')) {
-            $carePerson = CarePerson::create([
-                'alert'          => $alert,
-                'type'           => $type,
-                'user_id'        => $patientId,
-                'member_user_id' => $providerUser->id,
-            ]);
-        } else {
-            $carePerson = CarePerson::where('id', '=', $input['id'])
-                ->with('user')
-                ->first();
-
-            $carePerson->alert = $alert;
-            $carePerson->type = $type;
-            $carePerson->save();
-        }
+        $carePerson = CarePerson::updateOrCreate([
+            'user_id'        => $patientId,
+            'member_user_id' => $providerUser->id,
+        ],[
+            'alert'          => $alert,
+            'type'           => $type,
+        ]);
 
         if (isset($input['user']['phone_numbers'][0])) {
             $phone = $input['user']['phone_numbers'][0];
@@ -384,10 +382,14 @@ class CareTeamController extends Controller
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
         }
 
+        if (isset($billingProvider) && !empty($billingProvider)) {
+            $billingProvider = $billingProvider->fresh();
+            $billingProvider->formatted_type = snakeToSentenceCase($billingProvider->type);
+        }
+
         return response()->json([
             'carePerson'         => $carePerson,
             'oldBillingProvider' => $billingProvider ?? null,
         ], 200);
     }
-
 }

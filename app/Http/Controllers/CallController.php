@@ -6,6 +6,7 @@ use App\Call;
 use App\Patient;
 use App\Services\Calls\SchedulerService;
 use App\User;
+use App\Http\Resources\Call as CallResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,6 @@ class CallController extends Controller
         $calls = Call::where('status', 'scheduled')->get();
 
         return $calls;
-
     }
 
     public function create(Request $request)
@@ -47,51 +47,53 @@ class CallController extends Controller
             ]), 422);
         }
 
-        $input = $request->only('inbound_cpm_id',
+        $input = $request->only(
+            'inbound_cpm_id',
             'outbound_cpm_id',
             'scheduled_date',
             'window_start',
             'window_end',
-            'attempt_note');
+            'attempt_note'
+        );
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
-        if (!$patient) {
-            return response(json_encode([
+        if ( ! $patient) {
+            return response([
                 'errors' => ['could not find patient'],
                 'code'   => 406,
-            ]), 406);
+            ], 406);
         }
 
         if ($patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()->where('status', '=', 'scheduled')->first();
             if ($scheduledCall) {
-                return response(json_encode([
+                return response([
                     'errors' => ['patient already has a scheduled call'],
                     'code'   => 406,
-                ]), 406);
+                ], 406);
             }
         }
 
-        $call = new Call;
+        $call                 = new Call;
         $call->inbound_cpm_id = $input['inbound_cpm_id'];
         if (empty($input['outbound_cpm_id'])) {
             $call->outbound_cpm_id = null;
         } else {
             $call->outbound_cpm_id = $input['outbound_cpm_id'];
         }
-        $call->scheduled_date = $input['scheduled_date'];
-        $call->window_start = $input['window_start'];
-        $call->window_end = $input['window_end'];
-        $call->attempt_note = $input['attempt_note'];
-        $call->note_id = null;
+        $call->scheduled_date  = $input['scheduled_date'];
+        $call->window_start    = $input['window_start'];
+        $call->window_end      = $input['window_end'];
+        $call->attempt_note    = $input['attempt_note'];
+        $call->note_id         = null;
         $call->is_cpm_outbound = 1;
-        $call->service = 'phone';
-        $call->status = 'scheduled';
-        $call->scheduler = auth()->user()->id;
+        $call->service         = 'phone';
+        $call->status          = 'scheduled';
+        $call->scheduler       = auth()->user()->id;
         $call->save();
 
-        return response("successfully created call ", 201);
+        return response()->json(CallResource::make($call), 201);
         //return view('wpUsers.patient.calls.create');
     }
 
@@ -100,7 +102,7 @@ class CallController extends Controller
         $input = $request->all();
 
         $window_start = Carbon::parse($input['window_start'])->format('H:i');
-        $window_end = Carbon::parse($input['window_end'])->format('H:i');
+        $window_end   = Carbon::parse($input['window_end'])->format('H:i');
 
         //If the suggested date doesn't match the one in the input,
         //the scheduler has changed the date, mark it.
@@ -110,8 +112,7 @@ class CallController extends Controller
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
-            $patientId
-            ,
+            $patientId,
             $window_start,
             $window_end,
             $input['date'],
@@ -120,18 +121,15 @@ class CallController extends Controller
             isset($input['attempt_note'])
                 ? $input['attempt_note']
                 : ''
-
         );
 
 
-        $patient = Patient::where('user_id', intval($patientId
-        ))->first();
+        $patient = Patient::where('user_id', intval($patientId))->first();
 
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
         ])
-            ->with('messages', ['Successfully Created Note']);
-
+                         ->with('messages', ['Successfully Created Note']);
     }
 
     public function show($id)
@@ -149,31 +147,31 @@ class CallController extends Controller
     public function update(Request $request)
     {
 
-        $data = $request->only('callId',
+        $data = $request->only(
+            'callId',
             'columnName',
-            'value');
+            'value'
+        );
 
         // VALIDATION
         if (empty($data['callId'])) {
             return response("missing required params", 401);
         }
-        if (!Auth::user()) {
+        if ( ! Auth::user()) {
             return response("missing required scheduler user", 401);
         }
 
         // find call
         $call = Call::find($data['callId']);
-        if (!$call) {
+        if ( ! $call) {
             return response("could not locate call " . $data['callId'], 401);
         }
 
         // for null outbound_cpm_id
         if ($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned')) {
-
             $call->scheduler = Auth::user()->id;
-            $col = $data['columnName'];
-            $call->$col = null;
-
+            $col             = $data['columnName'];
+            $call->$col      = null;
         } else {
             if ($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text')) {
                 $call->attempt_note = '';
@@ -189,17 +187,18 @@ class CallController extends Controller
                     }
                 } else {
                     $call->scheduler = Auth::user()->id;
-                    $col = $data['columnName'];
-                    $call->$col = $data['value'];
+                    $col             = $data['columnName'];
+                    $call->$col      = $data['value'];
                 }
             }
         }
 
         $call->save();
 
-        return response("successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
-            201);
-
+        return response(
+            "successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
+            201
+        );
     }
 
     public function import(Request $request)
@@ -216,5 +215,4 @@ class CallController extends Controller
             }
         }
     }
-
 }

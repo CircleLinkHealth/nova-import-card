@@ -12,7 +12,6 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ItemLogs\AllergyLog;
 
-
 class Allergies extends BaseImporter
 {
     public function import(

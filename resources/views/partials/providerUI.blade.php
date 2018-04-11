@@ -1,14 +1,17 @@
-<html lang="en">
+<html lang="en-US">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta http-equiv="content-language" content="en-US"/>
     <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
     <meta http-equiv="expires" content={{ Carbon\Carbon::now()->format('D M d Y H:i:s O') }}>
     <meta http-equiv="pragma" content="no-cache">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
+    <base href="{{asset('')}}">
+
+    @include('partials.hotjar-code')
 
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
@@ -49,15 +52,10 @@
         <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
-        @stack('styles')
     @endif
     <style>
         span.twitter-typeahead .twitter-typeahead {
             position: absolute !important;
-        }
-
-        #bloodhound > .twitter-typeahead > .tt-menu > .tt-dataset.tt-dataset-User_list {
-            display: none;
         }
     </style>
     @stack('styles')
@@ -88,12 +86,34 @@
 
     @yield('content')
 
-    @if(isset($showBanner))
+    <?php
+        /**
+        * Sometimes, $patient is an instance of User::class, 
+        * other times, it is an instance of Patient::class
+        * We have to make sure that $user is always an instance of User::class by deriving it from $patient
+        */
+        use App\User;
+        use App\Patient;
+        $user = null;
+        if (isset($patient)) {
+            if (is_a($patient, Patient::class)) {
+                $user = $patient->user()->first();
+            }
+            else {
+                $user = $patient;
+            }
+        }
+    ?>
+
+    @if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))
         @include('partials.providerUI.notification-banner')
     @endif
 
+    <open-modal></open-modal>
+    <notifications></notifications>
+
 </div> <!-- end #app -->
-    </div>
+
 @if(!isset($isPdf))
     @include('partials.footer')
 
@@ -102,25 +122,34 @@
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-<script src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
-<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
+@if (Agent::isIE())
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+    <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+@endif
 
-@include('partials.searchjs')
 @include('partials.providerUItimer')
+@stack('prescripts')
+
+<script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
+<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
 
 @stack('scripts')
 <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-    .then(function(registration) {
-      console.log('Service Worker registration successful with scope: ',
-       registration.scope);
+    $(function () {
+        $('.selectpicker').selectpicker('refresh')
     })
-    .catch(function(err) {
-      console.log(err);
-    });
-  }
-  </script>
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/compiled/sw.js')
+        .then(function(registration) {
+            console.log('Service Worker registration successful with scope: ',
+            registration.scope);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+    }
+</script>
 @endif
 </body>
 

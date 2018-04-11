@@ -1,11 +1,4 @@
-@import "bootstrap/bootstrap";
-
-@btn-font-weight: 300;
-@font-family-sans-serif: "Roboto", Helvetica, Arial, sans-serif;
-
-body, label, .checkbox label {
-	font-weight: @btn-font-weight;
-}
+@import "tooltip";
 
 .full-width {
   width: 100%;
@@ -16,7 +9,7 @@ body, label, .checkbox label {
 }
 
 .flag {
-  background-color: #FF5500;
+  background-color: #f54437;
 }
 
 .quote {
@@ -156,4 +149,32 @@ body, label, .checkbox label {
 
 .notification-banner .banner-body {
   font-size: 20rem;
+}
+
+input[type='checkbox'] {
+  width: auto !important;
+  height: auto !important;
+}
+
+.vdp-datepicker.form-control {
+  padding: 0px;
+}
+
+.vdp-datepicker.form-control input[type='text'] {
+    height: 33px;
+}
+
+.pointer, .pagination > li > a.page-link {
+  cursor: pointer;
+}
+
+.pagination > li.active > a.page-link {
+  background-color: #5cb85c !important;
+  border-color: #4cae4c !important;
+  color: white !important;
+  cursor: pointer;
+}
+
+table.VueTables__table {
+  width: 100% !important;
 }

@@ -36,5 +36,4 @@ class CreateCpmMiscsUsersTable extends Migration
     {
         Schema::drop('cpm_miscs_users');
     }
-
 }

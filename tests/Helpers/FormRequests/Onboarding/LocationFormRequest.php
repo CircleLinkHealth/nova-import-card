@@ -18,8 +18,8 @@ class LocationFormRequest extends FormRequest
     public function delete(
         $count = 1,
         $params = []
-    ) : array
-    {
+    ) : array {
+    
         // TODO: Implement delete() method.
     }
 
@@ -31,8 +31,8 @@ class LocationFormRequest extends FormRequest
     public function get(
         $count = 1,
         $params = []
-    ) : array
-    {
+    ) : array {
+    
         // TODO: Implement get() method.
     }
 
@@ -44,8 +44,8 @@ class LocationFormRequest extends FormRequest
     public function patch(
         $count = 1,
         $params = []
-    ) : array
-    {
+    ) : array {
+    
         // TODO: Implement patch() method.
     }
 
@@ -57,8 +57,8 @@ class LocationFormRequest extends FormRequest
     public function post(
         $count = 1,
         $params = []
-    ) : array
-    {
+    ) : array {
+    
         return [
             'locations' =>
                 [
@@ -71,19 +71,19 @@ class LocationFormRequest extends FormRequest
                                     'email'     => $this->faker->email,
                                     'type'      => 'instead_of_billing_provider',
                                 ],
-                            'timezone'         => 'America/New_York',
-                            'isComplete'       => true,
-                            'errorCount'       => 0,
-                            'validated'        => true,
-                            'ehr_login'        => $this->faker->userName,
-                            'ehr_password'     => $this->faker->text(20),
-                            'name'             => $this->faker->company,
-                            'address_line_1'   => $this->faker->streetAddress,
-                            'address_line_2'   => $this->faker->numberBetween(1, 123),
-                            'city'             => $this->faker->city,
-                            'state'            => $this->faker->state,
-                            'postal_code'      => $this->faker->postcode,
-                            'phone'            => $this->faker->phoneNumber,
+                                'timezone'         => 'America/New_York',
+                                'isComplete'       => true,
+                                'errorCount'       => 0,
+                                'validated'        => true,
+                                'ehr_login'        => $this->faker->userName,
+                                'ehr_password'     => $this->faker->text(20),
+                                'name'             => $this->faker->company,
+                                'address_line_1'   => $this->faker->streetAddress,
+                                'address_line_2'   => $this->faker->numberBetween(1, 123),
+                                'city'             => $this->faker->city,
+                                'state'            => $this->faker->state,
+                                'postal_code'      => $this->faker->postcode,
+                                'phone'            => $this->faker->phoneNumber,
                         ],
                 ],
         ];

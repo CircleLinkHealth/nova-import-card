@@ -18,6 +18,5 @@ class TrackBillingInvoiceNo extends Seeder
             'config_value' => 1163
 
         ]);
-
     }
 }

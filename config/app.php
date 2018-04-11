@@ -1,8 +1,13 @@
 <?php
 
+use App\Providers\DirectMailServiceProvider;
 use App\Providers\EmailArrayValidatorServiceProvider;
+use App\Providers\FaxServiceProvider;
+use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
+use App\View\Composers\ProviderUITimerComposer;
+use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
 
@@ -142,7 +147,10 @@ return [
     */
 
     'providers' => [
-        Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        /*
+        * Jenssegers User Agent
+        */
+        Jenssegers\Agent\AgentServiceProvider::class,
 
         /*
          * Laravel Framework Service Providers...
@@ -183,6 +191,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        FaxServiceProvider::class,
+        DirectMailServiceProvider::class,
 
 
         App\Providers\UserMetaParserHelpersServiceProvider::class,
@@ -194,24 +204,23 @@ return [
         \Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         \Collective\Html\HtmlServiceProvider::class,
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        Zizaco\Entrust\EntrustServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
         Yajra\Datatables\DatatablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
-        Modelizer\Selenium\SeleniumServiceProvider::class,
-        Way\Generators\GeneratorsServiceProvider::class,
-        Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
         Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
-        Laravel\Tinker\TinkerServiceProvider::class,
         ViewComposerServiceProvider::class,
+        ProviderUITimerComposer::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
         EmailArrayValidatorServiceProvider::class,
-        GeneaLabs\LaravelCaffeine\Providers\LaravelCaffeineService::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
+        Spiritix\LadaCache\LadaCacheServiceProvider::class,
+        Waavi\UrlShortener\UrlShortenerServiceProvider::class,
+        GoogleDriveServiceProvider::class,
+        ManageInternalUser::class,
     ],
 
     /*
@@ -228,6 +237,7 @@ return [
     'aliases' => [
 
         'App'          => Illuminate\Support\Facades\App::class,
+        'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
         'Blade'        => Illuminate\Support\Facades\Blade::class,
@@ -263,7 +273,6 @@ return [
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
         'Debugbar'       => Barryvdh\Debugbar\Facade::class,
-        'Entrust'        => \Zizaco\Entrust\EntrustFacade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
         'Html'           => \Collective\Html\HtmlFacade::class,
@@ -274,7 +283,9 @@ return [
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
-        'Bugsnag'        => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
+        'Zip'            => ZanySoft\Zip\ZipFacade::class,
+        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
 ];

@@ -1,8 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('admin.questions.update', array('id' => $question->qid)), 'class' => 'form-horizontal')) !!}
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+    {!! Form::open(array('url' => route('admin.questions.update', array('id' => $question->qid)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -32,7 +34,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">{{ $question->qid }} Detail</a></td>
+                                    <td><a href="{{ route('admin.questions.show', array('id' => $question->qid)) }}" class="btn btn-primary">{{ $question->qid }} Detail</a></td>
                                     <td><div class="btn btn-orange btn-xs">{{ $question->msg_id }}</div></td>
                                     <td>{{ $question->qtype }}</td>
                                     <td>{{ $question->obs_key }}</td>
@@ -91,7 +93,7 @@
                                         <td>{!! Form::checkbox('care_team[]', $item->items_id, ['checked' => 'checked'], ['disabled' => 'disabled']) !!}</td>
                                         <td><strong>@if(($item->pcp->program->first())){{ $item->pcp->program->first()->domain }}@endif</strong></td>
                                         <td><strong>{{ $item->pcp->section_text }}</strong></td>
-                                        <td><a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
+                                        <td><a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->items_id }}</a></td>
                                     </tr>
                                 @endforeach
                             @endif
@@ -101,17 +103,15 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.questions.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.questions.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Question', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

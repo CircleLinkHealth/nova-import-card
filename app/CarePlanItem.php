@@ -2,16 +2,22 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanItem extends Model {
+/**
+ * App\CarePlanItem
+ *
+ * @property-read \App\CareItem $careItem
+ * @property-read \App\CarePlan $carePlan
+ * @property-read \App\CareSection $careSection
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanItem[] $children
+ * @property-read \App\CarePlanItem $parents
+ * @mixin \Eloquent
+ */
+class CarePlanItem extends \App\BaseModel
+{
 
     public $timestamps = false;
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -34,15 +40,18 @@ class CarePlanItem extends Model {
      */
     protected $fillable = ['parent_id', 'name', 'display_name', 'description'];
 
-    public function carePlan() {
+    public function carePlan()
+    {
         return $this->belongsTo('App\CarePlan', 'plan_id', 'id');
     }
 
-    public function careItem() {
+    public function careItem()
+    {
         return $this->belongsTo('App\CareItem', 'item_id', 'id');
     }
 
-    public function careSection() {
+    public function careSection()
+    {
         return $this->belongsTo('App\CareSection', 'section_id', 'id');
     }
 
@@ -55,5 +64,4 @@ class CarePlanItem extends Model {
     {
         return $this->hasMany('App\CarePlanItem', 'parent_id');
     }
-
 }

@@ -14,8 +14,10 @@ class AddForeignKeysToPracticesTable extends Migration
     public function up()
     {
         Schema::table('practices', function (Blueprint $table) {
-            $table->foreign('user_id',
-                'wp_blogs_user_id_foreign')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('SET NULL');
+            $table->foreign(
+                'user_id',
+                'wp_blogs_user_id_foreign'
+            )->references('id')->on('users')->onUpdate('CASCADE')->onDelete('SET NULL');
         });
     }
 
@@ -31,5 +33,4 @@ class AddForeignKeysToPracticesTable extends Migration
             $table->dropForeign('wp_blogs_user_id_foreign');
         });
     }
-
 }

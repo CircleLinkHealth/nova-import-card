@@ -16,7 +16,6 @@ class AddIsPrimaryToLocations extends Migration
         Schema::table('locations', function (Blueprint $table) {
 
             $table->boolean('is_primary')->after('practice_id')->default(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddIsPrimaryToLocations extends Migration
         Schema::table('locations', function (Blueprint $table) {
 
             $table->dropColumn('is_primary');
-
         });
     }
 }

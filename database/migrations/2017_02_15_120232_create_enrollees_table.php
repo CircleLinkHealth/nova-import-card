@@ -14,7 +14,7 @@ class CreateEnrolleesTable extends Migration
     public function up()
     {
 
-        Schema::create('enrollees',  function (Blueprint $table){
+        Schema::create('enrollees', function (Blueprint $table) {
 
             $table->increments('id');
             $table->unsignedInteger('user_id')->nullable();
@@ -46,11 +46,7 @@ class CreateEnrolleesTable extends Migration
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
         });
-
-
-
     }
 
     /**

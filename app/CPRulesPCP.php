@@ -2,14 +2,29 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesPCP extends Model {
+/**
+ * App\CPRulesPCP
+ *
+ * @property int $pcp_id
+ * @property int|null $prov_id
+ * @property string|null $section_text
+ * @property string|null $status
+ * @property int|null $cpset_id
+ * @property string|null $pcp_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItem[] $items
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Practice[] $program
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereCpsetId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereProvId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereSectionText($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereStatus($value)
+ * @mixin \Eloquent
+ */
+class CPRulesPCP extends \App\BaseModel
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -49,5 +64,4 @@ class CPRulesPCP extends Model {
 
         return $CPrulesPCP;
     }
-
 }

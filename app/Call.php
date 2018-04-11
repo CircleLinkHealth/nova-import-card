@@ -2,15 +2,63 @@
 
 namespace App;
 
+use App\Filters\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Call extends Model
+/**
+ * App\Call
+ *
+ * @property int $id
+ * @property int|null $note_id
+ * @property string $service
+ * @property string $status
+ * @property string $inbound_phone_number
+ * @property string $outbound_phone_number
+ * @property int $inbound_cpm_id
+ * @property int|null $outbound_cpm_id
+ * @property int|null $call_time
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property int $is_cpm_outbound
+ * @property string $window_start
+ * @property string $window_end
+ * @property string $scheduled_date
+ * @property string|null $called_date
+ * @property string $attempt_note
+ * @property string|null $scheduler
+ * @property-read \App\User $inboundUser
+ * @property-read \App\Note|null $note
+ * @property-read \App\User|null $outboundUser
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereAttemptNote($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCallTime($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCalledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundCpmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereInboundPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereIsCpmOutbound($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereNoteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundCpmId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereOutboundPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduledDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereScheduler($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereService($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
+ * @mixin \Eloquent
+ */
+class Call extends \App\BaseModel
 {
 
-    use \Venturecraft\Revisionable\RevisionableTrait;
+    use Filterable,
+        \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'calls';
+
     protected $fillable = [
         'note_id',
         'service',
@@ -46,47 +94,43 @@ class Call extends Model
         'is_cpm_outbound'
     ];
 
-    public static function boot()
+    public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
-        parent::boot();
-    }
-
-    public static function numberOfCallsForPatientForMonth(User $user, $date){
-
-        if (!$user->patientInfo) {
-            $user->patientInfo()->create([]);
-            return;
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
         }
 
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->patientSummaries()->where('month_year',$day_start)->first();
-        if(!$record) {
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
+        if (!$record) {
             return 0;
         }
         return $record->no_of_calls;
     }
 
-    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date){
-
-        if (!$user->patientInfo) {
-            $user->patientInfo()->create([]);
-            return;
+    public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
+    {
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
         }
 
         // get record for month
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientInfo->patientSummaries()->where('month_year',$day_start)->first();
-        if(!$record) {
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
+        if (!$record) {
             return 0;
         }
         return $record->no_of_successful_calls;
-
     }
 
     public function note()
     {
-        return $this->belongsTo('App\Note', 'note_id', 'id');
+        return $this->belongsTo(Note::class, 'note_id', 'id');
     }
 
     public function outboundUser()
@@ -96,8 +140,62 @@ class Call extends Model
 
     public function inboundUser()
     {
-        return $this->belongsTo('App\User', 'inbound_cpm_id', 'id');
+        return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
+    public function patientId() {
+        return $this->has('outboundUser.patientInfo.user') ? $this->outbound_cpm_id : $this->inbound_cpm_id;
+    }
 
+    /**
+     * Scope for calls for the given month
+     *
+     * @param $builder
+     * @param Carbon $monthYear
+     *
+     */
+    public function scopeOfMonth($builder, Carbon $monthYear) {
+        $builder->whereBetween('called_date', [
+            $monthYear->startOfMonth()->toDateString(),
+            $monthYear->copy()->endOfMonth()->toDateString(),
+        ]);
+    }
+
+    /**
+     * Scope for status
+     *
+     * @param $builder
+     * @param $status
+     *
+     */
+    public function scopeOfStatus($builder, $status) {
+        if (!is_array($status)) {
+            $status = [$status];
+        }
+
+        $builder->whereIn('status', $status);
+    }
+
+    /**
+     * Scope for Scheduled calls for the given month
+     *
+     * @param $builder
+     */
+    public function scopeScheduled($builder) {
+        $builder->where('calls.status', '=', 'scheduled')
+                ->whereHas('inboundUser')
+                ->with([
+                    'inboundUser.billingProvider.user',
+                    'inboundUser.notes'                        => function ($q) {
+                        $q->latest();
+                    },
+                    'inboundUser.patientInfo.contactWindows',
+                    'inboundUser.patientSummaries' => function ($q) {
+                        $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
+                    },
+                    'inboundUser.primaryPractice',
+                    'outboundUser.nurseInfo',
+                    'note',
+                ]);
+    }
 }

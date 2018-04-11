@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Importer\ImportedMedicalRecord;
 
-
 interface ImportedItem
 {
 

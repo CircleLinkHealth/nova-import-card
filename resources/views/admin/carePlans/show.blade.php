@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -43,7 +45,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.careplans.index', array()) }}" class="btn btn-danger">Back</a>
+                                    <a href="{{ route('admin.careplans.index', array()) }}" class="btn btn-danger">Back</a>
                                 </div>
                             </div>
                         </div>

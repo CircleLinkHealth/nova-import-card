@@ -167,11 +167,15 @@ class AddProviderSuffixes extends Migration
         ];
 
         foreach ($users as $id => $suffix) {
-            if (!$suffix) continue;
+            if (!$suffix) {
+                continue;
+            }
 
             $u = User::find($id);
 
-            if (!$u) continue;
+            if (!$u) {
+                continue;
+            }
 
             $u->suffix = $suffix;
             $u->save();

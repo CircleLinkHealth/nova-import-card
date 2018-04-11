@@ -30,5 +30,4 @@ class AddForeignKeysToCpmMedicationGroupsTable extends Migration
             $table->dropForeign('cpm_medication_groups_care_item_id_foreign');
         });
     }
-
 }

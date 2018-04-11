@@ -39,5 +39,4 @@ class CreateRevisionsTable extends Migration
     {
         Schema::drop('revisions');
     }
-
 }

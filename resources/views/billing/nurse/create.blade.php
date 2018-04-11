@@ -14,7 +14,7 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {!! Form::open(array('url' => URL::route('admin.reports.nurse.generate', array()),'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('admin.reports.nurse.generate', array()),'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -115,7 +115,7 @@
                                         <label class="col-md-2 control-label" for="end_date"></label>
                                         <div class="col-md-2">
                                             <button id="submit" name="submit" value="download" class="btn btn-success">Download
-                                                Invoice (s)
+                                                Invoice(s)
                                             </button>
                                         </div>
                                     </div>
@@ -123,14 +123,14 @@
 
 
                             </fieldset>
-                        </form>
+                        
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    {!! Form::close() !!}
 
     @push('scripts')
         <script>

@@ -7,7 +7,7 @@ $new_user = false;
 
 @section('content')
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row">
         <div class="icon-container col-lg-12">
             @if(isset($patient->id) && !$new_user )

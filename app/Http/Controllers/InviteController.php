@@ -29,7 +29,6 @@ class InviteController extends Controller
     {
 
         return view('admin.invites.create');
-
     }
 
     /**
@@ -66,7 +65,6 @@ class InviteController extends Controller
         \Illuminate\Support\Facades\Notification::send([$user], new ImplementationLeadInvite($invite));
 
         return view('admin.invites.create', ['message' => "Invite sent to: $invite->email"]);
-
     }
 
     /**

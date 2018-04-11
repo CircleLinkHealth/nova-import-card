@@ -30,5 +30,4 @@ class AddForeignKeysToCcdAllergiesTable extends Migration
             $table->dropForeign('ccd_allergies_patient_id_foreign');
         });
     }
-
 }

@@ -16,7 +16,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->can('roles-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
@@ -32,7 +32,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
@@ -52,7 +52,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $params = $request->input();
@@ -66,8 +66,10 @@ class RoleController extends Controller
         }
         $role->save();
 
-        return redirect()->route('roles.edit', [$role->id])->with('messages',
-            ['successfully added new role - ' . $params['name']])->send();
+        return redirect()->route('roles.edit', [$role->id])->with(
+            'messages',
+            ['successfully added new role - ' . $params['name']]
+        )->send();
     }
 
     /**
@@ -79,7 +81,7 @@ class RoleController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->can('roles-view')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         // display view
@@ -101,7 +103,7 @@ class RoleController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $role = Role::find($id);
@@ -125,7 +127,7 @@ class RoleController extends Controller
         Request $request,
         $id
     ) {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         $params = $request->input();
@@ -150,10 +152,9 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->can('roles-manage')) {
+        if (!Auth::user()->hasRole('administrator')) {
             abort(403);
         }
         //
     }
-
 }

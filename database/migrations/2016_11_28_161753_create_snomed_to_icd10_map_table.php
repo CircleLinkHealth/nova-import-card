@@ -31,5 +31,4 @@ class CreateSnomedToIcd10MapTable extends Migration
     {
         Schema::drop('snomed_to_icd10_map');
     }
-
 }

@@ -27,11 +27,9 @@ class AddsCLHPPPMToPractices extends Seeder
         ];
 
         foreach ($data as $key => $value) {
-
             $p = \App\Practice::whereName($key)->first();
             $p->clh_pppm = $value;
             $p->save();
-
         }
     }
 }

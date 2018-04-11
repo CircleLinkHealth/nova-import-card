@@ -42,8 +42,5 @@ class EnrollmentSummary extends SalesReportSection
         $this->data['historical'] = $this->service->historicalEnrollmentPerformance($this->start->startOfMonth(), $this->end);
 
         return $this->data;
-
     }
-
-
 }

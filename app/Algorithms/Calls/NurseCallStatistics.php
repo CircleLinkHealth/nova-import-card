@@ -8,7 +8,6 @@
 
 namespace App\Algorithms\Calls;
 
-
 use App\Call;
 use Carbon\Carbon;
 
@@ -27,34 +26,30 @@ class NurseCallStatistics
     protected $minCallsForAverageConsideration = 0;
     protected $minMinutesForAverageConsideration = 0;
 
-    public function __construct( $nurses, Carbon $startRange, Carbon $endRange)
+    public function __construct($nurses, Carbon $startRange, Carbon $endRange)
     {
         
         $this->nurses = $nurses;
         $this->startTime = $startRange; //->subMinutes($this->minutesPadding);
         $this->endTime = $endRange;//->addMinutes($this->minutesPadding);
-
     }
 
-    public function callsPerHour(Carbon $month){
-
-
-
+    public function callsPerHour(Carbon $month)
+    {
     }
 
-    public function nurseCallsPerHourAggregated(){
+    public function nurseCallsPerHourAggregated()
+    {
 
         $results = [];
 
 //        $this->nurses = [Nurse::find(5)];
 
         foreach ($this->nurses as $nurse) {
-
             $differentiations = 10;
             $name = $nurse->user->fullName;
 
             for ($i = 0; $i < $differentiations; $i++) {
-
                 $rangeStart = Carbon::parse($this->startTime)->addHours($i);
                 $rangeEnd = Carbon::parse($this->endTime)->addHours($i);
 
@@ -96,19 +91,13 @@ class NurseCallStatistics
                 if ($activityHour != 0 && $count != 0) {
                     $results[$name][$i]['Adjusted Calls Per Hour'] = round(($count / $activityHour) * 60, 1);
                 }
-
-
             }
 
 //             if(isset($results[$name])){
 //                 $results[$name]['Average CPH For Period'] = collect($results[$name])->average('Adjusted Calls Per Hour');
 //             };
-
-
         }
 
         return [$this->startTime->toDateString() => $results];
-
     }
-
 }

@@ -26,14 +26,14 @@
 
     @include('partials.confirm-modal')
 
-    <div class="row" style="margin-top:30px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
-             style="border-bottom: 3px solid #50b2e2;">
-            <div class="row">
-                <div class="main-form-title col-lg-12"> Record New Note</div>
+    <form id="newNote" method="post" action="{{route('patient.note.store', ['patientId' => $patient->id])}}"
+          class="form-horizontal">
+        <div class="row" style="margin-top:30px;">
+            <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
+                 style="border-bottom: 3px solid #50b2e2;">
+                <div class="row">
+                    <div class="main-form-title col-lg-12"> Record New Note</div>
 
-                <form method="post" action="{{URL::route('patient.note.store', ['patientId' => $patient->id])}}"
-                      class="form-horizontal">
 
                     {{ csrf_field() }}
 
@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-sm-4 pull-right"
                                  style="text-align: right;top: 9px;font-size: 22px;color: #ec683e;">
-                                 @include('partials.complex-ccm-badge')
+                                @include('partials.complex-ccm-badge')
                             </div>
                         </div>
                     </div>
@@ -234,9 +234,10 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <input type="hidden" name="body" value="body">
-                                            <textarea id="note" class="form-control" rows="10" cols="100"
+                                            <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note" class-name="form-control" :rows="10" :cols="100"
                                                       placeholder="Enter Note..."
-                                                      name="body" required></textarea> <br/>
+                                                      name="body" :required="true"></persistent-textarea>
+                                            <br>
                                         </div>
                                     </div>
 
@@ -262,6 +263,7 @@
                                         <div>
                                             <div class="col-sm-12">
                                                 <button name="Submit" id="Submit" type="submit" value="Submit"
+                                                        form="newNote"
                                                         class="btn btn-primary btn-lg form-item--button form-item-spacing">
                                                     Save/Send Note
                                                 </button>
@@ -272,10 +274,11 @@
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+
 
     <div>
         <br/>
@@ -291,6 +294,18 @@
             });
         });
 
+        $('#newNote').submit(function (e) {
+            e.preventDefault()
+            var form = this
+            $.get('/api/test').always(response => {
+                if (response.status == 200) {
+                    var key = 'notes:{{$patient->id}}:add'
+                    window.sessionStorage.removeItem(key)
+                }
+                form.submit()
+            })
+            
+        })
     </script>
     @endpush
 @endsection

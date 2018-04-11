@@ -31,5 +31,4 @@ class CreateRulesAnswersTable extends Migration
     {
         Schema::drop('rules_answers');
     }
-
 }

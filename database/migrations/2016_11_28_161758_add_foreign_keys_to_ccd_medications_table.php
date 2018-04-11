@@ -30,5 +30,4 @@ class AddForeignKeysToCcdMedicationsTable extends Migration
             $table->dropForeign('ccd_medications_patient_id_foreign');
         });
     }
-
 }

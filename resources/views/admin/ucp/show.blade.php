@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -32,7 +34,7 @@
                             <tr>
                                 <td>
                                     @if($ucp->item)
-                                        <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                        <a href="{{ route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
                                     @else
                                         {{ $ucp->items_id }}
                                     @endif
@@ -40,7 +42,7 @@
                                 <td>{{ $ucp->user_id }}</td>
                                 <td>{{ $ucp->meta_key }}</td>
                                 <td><strong>{{ $ucp->meta_value }}</strong></td>
-                                <td><a href="{{ URL::route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
+                                <td><a href="{{ route('admin.ucp.edit', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.ucp.destroy', array('id' => $ucp->ucp_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                             </tbody>
                         </table>
@@ -64,12 +66,9 @@
                             <strong>Meta Value:</strong><br>
                             {{ $ucp->meta_value }}
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 @stop

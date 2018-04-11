@@ -15,5 +15,5 @@ class CcdaRequestValidator extends LaravelValidator
             'vendor' => 'required',
         ],
         ValidatorInterface::RULE_UPDATE => [],
-   ];
+    ];
 }

@@ -1,0 +1,117 @@
+<?php
+
+namespace Tests\Unit;
+
+use App\Http\Controllers\OpsDashboardController;
+use App\Practice;
+use App\Repositories\OpsDashboardPatientEloquentRepository;
+use App\Services\OpsDashboardService;
+use App\User;
+use Carbon\Carbon;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class OpsDashboardTest extends TestCase
+{
+    private $controller;
+    private $service;
+    private $repo;
+    private $date;
+
+    /**
+     * Tests old dashboard
+     *
+     * @return void
+     */
+//    public function test_it_gets_and_counts_patients()
+//    {
+////        //date for month
+//        //fix dates
+////        $fromDate = $this->date->copy()->startOfMonth()->toDateString();
+////        $toDate = $this->date->copy()->endOfMonth()->toDateString();
+////
+////        //tests getting all patients (paused, withdrawn, enrolled and those that have careplan with status to enroll)
+////        $allPatients = $this->service->getTotalPatients();
+////        $this->assertNotNull($allPatients);
+////
+////        //get data for Total Patients table when selecting date from 'select day'
+////        //also tests for methods 'getTotalPatients' and 'countPatientsByStatus'
+////        $cpmTotalsDay = $this->service->getCpmPatientTotals($this->date, 'day');
+////        $this->assertNotNull($cpmTotalsDay);
+////
+////        //tests method for 2 given dates
+////        $monthPatients = $this->service->getTotalPatients($fromDate, $toDate);
+////        $this->assertNotNull($monthPatients);
+////
+////        //tests count method
+////        $counts = $this->service->countPatientsByStatus($monthPatients);
+////        $this->assertNotNull($counts);
+////        $this->assertArrayHasKey('pausedPatients', $counts);
+////
+////        //tests filtering result by practice, countPatientsByStatus, returns collection of counts
+////        $filteredByPractice = $this->service->filterPatientsByPractice($monthPatients, 188);
+////        $this->assertNotNull($filteredByPractice);
+////
+////
+////        //gets all paused patients for given dates, always takes 2 dates
+////        $pausedPatients = $this->service->getPausedPatients($fromDate, $toDate);
+////        $this->assertNotNull($pausedPatients);
+//
+//    }
+
+//    public function test_new_repository()
+//    {
+//
+//        $from = Carbon::now()->startOfDay()->toDateTimeString();
+//        $to = Carbon::now()->startOfMonth()->startOfDay()->toDateTimeString();
+//
+//        $weekdays = $this->service->calculateWeekdays($from, $to);
+//
+//        $this->assertNotNull($weekdays);
+//
+//        $fromDate = $this->date->copy()->subYear(2)->startOfYear()->startOfDay()->toDateTimeString();
+//        $toDate = $this->date->copy()->subYear(2)->endOfYear()->endOfDay()->toDateTimeString();
+//
+//        $hoursBehind = $this->service->calculateHoursBehind($toDate);
+//        $this->assertNotNull($hoursBehind);
+//
+//
+//        $totalPatients = $this->repo->getPatientsByStatus($fromDate, $toDate);
+//        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $totalPatients);
+//        $this->assertNotNull($totalPatients);
+//
+//        $enrolledPatients = $this->repo->getEnrolledPatients($fromDate, $toDate);
+//        $countsByCcmTime = $this->service->countPatientsByCcmTime($enrolledPatients, $fromDate, $toDate);
+//
+//        $this->assertNotNull($countsByCcmTime);
+//
+//
+//        $practices = Practice::active()->get();
+//        $totals = [];
+//        foreach ($practices as $practice){
+//            $totals[$practice->display_name] = $this->service->dailyReportRow($practice, $fromDate, $toDate);
+//        }
+//
+//        $this->assertNotNull($totals);
+//    }
+
+    public function test_billing_churn(){
+
+        $row = $this->controller->getBillingChurnIndex();
+
+        $this->assertNotNull($row);
+
+    }
+
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->controller = app(OpsDashboardController::class);
+        $this->service = app(OpsDashboardService::class);
+        $this->repo = new OpsDashboardPatientEloquentRepository();
+        $this->date = Carbon::now()->subMonth(2);
+    }
+}

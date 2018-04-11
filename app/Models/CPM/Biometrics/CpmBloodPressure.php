@@ -2,9 +2,36 @@
 
 use App\Contracts\Models\CPM\Biometric;
 use App\User;
+use App\Models\CPM\CpmBiometric;
 use Illuminate\Database\Eloquent\Model;
 
-class CpmBloodPressure extends Model implements Biometric
+/**
+ * App\Models\CPM\Biometrics\CpmBloodPressure
+ *
+ * @property int $id
+ * @property int $patient_id
+ * @property string $starting
+ * @property string $target
+ * @property string $systolic_high_alert
+ * @property string $systolic_low_alert
+ * @property string $diastolic_high_alert
+ * @property string $diastolic_low_alert
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\User $patient
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicHighAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereDiastolicLowAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereStarting($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereSystolicHighAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereSystolicLowAlert($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereTarget($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\CPM\Biometrics\CpmBloodPressure whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class CpmBloodPressure extends \App\BaseModel implements Biometric
 {
     public function __construct(array $attributes = [])
     {
@@ -50,6 +77,10 @@ class CpmBloodPressure extends Model implements Biometric
     {
         return $this->belongsTo(User::class, 'patient_id');
     }
+    
+    public function biometric() {
+        return CpmBiometric::where('name', 'LIKE', '%pressure%');
+    }
 
     public function getUserValues(User $user)
     {
@@ -80,5 +111,4 @@ class CpmBloodPressure extends Model implements Biometric
 
         $this->attributes['target'] = $settings->default_target_bp;
     }
-
 }

@@ -37,5 +37,4 @@ class CreateCpmProblemsActivateCpmLifestylesTable extends Migration
     {
         Schema::drop('cpm_problems_activate_cpm_lifestyles');
     }
-
 }

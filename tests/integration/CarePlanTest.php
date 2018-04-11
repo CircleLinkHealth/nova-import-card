@@ -1,10 +1,13 @@
 <?php
 
+namespace Tests\integration;
+
+use Tests\DuskTestCase;
+use Tests\TestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
-
-class CarePlanTest extends TestCase
+class CarePlanTest extends DuskTestCase
 {
     use CarePlanHelpers,
         UserHelpers;
@@ -18,7 +21,7 @@ class CarePlanTest extends TestCase
         parent::setUp();
 
         $this->provider = $this->createUser();
-        $this->userLogin($this->provider);
+        auth()->login($this->provider);
     }
 
     public function testCreatePatientWithSomeItemsChecked()

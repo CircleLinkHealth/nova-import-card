@@ -32,5 +32,4 @@ class AddForeignKeysToLocationUserTable extends Migration
             $table->dropForeign('location_user_user_id_foreign');
         });
     }
-
 }

@@ -36,5 +36,4 @@ class AddForeignKeysToAllergyImportsTable extends Migration
             $table->dropForeign('allergy_imports_vendor_id_foreign');
         });
     }
-
 }

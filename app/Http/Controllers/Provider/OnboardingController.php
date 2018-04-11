@@ -8,12 +8,12 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Entities\Invite;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateInvitedUserAccount;
 use App\Role;
 use App\Services\OnboardingService;
 use App\User;
 use Illuminate\Http\Request;
 use Prettus\Validator\Exceptions\ValidatorException;
-
 
 class OnboardingController extends Controller
 {
@@ -65,12 +65,10 @@ class OnboardingController extends Controller
         OnboardingService $onboardingService,
         Request $request
     ) {
-        parent::__construct($request);
-
-        $this->invites = $inviteRepository;
-        $this->locations = $locationRepository;
-        $this->practices = $practiceRepository;
-        $this->users = $userRepository;
+        $this->invites           = $inviteRepository;
+        $this->locations         = $locationRepository;
+        $this->practices         = $practiceRepository;
+        $this->users             = $userRepository;
         $this->onboardingService = $onboardingService;
 
         if ($request->route('code')) {
@@ -86,10 +84,11 @@ class OnboardingController extends Controller
     public function getCreateInvitedUser()
     {
         $user = User::whereEmail($this->invite->email)
-            ->first();
+                    ->first();
 
         return view('provider.onboarding.invited-staff', [
             'user' => $user,
+            'invite' => $this->invite,
         ]);
     }
 
@@ -122,7 +121,7 @@ class OnboardingController extends Controller
                 'name' => $practiceSlug,
             ])->first();
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -155,7 +154,7 @@ class OnboardingController extends Controller
                 'name' => $practiceSlug,
             ])->first();
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
@@ -195,27 +194,24 @@ class OnboardingController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postStoreInvitedUser(Request $request)
+    public function postStoreInvitedUser(CreateInvitedUserAccount $request)
     {
-        $input = $request->input();
-
-        try {
-            $user = $this->users->skipPresenter()->create([
-                'email'      => $input['email'],
-                'first_name' => $input['firstName'],
-                'last_name'  => $input['lastName'],
-                'password'   => bcrypt($input['password']),
-            ]);
-        } catch (ValidatorException $e) {
-            return redirect()
-                ->back()
-                ->withInput($input)
-                ->withErrors($e->getMessageBag()->getMessages());
-        }
+        $user = User::updateOrCreate([
+            'id' => $request['userId'],
+        ], [
+            'email'      => $request['email'],
+            'first_name' => $request['first_name'],
+            'last_name'  => $request['last_name'],
+            'password'   => bcrypt($request['password']),
+        ]);
 
         auth()->login($user);
 
-        return redirect()->route('/');
+        Invite::whereCode($request['code'])
+            ->delete();
+
+        return redirect()
+            ->to('/');
     }
 
     /**
@@ -254,15 +250,15 @@ class OnboardingController extends Controller
         $role = Role::whereName('practice-lead')->first();
 
         $user->roles()
-            ->attach($role->id);
+             ->attach($role->id);
 
-        if (!auth()->user()->hasRole('salesperson')) {
+        if ( ! auth()->user()->hasRole('salesperson')) {
             auth()->login($user);
         }
 
         if (isset($input['code'])) {
             $invite = Invite::whereCode($input['code'])
-                ->first();
+                            ->first();
 
             if ($invite) {
                 $invite->delete();

@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies\Medications;
 
-
 use App\CarePlan;
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
@@ -18,7 +17,9 @@ class MedicationsList extends BaseStorageStrategy implements StorageStrategy
 
     public function import($medsList)
     {
-        if (empty($medsList)) return;
+        if (empty($medsList)) {
+            return;
+        }
         
         $instruction = CpmInstruction::create([
             'name' => $medsList

@@ -20,7 +20,6 @@ class ObservationController extends Controller
 
             return response()->json(Crypt::encrypt(json_encode($wpUsers)));
         }
-
     }
 
     /**
@@ -123,8 +122,10 @@ class ObservationController extends Controller
         if ($request->input('observationType') == 'RPT/CF_RPT_60') {
             $params['obs_value'] = str_replace('%', '', $params['obs_value']);
 
-            if (str_contains($params['obs_value'],
-                    '.') && strlen($params['obs_value']) == 3 && is_numeric($params['obs_value'])
+            if (str_contains(
+                $params['obs_value'],
+                '.'
+            ) && strlen($params['obs_value']) == 3 && is_numeric($params['obs_value'])
             ) {
                 $answerResponse = true;
             }
@@ -141,9 +142,17 @@ class ObservationController extends Controller
         }
         */
 
-        $result = $observationService->storeObservationFromApp($params['user_id'], $params['parent_id'],
-            $params['obs_value'], $params['obs_date'], $obsMessageId, $params['obs_key'], $params['timezone'],
-            $params['source'], $params['isStartingObs']);
+        $result = $observationService->storeObservationFromApp(
+            $params['user_id'],
+            $params['parent_id'],
+            $params['obs_value'],
+            $params['obs_date'],
+            $obsMessageId,
+            $params['obs_key'],
+            $params['timezone'],
+            $params['source'],
+            $params['isStartingObs']
+        );
 
 
         if ($request->header('Client') == 'mobi' || $request->header('Client') == 'ui') {
@@ -202,5 +211,4 @@ class ObservationController extends Controller
     {
         //
     }
-
 }

@@ -21,7 +21,7 @@ class CheckOnboardingInvite
     ) {
         //Salespeople don't need an invite, as they're creating practices for others
         if (auth()->user()) {
-            if (auth()->user()->can('use-onboarding')) {
+            if (auth()->user()->hasPermission('use-onboarding')) {
                 return $next($request);
             }
         }

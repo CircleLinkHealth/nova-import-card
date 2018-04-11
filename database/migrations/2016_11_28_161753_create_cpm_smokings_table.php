@@ -32,5 +32,4 @@ class CreateCpmSmokingsTable extends Migration
     {
         Schema::drop('cpm_smokings');
     }
-
 }

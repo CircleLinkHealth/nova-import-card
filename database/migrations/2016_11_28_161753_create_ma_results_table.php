@@ -39,5 +39,4 @@ class CreateMaResultsTable extends Migration
     {
         Schema::drop('ma_results');
     }
-
 }

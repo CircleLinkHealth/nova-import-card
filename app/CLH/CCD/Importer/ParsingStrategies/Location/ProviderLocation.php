@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\Importer\ParsingStrategies\Location;
 
-
 use App\CLH\Contracts\CCD\ParsingStrategy;
 use App\CLH\Contracts\CCD\ValidationStrategy;
 use App\Importer\Models\ItemLogs\ProviderLog;
@@ -16,10 +15,9 @@ class ProviderLocation implements ParsingStrategy
         $providers = ProviderLog::whereCcdaId($ccd->id)->get();
 
         $locations = [];
-        foreach ($providers as $provider)
-        {
-            $loc = Location::where( 'address_line_1', $provider->street )
-                ->whereIn( 'phone', [$provider->cell_phone, $provider->home_phone, $provider->work_phone] )
+        foreach ($providers as $provider) {
+            $loc = Location::where('address_line_1', $provider->street)
+                ->whereIn('phone', [$provider->cell_phone, $provider->home_phone, $provider->work_phone])
                 ->get();
 
             if (count($loc) > 0) {
@@ -31,7 +29,9 @@ class ProviderLocation implements ParsingStrategy
             }
         }
 
-        if ( count( $locations ) > 0 ) return $locations;
+        if (count($locations) > 0) {
+            return $locations;
+        }
 
         return false;
     }

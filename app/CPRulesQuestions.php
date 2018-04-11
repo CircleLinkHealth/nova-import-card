@@ -3,14 +3,34 @@
 use App\Services\MsgUI;
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesQuestions extends Model {
+/**
+ * App\CPRulesQuestions
+ *
+ * @property int $qid
+ * @property string $msg_id
+ * @property string|null $qtype
+ * @property string|null $obs_key
+ * @property string|null $description
+ * @property string $icon
+ * @property string $category
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $careItems
+ * @property-read mixed $msg_id_and_obs_key
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Observation[] $observations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesQuestionSets[] $questionSets
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItem[] $rulesItems
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereCategory($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereIcon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereMsgId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereObsKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereQtype($value)
+ * @mixin \Eloquent
+ */
+class CPRulesQuestions extends \App\BaseModel
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -62,7 +82,7 @@ class CPRulesQuestions extends Model {
         $html = '';
         $msgUI = new MsgUI;
         $msgIcon = $msgUI->getMsgIcon($this->icon);
-        if(!empty($msgIcon)) {
+        if (!empty($msgIcon)) {
             $html = "<i style='color:" . $msgIcon['color'] . "' class='fa fa-2x fa-" . $msgIcon['icon'] . "'></i>";
         }
         return $html;
@@ -72,10 +92,10 @@ class CPRulesQuestions extends Model {
 
     // ATTRIBUTES
 
-    public function getMsgIdAndObsKeyAttribute() {
+    public function getMsgIdAndObsKeyAttribute()
+    {
         $msgId = $this->msg_id;
         $obsKey = $this->obs_key;
         return $msgId . ' [' . $obsKey . ']';
     }
-
 }

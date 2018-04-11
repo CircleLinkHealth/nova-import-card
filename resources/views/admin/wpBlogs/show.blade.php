@@ -1,11 +1,13 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <style>
-        .form-group {
-            margin:20px;
-        }
-    </style>
+    @push('styles')
+        <style>
+            .form-group {
+                margin:20px;
+            }
+        </style>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -15,11 +17,11 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            @if(Entrust::can('programs-manage'))
-                                <a href="{{ URL::route('admin.programs.edit', array('id' => $program->id)) }}"
+                            @if(Cerberus::hasPermission('programs-manage'))
+                                <a href="{{ route('admin.programs.edit', array('id' => $program->id)) }}"
                                    class="btn btn-info">Edit</a>
                             @endif
-                            <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-plus-sign"></i> Back to programs list</a>
+                            <a href="{{ route('admin.programs.index', array()) }}" class="btn btn-danger" style="margin-left:10px;"><i class="glyphicon glyphicon-plus-sign"></i> Back to programs list</a>
                         </div>
                     </div>
                 </div>

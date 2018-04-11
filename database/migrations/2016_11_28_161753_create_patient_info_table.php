@@ -74,5 +74,4 @@ class CreatePatientInfoTable extends Migration
     {
         Schema::drop('patient_info');
     }
-
 }

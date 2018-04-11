@@ -2,6 +2,10 @@
 
 @section('content')
     <div id="medication-group-maps"></div>
+@endsection
+
+
+@push('scripts')
 
     <!-- using string template here to work around HTML <option> placement restriction -->
     <script type="text/x-template" id="med-template">
@@ -62,10 +66,6 @@
             <slot></slot>
         </select>
     </script>
-@endsection
-
-
-@section('javascript')
     <script src="https://unpkg.com/vue"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 
@@ -171,4 +171,4 @@
         });
 
     </script>
-@endsection
+@endpush

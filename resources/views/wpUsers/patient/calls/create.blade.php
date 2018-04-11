@@ -4,16 +4,18 @@
 @section('activity', 'Patient Call Scheduler')
 
 @section('content')
-    <script>
-        $(document).ready(function () {
-            /* $( ".submitFormBtn").click(function(e) { */
-            $("a").click(function (e) {
-                $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
-                e.preventDefault();
-                return false;
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+                /* $( ".submitFormBtn").click(function(e) { */
+                $("a").click(function (e) {
+                    $("#confirmButtonModal").modal({    backdrop: 'static',    keyboard: false});
+                    e.preventDefault();
+                    return false;
+                });
             });
-        });
-    </script>
+        </script>
+    @endpush
 
     <div id="confirmButtonModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -47,7 +49,7 @@
                     @endif
                 </div>
                 {!!
-                Form::open(['url' => URL::route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form'])
+                Form::open(['url' => route('call.schedule', ['patientId' => $patient->user_id]), 'method' => 'POST', 'id' => 'sched-call-form'])
                 !!}
 
                 <div class="form-block col-md-4" style="padding-top: 0px">
@@ -138,6 +140,8 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
     {!! Form::close() !!}
 
 @endsection

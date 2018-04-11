@@ -1,19 +1,23 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script>
-        $(document).on("click", '.section-reload', function(event) {
-            var sectionId = $(this).attr('section');
-            var BASE = "{{ url() }}";
-            var carePlanId = "{{ $carePlan->id }}";
-            //alert(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
-            $('#section' + sectionId)
-                    .html('loading.....')
-                    .load(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
-            return false;
-        });
-    </script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('scripts')
+        <script>
+            $(document).on("click", '.section-reload', function(event) {
+                var sectionId = $(this).attr('section');
+                var BASE = "{{ url() }}";
+                var carePlanId = "{{ $carePlan->id }}";
+                //alert(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
+                $('#section' + sectionId)
+                        .html('loading.....')
+                        .load(BASE + '/careplan/' + carePlanId + '/section/' + sectionId);
+                return false;
+            });
+        </script>
+    @endpush
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -31,7 +35,7 @@
 
                                     <!-- Modal content-->
                                     <div class="modal-content">
-                                        {!! Form::open(array('url' => URL::route('admin.careplans.duplicate', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
+                                        {!! Form::open(array('url' => route('admin.careplans.duplicate', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                                             <h4 class="modal-title">Duplicate</h4>
@@ -70,7 +74,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Edit Care Plan: {{ $carePlan->id }}</div>
                     <div class="panel-body">
-                        {!! Form::open(array('url' => URL::route('admin.careplans.update', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.careplans.update', array('id' => $carePlan->id)), 'class' => 'form-horizontal')) !!}
                         @include('errors.errors')
 
                         <div class="form-group">
@@ -94,7 +98,7 @@
                         </div>
 
                         <h2>Sections:</h2>
-                        <a href="{{ URL::route('admin.careplansections.create', array()) }}" class="btn btn-primary btn">
+                        <a href="{{ route('admin.careplansections.create', array()) }}" class="btn btn-primary btn">
                             <span class="glyphicon glyphicon-plus-sign"></span>
                             Add Section
                         </a>
@@ -124,12 +128,12 @@
 
 
                         @if($carePlan->careSections)
-                            <a href="{{ URL::route('admin.careplans.index', array()) }}" class="btn btn-primary btn">
+                            <a href="{{ route('admin.careplans.index', array()) }}" class="btn btn-primary btn">
                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                 Add Item
                             </a>
                             <h3>Section 1:</h3>
-                            <a href="{{ URL::route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">{{ $carePlan->name }}</a>
+                            <a href="{{ route('admin.items.show', array('id' => $carePlan->id)) }}" class="btn btn-orange btn-xs">{{ $carePlan->name }}</a>
                         @else
                             <div class="alert alert-danger" style="margin-top:20px;">
                                 No sections
@@ -139,7 +143,7 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.careplans.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.careplans.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update Care Plan', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>

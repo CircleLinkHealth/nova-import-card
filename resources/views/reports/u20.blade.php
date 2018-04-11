@@ -9,7 +9,7 @@
                 </div>
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => route('patient.reports.u20'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
@@ -46,11 +46,16 @@
                     @if($data)
                         <div id="obs_alerts_container" class=""></div><br/>
                         <div id="paging_container"></div><br/>
+
+                        @push('styles')
                         <style>
                             .webix_hcell {
                                 background-color: #d2e3ef;
                             }
                         </style>
+                        @endpush
+
+                        @push('scripts')
                         <script>
                             function filterText(text) {
                                 // var text = node;
@@ -60,11 +65,13 @@
                                     return obj.ccm_status == text;
                                 })
                             }
+
                             function sortByParam(a, b) {
                                 a = a.patient_name_sort;
                                 b = b.patient_name_sort;
                                 return a > b ? 1 : (a < b ? -1 : 0);
                             }
+
                             function zeroPad(nr, base) {
                                 var len = (String(base).length - String(nr).length) + 1;
                                 return len > 0 ? new Array(len).join('0') + nr : nr;
@@ -75,6 +82,7 @@
                                 filter = '<' + filter.toString().toLowerCase();
                                 return value.indexOf(filter) === 0;
                             }
+
                             webix.locale.pager = {
                                 first: "<<",// the first button
                                 last: ">>",// the last button
@@ -87,6 +95,7 @@
                                 // view:"datatable",
                                 //css:"webix_clh_cf_style",
                                 autoheight: true,
+                                autowidth: true,
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                 // leftSplit:2,
                                 scrollX: false,
@@ -95,37 +104,36 @@
                                     {
                                         id: "patient_name",
                                         header: ["Patient", {content: "textFilter", placeholder: "Filter"}],
-                                        // fillspace: true,
-                                        width: 200,
                                         sort: 'string',
-                                        template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
-                                                array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
+                                        adjust: true,
+                                        template: "<a href='<?php echo route('patient.activity.providerUIIndex',
+                                            array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
 
                                     },
                                     {
                                         id: "site",
-                                        header: ["Program", {content: "selectFilter"}],
-                                        width: 150,
+                                        header: ["Practice", {content: "selectFilter"}],
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "ccm_status",
                                         header: ["CCM Status", {content: "selectFilter", placeholder: "Filter"}],
-                                        width: 110,
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "dob",
                                         header: ["DOB", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 110,
+                                        adjust: true,
                                         sort: 'string'
                                     },
                                     {
                                         id: "colsum_careplan",
                                         header: ["CarePlan", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_careplan;
                                             var date = new Date(seconds * 1000);
@@ -137,9 +145,9 @@
                                     {
                                         id: "colsum_progress",
                                         header: ["Progress", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_progress;
                                             var date = new Date(seconds * 1000);
@@ -151,9 +159,9 @@
                                     {
                                         id: "colsum_rpm",
                                         header: ["RPM", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         template: function (obj) {
                                             var seconds = obj.colsum_rpm;
                                             var date = new Date(seconds * 1000);
@@ -165,9 +173,9 @@
                                     {
                                         id: "colsum_tcc",
                                         header: ["CC", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         format: webix.numberFormat,
                                         template: function (obj) {
                                             var seconds = obj.colsum_tcc;
@@ -180,10 +188,10 @@
                                     {
                                         id: "colsum_other",
                                         header: ["Other", "(Min:Sec)"],
-                                        width: 80,
                                         sort: 'int',
-                                        css: {"color": "black", "text-align": "right"}
-                                        , template: function (obj) {
+                                        css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
+                                        template: function (obj) {
                                         var seconds = obj.colsum_other;
                                         var date = new Date(seconds * 1000);
                                         var mm = Math.floor(seconds / 60);
@@ -197,6 +205,7 @@
                                         header: ["Total", "(Min:Sec)"],
                                         sort: 'int',
                                         css: {"color": "black", "text-align": "right"},
+                                        adjust: true,
                                         format: webix.numberFormat,
                                         template: function (obj, common) {
                                             var seconds = obj.colsum_total;
@@ -207,12 +216,6 @@
                                         }
                                     }
                                 ],
-                                ready: function () {
-                                    this.adjustRowHeight("obs_key");
-                                },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
                                 pager: {
                                     container: "paging_container",// the container where the pager controls will be placed into
                                     template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
@@ -221,6 +224,7 @@
                                 },
                                 {!! $activity_json !!}
                             });
+
                             function gby() {
                                 obs_alerts_dtable.ungroup();
                                 obs_alerts_dtable.group({
@@ -243,6 +247,7 @@
                                     row: "provider"
                                 });
                             }
+
                             function gbyp() {
                                 obs_alerts_dtable.ungroup();
                                 obs_alerts_dtable.group({
@@ -268,9 +273,11 @@
                                     row: "patient_name"
                                 });
                             }
+
                             function ug() {
                                 obs_alerts_dtable.ungroup();
                             }
+
                             obs_alerts_dtable.ungroup();
                             obs_alerts_dtable.sort('#patient_name#');
                             obs_alerts_dtable.hideColumn("site");
@@ -279,6 +286,8 @@
                                 obs_alerts_dtable.adjust();
                             })
                         </script>
+                        @endpush
+
                         @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                             <input type="button" value="Export as PDF" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toPDF($$(obs_alerts_dtable), {
@@ -351,7 +360,7 @@
                             <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toExcel(obs_alerts_dtable);">
                         @endif
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                             <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Practice'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>
@@ -359,9 +368,12 @@
                                    style='display:none;margin:15px;'
                                    onclick='obs_alerts_dtable.hideColumn("site");this.style.display = "none";getElementById("site_show_btn").style.display = "inline-block";'>
                         @endif
+                        @push('scripts')
                         <script type="text/javascript">
                             window.onload = filterText('Enrolled');
                         </script>
+                        @endpush
+
                     @else
                         <div style="text-align:center;margin:50px;">There are no patients under 20 minutes this month.
                         </div>

@@ -52,5 +52,4 @@ class CreateCcdDemographicsLogsTable extends Migration
     {
         Schema::drop('ccd_demographics_logs');
     }
-
 }

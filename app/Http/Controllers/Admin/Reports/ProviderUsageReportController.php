@@ -54,7 +54,6 @@ class ProviderUsageReportController extends Controller
 
         $userTotals = ['TOTAL:'];
         foreach ($period as $dt) {
-
         }
 
         // get stats for each program
@@ -66,7 +65,7 @@ class ProviderUsageReportController extends Controller
             // get users
             $officeUserIds = User::
             whereHas('practices', function ($q) use
-            (
+                (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -84,7 +83,7 @@ class ProviderUsageReportController extends Controller
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
             whereHas('logger', function ($q) use
-            (
+                (
                 $officeUserIds
             ) {
                 $q->whereIn('id', $officeUserIds);
@@ -100,11 +99,13 @@ class ProviderUsageReportController extends Controller
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
                     $pagetimesForDate = $pagetimes->filter(function ($item) use
-                    (
+                        (
                         $dt
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get($item,
-                                'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
+                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get(
+                            $item,
+                            'start_time'
+                        ) < $dt->format('Y-m-d') . ' 23:59:59');
                     })->count();
                 }
                 $programStats[$programName]['dates'][$dt->format('Y-m-d')]['pageviews'] = $pagetimesForDate;
@@ -115,7 +116,7 @@ class ProviderUsageReportController extends Controller
             // get users
             $nurseUserIds = User::
             whereHas('practices', function ($q) use
-            (
+                (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -132,7 +133,7 @@ class ProviderUsageReportController extends Controller
             // get participants
             $participantUserIds = User::
             whereHas('practices', function ($q) use
-            (
+                (
                 $programId
             ) {
                 $q->whereIn('program_id', [$programId]);
@@ -149,13 +150,13 @@ class ProviderUsageReportController extends Controller
             // get all pagetimes for users, per day:
             $pagetimes = PageTimer::
             whereHas('logger', function ($q) use
-            (
+                (
                 $nurseUserIds
             ) {
                 $q->whereIn('id', $nurseUserIds);
             })
                 ->whereHas('patient', function ($q) use
-                (
+                    (
                     $participantUserIds
                 ) {
                     $q->whereIn('id', $participantUserIds);
@@ -170,11 +171,13 @@ class ProviderUsageReportController extends Controller
                 $pagetimesForDate = 0;
                 if ($pagetimes->count() > 0) {
                     $pagetimesForDate = $pagetimes->filter(function ($item) use
-                    (
+                        (
                         $dt
                     ) {
-                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get($item,
-                                'start_time') < $dt->format('Y-m-d') . ' 23:59:59');
+                        return (data_get($item, 'start_time') > $dt->format('Y-m-d') . ' 00:00:01') && (data_get(
+                            $item,
+                            'start_time'
+                        ) < $dt->format('Y-m-d') . ' 23:59:59');
                     })->count();
                 }
                 $programStats[$programName]['dates'][$dt->format('Y-m-d')]['nurse_pageviews'] = $pagetimesForDate;
@@ -189,7 +192,7 @@ class ProviderUsageReportController extends Controller
         $date = Carbon::now()->startOfMonth();
 
         Excel::create('CLH-Provider_Usage-Report-' . $date, function ($excel) use
-        (
+            (
             $date,
             $worksheets
         ) {
@@ -214,7 +217,7 @@ class ProviderUsageReportController extends Controller
             // sheet for each program
             foreach ($worksheets as $worksheetName => $worksheetData) {
                 $excel->sheet(substr($worksheetName, 0, 20), function ($sheet) use
-                (
+                    (
                     $worksheetData,
                     $headers
                 ) {
@@ -228,8 +231,6 @@ class ProviderUsageReportController extends Controller
                     }
                 });
             }
-
         })->export('xls');
     }
-
 }

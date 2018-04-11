@@ -12,7 +12,7 @@
                 </div>
                 @include('partials.userheader')
 
-                {!! Form::open(array('url' => URL::route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
+                {!! Form::open(array('url' => route('patient.activity.providerUIIndex', ['patientId' => $patient]), 'method' => 'GET', 'class' => 'form-horizontal', 'style' => 'margin-right: 10px')) !!}
                 <div class="col-sm-3" style="top: 16px">
                     <button type="submit"
                             href="{{route('patient.activity.providerUIIndex', ['patientId' => $patient])}}"
@@ -82,12 +82,18 @@
                                         seconds = seconds + parseInt(obj.duration);
                                     });
                                     var date = new Date(seconds * 1000);
-                                    var mm = Math.floor(seconds / 60);
+                                    var hh = Math.floor(seconds / 3600);
+                                    var mm = Math.floor(seconds / 60) % 60;
                                     var ss = date.getSeconds();
-                                    if (ss < 10) {
-                                        ss = "0" + ss;
+                                    function pad (num, count) {
+                                        count = count || 0;
+                                        const $num = num + '';
+                                        return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                     }
-                                    var time = "" + mm + ":" + ss;
+                                    ss = pad(ss, 2)
+                                    mm = pad(mm, 2)
+                                    hh = pad(hh, 2)
+                                    var time = hh + ':' + mm + ":" + ss;
                                     result = "<span title='" + mm + ":" + ss + "' style='float:right;'><b>" + time + "</b></span>";
                                     node.firstChild.innerHTML = result;
                                 }
@@ -119,7 +125,7 @@
 
                                         template: function (obj) {
                                             if (obj.logged_from == "manual_input" || obj.logged_from == "activity")
-                                                return "<a href='<?php echo URL::route('patient.activity.view', array(
+                                                return "<a href='<?php echo route('patient.activity.view', array(
                                                         'patientId' => $patient->id,
                                                         'atcId'     => ''
                                                     )); ?>/" + obj.id + "'>" + obj.type + "</a>";
@@ -142,7 +148,7 @@
                                     },
                                     {
                                         id: "duration",
-                                        header: ["Total", "(Min:Sec)"],
+                                        header: ["Total", "(HH:MM:SS)"],
                                         width: 100,
                                         sort: 'string',
                                         css: {"color": "black", "text-align": "right"},
@@ -150,12 +156,18 @@
                                         template: function (obj) {
                                             var seconds = obj.duration;
                                             var date = new Date(seconds * 1000);
-                                            var mm = Math.floor(seconds / 60);
+                                            var hh = Math.floor(seconds / 3600);
+                                            var mm = Math.floor(seconds / 60) % 60;
                                             var ss = date.getSeconds();
-                                            if (ss < 10) {
-                                                ss = "0" + ss;
+                                            function pad (num, count) {
+                                                count = count || 0;
+                                                const $num = num + '';
+                                                return '0'.repeat(Math.max(count - $num.length, 0)) + $num;
                                             }
-                                            var time = mm + ":" + ss;
+                                            ss = pad(ss, 2)
+                                            mm = pad(mm, 2)
+                                            hh = pad(hh, 2)
+                                            var time = hh + ':' + mm + ":" + ss;
                                             return "<span title=':" + mm + ":" + ss + "' style='float:right;'>" + time + "</span>";
                                         }
                                     }

@@ -35,5 +35,4 @@ class CreateRulesItemmetaTable extends Migration
     {
         Schema::drop('rules_itemmeta');
     }
-
 }

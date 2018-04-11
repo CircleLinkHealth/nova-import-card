@@ -1,12 +1,15 @@
 <?php
 
+namespace Tests\integration;
+
 use App\NurseContactWindow;
 use App\User;
 use Carbon\Carbon;
+use Tests\DuskTestCase;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 
-class NurseWorkScheduleTest extends BrowserKitTestCase
+class NurseWorkScheduleTest extends DuskTestCase
 {
     use CarePlanHelpers,
         UserHelpers;
@@ -30,30 +33,26 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
 
     protected function nurse_sees_account_button_and_schedule(User $nurse)
     {
-        $this->actingAs($nurse)
-            ->visit(route('patients.dashboard'))
-            ->see($nurse->full_name)
-            ->see('work-schedule-link');
-
-        //By default PHPUnit fails the test if the output buffer wasn't closed.
-        //So we're adding this to make the test work.
-        ob_end_clean();
+        $this->browse(function ($browser) use ($nurse) {
+            $browser->loginAs($nurse)
+                    ->visit(route('patients.dashboard'))
+                    ->assertPathIs('/manage-patients/dashboard')
+                    ->assertSee($nurse->full_name)
+                    ->assertSee('Create/Edit Schedule');
+        });
     }
 
     protected function provider_does_not_see_work_schedule()
     {
         $provider = $this->createUser(9, 'provider');
 
-        $this->userLogin($provider);
-
-        $this->actingAs($provider)
-            ->visit(route('patients.dashboard'))
-            ->see($provider->full_name)
-            ->dontSee('work-schedule-link');
-
-        //By default PHPUnit fails the test if the output buffer wasn't closed.
-        //So we're adding this to make the test work.
-//        ob_end_clean();
+        $this->browse(function ($browser) use ($provider) {
+            $browser->loginAs($provider)
+                    ->visit(route('patients.dashboard'))
+                    ->assertPathIs('/manage-patients/dashboard')
+                    ->assertSee($provider->full_name)
+                    ->assertDontSee('Create/Edit Schedule');
+        });
     }
 
     protected function nurse_stores_and_deletes_window(User $nurse)
@@ -61,7 +60,6 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
         $window = $this->store_window($nurse, Carbon::now()->addWeek(2));
 
         $this->delete_window($nurse, $window);
-
     }
 
     protected function store_window(
@@ -71,29 +69,31 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
         $timeStart = '09:00:00',
         $timeEnd = '19:00:00'
     ) {
-        $this->actingAs($nurse)
-            ->visit(route('care.center.work.schedule.index'))
-            ->select(carbonToClhDayOfWeek($date->dayOfWeek), 'day_of_week')
-            ->type($timeStart, 'window_time_start')
-            ->type($timeEnd, 'window_time_end')
-            ->press('store-window');
+        $this->browse(function ($browser) use ($nurse, $date, $valid, $timeStart, $timeEnd) {
+            $browser->loginAs($nurse)
+                    ->visit(route('care.center.work.schedule.index'))
+                    ->select('day_of_week', carbonToClhDayOfWeek($date->dayOfWeek))
+                    ->type('window_time_start', $timeStart)
+                    ->type('window_time_end', $timeEnd)
+                    ->press('store-window');
 
-        if ($valid) {
-            $this->seeInDatabase('nurse_contact_window', [
+            if ($valid) {
+                $this->assertDatabaseHas('nurse_contact_window', [
+                    'nurse_info_id'     => $nurse->nurseInfo->id,
+                    'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
+                    'window_time_start' => $timeStart,
+                    'window_time_end'   => $timeEnd,
+                ]);
+
+                return $nurse->nurseInfo->windows()->first();
+            }
+
+            $this->dontSeeInDatabase('nurse_contact_window', [
                 'nurse_info_id'     => $nurse->nurseInfo->id,
-                'day_of_week'       => carbonToClhDayOfWeek($date->dayOfWeek),
                 'window_time_start' => $timeStart,
                 'window_time_end'   => $timeEnd,
             ]);
-
-            return $nurse->nurseInfo->windows()->first();
-        }
-
-        $this->dontSeeInDatabase('nurse_contact_window', [
-            'nurse_info_id'     => $nurse->nurseInfo->id,
-            'window_time_start' => $timeStart,
-            'window_time_end'   => $timeEnd,
-        ]);
+        });
     }
 
     protected function delete_window(
@@ -103,8 +103,8 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
     ) {
         if ($valid) {
             $this->actingAs($nurse)
-                ->visit(route('care.center.work.schedule.index'))
-                ->click("delete-window-{$window->id}");
+                 ->visit(route('care.center.work.schedule.index'))
+                 ->click("delete-window-{$window->id}");
 
             $this->dontSeeInDatabase('nurse_contact_window', [
                 'nurse_info_id' => $nurse->nurseInfo->id,
@@ -112,14 +112,14 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
             ]);
         }
 
-        if (!$valid) {
+        if ( ! $valid) {
             $response = $this->call('GET', '/care-center/work-schedule/destroy/71');
 
             $this->actingAs($nurse)
-                ->visit(route('care.center.work.schedule.index'))
-                ->dontSee("delete-window-{$window->id}");
+                 ->visit(route('care.center.work.schedule.index'))
+                 ->assertDontSee("delete-window-{$window->id}");
 
-            $this->seeInDatabase('nurse_contact_window', [
+            $this->assertDatabaseHas('nurse_contact_window', [
                 'nurse_info_id' => $nurse->nurseInfo->id,
                 'id'            => $window->id,
             ]);
@@ -131,9 +131,9 @@ class NurseWorkScheduleTest extends BrowserKitTestCase
         $this->store_window($nurse, Carbon::now(), false);
         $this->store_window($nurse, Carbon::parse('this sunday'), false);
 
-        $date = Carbon::now();
+        $date      = Carbon::now();
         $timeStart = '10:00';
-        $timeEnd = '13:00';
+        $timeEnd   = '13:00';
 
         $window = NurseContactWindow::create([
             'nurse_info_id'     => $nurse->nurseInfo->id,

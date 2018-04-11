@@ -35,5 +35,4 @@ class CreateNurseContactWindowTable extends Migration
     {
         Schema::drop('nurse_contact_window');
     }
-
 }

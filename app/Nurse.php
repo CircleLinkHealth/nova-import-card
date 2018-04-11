@@ -2,15 +2,56 @@
 
 namespace App;
 
+use App\Filters\Filterable;
 use App\Models\Holiday;
 use App\Models\WorkHours;
 use App\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class Nurse extends Model
+/**
+ * App\Nurse
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $status
+ * @property string $license
+ * @property int $hourly_rate
+ * @property string $billing_type
+ * @property int $low_rate
+ * @property int $high_rate
+ * @property int $spanish
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property int $isNLC
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\NurseCareRateLog[] $careRateLogs
+ * @property-read mixed $holidays_this_week
+ * @property-read mixed $upcoming_holiday_dates
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Holiday[] $holidays
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\State[] $states
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\NurseMonthlySummary[] $summary
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Holiday[] $upcomingHolidays
+ * @property-read \App\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\NurseContactWindow[] $windows
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\WorkHours[] $workhourables
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereBillingType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHighRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereHourlyRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereIsNLC($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereLicense($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereLowRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereSpanish($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Nurse whereUserId($value)
+ * @mixin \Eloquent
+ */
+class Nurse extends \App\BaseModel
 {
-    use MakesOrReceivesCalls;
+    use Filterable,
+        MakesOrReceivesCalls;
 
     //nurse mapping for import csv
     public static $nurseMap = [
@@ -80,7 +121,7 @@ class Nurse extends Model
 
     public function states()
     {
-        return $this->belongsToMany(State::class, 'nurse_info_state');
+        return $this->belongsToMany(State::class, 'nurse_info_state', 'nurse_info_id');
     }
 
     public function careRateLogs()
@@ -90,8 +131,6 @@ class Nurse extends Model
 
     public function callStatsForRange(Carbon $start, Carbon $end)
     {
-
-
     }
 
     public function getUpcomingHolidayDatesAttribute()
@@ -99,8 +138,10 @@ class Nurse extends Model
         return $this->upcomingHolidays()
             ->get()
             ->sortBy(function ($item) {
-                return Carbon::createFromFormat('Y-m-d',
-                    "{$item->date->format('Y-m-d')}");
+                return Carbon::createFromFormat(
+                    'Y-m-d',
+                    "{$item->date->format('Y-m-d')}"
+                );
             });
     }
 
@@ -111,8 +152,11 @@ class Nurse extends Model
      */
     public function upcomingHolidays()
     {
-        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where('date', '>=',
-            Carbon::now()->format('Y-m-d'));
+        return $this->hasMany(Holiday::class, 'nurse_info_id', 'id')->where(
+            'date',
+            '>=',
+            Carbon::now()->format('Y-m-d')
+        );
     }
 
     public function getHolidaysThisWeekAttribute()

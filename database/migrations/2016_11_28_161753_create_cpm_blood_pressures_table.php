@@ -36,5 +36,4 @@ class CreateCpmBloodPressuresTable extends Migration
     {
         Schema::drop('cpm_blood_pressures');
     }
-
 }

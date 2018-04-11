@@ -40,5 +40,4 @@ class CreateCcdProblemsTable extends Migration
     {
         Schema::drop('ccd_problems');
     }
-
 }

@@ -2,9 +2,9 @@
 
 namespace App\Observers;
 
+use App\Enrollee;
 use App\Patient;
-use App\Services\Phaxio\PhaxioService;
-use App\Services\PhiMail\PhiMail;
+use App\TargetPatient;
 use Carbon\Carbon;
 
 class PatientObserver
@@ -16,16 +16,14 @@ class PatientObserver
      */
     public function created(Patient $patient)
     {
-        if (!$patient->consent_date) {
-            return;
+        if ($patient->consent_date) {
+            $this->sendPatientConsentedNote($patient);
         }
-
-        $this->sendPatientConsentedNote($patient);
     }
 
     public function sendPatientConsentedNote(Patient $patient)
     {
-        if (!$patient->user->careplan->isProviderApproved()) {
+        if ( ! optional($patient->user->careplan)->isProviderApproved() || !auth()->check()) {
             return;
         }
 
@@ -34,39 +32,31 @@ class PatientObserver
             'body'         => "Patient consented on $patient->consent_date",
             'type'         => 'Patient Consented',
             'performed_at' => Carbon::now()->toDateTimeString(),
-        ]);
+        ])->forward(true, false);
+    }
 
-        $pdfPath = $note->toPdf();
+    public function attachTargetPatient(Patient $patient)
+    {
+        $user = $patient->user;
 
-        if ($patient->user->primaryPractice
-            ->settings
-            ->first()
-            ->efax_pdf_notes
-        ) {
-            $efax = $patient->user
-                ->locations
-                ->first()
-                ->fax;
+        $enrollee = Enrollee::where([
+            ['mrn', '=', $patient->mrn_number],
+            ['practice_id', '=', $user->primaryPractice],
+        ])->first();
 
-            if ($efax) {
-                (new PhaxioService())->send($efax, $pdfPath);
+
+        if ($enrollee) {
+            //find target patient with matching ehr_patient_id, update or create TargetPatient
+            $targetPatient = TargetPatient::where('enrollee_id', $enrollee->id)
+                                          ->orWhere('ehr_patient_id', $enrollee->mrn)
+                                          ->first();
+
+            if ($targetPatient) {
+                $user->ehrInfo()->save($targetPatient);
             }
         }
 
-        if ($patient->user
-            ->primaryPractice
-            ->settings
-            ->first()
-            ->dm_pdf_notes
-        ) {
-            $direct = $patient->user
-                ->billingProvider()
-                ->emr_direct_address;
 
-            if ($direct) {
-                (new PhiMail())->send($direct, $pdfPath, $note->fileName ?? $pdfPath);
-            }
-        }
     }
 
     /**
@@ -76,10 +66,32 @@ class PatientObserver
      */
     public function updated(Patient $patient)
     {
-        if (!$patient->isDirty('consent_date')) {
-            return;
+        if ($patient->isDirty('consent_date')) {
+            $this->sendPatientConsentedNote($patient);
+        }
+    }
+
+    /**
+     * Listen to the Patient updated event.
+     *
+     * @param Patient $patient
+     */
+    public function updating(Patient $patient)
+    {
+        if ($patient->isDirty('date_paused')) {
+            $patient->paused_letter_printed_at = null;
+        }
+    }
+
+
+    /**
+     * @param Patient $patient
+     */
+    public function saving(Patient $patient)
+    {
+        if ($patient->isDirty('mrn_number')) {
+            $this->attachTargetPatient($patient);
         }
 
-        $this->sendPatientConsentedNote($patient);
     }
 }

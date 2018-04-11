@@ -16,9 +16,13 @@ class AllergiesList extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($allergiesList)
     {
-        if ( empty($allergiesList) ) return;
+        if (empty($allergiesList)) {
+            return;
+        }
 
-        if ( empty($this->blogId) or empty($this->user) ) throw new \Exception( 'UserID and BlogID are required.' );
+        if (empty($this->blogId) or empty($this->user)) {
+            throw new \Exception('UserID and BlogID are required.');
+        }
 
         $instruction = CpmInstruction::create([
             'name' => $allergiesList

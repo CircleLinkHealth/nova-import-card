@@ -14,10 +14,14 @@ class AddForeignKeysToForeignIdsTable extends Migration
     public function up()
     {
         Schema::table('foreign_ids', function (Blueprint $table) {
-            $table->foreign('location_id',
-                'location_foreign')->references('id')->on('locations')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('user_id',
-                'user_id_foreign')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'location_id',
+                'location_foreign'
+            )->references('id')->on('locations')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'user_id',
+                'user_id_foreign'
+            )->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 
@@ -34,5 +38,4 @@ class AddForeignKeysToForeignIdsTable extends Migration
             $table->dropForeign('user_id_foreign');
         });
     }
-
 }

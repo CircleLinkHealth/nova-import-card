@@ -36,5 +36,4 @@ class CreateCpmLifestylesUsersTable extends Migration
     {
         Schema::drop('cpm_lifestyles_users');
     }
-
 }

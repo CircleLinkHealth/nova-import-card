@@ -38,5 +38,4 @@ class CreateForeignIdsTable extends Migration
     {
         Schema::drop('foreign_ids');
     }
-
 }

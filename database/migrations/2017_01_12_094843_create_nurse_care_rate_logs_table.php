@@ -34,7 +34,6 @@ class CreateNurseCareRateLogsTable extends Migration
                 ->on('lv_activities')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
-
         });
     }
 
@@ -48,7 +47,6 @@ class CreateNurseCareRateLogsTable extends Migration
         Schema::table('nurse_care_rate_logs', function (Blueprint $table) {
 
             $table->drop();
-
         });
     }
 }

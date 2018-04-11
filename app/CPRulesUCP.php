@@ -2,16 +2,29 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesUCP extends Model {
+/**
+ * App\CPRulesUCP
+ *
+ * @property int $ucp_id
+ * @property int|null $items_id
+ * @property int|null $user_id
+ * @property string|null $meta_key
+ * @property string|null $meta_value
+ * @property-read \App\CPRulesItem|null $item
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereItemsId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaKey($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereMetaValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUcpId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesUCP whereUserId($value)
+ * @mixin \Eloquent
+ */
+class CPRulesUCP extends \App\BaseModel
+{
 
     public $timestamps = false;
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -56,12 +69,10 @@ class CPRulesUCP extends Model {
     {
         $rulesUCP = CPRulesUCP::where('user_id', '=', $userId)->get();
 
-        foreach ( $rulesUCP as $rules )
-        {
+        foreach ($rulesUCP as $rules) {
             $rules['item'] = $rules->item;
         }
 
         return $rulesUCP;
     }
-
 }

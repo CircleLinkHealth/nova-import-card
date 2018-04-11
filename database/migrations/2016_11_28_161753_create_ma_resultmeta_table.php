@@ -31,5 +31,4 @@ class CreateMaResultmetaTable extends Migration
     {
         Schema::drop('ma_resultmeta');
     }
-
 }

@@ -32,6 +32,12 @@ use Carbon\Carbon;
 
 class ReschedulerHandler
 {
+    private $schedulerService;
+
+    public function __construct(SchedulerService $schedulerService)
+    {
+        $this->schedulerService = $schedulerService;
+    }
 
     protected $callsToReschedule;
     protected $rescheduledCalls = [];
@@ -45,7 +51,6 @@ class ReschedulerHandler
         $this->handleCalls();
 
         return $this->rescheduledCalls;
-
     }
 
     public function collectCallsToBeRescheduled()
@@ -53,10 +58,11 @@ class ReschedulerHandler
 
         $calls = Call
             ::whereStatus('scheduled')
+            ->with(['inboundUser'])
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->get();
 
-        $missed = array();
+        $missed = [];
 
         /*
          * Check to see if the call is dropped if it's the current day
@@ -66,7 +72,6 @@ class ReschedulerHandler
         */
 
         foreach ($calls as $call) {
-
             $end_carbon = Carbon::parse($call->scheduled_date);
 
             $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
@@ -79,36 +84,34 @@ class ReschedulerHandler
             if ($end_time < $now_carbon) {
                 $missed[] = $call;
             }
-
         }
 
         return $missed;
-
     }
 
     public function handleCalls()
     {
 
         foreach ($this->callsToReschedule as $call) {
-
             //Handle Previous Call
             $call->status = 'dropped';
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = Patient::where('user_id', $call->inbound_cpm_id)->first();
+            $patient = $call->inboundUser->patientInfo;
 
-            if(is_object($patient)) {
-
+            if (is_object($patient)) {
                 //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
-                $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate($patient,
-                    Carbon::now());
+                $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
+                    $patient,
+                    Carbon::now()
+                );
 
                 $window_start = Carbon::parse($next_predicted_contact_window['window_start'])->format('H:i');
                 $window_end = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
                 $day = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-                $this->rescheduledCalls[] = (new SchedulerService())->storeScheduledCall(
+                $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
                     $patient->user->id,
                     $window_start,
                     $window_end,
@@ -118,9 +121,6 @@ class ReschedulerHandler
                     ''
                 );
             }
-
         }
-
     }
-
 }

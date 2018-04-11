@@ -34,5 +34,4 @@ class CreateLvRulesOperatorsTable extends Migration
     {
         Schema::drop('lv_rules_operators');
     }
-
 }

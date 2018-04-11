@@ -32,5 +32,4 @@ class AddForeignKeysToPatientCareTeamMembersTable extends Migration
             $table->dropForeign('patient_care_team_members_user_id_foreign');
         });
     }
-
 }

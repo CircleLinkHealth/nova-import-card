@@ -8,7 +8,31 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use Illuminate\Database\Eloquent\Model;
 
-class CarePlanTemplate extends Model
+/**
+ * App\CarePlanTemplate
+ *
+ * @property int $id
+ * @property string $display_name
+ * @property int|null $program_id
+ * @property string $type
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmBiometric[] $cpmBiometrics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmLifestyle[] $cpmLifestyles
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMedicationGroup[] $cpmMedicationGroups
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMisc[] $cpmMiscs
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmProblem[] $cpmProblems
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptom[] $cpmSymptoms
+ * @property-read \App\Practice|null $program
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereProgramId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class CarePlanTemplate extends \App\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 
@@ -105,15 +129,6 @@ class CarePlanTemplate extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function careplan()
-    {
-        return $this->hasOne('App\PatientCarePlan', 'care_plan_template_id');
-    }
-
-
-    /**
      * Get a cpm***** relationship with it's related instructions, ordered using db field ui_config
      *
      * @return \Illuminate\Database\Eloquent\Builder|static
@@ -128,7 +143,6 @@ class CarePlanTemplate extends Model
         }
 
         foreach ($relationship as $rel) {
-
             if (!method_exists($this, $rel)) {
                 throw new \Exception("Relationship `$rel` does not exist.");
             }

@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-
 use App\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
@@ -72,5 +71,4 @@ class ImportedMedicalRecordController extends Controller
 
         return view('CCDUploader.editUploadedItems');
     }
-
 }

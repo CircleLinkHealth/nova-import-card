@@ -17,7 +17,6 @@ class ChangeColNameInCareAmbassadorTable extends Migration
 
             $table->dropColumn('month-year');
             $table->date('day')->after('care_ambassador_id');
-
         });
     }
 
@@ -32,7 +31,6 @@ class ChangeColNameInCareAmbassadorTable extends Migration
 
             $table->date('month-year');
             $table->dropColumn('day');
-
         });
     }
 }

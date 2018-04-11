@@ -17,37 +17,42 @@ class RoutineBuilder
 
     public function getRoutine()
     {
-        $idManager = new IdentificationManager( $this->ccd );
+        $idManager = new IdentificationManager($this->ccd);
         $matchedIdentifiers = $idManager->identify();
 
-        if ( !$matchedIdentifiers ) return $this->getDefaultRoutine();
+        if (!$matchedIdentifiers) {
+            return $this->getDefaultRoutine();
+        }
 
         $vendors = CcdVendor::all()->all();
 
-        foreach ( $matchedIdentifiers as $key => $value ) {
-            $vendors = array_filter( $vendors, function ($vendor) use ($key, $value) {
-                if ( empty($vendor->$key) ) return true;
+        foreach ($matchedIdentifiers as $key => $value) {
+            $vendors = array_filter($vendors, function ($vendor) use ($key, $value) {
+                if (empty($vendor->$key)) {
+                    return true;
+                }
                 return $vendor->$key == $value;
-            } );
+            });
             //@todo: this will not fly because if the last irrelevant rule is left, it will pick it
 //            if ( count( $vendors ) == 1 ) break;
         }
 
-        if ( count( $vendors ) > 1 )
-        {
-            foreach ( $matchedIdentifiers as $key => $value ) {
-                $vendors = array_filter( $vendors, function ($vendor) use ($key, $value) {
+        if (count($vendors) > 1) {
+            foreach ($matchedIdentifiers as $key => $value) {
+                $vendors = array_filter($vendors, function ($vendor) use ($key, $value) {
                     /*
                      * If there's more than one vendors, iterate again, but check strictly
                      * by getting rid of this line
                      */
 //                    if ( empty($vendor->$key) ) return true;
                     return $vendor->$key == $value;
-                } );
+                });
             }
         }
 
-        if ( empty($vendors) ) return $this->getDefaultRoutine();
+        if (empty($vendors)) {
+            return $this->getDefaultRoutine();
+        }
 
         $keys = array_keys($vendors);
 

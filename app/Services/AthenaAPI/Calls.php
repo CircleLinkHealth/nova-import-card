@@ -2,6 +2,8 @@
 
 namespace App\Services\AthenaAPI;
 
+use App\ValueObjects\Athena\Patient;
+use App\ValueObjects\Athena\Problem;
 
 class Calls
 {
@@ -12,8 +14,8 @@ class Calls
 
     public function __construct()
     {
-        $this->key = env('ATHENA_KEY');
-        $this->secret = env('ATHENA_SECRET');
+        $this->key     = env('ATHENA_KEY');
+        $this->secret  = env('ATHENA_SECRET');
         $this->version = env('ATHENA_VERSION');
 
         $this->api = new Connection($this->version, $this->key, $this->secret);
@@ -37,6 +39,7 @@ class Calls
         $startDate,
         $endDate,
         $departmentId,
+        $offset = 0,
         $showInsurance = false,
         $limit = 1000,
         $showCancelled = false
@@ -51,10 +54,42 @@ class Calls
             'showinsurance' => $showInsurance,
             'limit'         => $limit,
             'showcancelled' => $showCancelled,
+            'offset'        => $offset,
         ]);
 
         return $this->response($response);
     }
+
+    /**
+     * Gets Information about a single patient's appointments
+     * set $showPast to false to get future appointments only
+     *
+     * @param $practiceId
+     * @param $patientId
+     * @param bool $showPast
+     * @param bool $showCancelled
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getPatientAppointments(
+        $practiceId,
+        $patientId,
+        $showPast = true,
+        $showCancelled = false
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("patients/{$patientId}/appointments",
+            [
+                'showpast'      => $showPast,
+                'showcancelled' => $showCancelled,
+
+            ]);
+
+        return $this->response($response);
+    }
+
 
     /**
      * Checks if the response contains errors. If it does, it logs the response and throws an Exception
@@ -73,7 +108,7 @@ class Calls
 
             \Log::error(\GuzzleHttp\json_encode($response));
 
-            if (!empty($response)) {
+            if ( ! empty($response)) {
                 abort(400, json_encode($response));
             }
         }
@@ -109,6 +144,122 @@ class Calls
     }
 
     /**
+     * Get problems for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param $departmentId
+     * @param bool $showDiagnosisInfo
+     *
+     * @return mixed
+     */
+    public function getPatientProblems($patientId, $practiceId, $departmentId, $showDiagnosisInfo = true)
+    {
+        $response = $this->api->GET("$practiceId/chart/$patientId/problems", [
+            'departmentid'      => $departmentId,
+            'showdiagnosisinfo' => $showDiagnosisInfo,
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
+     * Get insurances for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     * @param $departmentId
+     *
+     *
+     * @return mixed
+     */
+    public function getPatientInsurances($patientId, $practiceId, $departmentId)
+    {
+
+        $response = $this->api->GET("$practiceId/patients/$patientId/insurances", [
+            'departmentid' => $departmentId,
+        ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
+     * Get first and last name, and phone number for a patient
+     *
+     * @param $patientId
+     * @param $practiceId
+     *
+     * @return mixed
+     */
+    public function getDemographics($patientId, $practiceId)
+    {
+
+        $response = $this->api->GET("$practiceId/patients/$patientId");
+
+        return $this->response($response);
+    }
+
+
+    /**
+     * Get primary provider for a patient (if set)
+     *
+     *From Athena docs: 'Find a patient. At least one of the following is required:
+     * guarantorfirstname, firstname, dob, workphone, departmentid, guarantorsuffix,
+     * guarantorlastname, mobilephone, middlename, suffix, guarantormiddlename, homephone, lastname.'
+     *
+     * @param $practiceId
+     *
+     * @param null $patientFirstName
+     * @param null $patientMiddleName
+     * @param null $patientLastName
+     * @param null $dob
+     * @param null $mobilephone
+     * @param null $homephone
+     * @param null $workphone
+     * @param null $departmentId
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getPatientPrimaryProvider(
+        $practiceId,
+        $patientFirstName = null,
+        $patientMiddleName = null,
+        $patientLastName = null,
+        $dob = null,
+        $mobilephone = null,
+        $homephone = null,
+        $workphone = null,
+        $departmentId = null
+    ) {
+        $response = $this->api->GET("$practiceId/patients", [
+            'firstname'    => $patientFirstName,
+            'middlename'   => $patientMiddleName,
+            'lastname'     => $patientLastName,
+            'dob'          => $dob,
+            'mobilephone'  => $mobilephone,
+            'homephone'    => $homephone,
+            'workphone'    => $workphone,
+            'departmentid' => $departmentId,
+        ]);
+
+        return $this->response($response);
+    }
+
+    public function getBillingProviderName($practiceId, $providerId)
+    {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("providers/$providerId", [
+            'showallproviderids' => true,
+        ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
      * Get available practices. Passing in practiceId of 1 will return all practices we have access to.
      *
      * @param $practiceId
@@ -140,6 +291,18 @@ class Calls
         ]);
 
         return $this->response($response);
+    }
+
+    public  function getDepartmentInfo($practiceId, $departmentId, $providerList = false)
+    {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("departments/$departmentId", [
+            'providerlist' => $providerList,
+        ]);
+
+        return $this->response($response);
+
     }
 
     /**
@@ -225,6 +388,7 @@ class Calls
         $practiceId,
         $attachmentContent,
         $departmentId,
+        $appointmentId = null,
         $documentSubClass = 'CLINICALDOCUMENT',
         $contentType = 'multipart/form-data'
     ) {
@@ -246,10 +410,206 @@ class Calls
          * HACK
          * @todo: Figure out why the above doesn't work
          */
-        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
+        $appointmentField = $appointmentId
+            ? "-F appointmentid=$appointmentId"
+            : '';
+
+        $command = "curl -v -k 'https://api.athenahealth.com/$version/$practiceId/patients/$patientId/documents' -XPOST -F documentsubclass=$documentSubClass -F departmentid=$departmentId $appointmentField -F 'attachmentcontents=@$attachmentContent' -H 'Authorization: Bearer {$this->api->get_token()}'";
 
         $response = exec($command);
 
         return $this->response($response);
+    }
+
+
+    /**
+     * Add a note for an appointment.
+     * Can be desplayed on homescreen.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showOnDesplay
+     * @param $noteText
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function postAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $noteText,
+        $showOnDisplay = false
+
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->POST("appointments/{$appointmentId}/notes", [
+            'displayonschedule' => $showOnDisplay,
+            'notetext' => $noteText,
+            ]);
+
+        return $this->response($response);
+    }
+
+
+    /**
+     * Retrieve notes for an appointment.
+     *
+     * @param $practiceId
+     * @param $appointmentId
+     * @param bool $showDeleted
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getAppointmentNotes(
+        $practiceId,
+        $appointmentId,
+        $showDeleted = false
+    ){
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->GET("appointments/{$appointmentId}/notes", [
+            'showdeleted' => $showDeleted,
+        ]);
+
+        return $this->response($response);
+
+
+    }
+
+
+    //create method to create patient in athena (for testing), issue with date format
+    public function createNewPatient(Patient $patient)
+    {
+
+        $practiceId = $patient->getPracticeId();
+
+        if ( ! $practiceId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $response = $this->api->POST("{$practiceId}/patients", [
+            'departmentid' => $patient->getDepartmentId(),
+            'dob'          => $patient->getDob(),
+            'firstname'    => $patient->getFirstName(),
+            'lastname'     => $patient->getLastName(),
+            'address1'     => $patient->getAddress1(),
+            'address2'     => $patient->getAddress2(),
+            'donotcallyn'  => $patient->getDoNotCall(),
+            'city'         => $patient->getCity(),
+            'email'        => $patient->getEmail(),
+            'homephone'    => $patient->getHomePhone(),
+            'mobilephone'  => $patient->getMobilePhone(),
+            'state'        => $patient->getState(),
+            'zip'          => $patient->getZip(),
+            'sex'          => $patient->getGender(),
+        ]);
+
+        //returns patient Id
+        return $this->response($response);
+    }
+
+    /**
+     * List or add patient problems. - POST /v1/{practiceid}/chart/{patientid}/problems
+     * @see: https://developer.athenahealth.com/docs/read/chart/Problems#section-0
+     */
+    public function addProblem(Problem $problem)
+    {
+        $practiceId = $problem->getPracticeId();
+
+        if ( ! $practiceId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $patientId = $problem->getPatientId();
+
+        if ( ! $patientId) {
+            throw new \Exception("practiceid is required.", 422);
+        }
+
+        $response = $this->api->POST("{$practiceId}/chart/{$patientId}/problems", [
+            'departmentid' => $problem->getDepartmentId(),
+            'snomedcode'   => $problem->getSnomedCode(),
+            'status'       => $problem->getStatus(),
+        ]);
+
+        return $this->response($response);
+    }
+
+    /**
+     * Creates new apointment slot for testing
+     * Returns appointment id and time of appointment slot.
+     * We use that id to create new appointment in the slot
+     *
+     * @param $practiceId
+     * @param $providerId
+     * @param $departmentId
+     * @param $reasonId
+     * @param $appointmentDate
+     * @param $appointmentTime
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function createNewAppointmentSlot(
+        $practiceId,
+        $departmentId,
+        $providerId,
+        $reasonId,
+        $appointmentDate,
+        $appointmentTime
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->POST("appointments/open", [
+            'practiceid'      => $practiceId,
+            'departmentid'    => $departmentId,
+            'providerid'      => $providerId,
+            'reasonid'        => $reasonId,
+            'appointmentdate' => $appointmentDate,
+            'appointmenttime' => $appointmentTime,
+        ]);
+
+        return $this->response($response);
+
+    }
+
+    /**
+     *
+     *
+     * @param $practiceId
+     * @param $departmentId
+     * @param $patientId
+     * @param $providerId
+     * @param $appointmentId
+     * @param null $reasonId
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function createNewAppointment(
+        $practiceId,
+        $departmentId,
+        $patientId,
+        $providerId,
+        $appointmentId,
+        $reasonId
+    ) {
+        $this->api->setPracticeId($practiceId);
+
+        $response = $this->api->PUT("appointments/$appointmentId", [
+            'practiceid'                  => $practiceId,
+            'departmentid'                => $departmentId,
+            'patientid'                   => $patientId,
+            'providerid'                  => $providerId,
+            'appointmentid'               => $appointmentId,
+            'reasonid'                    => $reasonId,
+            'Content-Type'                => 'application/x-www-form-urlencoded',
+            'ignoreschedulablepermission' => false,
+        ]);
+
+        return $this->response($response);
+
     }
 }

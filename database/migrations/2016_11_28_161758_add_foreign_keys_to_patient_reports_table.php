@@ -32,5 +32,4 @@ class AddForeignKeysToPatientReportsTable extends Migration
             $table->dropForeign('patient_reports_patient_id_foreign');
         });
     }
-
 }

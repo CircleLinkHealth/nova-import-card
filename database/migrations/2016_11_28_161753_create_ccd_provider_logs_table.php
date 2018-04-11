@@ -47,5 +47,4 @@ class CreateCcdProviderLogsTable extends Migration
     {
         Schema::drop('ccd_provider_logs');
     }
-
 }

@@ -49,5 +49,4 @@ class CreateCcdProblemLogsTable extends Migration
     {
         Schema::drop('ccd_problem_logs');
     }
-
 }

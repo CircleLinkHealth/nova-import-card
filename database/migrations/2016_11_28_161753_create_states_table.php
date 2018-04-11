@@ -30,5 +30,4 @@ class CreateStatesTable extends Migration
     {
         Schema::drop('states');
     }
-
 }

@@ -55,5 +55,4 @@ class UserMetaParserHelpers
 
         return $phoneCollections;
     }
-
 }

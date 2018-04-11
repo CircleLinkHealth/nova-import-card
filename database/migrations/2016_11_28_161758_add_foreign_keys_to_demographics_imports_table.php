@@ -40,5 +40,4 @@ class AddForeignKeysToDemographicsImportsTable extends Migration
             $table->dropForeign('demographics_imports_vendor_id_foreign');
         });
     }
-
 }

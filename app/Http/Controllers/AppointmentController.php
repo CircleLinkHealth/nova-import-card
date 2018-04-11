@@ -6,17 +6,15 @@ use App\Appointment;
 use App\User;
 use Illuminate\Http\Request;
 
-
 class AppointmentController extends Controller
 {
 
-    public function index(){
-
-                        
-
+    public function index()
+    {
     }
     
-    public function create(Request $request, $patientId){
+    public function create(Request $request, $patientId)
+    {
 
         $patient = User::find($patientId);
 
@@ -25,10 +23,10 @@ class AppointmentController extends Controller
             $q->where('name', '=', 'provider');
         })->get()->all();
 
-        foreach ($providerList as $provider){
-                if ($provider->fullName) {
-                    $providers[$provider->id] = $provider->fullName;
-                }
+        foreach ($providerList as $provider) {
+            if ($provider->fullName) {
+                $providers[$provider->id] = $provider->fullName;
+            }
         }
         
         asort($providers);
@@ -44,21 +42,23 @@ class AppointmentController extends Controller
 
 
         return view('wpUsers.patient.appointment.create', $data);
-        
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         $input = $request->input();
 
         $was_completed = isset($input['is_completed']) ?? false;
+
+        $providerId = $input['provider'] != 'null' ? $input['provider'] : null;
 
         $data = Appointment::create([
 
             'patient_id' => $input['patientId'],
             'author_id' => auth()->user()->id,
             'type' =>  $input['appointment_type'],
-            'provider_id' => $input['provider'],
+            'provider_id' => $providerId,
             'date' => $input['date'],
             'time' => $input['time'],
             'comment' => $input['comment'],
@@ -66,12 +66,14 @@ class AppointmentController extends Controller
 
         ]);
 
-        return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with('messages',
-            ['Successfully Created Note']);
-
+        return redirect()->route('patient.note.index', ['patient' => $input['patientId']])->with(
+            'messages',
+            ['Successfully Created Note']
+        );
     }
 
-    public function view(Request $request, $patientId, $appointmentId){
+    public function view(Request $request, $patientId, $appointmentId)
+    {
 
         $patient = User::find($patientId);
         $appointment = Appointment::find($appointmentId);
@@ -98,7 +100,7 @@ class AppointmentController extends Controller
         $data['comment'] = $appointment->comment;
         $data['type'] = $appointment->type;
         $data['is_completed'] = $appointment->was_completed;
-;
+        ;
 
         $view_data = [
             'appointment'          => $data,
@@ -108,7 +110,5 @@ class AppointmentController extends Controller
         ];
 
         return view('wpUsers.patient.appointment.view', $view_data);
-
     }
-    
 }

@@ -2,29 +2,34 @@
     <div class="patient__actions text-center">
         <ul class="navbar-nav nav">
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.note.index', array('patient' => $patient->id)) }}">
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.note.index', array('patient' => $patient->id)) }}">
                     Notes and Activities
                 </a>
             </li>
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.summary', array('patient' => $patient->id)) }}"
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.summary', array('patient' => $patient->id)) }}"
                    role="button">Patient Overview</a>
             </li>
 
-            @if ($patient->careplan_mode == App\CarePlan::WEB)
+            {{--  @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <li class="inline-block">
-                    <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
+                    <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
                        role="button">Edit Care Plan</a>
                 </li>
             @endif
 
             @if ($patient->careplan_mode == App\CarePlan::PDF)
                 <li class="inline-block">
-                    <a href="{{ URL::route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                    <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
                        role="button">Patient Profile</a>
                 </li>
-            @endif
+            @endif  --}}
+
+            <li class="inline-block">
+                <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
+                    role="button">Patient Profile</a>
+            </li>
 
 
             <li class="inline-block dropdown">
@@ -32,18 +37,20 @@
                    omitsubmit="yes">Patient Reports <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                        <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">Patient
                             Activity Report</a>
                     </li>
+                    @if(auth()->user()->isNotSaas())
                     <li>
-                        <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
+                        <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.reports.progress', array('patient' => $patient->id)) }}">Progress
                             Report</a>
                     </li>
+                        @endif
                 </ul>
             </li>
 
             <li class="inline-block">
-                <a href="{{ empty($patient->id) ? URL::route('patients.search') : URL::route('patient.careplan.print', array('patient' => $patient->id)) }}"
+                <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.print', array('patient' => $patient->id)) }}"
                    role="button">View Care Plan</a>
             </li>
         </ul>

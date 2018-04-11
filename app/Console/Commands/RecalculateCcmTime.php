@@ -4,9 +4,10 @@ namespace App\Console\Commands;
 
 use App\Activity;
 use App\Patient;
+use App\Services\ActivityService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-
 
 class RecalculateCcmTime extends Command
 {
@@ -15,7 +16,7 @@ class RecalculateCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:recalculate';
+    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for ins YYYY-MM-DD}';
 
     /**
      * The console command description.
@@ -25,13 +26,22 @@ class RecalculateCcmTime extends Command
     protected $description = 'Goes through activities for this month and recalculates CCM Time.';
 
     /**
+     * Activity Service Instance
+     *
+     * @var ActivityService
+     */
+    protected $service;
+
+    /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ActivityService $service
      */
-    public function __construct()
+    public function __construct(ActivityService $service)
     {
         parent::__construct();
+
+        $this->service = $service;
     }
 
     /**
@@ -41,27 +51,19 @@ class RecalculateCcmTime extends Command
      */
     public function handle()
     {
-        $acts = Activity::where('performed_at', '>=', Carbon::now()->startOfMonth())
-            ->where('performed_at', '<=', Carbon::now()->endOfMonth())
-            ->groupBy('patient_id')
-            ->selectRaw('sum(duration) as total_duration, patient_id')
-            ->pluck('total_duration', 'patient_id');
+        $userIds = User::ofType('participant')
+            ->pluck('id')
+            ->all();
 
-        foreach ($acts as $id => $ccmTime) {
-            try {
-                $info = Patient::updateOrCreate([
-                    'user_id' => $id,
-                ]);
+        $this->comment(count($userIds) . ' Users to recalculate time.');
 
-                if ($info) {
-                    $info->cur_month_activity_time = $ccmTime;
-                    $info->save();
-                }
-            } catch (\Exception $e) {
-                \Log::alert($e);
-                $this->error(json_encode($e));
-            }
+        $date = $this->argument('dateString') ?? null;
+
+        if ($date) {
+            $date = Carbon::parse($date);
         }
+
+        $this->service->processMonthlyActivityTime($userIds, $date);
 
         $this->info('CCM Time recalculated!');
     }

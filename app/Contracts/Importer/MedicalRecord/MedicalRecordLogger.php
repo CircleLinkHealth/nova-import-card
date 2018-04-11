@@ -8,7 +8,6 @@
 
 namespace App\Contracts\Importer\MedicalRecord;
 
-
 interface MedicalRecordLogger
 {
     /**

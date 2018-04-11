@@ -34,5 +34,4 @@ class CreatePatientMonthlySummariesTable extends Migration
     {
         Schema::drop('patient_monthly_summaries');
     }
-
 }

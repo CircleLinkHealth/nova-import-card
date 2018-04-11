@@ -39,5 +39,4 @@ class CreateCarePlanTemplatesCpmMiscsTable extends Migration
     {
         Schema::drop('care_plan_templates_cpm_miscs');
     }
-
 }

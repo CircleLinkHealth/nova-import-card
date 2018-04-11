@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-
 use App\CarePerson;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
 use App\ForeignId;
@@ -28,8 +27,7 @@ class AprimaCcdApiRepositoryEloquent implements AprimaCcdApiRepository
                 $patientTable.user_id as clhPatientUserId,
                 $foreignIdTable.foreign_id as providerId,
                 $careTeamTable.member_user_id as clhProviderUserId
-                "
-        ))
+                "))
             ->where("$patientTable.preferred_contact_location", $locationId)
             ->whereNotNull("$patientTable.preferred_contact_location")
             ->join($careTeamTable, "$careTeamTable.user_id", '=', "$patientTable.user_id")

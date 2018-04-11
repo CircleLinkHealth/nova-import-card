@@ -13,10 +13,10 @@
                     <div class="col-sm-8">
                         <h1>Roles</h1>
                     </div>
-                    @if(Entrust::can('roles-manage'))
+                    @if(Cerberus::hasPermission('roles-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ URL::route('roles.create', array()) }}" class="btn btn-success">New Role</a>
+                                <a href="{{ route('roles.create', array()) }}" class="btn btn-success">New Role</a>
                             </div>
                         </div>
                     @endif
@@ -37,15 +37,15 @@
                         <tbody>
                         @foreach( $roles as $role )
                             <tr>
-                                <td><a href="{{ URL::route('roles.show', array('id' => $role->id)) }}"
+                                <td><a href="{{ route('roles.show', array('id' => $role->id)) }}"
                                        class="btn btn-primary">Detail</a></td>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>{{ $role->description }}</td>
                                 <td>{{ date('F d, Y g:i A', strtotime($role->created_at)) }}</td>
                                 <td>
-                                    @if(Entrust::can('roles-manage'))
-                                        <a href="{{ URL::route('roles.edit', array('id' => $role->id)) }}"
+                                    @if(Cerberus::hasPermission('roles-manage'))
+                                        <a href="{{ route('roles.edit', array('id' => $role->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>

@@ -5,15 +5,17 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 @extends('partials.adminUI')
 
 @section('content')
-	<style>
-		.panel-collapse {
-			border-bottom:1px solid #fff;
-		}
+	@push('styles')
+		<style>
+			.panel-collapse {
+				border-bottom:1px solid #fff;
+			}
 
-		.complete {
-			text-decoration: line-through;
-		}
-	</style>
+			.complete {
+				text-decoration: line-through;
+			}
+		</style>
+	@endpush
 	<div class="container">
 		<div class="row">
 
@@ -23,7 +25,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 				</div>
 				<div class="col-sm-6">
 					<div class="pull-right" style="margin:20px;">
-						<a href="{{ URL::route('patients.dashboard', array()) }}" class="btn btn-info" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
+						<a href="{{ route('patients.dashboard', array()) }}" class="btn btn-info" style="margin-left:10px;"><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
 					</div>
 				</div>
 			</div>
@@ -65,7 +67,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseLogin"><strong><i class="glyphicon glyphicon-list"></i> Login</strong> - 100%</a></h4>
 						<div id="collapseLogin" class="panel-collapse collapse in">
-							<br />Link: <a href="{{ URL::route('login', array()) }}" target="_blank">{{ URL::route('login', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ route('login', array()) }}" target="_blank">{{ route('login', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Add trademark symbol to CarePlanManager <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/98">#98</a></li>
@@ -85,7 +87,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseDashboard"><strong><i class="glyphicon glyphicon-list"></i> Dashboard</strong> - 80%</a></h4>
 						<div id="collapseDashboard" class="panel-collapse collapse in">
-							<br />Link: <a href="{{ URL::route('patients.dashboard', array()) }}" target="_blank">{{ URL::route('patients.dashboard', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ route('patients.dashboard', array()) }}" target="_blank">{{ route('patients.dashboard', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Alert count # is omitted until alerts page is done</li>
@@ -96,7 +98,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSearch"><strong><i class="glyphicon glyphicon-list"></i> Patient Search</strong> - 70%</a></h4>
 						<div id="collapsePatientSearch" class="panel-collapse collapse in">
-							<br />Link: <a href="{{ URL::route('patients.search', array()) }}" target="_blank">{{ URL::route('patients.search', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ route('patients.search', array()) }}" target="_blank">{{ route('patients.search', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Not searching on all columns, only searching for name</li>
@@ -107,7 +109,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientList"><strong><i class="glyphicon glyphicon-list"></i> Patient List</strong> - 95%</a></h4>
 						<div id="collapsePatientList" class="panel-collapse collapse in">
-							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}" target="_blank">{{ URL::route('patients.listing', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ route('patients.listing', array()) }}" target="_blank">{{ route('patients.listing', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Missing billing provider name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/107">#107</a></li>
@@ -117,7 +119,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientPrintList"><strong><i class="glyphicon glyphicon-list"></i> Patient Care Plan Print List</strong> - 15%</a></h4>
 						<div id="collapsePatientPrintList" class="panel-collapse collapse in">
-							<br />Link: <a href="{{ URL::route('patients.listing', array()) }}" target="_blank">{{ URL::route('patients.listing', array()) }}</a><br /><br />
+							<br />Link: <a href="{{ route('patients.listing', array()) }}" target="_blank">{{ route('patients.listing', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Build Page <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/113">#113</a></li>
@@ -127,7 +129,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAlerts"><strong><i class="glyphicon glyphicon-list"></i> Alerts</strong> - ON HOLD</a></h4>
 						<div id="collapseAlerts" class="panel-collapse collapse in">
-							<br />link: <a href="{{ URL::route('patients.alerts', array()) }}" target="_blank">{{ URL::route('patients.alerts', array()) }}</a><br /><br />
+							<br />link: <a href="{{ route('patients.alerts', array()) }}" target="_blank">{{ route('patients.alerts', array()) }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Build Page - ON HOLD <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/16">#16</a></li>
@@ -137,7 +139,7 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<br />
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddPatient"><strong><i class="glyphicon glyphicon-list"></i> Add Patient</strong> - 95%</a></h4>
 						<div id="collapseAddPatient" class="panel-collapse collapse in">
-							<br />link: <a href="{{ URL::route('patients.demographics.show') }}" target="_blank">{{ URL::route('patients.demographics.show') }}</a><br /><br />
+							<br />link: <a href="{{ route('patients.demographics.show') }}" target="_blank">{{ route('patients.demographics.show') }}</a><br /><br />
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Choose program - show only allowed programs, use display_name <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/99">#99</a></li>
@@ -174,8 +176,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCareTeam"><strong><i class="glyphicon glyphicon-list"></i> Care Team Setup</strong> - 95%</a></h4>
 							<div id="collapseCareTeam" class="panel-collapse collapse in">
                                 <br/>link: <a
-                                        href="{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->id)) }}"
-                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.careteam.show', array('patient' => $patient->id)) }}</a><br/><br/>
+                                        href="{{ empty($patient) ? '' : route('patient.demographics.show', array('patient' => $patient->id)) }}"
+                                        target="_blank">{{ empty($patient) ? '' : route('patient.demographics.show', array('patient' => $patient->id)) }}</a><br/><br/>
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">"Are you sure?" confirmation modal missing green submit button <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/102">#102</a></li>
@@ -188,8 +190,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Care Plan</strong> - 95%</a></h4>
 							<div id="collapseCarePlan" class="panel-collapse collapse in">
                                 <br/>link: <a
-                                        href="{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => 1)) }}"
-                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.show', array('patient' => $patient->id, 'page' => 1)) }}</a><br/><br/>
+                                        href="{{ empty($patient) ? '' : route('patient.careplan.show', array('patient' => $patient->id, 'page' => 1)) }}"
+                                        target="_blank">{{ empty($patient) ? '' : route('patient.careplan.show', array('patient' => $patient->id, 'page' => 1)) }}</a><br/><br/>
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">Remove "Care Plan" heading <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/106">#106</a></li>
@@ -209,8 +211,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseAddObservation"><strong><i class="glyphicon glyphicon-list"></i> Add Observation</strong> - 95%</a></h4>
 							<div id="collapseAddObservation" class="panel-collapse collapse in">
                                 <br/>link: <a
-                                        href="{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->id)) }}"
-                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.observation.create', array('patient' => $patient->id)) }}</a><br/><br/>
+                                        href="{{ empty($patient) ? '' : route('patient.observation.create', array('patient' => $patient->id)) }}"
+                                        target="_blank">{{ empty($patient) ? '' : route('patient.observation.create', array('patient' => $patient->id)) }}</a><br/><br/>
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">Date input on firefox formats weird, switch to timepicker <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/146">#146</a></li>
@@ -222,8 +224,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 							<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePatientSummary"><strong><i class="glyphicon glyphicon-list"></i> Patient Summary</strong> - 90%</a></h4>
 							<div id="collapsePatientSummary" class="panel-collapse collapse in">
                                 <br/>link: <a
-                                        href="{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->id)) }}"
-                                        target="_blank">{{ empty($patient) ? '' : URL::route('patient.summary', array('patient' => $patient->id)) }}</a><br/><br/>
+                                        href="{{ empty($patient) ? '' : route('patient.summary', array('patient' => $patient->id)) }}"
+                                        target="_blank">{{ empty($patient) ? '' : route('patient.summary', array('patient' => $patient->id)) }}</a><br/><br/>
 								<h5>Known Issues</h5>
 								<ul>
 									<li class="complete">Observation labels are not correct <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/82">#82</a></li>
@@ -241,8 +243,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseProgressReport"><strong><i class="glyphicon glyphicon-list"></i> Progress Report</strong> - 80%</a></h4>
 						<div id="collapseProgressReport" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.reports.progress', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.reports.progress', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.reports.progress', array('patient' => $patient->id)) }}</a><br/><br/>
 							<h5>Known Issues</h5>
 							<ul>
 								<li>Charts not perfectly/cleanly aligned</li>
@@ -254,8 +256,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseNotes"><strong><i class="glyphicon glyphicon-list"></i> Notes</strong> - 90%</a></h4>
 						<div id="collapseNotes" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.note.index', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.note.index', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.note.index', array('patient' => $patient->id)) }}</a><br/><br/>
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Submit button should be centered underneath centered paragraph text <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/103">#103</a></li>
@@ -269,8 +271,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseRecActivity"><strong><i class="glyphicon glyphicon-list"></i> Record Activity</strong> - 80%</a></h4>
 						<div id="collapseRecActivity" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.activity.create', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.activity.create', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.activity.create', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.activity.create', array('patient' => $patient->id)) }}</a><br/><br/>
 						</div>
 
 
@@ -278,8 +280,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseBillingReport"><strong><i class="glyphicon glyphicon-list"></i> Billing Report</strong> - 90%</a></h4>
 						<div id="collapseBillingReport" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.reports.billing', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.reports.billing', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.reports.billing', array('patient' => $patient->id)) }}</a><br/><br/>
 						</div>
 
 
@@ -287,8 +289,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapseActivityReport"><strong><i class="glyphicon glyphicon-list"></i> Activity Report</strong> - 90%</a></h4>
 						<div id="collapseActivityReport" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}</a><br/><br/>
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Data doesnt match 2.8 <a class="btn-primary btn-xs" target="_blank" href="{{ $codebaseUrl }}/104">#104</a></li>
@@ -302,8 +304,8 @@ $codebaseUrl = 'https://circlelink-health2.codebasehq.com/projects/cpm/tickets/'
 						<h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapsePrintCarePlan"><strong><i class="glyphicon glyphicon-list"></i> Print Care Plan</strong> - 90%</a></h4>
 						<div id="collapsePrintCarePlan" class="panel-collapse collapse in">
                             <br/>link: <a
-                                    href="{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->id)) }}"
-                                    target="_blank">{{ empty($patient) ? '' : URL::route('patient.careplan.print', array('patient' => $patient->id)) }}</a><br/><br/>
+                                    href="{{ empty($patient) ? '' : route('patient.careplan.print', array('patient' => $patient->id)) }}"
+                                    target="_blank">{{ empty($patient) ? '' : route('patient.careplan.print', array('patient' => $patient->id)) }}</a><br/><br/>
 							<h5>Known Issues</h5>
 							<ul>
 								<li class="complete">Very slow page load</li>

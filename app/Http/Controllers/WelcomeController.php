@@ -45,6 +45,10 @@ class WelcomeController extends Controller
                 return redirect()->route('admin.dashboard', [])->send();
             }
 
+            if (auth()->user()->hasRole('saas-admin')) {
+                return redirect()->route('saas-admin.home', [])->send();
+            }
+
             if (auth()->user()->hasRole('provider')) {
                 return redirect()->route('patients.dashboard', [])->send();
             }
@@ -62,5 +66,4 @@ class WelcomeController extends Controller
 
         return redirect()->route('login', [])->send();
     }
-
 }

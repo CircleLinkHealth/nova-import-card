@@ -18,7 +18,7 @@ $new_user = false;
 @endpush
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patient.careplan.store', array('patientId' => $patient->id)), 'class' => '', 'id' => 'ucpForm')) !!}
 
     <div id="content" class="row">
         <div class="container">
@@ -78,7 +78,23 @@ $new_user = false;
                 <!--footer-->
                 @include('wpUsers.patient.careplan.footer')
                 <br/><br/>
+                @push('styles')
+                    <style>
+                        .collapsing {
+                            -webkit-transition: none;
+                            transition: height 0.01s;
+                        }
+                    </style>
+                @endpush
 
+                @push('styles')
+                    <style>
+                        .collapsing {
+                            -webkit-transition: none;
+                            transition: height 0.01s;
+                        }
+                    </style>
+                @endpush
             </section>
         </div>
     </div>

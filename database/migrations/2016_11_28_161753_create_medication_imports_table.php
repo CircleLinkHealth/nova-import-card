@@ -39,5 +39,4 @@ class CreateMedicationImportsTable extends Migration
     {
         Schema::drop('medication_imports');
     }
-
 }

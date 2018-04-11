@@ -9,7 +9,7 @@
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12">
 
 
-                    {!! Form::open(array('url' => URL::route('patient.reports.billing'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
+                    {!! Form::open(array('url' => route('patient.reports.billing'), 'method' => 'GET', 'class' => 'form-horizontal')) !!}
                     <div class="col-sm-3">
                         <h4 class="time-report__month">{{$month_selected_text}} {{$year_selected}}</h4>
                     </div>
@@ -113,7 +113,7 @@
                                         fillspace: true,
                                         width: 90,
                                         sort: 'string',
-                                        template: "<a href='<?php echo URL::route('patient.activity.providerUIIndex',
+                                        template: "<a href='<?php echo route('patient.activity.providerUIIndex',
                                                 array('patient' => '#patient_id#')); ?>'>#patient_name#</a>"
                                     },
                                     {
@@ -388,7 +388,7 @@
                             <input type="button" value="Export as Excel" class="btn btn-primary" style='margin:15px;'
                                    onclick="webix.toExcel(obs_alerts_dtable);">
                         @endif
-                        @if ( !Auth::guest() && Auth::user()->can(['admin-access']))
+                        @if ( !Auth::guest() && Auth::user()->hasPermission(['admin-access']))
                             <input id='site_show_btn' type='button' class='btn btn-primary' value='Show Program'
                                    style='margin:15px;'
                                    onclick='obs_alerts_dtable.showColumn("site");this.style.display = "none";getElementById("site_hide_btn").style.display = "inline-block";'>

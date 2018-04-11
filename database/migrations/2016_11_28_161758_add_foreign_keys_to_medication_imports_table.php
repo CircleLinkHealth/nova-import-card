@@ -36,5 +36,4 @@ class AddForeignKeysToMedicationImportsTable extends Migration
             $table->dropForeign('medication_imports_vendor_id_foreign');
         });
     }
-
 }

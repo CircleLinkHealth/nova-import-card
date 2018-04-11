@@ -26,7 +26,6 @@ class PatientDailyAuditReport
 
         $this->patient = $patient;
         $this->forMonth = $forMonth;
-
     }
 
     public function renderPDF()
@@ -65,7 +64,6 @@ class PatientDailyAuditReport
         $this->data['daily'] = [];
 
         foreach ($activities as $date => $value) {
-
             $value = collect($value);
 
             $this->data['daily'][$date]['activities'] = $value->implode('type', ', ');
@@ -83,19 +81,14 @@ class PatientDailyAuditReport
             $this->data['daily'][$date]['notes'] = [];
 
             foreach ($notes as $note) {
-
                 $time = Carbon::parse($note->created_at)->format("g:i:s A");
                 $performer = User::withTrashed()->find($note->author_id)->fullName ?? '';
                 $this->data['daily'][$date]['notes'][$note->id]['performer'] = $performer;
                 $this->data['daily'][$date]['notes'][$note->id]['time'] = $time;
                 $this->data['daily'][$date]['notes'][$note->id]['body'] = $note->body;
-
             }
-
         }
 
         return $this->data;
-
     }
-
 }

@@ -16,7 +16,6 @@ class AddSpanishBoolToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->string('lang')->after('dob')->default('EN');
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddSpanishBoolToEnrollees extends Migration
         Schema::table('enrollees', function (Blueprint $table) {
 
             $table->dropColumn('lang');
-
         });
     }
 }

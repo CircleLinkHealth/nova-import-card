@@ -1,8 +1,35 @@
 <?php namespace App;
 
+use App\CLH\Helpers\StringManipulation;
 use Illuminate\Database\Eloquent\Model;
 
-class PhoneNumber extends Model
+/**
+ * App\PhoneNumber
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $location_id
+ * @property string|null $number
+ * @property string|null $extension
+ * @property string|null $type
+ * @property int $is_primary
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string|null $deleted_at
+ * @property-read \App\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereExtension($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereIsPrimary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereLocationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereUserId($value)
+ * @mixin \Eloquent
+ */
+class PhoneNumber extends \App\BaseModel
 {
 
     //types
@@ -52,12 +79,27 @@ class PhoneNumber extends Model
         ];
     }
 
-    // START RELATIONSHIPS
-
     public function user()
     {
         return $this->belongsTo('App\User', 'id', 'user_id');
     }
-    // END RELATIONSHIPS
 
+    /**
+     * Get phone number in this format xxx-xxx-xxxx
+     *
+     * @return string
+     */
+    public function getNumberWithDashesAttribute() {
+        return (new StringManipulation())->formatPhoneNumber($this->number);
+    }
+
+    /**
+     * Set the phone number.
+     *
+     * @param $value
+     * @return void
+     */
+    public function setNumberAttribute($value) {
+        $this->attributes['number'] = (new StringManipulation())->formatPhoneNumberE164($value);
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
-
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
 use App\Models\CPM\CpmInstruction;
@@ -12,7 +11,9 @@ class ProblemsList extends BaseStorageStrategy implements StorageStrategy
 {
     public function import($problemsList)
     {
-        if ( empty($problemsList) ) return false;
+        if (empty($problemsList)) {
+            return false;
+        }
 
         $instruction = CpmInstruction::create([
             'name' => $problemsList

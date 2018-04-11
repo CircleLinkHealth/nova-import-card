@@ -25,7 +25,6 @@ class AddCallerIdAndOtherFieldsToEnrollees extends Migration
                 ->on('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-
         });
     }
 
@@ -42,8 +41,6 @@ class AddCallerIdAndOtherFieldsToEnrollees extends Migration
             $table->dropColumn('care_ambassador_id');
             $table->dropColumn('last_call_outcome');
             $table->dropColumn('last_call_outcome_reason');
-
-
         });
     }
 }

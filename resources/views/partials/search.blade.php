@@ -11,7 +11,7 @@
                 datumTokenizer: Bloodhound.tokenizers.obj.whitespace('search'),
                 queryTokenizer: Bloodhound.tokenizers.whitespace,
                 remote: {
-                    url: '{{route('patients.query')}}',
+                    url: '{!! route('patients.query') . '?users=%QUERY' !!}',
                     wildcard: '%QUERY'
                 }
             });
@@ -33,7 +33,7 @@
                 limit: 50,
                 templates: {
                     empty: [
-                        '<div class="empty-message">No Patients Found</div>'
+                        '<div class="empty-message">No Patients Found...</div>'
                     ]
                 }
             });

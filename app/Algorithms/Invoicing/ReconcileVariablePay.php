@@ -16,7 +16,8 @@ class ReconcileVariablePay
 
     private $data;
 
-    public function __construct(){
+    public function __construct()
+    {
 
         $this->nurses = [
 
@@ -27,15 +28,14 @@ class ReconcileVariablePay
 
         $this->start = Carbon::parse('2017-02-01 00:00:00');
         $this->end = Carbon::parse('2017-02-02 23:59:59');
-
     }
 
-    public function adjust(){
+    public function adjust()
+    {
 
         $data = [];
 
         foreach ($this->nurses as $nurse) {
-
             $vities = Activity
                 ::select(\DB::raw('patient_id, sum(duration) as total'))
                 ->where('provider_id', $nurse)
@@ -44,26 +44,20 @@ class ReconcileVariablePay
                 ->groupBy('patient_id')
                 ->get();
 
-        $data[$nurse]['HR'] = 0;
-        $data[$nurse]['LR'] = 0;
+            $data[$nurse]['HR'] = 0;
+            $data[$nurse]['LR'] = 0;
 
             foreach ($vities as $vity) {
-
                 if ($vity->total < 1200) {
-
                     $hr = $vity->total;
                     $lr = 0;
-
                 } else {
-
                     $hr = 1200;
                     $lr = $vity->total - 1200;
-
                 }
 
                 $data[$nurse]['HR'] += $hr;
                 $data[$nurse]['LR'] += $lr;
-
             }
         }
 
@@ -81,5 +75,4 @@ class ReconcileVariablePay
 //        $sueData['LR'] = 0;
 //
     }
-
 }

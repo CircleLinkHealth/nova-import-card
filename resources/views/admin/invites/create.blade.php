@@ -4,7 +4,7 @@
     @push('styles')
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
-    {!! Form::open(array('url' => URL::route('invite.store', array()), 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('url' => route('invite.store', array()), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-7 col-md-offset-2">
@@ -56,11 +56,11 @@
                                 </div>
                             </div>
 
-                        </form>
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {!! Form::close() !!}
 @stop

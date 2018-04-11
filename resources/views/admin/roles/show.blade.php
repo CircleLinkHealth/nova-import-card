@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -31,8 +33,8 @@
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->display_name }}</td>
                                 <td>
-                                    @if(Entrust::can('roles-manage'))
-                                        <a href="{{ URL::route('roles.edit', array('id' => $role->id)) }}"
+                                    @if(Cerberus::hasPermission('roles-manage'))
+                                        <a href="{{ route('roles.edit', array('id' => $role->id)) }}"
                                            class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>
@@ -71,12 +73,9 @@
                             <strong>Created:</strong><br>
                             {{ date('F d, Y g:i A', strtotime($role->created_at)) }}
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
 @stop

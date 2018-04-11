@@ -1,17 +1,90 @@
 <?php namespace App;
 
+use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
 use App\Traits\HasSettings;
+use App\Traits\SaasAccountable;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
-class Practice extends Model
+/**
+ * App\Practice
+ *
+ * @property int $id
+ * @property int|null $ehr_id
+ * @property int|null $user_id
+ * @property string $name
+ * @property string|null $display_name
+ * @property int $active
+ * @property float $clh_pppm
+ * @property int $term_days
+ * @property string|null $federal_tax_id
+ * @property int|null $same_ehr_login
+ * @property int|null $same_clinical_contact
+ * @property int $auto_approve_careplans
+ * @property int $send_alerts
+ * @property string|null $weekly_report_recipients
+ * @property string $invoice_recipients
+ * @property string $bill_to_name
+ * @property string|null $external_id
+ * @property string $outgoing_phone_number
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property string|null $deleted_at
+ * @property string|null $sms_marketing_number
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlanTemplate[] $careplan
+ * @property-read \App\Models\Ehr|null $ehr
+ * @property-read mixed $formatted_name
+ * @property-read mixed $primary_location_id
+ * @property-read mixed $subdomain
+ * @property-read \App\User|null $lead
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Location[] $locations
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesPCP[] $pcp
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Settings[] $settings
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice active()
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereAutoApproveCareplans($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereBillToName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereClhPppm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereDisplayName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereEhrId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereExternalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereFederalTaxId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereInvoiceRecipients($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereOutgoingPhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameClinicalContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSameEhrLogin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSendAlerts($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereSmsMarketingNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereTermDays($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Practice whereWeeklyReportRecipients($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\App\Practice withoutTrashed()
+ * @mixin \Eloquent
+ */
+class Practice extends \App\BaseModel implements HasMedia
 {
-    use HasSettings,
-        SoftDeletes;
+    use HasMediaTrait,
+        HasSettings,
+        SaasAccountable,
+        SoftDeletes,
+        Notifiable;
 
     protected $fillable = [
+        'saas_account_id',
         'name',
         'display_name',
         'active',
@@ -43,88 +116,41 @@ class Practice extends Model
         return $providers;
     }
 
-    public static function getNonCCMCareCenterUsers($practiceId)
+    public function getInvoiceRecipients()
     {
-        $providers = User::whereHas('practices', function ($q) use (
-            $practiceId
-        ) {
-            $q->where('id', '=', $practiceId);
-        })->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'no-ccm-care-center');
-        })->get();
-
-        return $providers;
-    }
-
-    public static function getCareCenterUsers($practiceId)
-    {
-        $providers = User::whereHas('practices', function ($q) use (
-            $practiceId
-        ) {
-            $q->where('id', '=', $practiceId);
-        })->whereHas('roles', function ($q) {
-            $q->where('name', '=', 'care-center');
-        })->get();
-
-        return $providers;
-    }
-
-    public static function getItemsForParent(
-        $item,
-        $blogId
-    ) {
-        $categories = [];
-        //PCP has the sections for each provider, get all sections for the user's blog
-        $pcp = CPRulesPCP::where('prov_id', '=', $blogId)->where('status', '=', 'Active')->where('section_text',
-            $item)->first();
-        //Get all the items for each section
-        if ($pcp) {
-            $items = CPRulesItem::where('pcp_id', $pcp->pcp_id)->where('items_parent', 0)->pluck('items_id')->all();
-            for ($i = 0; $i < count($items); $i++) {
-                //get id's of all lifestyle items that are active for the given user
-                $item_for_user[$i] = CPRulesUCP::where('items_id', $items[$i])->where('meta_value',
-                    'Active')->where('user_id', $blogId)->first();
-                if ($item_for_user[$i] != null) {
-                    //Find the items_text for the one's that are active
-                    $user_items = CPRulesItem::find($item_for_user[$i]->items_id);
-                    $categories[] = [
-                        'name'         => $user_items->items_text,
-                        'items_id'     => $user_items->items_id,
-                        'section_text' => $item,
-                        'items_text'   => $user_items->items_text,
-                    ];
-                }
-            }
-            if (count($categories) > 0) {
-                return $categories;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    public function getInvoiceRecipients($return = 'collection')
-    {
-        $emails = $this->users()->where('send_billing_reports', '=', true)->pluck('email');
-
-        if ($return == 'string') {
-            return $emails->implode(', ');
-        }
-
-        return $emails;
+        return $this->users()->where('send_billing_reports', '=', true)->get();
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'practice_user', 'program_id', 'user_id')
-            ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+        return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
     }
 
-    public static function active()
+    public function patients()
     {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->whereName('participant');
+        });
+    }
 
-        return Practice::whereActive(1)->get();
+    public function providers()
+    {
+        return Practice::getProviders($this->id);
+    }
 
+    public function nurses()
+    {
+        return $this->users()->whereHas('roles', function ($q) {
+            $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
+        });
+    }
+
+    public function chargeableServices()
+    {
+        return $this->morphToMany(ChargeableService::class, 'chargeable')
+                    ->withPivot(['amount'])
+                    ->withTimestamps();
     }
 
     public function getCountOfUserTypeAtPractice($role)
@@ -141,7 +167,6 @@ class Practice extends Model
                 $q->whereName($role);
             })
             ->count();
-
     }
 
     public function getFormattedNameAttribute()
@@ -191,10 +216,9 @@ class Practice extends Model
         $patients = Patient::whereHas('user', function ($q) {
 
             $q->where('program_id', $this->id);
-
         })
-            ->whereNotNull('ccm_status')
-            ->get();
+                           ->whereNotNull('ccm_status')
+                           ->get();
 
         $data = [
 
@@ -205,31 +229,26 @@ class Practice extends Model
         ];
 
         foreach ($patients as $patient) {
-
             if ($patient->created_at > $start->toDateTimeString() && $patient->created_at <= $end->toDateTimeString()) {
-
                 $data['added']++;
-
             }
 
             if ($patient->date_withdrawn > $start->toDateTimeString() && $patient->date_withdrawn <= $end->toDateTimeString()) {
-
                 $data['withdrawn']++;
-
             }
 
             if ($patient->date_paused > $start->toDateTimeString() && $patient->date_paused <= $end->toDateTimeString()) {
-
                 $data['paused']++;
-
             }
-
         }
 
         return $data;
-
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function getAddress()
     {
 
@@ -239,13 +258,16 @@ class Practice extends Model
             $primary = $this->locations()->first();
         }
 
+        if (is_null($primary)) {
+            throw new \Exception('This Practice does not have a location.', 500);
+        }
+
         return [
 
             'line1' => $primary->address_line_1 . ' ' . $primary->address_line_2,
             'line2' => $primary->city . ', ' . $primary->state . ' ' . $primary->postal_code,
 
         ];
-
     }
 
     public function locations()
@@ -265,14 +287,69 @@ class Practice extends Model
 
     public function scopeActive($q)
     {
-
         return $q->whereActive(1);
+    }
+
+    public function scopeActiveBillable($q)
+    {
+        if (app()->environment(['local', 'staging', 'testing'])){
+            return $q->whereActive(1);
+        }
+        return $q->whereActive(1)
+                     ->whereNotIn('name', ['demo', 'testdrive']);
+
 
     }
 
-    public function cpmSettings() {
+    public function scopeAuthUserCanAccess($q)
+    {
+        return $q->whereIn('id', auth()->user()->practices->pluck('id')->all());
+    }
+
+    public function scopeAuthUserCannotAccess($q)
+    {
+        return $q->whereNotIn('id', auth()->user()->practices->pluck('id')->all());
+    }
+
+    public function cpmSettings()
+    {
         return $this->settings->isEmpty()
             ? $this->syncSettings(new Settings())
             : $this->settings->first();
+    }
+
+    public function getWeeklyReportRecipientsArray()
+    {
+        return array_map('trim', explode(',', $this->weekly_report_recipients));
+    }
+
+    public function getInvoiceRecipientsArray()
+    {
+        return array_values(array_filter(array_map('trim', explode(',', $this->invoice_recipients))));
+    }
+
+    /**
+     * Get phone number in this format xxx-xxx-xxxx
+     *
+     * @return string
+     */
+    public function getNumberWithDashesAttribute()
+    {
+        return (new StringManipulation())->formatPhoneNumber($this->outgoing_phone_number);
+    }
+
+    public function scopeEnrolledPatients($builder)
+    {
+        return $builder->with([
+            'patients' => function ($q) {
+                $q->with([
+                    'patientInfo',
+                    'activities',
+                ])
+                  ->whereHas('patientInfo', function ($patient) {
+                      $patient->where('ccm_status', Patient::ENROLLED);
+                  });
+            },
+        ]);
     }
 }

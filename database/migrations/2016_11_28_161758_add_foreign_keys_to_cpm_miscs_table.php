@@ -30,5 +30,4 @@ class AddForeignKeysToCpmMiscsTable extends Migration
             $table->dropForeign('cpm_miscs_care_item_id_foreign');
         });
     }
-
 }

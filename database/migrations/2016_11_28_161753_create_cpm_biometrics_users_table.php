@@ -36,5 +36,4 @@ class CreateCpmBiometricsUsersTable extends Migration
     {
         Schema::drop('cpm_biometrics_users');
     }
-
 }

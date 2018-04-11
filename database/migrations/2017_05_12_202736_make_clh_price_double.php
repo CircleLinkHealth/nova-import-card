@@ -16,7 +16,6 @@ class MakeClhPriceDouble extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->float('clh_pppm')->change();
-
         });
     }
 
@@ -30,7 +29,6 @@ class MakeClhPriceDouble extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->integer('clh_pppm')->change();
-
         });
     }
 }

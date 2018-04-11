@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Rules\PasswordCharacters;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 
@@ -35,8 +36,21 @@ class ResetPasswordController extends Controller
      */
     public function __construct(Request $request)
     {
-        parent::__construct($request);
-
         $this->middleware('guest');
+    }
+
+    protected function rules()
+    {
+        return [
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => [
+                'required',
+                'filled',
+                'min:8',
+                'confirmed',
+                new PasswordCharacters,
+            ],
+        ];
     }
 }

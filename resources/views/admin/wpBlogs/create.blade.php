@@ -25,15 +25,12 @@
                         Add New Practice
                     </div>
                     <div class="panel-body">
-
-                        <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
-                        </div>
+                        {!! Form::open(array('url' => route('admin.programs.store', array()), 'class' => 'form-horizontal')) !!}
 
                         <div class="row" style="">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
@@ -46,11 +43,6 @@
                             <div class="row" style="margin-top:20px;">
                                 <div class="col-xs-2">{!! Form::label('display_name', 'Display Name:') !!}</div>
                                 <div class="col-xs-10">{!! Form::text('display_name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
-                            </div>
-
-                            <div class="row" style="margin-top:20px;">
-                                <div class="col-xs-2">{!! Form::label('name', 'Unique Name:') !!}</div>
-                                <div class="col-xs-10">{!! Form::text('name', '', ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                             </div>
 
                             <div class="row" style="margin-top:20px;">
@@ -87,24 +79,22 @@
                                                               style="width: 100%" checked/>
                                 </div>
                             </div>
-
-
                         </div>
 
 
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.programs.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Add Practice', array('class' => 'btn btn-success')) !!}
-                                    </form>
                                 </div>
                             </div>
                         </div>
-
+                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 @stop

@@ -32,5 +32,4 @@ class CreatePatientCareTeamMembersTable extends Migration
     {
         Schema::drop('patient_care_team_members');
     }
-
 }

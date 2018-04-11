@@ -3,55 +3,49 @@
 use App\Importer\Models\ItemLogs\ProblemLog;
 use Illuminate\Database\Eloquent\Model;
 
-class ProblemImport extends Model {
+/**
+ * App\Importer\Models\ImportedItems\ProblemImport
+ *
+ * @property int $id
+ * @property string|null $medical_record_type
+ * @property int|null $medical_record_id
+ * @property int $imported_medical_record_id
+ * @property int $ccd_problem_log_id
+ * @property string|null $name
+ * @property string|null $code
+ * @property string|null $code_system
+ * @property string|null $code_system_name
+ * @property int $activate
+ * @property int|null $cpm_problem_id
+ * @property int|null $substitute_id
+ * @property string|null $deleted_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\Importer\Models\ItemLogs\ProblemLog $ccdLog
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereActivate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCcdProblemLogId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCodeSystem($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCodeSystemName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCpmProblemId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereImportedMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereMedicalRecordId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereMedicalRecordType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereSubstituteId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\ProblemImport whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+class ProblemImport extends \App\BaseModel
+{
 
     protected $guarded = [];
 
     public function ccdLog()
     {
-        return $this->belongsTo(ProblemLog::class);
-    }
-
-    /**
-     * Gets the kind of code for a problem (ICD 9, ICD10, Snomed)
-     *
-     * @return bool|string
-     */
-    public function getCodeType()
-    {
-        /*
-         * ICD-9 Check
-         */
-        if ((str_contains(strtolower($this->code_system_name), 'icd')
-                && str_contains(strtolower($this->code_system_name), '9'))
-            || $this->code_system == '2.16.840.1.113883.6.103'
-        ) {
-            return 'icd_9_code';
-        }
-
-        /*
-       * ICD-10 Check
-       */
-        if ((str_contains(strtolower($this->code_system_name), 'icd')
-                && str_contains(strtolower($this->code_system_name), '10'))
-            || in_array($this->code_system, [
-                '2.16.840.1.113883.6.3',
-                '2.16.840.1.113883.6.4',
-            ])
-        ) {
-            return 'icd_10_code';
-        }
-
-
-        /*
-             * SNOMED Check
-             */
-        if (str_contains(strtolower($this->code_system_name), 'snomed')
-            || $this->code_system == '2.16.840.1.113883.6.96'
-        ) {
-            return 'snomed_code';
-        }
-
-        return false;
+        return $this->belongsTo(ProblemLog::class, 'ccd_problem_log_id');
     }
 }

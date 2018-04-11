@@ -16,7 +16,6 @@ class AddSpanishBoolToCareAmbassadors extends Migration
         Schema::table('care_ambassadors', function (Blueprint $table) {
 
             $table->boolean('speaks_spanish')->after('hourly_rate')->defualt(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddSpanishBoolToCareAmbassadors extends Migration
         Schema::table('care_ambassadors', function (Blueprint $table) {
 
             $table->dropColumn('speaks_spanish');
-
         });
     }
 }

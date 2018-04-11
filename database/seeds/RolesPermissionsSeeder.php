@@ -30,14 +30,42 @@ class RolesPermissionsSeeder extends Seeder
             $role->perms()->sync($permissionIds);
         }
 
-        $this->giveAdminsAllPermissions();
+        $this->giveAdminsAllPermissions('administrator');
+        $this->giveAdminsAllPermissions('saas-admin');
 
         $this->command->info('That\'s all folks!');
+    }
+
+    public function deletePermissions() {
+        return [
+            'activities-pagetimer-manage',
+
+        ];
     }
 
     public function permissions()
     {
         return [
+            [
+                'name'         => 'read-practice-chargeable-service',
+                'display_name' => 'View the ChargeableServices for a Practice.',
+                'description'  => 'Can View the ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'create-practice-chargeable-service',
+                'display_name' => 'Create a ChargeableService for a Practice.',
+                'description'  => 'Can Create ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'delete-practice-chargeable-service',
+                'display_name' => 'Delete a ChargeableService for a Practice.',
+                'description'  => 'Can Delete ChargeableServices for a Practice.',
+            ],
+            [
+                'name'         => 'update-practice-chargeable-service',
+                'display_name' => 'Update a ChargeableService for a Practice.',
+                'description'  => 'Can Update ChargeableServices for a Practice.',
+            ],
             [
                 'name'         => 'practice-manage',
                 'display_name' => 'Practice Manage',
@@ -135,6 +163,7 @@ class RolesPermissionsSeeder extends Seeder
                     'users-view-self',
                     'observations-create',
                     'observations-view',
+                    'read-practice-chargeable-service',
                 ],
             ],
             [
@@ -159,12 +188,20 @@ class RolesPermissionsSeeder extends Seeder
                     'users-create',
                 ],
             ],
+            [
+                'name'         => 'saas-admin',
+                'display_name' => 'SAAS Admin',
+                'description'  => 'An admin for CPM Software-As-A-Service.',
+                'permissions'  => [
+
+                ],
+            ],
         ];
     }
 
-    public function giveAdminsAllPermissions()
+    public function giveAdminsAllPermissions($roleName)
     {
-        $adminRole = Role::whereName('administrator')->first();
+        $adminRole = Role::whereName($roleName)->first();
 
         $permissions = Permission::where('name', '!=', 'care-plan-approve')
             ->get();

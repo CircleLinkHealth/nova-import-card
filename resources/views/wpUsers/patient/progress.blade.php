@@ -11,19 +11,56 @@ function trim_bp($bp){
     $bp_ = explode('/', $bp);
     echo $bp_[0];
 }
-
+if (isset($patient)) {
+    $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+    $H = floor($seconds / 3600);
+    $i = ($seconds / 60) % 60;
+    $s = $seconds % 60;
+    $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+}
+else {
+    $monthlyTime = "";
+}
 ?>
 @section('content')
+    @push('styles')
+        <style>
+            div.pad-right-20 {
+                padding-right: 25px;
+            }
+        </style>
+    @endpush
     <div class="container">
         <section class="patient-summary">
             <div class="row" style="margin-top:60px;">
                 <div class="patient-info__main" style="padding-left: 51px;">
                     @if(auth()->user()->hasRole(['administrator', 'med_assistant', 'provider']))
                         <div class="row">
+                            <div class="col-xs-12 text-right pad-right-20">
+                                <span style="font-size: 27px;">
+                                    <span data-monthly-time="{{$monthlyTime}}" style="color: inherit">
+                                        @if (isset($disableTimeTracking) && $disableTimeTracking)
+                                            <div class="color-grey">
+                                                <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
+                                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                                </a>
+                                            </div>
+                                        @else
+                                            <?php
+                                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                                            ?>
+                                            <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                                    :info="timeTrackerInfo" 
+                                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"></time-tracker>
+                                        @endif
+                                    </span>
+                                </span>
+                            </div>
                             <div class="col-xs-12 text-right hidden-print">
-            <span class="btn btn-group text-right">
-            <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
-            </span>
+                                <span class="btn btn-group text-right">
+                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
+                                </span>
                             </div>
                         </div>
                     @endif

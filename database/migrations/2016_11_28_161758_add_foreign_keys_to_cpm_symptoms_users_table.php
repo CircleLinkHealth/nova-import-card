@@ -34,5 +34,4 @@ class AddForeignKeysToCpmSymptomsUsersTable extends Migration
             $table->dropForeign('cpm_symptoms_users_patient_id_foreign');
         });
     }
-
 }

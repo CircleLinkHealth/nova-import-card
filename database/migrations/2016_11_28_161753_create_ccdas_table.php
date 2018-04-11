@@ -37,5 +37,4 @@ class CreateCcdasTable extends Migration
     {
         Schema::drop('ccdas');
     }
-
 }

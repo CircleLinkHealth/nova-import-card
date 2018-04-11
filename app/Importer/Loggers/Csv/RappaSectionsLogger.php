@@ -224,7 +224,6 @@ class RappaSectionsLogger extends TabularMedicalRecordSectionsLogger
             ], $this->foreignKeys));
 
             return $this;
-
         }
 
         $provider = ProviderLog::create(array_merge([

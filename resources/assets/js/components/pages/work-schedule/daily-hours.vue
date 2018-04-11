@@ -1,3 +1,17 @@
+<template>
+    <div>
+        <div v-if="totalHours > 0">
+            <label v-show="!edited" @click="edit()" class="edit-daily-work-hours text-center" style="padding: 2px 0;">{{workHours[day]}} hrs</label>
+
+            <input v-show="edited" type="number" :min="min" :max="max" class="form-control edit-daily-work-hours"
+                v-model="workHours[day]"
+                @blur="doneEdit()"
+                @keyup.enter="hideEdited()"
+                @keyup.esc="cancelEdit()">
+        </div>
+    </div>
+</template>
+
 <script>
     import {mapActions} from 'vuex'
     import {addNotification} from '../../../store/actions'
@@ -91,7 +105,7 @@
                     return
                 }
 
-                window.axios.patch('work-hours/' + this.workHours.id, {
+                this.axios.patch('work-hours/' + this.workHours.id, {
                     workHours: this.workHours[this.day],
                     day: this.day
                 }).then((response) => {
@@ -118,18 +132,6 @@
         })
     }
 </script>
-
-<template>
-    <div v-if="totalHours > 0">
-        <label v-show="!edited" @click="edit()" class="edit-daily-work-hours text-center" style="padding: 2px 0;">{{workHours[day]}} hrs</label>
-
-        <input v-show="edited" type="number" :min="min" :max="max" class="form-control edit-daily-work-hours"
-               v-model="workHours[day]"
-               @blur="doneEdit()"
-               @keyup.enter="hideEdited()"
-               @keyup.esc="cancelEdit()">
-    </div>
-</template>
 
 <style>
     .edit-daily-work-hours {

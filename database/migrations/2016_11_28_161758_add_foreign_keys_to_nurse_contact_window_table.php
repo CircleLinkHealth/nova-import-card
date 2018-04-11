@@ -30,5 +30,4 @@ class AddForeignKeysToNurseContactWindowTable extends Migration
             $table->dropForeign('nurse_contact_window_nurse_info_id_foreign');
         });
     }
-
 }

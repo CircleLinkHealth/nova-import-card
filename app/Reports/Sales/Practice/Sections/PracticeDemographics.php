@@ -38,20 +38,18 @@ class PracticeDemographics extends SalesReportSection
             ->where('user_status', 0)
             ->get();
 
-        foreach ($disabled_users as $user){
-
-            if($user->roles[0]->name == 'provider'){
+        foreach ($disabled_users as $user) {
+            if ($user->roles[0]->name == 'provider') {
                 $providers--;
             }
 
-            if($user->roles[0]->name == 'med_assistant'){
+            if ($user->roles[0]->name == 'med_assistant') {
                 $mas--;
             }
 
-            if($user->roles[0]->name == 'office_admin'){
+            if ($user->roles[0]->name == 'office_admin') {
                 $oa--;
             }
-
         }
 
 
@@ -73,8 +71,5 @@ class PracticeDemographics extends SalesReportSection
             'total' => $total,
 
         ];
-
     }
-
-
 }

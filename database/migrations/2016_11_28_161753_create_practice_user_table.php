@@ -29,5 +29,4 @@ class CreatePracticeUserTable extends Migration
     {
         Schema::drop('practice_user');
     }
-
 }

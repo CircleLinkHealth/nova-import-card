@@ -29,5 +29,4 @@ class CreateLvMigrationsTable extends Migration
     {
         Schema::drop('lv_migrations');
     }
-
 }

@@ -19,7 +19,7 @@ class AddRnSuffixToActiveNurses extends Migration
                     'Dawn Brook',
                     'Davona McCready',
                 ]);
-            })
+        })
             ->get();
 
         foreach ($nurses as $nurse) {

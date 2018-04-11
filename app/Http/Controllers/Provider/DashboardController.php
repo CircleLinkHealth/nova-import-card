@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Provider;
 
+use App\ChargeableService;
 use App\Contracts\Repositories\InviteRepository;
 use App\Contracts\Repositories\LocationRepository;
 use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
+use App\Location;
+use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -21,6 +24,7 @@ class DashboardController extends Controller
     protected $practices;
     protected $users;
     protected $onboardingService;
+    protected $primaryPractice;
 
     public function __construct(
         InviteRepository $inviteRepository,
@@ -30,12 +34,10 @@ class DashboardController extends Controller
         OnboardingService $onboardingService,
         Request $request
     ) {
-        parent::__construct($request);
-
-        $this->invites = $inviteRepository;
-        $this->locations = $locationRepository;
-        $this->practices = $practiceRepository;
-        $this->users = $userRepository;
+        $this->invites           = $inviteRepository;
+        $this->locations         = $locationRepository;
+        $this->practices         = $practiceRepository;
+        $this->users             = $userRepository;
         $this->onboardingService = $onboardingService;
 
         $this->practiceSlug = $request->route('practiceSlug');
@@ -52,11 +54,11 @@ class DashboardController extends Controller
     {
         $primaryPractice = $this->primaryPractice;
 
-        if (!$primaryPractice) {
+        if ( ! $primaryPractice) {
             return response('Practice not found', 404);
         }
 
-        return view('provider.location.create',[
+        return view('provider.location.create', [
             'practiceSlug' => $this->practiceSlug,
             'practice'     => $this->primaryPractice,
         ]);
@@ -64,17 +66,19 @@ class DashboardController extends Controller
 
     public function getCreatePractice()
     {
-        $users = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $users     = $this->onboardingService->getExistingStaff($this->primaryPractice);
+        $locations = $this->onboardingService->getExistingLocations($this->primaryPractice);
 
         return view('provider.practice.create', array_merge([
             'practiceSlug' => $this->practiceSlug,
             'staff'        => $users['existingUsers'],
+            'locations'    => $locations,
         ], $this->returnWithAll));
     }
 
     public function getCreateNotifications()
     {
-        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients('string');
+        $invoiceRecipients = $this->primaryPractice->getInvoiceRecipients()->pluck('email')->implode(',');
 
         return view('provider.notifications.create', array_merge([
             'practice'          => $this->primaryPractice,
@@ -84,11 +88,39 @@ class DashboardController extends Controller
         ], $this->returnWithAll));
     }
 
+    public function getCreateChargeableServices()
+    {
+        $practiceChargeableRel = $this->primaryPractice->chargeableServices;
+
+        $allChargeableServices = ChargeableService::all()
+                                                  ->map(function ($service) use ($practiceChargeableRel) {
+                                                      $existing = $practiceChargeableRel
+                                                          ->where('id', '=', $service->id)
+                                                          ->first();
+
+                                                      $service->is_on = false;
+
+                                                      if ($existing) {
+                                                          $service->amount = $existing->pivot->amount;
+                                                          $service->is_on = true;
+                                                      }
+
+                                                      return $service;
+                                                  });
+
+        return view('provider.chargableServices.create', array_merge([
+            'practice'          => $this->primaryPractice,
+            'practiceSlug'      => $this->practiceSlug,
+            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+            'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
+        ], $this->returnWithAll));
+    }
+
     public function getCreateStaff()
     {
         $practice = $this->primaryPractice;
 
-        if (!$practice) {
+        if ( ! $practice) {
             return response('Practice not found', 404);
         }
 
@@ -132,13 +164,13 @@ class DashboardController extends Controller
     public function postStoreNotifications(UpdatePracticeSettingsAndNotifications $request)
     {
         $settingsInput = $request->input('settings');
-        $errors = collect();
+        $errors        = collect();
 
         if (isset($settingsInput['dm_audit_reports'])) {
             $locationsWithoutDM = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->emr_direct_address) {
+                if ( ! $location->emr_direct_address) {
                     $locationsWithoutDM->push($location);
                 }
             }
@@ -159,7 +191,7 @@ class DashboardController extends Controller
             $locationsWithoutFax = collect();
 
             foreach ($this->primaryPractice->locations as $location) {
-                if (!$location->fax) {
+                if ( ! $location->fax) {
                     $locationsWithoutFax->push($location);
                 }
             }
@@ -178,15 +210,36 @@ class DashboardController extends Controller
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
-        $invoiceRecipients = $request->input('invoice_recipients');
+        $invoiceRecipients      = $request->input('invoice_recipients');
         $weeklyReportRecipients = $request->input('weekly_report_recipients');
 
         $this->primaryPractice->update([
-            'invoice_recipients' => $invoiceRecipients,
-            'weekly_report_recipients' => $weeklyReportRecipients
+            'invoice_recipients'       => $invoiceRecipients,
+            'weekly_report_recipients' => $weeklyReportRecipients,
         ]);
 
         return redirect()->back()->withErrors($errors);
+    }
+
+    public function postStoreChargeableServices(Request $request)
+    {
+        $services = $request['chargeable_services'];
+
+        $sync = [];
+
+        foreach ($services as $id => $service) {
+            if (array_key_exists('is_on', $service)) {
+                $sync[$id] = [
+                    'amount' => $service['amount']
+                ];
+            }
+        }
+
+        $this->primaryPractice
+            ->chargeableServices()
+            ->sync($sync);
+
+        return redirect()->back();
     }
 
     public function postStoreStaff(Request $request)
@@ -209,6 +262,11 @@ class DashboardController extends Controller
         }
 
         $this->primaryPractice->update($update);
+
+        Location::whereId($request['primary_location'])
+            ->update([
+                'is_primary' => true
+            ]);
 
         return redirect()->back();
     }

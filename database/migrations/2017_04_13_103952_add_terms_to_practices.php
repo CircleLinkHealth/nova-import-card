@@ -16,7 +16,6 @@ class AddTermsToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->integer('term_days')->after('clh_pppm')->default(30);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddTermsToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('term_days');
-
         });
     }
 }

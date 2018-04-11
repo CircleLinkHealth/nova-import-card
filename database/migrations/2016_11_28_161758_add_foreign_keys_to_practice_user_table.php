@@ -30,5 +30,4 @@ class AddForeignKeysToPracticeUserTable extends Migration
             $table->dropForeign('practice_user_user_id_foreign');
         });
     }
-
 }

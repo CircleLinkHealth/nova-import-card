@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function getAccessToken(Request $request)
     {
-        if (!$request->has('username') || !$request->has('password')) {
+        if (!$request->filled('username') || !$request->filled('password')) {
             response()->json(['error' => 'Username and password need to be included on the request.'], 400);
         }
 
@@ -34,7 +34,9 @@ class AuthController extends Controller
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
-        if (!$user->hasRole('aprima-api-location')) {
+
+        //Verify Role for UPG
+        if (!$user->hasRoleForSite('aprima-api-location', 16)) {
             return response()->json(['error' => 'Invalid Credentials.'], 400);
         }
 
@@ -52,5 +54,4 @@ class AuthController extends Controller
 
         return response()->json(compact('access_token'), 200);
     }
-
 }

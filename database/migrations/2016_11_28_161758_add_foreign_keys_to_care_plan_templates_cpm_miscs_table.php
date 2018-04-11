@@ -34,5 +34,4 @@ class AddForeignKeysToCarePlanTemplatesCpmMiscsTable extends Migration
             $table->dropForeign('care_plan_templates_cpm_miscs_cpm_misc_id_foreign');
         });
     }
-
 }

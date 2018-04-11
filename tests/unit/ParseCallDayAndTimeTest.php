@@ -1,4 +1,7 @@
 <?php
+namespace Tests\unit;
+
+use Tests\TestCase;
 
 class ParseCallDayAndTimeTest extends TestCase
 {

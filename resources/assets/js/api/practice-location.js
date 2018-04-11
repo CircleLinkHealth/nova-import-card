@@ -18,8 +18,13 @@ export default {
         }
 
         window.axios.patch('practice/' + practiceId + '/locations/' + location.id, location).then(
-            (resp) => cb(resp.data),
-            (error) => ecb(error.response.data)
+            (resp) => {
+                cb(resp.data)
+            },
+            (error) => {
+                console.log(error)
+                ecb(error.response.data.errors);
+            }
         );
     },
 
@@ -30,7 +35,7 @@ export default {
 
         window.axios.delete('practice/' + practiceId + '/locations/' + location.id).then(
             (resp) => cb(resp.data),
-            (error) => ecb(error.response.data)
+            (error) => ecb(error.response.data.errors)
         );
     },
 }

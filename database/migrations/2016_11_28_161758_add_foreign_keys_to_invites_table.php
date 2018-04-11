@@ -32,5 +32,4 @@ class AddForeignKeysToInvitesTable extends Migration
             $table->dropForeign('invites_role_id_foreign');
         });
     }
-
 }

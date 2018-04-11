@@ -30,5 +30,4 @@ class AddForeignKeysToCpmSmokingsTable extends Migration
             $table->dropForeign('cpm_smokings_patient_id_foreign');
         });
     }
-
 }

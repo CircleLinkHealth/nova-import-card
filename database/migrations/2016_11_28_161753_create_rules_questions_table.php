@@ -34,5 +34,4 @@ class CreateRulesQuestionsTable extends Migration
     {
         Schema::drop('rules_questions');
     }
-
 }

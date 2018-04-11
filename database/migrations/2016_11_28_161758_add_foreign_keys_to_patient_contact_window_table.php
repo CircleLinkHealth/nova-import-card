@@ -30,5 +30,4 @@ class AddForeignKeysToPatientContactWindowTable extends Migration
             $table->dropForeign('patient_contact_window_patient_info_id_foreign');
         });
     }
-
 }

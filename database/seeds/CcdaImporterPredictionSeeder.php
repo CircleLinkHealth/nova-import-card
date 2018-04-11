@@ -48,7 +48,6 @@ class CcdaImporterPredictionSeeder extends Seeder
                             $providerLog->save();
                         }
                     }
-
                 }
             } catch (Exception $e) {
                 echo $e->getMessage();

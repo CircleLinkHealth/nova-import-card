@@ -1,5 +1,12 @@
 <?php
 
+namespace Tests\AprimaApi;
+
+use App\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
+
 /**
  * Created by PhpStorm.
  * User: michalis
@@ -8,33 +15,37 @@
  */
 class UploadCcdTest extends TestCase
 {
+    use DatabaseTransactions,
+        WithoutMiddleware;
+
     public function test_no_credentials_error()
     {
         $response = $this->call('POST', '/api/v1.0/ccd', []);
 
-        $this->assertResponseStatus(400);
+        $response->assertStatus(403);
     }
 
     public function test_ccd_with_provider_info()
     {
-//        $response = $this->action('POST', 'CcdApi\Aprima\CcdApiController@uploadCcd', [
-//            'file' => base64_encode('suppose this is a ccd'),
-//            'provider' => \GuzzleHttp\json_encode([
-//                'providerId' => '1',
-//                'lastName' => 'smith',
-//                'firstName' => 'john',
-//                'phone' => '111-111-1111',
-//                'address' => [
-//                    'line1' => '111 main st',
-//                    'line2' => "222 main st",
-//                    'city' => 'somewhere',
-//                    'state' => 'TX',
-//                    'zip' => '11111'
-//                ],
-//                'clinic' => 'testClinic'
-//            ])
-//        ]);
-//
-//        $this->assertResponseStatus(201);
+        $response = $this->withSession(['apiUser' => User::find(1811)])
+                         ->call('POST', route('api.aprima.uploadCcd'), [
+                             'file'     => base64_encode('suppose this is a ccd'),
+                             'provider' => \GuzzleHttp\json_encode([
+                                 'providerId' => '1',
+                                 'lastName'   => 'smith',
+                                 'firstName'  => 'john',
+                                 'phone'      => '111-111-1111',
+                                 'address'    => [
+                                     'line1' => '111 main st',
+                                     'line2' => "222 main st",
+                                     'city'  => 'somewhere',
+                                     'state' => 'TX',
+                                     'zip'   => '11111',
+                                 ],
+                                 'clinic'     => 'testClinic',
+                             ]),
+                         ]);
+
+        $response->assertStatus(201);
     }
 }

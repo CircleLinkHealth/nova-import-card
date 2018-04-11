@@ -8,18 +8,56 @@
 
 namespace App\Services\CPM;
 
-
 use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
 use App\User;
+use App\Models\CCD\Problem;
+use App\Repositories\UserRepositoryEloquent;
+use App\Repositories\CpmProblemRepository;
+use App\Repositories\Criteria\CriteriaFactory;
 
 class CpmProblemService implements CpmModel
 {
+    private $problemRepo;
+    private $userRepo;
+
+    public function __construct(CpmProblemRepository $problemRepo, UserRepositoryEloquent $userRepo) {
+        $this->problemRepo = $problemRepo;
+        $this->userRepo = $userRepo;
+    }
+
+    public function repo() {
+        return $this->problemRepo;
+    }
+
+    public function problems() {
+        $problems = $this->repo()->noDiabetesFilter()->paginate(30);
+        $problems->getCollection()->transform(function ($value) {
+            return $this->setupProblem($value);
+        });
+        return $problems;
+    }
+
+    public function setupProblem($p) {
+        return [
+            'id'   => $p->id,
+            'name' => $p->name,
+            'code' => $p->default_icd_10_code,
+            'instruction' => $p->instruction()
+        ];
+    }
+
+    public function problem($id) {
+        $problem = $this->repo()->model()->find($id);
+        if ($problem) return $this->setupProblem($problem);
+        else return null;
+    }
+
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)
     {
         $user->cpmProblems()->sync($ids);
 
-        $instructionService = new CpmInstructionService();
+        $instructionService = app(CpmInstructionService::class);
 
         foreach ($ids as $problemId) {
             $relationship = 'cpmProblems';
@@ -42,7 +80,9 @@ class CpmProblemService implements CpmModel
 
         //Get all the User's Problems
         $problems = $user->cpmProblems()->get()->sortBy('name')->values()->all();
-        if (!$problems) return '';
+        if (!$problems) {
+            return '';
+        }
 
         //For each problem, extract the instructions and
         //store in a key value pair
@@ -67,20 +107,6 @@ class CpmProblemService implements CpmModel
      */
     public function getDetails(User $patient)
     {
-        $carePlan = $patient->service()->firstOrDefaultCarePlan($patient);
-
-        //get the template
-        $cptId = $carePlan->care_plan_template_id;
-        $cpt = CarePlanTemplate::find($cptId);
-
-        //get template's cpmProblems
-        $cptProblems = $cpt->cpmProblems()->get();
-
-        //get the User's cpmProblems
-        $patientProblems = $patient->cpmProblems()->get();
-
-        $intersection = $patientProblems->intersect($cptProblems)->pluck('name');
-
-        return $intersection;
+        return Problem::where([ 'patient_id' => $patient->id, 'is_monitored' => 1 ])->pluck('name');
     }
 }

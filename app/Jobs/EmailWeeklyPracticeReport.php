@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
+use App\Notifications\WeeklyPracticeReport;
 use App\Practice;
 use App\Reports\Sales\Practice\SalesByPracticeReport;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
@@ -18,19 +20,22 @@ class EmailWeeklyPracticeReport implements ShouldQueue
     protected $practice;
     protected $startRange;
     protected $endRange;
-    protected $testerEmail;
+    protected $tester;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param Practice $practice
+     * @param $startRange
+     * @param $endRange
+     * @param User|null $tester
      */
-    public function __construct(Practice $practice, $startRange, $endRange, $testerEmail)
+    public function __construct(Practice $practice, $startRange, $endRange, User $tester = null)
     {
-        $this->practice = $practice;
+        $this->practice   = $practice;
         $this->startRange = $startRange;
-        $this->endRange = $endRange;
-        $this->testerEmail = $testerEmail;
+        $this->endRange   = $endRange;
+        $this->tester     = $tester;
     }
 
     /**
@@ -40,15 +45,11 @@ class EmailWeeklyPracticeReport implements ShouldQueue
      */
     public function handle()
     {
-        if (!$this->practice->weekly_report_recipients) {
+        if ( ! $this->practice->weekly_report_recipients) {
             return;
         }
 
-        $organizationSummaryRecipients = explode(', ', trim($this->practice->weekly_report_recipients));
-
-        if ($this->testerEmail) {
-            $organizationSummaryRecipients = [$this->testerEmail];
-        }
+        $organizationSummaryRecipients = $this->practice->getWeeklyReportRecipientsArray();
 
         $subjectPractice = $this->practice->display_name . '\'s CCM Weekly Summary';
 
@@ -60,21 +61,28 @@ class EmailWeeklyPracticeReport implements ShouldQueue
             $this->endRange->copy()
         ))->data(true);
 
-        $practiceData['name'] = $this->practice->display_name;
-        $practiceData['start'] = $this->startRange;
-        $practiceData['end'] = $this->endRange;
+        $practiceData['name']    = $this->practice->display_name;
+        $practiceData['start']   = $this->startRange;
+        $practiceData['end']     = $this->endRange;
         $practiceData['isEmail'] = true;
 
-        //handle leads
-        foreach ($organizationSummaryRecipients as $recipient) {
+        $notification = new WeeklyPracticeReport($practiceData, $subjectPractice);
 
-            Mail::send('sales.by-practice.report', ['data' => $practiceData], function ($message) use (
-                $recipient,
-                $subjectPractice
-            ) {
-                $message->from('notifications@careplanmanager.com', 'CircleLink Health');
-                $message->to($recipient)->subject($subjectPractice);
-            });
+        if ($this->tester) {
+            $this->tester->notify($notification);
+
+            return;
+        }
+
+        foreach ($organizationSummaryRecipients as $recipient) {
+            $user = User::whereEmail($recipient)->first();
+
+            if ($user) {
+                $user->notify($notification);
+            } else {
+                Notification::route('mail', $recipient)
+                            ->notify($notification);
+            }
         }
     }
 }

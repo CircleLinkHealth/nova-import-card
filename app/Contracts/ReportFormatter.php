@@ -8,17 +8,20 @@
 
 namespace App\Contracts;
 
+use Illuminate\Database\Eloquent\Collection;
+
 interface ReportFormatter
 {
     
-    /* 
+    /*
      * This Interface will be used to format reports for the CPM Frontend
      */
     
     public function formatDataForNotesListingReport($notes, $request);
 
-    public function formatDataForNotesAndOfflineActivitiesReport($notes);
+    public function formatDataForNotesAndOfflineActivitiesReport($patient);
 
+    public function patientListing(Collection $patients = null);
 
     //public function formatDataForU20Report();
 
@@ -31,6 +34,4 @@ interface ReportFormatter
     //public function formatDataForPatientCarePlanPrintList();
 
     //public function formatDataForProgressReport();
-
-
 }

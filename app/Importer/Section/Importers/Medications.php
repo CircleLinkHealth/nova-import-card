@@ -8,7 +8,6 @@
 
 namespace App\Importer\Section\Importers;
 
-
 use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\MedicationImport;
@@ -98,8 +97,10 @@ class Medications extends BaseImporter
         ], [
             'ccd_medication_log_id'      => $itemLog->id,
             'medication_group_id'        => $medicationGroupId,
-            'sig'                        => ucfirst(StringManipulation::stringDiff($consolidatedMed->cons_name,
-                $consolidatedMed->cons_text)),
+            'sig'                        => ucfirst(StringManipulation::stringDiff(
+                $consolidatedMed->cons_name,
+                $consolidatedMed->cons_text
+            )),
             'code'                       => $consolidatedMed->cons_code,
             'code_system'                => $consolidatedMed->cons_code_system,
             'code_system_name'           => $consolidatedMed->cons_code_system_name,

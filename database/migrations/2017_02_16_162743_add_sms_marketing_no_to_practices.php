@@ -16,7 +16,6 @@ class AddSmsMarketingNoToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->string('sms_marketing_number')->nullable();
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddSmsMarketingNoToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('sms_marketing_number');
-
         });
     }
 }

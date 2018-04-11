@@ -26,7 +26,7 @@ class PatientsForInsuranceCheck extends Controller
                 return [
                     'name'             => $user->fullName,
                     'dob'              => $user->birth_date,
-                    'billing_provider' => $user->billingProvider()->fullName,
+                    'billing_provider' => $user->billingProviderUser()->fullName,
                     'practice'         => $user->primaryPractice->display_name,
                     'insurance_1'      => $user->ccdInsurancePolicies[0]->name ?? '',
                     'insurance_2'      => $user->ccdInsurancePolicies[1]->name ?? '',
@@ -35,17 +35,16 @@ class PatientsForInsuranceCheck extends Controller
             });
 
         Excel::create("{$date->toDateString()} - Patients For Insurance Check", function ($excel) use
-        (
+            (
             $users
         ) {
 
             $excel->sheet('Patients', function ($sheet) use
-            (
+                (
                 $users
             ) {
 
                 $sheet->fromArray($users);
-
             });
         })->export('xls');
     }

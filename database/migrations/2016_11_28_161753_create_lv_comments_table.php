@@ -45,5 +45,4 @@ class CreateLvCommentsTable extends Migration
     {
         Schema::drop('lv_comments');
     }
-
 }

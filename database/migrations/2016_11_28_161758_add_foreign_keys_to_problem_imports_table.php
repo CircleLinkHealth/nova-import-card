@@ -38,5 +38,4 @@ class AddForeignKeysToProblemImportsTable extends Migration
             $table->dropForeign('problem_imports_vendor_id_foreign');
         });
     }
-
 }

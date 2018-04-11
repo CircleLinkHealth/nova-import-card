@@ -24,10 +24,11 @@ class CCDViewerController extends Controller
 
     public function show($ccdaId)
     {
-        $ccda = Ccda::find($ccdaId);
+        $ccda = Ccda::withTrashed()
+            ->find($ccdaId);
 
         if ($ccda) {
-            $ccd = json_decode($ccda->json);
+            $ccd = $ccda->bluebuttonJson();
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }
@@ -40,7 +41,7 @@ class CCDViewerController extends Controller
         $ccda = Ccda::wherePatientId($userId)->first();
 
         if ($ccda) {
-            $ccd = json_decode($ccda->json);
+            $ccd = $ccda->bluebuttonJson();
 
             return view('CCDViewer.old-viewer', compact('ccd'));
         }
@@ -76,5 +77,4 @@ class CCDViewerController extends Controller
             return view('CCDViewer.old-viewer', compact('xml'));
         }
     }
-
 }

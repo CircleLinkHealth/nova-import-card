@@ -1,7 +1,9 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -32,15 +34,15 @@
                             <tr>
                                 <td>
                                     @if($item->pcp)
-                                        <a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
+                                        <a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
                                     @else
                                         {{ $item->pcp_id }}
                                     @endif
                                 </td>
                                 <td>{{ $item->items_parent }}</td>
-                                <td><a href="{{ URL::route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
+                                <td><a href="{{ route('admin.questions.show', array('id' => $item->qid)) }}" class="btn btn-orange btn-xs">{{ $item->qid }}</a></td>
                                 <td>{{ $item->items_text }}</td>
-                                <td><a href="{{ URL::route('admin.items.edit', array('id' => $item->items_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ URL::route('admin.items.destroy', array('id' => $item->items_id)) }}" class="btn btn-warning">Remove</a></td>
+                                <td><a href="{{ route('admin.items.edit', array('id' => $item->items_id)) }}" class="btn btn-primary">Edit</a> <a href="{{ route('admin.items.destroy', array('id' => $item->items_id)) }}" class="btn btn-warning">Remove</a></td>
                             </tr>
                             </tbody>
                         </table>

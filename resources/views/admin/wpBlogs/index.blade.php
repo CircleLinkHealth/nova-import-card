@@ -9,7 +9,7 @@
                     <div class="col-sm-8">
                         <h1>Practice</h1>
                     </div>
-                    @if(Entrust::can('programs-manage'))
+                    @if(Cerberus::hasPermission('programs-manage'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.programs.create')}}" class="btn btn-success">New
@@ -36,11 +36,11 @@
                                 @foreach( $wpBlogs as $wpBlog )
                                     <tr>
                                         <td>
-                                            <a href="{{ URL::route('admin.programs.show', array('id' => $wpBlog->id)) }}"
+                                            <a href="{{ route('admin.programs.show', array('id' => $wpBlog->id)) }}"
                                                class=""><strong>{{ $wpBlog->display_name }}</strong></a></td>
                                         <td>
                                             @if (count($wpBlog->users) > 0)
-                                                <a href="{{ URL::route('admin.users.index', array('filterProgram' => $wpBlog->id)) }}"
+                                                <a href="{{ route('admin.users.index', array('filterProgram' => $wpBlog->id)) }}"
                                                    class=""><strong>{{ count($wpBlog->users()->whereHas('roles', function ($q) {
 					$q->where('name', '=', 'participant');
 				})->get()) }}</strong></a>
@@ -48,17 +48,17 @@
                                         </td>
                                         <td>{{ date('F d, Y g:i A', strtotime($wpBlog->created_at)) }}</td>
                                         <td class="text-right">
-                                            @if(Entrust::can('programs-manage'))
-                                                <a href="{{ URL::route('provider.dashboard.index', ['practiceSlug' => $wpBlog->name]) }}"
+                                            @if(Cerberus::hasPermission('programs-manage'))
+                                                <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $wpBlog->name]) }}"
                                                    class="btn btn-xs btn-success">
                                                     Admin
                                                 </a>
 
-                                                <a href="{{ URL::route('admin.programs.edit', array('id' => $wpBlog->id)) }}"
+                                                <a href="{{ route('admin.programs.edit', array('id' => $wpBlog->id)) }}"
                                                    class="btn btn-xs btn-info">Edit
                                                 </a>
 
-                                                <a href="{{ URL::route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
+                                                <a href="{{ route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
                                                    class="btn btn-xs btn btn-warning"
                                                    style="margin-left:10px;">Remove
                                                 </a>

@@ -17,7 +17,6 @@ class ChangedColTypesForEnrollees extends Migration
 
             $table->text('last_call_outcome')->after('care_ambassador_id')->nullable()->change();
             $table->text('last_call_outcome_reason')->after('care_ambassador_id')->nullable()->change();
-
         });
     }
 
@@ -29,8 +28,6 @@ class ChangedColTypesForEnrollees extends Migration
     public function down()
     {
         Schema::table('enrollees', function (Blueprint $table) {
-
-
         });
     }
 }

@@ -14,8 +14,10 @@ class AddForeignKeysToCcmTimeApiLogsTable extends Migration
     public function up()
     {
         Schema::table('ccm_time_api_logs', function (Blueprint $table) {
-            $table->foreign('activity_id',
-                'activity_id_foreign')->references('id')->on('lv_activities')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign(
+                'activity_id',
+                'activity_id_foreign'
+            )->references('id')->on('lv_activities')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 
@@ -31,5 +33,4 @@ class AddForeignKeysToCcmTimeApiLogsTable extends Migration
             $table->dropForeign('activity_id_foreign');
         });
     }
-
 }

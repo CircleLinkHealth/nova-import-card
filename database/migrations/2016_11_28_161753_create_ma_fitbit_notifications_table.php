@@ -32,5 +32,4 @@ class CreateMaFitbitNotificationsTable extends Migration
     {
         Schema::drop('ma_fitbit_notifications');
     }
-
 }

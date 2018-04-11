@@ -16,6 +16,42 @@ use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
+    public function logDemographicsSection(): MedicalRecordLogger
+    {
+        if ( ! $this->medicalRecord->mrn) {
+            $this->medicalRecord->mrn = $this->lookupMrn($this->medicalRecord->first_name,
+                $this->medicalRecord->last_name, $this->medicalRecord->dob);
+        }
+
+        if ( ! $this->medicalRecord->gender && $this->medicalRecord->mrn) {
+            $phx                         = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)->first();
+            $this->medicalRecord->gender = $phx
+                ? $phx->gender
+                : null;
+        }
+
+        $this->medicalRecord->save();
+
+
+        return parent::logDemographicsSection();
+    }
+
+    public function lookupMrn($firstName, $lastName, $dob)
+    {
+        $dob = Carbon::parse($dob)->toDateString();
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+                               ->where('patient_last_name', $lastName)
+                               ->where('dob', $dob)
+                               ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
+    }
+
     /**
      * Log Allergies Section.
      * @return MedicalRecordLogger
@@ -42,8 +78,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logInsuranceSection(): MedicalRecordLogger
     {
         $insurances = PhoenixHeartInsurance::wherePatientId($this->medicalRecord->mrn)
-            ->get()
-            ->sortBy('order');
+                                           ->get()
+                                           ->sortBy('order');
 
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
@@ -62,13 +98,11 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logMedicationsSection(): MedicalRecordLogger
     {
         $medications = PhoenixHeartMedication::wherePatientId($this->medicalRecord->mrn)
-            ->get();
+                                             ->get();
 
         foreach ($medications as $medication) {
-
-
-            $endDate = null;
-            $end = null;
+            $endDate   = null;
+            $end       = null;
             $startDate = null;
 
             try {
@@ -92,8 +126,8 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
                     'text'          => $medication->instructions,
                 ], $this->foreignKeys),
                 [
-//                    'start' => $startDate,
-//                    'end'   => $end
+                    //                    'start' => $startDate,
+                    //                    'end'   => $end
                 ]
             );
         }
@@ -108,27 +142,27 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
-            ->get();
+                                       ->get();
 
         foreach ($problems as $problem) {
             if (str_contains($problem->code, ['-'])) {
-                $pos = strpos($problem->code, '-') + 1;
+                $pos         = strpos($problem->code, '-') + 1;
                 $problemCode = mb_substr($problem->code, $pos);
             } elseif (str_contains($problem->code, ['ICD'])) {
-                $pos = strpos($problem, 'ICD') + 3;
+                $pos         = strpos($problem, 'ICD') + 3;
                 $problemCode = mb_substr($problem->code, $pos);
             } else {
                 $problemCode = $problem->code;
             }
 
-            $endDate = null;
-            $end = null;
+            $endDate   = null;
+            $end       = null;
             $startDate = null;
 
             try {
                 $startDate = Carbon::parse($problem->start_date)->toDateTimeString() ?? null;
-                $endDate = Carbon::parse($problem->end_date);
-                $end = $endDate->isFuture()
+                $endDate   = Carbon::parse($problem->end_date);
+                $end       = $endDate->isFuture()
                     ? null
                     : $endDate->toDateTimeString();
             } catch (\Exception $e) {
@@ -157,16 +191,16 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logProvidersSection(): MedicalRecordLogger
     {
         $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
-            ->first();
+                                ->first();
 
-        if (!$name) {
+        if ( ! $name) {
             return $this;
         }
 
         $user = User::ofType('provider')
-            ->whereFirstName($name->provider_first_name)
-            ->whereLastName(explode(' ', $name->provider_last_name)[0])
-            ->first();
+                    ->whereFirstName($name->provider_first_name)
+                    ->whereLastName(explode(' ', $name->provider_last_name)[0])
+                    ->first();
 
         if ($user) {
             $provider = ProviderLog::create(array_merge([
@@ -178,7 +212,6 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
             ], $this->foreignKeys));
 
             return $this;
-
         }
 
         $provider = ProviderLog::create(array_merge([

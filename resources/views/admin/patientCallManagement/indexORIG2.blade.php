@@ -1,9 +1,14 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    @push('scripts')
+        <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    @endpush
+    
+    @push('styles')
+        <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    @endpush
     <div id="nurseFormWrapper" style="display:none;">
         {!! Form::select('nurseFormSelect', array('unassigned' => 'Unassigned') + $nurses->all(), '', ['class' => 'select-picker', 'style' => 'width:150px;']) !!}
     </div>
@@ -25,66 +30,64 @@
                         <div id="tBox"></div>
 
                         <div class="row">
-                            {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        </div>
+                            {!! Form::open(array('url' => route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                            <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
+                            <div id="collapseFilter" class="panel-collapse collapse">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
+                                        <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                    </div>
 
+                                    <div class="row">
+                                        <div class="col-xs-2"><label for="date">Date:</label></div>
+                                        <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                    </div>
 
+                                    <div class="row">
+                                        <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
+                                        <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses->all(), $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                    </div>
 
-                        <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
-                        <div id="collapseFilter" class="panel-collapse collapse">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="date">Date:</label></div><div id="dtBox"></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
+                                    <div class="row" style="margin-top:15px;">
+                                        <div class="col-xs-2"><label for="filterStatus">Status:</label></div>
+                                        <div class="col-xs-4">{!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
+                                    </div>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="date">Date:</label></div>
-                                    <div class="col-xs-4"><input id="date" class="form-control" name="date" type="input" value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"  data-field="date" data-format="yyyy-MM-dd" /><span class="help-block">{{ $errors->first('date') }}</span></div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-xs-2"><label for="filterNurse">Nurse:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterNurse', array('all' => 'All', 'unassigned' => 'Unassigned') + $nurses->all(), $filterNurse, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                </div>
-
-                                <div class="row" style="margin-top:15px;">
-                                    <div class="col-xs-2"><label for="filterStatus">Status:</label></div>
-                                    <div class="col-xs-4">{!! Form::select('filterStatus', array('all' => 'All', 'scheduled' => 'Scheduled', 'reached' => 'Reached'), $filterStatus, ['class' => 'form-control select-picker', 'style' => 'width:50%;']) !!}</div>
-                                </div>
-                            </div>
-                            <div class="row" style="margin-top:50px;">
-                                <div class="col-sm-12">
-                                    <div class="" style="text-align:center;">
-                                        {!! Form::hidden('action', 'filter') !!}
-                                        <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                        <a href="{{ URL::route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
-                                        </form>
+                                <div class="row" style="margin-top:50px;">
+                                    <div class="col-sm-12">
+                                        <div class="" style="text-align:center;">
+                                            {!! Form::hidden('action', 'filter') !!}
+                                            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
+                                            <a href="{{ route('admin.patientCallManagement.index', array()) }}" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</a>
+                                            
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        {!! Form::close() !!}
 
+                        {!! Form::open(array('url' => route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        @push('styles')
+                            <style>
+                                .table tbody>tr>td.vert-align{
+                                    vertical-align: middle;
+                                }
 
-                        {!! Form::open(array('url' => URL::route('admin.patientCallManagement.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        <style>
-                            .table tbody>tr>td.vert-align{
-                                vertical-align: middle;
-                            }
+                                #cpmEditableTable tbody>tr>td {
+                                    white-space: nowrap;
+                                }
 
-                            #cpmEditableTable tbody>tr>td {
-                                white-space: nowrap;
-                            }
+                                .cpm-editable {
+                                    color:#000;
+                                }
 
-                            .cpm-editable {
-                                color:#000;
-                            }
-
-                            .highlight {
-                                color:green;
-                                font-weight:bold;
-                            }
-                        </style>
+                                .highlight {
+                                    color:green;
+                                    font-weight:bold;
+                                }
+                            </style>
+                        @endpush
                         <table style=""  id="cpmEditableTable" class="display" width="100%" cellspacing="0">
                             <thead>
                             <tr>
@@ -124,7 +127,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                <a href="{{ URL::route('patient.demographics.show', array('patient' => $call->inboundUser->id)) }}">{{ $call->inboundUser->display_name }} </a>
+                                                <a href="{{ route('patient.demographics.show', array('patient' => $call->inboundUser->id)) }}">{{ $call->inboundUser->display_name }} </a>
                                             @else
                                                 <em style="color:red;">unassigned</em>
                                             @endif
@@ -166,7 +169,7 @@
                                             @endif
                                         </td>
                                         <td class="text-right vert-align">
-                                            <a href="{{ URL::route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                            <a href="{{ route('admin.patientCallManagement.edit', array('id' => $call->id)) }}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
                                         </td>
                                     </tr>
                                 @endforeach

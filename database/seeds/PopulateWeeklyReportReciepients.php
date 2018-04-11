@@ -90,15 +90,12 @@ class PopulateWeeklyReportReciepients extends Seeder
         ];
 
         foreach ($practicesToSendTo as $key => $value) {
-
             $practice = Practice::whereName($key)->first();
 
             if ($practice != null) {
                 $practice->weekly_report_recipients = $value;
                 $practice->save();
             }
-
         }
-
     }
 }

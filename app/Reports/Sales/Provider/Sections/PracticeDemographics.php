@@ -37,7 +37,5 @@ class PracticeDemographics extends SalesReportSection
             $this->start,
             $this->end
         ))->render();
-
     }
-
 }

@@ -33,17 +33,13 @@ class AddActiveStatusToPractices extends Seeder
             'CCN General Medicine'
         ];
 
-        foreach ($practices as $practiceName){
-
+        foreach ($practices as $practiceName) {
             $practice = \App\Practice::whereName($practiceName)->first();
 
-            if($practice != null){
+            if ($practice != null) {
                 $practice->active = 1;
                 $practice->save();
             }
-
         }
-
-
     }
 }

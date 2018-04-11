@@ -25,7 +25,7 @@
                     }
                 };
 
-                window.axios.get('/CCDModels/Items/AllergiesItem', params).then(function (response) {
+                this.axios.get('/CCDModels/Items/AllergiesItem', params).then(function (response) {
                     self.allergies = response.data;
                 }, function (response) {
                     console.log(response);
@@ -41,7 +41,7 @@
                         'allergy': this.allergy
                     };
 
-                    window.axios.post('/CCDModels/Items/AllergiesItem/store', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/AllergiesItem/store', payload).then(function (response) {
                         let id = response.data.id.id;
 
                         self.allergies.push({
@@ -84,7 +84,7 @@
                     allergy: this.allergies[index]
                 };
 
-                window.axios.post('/CCDModels/Items/AllergiesItem/update', payload).then(function (response) {
+                this.axios.post('/CCDModels/Items/AllergiesItem/update', payload).then(function (response) {
                     // show text
                     $('#allergy-name-' + index).toggle();
 
@@ -110,7 +110,7 @@
                         'allergy': self.allergies[index]
                     };
 
-                    window.axios.post('/CCDModels/Items/AllergiesItem/destroy', payload).then(function (response) {
+                    this.axios.post('/CCDModels/Items/AllergiesItem/destroy', payload).then(function (response) {
                         self.allergies.splice(index, 1);
                     }, function (response) {
                         console.log(response);
@@ -119,7 +119,7 @@
             },
 
             postEvents: function (index, e) {
-                window.axios.post('/CCDModels/Items/AllergiesItem/store', this.allergies).then(function (response) {
+                this.axios.post('/CCDModels/Items/AllergiesItem/store', this.allergies).then(function (response) {
                 }, function (response) {
                     console.log(response);
                 });
@@ -131,41 +131,42 @@
 
 <template>
     <div class="row" id="allergies">
-
         <!-- show the allergies -->
         <div class="col-sm-12">
             <div class="list-group">
-                <template v-for="(allergyitem, index) in allergies">
-                    <div href="#" class="list-group-item" v-on:submit.prevent v-if="allergyitem.name"
-                         style="padding:5px;font-size:12px;">
-                        <div class="row">
-                            <div class="col-sm-9">
-                                <div class="list-group-item-heading" v-if="allergyitem.name">
-                                    <span :id="'allergy-name-'+index">{{ allergyitem.name }}</span>
-                                    <textarea v-model="allergyitem.name" :id="'allergy-edit-'+index"
-                                              style="display:none;" rows="10">{{ allergyitem.name }}</textarea>
-                                    <input type="hidden" name="id" :value="allergyitem.id">
-                                    <input type="hidden" name="patient_id" :value="allergyitem.patient_id">
+                <template>
+                    <div v-for="(allergyitem, index) in allergies" :key="index">
+                        <div href="#" class="list-group-item" v-on:submit.prevent v-if="allergyitem.name"
+                            style="padding:5px;font-size:12px;">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <div class="list-group-item-heading" v-if="allergyitem.name">
+                                        <span :id="'allergy-name-'+index">{{ allergyitem.name }}</span>
+                                        <textarea v-model="allergyitem.name" :id="'allergy-edit-'+index"
+                                                style="display:none;" rows="10">{{ allergyitem.name }}</textarea>
+                                        <input type="hidden" name="id" :value="allergyitem.id">
+                                        <input type="hidden" name="patient_id" :value="allergyitem.patient_id">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-3 text-right">
+                                <div class="col-sm-3 text-right">
 
-                                <p class="list-group-item-text" v-if="allergyitem.name">
-                                    {{ allergyitem.description }}
-                                </p>
-                                <button class="btn btn-xs btn-danger allergy-delete-btn" v-if="allergyitem.name"
-                                        v-on:click.stop.prevent="deleteAllergy(index, allergy)"><span><i
-                                        class="glyphicon glyphicon-remove"></i></span>
-                                </button>
-                                <button class="btn btn-xs btn-primary allergy-edit-btn" v-if="allergyitem.name"
-                                        v-on:click.stop.prevent="editAllergy(index, allergy)"><span><i
-                                        class="glyphicon glyphicon-pencil"></i></span>
-                                </button>
-                                <button class="btn btn-xs btn-success allergy-save-btn"
-                                        :id="'allergy-save-btn-'+index" v-if="allergyitem.name"
-                                        v-on:click.stop.prevent="updateAllergy(index, allergy)" style="display:none;">
-                                    <span><i class="glyphicon glyphicon-ok"></i></span>
-                                </button>
+                                    <p class="list-group-item-text" v-if="allergyitem.name">
+                                        {{ allergyitem.description }}
+                                    </p>
+                                    <button class="btn btn-xs btn-danger allergy-delete-btn" v-if="allergyitem.name"
+                                            v-on:click.stop.prevent="deleteAllergy(index, allergy)"><span><i
+                                            class="glyphicon glyphicon-remove"></i></span>
+                                    </button>
+                                    <button class="btn btn-xs btn-primary allergy-edit-btn" v-if="allergyitem.name"
+                                            v-on:click.stop.prevent="editAllergy(index, allergy)"><span><i
+                                            class="glyphicon glyphicon-pencil"></i></span>
+                                    </button>
+                                    <button class="btn btn-xs btn-success allergy-save-btn"
+                                            :id="'allergy-save-btn-'+index" v-if="allergyitem.name"
+                                            v-on:click.stop.prevent="updateAllergy(index, allergy)" style="display:none;">
+                                        <span><i class="glyphicon glyphicon-ok"></i></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

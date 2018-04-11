@@ -5,10 +5,9 @@
     <div class="row row-centered">
         @if($patient->careplan_mode == App\CarePlan::PDF)
             <div class="progress-buttons col-sm-12 col-centered text-center">
-                <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                   dtarget="{{ URL::route('patient.demographics.store', array('user_id' => $patient->id)) }}">
+                <button id="approve-forward" form="ucpForm" type="submit" class="btn btn-primary btn-next inline-block submitFormBtn">
                     Save
-                </a>
+                </button>
             </div>
         @endif
 
@@ -20,7 +19,7 @@
                     <!-- <button type="submit" class="btn btn-primary btn-next inline-block">Submit</button> -->
                         @if( isset($showApprovalButton) && $showApprovalButton )
                             <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 1)) }}">Approve/Next
+                               dtarget="{{ route('patient.careplan.print', ['patientId' => $patient->id, 'page' => 3]) }}">Approve/Next
                                 Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @endif
                     @endif
@@ -30,10 +29,10 @@
                         @if( isset($showApprovalButton) && $showApprovalButton)
                             <a id="approve-backward" href="#"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careteam.show', array('patientId' => $patient->id)) }}"><span
+                               dtarget="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"><span
                                         class="glyphicon glyphicon-circle-arrow-left"></span></a>
                             <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}">Approve/Next
+                               dtarget="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}">Approve/Next
                                 Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @endif
                     @endif
@@ -43,10 +42,10 @@
                         @if( isset($showApprovalButton) && $showApprovalButton )
                             <a id="approve-backward" href="#"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 1)) }}"><span
+                               dtarget="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 1)) }}"><span
                                         class="glyphicon glyphicon-circle-arrow-left"></span></a>
                             <a id="approve-forward" href="#" class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 3)) }}">Approve/Next
+                               dtarget="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 3)) }}">Approve/Next
                                 Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @endif
                     @endif
@@ -55,20 +54,20 @@
                         <input type="hidden" name="page" value="{{ $page }}">
                         @if( isset($showApprovalButton) && $showApprovalButton )
                             <a id="approve-backward"
-                               href="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}"
+                               href="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}"><span
+                               dtarget="{{ route('patient.careplan.show', array('patientId' => $patient->id, 'page' => 2)) }}"><span
                                         class="glyphicon glyphicon-circle-arrow-left"></span></a>
                             <a id="approve-forward"
-                               href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}"
+                               href="{{ route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}">Approve/Next
+                               dtarget="{{ route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3, 'markAsApproved' => true)) }}">Approve/Next
                                 Page&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @else
                             <a id="approve-forward"
-                               href="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}"
+                               href="{{ route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}"
                                class="btn btn-primary btn-next inline-block submitFormBtn"
-                               dtarget="{{ URL::route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}">Print
+                               dtarget="{{ route('patient.careplan.print', array('patientId' => $patient->id, 'page' => 3)) }}">Print
                                 Care Plan&nbsp; <span class="glyphicon glyphicon-circle-arrow-right"></span></a>
                         @endif
 
@@ -133,10 +132,9 @@
 
     @if(!isset($patient->id))
         <div class="progress-buttons col-sm-12 col-centered text-center">
-            <a href="{{ URL::route('patients.dashboard', array()) }}" omitsubmit="yes"
+            <a href="{{ route('patients.dashboard', array()) }}" omitsubmit="yes"
                class="btn btn-danger btn-next inline-block omitsubmit">Cancel</a>
-            <button type="submit" class="btn btn-primary btn-next inline-block">Add Patient</button>
+            <button type="submit" class="btn btn-primary btn-next inline-block" dusk="unit-test-submit">Add Patient</button>
         </div>
         @endif
 </div>
-</div><!-- /main-form-progress -->

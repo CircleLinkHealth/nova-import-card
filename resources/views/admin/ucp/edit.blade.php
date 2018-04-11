@@ -1,8 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('admin.ucp.update', array('id' => $ucp->ucp_id)), 'class' => 'form-horizontal')) !!}
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+    {!! Form::open(array('url' => route('admin.ucp.update', array('id' => $ucp->ucp_id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -31,10 +33,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><a href="{{ URL::route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
+                                    <td><a href="{{ route('admin.ucp.show', array('id' => $ucp->ucp_id)) }}" class="btn btn-primary">Detail</a></td>
                                     <td>
                                         @if($ucp->item)
-                                            <a href="{{ URL::route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
+                                            <a href="{{ route('admin.items.show', array('id' => $ucp->items_id)) }}" class="btn btn-orange btn-xs">{{ $ucp->item->items_text }}</a>
                                         @else
                                             {{ $ucp->items_id }}
                                         @endif
@@ -69,17 +71,15 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.ucp.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.ucp.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Update UCP Item', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

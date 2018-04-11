@@ -35,5 +35,4 @@ class CreatePhoneNumbersTable extends Migration
     {
         Schema::drop('phone_numbers');
     }
-
 }

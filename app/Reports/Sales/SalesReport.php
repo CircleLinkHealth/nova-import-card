@@ -60,5 +60,4 @@ abstract class SalesReport
 
         return $name . '.pdf';
     }
-
 }

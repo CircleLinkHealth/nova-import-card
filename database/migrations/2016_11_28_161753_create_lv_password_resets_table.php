@@ -30,5 +30,4 @@ class CreateLvPasswordResetsTable extends Migration
     {
         Schema::drop('lv_password_resets');
     }
-
 }

@@ -3,10 +3,66 @@
 
 use App\AppConfig;
 use App\CarePlanTemplate;
+use App\Constants;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+
+if (!function_exists('parseIds')) {
+    /**
+     * Get all of the IDs from the given mixed value.
+     *
+     * @param  mixed  $value
+     * @return array
+     */
+    function parseIds($value)
+    {
+        if ($value instanceof Model) {
+            return [$value->getKey()];
+        }
+
+        if ($value instanceof EloquentCollection) {
+            return $value->modelKeys();
+        }
+
+        if (is_array($value)) {
+            $value = collect($value);
+        }
+
+        if ($value instanceof Collection) {
+            return $value->map(function($el){
+                $id = parseIds($el);
+                return $id[0];
+            })->values()->toArray();
+        }
+
+        if (is_string($value) && str_contains($value, ',')) {
+            return explode(',', $value);
+        }
+
+        return array_filter((array) $value);
+    }
+}
+
+if (!function_exists('str_substr_after')) {
+    /**
+     * Get the substring after the given character
+     *
+     * @param $string
+     * @param string $character
+     *
+     * @return string
+     */
+    function str_substr_after($string, $character = '/')
+    {
+        $pos = strrpos($string, $character);
+
+        return $pos === false ? $string : substr($string, $pos + 1);
+    }
+}
 
 if (!function_exists('activeNurseNames')) {
     /**
@@ -229,6 +285,40 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
+if (!function_exists('carbonGetNext')) {
+    /**
+     * Get carbon instance of the next $day
+     *
+     * @param $day
+     *
+     * @return Carbon|false
+     */
+    function carbonGetNext($day = 'monday')
+    {
+        if (!is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
+            $dayName = $day;
+        }
+
+        if (is_numeric($day)) {
+            $dayOfWeek = clhToCarbonDayOfWeek($day);
+            $dayName = clhDayOfWeekToDayName($day);
+        }
+
+        if (!isset($dayOfWeek)) {
+            return false;
+        }
+
+        $now = Carbon::now();
+
+        if ($now->dayOfWeek == $dayOfWeek) {
+            return $now;
+        }
+
+        return $now->parse("next $dayName");
+    }
+}
+
 if (!function_exists('clhToCarbonDayOfWeek')) {
     /**
      * Convert CLH DayOfWeek to Carbon DayOfWeek.
@@ -312,7 +402,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
             'Sunday'    => 7,
         ];
 
-        return $days[trim($clhDayOfWeek)];
+        return $days[ucfirst(strtolower(trim($clhDayOfWeek)))] ?? false;
     }
 }
 
@@ -557,10 +647,52 @@ if (!function_exists('snakeToSentenceCase')) {
         return ucwords(str_replace('_', ' ', $string));
     }
 }
+
+if (!function_exists('linkToDownloadFile')) {
+    /**
+     * Generate a file to download a file
+     *
+     * @param $path
+     *
+     * @return string
+     * @throws Exception
+     */
+    function linkToDownloadFile($path, $absolute = false)
+    {
+        if (!$path) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('download', [
+            'filePath' => base64_encode($path),
+        ], $absolute);
+    }
+}
+
+if (!function_exists('linkToCachedView')) {
+    /**
+     * Generate a link to a cached view
+     *
+     * @param $viewHashKey
+     *
+     * @return string
+     * @throws Exception
+     *
+     */
+    function linkToCachedView($viewHashKey, $absolute = false)
+    {
+        if (!$viewHashKey) {
+            throw new \Exception("File path cannot be empty");
+        }
+
+        return route('get.cached.view.by.key', ['key' => $viewHashKey], $absolute);
+    }
+}
+
 if (!function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
-        if (!$preferredCallDays) {
+        if (!$preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
 
@@ -583,7 +715,7 @@ if (!function_exists('parseCallDays')) {
             $days[] = dayNameToClhDayOfWeek($preferredCallDays);
         }
 
-        return $days;
+        return array_filter($days);
     }
 }
 
@@ -612,9 +744,10 @@ if (!function_exists('parseCallTimes')) {
             $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
             $times['end'] = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
         } else {
-            $startTime = Carbon::parse(trim($preferredCallTimes));
-            $times['start'] = $startTime->toTimeString();
-            $times['end'] = $startTime->addHour()->toTimeString();
+            $times = [
+                'start' => '09:00:00',
+                'end'   => '17:00:00',
+            ];
         }
 
         return $times;
@@ -622,3 +755,173 @@ if (!function_exists('parseCallTimes')) {
 }
 
 
+if (!function_exists('getProblemCodeSystemName')) {
+    /**
+     * Get a problem code system name from an array of clues
+     *
+     * @param array $clues
+     *
+     * @return null|string
+     */
+    function getProblemCodeSystemName(array $clues)
+    {
+        foreach ($clues as $clue) {
+            if ($clue == '2.16.840.1.113883.6.96'
+                || str_contains(strtolower($clue), ['snomed'])) {
+                return Constants::SNOMED_NAME;
+            }
+
+            if ($clue == '2.16.840.1.113883.6.103'
+                || str_contains(strtolower($clue), ['9'])) {
+                return Constants::ICD9_NAME;
+            }
+
+            if ($clue == '2.16.840.1.113883.6.3'
+                || str_contains(strtolower($clue), ['10'])) {
+                return Constants::ICD10_NAME;
+            }
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('getProblemCodeSystemCPMId')) {
+    /**
+     * Get the id of an App\ProblemCodeSystem from an array of clues
+     *
+     * @param array $clues
+     *
+     * @return int|null
+     */
+    function getProblemCodeSystemCPMId(array $clues)
+    {
+        $name = getProblemCodeSystemName($clues);
+
+        $map = Constants::CODE_SYSTEM_NAME_ID_MAP;
+
+        if (array_key_exists($name, $map)) {
+            return $map[$name];
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('validProblemName')) {
+    /**
+     * Is the problem name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validProblemName($name)
+    {
+        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection', 'vaccine', 'vaccination', 'vaccin']);
+    }
+}
+
+if (!function_exists('showDiabetesBanner')) {
+    function showDiabetesBanner($patient, $noShow = null)
+    {
+//        if (!$noShow && $patient
+//            && is_a($patient, User::class)
+//            && $patient->hasProblem(1)
+//            && !$patient->hasProblem(32)
+//            && !$patient->hasProblem(33)
+//            && $patient->primaryPractice->name != 'northeast-georgia-diagnostic-clinic'
+//        ) {
+//            return true;
+//        }
+
+        return false;
+    }
+}
+
+if (!function_exists('shortenUrl')){
+    /**
+     * Create a short URL
+     *
+     * @param $url
+     *
+     * @return string
+     * @throws \Waavi\UrlShortener\InvalidResponseException
+     */
+    function shortenUrl($url){
+        $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+        return $shortUrl;
+    }
+}
+
+if (!function_exists('validateYYYYMMDDDateString')){
+    /**
+     * Validate that the given date string has format YYYY-MM-DD
+     *
+     * @param $date
+     *
+     * @return bool
+     * @throws Exception
+     */
+    function validateYYYYMMDDDateString($date, $throwException = true){
+        $isValid = (bool) preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
+
+        if (!$isValid && $throwException) {
+            throw new \Exception("Invalid Date");
+        }
+
+        return $isValid;
+    }
+}
+
+if (!function_exists('cast')) {
+    /**
+    * Cast an object into a different class.
+    *
+    * Currently this only supports casting DOWN the inheritance chain,
+    * that is, an object may only be cast into a class if that class 
+    * is a descendant of the object's current class.
+    *
+    * This is mostly to avoid potentially losing data by casting across
+    * incompatable classes.
+    *
+    * @param object $object The object to cast.
+    * @param string $class The class to cast the object into.
+    * @return object
+    */
+    function cast($object, $class) {
+        if( !is_object($object) ) 
+            throw new InvalidArgumentException('$object must be an object.');
+        if( !is_string($class) )
+            throw new InvalidArgumentException('$class must be a string.');
+        if( !class_exists($class) )
+            throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
+        $ret = app($class);
+        foreach (get_object_vars($object) as $key => $value) {
+            $ret[$key] = $value;
+        }
+        return $ret;
+    }
+}
+
+if (!function_exists('is_json')) {
+    /**
+     * Determine whether the given string is json
+     *
+     * @param $string
+     *
+     * @return bool
+     */
+    function is_json($string) {
+        if ($string === '' || !is_string($string)) {
+            return false;
+        }
+
+        \json_decode($string);
+        if (\json_last_error()) {
+            return false;
+        }
+
+        return true;
+    }
+}

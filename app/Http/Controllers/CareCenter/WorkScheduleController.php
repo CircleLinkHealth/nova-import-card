@@ -46,8 +46,10 @@ class WorkScheduleController extends Controller
             ->whereNurseInfoId($nurse->id)
             ->get()
             ->sortBy(function ($item) {
-                return Carbon::createFromFormat('H:i:s',
-                    "$item->window_time_start");
+                return Carbon::createFromFormat(
+                    'H:i:s',
+                    "$item->window_time_start"
+                );
             });
 
         $holidays = $nurse->upcoming_holiday_dates;
@@ -149,12 +151,20 @@ class WorkScheduleController extends Controller
             ])
                 ->get()
                 ->sum(function ($window) {
-                    return Carbon::createFromFormat('H:i:s',
-                        $window->window_time_end)->diffInHours(Carbon::createFromFormat('H:i:s',
-                        $window->window_time_start));
-                }) + Carbon::createFromFormat('H:i',
-                $request->input('window_time_end'))->diffInHours(Carbon::createFromFormat('H:i',
-                $request->input('window_time_start')));
+                    return Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_end
+                    )->diffInHours(Carbon::createFromFormat(
+                        'H:i:s',
+                        $window->window_time_start
+                    ));
+                }) + Carbon::createFromFormat(
+                    'H:i',
+                    $request->input('window_time_end')
+                )->diffInHours(Carbon::createFromFormat(
+                    'H:i',
+                    $request->input('window_time_start')
+                ));
 
         $invalidWorkHoursNumber = false;
 
@@ -164,13 +174,17 @@ class WorkScheduleController extends Controller
 
         if ($validator->fails() || $windowExists || $invalidWorkHoursNumber) {
             if ($windowExists) {
-                $validator->getMessageBag()->add('window_time_start',
-                    'This window is overlapping with an already existing window.');
+                $validator->getMessageBag()->add(
+                    'window_time_start',
+                    'This window is overlapping with an already existing window.'
+                );
             }
 
             if ($invalidWorkHoursNumber) {
-                $validator->getMessageBag()->add('work_hours',
-                    'Daily work hours cannot be more than total window hours.');
+                $validator->getMessageBag()->add(
+                    'work_hours',
+                    'Daily work hours cannot be more than total window hours.'
+                );
             }
 
             return redirect()->back()
@@ -196,7 +210,6 @@ class WorkScheduleController extends Controller
             $nurseMessage = "Admin {$user->display_name} assigned Nurse {$nurseUser->display_name} to work for";
             $message = "$nurseMessage {$request->input('work_hours')} hours on $dayName between {$window->range()->start->format('h:i A T')} to {$window->range()->end->format('h:i A T')}";
             sendSlackMessage('#carecoachscheduling', $message);
-
         } else {
             $user = auth()->user();
 

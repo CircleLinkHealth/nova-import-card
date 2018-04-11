@@ -30,5 +30,4 @@ class AddForeignKeysToNurseInfoTable extends Migration
             $table->dropForeign('nurse_info_user_id_foreign');
         });
     }
-
 }

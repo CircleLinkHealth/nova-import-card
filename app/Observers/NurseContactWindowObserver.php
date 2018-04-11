@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-
 use App\NurseContactWindow;
 use Maknz\Slack\Facades\Slack;
 
@@ -18,6 +17,10 @@ class NurseContactWindowObserver
     public function created(NurseContactWindow $window)
     {
         $auth = auth()->user();
+
+        if (!$auth) {
+            return;
+        }
 
         if ($auth->id != $window->nurse->user->id) {
             return;
@@ -52,6 +55,4 @@ class NurseContactWindowObserver
 
         \sendSlackMessage('#carecoachscheduling', $sentence);
     }
-
-
 }

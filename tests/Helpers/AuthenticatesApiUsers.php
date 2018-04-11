@@ -2,7 +2,6 @@
 
 namespace Tests\Helpers;
 
-
 trait AuthenticatesApiUsers
 {
     protected $accessToken;

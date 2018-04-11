@@ -17,8 +17,7 @@ class EmailArrayValidatorServiceProvider extends ServiceProvider
         Validator::extend('email_array', function ($attribute, $value, $parameters, $validator) {
             $value = str_replace(' ', '', $value);
             $array = explode(',', $value);
-            foreach ($array as $email) //loop over values
-            {
+            foreach ($array as $email) { //loop over values
                 $email_to_validate['alert_email'][] = $email;
             }
             $rules = ['alert_email.*' => 'email'];

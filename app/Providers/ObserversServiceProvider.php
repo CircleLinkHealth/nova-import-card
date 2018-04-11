@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\Models\Holiday;
+use App\Models\ProblemCode;
 use App\NurseContactWindow;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
@@ -12,9 +13,14 @@ use App\Observers\HolidayObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
 use App\Observers\PatientObserver;
+use App\Observers\PracticeObserver;
+use App\Observers\ProblemCodeObserver;
+use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
 use App\PageTimer;
 use App\Patient;
+use App\Practice;
+use App\SaasAccount;
 use App\User;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,6 +39,9 @@ class ObserversServiceProvider extends ServiceProvider
         Holiday::observe(HolidayObserver::class);
         PageTimer::observe(PageTimerObserver::class);
         Patient::observe(PatientObserver::class);
+        Practice::observe(PracticeObserver::class);
+        ProblemCode::observe(ProblemCodeObserver::class);
+        SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
     }
 

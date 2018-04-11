@@ -31,5 +31,4 @@ class CreateFamiliesTable extends Migration
     {
         Schema::drop('families');
     }
-
 }

@@ -25,7 +25,6 @@ class EnrollmentCenterController extends Controller
 
         //if logged in ambassador is spanish, pick up a spanish patient
         if ($careAmbassador->speaks_spanish) {
-
             $enrollee = Enrollee
                 ::toCall()
                 ->where('lang', 'ES')
@@ -34,21 +33,17 @@ class EnrollmentCenterController extends Controller
 
             //if no spanish, get a EN user.
             if ($enrollee == null) {
-
                 $enrollee = Enrollee
                     ::toCall()
                     ->orderBy('attempt_count')
                     ->first();
-
             }
-
         } else { // auth ambassador doesn't speak ES, get a regular user.
 
             $enrollee = Enrollee
                 ::toCall()
                 ->orderBy('attempt_count')
                 ->first();
-
         }
 
         $engagedEnrollee = Enrollee::where([
@@ -63,10 +58,8 @@ class EnrollmentCenterController extends Controller
         }
 
         if ($enrollee == null) {
-
             //no calls available
             return view('enrollment-ui.no-available-calls');
-
         }
 
         //mark as engaged to prevent double dipping
@@ -74,13 +67,13 @@ class EnrollmentCenterController extends Controller
         $enrollee->care_ambassador_id = $careAmbassador->id;
         $enrollee->save();
 
-        return view('enrollment-ui.dashboard',
+        return view(
+            'enrollment-ui.dashboard',
             [
                 'enrollee' => $enrollee,
                 'report'   => CareAmbassadorLog::createOrGetLogs($careAmbassador->id),
             ]
         );
-
     }
 
     public function consented(Request $request)
@@ -136,11 +129,9 @@ class EnrollmentCenterController extends Controller
 
         if (is_array($request->input('days'))) {
             $enrollee->preferred_days = implode(', ', $request->input('days'));
-
         }
 
         if (is_array($request->input('times'))) {
-
             $enrollee->preferred_window = implode(', ', $request->input('times'));
         }
 
@@ -151,7 +142,6 @@ class EnrollmentCenterController extends Controller
         $enrollee->save();
 
         return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
-
     }
 
     public function unableToContact(Request $request)
@@ -188,7 +178,6 @@ class EnrollmentCenterController extends Controller
         $enrollee->save();
 
         return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
-
     }
 
     public function rejected(Request $request)
@@ -221,14 +210,11 @@ class EnrollmentCenterController extends Controller
         $enrollee->save();
 
         return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
-
     }
 
     public function training()
     {
 
         return view('enrollment-ui.training');
-
     }
-
 }

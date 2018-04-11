@@ -58,7 +58,7 @@
 
             <tr>
 
-                <td>CCM Services (CPT99490)</td>
+                <td>CCM Services (CPT 99490)</td>
                 <td>{{$billable}}</td>
                 <td>{{$rate}}</td>
                 <td>${{$invoice_amount}}</td>
@@ -70,7 +70,7 @@
     </div>
 
     <div class="col-sm-12 row" style="text-align: right; font-size: 25px;">
-        BALANCE DUE: ${{$invoice_amount}}.00
+        BALANCE DUE: ${{$invoice_amount}}
     </div>
 
 

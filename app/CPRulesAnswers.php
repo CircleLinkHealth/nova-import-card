@@ -2,14 +2,23 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class CPRulesAnswers extends Model {
+/**
+ * App\CPRulesAnswers
+ *
+ * @property int $aid
+ * @property string $value
+ * @property string|null $alt_answers
+ * @property int|null $a_sort
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereASort($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereAltAnswers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesAnswers whereValue($value)
+ * @mixin \Eloquent
+ */
+class CPRulesAnswers extends \App\BaseModel
+{
 
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql_no_prefix';
+
 
     /**
      * The database table used by the model.
@@ -33,6 +42,4 @@ class CPRulesAnswers extends Model {
     protected $fillable = ['value', 'alt_answers', 'a_sort'];
 
     public $timestamps = false;
-
-
 }

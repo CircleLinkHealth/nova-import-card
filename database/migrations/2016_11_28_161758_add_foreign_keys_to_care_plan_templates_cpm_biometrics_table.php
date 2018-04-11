@@ -34,5 +34,4 @@ class AddForeignKeysToCarePlanTemplatesCpmBiometricsTable extends Migration
             $table->dropForeign('care_plan_templates_cpm_biometrics_cpm_instruction_id_foreign');
         });
     }
-
 }

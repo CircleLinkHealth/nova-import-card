@@ -6,6 +6,7 @@ use App\Models\CPM\Biometrics\CpmWeight;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
+use Laravel\Dusk\Browser;
 use Maknz\Slack\Facades\Slack;
 
 trait CarePlanHelpers
@@ -57,16 +58,6 @@ trait CarePlanHelpers
             'member_user_id' => $this->provider->id,
             'type'           => CarePerson::SEND_ALERT_TO,
         ]);
-
-        $this
-            ->actingAs($this->provider)
-            ->visit("/manage-patients/{$patient->id}/careplan/team")
-            ->see('Edit Patient Care Team')
-            ->click('#add-care-team-member')
-            ->see('Billing Provider')
-            ->see('Lead Contact')
-            ->see('Send Alert')
-            ->see($this->provider->display_name);
     }
 
     public function fillCareplanPage1(
@@ -153,9 +144,9 @@ trait CarePlanHelpers
         $numberOfRowsToCreate = null
     ) {
         $carePlanTemplate = $patient->service()
-            ->firstOrDefaultCarePlan($patient)
-            ->carePlanTemplate()
-            ->first();
+                                    ->firstOrDefaultCarePlan($patient)
+                                    ->carePlanTemplate()
+                                    ->first();
 
         /*
          * Cpm Entity
@@ -167,7 +158,7 @@ trait CarePlanHelpers
             ?: $query->wherePivot('page', $page);
         $carePlanEntities = $query->get();
 
-        if (!empty($numberOfRowsToCreate)) {
+        if ( ! empty($numberOfRowsToCreate)) {
             if ($numberOfRowsToCreate > $carePlanEntities->count()) {
                 $numberOfRowsToCreate = rand(2, $carePlanEntities->count() - 1);
             }
@@ -176,18 +167,15 @@ trait CarePlanHelpers
         }
 
         $this
-            ->actingAs($this->provider)
+            ->be($this->provider)
             ->visit($url);
-
-        empty($sectionTitle)
-            ?: $this->see($sectionTitle);
 
         foreach ($carePlanEntities as $entity) {
             $this->select($entity->id, "{$relationship}[$entity->id]");
 
             $this->press('TestSubmit');
 
-            $this->seeInDatabase("{$entity->getTable()}_users", [
+            $this->assertDatabaseHas("{$entity->getTable()}_users", [
                 $entityIdFieldName   => $entity->id,
                 'patient_id'         => $patient->id,
                 'cpm_instruction_id' => $entity->pivot->cpm_instruction_id,
@@ -211,7 +199,6 @@ trait CarePlanHelpers
          * Hope this makes sense in the future :)
          */
         $this->assertGreaterThanOrEqual(count($carePlanEntities->all()), count($patientEntities));
-
     }
 
     public function fillCareplanPage2(
@@ -293,18 +280,21 @@ trait CarePlanHelpers
     public function printCarePlanTest(User $patient)
     {
         $billingProvider = User::find($patient->getBillingProviderIDAttribute());
-        $today = Carbon::now()->toFormattedDateString();
+        $today           = Carbon::now()->toFormattedDateString();
 
-        $this->actingAs($this->provider)
-            ->visit("/manage-patients/{$patient->id}/careplan/sections/3")
-            ->click('approve-forward')
-            ->seePageIs("/manage-patients/{$patient->id}/view-careplan?page=3")
-            ->see('Care Plan')
-            ->see($patient->fullName)
-            ->see($patient->phone)
-            ->see($today)
-            ->see($billingProvider->fullName)
-            ->see($billingProvider->phone);
+        $this->be($this->provider);
+
+        $this->browse(function (Browser $browser) use ($patient, $billingProvider, $today) {
+            $browser->visit("/manage-patients/{$patient->id}/careplan/sections/3")
+                    ->click('approve-forward')
+                    ->assertPathIs("/manage-patients/{$patient->id}/view-careplan?page=3")
+                    ->assertSee('Care Plan')
+                    ->assertSee($patient->fullName)
+                    ->assertSee($patient->phone)
+                    ->assertSee($today)
+                    ->assertSee($billingProvider->fullName)
+                    ->assertSee($billingProvider->phone);
+        });
 
         /**
          * Check that entities are on the page
@@ -337,106 +327,74 @@ trait CarePlanHelpers
                 continue;
             }
 
-            $this->see($entity->name);
+            $response->assertSee($entity->name);
         }
     }
 
     public function createNewPatient()
     {
-        $this->actingAs($this->provider)
-            ->visit(route('patients.dashboard'))
-            ->see('Add a Patient')
-            ->click('add-patient')
-            ->seePageIs('/manage-patients/careplan/demographics');
+        $newPatient = $this->getNewPatientObject();
 
+        $this->browse(function (Browser $browser) use ($newPatient) {
+            $browser->loginAs($this->provider)
+                    ->visit(route('patients.dashboard'))
+                    ->assertPathIs('/manage-patients/dashboard')
+                    ->assertSee('Add a Patient')
+                    ->click('@add-patient-btn')
+                    ->assertPathIs('/manage-patients/careplan/demographics')
+                    ->type('first_name', $newPatient->firstName)
+                    ->type('last_name', $newPatient->lastName)
+                    ->radio("#male", 'M')
+//                    ->radio('preferred_contact_language', $newPatient->language)
+                    ->type('mrn_number', $newPatient->mrn)
+//                    ->type('birth_date', $newPatient->dob)
+                    ->type('home_phone_number', $newPatient->homePhone)
+                    ->type('mobile_phone_number', $newPatient->cellPhone)
+                    ->type('email', $newPatient->email)
+                    ->type('address', $newPatient->streetAddress)
+                    ->type('city', $newPatient->city)
+                    ->select('state', $newPatient->state)
+                    ->type('zip', $newPatient->zip)
+                    ->type('agent_name', $newPatient->agentName)
+                    ->type('agent_telephone', $newPatient->agentPhone)
+                    ->type('agent_relationship', $newPatient->agentRelationship)
+                    ->type('agent_email', $newPatient->agentEmail)
+                    ->type('agent_email', $newPatient->agentEmail)
+//                    ->select($newPatient->contactMethod, 'preferred_contact_method')
+//                    ->type('consent_date', $newPatient->consentDate)
+                    ->select('timezone', $newPatient->timezone)
+                    ->select('ccm_status', $newPatient->ccmStatus)
+                    ->press('Add Patient')
+                    ->press('TestSubmit')
+                    ->select(10, 'preferred_contact_location')
+                    ->select([
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                    ], 'days')
+                    ->type($newPatient->windowTimeStart, 'window_start')
+                    ->type($newPatient->windowTimeEnd, 'window_end')
+                    ->press('@unit-test-submit');
+        });
 
-        $faker = Factory::create();
-
-        $firstName = $faker->firstName;
-        $lastName = $faker->lastName;
-        $mrn = $faker->randomNumber(6);
-        $genderCollection = [
-            'F',
-            'M',
-        ];
-        $gender = $genderCollection[array_rand($genderCollection, 1)];
-        $languageCollection = [
-            'EN',
-            'ES',
-        ];
-        $language = $languageCollection[array_rand($languageCollection, 1)];
-        $dob = $faker->date();
-        $homePhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
-        $cellPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
-        $email = $faker->email;
-        $streetAddress = $faker->streetAddress;
-        $city = $faker->city;
-        $state = $faker->stateAbbr;
-        $zip = $faker->postcode;
-        $agentName = $faker->name;
-        $agentPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
-        $agentRelationship = 'Next of Kin';
-        $agentEmail = $faker->email;
-        $contactMethod = 'CCT';
-        $consentDate = $faker->date();
-        $timezone = 'America/New_York';
-        $ccmStatus = 'enrolled';
-        $windowTimeStart = '09:00';
-        $windowTimeEnd = '19:00';
-
-        $this
-            ->type($firstName, 'first_name')
-            ->type($lastName, 'last_name')
-            ->select($gender, 'gender')
-            ->select($language, 'preferred_contact_language')
-            ->type($mrn, 'mrn_number')
-            ->type($dob, 'birth_date')
-            ->type($homePhone, 'home_phone_number')
-            ->type($cellPhone, 'mobile_phone_number')
-            ->type($email, 'email')
-            ->type($streetAddress, 'address')
-            ->type($city, 'city')
-            ->select($state, 'state')
-            ->type($zip, 'zip')
-            ->type($agentName, 'agent_name')
-            ->type($agentPhone, 'agent_telephone')
-            ->type($agentRelationship, 'agent_relationship')
-            ->type($agentEmail, 'agent_email')
-            ->type($agentEmail, 'agent_email')
-            ->select($contactMethod, 'preferred_contact_method')
-            ->type($consentDate, 'consent_date')
-            ->select($timezone, 'timezone')
-            ->select($ccmStatus, 'ccm_status')
-            ->press('Add Patient')
-            ->press('TestSubmit')
-            ->select(10, 'preferred_contact_location')
-            ->select([
-                1,
-                2,
-                3,
-                4,
-                5,
-            ], 'days')
-            ->type($windowTimeStart, 'window_start')
-            ->type($windowTimeEnd, 'window_end')
-            ->press('TestSubmit');
-
-        $this->seeInDatabase('users', [
-            'first_name'   => $firstName,
-            'last_name'    => $lastName,
-            'email'        => $email,
-            'display_name' => "$firstName $lastName",
+        $this->assertDatabaseHas('users', [
+            'first_name'   => $newPatient->firstName,
+            'last_name'    => $newPatient->lastName,
+            'email'        => $newPatient->email,
+            'display_name' => "$newPatient->firstName $newPatient->lastName",
             'program_id'   => 9,
-            'address'      => $streetAddress,
-            'city'         => $city,
-            'state'        => $state,
-            'zip'          => $zip,
-            'timezone'     => $timezone,
+            'address'      => $newPatient->streetAddress,
+            'city'         => $newPatient->city,
+            'state'        => $newPatient->state,
+            'zip'          => $newPatient->zip,
+            'timezone'     => $newPatient->timezone,
         ]);
 
-        $patient = User::whereEmail($email)->first();
+        $patient = User::whereEmail($newPatient->email)->first();
 
-        $this->seeInDatabase('location_user', [
+        $this->assertDatabaseHas('location_user', [
             'location_id' => 10,
             'user_id'     => $patient->id,
         ]);
@@ -457,28 +415,28 @@ trait CarePlanHelpers
         $patientInfo = $patient->patientInfo;
 
         for ($i = 1; $i < 6; $i++) {
-            $this->seeInDatabase('patient_contact_window', [
+            $this->assertDatabaseHas('patient_contact_window', [
                 'patient_info_id'   => $patientInfo->id,
                 'day_of_week'       => $i,
-                'window_time_start' => $windowTimeStart,
-                'window_time_end'   => $windowTimeEnd,
+                'window_time_start' => $newPatient->windowTimeStart,
+                'window_time_end'   => $newPatient->windowTimeEnd,
             ]);
         }
 
-        $this->seeInDatabase('patient_info', [
+        $this->assertDatabaseHas('patient_info', [
             'user_id'                    => $patient->id,
-            'agent_name'                 => $agentName,
-            'agent_telephone'            => $agentPhone,
-            'agent_email'                => $agentEmail,
-            'agent_relationship'         => $agentRelationship,
-            'birth_date'                 => $dob,
-            'ccm_status'                 => $ccmStatus,
-            'consent_date'               => $consentDate,
-            'gender'                     => $gender,
-            'mrn_number'                 => $mrn,
+            'agent_name'                 => $newPatient->agentName,
+            'agent_telephone'            => $newPatient->agentPhone,
+            'agent_email'                => $newPatient->agentEmail,
+            'agent_relationship'         => $newPatient->agentRelationship,
+            'birth_date'                 => $newPatient->dob,
+            'ccm_status'                 => $newPatient->ccmStatus,
+            'consent_date'               => $newPatient->consentDate,
+            'gender'                     => $newPatient->gender,
+            'mrn_number'                 => $newPatient->mrn,
             'preferred_contact_location' => 10,
-            'preferred_contact_language' => $language,
-            'preferred_contact_method'   => $contactMethod,
+            'preferred_contact_language' => $newPatient->language,
+            'preferred_contact_method'   => $newPatient->contactMethod,
             'daily_reminder_optin'       => 'Y',
             'daily_reminder_time'        => '08:00',
             'daily_reminder_areas'       => 'TBD',
@@ -487,17 +445,56 @@ trait CarePlanHelpers
             'hospital_reminder_areas'    => 'TBD',
         ]);
 
-        $this->seeInDatabase('care_plans', [
+        $this->assertDatabaseHas('care_plans', [
             'user_id' => $patient->id,
             'status'  => 'draft',
         ]);
 
-        //By default PHPUnit fails the test if the output buffer wasn't closed.
-        //So we're adding this to make the test work.
-        ob_end_clean();
-
-
         return $patient;
+    }
+
+    public function getNewPatientObject()
+    {
+        $faker = Factory::create();
+
+        $object = new \stdClass();
+
+        $object->firstName         = $faker->firstName;
+        $object->lastName          = $faker->lastName;
+        $object->mrn               = $faker->randomNumber(6);
+        $genderCollection          = [
+            'F',
+            'M',
+        ];
+        $object->gender            = $genderCollection[array_rand($genderCollection, 1)];
+        $object->genderRadio       = $object->gender == 'M'
+            ? '@male-gender'
+            : '@female-gender';
+        $languageCollection        = [
+            'EN',
+            'ES',
+        ];
+        $object->language          = $languageCollection[array_rand($languageCollection, 1)];
+        $object->dob               = $faker->date();
+        $object->homePhone         = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $object->cellPhone         = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $object->email             = $faker->email;
+        $object->streetAddress     = $faker->streetAddress;
+        $object->city              = $faker->city;
+        $object->state             = $faker->stateAbbr;
+        $object->zip               = $faker->postcode;
+        $object->agentName         = $faker->name;
+        $object->agentPhone        = StringManipulation::formatPhoneNumber($faker->phoneNumber);
+        $object->agentRelationship = 'Next of Kin';
+        $object->agentEmail        = $faker->email;
+        $object->contactMethod     = 'CCT';
+        $object->consentDate       = $faker->date();
+        $object->timezone          = 'America/New_York';
+        $object->ccmStatus         = 'enrolled';
+        $object->windowTimeStart   = '09:00';
+        $object->windowTimeEnd     = '19:00';
+
+        return $object;
     }
 
     public function report()

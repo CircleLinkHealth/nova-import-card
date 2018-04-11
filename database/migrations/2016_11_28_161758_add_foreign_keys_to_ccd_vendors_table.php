@@ -30,5 +30,4 @@ class AddForeignKeysToCcdVendorsTable extends Migration
             $table->dropForeign('ccd_vendors_program_id_foreign');
         });
     }
-
 }

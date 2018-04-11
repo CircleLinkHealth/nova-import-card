@@ -1,17 +1,19 @@
 <?php namespace App\Http\Controllers;
 
 use App\CareItem;
-use App\CareItemUserValue;
 use App\CarePlan;
-use App\Events\CarePlanWasApproved;
-use App\Formatters\WebixFormatter;
+use App\Contracts\ReportFormatter;
 use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\PageTimer;
 use App\Practice;
+use App\Repositories\PatientReadRepository;
+use App\Services\CareplanAssessmentService;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
+use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
+use App\Services\CareplanService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -24,17 +26,24 @@ use Illuminate\Support\Facades\DB;
 class ReportsController extends Controller
 {
     private $service;
+    private $assessmentService;
     private $formatter;
+    private $printPausedPatientLettersService;
+    private $patientReadRepository;
 
     public function __construct(
+        CareplanAssessmentService $assessmentService,
         ReportsService $service,
-        WebixFormatter $formatter,
-        Request $request
+        ReportFormatter $formatter,
+        Request $request,
+        PrintPausedPatientLettersService $printPausedPatientLettersService,
+        PatientReadRepository $patientReadRepository
     ) {
-        parent::__construct($request);
-
-        $this->service = $service;
-        $this->formatter = $formatter;
+        $this->service                          = $service;
+        $this->formatter                        = $formatter;
+        $this->assessmentService                = $assessmentService;
+        $this->printPausedPatientLettersService = $printPausedPatientLettersService;
+        $this->patientReadRepository            = $patientReadRepository;
     }
 
     //PROGRESS REPORT
@@ -43,10 +52,10 @@ class ReportsController extends Controller
         $patientId = false
     ) {
 
-        $user = User::find($patientId);
-        $treating = (new CpmProblemService())->getDetails($user);
-        $biometrics = $this->service->getBiometricsToMonitor($user);
-        $biometrics_data = [];
+        $user             = User::find($patientId);
+        $treating         = (app(CpmProblemService::class))->getDetails($user);
+        $biometrics       = $this->service->getBiometricsToMonitor($user);
+        $biometrics_data  = [];
         $biometrics_array = [];
 
         foreach ($biometrics as $biometric) {
@@ -54,11 +63,11 @@ class ReportsController extends Controller
         }
 
         foreach ($biometrics_data as $key => $value) {
-            $value = $value->all();
+            $value    = $value->all();
             $bio_name = $key;
             if ($value != null) {
-                $first = reset($value);
-                $last = end($value);
+                $first   = reset($value);
+                $last    = end($value);
                 $changes = $this->service
                     ->biometricsIndicators(
                         intval($last->Avg),
@@ -67,25 +76,31 @@ class ReportsController extends Controller
                         (new ReportsService())->getTargetValueForBiometric($bio_name, $user)
                     );
 
-                $biometrics_array[$bio_name]['change'] = $changes['change'];
+                $biometrics_array[$bio_name]['change']      = $changes['change'];
                 $biometrics_array[$bio_name]['progression'] = $changes['progression'];
-                $biometrics_array[$bio_name]['status'] = (isset($changes['status']))
+                $biometrics_array[$bio_name]['status']      = (isset($changes['status']))
                     ? $changes['status']
                     : 'Unchanged';
                 //$changes['bio']= $bio_name;debug($changes);
                 $biometrics_array[$bio_name]['lastWeekAvg'] = intval($last->Avg);
             }//debug($biometrics_array);
 
-            $count = 1;
+            $count                               = 1;
             $biometrics_array[$bio_name]['data'] = '';
-            $biometrics_array[$bio_name]['max'] = -1;
+            $biometrics_array[$bio_name]['max']  = -1;
             //$first = reset($array);
             if ($value) {
                 foreach ($value as $key => $value) {
-                    $biometrics_array[$bio_name]['unit'] = $this->service->biometricsUnitMapping(str_replace('_', ' ',
-                        $bio_name));
-                    $biometrics_array[$bio_name]['target'] = $this->service->getTargetValueForBiometric($bio_name,
-                        $user, false);
+                    $biometrics_array[$bio_name]['unit']    = $this->service->biometricsUnitMapping(str_replace(
+                        '_',
+                        ' ',
+                        $bio_name
+                    ));
+                    $biometrics_array[$bio_name]['target']  = $this->service->getTargetValueForBiometric(
+                        $bio_name,
+                        $user,
+                        false
+                    );
                     $biometrics_array[$bio_name]['reading'] = intval($value->Avg);
                     if (intval($value->Avg) > $biometrics_array[$bio_name]['max']) {
                         $biometrics_array[$bio_name]['max'] = intval($value->Avg);
@@ -115,7 +130,6 @@ class ReportsController extends Controller
         ];
 
         return view('wpUsers.patient.progress', $data);
-
     }
 
     public function u20(
@@ -125,25 +139,40 @@ class ReportsController extends Controller
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $month_selected = $time->format('m');
+            $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+            $month_selected      = $time->format('m');
             $month_selected_text = $time->format('F');
-            $year_selected = $time->format('Y');
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
+            $year_selected       = $time->format('Y');
+            $start               = $time->startOfMonth()->toDateString();
+            $end                 = $time->endOfMonth()->toDateString();
         } else {
-            $time = Carbon::now();
-            $month_selected = $time->format('m');
-            $year_selected = $time->format('Y');
+            $time                = Carbon::now();
+            $month_selected      = $time->format('m');
+            $year_selected       = $time->format('Y');
             $month_selected_text = $time->format('F');
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $start               = Carbon::now()->startOfMonth()->toDateString();
+            $end                 = Carbon::now()->endOfMonth()->toDateString();
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with('primaryPractice')
-            ->get();
+                        ->ofType('participant')
+                        ->with([
+                            'primaryPractice',
+                            'activities' => function ($q) use ($start, $end) {
+                                $q->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                                  ->whereBetween('performed_at', [
+                                      $start,
+                                      $end,
+                                  ])
+                                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                  ->orderBy('performed_at', 'desc');
+                            },
+                        ])
+                        ->whereHas('patientSummaries', function ($q) use ($time) {
+                            $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
+                              ->where('ccm_time', '<', 1200);
+                        })
+                        ->get();
 
         $u20_patients = [];
 
@@ -160,7 +189,7 @@ class ReportsController extends Controller
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM = [
+        $RPM      = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -170,13 +199,13 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM = [
+        $TCM      = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other = [
+        $Other    = [
             'other',
             'Medication Reconciliation',
         ];
@@ -186,26 +215,17 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['site'] = $patient->primaryPractice->display_name;
 
             $u20_patients[$patient_counter]['colsum_careplan'] = 0;
-            $u20_patients[$patient_counter]['colsum_changes'] = 0;
+            $u20_patients[$patient_counter]['colsum_changes']  = 0;
             $u20_patients[$patient_counter]['colsum_progress'] = 0;
-            $u20_patients[$patient_counter]['colsum_rpm'] = 0;
-            $u20_patients[$patient_counter]['colsum_tcc'] = 0;
-            $u20_patients[$patient_counter]['colsum_other'] = 0;
-            $u20_patients[$patient_counter]['colsum_total'] = 0;
-            $u20_patients[$patient_counter]['ccm_status'] = ucwords($patient->CCMStatus);
-            $u20_patients[$patient_counter]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-            $u20_patients[$patient_counter]['patient_name'] = $patient->fullName;
-            $u20_patients[$patient_counter]['patient_id'] = $patient->id;
-            $acts = DB::table('lv_activities')
-                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                ->where('patient_id', $patient->id)
-                ->whereBetween('performed_at', [
-                    $start,
-                    $end,
-                ])
-                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                ->orderBy('performed_at', 'desc')
-                ->get();
+            $u20_patients[$patient_counter]['colsum_rpm']      = 0;
+            $u20_patients[$patient_counter]['colsum_tcc']      = 0;
+            $u20_patients[$patient_counter]['colsum_other']    = 0;
+            $u20_patients[$patient_counter]['colsum_total']    = 0;
+            $u20_patients[$patient_counter]['ccm_status']      = ucwords($patient->CCMStatus);
+            $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$patient_counter]['patient_name']    = $patient->fullName;
+            $u20_patients[$patient_counter]['patient_id']      = $patient->id;
+            $acts                                              = $patient->activities;
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {
@@ -231,7 +251,6 @@ class ReportsController extends Controller
                     unset($u20_patients[$patient_counter]);
                     continue 2;
                 }
-
             }
             $patient_counter++;
         }
@@ -242,7 +261,7 @@ class ReportsController extends Controller
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = [
+        $months   = [
             'Jan',
             'Feb',
             'Mar',
@@ -281,32 +300,31 @@ class ReportsController extends Controller
         $input = $request->all();
 
         if (isset($input['selectMonth'])) {
-            $time = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
-            $start = $time->startOfMonth()->format('Y-m-d');
-            $end = $time->endOfMonth()->format('Y-m-d');
+            $time                = Carbon::createFromDate($input['selectYear'], $input['selectMonth'], 15);
+            $start               = $time->startOfMonth()->format('Y-m-d');
+            $end                 = $time->endOfMonth()->format('Y-m-d');
             $month_selected_text = $time->format('F');
-            $month_selected = $time->format('m');
-            $year_selected = $time->format('Y');
+            $month_selected      = $time->format('m');
+            $year_selected       = $time->format('Y');
         } else {
-            $time = Carbon::now();
-            $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-            $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+            $time                = Carbon::now();
+            $start               = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $end                 = Carbon::now()->endOfMonth()->format('Y-m-d');
             $month_selected_text = $time->format('F');
-            $month_selected = $time->format('m');
-            $year_selected = $time->format('Y');
-
+            $month_selected      = $time->format('m');
+            $year_selected       = $time->format('Y');
         }
 
         $patients = User::intersectPracticesWith(auth()->user())
-            ->ofType('participant')
-            ->with('primaryPractice')
-            ->get();
+                        ->ofType('participant')
+                        ->with('primaryPractice')
+                        ->get();
 
-        $u20_patients = [];
+        $u20_patients      = [];
         $billable_patients = [];
 
         // ROLLUP CATEGORIES
-        $CarePlan = [
+        $CarePlan  = [
             'Edit/Modify Care Plan',
             'Initial Care Plan Setup',
             'Care Plan View/Print',
@@ -314,11 +332,11 @@ class ReportsController extends Controller
             'Patient Item Detail Review',
             'Review Care Plan (offline)',
         ];
-        $Progress = [
+        $Progress  = [
             'Review Patient Progress (offline)',
             'Progress Report Review/Print',
         ];
-        $RPM = [
+        $RPM       = [
             'Patient Alerts Review',
             'Patient Overview Review',
             'Biometrics Data Review',
@@ -328,48 +346,48 @@ class ReportsController extends Controller
             'Medications Data Review',
             'Input Observation',
         ];
-        $TCM = [
+        $TCM       = [
             'Test (Scheduling, Communications, etc)',
             'Transitional Care Management Activities',
             'Call to Other Care Team Member',
             'Appointments',
         ];
-        $Other = [
+        $Other     = [
             'other',
             'Medication Reconciliation',
         ];
         $act_count = 0;
 
         foreach ($patients as $patient) {
-            $u20_patients[$act_count]['site'] = $patient->primaryPractice->display_name;
+            $u20_patients[$act_count]['site']            = $patient->primaryPractice->display_name;
             $u20_patients[$act_count]['colsum_careplan'] = 0;
-            $u20_patients[$act_count]['colsum_changes'] = 0;
+            $u20_patients[$act_count]['colsum_changes']  = 0;
             $u20_patients[$act_count]['colsum_progress'] = 0;
-            $u20_patients[$act_count]['colsum_rpm'] = 0;
-            $u20_patients[$act_count]['colsum_tcc'] = 0;
-            $u20_patients[$act_count]['colsum_other'] = 0;
-            $u20_patients[$act_count]['colsum_total'] = 0;
-            $u20_patients[$act_count]['ccm_status'] = ucwords($patient->CCMStatus);
-            $u20_patients[$act_count]['dob'] = Carbon::parse($patient->birthDate)->format('m/d/Y');
-            $u20_patients[$act_count]['patient_name'] = $patient->fullName;
-            $provider = User::find(intval($patient->getBillingProviderIDAttribute()));
+            $u20_patients[$act_count]['colsum_rpm']      = 0;
+            $u20_patients[$act_count]['colsum_tcc']      = 0;
+            $u20_patients[$act_count]['colsum_other']    = 0;
+            $u20_patients[$act_count]['colsum_total']    = 0;
+            $u20_patients[$act_count]['ccm_status']      = ucwords($patient->CCMStatus);
+            $u20_patients[$act_count]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$act_count]['patient_name']    = $patient->fullName;
+            $provider                                    = User::find(intval($patient->getBillingProviderIDAttribute()));
             if ($provider) {
                 $u20_patients[$act_count]['provider_name'] = $provider->fullName;
             } else {
                 $u20_patients[$act_count]['provider_name'] = '';
             }
             $u20_patients[$act_count]['patient_id'] = $patient->id;
-            $acts = DB::table('lv_activities')
-                ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
-                ->where('patient_id', $patient->id)
-                ->whereBetween('performed_at', [
-                    $start,
-                    $end,
-                ])
-                ->where('duration', '>', 1200)
-                ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                ->orderBy('performed_at', 'desc')
-                ->get();
+            $acts                                   = DB::table('lv_activities')
+                                                        ->select(DB::raw('*,DATE(performed_at),provider_id, type, SUM(duration) as duration'))
+                                                        ->where('patient_id', $patient->id)
+                                                        ->whereBetween('performed_at', [
+                                                            $start,
+                                                            $end,
+                                                        ])
+                                                        ->where('duration', '>', 1200)
+                                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                                                        ->orderBy('performed_at', 'desc')
+                                                        ->get();
 
             foreach ($acts as $activity) {
                 if (in_array($activity->type, $CarePlan)) {
@@ -390,7 +408,6 @@ class ReportsController extends Controller
                     }
                 }
                 $u20_patients[$act_count]['colsum_total'] += intval($activity->duration);
-
             }
 
             if ($u20_patients[$act_count]['colsum_total'] < 1200) {
@@ -398,7 +415,6 @@ class ReportsController extends Controller
             }
 
             $act_count++;
-
         }
 
         $reportData = "data:" . json_encode(array_values($u20_patients)) . "";
@@ -408,7 +424,7 @@ class ReportsController extends Controller
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
-        $months = [
+        $months   = [
             'Jan',
             'Feb',
             'Mar',
@@ -448,13 +464,13 @@ class ReportsController extends Controller
             // get and validate current user
             \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } else {
             // get user
             $wpUser = User::find($id);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response("User not found", 401);
             }
         }
@@ -464,10 +480,12 @@ class ReportsController extends Controller
         return json_encode($feed);
     }
 
-    public function viewPdfCarePlan(Request $request,
-                                    $patientId = false)
-    {
-        if (!$patientId) {
+    public function viewPdfCarePlan(
+        Request $request,
+        $patientId = false
+    ) {
+
+        if ( ! $patientId) {
             return "Patient Not Found..";
         }
 
@@ -476,32 +494,59 @@ class ReportsController extends Controller
         return view('patient.careplan.view-pdf-careplan', compact(['patient']));
     }
 
-    public function viewPrintCareplan(
+    public function makeAssessment(
         Request $request,
-        $patientId = false,
+        $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
-        if (!$patientId) {
+        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8) && !auth()->user()->hasRole('administrator')) {
+            return abort(403);
+        }
+
+        if ( ! $patientId) {
             return "Patient Not Found..";
         }
 
-        $patient = User::find($patientId);
+        $patient = User::with('carePlan')->find($patientId);
 
-        if ($patient->careplan_mode == CarePlan::PDF) {
-            return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
+        if ( ! $patient) {
+            return "Patient Not Found..";
         }
+
+
+        // if ( ! $patient->isCcmEligible()) {
+        //     return redirect()->route('patient.careplan.print', ['patientId' => $patientId]);
+        // }
 
         $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
 
-        if (!$careplan) {
+        if ( ! $careplan) {
             return 'Careplan not found...';
         }
 
-        $patient = User::find($patientId);
-
         $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+        $editable = true;
 
-        return view('wpUsers.patient.careplan.print',
+        $assessmentQuery = $this->assessmentService->repo()->model()->where(['careplan_id' => $patientId]);
+        if ($approverId) {
+            $assessmentQuery = $assessmentQuery->where([ 'provider_approver_id' => $approverId ]);
+        }
+        
+        $assessment = $assessmentQuery->first();
+
+        if ($assessment) {
+            $assessment->unload();
+            $editable = $patient->isCcmEligible() || ($assessment->provider_approver_id != auth()->user()->id);
+        }
+
+
+
+        $approver = $assessment
+            ? $assessment->approver()->first()
+            : null;
+
+        return view(
+            'wpUsers.patient.careplan.assessment',
             [
                 'patient'                 => $patient,
                 'problems'                => $careplan[$patientId]['problems'],
@@ -516,7 +561,62 @@ class ReportsController extends Controller
                 'appointments'            => $careplan[$patientId]['appointments'],
                 'other'                   => $careplan[$patientId]['other'],
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
-            ]);
+                'assessment'              => $assessment,
+                'approver'                => $approver,
+                'editable'                => $editable
+            ]
+        );
+
+    }
+
+    public function viewPrintCareplan(
+        Request $request,
+        $patientId = false,
+        CcdInsurancePolicyService $insurances, CareplanService $careplanService
+    ) {
+        if ( ! $patientId) {
+            return "Patient Not Found..";
+        }
+
+        $patient = User::find($patientId);
+
+        if ($patient->careplan_mode == CarePlan::PDF) {
+            return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
+        }
+
+        $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$patient]);
+
+        if ( ! $careplan) {
+            return 'Careplan not found...';
+        }
+
+        $showInsuranceReviewFlag = $insurances->checkPendingInsuranceApproval($patient);
+
+        $skippedAssessment = $request->has('skippedAssessment');
+
+        $recentSubmission = $request->input('recentSubmission') ?? false;
+
+        return view(
+            'wpUsers.patient.careplan.print',
+            [
+                'patient'                 => $patient,
+                'problems'                => $careplan[$patientId]['problems'],
+                'problemNames'            => $careplan[$patientId]['problem'],
+                'biometrics'              => $careplan[$patientId]['bio_data'],
+                'symptoms'                => $careplan[$patientId]['symptoms'],
+                'lifestyle'               => $careplan[$patientId]['lifestyle'],
+                'medications_monitor'     => $careplan[$patientId]['medications'],
+                'taking_medications'      => $careplan[$patientId]['taking_meds'],
+                'allergies'               => $careplan[$patientId]['allergies'],
+                'social'                  => $careplan[$patientId]['social'],
+                'appointments'            => $careplan[$patientId]['appointments'],
+                'other'                   => $careplan[$patientId]['other'],
+                'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
+                'skippedAssessment'       => $skippedAssessment,
+                'recentSubmission'        => $recentSubmission,
+                'careplan'                => $careplanService->careplan($patientId)
+            ]
+        );
     }
 
     public function biometricsCharts(
@@ -526,12 +626,12 @@ class ReportsController extends Controller
 
         $patient = User::find($patientId);
 
-        $biometrics = [
+        $biometrics       = [
             'Weight',
             'Blood_Sugar',
             'Blood_Pressure',
         ];
-        $biometrics_data = [];
+        $biometrics_data  = [];
         $biometrics_array = [];
 
         foreach ($biometrics as $biometric) {
@@ -539,8 +639,8 @@ class ReportsController extends Controller
         }            //debug($biometrics_data);
 
         foreach ($biometrics_data as $key => $value) {
-            $bio_name = $key;
-            $count = 1;
+            $bio_name                            = $key;
+            $count                               = 1;
             $biometrics_array[$bio_name]['data'] = '';
             if ($value) {
                 foreach ($value as $key => $value) {
@@ -563,23 +663,23 @@ class ReportsController extends Controller
     {
         // get all users with 1 condition
         $usersCondition = [];
-        $problems = [];
-        $cpmProblems = CpmProblem::all();
+        $problems       = [];
+        $cpmProblems    = CpmProblem::all();
         if ($cpmProblems->count() > 0) {
             foreach ($cpmProblems as $cpmProblem) {
                 $problems[$cpmProblem->id] = $cpmProblem->name;
-                $problemNames[] = $cpmProblem->name;
+                $problemNames[]            = $cpmProblem->name;
             }
         }
-        $careItemNames = CareItem::whereIn('display_name', $problemNames)->pluck('display_name', 'id')->all();
-        $careItems = CareItem::whereIn('display_name', $problemNames)->pluck('id')->all();
+        $careItemNames      = CareItem::whereIn('display_name', $problemNames)->pluck('display_name', 'id')->all();
+        $careItems          = CareItem::whereIn('display_name', $problemNames)->pluck('id')->all();
         $careItemUserValues = CareItemUserValue::whereIn('care_item_id', $careItems)->where('value', 'Active')->get();
         if ($careItemUserValues->count() > 0) {
             foreach ($careItemUserValues as $careItemUserValue) {
                 $usersCondition[$careItemUserValue->user_id] = $careItemNames[$careItemUserValue->care_item_id];
             }
         }
-        $date = date('Y-m-d H:i:s');
+        $date  = date('Y-m-d H:i:s');
         $users = User::all();
 
         Excel::create('CLH-Report-' . $date, function ($excel) use (
@@ -593,7 +693,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T1');
@@ -624,7 +724,7 @@ class ReportsController extends Controller
                         $condition = $usersCondition[$user->id];
                     }
                     $programName = 'N/A';
-                    $program = Practice::find($user->program_id);
+                    $program     = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
@@ -649,12 +749,7 @@ class ReportsController extends Controller
 
     public function excelReportT2()
     {
-        // get all users with paused ccm_status
-        $users = User::with('patientInfo')
-            ->whereHas('patientInfo', function ($q) {
-                $q->where('ccm_status', '=', 'paused');
-            })
-            ->get();
+        $users = $this->patientReadRepository->paused()->fetch();
 
         $date = date('Y-m-d H:i:s');
 
@@ -668,7 +763,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T2');
@@ -715,29 +810,29 @@ class ReportsController extends Controller
                     }
 
                     $billingProvider = User::find($user->billingProviderID);
-                    if (!$billingProvider) {
-                        $billingProvider = '';
+                    if ( ! $billingProvider) {
+                        $billingProvider      = '';
                         $billingProviderPhone = '';
                     } else {
-                        $billingProviderName = $billingProvider->display_name;
+                        $billingProviderName  = $billingProvider->display_name;
                         $billingProviderPhone = $billingProvider->phone;
                     }
 
                     $location = Location::find($user->patientInfo->preferred_contact_location);
-                    if (!$location) {
-                        $locationName = '';
-                        $locationPhone = '';
+                    if ( ! $location) {
+                        $locationName    = '';
+                        $locationPhone   = '';
                         $locationAddress = '';
-                        $locationCity = '';
-                        $locationState = '';
-                        $locationZip = '';
+                        $locationCity    = '';
+                        $locationState   = '';
+                        $locationZip     = '';
                     } else {
-                        $locationName = $location->name;
-                        $locationPhone = $location->phone;
+                        $locationName    = $location->name;
+                        $locationPhone   = $location->phone;
                         $locationAddress = $location->address_line_1;
-                        $locationCity = $location->city;
-                        $locationState = $location->state;
-                        $locationZip = $location->postal_code;
+                        $locationCity    = $location->city;
+                        $locationState   = $location->state;
+                        $locationZip     = $location->postal_code;
                     }
 
                     $sheet->appendRow([
@@ -785,14 +880,14 @@ class ReportsController extends Controller
     {
         // get all users with paused ccm_status
         $users = User::with('meta')
-            ->with('roles')
-            ->whereHas('roles', function ($q) {
-                $q->where(function ($query) {
-                    $query->orWhere('name', 'care-center');
-                    $query->orWhere('name', 'no-ccm-care-center');
-                });
-            })
-            ->get();
+                     ->with('roles')
+                     ->whereHas('roles', function ($q) {
+                         $q->where(function ($query) {
+                             $query->orWhere('name', 'care-center');
+                             $query->orWhere('name', 'no-ccm-care-center');
+                         });
+                     })
+                     ->get();
 
         $date = date('Y-m-d H:i:s');
 
@@ -806,7 +901,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T3');
@@ -847,15 +942,14 @@ class ReportsController extends Controller
                             $dt->format('Y-m-d') . ' 00:00:01',
                             $dt->format('Y-m-d') . ' 23:59:59',
                         ])
-                            ->where('provider_id', $user->id)
-                            ->where('activity_type', '!=', '')
-                            ->sum('duration');
+                                             ->where('provider_id', $user->id)
+                                             ->where('activity_type', '!=', '')
+                                             ->sum('duration');
 
                         $rowUserValues[] = number_format((float)($pageTime / 60), 2, '.', '');;
                     }
 
                     $sheetRows[] = $rowUserValues;
-
                 }
 
                 $sheetRows = array_reverse($sheetRows);
@@ -881,10 +975,10 @@ class ReportsController extends Controller
     {
         // get all patients
         $users = User::with('roles')
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'participant');
-            })
-            ->get();
+                     ->whereHas('roles', function ($q) {
+                         $q->where('name', 'participant');
+                     })
+                     ->get();
 
         $date = date('Y-m-d H:i:s');
 
@@ -898,7 +992,7 @@ class ReportsController extends Controller
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                ->setCompany('CircleLink Health');
+                  ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Report T4');
@@ -936,7 +1030,7 @@ class ReportsController extends Controller
                     }
 
                     // provider
-                    $billingProvider = User::find($user->billingProviderID);
+                    $billingProvider     = User::find($user->billingProviderID);
                     $billingProviderName = '';
                     if ($billingProvider) {
                         $billingProviderName = $billingProvider->display_name;
@@ -944,7 +1038,7 @@ class ReportsController extends Controller
 
                     // program
                     $programName = 'N/A';
-                    $program = Practice::find($user->program_id);
+                    $program     = Practice::find($user->program_id);
                     if ($program) {
                         $programName = $program->display_name;
                     }
@@ -954,47 +1048,47 @@ class ReportsController extends Controller
                     if ($seconds < 600) {
                         //continue 1;
                     }
-                    $H = floor($seconds / 3600);
-                    $i = ($seconds / 60) % 60;
-                    $s = $seconds % 60;
+                    $H           = floor($seconds / 3600);
+                    $i           = ($seconds / 60) % 60;
+                    $s           = $seconds % 60;
                     $monthlyTime = sprintf("%03d:%02d", $i, $s);
 
                     $activity1comment = '';
-                    $activity1status = '';
-                    $activity1date = '';
+                    $activity1status  = '';
+                    $activity1date    = '';
                     $activity2comment = '';
-                    $activity2status = '';
-                    $activity2date = '';
+                    $activity2status  = '';
+                    $activity2date    = '';
                     $activity3comment = '';
-                    $activity3status = '';
-                    $activity3date = '';
-                    $activities = $user->notes()
-                        ->orderBy('performed_at', 'DESC')
-                        ->limit(3)
-                        ->get();
+                    $activity3status  = '';
+                    $activity3date    = '';
+                    $activities       = $user->notes()
+                                             ->orderBy('performed_at', 'DESC')
+                                             ->limit(3)
+                                             ->get();
                     if ($activities->count() > 0) {
                         $a = 0;
                         foreach ($activities as $activity) {
-                            $comment = $activity->body;
+                            $comment    = $activity->body;
                             $callStatus = '';
-                            $call = $activity->call()->first();
+                            $call       = $activity->call()->first();
                             if ($call) {
                                 $callStatus = $call->status;
                             }
                             if ($a == 0) {
                                 $activity1comment = $activity->id . ' ' . $comment;
-                                $activity1status = $callStatus;
-                                $activity1date = $activity->performed_at;
+                                $activity1status  = $callStatus;
+                                $activity1date    = $activity->performed_at;
                             }
                             if ($a == 1) {
                                 $activity2comment = $activity->id . ' ' . $comment;
-                                $activity2status = $callStatus;
-                                $activity2date = $activity->performed_at;
+                                $activity2status  = $callStatus;
+                                $activity2date    = $activity->performed_at;
                             }
                             if ($a == 2) {
                                 $activity3comment = $activity->id . ' ' . $comment;
-                                $activity3status = $callStatus;
-                                $activity3date = $activity->performed_at;
+                                $activity3status  = $callStatus;
+                                $activity3date    = $activity->performed_at;
                             }
                             $a++;
                         }
@@ -1020,5 +1114,35 @@ class ReportsController extends Controller
                 }
             });
         })->export('xls');
+    }
+
+    public function pausedPatientsLetterPrintList()
+    {
+        $patients = false;
+
+        $pausedPatients = $this->printPausedPatientLettersService->getPausedPatients();
+
+        if ($pausedPatients->isNotEmpty()) {
+            $patients = $pausedPatients->toJson();
+        }
+
+        $url = route('get.paused.letters.file') . '?patientUserIds=';
+
+        return view('patient.printPausedPatientsLetters', compact(['patients', 'url']));
+    }
+
+    public function getPausedLettersFile(Request $request)
+    {
+        if (!$request->has('patientUserIds')) {
+            throw new \InvalidArgumentException("patientUserIds is a required parameter", 422);
+        }
+
+        $viewOnly = $request->has('view');
+
+        $userIdsToPrint = explode(',', $request['patientUserIds']);
+
+        $fullPathToFile = $this->printPausedPatientLettersService->makePausedLettersPdf($userIdsToPrint, $viewOnly);
+
+        return response()->file($fullPathToFile);
     }
 }

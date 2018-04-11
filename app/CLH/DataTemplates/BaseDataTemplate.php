@@ -2,7 +2,6 @@
 
 namespace App\CLH\DataTemplates;
 
-
 abstract class BaseDataTemplate
 {
     public function getArray()

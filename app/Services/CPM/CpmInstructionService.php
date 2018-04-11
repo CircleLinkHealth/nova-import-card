@@ -8,15 +8,67 @@
 
 namespace App\Services\CPM;
 
-
-use App\Models\CPM\CpmInstruction;
 use App\User;
+use App\Models\CPM\CpmInstruction;
+use App\Repositories\CpmInstructionRepository;
+use App\Repositories\UserRepositoryEloquent;
 
 class CpmInstructionService
 {
+    private $instructionsRepo;
+    private $userRepo;
+    
+    public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo) {
+        $this->instructionsRepo = $instructionsRepo;
+        $this->userRepo = $userRepo;
+    }
+
+    public function repo() {
+        return $this->instructionsRepo;
+    }
+
+    public function instructions() {
+        $instructions = $this->repo()->model()->paginate(15);
+        $instructions->getCollection()->transform([$this, 'setupInstruction']);
+        return $instructions;
+    }
+
+    public function instruction($id) {
+        $instruction = $this->repo()->model()->find($id);
+        if ($instruction) return $this->setupInstruction($instruction);
+        else return null;
+    }
+
+    public function create($name) {
+        if ($name) {
+            $instruction = new CpmInstruction();
+            $instruction->name = $name;
+            $instruction->is_default = 0;
+            $instruction->save();
+            return $instruction;
+        }
+    }
+    
+    public function edit($id, $text) {
+        if ($id && $text) {
+            $query = CpmInstruction::where('id', $id);
+            $query->update(['name' => $text ]);
+            return $query->first();
+        }
+    }
+
+    function setupInstruction($value) {
+        $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
+            return $p->id;
+        });
+        return $value;
+    }
+
     public function syncWithUser(User $user, $relationship, $entityForeign, $entityId, $instructionInput)
     {
-        if (!method_exists($user, $relationship)) throw new \Exception('Relationship does not exist', 500);
+        if (!method_exists($user, $relationship)) {
+            throw new \Exception('Relationship does not exist', 500);
+        }
         
         $pivotTableName = snake_case($relationship).'_users';
 
@@ -30,9 +82,13 @@ class CpmInstructionService
 
             $oldInstruction = CpmInstruction::find($oldInstructionId);
 
-            if (empty($oldInstruction)) return;
+            if (empty($oldInstruction)) {
+                return;
+            }
 
-            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) return;
+            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) {
+                return;
+            }
 
             $userWithSameInstr = \DB::table($pivotTableName)
                 ->where('cpm_instruction_id', '=', 1025)

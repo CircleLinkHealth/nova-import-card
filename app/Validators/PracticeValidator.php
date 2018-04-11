@@ -13,5 +13,5 @@ class PracticeValidator extends LaravelValidator
             'name' => 'required|unique:practices,name',
         ],
         ValidatorInterface::RULE_UPDATE => [],
-   ];
+    ];
 }

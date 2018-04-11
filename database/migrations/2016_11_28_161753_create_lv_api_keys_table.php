@@ -35,5 +35,4 @@ class CreateLvApiKeysTable extends Migration
     {
         Schema::drop('lv_api_keys');
     }
-
 }

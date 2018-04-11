@@ -32,5 +32,4 @@ class AddForeignKeysToPatientSessionsTable extends Migration
             $table->dropForeign('patient_sessions_user_id_foreign');
         });
     }
-
 }

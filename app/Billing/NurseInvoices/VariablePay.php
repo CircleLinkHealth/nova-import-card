@@ -1,6 +1,5 @@
 <?php namespace App\Billing\NurseInvoices;
 
-
 use App\Activity;
 use App\Nurse;
 use App\NurseCareRateLog;
@@ -32,10 +31,9 @@ class VariablePay extends NurseInvoice
 
         $this->report = NurseMonthlySummary::where('nurse_id', $nurse->id)->where('month_year', $day_start)->first();
 
-        if($this->report != null){
-
+        if ($this->report != null) {
             $this->ccm_over_duration = round($this->report->accrued_after_ccm / 3600, 1);
-            $this->ccm_under_duration = round($this->report->accrued_towards_ccm /3600 , 1);
+            $this->ccm_under_duration = round($this->report->accrued_towards_ccm /3600, 1);
 
             $this->ccm_under_payable =  $this->ccm_under_duration * $nurse->high_rate;
             $this->ccm_over_payable = $this->ccm_over_duration * $nurse->low_rate;
@@ -44,9 +42,7 @@ class VariablePay extends NurseInvoice
 
             $this->data['after'] = ($this->ccm_over_duration);
             $this->data['towards'] = ($this->ccm_under_duration);
-
         } else {
-
             $this->ccm_over_duration = 0;
             $this->ccm_under_duration = 0;
             $this->ccm_under_payable = 0;
@@ -54,9 +50,7 @@ class VariablePay extends NurseInvoice
             $this->data['after'] = 0;
             $this->data['towards'] = 0;
             $this->data['payable'] = 0;
-
         }
-
     }
 
     public function activityDurationForPeriod()
@@ -69,7 +63,6 @@ class VariablePay extends NurseInvoice
             'Low Rate'  => $this->ccm_over_payable,
 
         ];
-
     }
 
     public function getItemizedActivities()
@@ -83,7 +76,7 @@ class VariablePay extends NurseInvoice
         while ($this->end->toDateString() >= $dayCounter) {
             $raw_after = NurseCareRateLog::where('nurse_id', $this->nurse->id)
                 ->where(function ($q) use
-                (
+                    (
                     $dayCounter
                 ) {
                     $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())
@@ -95,7 +88,7 @@ class VariablePay extends NurseInvoice
 
             $raw_towards = NurseCareRateLog::where('nurse_id', $this->nurse->id)
                 ->where(function ($q) use
-                (
+                    (
                     $dayCounter
                 ) {
                     $q->where('created_at', '>=', Carbon::parse($dayCounter)->startOfDay())
@@ -108,11 +101,8 @@ class VariablePay extends NurseInvoice
             $this->data[$dayCounter]['towards'] = round($raw_towards / 3600, 1);
 
             $dayCounter = Carbon::parse($dayCounter)->addDay(1)->toDateString();
-
         }
 
         return $this->data;
-
     }
-
 }

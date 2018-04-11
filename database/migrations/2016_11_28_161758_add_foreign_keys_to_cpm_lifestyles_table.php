@@ -30,5 +30,4 @@ class AddForeignKeysToCpmLifestylesTable extends Migration
             $table->dropForeign('cpm_lifestyles_care_item_id_foreign');
         });
     }
-
 }

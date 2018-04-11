@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Algorithms\Calls\SuccessfulHandler;
 use App\Algorithms\Calls\UnsuccessfulHandler;
 use App\Patient;
@@ -12,17 +11,17 @@ use Illuminate\Http\Request;
 class AlgoController extends Controller
 {
 
-    public function createMock(Request $request){
+    public function createMock(Request $request)
+    {
 
 
         return view('admin.algo.mocker');
-        
     }
 
-    public function computeMock(Request $request){
+    public function computeMock(Request $request)
+    {
 
-        if($request->ajax()){
-
+        if ($request->ajax()) {
             $ccm = $request->input('seconds');
             $date = Carbon::parse($request->input('date'));
             $status = (bool) $request->input('status');
@@ -30,8 +29,7 @@ class AlgoController extends Controller
 
             $guineaPig = Patient::find(1272);
 
-            if($status){
-
+            if ($status) {
                 //Pass in a patient, and a time to start calculations.
 
                 //in this case, the calculation is the first day of the given months's week.
@@ -40,31 +38,20 @@ class AlgoController extends Controller
 
                 $day = (new SuccessfulHandler($guineaPig, $date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
-
-
-
             } else {
-
-
-                $day = (new UnsuccessfulHandler($guineaPig,$date))
+                $day = (new UnsuccessfulHandler($guineaPig, $date))
                                     ->getPatientOffset($ccm, $date->weekOfMonth);
-
-
             }
 
             $days = [];
 
-            foreach ($contact_day as $week_day){
+            foreach ($contact_day as $week_day) {
                 $days[] = Carbon::parse($day)->next($week_day);
             }
 
             $upcoming = min($days);
 
             return $upcoming->format('l, jS M');
-
         }
-
     }
-    
-
 }

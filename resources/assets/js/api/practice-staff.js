@@ -8,7 +8,7 @@ export default {
 
         window.axios.get('practice/' + practiceId + '/users').then(
             (resp) => cb(resp.data),
-            (resp) => ecb(resp.data)
+            (error) => ecb(error.response.data.errors)
         );
     },
 
@@ -19,7 +19,7 @@ export default {
 
         window.axios.patch('practice/' + practiceId + '/users/' + user.id, user).then(
             (resp) => cb(resp.data),
-            (error) => ecb(error.response.data)
+            (error) => ecb(error.response.data.errors)
         );
     },
 
@@ -30,7 +30,7 @@ export default {
 
         window.axios.delete('practice/' + practiceId + '/users/' + user.id).then(
             (resp) => cb(resp.data),
-            (error) => ecb(error.response.data)
+            (error) => ecb(error.response.data.errors)
         );
     },
 }

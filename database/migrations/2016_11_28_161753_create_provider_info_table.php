@@ -35,5 +35,4 @@ class CreateProviderInfoTable extends Migration
     {
         Schema::drop('provider_info');
     }
-
 }

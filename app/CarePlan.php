@@ -8,7 +8,43 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
-class CarePlan extends Model implements PdfReport
+/**
+ * App\CarePlan
+ *
+ * @property int $id
+ * @property string $mode
+ * @property int $user_id
+ * @property int|null $provider_approver_id
+ * @property int|null $qa_approver_id
+ * @property int $care_plan_template_id
+ * @property string $type
+ * @property string $status
+ * @property \Carbon\Carbon $qa_date
+ * @property \Carbon\Carbon $provider_date
+ * @property string|null $last_printed
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \App\CarePlanTemplate $carePlanTemplate
+ * @property-read \App\CareplanAssessment $assessment
+ * @property-read \App\User $patient
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Pdf[] $pdfs
+ * @property-read \App\User|null $providerApproverUser
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCarePlanTemplateId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereLastPrinted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereMode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereProviderDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaApproverId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereQaDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlan whereUserId($value)
+ * @mixin \Eloquent
+ */
+class CarePlan extends \App\BaseModel implements PdfReport
 {
     use PdfReportTrait;
 
@@ -16,6 +52,7 @@ class CarePlan extends Model implements PdfReport
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
+    const TO_ENROLL = 'to_enroll';
 
     // modes
     const WEB = 'web';
@@ -61,13 +98,13 @@ class CarePlan extends Model implements PdfReport
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
                     ->whereHas('carePlan', function ($q) {
-                        $q->whereStatus('qa_approved');
+                        $q->whereStatus(CarePlan::QA_APPROVED);
                     })
                     ->whereHas('patientInfo', function ($q) {
-                        $q->whereCcmStatus('enrolled');
+                        $q->whereCcmStatus(Patient::ENROLLED);
                     })
                     ->whereHas('careTeamMembers', function ($q) use
-                    (
+                        (
                         $user
                     ) {
                         $q->where('member_user_id', '=', $user->id)
@@ -90,15 +127,13 @@ class CarePlan extends Model implements PdfReport
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function getCarePlanTemplateIdAttribute()
-    {
-        //@todo: pretty sure that's not the way it's done. come back here later
-        return $this->attributes['care_plan_template_id'];
-    }
-
     public function providerApproverUser()
     {
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
+    }
+
+    public function assessment() {
+        return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
     /**
@@ -135,7 +170,8 @@ class CarePlan extends Model implements PdfReport
         return $file_name;
     }
 
-    public function isProviderApproved() {
+    public function isProviderApproved()
+    {
         return $this->status == CarePlan::PROVIDER_APPROVED;
     }
 
@@ -145,5 +181,28 @@ class CarePlan extends Model implements PdfReport
     public function pdfs()
     {
         return $this->morphMany(Pdf::class, 'pdfable');
+    }
+
+    /**
+     * Get the name of the provider who approved this care plan
+     *
+     * @return string
+     */
+    public function getProviderApproverNameAttribute() {
+        $approver = $this->providerApproverUser;
+
+        return $approver
+            ? $approver->fullName
+            : '';
+    }
+
+    public function safe() {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'status' => $this->status,
+            'mode' => $this->mode,
+            'type' => $this->type
+        ];
     }
 }

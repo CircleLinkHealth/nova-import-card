@@ -1,8 +1,10 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    {!! Form::open(array('url' => URL::route('admin.careplansections.update', array('id' => $careplan->id)), 'class' => 'form-horizontal')) !!}
+    @push('styles')
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    @endpush
+    {!! Form::open(array('url' => route('admin.careplansections.update', array('id' => $careplan->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -41,18 +43,18 @@
                         </div>
 
                         <h2>Sections:</h2>
-                        <a href="{{ URL::route('admin.careplansections.index', array()) }}" class="btn btn-primary btn">
+                        <a href="{{ route('admin.careplansections.index', array()) }}" class="btn btn-primary btn">
                             <span class="glyphicon glyphicon-plus-sign"></span>
                             Add Section
                         </a>
                         <br />
                         @if($careplan->sections)
-                            <a href="{{ URL::route('admin.careplansections.index', array()) }}" class="btn btn-primary btn">
+                            <a href="{{ route('admin.careplansections.index', array()) }}" class="btn btn-primary btn">
                                 <span class="glyphicon glyphicon-plus-sign"></span>
                                 Add Item
                             </a>
                             <h3>Section 1:</h3>
-                            <a href="{{ URL::route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
+                            <a href="{{ route('admin.items.show', array('id' => $item->items_id)) }}" class="btn btn-orange btn-xs">{{ $item->pcp->section_text }}</a>
                         @else
                             <div class="alert alert-danger" style="margin-top:20px;">
                                 No sections
@@ -61,17 +63,15 @@
                         <div class="row" style="margin-top:50px;">
                             <div class="col-sm-12">
                                 <div class="pull-right">
-                                    <a href="{{ URL::route('admin.careplansections.index', array()) }}" class="btn btn-danger">Cancel</a>
+                                    <a href="{{ route('admin.careplansections.index', array()) }}" class="btn btn-danger">Cancel</a>
                                     {!! Form::submit('Edit Care Plan', array('class' => 'btn btn-success')) !!}
                                 </div>
                             </div>
                         </div>
-                        {!! Form::close() !!}
                     </div>
                 </div>
             </div>
         </div>
-
-
     </div>
+    {!! Form::close() !!}
 @stop

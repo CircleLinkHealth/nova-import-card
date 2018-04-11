@@ -1,69 +1,23 @@
 <?php namespace App\Console;
 
-use App\Algorithms\Calls\ReschedulerHandler;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
+use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CheckEmrDirectInbox;
+use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
-use App\Console\Commands\EmailsProvidersToApproveCareplans;
-use App\Console\Commands\EmailWeeklyReports;
-use App\Console\Commands\ExportNurseSchedulesToGoogleCalendar;
-use App\Console\Commands\FormatLocationPhone;
-use App\Console\Commands\GeneratePatientReports;
-use App\Console\Commands\ImportLGHInsurance;
-use App\Console\Commands\ImportNurseScheduleFromGoogleCalendar;
-use App\Console\Commands\Inspire;
-use App\Console\Commands\MapSnomedToCpmProblems;
-use App\Console\Commands\NukeItemAndMeta;
-use App\Console\Commands\ProcessCcdaLGHMixup;
-use App\Console\Commands\QueueCcdasToConvertToJson;
-use App\Console\Commands\QueueCcdasToProcess;
-use App\Console\Commands\QueueCcdaToDetermineEnrollmentEligibility;
-use App\Console\Commands\QueueMakeWelcomeCallsList;
+use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
-use App\Console\Commands\RecalculateCcmTime;
+use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
+use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetCcmTime;
-use App\Console\Commands\SplitMergedCcdas;
-use App\Reports\WeeklyReportDispatcher;
-use App\Services\Calls\SchedulerService;
+use App\Console\Commands\SyncFamilialCalls;
+use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Maknz\Slack\Facades\Slack;
-
-//use EnrollmentSMSSender;
-
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        EmailRNDailyReport::class,
-        EmailsProvidersToApproveCareplans::class,
-        ExportNurseSchedulesToGoogleCalendar::class,
-        GeneratePatientReports::class,
-        ImportNurseScheduleFromGoogleCalendar::class,
-        Inspire::class,
-        MapSnomedToCpmProblems::class,
-        GetAppointments::class,
-        GetCcds::class,
-        ResetCcmTime::class,
-        RecalculateCcmTime::class,
-        SplitMergedCcdas::class,
-        QueueCcdasToConvertToJson::class,
-        QueueCcdaToDetermineEnrollmentEligibility::class,
-        QueueCcdasToProcess::class,
-        QueueSendAuditReports::class,
-        ProcessCcdaLGHMixup::class,
-        ImportLGHInsurance::class,
-        CheckEmrDirectInbox::class,
-        EmailWeeklyReports::class,
-        QueueMakeWelcomeCallsList::class,
-    ];
-
     /**
      * Define the application's command schedule.
      *
@@ -73,86 +27,87 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //Reconciles missed calls and creates a new call for patient using algo
-        $schedule->call(function () {
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
-            $handled = (new ReschedulerHandler())->handle();
-
-            if (!empty($handled)) {
-                $message = "The CPMbot just rescheduled some calls.\n";
-
-                foreach ($handled as $call) {
-                    $message = "We just fixed call: {$call->id}. \n";
-                }
-
-                sendSlackMessage('#background-tasks', $message);
-            }
-
-        })->dailyAt('00:05');
-
-        //tunes scheduled call dates.
-        $schedule->call(function () {
-            (new SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
-        })->dailyAt('00:20');
+        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-        //syncs families.
-        $schedule->call(function () {
-            (new SchedulerService())->syncFamilialCalls();
-        })->dailyAt('00:30');
+        $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->call(function () {
-            (new SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
-        })->everyMinute();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute();
 
-        //Comments out until we find all the bugs
-        $schedule->command('email:weeklyReports --practice --provider')->weeklyOn(1, '10:00');
+//        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+//                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
-            ->weekdays()
-            ->dailyAt('08:00');
+                 ->weekdays()
+                 ->dailyAt('08:00');
 
-        $schedule->command('nurseSchedule:export')
-            ->hourly();
+        //commenting out due to isues with google calendar
+//        $schedule->command('nurseSchedule:export')
+//                 ->hourly();
 
-        $schedule->command('athena:getAppointments')
-            ->dailyAt('23:00');
+        $schedule->command(GetAppointments::class)
+                 ->dailyAt('23:00');
 
-        $schedule->command('athena:getCcds')
-            ->everyThirtyMinutes();
+        $schedule->command(GetCcds::class)
+                 ->everyThirtyMinutes();
 
-        $schedule->command('nurses:emailDailyReport')
-            ->weekdays()
-            ->at('21:00');
+        $schedule->command(EmailRNDailyReport::class)
+                 ->weekdays()
+                 ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command('ccm_time:reset')
-            ->cron('1 0 1 * *');
+        $schedule->command(ResetCcmTime::class)
+                 ->cron('1 0 1 * *');
 
-        $schedule->command('lgh:importInsurance')
-            ->dailyAt('05:00');
+        //Run at 12:30am every 1st of month
+        $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
+                 ->cron('30 0 1 * *');
 
-//        $schedule->command('ccda:toJson')
-//            ->everyMinute();
+//        $schedule->command('lgh:importInsurance')
+//            ->dailyAt('05:00');
+
+        $schedule->command(QueueGenerateNurseInvoices::class)
+                 ->dailyAt('04:00')
+                 ->withoutOverlapping();
+
+        $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
+                ->dailyAt('09:00')
+                ->withoutOverlapping();
+
 
 //        $schedule->command('ccda:determineEligibility')
-//            ->everyMinute();
+//                 ->everyFiveMinutes()
+//                 ->withoutOverlapping();
 
-//        $schedule->command('ccda:process')
-//            ->everyMinute();
+//        $schedule->command('ccda:toJson')
+//            ->everyMinute()
+//            ->withoutOverlapping();
+
+
+        $schedule->command('ccda:process')
+            ->everyMinute()
+            ->withoutOverlapping();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
 //            ->cron('0 */2 * * *');
 
-        $schedule->command('send:audit-reports')
-            ->monthlyOn(1, '02:00');
+        $schedule->command(QueueSendAuditReports::class)
+                 ->monthlyOn(1, '02:00');
 
-        $schedule->command('dm:check')->everyFiveMinutes();
+        $schedule->command(CheckEmrDirectInbox::class)
+                 ->everyFiveMinutes()
+                 ->withoutOverlapping();
+
+        $schedule->command(DeleteProcessedFiles::class)
+                 ->everyThirtyMinutes()
+                 ->withoutOverlapping();
     }
 
     /**
@@ -162,6 +117,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }
 }

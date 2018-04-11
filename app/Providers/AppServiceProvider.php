@@ -1,8 +1,6 @@
 <?php namespace App\Providers;
 
-use App\AppConfig;
-use App\CarePlan;
-use App\Contracts\Efax;
+use App\Contracts\HtmlToPdfService;
 use App\Contracts\ReportFormatter;
 use App\Contracts\Repositories\ActivityRepository;
 use App\Contracts\Repositories\AprimaCcdApiRepository;
@@ -22,10 +20,18 @@ use App\Repositories\CcmTimeApiLogRepositoryEloquent;
 use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
+use App\Repositories\PrettusUserRepositoryEloquent;
 use App\Repositories\UserRepositoryEloquent;
-use App\Services\Phaxio\PhaxioService;
+use App\Services\SnappyPdfWrapper;
+use Illuminate\Notifications\Channels\DatabaseChannel;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\HasDatabaseNotifications;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
-use View;
+use Laravel\Dusk\DuskServiceProvider;
+use Orangehill\Iseed\IseedServiceProvider;
+use Way\Generators\GeneratorsServiceProvider;
+use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,14 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (\Schema::hasTable((new AppConfig)->getTable())) {
-            $appConfigs = AppConfig::all();
-            $adminStylesheet = $appConfigs->where('config_key', 'admin_stylesheet')->first();
-            view()->share('app_config_admin_stylesheet', 'admin-bootswatch-default.css');
-            if ($adminStylesheet) {
-                view()->share('app_config_admin_stylesheet', $adminStylesheet->config_value);
-            }
-        }
+        //
     }
 
     /**
@@ -58,13 +57,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
-        $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
-
-        $this->app->bind(
-            'Illuminate\Contracts\Auth\Registrar',
-            'App\Services\Registrar'
-        );
+        //Bind database notification classes to local
+        $this->app->bind(DatabaseChannel::class, \App\Notifications\Channels\DatabaseChannel::class);
+        $this->app->bind(DatabaseNotification::class, \App\DatabaseNotification::class);
+        $this->app->bind(HasDatabaseNotifications::class, \App\Notifications\HasDatabaseNotifications::class);
+        $this->app->bind(Notifiable::class, \App\Notifications\Notifiable::class);
+        $this->app->bind(HtmlToPdfService::class, function () {
+            return $this->app->make(SnappyPdfWrapper::class);
+        });
 
         $this->app->bind(
             ActivityRepository::class,
@@ -92,11 +92,6 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            Efax::class,
-            PhaxioService::class
-        );
-
-        $this->app->bind(
             InviteRepository::class,
             InviteRepositoryEloquent::class
         );
@@ -118,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             UserRepository::class,
-            UserRepositoryEloquent::class
+            PrettusUserRepositoryEloquent::class
         );
 
         $this->app->bind(
@@ -127,8 +122,10 @@ class AppServiceProvider extends ServiceProvider
         );
 
         if ($this->app->environment('local')) {
-            $this->app->register('Orangehill\Iseed\IseedServiceProvider');
+            $this->app->register(IseedServiceProvider::class);
+            $this->app->register(GeneratorsServiceProvider::class);
+            $this->app->register(MigrationsGeneratorServiceProvider::class);
+            $this->app->register(DuskServiceProvider::class);
         }
     }
-
 }

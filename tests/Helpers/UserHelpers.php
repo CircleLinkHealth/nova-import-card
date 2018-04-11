@@ -14,15 +14,14 @@ use App\Facades\StringManipulation;
 use App\Nurse;
 use App\NurseContactWindow;
 use App\Patient;
-use App\PatientMonthlySummary;
 use App\PatientContactWindow;
 use App\Practice;
+use App\Repositories\PatientWriteRepository;
 use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Faker\Factory;
 use Symfony\Component\HttpFoundation\ParameterBag;
-
 
 trait UserHelpers
 {
@@ -39,8 +38,8 @@ trait UserHelpers
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
-        $lastName = $faker->lastName;
-        $email = $faker->email;
+        $lastName  = $faker->lastName;
+        $email     = $faker->email;
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
         $roles = [
@@ -68,12 +67,14 @@ trait UserHelpers
 
             //provider Info
             'prefix'            => 'Dr',
-            'suffix'     => 'MD',
+            'suffix'            => 'MD',
             'npi_number'        => 1234567890,
             'specialty'         => 'Unit Tester',
 
             //phones
             'home_phone_number' => $workPhone,
+
+            'ccm_status' => 'enrolled'
         ]);
 
         //create a user
@@ -97,9 +98,10 @@ trait UserHelpers
 
         //check that the roles were created
         foreach ($roles as $role) {
-            $this->assertDatabaseHas('lv_role_user', [
-                'user_id' => $user->id,
-                'role_id' => $role,
+            $this->assertDatabaseHas('practice_role_user', [
+                'user_id'    => $user->id,
+                'role_id'    => $role,
+                'program_id' => $practiceId,
             ]);
         }
 
@@ -109,20 +111,9 @@ trait UserHelpers
             ]);
         }
 
+        $user->load('practices');
+
         return $user;
-    }
-
-    public function userLogin(User $user)
-    {
-        $this->visit('/auth/login')
-            ->see('CarePlanManager')
-            ->type($user->email, 'email')
-            ->type('password', 'password')
-            ->press('Log In');
-
-        //By default PHPUnit fails the test if the output buffer wasn't closed.
-        //So we're adding this to make the test work.
-//        ob_end_clean();
     }
 
     public function createLastCallForPatient(
@@ -159,7 +150,6 @@ trait UserHelpers
         ]);
 
         return $call;
-
     }
 
     public function createWindowForNurse(
@@ -183,7 +173,6 @@ trait UserHelpers
         ]);
 
         return $res;
-
     }
 
     //NURSE TEST HELPERS
@@ -207,14 +196,11 @@ trait UserHelpers
             'patient_info_id' => $patient->id,
 
         ]);
-
     }
 
     public function makePatientMonthlyRecord(Patient $patient)
     {
 
-        return PatientMonthlySummary::updateCallInfoForPatient($patient, true);
-
+        return (app(PatientWriteRepository::class))->updateCallLogs($patient, true);
     }
-
 }

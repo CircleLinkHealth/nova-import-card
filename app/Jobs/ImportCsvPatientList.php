@@ -7,6 +7,7 @@ use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
@@ -54,8 +55,8 @@ class ImportCsvPatientList implements ShouldQueue
     public function handle()
     {
         foreach ($this->patientsArr as $row) {
-            if (isset($row['medical_record_type'])) {
-                if (stripslashes($row['medical_record_type']) == Ccda::class) {
+            if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
+                if (stripcslashes($row['medical_record_type']) == stripcslashes(Ccda::class)) {
                     $imr = $this->importExistingCcda($row['medical_record_id']);
 
                     if ($imr) {
@@ -65,9 +66,13 @@ class ImportCsvPatientList implements ShouldQueue
                 }
             }
 
-            if (isset($row['mrn'])) {
-                $this->createTabularMedicalRecordAndImport($row);
+            if (isset($row['patient_name'])) {
+                $names = explode(', ', $row['patient_name']);
+                $row['first_name'] = $names[0];
+                $row['last_name'] = $names[1];
             }
+
+            $this->createTabularMedicalRecordAndImport($row);
         }
 
         $url = url('view.files.ready.to.import');
@@ -114,11 +119,15 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $demographics = $importedMedicalRecord->demographics;
 
-        $demographics->primary_phone = $row['primary_phone'];
-        $demographics->preferred_call_times = $row['preferred_call_times'];
-        $demographics->preferred_call_days = $row['preferred_call_days'];
+        $demographics->primary_phone = $row['primary_phone'] ?? '';
+        $demographics->preferred_call_times = $row['preferred_call_times'] ?? '';
+        $demographics->preferred_call_days = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
+            if (!array_key_exists($phone, $row)) {
+                continue;
+            }
+
             if ($demographics->{$phone} == $row[$phone]) {
                 continue;
             }
@@ -136,7 +145,7 @@ class ImportCsvPatientList implements ShouldQueue
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
-        if (!$importedMedicalRecord->billing_provider_id) {
+        if (!$importedMedicalRecord->billing_provider_id && array_key_exists('provider', $row)) {
             $providerName = explode(' ', $row['provider']);
 
             if (count($providerName) >= 2) {
@@ -170,6 +179,14 @@ class ImportCsvPatientList implements ShouldQueue
                 'practice_id'         => $importedMedicalRecord->practice_id,
             ]);
 
+        $demographicsLogs = $mr->demographics->first();
+
+        if ($demographicsLogs) {
+            if (!$demographicsLogs->mrn_number) {
+                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->save();
+            }
+        }
 
         $importedMedicalRecord->save();
     }
@@ -183,12 +200,8 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function createTabularMedicalRecordAndImport($row)
     {
-        if (in_array($row['mrn'], ['#N/A'])) {
-            return false;
-        }
-
         $row['dob'] = $row['dob']
-            ? Carbon::parse($row['dob'])->format('Y-m-d')
+            ? Carbon::parse($row['dob'])->toDateString()
             : null;
         $row['practice_id'] = $this->practice->id;
         $row['location_id'] = $this->practice->primary_location_id;
@@ -197,8 +210,37 @@ class ImportCsvPatientList implements ShouldQueue
             $row['consent_date'] = Carbon::parse($row['consent_date'])->format('Y-m-d');
         }
 
+        if (array_key_exists('street', $row)) {
+            $row['address'] = $row['street'];
+        }
+
+        if (array_key_exists('street_2', $row)) {
+            $row['address2'] = $row['street_2'];
+        }
+
+        if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
+            if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'home')) {
+                $row['home_phone'] = $row['primary_phone'];
+            } elseif (str_contains(strtolower($row['primary_phone_type']), 'work')) {
+                $row['work_phone'] = $row['primary_phone'];
+            }
+        }
+
+        if (array_key_exists('alt_phone', $row) && array_key_exists('alt_phone_type', $row)) {
+            if (str_contains(strtolower($row['alt_phone_type']), ['cell', 'mobile'])) {
+                $row['cell_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'home')) {
+                $row['home_phone'] = $row['alt_phone'];
+            } elseif (str_contains(strtolower($row['alt_phone_type']), 'work')) {
+                $row['work_phone'] = $row['alt_phone'];
+            }
+        }
+
         $exists = TabularMedicalRecord::where([
-            'mrn' => $row['mrn'],
+            'first_name' => $row['first_name'],
+            'last_name' => $row['last_name'],
             'dob' => $row['dob'],
         ])->first();
 
@@ -210,9 +252,34 @@ class ImportCsvPatientList implements ShouldQueue
             $exists->delete();
         }
 
+        if ($this->practice->id == 139) {
+            $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
+
+            if (!$mrn) {
+                return false;
+            }
+
+            $row['mrn'] = $mrn;
+        }
+
         $mr = TabularMedicalRecord::create($row);
 
         $importedMedicalRecords[] = $mr->import();
+    }
+
+    private function lookupPHXmrn($firstName, $lastName, $dob) {
+        $dob = Carbon::parse($dob)->toDateString();
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+                               ->where('patient_last_name', $lastName)
+                               ->where('dob', $dob)
+                               ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
     }
 
     /**

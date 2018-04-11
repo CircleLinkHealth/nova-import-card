@@ -8,15 +8,61 @@
 
 namespace App\Services\CPM;
 
-
+use App\Repositories\CpmMiscRepository;
+use App\Repositories\CpmMiscUserRepository;
 use App\Contracts\Services\CpmModel;
 use App\User;
 
 class CpmMiscService implements CpmModel
 {
+    private $cpmMiscRepo;
+    private $cpmMiscUserRepo;
+
+    public function __construct(CpmMiscRepository $cpmMiscRepo, CpmMiscUserRepository $cpmMiscUserRepo) {
+        $this->cpmMiscRepo = $cpmMiscRepo;
+        $this->cpmMiscUserRepo = $cpmMiscUserRepo;
+    }
+
+    public function repo() {
+        return $this->cpmMiscRepo;
+    }
+
+    public function miscPatients($miscId) {
+        return $this->cpmMiscUserRepo->miscPatients($miscId);
+    }
+    
+    public function patientMisc($userId) {
+        return $this->cpmMiscUserRepo->patientMisc($userId);
+    }
+    
+    public function patientMiscByType($userId, $miscTypeId) {
+        return $this->cpmMiscUserRepo->patientMisc($userId)->filter(function ($item) use ($miscTypeId) {
+            return $item->id == $miscTypeId;
+        })->first();
+    }
+
+    public function editPatientMisc($userId, $miscId, $instructionId) {
+        return $this->cpmMiscUserRepo->editPatientMisc($userId, $miscId, $instructionId);
+    }
+
+    public function addMiscToPatient($miscId, $userId) {
+        if ($this->repo()->exists($miscId)) return $this->cpmMiscUserRepo->addMiscToPatient($miscId, $userId);
+        else throw new Exception('misc with id "' . $miscId . '" does not exist');
+    }
+    
+    public function removeMiscFromPatient($miscId, $userId) {
+        return $this->cpmMiscUserRepo->removeMiscFromPatient($miscId, $userId);
+    }
+    
+    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId) {
+        return $this->cpmMiscUserRepo->removeInstructionFromPatientMisc($userId, $miscId, $instructionId);
+    }
+
     public function syncWithUser(User $user, array $ids, $page, array $instructions)
     {
-        if (!is_int($page)) throw new \Exception('The page number needs to be an integer.');
+        if (!is_int($page)) {
+            throw new \Exception('The page number needs to be an integer.');
+        }
 
         //get careplan templateMiscs id
         $templateMiscs = $user->service()
@@ -43,7 +89,7 @@ class CpmMiscService implements CpmModel
             return true;
         }
 
-        $instructionService = new CpmInstructionService();
+        $instructionService = app(CpmInstructionService::class);
 
         //otherwise attach/detach each one
         foreach ($cptMiscsIds as $cptMiscId) {
@@ -75,17 +121,22 @@ class CpmMiscService implements CpmModel
         return true;
     }
 
-    public function getMiscWithInstructionsForUser(User $user, $miscName){
+    public function getMiscWithInstructionsForUser(User $user, $miscName)
+    {
 
-        $misc = $user->cpmMiscs->where('name',$miscName)->first();
+        $misc = $user->cpmMiscs->where('name', $miscName)->first();
         //For the CPM Misc Item, extract the instruction and
         //store in a key value pair
-        if($misc) {
+        if ($misc) {
             $instruction = \App\Models\CPM\CpmInstruction::find($misc->pivot->cpm_instruction_id);
-        } else return '';
+        } else {
+            return '';
+        }
 
-        if($instruction) return $instruction->name;
-        else return '';
+        if ($instruction) {
+            return $instruction->name;
+        } else {
+            return '';
+        }
     }
-
 }

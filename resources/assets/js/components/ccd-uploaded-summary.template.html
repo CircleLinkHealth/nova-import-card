@@ -45,20 +45,20 @@
                 </label>
             </td>
 
-            <td class="mdl-data-table__cell--non-numeric">{{ importedMedicalRecord.demographics.first_name }} {{
-                importedMedicalRecord.demographics.last_name }}
+            <td class="mdl-data-table__cell--non-numeric">{{ (importedMedicalRecord.demographics || {}).first_name }} {{
+                (importedMedicalRecord.demographics || {}).last_name }}
             </td>
 
             <td class="mdl-data-table__cell--non-numeric">
-                {{ importedMedicalRecord.practice.display_name }}
+                {{ (importedMedicalRecord.practice || {}).display_name }}
             </td>
 
             <td class="mdl-data-table__cell--non-numeric">
-                {{ importedMedicalRecord.location.name }}
+                {{ (importedMedicalRecord.location || {}).name }}
             </td>
 
-            <td class="mdl-data-table__cell--non-numeric">{{ importedMedicalRecord.billing_provider.first_name }}
-                {{importedMedicalRecord.billing_provider.last_name }}
+            <td class="mdl-data-table__cell--non-numeric">{{ (importedMedicalRecord.billing_provider || {}).first_name }}
+                {{(importedMedicalRecord.billing_provider || {}).last_name }}
             </td>
 
             <td v-if="importedMedicalRecord.source" class="mdl-data-table__cell--non-numeric">{{

@@ -15,6 +15,7 @@ use App\Enrollee;
 use App\Entities\Invite;
 use App\Nurse;
 use App\Practice;
+use Carbon\Carbon;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
@@ -29,6 +30,28 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'city'         => $faker->city,
         'state'        => 'IL',
         'zip'          => '12345',
+    ];
+});
+
+$factory->define(App\Activity::class, function (Faker\Generator $faker) use ($factory) {
+    return [
+        'type'          => $faker->text(15),
+        'duration'      => $faker->numberBetween(1, 120),
+        'duration_unit' => 'seconds',
+        'performed_at'  => Carbon::now(),
+    ];
+});
+
+$factory->define(App\Note::class, function (Faker\Generator $faker) use ($factory) {
+    return [
+        'patient_id'           => $factory->create(App\User::class)->id,
+        'author_id'            => $factory->create(App\User::class)->id,
+        'logger_id'            => $factory->create(App\User::class)->id,
+        'body'                 => $faker->text(100),
+        'isTCM'                => $faker->boolean(50),
+        'type'                 => $faker->text(10),
+        'did_medication_recon' => $faker->boolean(50),
+        'performed_at'         => Carbon::now(),
     ];
 });
 
@@ -47,10 +70,10 @@ $factory->define(\App\Models\CPM\Biometrics\CpmWeight::class, function (Faker\Ge
 
 $factory->define(\App\Models\CPM\Biometrics\CpmBloodPressure::class, function (Faker\Generator $faker) {
 
-    $systolicStarting = rand(110, 140);
+    $systolicStarting  = rand(110, 140);
     $diastolicStarting = rand(60, 70);
 
-    $systolicTarget = $systolicStarting - rand(10, 20);
+    $systolicTarget  = $systolicStarting - rand(10, 20);
     $diastolicTarget = $diastolicStarting - rand(15, 20);
 
     return [
@@ -150,28 +173,27 @@ $factory->define(Enrollee::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(Nurse::class, function (Faker\Generator $faker) {
-
 });
 
 $factory->define(Practice::class, function (Faker\Generator $faker) {
     $name = $faker->company;
 
     return [
-        'name' => $name,
-        'display_name' => $name,
-        'active' => true,
-        'federal_tax_id' => $faker->randomNumber(5),
-//        'user_id',
-//        'same_clinical_contact',
-        'clh_pppm' => 0,
-//        'same_ehr_login',
-//        'sms_marketing_number',
+        'name'                     => $name,
+        'display_name'             => $name,
+        'active'                   => true,
+        'federal_tax_id'           => $faker->randomNumber(5),
+        //        'user_id',
+        //        'same_clinical_contact',
+        'clh_pppm'                 => 0,
+        //        'same_ehr_login',
+        //        'sms_marketing_number',
         'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
-        'invoice_recipients' => 'mantoniou@circlelinkhealth.com',
-        'bill_to_name' => $name,
-//        'auto_approve_careplans',
-//        'send_alerts',
-        'outgoing_phone_number' => $faker->phoneNumber,
-        'term_days' => 30,
+        'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
+        'bill_to_name'             => $name,
+        //        'auto_approve_careplans',
+        //        'send_alerts',
+        'outgoing_phone_number'    => $faker->phoneNumber,
+        'term_days'                => 30,
     ];
 });

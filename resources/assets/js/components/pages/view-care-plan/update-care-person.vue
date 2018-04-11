@@ -26,7 +26,7 @@
 
 <template>
     <div>
-        <modal v-show="show">
+        <modal>
             <template slot="header">
                 <button type="button" class="close" @click="clearOpenModal">×</button>
                 <h4 class="modal-title">Provider Details</h4>
@@ -58,6 +58,7 @@
                                                        name="first_name"
                                                        class="form-control input-md"
                                                        placeholder="First"
+                                                       disabled
                                                        required
                                                        v-model="formData.user.first_name">
                                             </div>
@@ -82,6 +83,7 @@
                                                        name="last_name"
                                                        class="form-control input-md"
                                                        placeholder="Last"
+                                                       disabled
                                                        required
                                                        v-model="formData.user.last_name">
                                             </div>
@@ -364,7 +366,7 @@
                                     <!--send alerts-->
                                     <div class="form-group col-md-6">
 
-                                        <label class="col-md-3 control-label">Send Alerts</label>
+                                        <label class="col-md-3 control-label">Receives Alerts</label>
 
                                         <div class="col-md-9">
                                             <div class="row">
@@ -467,7 +469,7 @@
                                                                    id="is_billing_provider"
                                                                    name="is_billing_provider"
                                                                    class="form-control input-md"
-                                                                   type="checkbox"
+                                                                   type="checkbox" @change="changeFormattedType"
                                                                    style="display: inline;">
                                                         </div>
 
@@ -516,10 +518,6 @@
 
     export default {
         props: {
-            show: {
-                type: Boolean,
-                default: false
-            },
             carePerson: Object
         },
 
@@ -543,11 +541,8 @@
         ),
 
         methods: Object.assign(
-            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson']),
+            mapActions(['getPatientCareTeam', 'addNotification', 'updateCarePerson', 'clearOpenModal']),
             {
-                clearOpenModal() {
-                    this.show = false
-                },
                 sendForm() {
                     this.submitClicked = true
 
@@ -563,11 +558,9 @@
 
                     let id = this.formData.id ? this.formData.id : 'new'
 
-                    this.updateCarePerson(this.formData)
+                    this.updateCarePerson(this.formData, this.patientId)
 
-                    this.getPatientCareTeam(this.patientId)
-
-                    this.clearOpenModal();
+                    this.clearOpenModal()
 
                     this.addNotification({
                         title: "Successfully saved Care Person",
@@ -578,13 +571,14 @@
 
                     let url = window.location.href
 
-                    if (url.includes('view-careplan')) {
-                        if (_.includes(url, '#care-team')) {
-                            window.location.replace(_.replace(url, '/#care-team', ''))
-                        } else {
-                            window.location.replace(url + '/#care-team')
-                        }
+                    if(url.includes('view-careplan')) {
+                        window.location.replace(url)
                     }
+                },
+
+                changeFormattedType(e) {
+                    this.formData.formatted_type = e.target.checked ? 'Billing Provider' : 'Provider'
+                    console.log(this.formData.formatted_type)
                 },
 
                 fieldClassName(field) {
@@ -603,6 +597,8 @@
 
         created() {
             this.formData = JSON.parse(JSON.stringify(this.carePerson))
+            this.formData.is_billing_provider = (this.formData.formatted_type == 'billing_provider') || (this.formData.formatted_type == 'Billing Provider')
+            console.log('update-care-person:form-data', this.formData)
         },
 
         data() {

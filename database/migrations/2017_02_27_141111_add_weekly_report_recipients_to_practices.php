@@ -16,7 +16,6 @@ class AddWeeklyReportRecipientsToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->longText('weekly_report_recipients')->after('same_clinical_contact')->nullable();
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddWeeklyReportRecipientsToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('weekly_report_recipients');
-
         });
     }
 }

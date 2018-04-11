@@ -36,5 +36,4 @@ class CreateCpmSymptomsUsersTable extends Migration
     {
         Schema::drop('cpm_symptoms_users');
     }
-
 }

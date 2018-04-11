@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\DetermineCcdaEnrollmentEligibility;
+use App\Jobs\CheckCcdaEnrollmentEligibility;
+use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
+use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Maknz\Slack\Facades\Slack;
 
 class QueueCcdaToDetermineEnrollmentEligibility extends Command
 {
@@ -41,14 +42,47 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
-        $ccdas = Ccda::where([
+        $jobs = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
-        ])->whereNotNull('mrn')->take(5000)->get(['id', 'referring_provider_name'])
-            ->map(function ($ccda) {
-                $job = (new DetermineCcdaEnrollmentEligibility($ccda))
-                    ->delay(Carbon::now()->addSeconds(20));
+        ])->whereNotNull('mrn')
+                    ->inRandomOrder()
+                    ->take(2000)
+                    ->get(['id', 'practice_id'])
+                    ->map(function ($ccda) {
+                        //lgh
+                        if ($ccda->practice_id == 141) {
+                            dispatch(
+                                (new LGHDetermineCcdaEnrollmentEligibility($ccda))
+                                    ->delay(Carbon::now()->addSeconds(5))
+                                    ->onQueue('ccda-processor')
+                            );
 
-                dispatch($job);
-            });
+                            return true;
+                        }
+
+
+                        if ($ccda->practice_id) {
+                            $practice = Practice::find($ccda->practice_id);
+
+                            if ( ! $practice) {
+                                return false;
+                            }
+
+                            dispatch(
+                                (new CheckCcdaEnrollmentEligibility($ccda, $practice))
+                                    ->delay(Carbon::now()->addSeconds(5))
+                                    ->onQueue('ccda-processor')
+                            );
+
+                            return true;
+                        }
+
+                        return false;
+                    })
+                    ->filter()
+                    ->values()
+                    ->count();
+
+        $this->output->success("$jobs jobs scheduled.");
     }
 }

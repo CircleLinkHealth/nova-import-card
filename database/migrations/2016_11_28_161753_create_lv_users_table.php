@@ -33,5 +33,4 @@ class CreateLvUsersTable extends Migration
     {
         Schema::drop('lv_users');
     }
-
 }

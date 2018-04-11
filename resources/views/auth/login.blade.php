@@ -6,26 +6,32 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CarePlanManager - Log In</title>
 
+	@include('partials.hotjar-code')
+
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
-<style type="text/css">
-	  input[type=text] ,  input[type=password]  {
-		display: inline-block;
-		margin-bottom: 0;
-		font-weight: normal;
-		text-align: center;
-		vertical-align: middle;
-		touch-action: manipulation;
-		background-image: none;
-		border: 1px solid ;
-		white-space: nowrap;
-		padding: 6px 12px;
-		font-size: 14px;
-		line-height: 1.42857;
-		border-radius: 4px;
-	  }
-</style>
+	<style type="text/css">
+		input[type=text] ,  input[type=password]  {
+			display: inline-block;
+			margin-bottom: 0;
+			font-weight: normal;
+			vertical-align: middle;
+			touch-action: manipulation;
+			background-image: none;
+			border: 1px solid ;
+			white-space: nowrap;
+			padding: 6px 12px;
+			font-size: 14px;
+			line-height: 1.42857;
+			border-radius: 4px;
+		}
+
+		.control-label {
+			padding-left: 0px;
+			font-weight: bold;
+		}
+	</style>
 </head>
 <body>
 		<nav class="navbar primary-navbar">
@@ -58,7 +64,7 @@
 
 									<div class="col-md-12">
 								<p>
-                                    <label class="col-md-12 control-label text-center" for="email">Username</label></BR>
+                                    <label class="col-md-12 control-label" for="email">E-mail or Username</label></BR>
 									<input id="email" type="text" class="form-control" name="email"
 										   value="{{ old('email') }}">
 								</p>
@@ -66,7 +72,7 @@
 
 									<div class="col-md-12">
 								<p>
-									<label class="col-md-12 control-label text-center" for="password">Password</label></br>
+									<label class="col-md-12 control-label" for="password">Password</label></br>
 									<input id="password" type="password" class="form-control" name="password">
 								</p>
 									</div>

@@ -23,7 +23,6 @@ abstract class FormRequest
     public function __construct()
     {
         $this->faker = Factory::create();
-
     }
 
     /**

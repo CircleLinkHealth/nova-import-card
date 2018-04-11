@@ -16,7 +16,6 @@ class AddComplexCcmToPatientMonthlySummaries extends Migration
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
 
             $table->boolean('is_ccm_complex')->after('no_of_successful_calls')->default(0);
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddComplexCcmToPatientMonthlySummaries extends Migration
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
 
             $table->dropColumn('is_ccm_complex');
-
         });
     }
 }

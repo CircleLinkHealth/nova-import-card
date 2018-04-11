@@ -17,23 +17,13 @@ interface UserRepository
         ParameterBag $params
     );
 
-    public function saveOrUpdateUserMeta(
-        User $user,
-        ParameterBag $params
-    );
-
-    public function updateUserConfig(
-        User $wpUser,
-        ParameterBag $params
-    );
-
     public function saveOrUpdateRoles(
         User $wpUser,
         ParameterBag $params
     );
 
-    public function saveOrUpdatePrograms(
-        User $wpUser,
+    public function saveAndGetPractice(
+        User $user,
         ParameterBag $params
     );
 

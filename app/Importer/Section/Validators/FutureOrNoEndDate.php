@@ -6,7 +6,6 @@ use App\Contracts\Importer\MedicalRecord\Section\ItemLog;
 use App\Contracts\Importer\MedicalRecord\Section\Validator as SectionValidator;
 use Carbon\Carbon;
 
-
 class FutureOrNoEndDate implements SectionValidator
 {
     public function isValid(ItemLog $item) : bool

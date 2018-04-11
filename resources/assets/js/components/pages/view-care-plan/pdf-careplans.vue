@@ -7,9 +7,9 @@
 
     import CreateCarePerson from '../../CareTeam/create-care-person.vue'
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-    import IndexCarePerson from '../../pages/view-care-plan/index-care-person.vue'
     import CareTeam from '../../pages/view-care-plan/care-team.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
+    import { rootUrl } from '../../../app.config'
 
     export default {
         components: {
@@ -17,13 +17,14 @@
             Dropzone,
             CreateCarePerson,
             UpdateCarePerson,
-            IndexCarePerson,
             CareTeam,
         },
 
+        props: ['mode'],
+
         created() {
             this.getPatientCarePlan(this.patientId)
-            this.apiUrl = window.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
+            this.apiUrl = this.axios.defaults.baseURL + '/care-plans/' + this.patientCareplanId + '/pdfs'
         },
 
         data() {
@@ -37,10 +38,24 @@
                 csrfHeader: {
                     'X-CSRF-TOKEN': document.head.querySelector('meta[name="csrf-token"]').content
                 },
-                patientCarePlan: {}
+                patientCarePlan: {},
+                Modes: {
+                    Web: 'web',
+                    Pdf: 'pdf'
+                }
             }
         },
-
+        computed: {
+            pdfSwitchUrl() {
+                return rootUrl(`manage-patients/switch-to-pdf-careplan/${this.patientCareplanId}`)
+            },
+            viewCareplanUrl() {
+                return rootUrl('manage-patients/' + this.patientId + '/view-careplan')
+            },
+            assessmentUrl() {
+                return rootUrl('manage-patients/' + this.patientId + '/view-careplan/assessment')
+            }
+        },
         methods: Object.assign({},
             mapActions(['destroyPdf', 'uploadPdfCarePlan', 'addNotification']),
             {
@@ -53,7 +68,18 @@
                         if (!carePlan) {
                             return
                         }
+
+                        carePlan.pdfs = (carePlan.pdfs || []).map(pdf => {
+                            if (pdf.created_at) pdf.created_at = new Date(pdf.created_at)
+                            if (pdf.deleted_at) pdf.deleted_at = new Date(pdf.deleted_at)
+                            if (pdf.updated_at) pdf.updated_at = new Date(pdf.updated_at)
+                            return pdf
+                        }).sort((pdfA, pdfB) => pdfB.updated_at - pdfA.updated_at)
+
+                        console.log(carePlan)
+                        
                         this.patientCarePlan = carePlan;
+                        console.log('patient-careplan', this.patientCarePlan)
                     }, error => {
                         console.log(error)
                     }, patientId)
@@ -102,7 +128,7 @@
 
                     if (this.modeBeforeUpload === 'web') {
                         setTimeout(() => {
-                            window.location.replace(window.location.href + '/pdf')
+                            window.location.replace(rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`))
                         }, 1000)
                     }
 
@@ -118,21 +144,55 @@
 <template>
     <div class="col-md-12" style="padding-top: 2%;" v-cloak>
         <div class="row">
-            <div class="col-md-12 text-right">
+            <div class="col-md-6">
+                
+            </div>
+            <div class="col-md-6 text-right">
+                <slot name="buttons"></slot>
+                <a :href="assessmentUrl" v-if="patientCarePlan.status == 'provider_approved'" class="btn btn-info btn-sm inline-block">View Assessment</a>
                 <a @click="openModal()" class="btn btn-info btn-sm inline-block">Upload PDF</a>
                 <slot></slot>
             </div>
         </div>
 
         <div class="row" v-if="patientCarePlan.mode == 'pdf'">
-            <div class="col-md-6">
-                <ul class="list-group">
-                    <li v-for="(pdf, index) in patientCarePlan.pdfs" class="list-group-item pdf-careplan">
+            <div class="col-md-12 list-group">
+                <div class="list-group-item list-group-item-action top-20" v-for="(pdf, index) in patientCarePlan.pdfs" :key="index">
+                    <h3 class="pdf-title">
                         <a :href="pdf.url" target="_blank">{{pdf.label}} </a>
-                        <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn"><span><i
-                                class="glyphicon glyphicon-remove"></i></span></button>
-                    </li>
-                </ul>
+                        <button @click="deletePdf(pdf)" class="btn btn-xs btn-danger problem-delete-btn">
+                            <span>
+                                <i class="glyphicon glyphicon-remove"></i>
+                            </span>
+                        </button>
+                    </h3>
+                    <div class="pdf-body">
+                        <object :data="pdf.url" type="application/pdf" width="100%" height="100%">
+                            <iframe :src="pdf.url" width="100%" height="100%" style="border: none;">
+                                <div>
+                                    Sorry, your browser does not support PDF Embeds ... 
+                                    
+                                    Please update it as soon as possible, or click <a :href="pdf.url">here</a> to download the PDF
+                                </div>
+                            </iframe>
+                        </object>
+                    </div>
+                </div>
+                <div class="list-group-item list-group-item-action top-20 pointer" @click="openModal()" v-if="patientCarePlan.pdfs.length === 0">
+                    <h3 class="pdf-title text-center">
+                        No PDF files uploaded yet ... Click to upload
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" v-if="mode === Modes.Pdf && patientCarePlan.mode !== 'pdf'">
+            <div class="col-md-12">
+                <center>
+                    <h3>
+                        This Careplan is in Web mode. Click <a :href="viewCareplanUrl">here</a> to access it, or <a :href="pdfSwitchUrl">here</a> to switch to PDF mode.
+                    </h3>
+                </center>
             </div>
         </div>
 
@@ -165,5 +225,13 @@
 <style>
     li.pdf-careplan {
         font-size: 16px;
+    }
+
+    .top-20 {
+        margin-top: 20px;
+    }
+
+    .pointer {
+        cursor: pointer;
     }
 </style>

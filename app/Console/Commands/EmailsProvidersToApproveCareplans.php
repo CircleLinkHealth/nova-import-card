@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Models\EmailSettings;
 use App\User;
 use Carbon\Carbon;
@@ -110,11 +111,11 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->email_careplan_approval_reminders) {
+        if (!$providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
             return false;
         }
 
-        if ($providerUser->primaryPractice->settings && !$providerUser->primaryPractice->settings->isEmpty() && $providerUser->primaryPractice->settings->first()->auto_approve_careplans) {
+        if ($providerUser->primaryPractice->cpmSettings()->auto_approve_careplans) {
             return false;
         }
 
@@ -145,41 +146,9 @@ class EmailsProvidersToApproveCareplans extends Command
 
     public function sendEmail(User $recipient, $numberOfCareplans, User $providerUser, bool $pretend)
     {
-        $data = [
-            'numberOfCareplans' => $numberOfCareplans,
-            'recipient'         => $recipient,
-        ];
-
-        $view = 'emails.careplansPendingApproval';
-        $subject = "{$numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
-
-        $settings = $providerUser->emailSettings()->firstOrNew([]);
-
-        $send = $settings->frequency == EmailSettings::DAILY
-            ? true
-            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
-                ? true
-                : ($settings->frequency == EmailSettings::MWF) &&
-                (Carbon::today()->dayOfWeek == 1
-                    || Carbon::today()->dayOfWeek == 3
-                    || Carbon::today()->dayOfWeek == 5)
-                    ? true
-                    : false;
-
-        if (!$send) {
-            return false;
-        }
-
         if (!$pretend) {
-            if ($send && $recipient->email) {
-                Mail::send($view, $data, function ($message) use (
-                    $recipient,
-                    $subject
-                ) {
-                    $message->from('notifications@careplanmanager.com', 'CircleLink Health')
-                        ->to($recipient->email)
-                        ->subject($subject);
-                });
+            if ($recipient->email) {
+                $recipient->sendCarePlanApprovalReminderEmail();
             }
         }
     }

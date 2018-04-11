@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
@@ -11,33 +10,46 @@ use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
 use App\Practice;
+use App\Services\Eligibility\EligibilityProcessorService;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 
 class WelcomeCallListController extends Controller
 {
+    protected $eligibilityService;
+
+    public function __construct(EligibilityProcessorService $eligibilityService)
+    {
+        $this->eligibilityService = $eligibilityService;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function makeWelcomeCallList(Request $request)
     {
-
-        if (!$request->hasFile('patient_list')) {
+        if ( ! $request->hasFile('patient_list')) {
             dd('Please upload a CSV file.');
         }
 
-        $csv = parseCsvToArray($request->file('patient_list'));
+        if ( ! $request['practice_id']) {
+            dd('`practice_id` is a required field.');
+        }
+
+        $practiceId = $request->input('practice_id');
+        $file       = $request->file('patient_list');
 
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
-        $filterInsurance = (boolean)$request->input('filterInsurance');
-        $filterProblems = (boolean)$request->input('filterProblems');
-        $createEnrollees = (boolean)$request->input('createEnrollees');
+        $filterInsurance     = (boolean)$request->input('filterInsurance');
+        $filterProblems      = (boolean)$request->input('filterProblems');
+        $createEnrollees     = true;
+        $practice            = Practice::find($practiceId);
 
-        $list = new WelcomeCallListGenerator(new Collection($csv), $filterLastEncounter, $filterInsurance,
-            $filterProblems, $createEnrollees, Practice::find($request->input('practice_id')));
-
-        //If we only want to export ineligible patients
-//        return $list->exportIneligibleToCsv();
-
-        return $list->exportToCsv();
+        return $this->eligibilityService->processEligibility($file, $practice, $filterLastEncounter,
+            $filterInsurance, $filterProblems, $createEnrollees);
     }
 
     /**
@@ -45,10 +57,10 @@ class WelcomeCallListController extends Controller
      */
     public function makeRappahannockCallList()
     {
-        $rappaNames = RappaName::get()->keyBy('patient_id');
+        $rappaNames        = RappaName::get()->keyBy('patient_id');
         $rappaInsAllergies = RappaInsAllergy::get()->keyBy('patient_id');
 
-        $difference = $rappaInsAllergies->keys()->diff($rappaNames->keys());
+        $difference   = $rappaInsAllergies->keys()->diff($rappaNames->keys());
         $intersection = $rappaInsAllergies->keys()->intersect($rappaNames->keys());
 
         $merged = $rappaInsAllergies->map(function ($rappaInsAllergy) use ($rappaNames) {
@@ -67,19 +79,19 @@ class WelcomeCallListController extends Controller
             $patient->put('problems', collect());
 
             foreach ($data as $d) {
-                if ($d['medication'] && !$patient['medications']->contains($d['medication'])) {
+                if ($d['medication'] && ! $patient['medications']->contains($d['medication'])) {
                     $patient['medications']->push($d['medication']);
                 }
 
-                if ($d['condition'] && !$patient['problems']->contains($d['condition'])) {
+                if ($d['condition'] && ! $patient['problems']->contains($d['condition'])) {
                     $patient['problems']->push($d['condition']);
                 }
 
-                if (!$patient->contains($d['last_name'])) {
+                if ( ! $patient->contains($d['last_name'])) {
                     $patient->put('last_name', $d['last_name']);
                 }
 
-                if (!$patient->contains($d['first_name'])) {
+                if ( ! $patient->contains($d['first_name'])) {
                     $patient->put('first_name', $d['first_name']);
                 }
             }
@@ -109,7 +121,7 @@ class WelcomeCallListController extends Controller
 
             foreach ($data as $d) {
                 for ($i = 1; $i < 11; $i++) {
-                    if ($d["DIAG$i"] && !$patient['problems']->contains($d["DIAG$i"])) {
+                    if ($d["DIAG$i"] && ! $patient['problems']->contains($d["DIAG$i"])) {
                         $patient['problems']->push($d["DIAG$i"]);
                     }
                 }
@@ -130,6 +142,8 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        (new MakePhoenixHeartWelcomeCallList())->handle();
+        MakePhoenixHeartWelcomeCallList::dispatch();
+
+        return "Job dispatched";
     }
 }

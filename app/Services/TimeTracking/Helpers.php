@@ -8,7 +8,6 @@
 
 namespace App\Services\TimeTracking;
 
-
 use App\PageTimer;
 use Carbon\Carbon;
 

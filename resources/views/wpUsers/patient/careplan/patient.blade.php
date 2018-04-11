@@ -12,14 +12,14 @@ $user_info = array();
 @endpush
 
 @section('content')
-    {!! Form::open(array('url' => URL::route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
-    <div class="row" style="margin-top:20px;">
+    {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1">
             @if ($patient->careplan_mode == App\CarePlan::WEB)
                 <div class="icon-container col-lg-12">
-                    @if(isset($patient))
+                    {{--  @if(isset($patient))
                         @include('wpUsers.patient.careplan.nav')
-                    @endif
+                    @endif  --}}
                 </div>
             @endif
             {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
@@ -27,8 +27,8 @@ $user_info = array();
                 <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
             @endif
             --}}
-            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;">
-                <div class="row">
+            <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
+                <div class="row no-overflow">
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Profile
@@ -41,6 +41,8 @@ $user_info = array();
                     @endif
                     <div class="">
                         <div class="row">
+                            <div class="col-lg-12 main-form-primary-horizontal">
+                                <div class="row">
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
                                 <p><span class="attention">*</span> Required Field</p>
@@ -55,9 +57,9 @@ $user_info = array();
                                 <input type=hidden name=hospital_reminder_time value="19:00">
                                 <input type=hidden name=hospital_reminder_areas value="TBD">
                                 <input type=hidden name=qualification value="">
-                                <input type=hidden name=specialty
+                                <input type=hidden name=specialty"
                                        value="<?php /*echo $validation['specialty']['value'];*/ ?>">
-                                <input type=hidden name=npi_number
+                                <input type=hidden name=npi_number"
                                        value="<?php /*echo $validation['npi_number']['value'];*/ ?>">
                                 <div class="row">
 
@@ -84,12 +86,12 @@ $user_info = array();
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioMale" name="gender"
+                                                    <input dusk="male-gender" type="radio" id="radioMale" name="gender"
                                                            value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioMale"><span> </span>Male</label>
                                                 </div>
                                                 <div class="radio-inline">
-                                                    <input type="radio" id="radioFemale" name="gender"
+                                                    <input dusk="female-gender" type="radio" id="radioFemale" name="gender"
                                                            value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
                                                     <label for="radioFemale"><span> </span>Female</label>
                                                 </div>
@@ -129,11 +131,10 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="input" class="form-control"
-                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '01-01-1960')) }}"
+                                        <input id="birth_date" name="birth_date" type="date" class="form-control"
+                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
-                                        <div id="dtBox"></div>
                                     </div>
                                     <div class="form-item col-sm-12">
                                         <div class="row">
@@ -276,7 +277,7 @@ $user_info = array();
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
                                         <input id="consent_date" name="consent_date" class="form-control"
-                                               type="input"
+                                               type="date"
                                                value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
                                                data-field="date" data-format="yyyy-MM-dd"/><br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
@@ -305,12 +306,22 @@ $user_info = array();
                                     <input type=hidden name=status
                                            value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
-                                    <div class="form-group form-item form-item-spacing col-sm-12">
-                                        <div class="row">
-                                            <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                            <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                    @if(auth()->user()->isAdmin())
+                                        <div class="form-group form-item form-item-spacing col-sm-12">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="form-group form-item form-item-spacing col-sm-12">
+                                            <div class="row">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
+                                                <div class="col-lg-8">{{ ucfirst($patient->ccm_status) }}</div>
+                                                <input type="hidden" value="{{$patient->ccm_status}}" name="ccm_status">
+                                            </div>
+                                        </div>
+                                    @endif
 
 
                                     <br>
@@ -325,12 +336,33 @@ $user_info = array();
                                 </div>
                             </div>
                         </div>
+                        </div>
+
+                        <div class="main-form-block main-form-secondary col-lg-12 text-center">
+                            <button class="btn btn-primary">Save Profile</button>
+                            <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
+                        </div>
+                        </div>
+                        @push('styles')
+                            <style>
+                                .no-overflow {
+                                    overflow: hidden;
+                                }
+                            </style>
+                        @endpush
                     </div>
                 </div>
             </div>
+            <div class="top-20"></div>
         </div>
-            @include('wpUsers.patient.careplan.footer')
-        <br/><br/>
+        @push('styles')
+            <style>
+                .top-20 {
+                    margin-top: 20px;
+                }
+            </style>
+        @endpush
+        <br><br><br><br>
 
         @if(isset($_GET['scrollTo']))
             @push('scripts')
@@ -354,11 +386,7 @@ $user_info = array();
             
     </div>
     @endif
-
-    {{--Added this to allow for testing, since submit is done via js--}}
-    @if(app()->environment('testing'))
-        {!! Form::submit('TestSubmit', ['id' => 'unit-test-submit']) !!}
-    @endif
+    </div>
 
     {!! Form::close() !!}
-@stop
+@endsection

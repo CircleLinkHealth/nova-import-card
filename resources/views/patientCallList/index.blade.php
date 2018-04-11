@@ -48,16 +48,17 @@
                                         <p>My assigned calls</p>
                                     </div>
                                     <div class="col-sm-9">
-                                        {!! Form::open(array('url' => URL::route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                                        {!! Form::open(array('url' => route('patientCallList.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                                         <div id="filters" class="" style="margin:40px 0px;">
                                             <div class="form-group">
                                                 <div id="dtBox"></div>
                                                 <label for="date" class="col-sm-1 control-label">Date: </label>
                                                 <div class="col-sm-4">
                                                     <input id="date" class="form-control pull-right" name="date"
-                                                           type="input"
-                                                           value="{{ (old('date') ? old('date') : ($date ? $date : '')) }}"
-                                                           data-field="date" data-format="yyyy-MM-dd"/><span
+                                                           type="text"
+                                                           placeholder="yyyy-mm-dd"
+                                                           value="{{ (old('date') ? old('date') : ($dateFilter ? $dateFilter : '')) }}"
+                                                           data-field="date" data-format="yyyy-mm-dd"/><span
                                                             class="help-block">{{ $errors->first('date') }}</span>
                                                 </div>
                                                 <label for="filterStatus"
@@ -138,7 +139,7 @@
                                                         </td>
                                                         <td>
                                                             @if($call->inboundUser)
-                                                                <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                                                                <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
                                                                    class="patientNameLink" call-id="{{ $call->id }}"
                                                                    style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
                                                             @else
@@ -170,9 +171,9 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if($call->inboundUser)                                                                             {{ \App\Call::numberOfCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}
+                                                            @if($call->inboundUser)                                                                             {{ $call->inboundUser->patientSummaries->first()->no_of_calls ?? 0 }}
                                                             (
-                                                            <span style="color:green;">{{ \App\Call::numberOfSuccessfulCallsForPatientForMonth($call->inboundUser,Carbon\Carbon::now()->toDateTimeString()) }}</span>
+                                                            <span style="color:green;">{{ $call->inboundUser->patientSummaries->first()->no_of_successful_calls ?? 0 }}</span>
                                                             )
                                                             @endif
                                                         </td>
@@ -192,7 +193,7 @@
                                                             {{--@if($call->status == 'reached')--}}
 
                                                             {{--@elseif($call->status == 'scheduled')--}}
-                                                                {{--<a href="{{ URL::route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
+                                                                {{--<a href="{{ route('patientCallList.index', array('id' => $call->id, 'action' => 'unassign')) }}"--}}
                                                                    {{--class="btn btn-danger btn-xs"><i--}}
                                                                             {{--class="glyphicon glyphicon-remove"></i>--}}
                                                                     {{--Unassign</a>--}}
@@ -250,7 +251,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <a href="{{ URL::route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
+                    <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
                        class="btn btn-primary">Continue to care plan</a>
                 </div>
             </div>

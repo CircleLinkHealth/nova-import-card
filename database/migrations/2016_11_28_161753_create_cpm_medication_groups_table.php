@@ -31,5 +31,4 @@ class CreateCpmMedicationGroupsTable extends Migration
     {
         Schema::drop('cpm_medication_groups');
     }
-
 }

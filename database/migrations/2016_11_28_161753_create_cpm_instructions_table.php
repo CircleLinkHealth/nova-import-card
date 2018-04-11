@@ -31,5 +31,4 @@ class CreateCpmInstructionsTable extends Migration
     {
         Schema::drop('cpm_instructions');
     }
-
 }

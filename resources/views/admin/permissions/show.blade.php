@@ -30,8 +30,8 @@
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->display_name }}</td>
                                 <td>
-                                    @if(Entrust::can('roles-permissions-manage'))
-                                        <a href="{{ URL::route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a>
+                                    @if(Cerberus::hasPermission('roles-permissions-manage'))
+                                        <a href="{{ route('admin.permissions.edit', array('id' => $permission->id)) }}" class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>
                             </tr>
@@ -72,7 +72,5 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 @stop

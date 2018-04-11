@@ -1,4 +1,7 @@
 <?php
+namespace Tests\Importer\ValidationStrategiesTests;
+
+use Tests\TestCase;
 
 class ValidStatusTest extends TestCase
 {

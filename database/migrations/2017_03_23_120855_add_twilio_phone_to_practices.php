@@ -16,7 +16,6 @@ class AddTwilioPhoneToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->string('outgoing_phone_number')->after('external_id')->default('+18886958537');
-
         });
     }
 
@@ -30,7 +29,6 @@ class AddTwilioPhoneToPractices extends Migration
         Schema::table('practices', function (Blueprint $table) {
 
             $table->dropColumn('outgoing_phone_number');
-
         });
     }
 }
