@@ -8,7 +8,7 @@ $user_info = array();
 @section('activity', 'Edit/Modify Care Plan')
 
 @push('scripts')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+    <!--<script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>-->
 @endpush
 
 @section('content')
@@ -340,7 +340,7 @@ $user_info = array();
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
                                                 <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', [ 'paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                             </div>
                                         </div>
                                     @else
