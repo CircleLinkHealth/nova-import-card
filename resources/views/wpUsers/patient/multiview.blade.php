@@ -660,7 +660,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <p style="margin-left: -10px;">
                                                 <strong>
                                                     {{snakeToSentenceCase($carePerson->type)}}:
-                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}}
+                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}} {{ optional($carePerson->user)->suffix }}
                                             </p>
                                         </div>
                                     </li>
