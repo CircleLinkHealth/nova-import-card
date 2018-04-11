@@ -33,7 +33,7 @@ import { ClientTable } from 'vue-tables-2'
 
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
-const ImporterTraining = () => import(/* webpackChunkName: "chunk-admin" */ './components/importer/trainer')
+const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
 const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
 const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
@@ -46,7 +46,7 @@ Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
 Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
-Vue.component('importer-trainer', ImporterTrainer)
+Vue.component('importer-trainer', ImporterTrainerComponent)
 Vue.component('passport-personal-access-tokens', PassportPersonalAccessTokensComponent)
 
 const App = new Vue({
