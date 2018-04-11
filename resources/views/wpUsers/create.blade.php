@@ -106,9 +106,9 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-xs-2">{!! Form::label('ccm_status', 'CCM Status:') !!}</div>
-                                                    <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                                    <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                                     <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
-                                                    <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                                    <div class="col-xs-4">{!! Form::select('careplan_status', array('to_enroll' => 'To Enroll', 'draft' => 'Draft', 'qa_approved' => 'QA Approved', 'provider_approved' => 'Provider Approved'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                                 </div>
                                             </div>
 
