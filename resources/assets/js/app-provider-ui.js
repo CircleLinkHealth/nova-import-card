@@ -33,45 +33,45 @@ Vue.use(VueForm, {
         invalid: 'form-control-danger'
     }
 })
-
-import ComponentProxy from './components/shared/component-proxy'
-import CareTeamComponent from './components/pages/view-care-plan/care-team'
-import CreateAppointmentsAddCarePerson from './components/CareTeam/create-appointments-add-care-person'
-import CreateCarePerson from './components/CareTeam/create-care-person'
-import UpdateCarePerson from './components/pages/view-care-plan/update-care-person'
-import Select2Component from './components/src/select2'
-import FabComponent from './components/fab'
-import OpenModalComponent from './components/shared/open-modal'
-import NotificationsComponent from './components/shared/notifications/notifications'
-import PdfCarePlans from './components/pages/view-care-plan/pdf-careplans'
-import MedicationsListComponent from './ccd-models/medications'
-import ProblemsList from './ccd-models/problems'
-import AllergiesList from './ccd-models/allergies'
-import NurseDailyHours from './components/pages/work-schedule/daily-hours'
-import QuestionnaireApp from './admin/questionnaire/app'
-import TimeTracker from './admin/time-tracker'
-import ServerTimeDisplay from './admin/time-tracker/comps/server-time-display'
-import LoaderComponent from './components/loader'
-import PersistentTextArea from './components/persistent-textarea'
-import CareAreasComponent from './components/careplan/care-areas'
-import HealthGoalsComponent from './components/careplan/health-goals'
-import MedicationsComponent from './components/careplan/medications'
-import SymptomsComponent from './components/careplan/symptoms'
-import LifestylesComponent from './components/careplan/lifestyles'
-import InstructionsComponent from './components/careplan/instructions'
-import AllergiesComponent from './components/careplan/allergies'
-import SocialServicesComponent from './components/careplan/social-services'
-import MiscModalComponent from './components/careplan/modals/misc.modal'
-import OthersComponent from './components/careplan/others'
-import AppointmentsComponent from './components/careplan/appointments'
-import PatientList from './components/patients/listing'
-import Datepicker from 'vuejs-datepicker'
-import ImporterTrainer from './components/Importer/trainer'
+const BillingComponent = () => import(/* webpackChunkName: "chunk-billing" */ './admin/billing')
+const ComponentProxy = () => import(/* webpackChunkName: "chunk" */ './components/shared/component-proxy')
+const CareTeamComponent = () => import(/* webpackChunkName: "chunk-careteam" */ './components/pages/view-care-plan/care-team')
+const CreateAppointmentsAddCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/careteam/create-appointments-add-care-person')
+const CreateCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/careteam/create-care-person')
+const UpdateCarePerson = () => import(/* webpackChunkName: "chunk-careteam" */ './components/pages/view-care-plan/update-care-person')
+const Select2Component = () => import(/* webpackChunkName: "chunk-misc" */ './components/src/select2')
+const FabComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/fab')
+const OpenModalComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/open-modal')
+const NotificationsComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/shared/notifications/notifications')
+const PdfCarePlans = () => import(/* webpackChunkName: "chunk" */ './components/pages/view-care-plan/pdf-careplans')
+const MedicationsListComponent = () => import(/* webpackChunkName: "chunk" */ './ccd-models/medications')
+const ProblemsList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/problems')
+const AllergiesList = () => import(/* webpackChunkName: "chunk" */ './ccd-models/allergies')
+const NurseDailyHours = () => import(/* webpackChunkName: "chunk" */ './components/pages/work-schedule/daily-hours')
+const QuestionnaireApp = () => import(/* webpackChunkName: "chunk-assessment" */ './admin/questionnaire/app')
+const TimeTracker = () => import(/* webpackChunkName: "chunk-time-tracker" */ './admin/time-tracker')
+const ServerTimeDisplay = () => import(/* webpackChunkName: "chunk" */ './admin/time-tracker/comps/server-time-display')
+const LoaderComponent = () => import(/* webpackChunkName: "chunk-misc" */ './components/loader')
+const PersistentTextArea = () => import(/* webpackChunkName: "chunk-misc" */ './components/persistent-textarea')
+const CareAreasComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/care-areas')
+const HealthGoalsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/health-goals')
+const MedicationsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/medications')
+const SymptomsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/symptoms')
+const LifestylesComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/lifestyles')
+const InstructionsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/instructions')
+const AllergiesComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/allergies')
+const SocialServicesComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/social-services')
+const MiscModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/misc.modal')
+const OthersComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/others')
+const AppointmentsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/appointments')
+const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */ './components/patients/listing')
+const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
+const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
-Vue.component('billing-report', require('./admin/billing/index.vue'));
+Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy)
 Vue.component('careTeam', CareTeamComponent)
 Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
@@ -103,8 +103,8 @@ Vue.component('others', OthersComponent)
 Vue.component('misc-modal', MiscModalComponent)
 Vue.component('appointments', AppointmentsComponent)
 Vue.component('patient-list', PatientList)
-Vue.component('v-datepicker', Datepicker)
-Vue.component('importer-trainer', ImporterTrainer)
+Vue.component('v-datepicker', DatepickerComponent)
+Vue.component('importer-trainer', ImporterTrainerComponent)
 
 
 const App = new Vue({

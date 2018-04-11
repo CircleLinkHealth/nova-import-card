@@ -5,7 +5,7 @@
     import modal from '../../shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
 
-    import CreateCarePerson from '../../CareTeam/create-care-person.vue'
+    import CreateCarePerson from '../../careteam/create-care-person.vue'
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
     import CareTeam from '../../pages/view-care-plan/care-team.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
