@@ -18,7 +18,7 @@
 
                     <br>
 
-                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter" checked>
+                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter">
                     <label for="">filterLastEncounter</label>
 
                     <br>
@@ -28,12 +28,12 @@
 
                     <br>
 
-                    <input type="checkbox" name="filterInsurance" id="filterInsurance" checked>
+                    <input type="checkbox" name="filterInsurance" id="filterInsurance">
                     <label for="">filterInsurance</label>
 
                     <br>
 
-                    <input type="checkbox" name="localDir" id="localDir" checked>
+                    <input type="checkbox" name="localDir" id="localDir">
                     <label for="localDir">localDir</label>
 
                     <input type="submit" class="btn btn-default" value="Generate" name="submit">
