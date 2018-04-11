@@ -8,7 +8,7 @@ $user_info = array();
 @section('activity', 'Edit/Modify Care Plan')
 
 @push('scripts')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+    <!--<script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>-->
 @endpush
 
 @section('content')
@@ -340,15 +340,17 @@ $user_info = array();
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
                                                 <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', [ 'paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                             </div>
                                         </div>
                                     @else
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
-                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{{ ucfirst($patient->ccm_status) }}</div>
-                                                <input type="hidden" value="{{$patient->ccm_status}}" name="ccm_status">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->ccm_status == '' ? 'paused' : ucfirst($patient->ccm_status))) !!}</div>
+                                                <div class="col-lg-8">
+                                                    <input type="hidden" value="{{ $patient->ccm_status == '' ? 'paused' : $patient->ccm_status }}" name="ccm_status">
+                                                </div>
+                                                
                                             </div>
                                         </div>
                                     @endif
