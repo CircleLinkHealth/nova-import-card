@@ -21,7 +21,7 @@
         <label for="window_start">Calls Start Time</label>
         <input class="form-control" name="window_start" type="time"
                value="{{isset($contactWindows[0]) ? $contactWindows[0]->window_time_start : ''}}"
-               id="window_start" placeholder="time">
+               id="window_start" placeholder="00:00 AM" pattern="\d{2}\:\d{2} (AM|PM)">
     </div>
 </div>
 
@@ -30,7 +30,7 @@
         <label for="window_end">Calls End Time</label>
         <input class="form-control" name="window_end" type="time"
                value="{{isset($contactWindows[0]) ? $contactWindows[0]->window_time_end : ''}}"
-               id="window_end" placeholder="time">
+               id="window_end" placeholder="00:00 AM" pattern="\d{2}\:\d{2} (AM|PM)">
     </div>
 </div>
 
