@@ -26,8 +26,9 @@ class PatientSummaryEloquentRepository
      *
      * @return bool
      */
-    public function shouldApprove(User $patient, PatientMonthlySummary $summary) {
-        return !$this->lacksProblems($summary)
+    public function shouldApprove(User $patient, PatientMonthlySummary $summary)
+    {
+        return ! $this->lacksProblems($summary)
                && $summary->no_of_successful_calls >= 1
                && $patient->patientInfo->ccm_status == 'enrolled'
                && $summary->rejected != 1
@@ -37,7 +38,8 @@ class PatientSummaryEloquentRepository
                && $summary->billable_problem2_code;
     }
 
-    public function shouldAttachProblems(User $patient, PatientMonthlySummary $summary) {
+    public function shouldAttachProblems(User $patient, PatientMonthlySummary $summary)
+    {
         return ! $this->approveIfShouldApprove($patient, $summary)->approved;
     }
 
@@ -53,11 +55,11 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
-        if (! $this->hasBillableProblemsNameAndCode($summary)) {
+        if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
-        if (! $this->shouldAttachProblems($patient, $summary)) {
+        if ( ! $this->shouldAttachProblems($patient, $summary)) {
             return $this->determineStatusAndSave($summary);
         }
 
@@ -98,8 +100,13 @@ class PatientSummaryEloquentRepository
      *
      * @return PatientMonthlySummary
      */
-    private function fillProblems(User $patient, PatientMonthlySummary $summary, $billableProblems, $tryCount = 0, $maxTries = 2)
-    {
+    private function fillProblems(
+        User $patient,
+        PatientMonthlySummary $summary,
+        $billableProblems,
+        $tryCount = 0,
+        $maxTries = 2
+    ) {
         if ($billableProblems->isEmpty()) {
             return $summary;
         }
@@ -323,8 +330,8 @@ class PatientSummaryEloquentRepository
 
     public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
     {
-        if (!$this->lacksProblems($summary)) {
-            if (!$summary->approved && !$summary->rejected && $this->shouldApprove($patient, $summary)) {
+        if ( ! $this->lacksProblems($summary)) {
+            if ( ! $summary->approved && ! $summary->rejected && $this->shouldApprove($patient, $summary)) {
                 $summary->approved = true;
 
                 if ($summary->problem_1 && $summary->problem_2) {
@@ -344,18 +351,19 @@ class PatientSummaryEloquentRepository
 
         return $summary;
     }
-    
-    public function determineStatusAndSave(PatientMonthlySummary $summary) {
-        if (! $this->hasBillableProblemsNameAndCode($summary)) {
+
+    public function determineStatusAndSave(PatientMonthlySummary $summary)
+    {
+        if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         $summary = $this->approveIfShouldApprove($summary->patient, $summary);
 
         $summary->needs_qa = ( ! $summary->approved && ! $summary->rejected)
-                || $this->lacksProblems($summary)
-                || $summary->no_of_successful_calls == 0
-                || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+                             || $this->lacksProblems($summary)
+                             || $summary->no_of_successful_calls == 0
+                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
         if (($summary->rejected || $summary->approved) && $summary->actor_id) {
             $summary->needs_qa = false;
@@ -365,7 +373,7 @@ class PatientSummaryEloquentRepository
             $summary->approved = $summary->rejected = false;
         }
 
-        if (($summary->approved && !$summary->isDirty('approved')) || ($summary->rejected && !$summary->isDirty('rejected')) || ($summary->needs_qa && !$summary->isDirty('needs_qa'))) {
+        if (($summary->approved && ! $summary->isDirty('approved')) || ($summary->rejected && ! $summary->isDirty('rejected')) || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
             return $summary;
         }
 
@@ -421,8 +429,8 @@ class PatientSummaryEloquentRepository
     public function detachDefaultChargeableService($summary, $defaultCodeId)
     {
         $detached = $summary->chargeableServices()
-            ->detach($defaultCodeId);
-        
+                            ->detach($defaultCodeId);
+
         $summary->load('chargeableServices');
 
         return $summary;
@@ -438,18 +446,23 @@ class PatientSummaryEloquentRepository
 
     public function fillBillableProblemsNameAndCode(PatientMonthlySummary $summary)
     {
-        $summary     = $this->fillProblemNameAndCodeFromIdOrRelationship($summary, 1);
-        $summary     = $this->fillProblemNameAndCodeFromIdOrRelationship($summary, 2);
+        $summary = $this->fillProblemNameAndCodeFromIdOrRelationship($summary, 1);
+        $summary = $this->fillProblemNameAndCodeFromIdOrRelationship($summary, 2);
 
         return $summary;
     }
 
-    public function fillProblemNameAndCodeFromIdOrRelationship(PatientMonthlySummary $summary, $problemNumber) {
-        if (!is_int($problemNumber) || $problemNumber > 2 || $problemNumber < 1) {
+    public function fillProblemNameAndCodeFromIdOrRelationship(PatientMonthlySummary $summary, $problemNumber)
+    {
+        if ($summary->{"billable_problem$problemNumber"} && $summary->{"billable_problem{$problemNumber}_code"}) {
+            return $summary;
+        }
+
+        if ( ! is_int($problemNumber) || $problemNumber > 2 || $problemNumber < 1) {
             throw new InvalidArgumentException('Problem number must be an integer between 1 and 2.', 422);
         }
 
-        if (!$summary->{"problem_$problemNumber"}) {
+        if ( ! $summary->{"problem_$problemNumber"}) {
             return $summary;
         }
 
@@ -460,12 +473,12 @@ class PatientSummaryEloquentRepository
                 ->firstWhere('id', $summary->{"problem_$problemNumber"});
         }
 
-        if (!$problem) {
+        if ( ! $problem) {
             //this will never be reached @todo: confirm
-            $problem     = $summary->{"billableProblem$problemNumber"};
+            $problem = $summary->{"billableProblem$problemNumber"};
         }
 
-        $summary->{"billable_problem$problemNumber"} = optional($problem)->name;
+        $summary->{"billable_problem$problemNumber"}        = optional($problem)->name;
         $summary->{"billable_problem{$problemNumber}_code"} = optional($problem)->icd10Code();
 
         return $summary;
