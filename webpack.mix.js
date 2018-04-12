@@ -16,7 +16,7 @@ const webpackConfig = {
     plugins: [
         new WorkboxPlugin({
             globDirectory: DIST_DIR,
-            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css'],
+            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css', 'css/wpstyle.css'],
             swDest: path.join(DIST_DIR, 'sw.js')
         }),
     ]

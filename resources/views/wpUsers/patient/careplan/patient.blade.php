@@ -1,5 +1,7 @@
 <?php
-$user_info = array();
+    use \Carbon\Carbon;
+
+    $user_info = array();
 ?>
 
 @extends('partials.providerUI')
@@ -28,7 +30,7 @@ $user_info = array();
             @endif
             --}}
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
-                <div class="row no-overflow">
+                <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Profile
@@ -131,9 +133,10 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="date" class="form-control"
-                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
-                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                        <v-datepicker name="birth_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
+                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
+                                            value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}" required></v-datepicker>
+                                        <br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                     </div>
                                     <div class="form-item col-sm-12">
@@ -236,7 +239,7 @@ $user_info = array();
                                     </div>
                                 </div>
                             </div>
-                            <div class="main-form-block main-form-secondary col-lg-5">
+                            <div class="main-form-block main-form-secondary col-lg-5" style="padding-bottom: 0px">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row" style=" padding-right: 15px;">
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
@@ -276,10 +279,10 @@ $user_info = array();
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
-                                        <input id="consent_date" name="consent_date" class="form-control"
-                                               type="date"
-                                               value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
-                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                        <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
+                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
+                                            value="{{ Carbon::today()->format('y-M-d') }}" required></v-datepicker>
+                                        <br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>
 
@@ -369,7 +372,9 @@ $user_info = array();
                             </div>
                         </div>
                         </div>
-
+                        <div class="col-lg-12 text-center" style="margin-top: -24px">
+                            <hr style="border-top: 3px solid #50b2e2;">
+                        </div>
                         <div class="main-form-block main-form-secondary col-lg-12 text-center">
                             <button class="btn btn-primary">Save Profile</button>
                             <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
