@@ -298,7 +298,7 @@
             e.preventDefault()
             var form = this
             $.get('/api/test').always(response => {
-                if (response.status == 200) {
+                if (response.status == 200 || response.message == 'clh') {
                     var key = 'notes:{{$patient->id}}:add'
                     window.sessionStorage.removeItem(key)
                 }
