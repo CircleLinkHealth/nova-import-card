@@ -111,6 +111,10 @@
                 },
 
                 showSuccess() {
+                    this.modeBeforeUpload = this.patientCarePlan.mode
+
+                    console.log('mode:before:upload', this.modeBeforeUpload)
+                    
                     if (this.modeBeforeUpload === 'web') {
                         location.href = rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`)
                     }
@@ -121,7 +125,6 @@
 
                     this.$refs.pdfCareplansDropzone.removeAllFiles()
                     this.showUploadModal = false;
-                    this.modeBeforeUpload = this.patientCarePlan.mode
 
                     this.addNotification({
                         title: "PDF Careplan(s) uploaded",
