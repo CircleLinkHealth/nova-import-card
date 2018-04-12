@@ -111,9 +111,20 @@
                 },
 
                 showSuccess() {
+                    this.modeBeforeUpload = this.patientCarePlan.mode
+
+                    console.log('mode:before:upload', this.modeBeforeUpload)
+                    
+                    if (this.modeBeforeUpload === 'web') {
+                        location.href = rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`)
+                    }
+
+                    if (this.modeBeforeUpload === 'pdf') {
+                        this.getPatientCarePlan(this.patientId)
+                    }
+
                     this.$refs.pdfCareplansDropzone.removeAllFiles()
                     this.showUploadModal = false;
-                    this.modeBeforeUpload = this.patientCarePlan.mode
 
                     this.addNotification({
                         title: "PDF Careplan(s) uploaded",
@@ -121,16 +132,6 @@
                         type: "success",
                         timeout: true
                     })
-
-                    if (this.modeBeforeUpload === 'web') {
-                        setTimeout(() => {
-                            window.location.replace(rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`))
-                        }, 1000)
-                    }
-
-                    if (this.modeBeforeUpload === 'pdf') {
-                        this.getPatientCarePlan(this.patientId)
-                    }
                 },
             }
         ),
