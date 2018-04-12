@@ -874,13 +874,13 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.GeneralCommentsCsv',
         ]);
 
-        Route::get('calls/remix', [
-            'uses' => 'Admin\PatientCallManagementController@remix',
-            'as'   => 'admin.patientCallManagement.remix',
+        Route::get('calls/old', [
+            'uses' => 'Admin\PatientCallManagementController@index',
+            'as'   => 'admin.patientCallManagement.old',
         ]);
-
+        
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
-
+        
 
         Route::group([
             'prefix' => 'reports',
@@ -1251,8 +1251,8 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
             ]);
-            Route::get('calls/', [
-                'uses' => 'Admin\PatientCallManagementController@index',
+            Route::get('calls', [
+                'uses' => 'Admin\PatientCallManagementController@remix',
                 'as'   => 'admin.patientCallManagement.index',
             ]);
             Route::get('calls/{id}/edit', [
