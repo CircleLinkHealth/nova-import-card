@@ -8412,7 +8412,7 @@ a:hover .icon--menu {
   color: #50b2e2;
 }
 .main-form-primary-horizontal {
-  /* border-bottom: 3px solid #50b2e2; */
+  border-bottom: 3px solid #50b2e2;
 }
 @media screen and (min-width: 1080px) {
   .main-form-primary-vertical {
