@@ -43,7 +43,7 @@
                     @endif
                     <div class="">
                         <div class="row">
-                            <div class="col-lg-12 main-form-primary-horizontal">
+                            <div class="col-lg-12 main-form-primary-horizontal" style="border-bottom: 0px">
                                 <div class="row">
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
