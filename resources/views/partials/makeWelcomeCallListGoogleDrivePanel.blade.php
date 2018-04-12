@@ -5,9 +5,9 @@
                 {{ csrf_field() }}
                 <div class="form-group">
                     <div class="form-group">
-                        <select name="practiceName" class="col-sm-12 form-control" required>
+                        <select name="practiceName" class="col-sm-12 form-control select2" required>
                             <option value="" disabled selected>Select Practice</option>
-                            @foreach(App\Practice::get()->sortBy('name')->values() as $practice)
+                            @foreach(App\Practice::active()->orderBy('display_name')->get() as $practice)
                                 <option value="{{$practice->name}}">{{$practice->display_name}}</option>
                             @endforeach
                         </select>
@@ -18,7 +18,7 @@
 
                     <br>
 
-                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter" checked>
+                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter">
                     <label for="">filterLastEncounter</label>
 
                     <br>
@@ -28,12 +28,12 @@
 
                     <br>
 
-                    <input type="checkbox" name="filterInsurance" id="filterInsurance" checked>
+                    <input type="checkbox" name="filterInsurance" id="filterInsurance">
                     <label for="">filterInsurance</label>
 
                     <br>
 
-                    <input type="checkbox" name="localDir" id="localDir" checked>
+                    <input type="checkbox" name="localDir" id="localDir">
                     <label for="localDir">localDir</label>
 
                     <input type="submit" class="btn btn-default" value="Generate" name="submit">
