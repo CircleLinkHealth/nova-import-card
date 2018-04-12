@@ -14,7 +14,7 @@ class SetupTestCustomer extends Command
      *
      * @var string
      */
-    protected $signature = 'command:setupTestCustomer';
+    protected $signature = 'command:setupTestCustomer {count=100}';
 
     /**
      * The console command description.
@@ -40,7 +40,11 @@ class SetupTestCustomer extends Command
      */
     public function handle()
     {
-        $this->createTestCustomerData();
+        $count = $this->argument('count');
+
+
+        $this->createTestCustomerData($count);
+
 
     }
 }

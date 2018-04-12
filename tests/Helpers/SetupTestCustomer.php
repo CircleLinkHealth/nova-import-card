@@ -184,7 +184,7 @@ trait SetupTestCustomer
      *
      * @return mixed
      */
-    public function createTestCustomerData($patientCount = 50)
+    public function createTestCustomerData($patientCount = 100)
     {
 
         $practice = $this->createPractice();
