@@ -78,6 +78,10 @@ class CarePlan extends \App\BaseModel implements PdfReport
         'provider_date',
     ];
 
+    protected $attributes = [
+        'mode' => self::WEB,
+    ];
+
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
         $pendingApprovals = 0;

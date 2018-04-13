@@ -483,11 +483,12 @@ class PatientCareplanController extends Controller
                 'program_id'      => $params->get('program_id'),
                 'display_name'    => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles'           => [$role->id],
-                'ccm_status'      => 'enrolled',
+                'ccm_status'      => $request->input('ccm_status', Patient::ENROLLED),
                 'careplan_status' => 'draft',
+                'careplan_mode'   => CarePlan::WEB,
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
-                
+
             if ($request->has('provider_id')) {
                 $newUser->billing_provider_id = $request->input('provider_id');
             }

@@ -274,6 +274,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 'user_id' => $user->id,
             ], [
                 'status' => $params->get('careplan_status'),
+                'mode' => $params->get('careplan_mode', CarePlan::WEB),
             ]);
 
             $params->remove('careplan_status');
