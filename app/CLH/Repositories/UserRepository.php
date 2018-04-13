@@ -278,6 +278,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             ]);
 
             $params->remove('careplan_status');
+            $params->remove('careplan_mode');
         }
 
         foreach ($patientInfo as $key => $value) {
