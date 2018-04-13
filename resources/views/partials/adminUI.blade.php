@@ -11,9 +11,9 @@
 
     <base href="{{asset('')}}">
 
-    @include('partials.hotjar-code')
+@include('partials.hotjar-code')
 
-    <!-- Stylesheets -->
+<!-- Stylesheets -->
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
@@ -230,27 +230,36 @@
                                     </a></li>
                             </ul>
                         </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Practices <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
+                                <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
 
+                                <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
+                                <li>
+                                    <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
+                                </li>
+                                <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
+                                <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
+                                        Patient Report</a></li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Settings<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
+                                <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
+                                    </a></li>
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Practices <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                    <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
-
-                                    <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                    <li>
-                                        <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                    </li>
-                                    <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
-                                    <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
-                                            Patient Report</a></li>
-                                </ul>
-                            </li>
+                            </ul>
+                        </li>
 
                         @if(auth()->user()->isSaas())
                             <li role="presentation" class="dropdown">

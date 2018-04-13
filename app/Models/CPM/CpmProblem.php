@@ -147,9 +147,6 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->where('contains', 'LIKE', "%$name%");
     }
 
-    public function keywords(){
-        return $this->hasMany(Keyword::class);
-    }
 
     /**
      * Get this Model's Service Class
