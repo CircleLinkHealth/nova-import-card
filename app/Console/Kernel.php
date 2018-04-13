@@ -6,6 +6,7 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -40,8 +41,8 @@ class Kernel extends ConsoleKernel
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute();
 
-//        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-//                 ->weeklyOn(1, '10:00');
+        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
                  ->weekdays()
