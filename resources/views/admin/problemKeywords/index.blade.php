@@ -23,7 +23,7 @@
                             <option value="{{$p->id}}">{{$p->name}}</option>
                         @endforeach
                     </select>
-                    <input type="submit">
+                    <input type="submit" class="btn btn-info">
                 </form>
             </div>
         </div>
@@ -32,18 +32,26 @@
             <div>
                 <form action="{{route('problem-keywords.update')}}" method="POST">
                     {!! method_field('patch') !!}
-                    Add keyword to text below. (Remember to seperate by comma!)
+                    <div class="form-group">
+                        Edit keywords for CPM Problem @if($problem != null): <strong>{{$problem->name}}</strong>. @elseif($problem == null) -select problem above. @endif (Remember to seperate by comma!)
+                    </div>
                     @if($problem != null)
-                    <textarea class="col-md-12" name="contains">{{$problem->contains}}</textarea>
+                    <textarea class="col-md-12 form-group" name="contains">{{$problem->contains}}</textarea>
                     <input type="hidden" name="problemId" value="{{$problem->id}}">
-                        @else <textarea class="col-md-12" name="contains">Select Problem</textarea>
+                    @else
+                        <textarea class="col-md-12" name="contains">Select CPM Problem.</textarea>
                     <input type="hidden" name="problemId" value="{{null}}">
                     @endif
-                    <input type="submit">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-info">
+                    </div>
                     {{csrf_field()}}
                 </form>
                 <br>
             </div>
+        </div>
+        <div class="alert-success col-md-4 col-md-offset-4">
+            @isset($message){{$message}}@endisset
         </div>
         <br>
     </div>

@@ -257,6 +257,8 @@
 
                                 <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
                                     </a></li>
+                                <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
+                                    </a></li>
 
                             </ul>
                         </li>

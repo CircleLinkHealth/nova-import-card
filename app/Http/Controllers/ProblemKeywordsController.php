@@ -18,7 +18,8 @@ class ProblemKeywordsController extends Controller
 
         $problem = null;
 
-        return view('admin.problemKeywords.index', compact(['problems', 'problem']));
+
+        return view('admin.problemKeywords.index', compact(['problems', 'problem',]));
     }
 
     /**
@@ -65,9 +66,10 @@ class ProblemKeywordsController extends Controller
 
         $problem = $problems->where('id', $request['problem_id'])->first();
 
+        $message = null;
 
 
-        return view('admin.problemKeywords.index', compact(['problems', 'problem']));
+        return view('admin.problemKeywords.index', compact(['problems', 'problem',]));
 
     }
 
@@ -83,13 +85,23 @@ class ProblemKeywordsController extends Controller
         if ($request['problemId'] == null){
             return back();
         }
+        $problems = CpmProblem::get();
         $problem = CpmProblem::find($request['problemId']);
         $contains = $request['contains'];
 
-        $problem->contains = $contains;
-        $problem->save();
+        $message = 'You need to make some changes to the keywords';
 
-        return back();
+        if ($problem->contains != $contains){
+            $problem->contains = $contains;
+            $problem->save();
+            $message = 'Keywords successfully edited!';
+        }
+
+
+
+
+
+        return view('admin.problemKeywords.index', compact(['problems', 'problem', 'message']));
 
 
     }
