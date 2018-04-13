@@ -484,7 +484,7 @@ class PatientCareplanController extends Controller
                 'display_name'    => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles'           => [$role->id],
                 'ccm_status'      => 'enrolled',
-                'careplan_status' => 'to_enroll',
+                'careplan_status' => 'draft',
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
                 
