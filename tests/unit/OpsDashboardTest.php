@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\OpsDashboardController;
+use App\Models\CPM\CpmProblem;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
@@ -50,7 +51,7 @@ class OpsDashboardTest extends TestCase
         $rows                     = collect($rows);
 
 
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $rows);
+        $this->assertInstanceOf('Illuminate\Support\Collection', $rows);
 
     }
 

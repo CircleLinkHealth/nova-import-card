@@ -1094,6 +1094,30 @@ Route::group(['middleware' => 'auth'], function () {
 
         });
 
+        Route::group([
+            'prefix' => 'settings',
+        ], function () {
+            Route::group([
+                'prefix' => 'problem-keywords',
+            ], function () {
+                Route::get('/index', [
+                    'uses' => 'ProblemKeywordsController@index',
+                    'as'   => 'problem-keywords.index',
+                ]);
+
+                Route::get('/edit', [
+                    'uses' => 'ProblemKeywordsController@edit',
+                    'as'   => 'problem-keywords.edit',
+                ]);
+
+                Route::patch('/update', [
+                    'uses' => 'ProblemKeywordsController@update',
+                    'as'   => 'problem-keywords.update',
+                ]);
+            });
+
+        });
+
         //Practice Billing
         Route::group(['prefix' => 'practice/billing'], function () {
 
