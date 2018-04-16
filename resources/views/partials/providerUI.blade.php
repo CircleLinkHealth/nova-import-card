@@ -32,7 +32,6 @@
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
-    <link href="{{ asset('/css/fab.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/patientsearch.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
