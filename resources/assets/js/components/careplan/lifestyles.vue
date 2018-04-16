@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="patientLifestyles.length === 0">
-            <div class="col-xs-12 text-center">
-                No Lifestyles at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="patientLifestyles.length === 0">
+            No Lifestyles at this time
+        </div>
         <div class="row gutter" v-if="patientLifestyles.length > 0">
             <div class="col-xs-12">
                 <ul class="subareas__list">

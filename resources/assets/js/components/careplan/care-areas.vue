@@ -9,9 +9,7 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">
-                    <div class="text-center">No Problems at this time</div>
-                </slot>
+                <div class="text-center" v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">No Problems at this time</div>
                 
                 <ul class="subareas__list" v-if="(ccdMonitoredProblems.length > 0)">
                     <li class='subareas__item inline-block col-sm-6 print-row' :class="{ ccd: problem.type === 'ccd' }" 
