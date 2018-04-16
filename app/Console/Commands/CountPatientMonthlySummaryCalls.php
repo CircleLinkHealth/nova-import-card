@@ -59,6 +59,7 @@ class CountPatientMonthlySummaryCalls extends Command
             : Carbon::now();
 
         PatientMonthlySummary::orderBy('id')
+                             ->whereMonthYear($date->toDateString())
                              ->chunk(500, function ($summaries) use ($date) {
                                  foreach ($summaries as $pms) {
                                      $save = false;
@@ -67,7 +68,7 @@ class CountPatientMonthlySummaryCalls extends Command
                                          $date);
 
                                      if ($noOfSuccessfulCalls != $pms->no_of_successful_calls) {
-                                         $this->comment("user_id:$pms->patient_id successful calls changing from $pms->no_of_successful_calls to $noOfSuccessfulCalls");
+                                         $this->comment("user_id:$pms->patient_id no_of_successful_calls changing from $pms->no_of_successful_calls to $noOfSuccessfulCalls");
                                          $pms->no_of_successful_calls = $noOfSuccessfulCalls;
                                          $save                        = true;
                                      }
@@ -75,7 +76,7 @@ class CountPatientMonthlySummaryCalls extends Command
                                      $noOfCalls = $this->callRepository->numberOfCalls($pms->patient_id, $date);
 
                                      if ($noOfCalls != $pms->no_of_calls) {
-                                         $this->comment("user_id:$pms->patient_id successful calls changing from $pms->no_of_calls to $noOfCalls");
+                                         $this->comment("user_id:$pms->patient_id no_of_calls changing from $pms->no_of_calls to $noOfCalls");
                                          $pms->no_of_calls = $noOfCalls;
                                          $save             = true;
                                      }
