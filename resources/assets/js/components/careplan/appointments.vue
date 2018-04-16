@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="appointments.length === 0">
-            <div class="col-xs-12 text-center">
-                No Appointments at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="appointments.length === 0">
+            No Appointments at this time
+        </div>
         <div class="row gutter" v-if="appointments.length > 0">
             <div class="col-xs-12" v-if="futureAppointments.length > 0">
                 <h3>Upcoming</h3>

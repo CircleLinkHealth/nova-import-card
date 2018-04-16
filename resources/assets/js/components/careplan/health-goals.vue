@@ -20,12 +20,10 @@
                     </div>
                 </div>
 
-                <slot v-if="goals.length === 0">
-                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
-                </slot>
+                <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 
                 <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing()" :key="goal.id">
+                    <li class='subareas__item subareas__item--wide row top-10' v-for="goal in goalsForListing()" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.name == 'Weight' && !Number(goal.info.target)) ? 'to' : ((goal.info.verb === 'Regulate') ? 'keep under' :  'to') }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
