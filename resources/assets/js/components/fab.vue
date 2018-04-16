@@ -1,72 +1,63 @@
-<!--Don't know how to add compiled fab.css to style tag. Make sure 'public/css/fab.css' is included on the page-->
-<style>
-    @media print {
-        .hidden-print, .hidden-print * {
-            display: none !important;
-        }
-    }
-</style>
-
 <template>
     <div>
-        <section class="FAB hidden-print">
-            <div class="FAB__mini-action-button hidden-print">
-                <div class="mini-action-button--hide mini-action-button hidden-print">
+        <section class="fab">
+            <div class="mini-action-container">
+                <div class="mini-action-button">
                     <a :href="createNoteUrl">
-                        <i class="mini-action-button__icon material-icons">speaker_notes</i>
+                        <i class="icon material-icons">speaker_notes</i>
                     </a>
-                    <p class="mini-action-button__text--hide">Add Note</p>
+                    <p class="text">Add Note</p>
                 </div>
 
-                <div class="mini-action-button--hide mini-action-button">
+                <div class="mini-action-button">
                     <a :href="createObservationUrl">
-                        <i class="mini-action-button__icon material-icons">timeline</i>
+                        <i class="icon material-icons">timeline</i>
                     </a>
-                    <p class="mini-action-button__text--hide">Add Observation</p>
+                    <p class="text">Add Observation</p>
                 </div>
 
-                <div class="mini-action-button--hide mini-action-button">
+                <div class="mini-action-button">
                     <a :href="createActivityUrl">
-                        <i class="mini-action-button__icon material-icons">local_hospital</i>
+                        <i class="icon material-icons">local_hospital</i>
                     </a>
-                    <p class="mini-action-button__text--hide">Add Offline Activity</p>
+                    <p class="text">Add Offline Activity</p>
                 </div>
 
-                <div class="mini-action-button--hide mini-action-button">
+                <div class="mini-action-button">
                     <a :href="createAppointmentUrl">
-                        <i class="mini-action-button__icon material-icons">today</i>
+                        <i class="icon material-icons">today</i>
                     </a>
-                    <p class="mini-action-button__text--hide">Add Appointment</p>
+                    <p class="text">Add Appointment</p>
                 </div>
 
-                <div id="showAddCarePersonModal" class="mini-action-button--hide mini-action-button">
+                <div id="showAddCarePersonModal" class="mini-action-button">
                     <p>
                         <i v-on:click="createCarePerson"
-                           class="mini-action-button__icon material-icons">contact_mail</i>
+                           class="icon material-icons">contact_mail</i>
                     </p>
-                    <p class="mini-action-button__text--hide">Add Care Person</p>
+                    <p class="text">Add Care Person</p>
                 </div>
 
             </div>
-            <div class="FAB__action-button hidden-print">
-                <i class="action-button__icon material-icons hidden-print">add</i>
+            <div class="action-button">
+                <i class="icon material-icons">add</i>
             </div>
         </section>
     </div>
 </template>
 
 <script>
-    import {mapGetters, mapActions} from 'vuex'
-    import {getCurrentUser, setOpenModal} from "../store/actions";
-    import {currentUser} from '../store/getters';
+    import { mapGetters, mapActions } from 'vuex'
+    import { getCurrentUser, setOpenModal } from "../store/actions";
+    import { currentUser } from '../store/getters';
 
     export default {
         data() {
             return {
-                createNoteUrl: $('meta[name="route.patient.note.create"]').attr('content'),
-                createObservationUrl: $('meta[name="route.patient.observation.create"]').attr('content'),
-                createActivityUrl: $('meta[name="route.patient.activity.create"]').attr('content'),
-                createAppointmentUrl: $('meta[name="route.patient.appointment.create"]').attr('content'),
+                createNoteUrl: this.document().querySelector('meta[name="route.patient.note.create"]').getAttribute('content'),
+                createObservationUrl: this.document().querySelector('meta[name="route.patient.observation.create"]').getAttribute('content'),
+                createActivityUrl: this.document().querySelector('meta[name="route.patient.activity.create"]').getAttribute('content'),
+                createAppointmentUrl: this.document().querySelector('meta[name="route.patient.appointment.create"]').getAttribute('content'),
             }
         },
 
@@ -87,8 +78,136 @@
                     this.setOpenModal({
                         name: 'create-care-person'
                     })
+                },
+                document () {
+                    return (typeof (document) == 'undefined') ? {
+                        querySelector: (query) => ({ getAttribute: () => null })
+                    } : document
                 }
             }
         ),
     }
 </script>
+
+<style scoped>
+    .fab {
+        z-index: 999;
+        position: fixed;
+        bottom: 30px;
+        right: 60px;
+        width: 56px;
+        height: 360px;
+    }
+
+    .fab .action-button, .fab .mini-action-button {
+        cursor: pointer;
+        position: absolute;
+    }
+
+    .fab .action-button {
+        bottom: -18px;
+        right: 1px;
+    }
+
+    .fab .action-button:hover .action-button__icon {
+        -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .fab .mini-action-container {
+        bottom: 0;
+        right: 49px;
+        display: none;
+    }
+
+    .fab:hover .mini-action-container {
+        display: block;
+    }
+
+    .action-button .icon {
+        -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+        background-color: #50b2e2;
+        border-radius: 50%;
+        color: #fff;
+        padding: 16px;
+    }
+
+    .mini-action-button .icon {
+        -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+        background-color: #47beab;
+        border-radius: 50%;
+        color: #fff;
+        padding: 8px;
+    }
+
+    .mini-action-button .icon:hover {
+        -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.14), 0 8px 16px rgba(0, 0, 0, 0.28);
+    }
+
+    .mini-action-button .text {
+        display: none;
+    }
+
+    .mini-action-button:hover .text {
+        background-color: #212121;
+        border-radius: 3px;
+        color: #fff;
+        display: block;
+        right: 60px;
+        font-size: 14px;
+        font-family: "Helvetica Neue";
+        opacity: .8;
+        padding: 5px 9px;
+        position: absolute;
+        top: 15px;
+        white-space: nowrap;
+    }
+
+    .mini-action-button {
+        position: fixed;
+        text-align: center;
+    }
+
+    .mini-action-button:nth-child(1) {
+        bottom: 80px;
+    }
+
+    .mini-action-button:nth-child(2) {
+        bottom: 140px;
+    }
+
+    .mini-action-button:nth-child(3) {
+        bottom: 200px;
+    }
+
+    .mini-action-button:nth-child(4) {
+        bottom: 260px;
+    }
+
+    .mini-action-button:nth-child(5) {
+        bottom: 320px;
+    }
+
+    .mini-action-button:nth-child(6) {
+        bottom: 380px;
+    }
+
+    .mini-action-button:nth-child(7) {
+        bottom: 440px;
+    }
+
+    .mini-action-button:nth-child(8) {
+        bottom: 500px;
+    }
+
+    .mini-action-button:nth-child(9) {
+        bottom: 560px;
+    }
+
+    .mini-action-button:nth-child(10) {
+        bottom: 620px;
+    }
+</style>
