@@ -16,7 +16,7 @@ class RecalculateCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for ins YYYY-MM-DD}';
+    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for in format YYYY-MM-DD}';
 
     /**
      * The console command description.
