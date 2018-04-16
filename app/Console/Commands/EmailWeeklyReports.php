@@ -53,7 +53,7 @@ class EmailWeeklyReports extends Command
         }
 
         if ($this->argument('practiceId')) {
-            $onlyForPractice = Practice::find($this->argument('practiceId'));
+            $onlyForPractice = Practice::findOrFail($this->argument('practiceId'));
         }
 
         $endDate = $this->argument('endDate') ?? null;
