@@ -50,6 +50,10 @@
         .modal-dialog {
             z-index: 1051 !important;
         }
+
+        .select2 {
+            width: 100%;
+        }
     </style>
     @stack('styles')
 </head>

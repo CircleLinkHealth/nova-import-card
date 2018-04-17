@@ -762,6 +762,17 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'enrollees'], function() {
+            Route::get('', [
+                'uses' => 'EnrolleesController@index',
+                'as'    => 'admin.enrollees.index'
+            ]);
+            Route::post('import', [
+                'uses' => 'EnrolleesController@import',
+                'as'    => 'admin.enrollees.import'
+            ]);
+        });
+
         Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
 
         Route::get('eligible-lists/phoenix-heart', 'Admin\WelcomeCallListController@makePhoenixHeartCallList');

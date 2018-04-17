@@ -12,6 +12,7 @@ use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -250,5 +251,38 @@ class ProcessEligibilityService
             });
 
         return true;
+    }
+
+    /**
+     * Import a Patient whose CCDA we have already.
+     *
+     * @param $ccdaId
+     *
+     * @return ImportedMedicalRecord|bool
+     */
+    public function importExistingCcda($ccdaId)
+    {
+        $ccda = Ccda::where([
+            'id'       => $ccdaId,
+            'imported' => false,
+        ])->first();
+
+        if (!$ccda) {
+            return false;
+        }
+
+        $imr = $ccda->import();
+
+        $update = Ccda::whereId($ccdaId)
+                      ->update([
+                          'status'   => Ccda::QA,
+                          'imported' => true,
+                      ]);
+
+        return $imr;
+    }
+
+    public function isCcda($medicalRecordType) {
+        return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
     }
 }

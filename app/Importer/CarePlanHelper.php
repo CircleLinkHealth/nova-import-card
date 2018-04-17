@@ -9,6 +9,7 @@ use App\CLH\CCD\Importer\StorageStrategies\Biometrics\Weight;
 use App\CLH\CCD\Importer\StorageStrategies\Problems\ProblemsToMonitor;
 use App\CLH\Helpers\StringManipulation;
 use App\CLH\Repositories\CCDImporterRepository;
+use App\Enrollee;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -68,6 +69,8 @@ class CarePlanHelper
         $this->user->display_name = "{$this->user->first_name} {$this->user->last_name}";
         $this->user->program_id = $this->importedMedicalRecord->practice_id ?? null;
         $this->user->save();
+
+        $this->handleEnrollees();
 
         return $this->carePlan;
     }
@@ -477,6 +480,18 @@ class CarePlanHelper
             'care_plan_template_id' => $this->user->service()->firstOrDefaultCarePlan($this->user)->care_plan_template_id,
             'status'                => 'draft',
         ]);
+
+        return $this;
+    }
+
+    public function handleEnrollees()
+    {
+        $enrollee = Enrollee::whereMedicalRecordId($this->importedMedicalRecord->medical_record_id)->whereNull('user_id')->first();
+
+        if ($enrollee) {
+            $enrollee->user_id = $this->user->id;
+            $enrollee->save();
+        }
 
         return $this;
     }
