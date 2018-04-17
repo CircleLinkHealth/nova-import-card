@@ -147,6 +147,10 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         })
     }
 
+    /**
+     * 
+     * @param {boolean} response yes/no on whether the practitioner was busy on a patient during calculated inactive-time
+     */
     user.respondToModal = (response) => {
         let activity = user.activities.find(item => item.name == info.activity)
         if (response) {
