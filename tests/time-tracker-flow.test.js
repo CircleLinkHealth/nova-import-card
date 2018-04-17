@@ -8,7 +8,7 @@ const TimeTrackerUser = TimeTracker.TimeTrackerUser
 const WebSocket = require('./stubs/ws.stub')
 
 const TimeTrackerInfo = require('./stubs/time-tracker-info.stub')
-const info = new TimeTrackerInfo()
+const info = new TimeTrackerInfo({ totalTime: 0 })
 const key = (new TimeTrackerInfo()).createKey()
 const ws = new WebSocket()
 const activity1 = { name: 'patient-notes-1', urlFull: 'http://cpm-web.com/x/y/z', urlShort: '/x/y/z' }
@@ -22,20 +22,38 @@ describe('TimeTrackerFlow', () => {
     const timeTracker = new TimeTracker()
     const user = timeTracker.get(info)
 
+    describe('Enter', () => {
+        user.enter(info, ws)
 
-    it('should return 3 when addSeconds(3) is passed to interval() for the first time', () => {
-        assert.equal(user.interval(addSeconds(3)), 3)
-    })
+        it('should have totalSeconds as 0', () => {
+            assert.equal(user.totalSeconds, 0)
+        })
 
-    it('interval() should return 3 when addSeconds(3) is passed to setEndTime() for the first time', () => {
-        assert.equal(user.setEndTime(addSeconds(3)).interval(), 3)
-    })
+        describe('InactivityModal', () => {
+            const timeTracker = new TimeTracker()
+            const user = timeTracker.get(info)
 
-    it('interval() should return 4 when addSeconds(4) is passed to stop() for the first time', () => {
-        assert.equal(user.stop(addSeconds(4)).interval(), 4)
-    })
+            describe('User chose NO', () => {
+                user.enter(info, ws)
+                user.respondToModal(false)
 
-    it('should have dates.length equal to 1 when stop() is called for the first time', () => {
-        assert.equal(user.stop().dates.length, 1)
+                it('should have totalSeconds as 30', () => {
+                    assert.equal(user.totalSeconds, 30)
+                })
+            })
+            
+            describe('User chose YES', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+
+                user.enter(info, ws)
+                user.inactiveSeconds = 20
+                user.respondToModal(true)
+
+                it('should have totalSeconds as 20', () => {
+                    assert.equal(user.totalSeconds, 20)
+                })
+            })
+        })
     })
 })

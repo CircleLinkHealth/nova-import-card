@@ -4,7 +4,7 @@ function TimeTrackerInfo (options = {}) {
 
     this.providerId = options.providerId || '3864'
 
-    this.totalTime = options.totalTime || 339
+    this.totalTime = (typeof(options.totalTime) != 'undefined') ? options.totalTime : 339
 
     this.wsUrl = options.wsUrl || 'ws://localhost:3000/time'
 
