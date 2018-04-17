@@ -24,16 +24,19 @@ class CreateNewPatientRequest extends FormRequest
      */
     public function rules()
     {
-        if ($this->input('patientId')){
+
+        if ($this->input('patientId')) {
             return [];
         }
+
 
         return [
             'first_name' => [
                 'required',
-                function($attribute, $value, $fail) {
+                function ($attribute, $value, $fail) {
                     $count = User::whereHas('patientInfo', function ($q) {
-                        $q->where('mrn_number', $this->input('mrn_number'));
+                        $q->where('mrn_number', $this->input('mrn_number'))
+                          ->where('birth_date', $this->input('birth_date'));
                     })
                                  ->where('first_name', $this->input('first_name'))
                                  ->where('last_name', $this->input('last_name'))
