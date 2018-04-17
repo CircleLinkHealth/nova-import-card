@@ -112,25 +112,23 @@
             },
             editNote(e) {
                 e.preventDefault()
-                if (e.target.value != '') {
-                    this.loaders.editNote = true
-                    let $promise = null
-                    if (this.note.id) {
-                        $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
-                    }
-                    else {
-                        $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
-                    }
-                    return $promise.then(response => {
-                        console.log('health-goals:note-add', response.data)
-                        Event.$emit('health-goals:note-add', response.data)
-                        if (response.data) this.note = response.data
-                        this.loaders.editNote = false
-                    }).catch(err => {
-                        console.error('health-goals:note-add', err)
-                        this.loaders.editNote = false
-                    })
+                this.loaders.editNote = true
+                let $promise = null
+                if (this.note.id) {
+                    $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
                 }
+                else {
+                    $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
+                }
+                return $promise.then(response => {
+                    console.log('health-goals:note-add', response.data)
+                    Event.$emit('health-goals:note-add', response.data)
+                    if (response.data) this.note = response.data
+                    this.loaders.editNote = false
+                }).catch(err => {
+                    console.error('health-goals:note-add', err)
+                    this.loaders.editNote = false
+                })
             }
         },
         mounted() {
