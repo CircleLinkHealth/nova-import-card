@@ -1,21 +1,14 @@
-const assert = require('chai').assert
-require('../prototypes/array.prototype')
-require('../prototypes/date.prototype')
-
-const TimeTracker = require('../time-tracker')
-const TimeTrackerUser = TimeTracker.TimeTrackerUser
-
-const WebSocket = require('./stubs/ws.stub')
-
-const TimeTrackerInfo = require('./stubs/time-tracker-info.stub')
-const info = new TimeTrackerInfo()
-const key = (new TimeTrackerInfo()).createKey()
-const ws = new WebSocket()
-const activity1 = { name: 'patient-notes-1', urlFull: 'http://cpm-web.com/x/y/z', urlShort: '/x/y/z' }
-const activity2 = { name: 'patient-notes-2', urlFull: 'http://cpm-web.com/x/y/z', urlShort: '/x/y/z' }
-const activity3 = { name: 'patient-notes-3', urlFull: 'http://cpm-web.com/x/y/z', urlShort: '/x/y/z' }
-
-const addSeconds = (seconds) => () => (new Date).addSeconds(seconds)
+const {
+    assert,
+    TimeTracker,
+    TimeTrackerUser,
+    TimeTrackerInfo,
+    WebSocket,
+    info,
+    key,
+    ws,
+    addSeconds
+} = require('./setup.test')
 
 describe('TimeTrackerUser', () => {
     const timeTracker = new TimeTracker()
