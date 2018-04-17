@@ -537,6 +537,10 @@ class UserController extends Controller
         $userRepo = new UserRepository();
 
         $userRepo->editUser($wpUser, $params);
+                
+        if ($request->has('provider_id')) {
+            $wpUser->billing_provider_id = $request->input('provider_id');
+        }
 
         return redirect()->back()->with('messages', ['successfully updated user']);
     }
