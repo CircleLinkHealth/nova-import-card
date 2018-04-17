@@ -1,4 +1,4 @@
-const { validateInfo } = require('./utils.fn')
+const { validateInfo, createActivity } = require('./utils.fn')
 
 function TimeTrackerUser(info, now = () => (new Date())) {
     
@@ -8,23 +8,6 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
-    }
-
-    const getActivity = (info) => {
-        validateInfo(info)
-
-        return { 
-            name: info.activity || 'unknown', 
-            title: info.title || 'unknown',
-            duration: 0,
-            url: info.urlFull, 
-            url_short: info.urlShort,
-            start_time: info.startTime,
-            sockets: [],
-            get isActive() {
-                return this.sockets.some(socket => socket.active)
-            }
-        }
     }
     
     const user = {
@@ -73,7 +56,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         validateWebSocket(ws)
         let activity = user.activities.find(item => item.name == info.activity)
         if (!activity) {
-            activity = getActivity(info)
+            activity = createActivity(info)
             activity.sockets.push(ws)
             user.activities.push(activity)
         }
