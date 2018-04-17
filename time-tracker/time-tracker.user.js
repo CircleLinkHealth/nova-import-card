@@ -1,64 +1,4 @@
-require('./prototypes/date.prototype')
-require('./prototypes/array.prototype')
-const moment = require('moment')
-
-const validateInfo = (info) => {
-    if (!info || !['Object', 'TimeTrackerInfo'].includes(info.constructor.name)) throw new Error('[info] must be a valid object')
-}
-
-function TimeTracker(now = () => (new Date())) {
-    const users = {}
-
-    this.key = (info) => `${info.providerId}-${info.patientId}`
-
-    this.validateInfo = validateInfo
-
-    this.get = (info) => {
-
-        this.validateInfo(info)
-
-        const key = this.key(info)
-
-        if (info.activity === '') {
-            info.activity = 'unknown'
-        }
-
-        return users[key] = users[key] || this.create(info)
-    }
-
-    this.create = (info) => {
-        
-        this.validateInfo(info)
-
-        return new TimeTrackerUser(info, now)
-    }
-
-    this.users = () => {
-        return Object.values(users)
-    }
-
-    this.remove = (info) => {
-        
-        this.validateInfo(info)
-
-        const key = this.key(info)
-
-        if (users[key]) delete users[key]
-    }
-
-    this.exists = (info) => {
-        
-        this.validateInfo(info)
-        
-        const key = this.key(info)
-
-        return !!users[key]
-    }
-
-    this.keys = () => {
-        return Object.keys(users)
-    }
-}
+const { validateInfo } = require('./utils.fn')
 
 function TimeTrackerUser(info, now = () => (new Date())) {
     
@@ -269,5 +209,4 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     return user
 }
 
-module.exports = TimeTracker;
-module.exports.TimeTrackerUser = TimeTrackerUser
+module.exports = TimeTrackerUser
