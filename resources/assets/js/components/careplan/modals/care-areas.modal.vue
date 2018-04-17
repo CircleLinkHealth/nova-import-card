@@ -8,12 +8,12 @@
                 </div>
                 <div class="col-sm-12" :class="{ 'problem-container': problems.length > 12 }">
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
-                        <button class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
+                        <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
                             {{problem.name}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
-                        </button>
+                        </div>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedProblem || !selectedProblem.id }" value="+" @click="select(null)" />
                     </div>
                 </div>
