@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class CreateNewPatientRequest extends FormRequest
 {
@@ -24,28 +24,29 @@ class CreateNewPatientRequest extends FormRequest
      */
     public function rules()
     {
+        if ($this->input('patientId')){
+            return [];
+        }
 
         return [
             'first_name' => [
                 'required',
-                Rule::unique('users')->where(function ($query) {
-                    $query->where('last_name', $this->input('last_name'))
-                          ->where('program_id', $this->input('program_id'));
-                })
-                    ->ignore($this->input('patientId')),
+                function($attribute, $value, $fail) {
+                    $count = User::whereHas('patientInfo', function ($q) {
+                        $q->where('mrn_number', $this->input('mrn_number'));
+                    })
+                                 ->where('first_name', $this->input('first_name'))
+                                 ->where('last_name', $this->input('last_name'))
+                                 ->where('program_id', $this->input('program_id'))
+                                 ->count();
+
+                    if ($count > 0) {
+                        return $fail('Patient already exists.');
+                    }
+                },
             ],
         ];
+
     }
 
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'first_name.unique' => 'Patient already exists.',
-        ];
-    }
 }
