@@ -288,10 +288,28 @@
     <script>
 
         $(document).ready(function () {
-            $('#phone').change(function () {
-                $('#collapseOne').toggle();
+            function phoneSessionChange(e) {
+                if (e) {
+                    if (e.currentTarget.checked) {
+                        $('#collapseOne').show()
+                    }
+                    else {
+                        $('#collapseOne').hide()
+                    }
+                }
+                else {
+                    $('#collapseOne').toggle();
+                }
                 $("#Outbound").prop("checked", true);
-            });
+            }
+
+            $('#phone').change(phoneSessionChange);
+
+            phoneSessionChange({
+                currentTarget: {
+                    checked: $('#phone').is(':checked')
+                }
+            })
         });
 
         $('#newNote').submit(function (e) {
