@@ -13,7 +13,9 @@
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
             </template>
             <template slot="careplanStatus" scope="props">
-                {{ (({ qa_approved: 'QA Approved', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
+                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                </a>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -338,7 +340,7 @@
 
                 ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
                     option.innerText = ({
-                        qa_approved: 'QA Approved',
+                        qa_approved: 'Approve Now',
                         to_enroll: 'To Enroll',
                         provider_approved: 'Provider Approved',
                         none: 'None',
@@ -419,4 +421,14 @@
     padding: 10px;
 }
 
+</style>
+
+<style scoped>
+    a:hover {
+        text-decoration: none;
+    }
+
+    a[href]:hover {
+        text-decoration: underline;
+    }
 </style>
