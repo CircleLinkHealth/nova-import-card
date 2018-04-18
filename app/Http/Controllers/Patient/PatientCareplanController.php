@@ -5,6 +5,7 @@ use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateNewPatientRequest;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
@@ -388,7 +389,7 @@ class PatientCareplanController extends Controller
      *
      * @return Response
      */
-    public function storePatientDemographics(Request $request)
+    public function storePatientDemographics(CreateNewPatientRequest $request)
     {
         // input
         $params    = new ParameterBag($request->input());
