@@ -364,6 +364,7 @@
                     obj[key] = ''
                     this.$refs.tblPatientList.setFilter(obj)
                 })
+                this.$refs.tblPatientList.setOrder()
                 this.activateFilters()
             }
         },
