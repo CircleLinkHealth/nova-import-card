@@ -124,6 +124,7 @@
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     },
+                    perPage: this.isFilterActive() ? this.tableData.length : 10,
                     customSorting: {
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
@@ -142,6 +143,9 @@
         },
         methods: {
             rootUrl,
+            isFilterActive () {
+                return this.$refs.tblPatientList ? !!Object.values(this.$refs.tblPatientList.query).reduce((a, b) => a || b) : false
+            },
             columnMapping (name) {
                 const columns = {
                     program: 'practice'
@@ -155,10 +159,10 @@
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
             toggleProgramColumn () {
