@@ -332,7 +332,7 @@
     <!-- Script for polyfilling Promises on IE9 and 10 -->
     
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/es7-object-polyfill@0.0.5/es7-object-polyfill.min.js"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
