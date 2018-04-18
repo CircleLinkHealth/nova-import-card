@@ -297,7 +297,7 @@
         $('#newNote').submit(function (e) {
             e.preventDefault()
             var form = this
-            $.get('/api/test').always(response => {
+            $.get('/api/test').always(function (response) {
                 if (response.status == 200 || response.message == 'clh') {
                     var key = 'notes:{{$patient->id}}:add'
                     window.sessionStorage.removeItem(key)
