@@ -90,11 +90,19 @@ class CallsDashboardController extends Controller
 
     public function createCall(Request $request, NoteService $service)
     {
-        $note            = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
+        $note            = Note::with(['patient', 'author', 'call'])->where('id', $request['noteId'])->first();
+        $call            = $note->call;
+        if ($call){
+            return view('admin.CallsDashboard.edit', compact(['note', 'call']));
+        }
+
         $status          = $request['status'];
         $patient         = User::find($note->patient_id);
         $nurse           = User::find($request['nurseId']);
         $phone_direction = $request['direction'];
+
+
+
 
         $service->storeCallForNote(
             $note,
