@@ -1,6 +1,7 @@
+const { EventEmitter } = require('events')
 const { validateInfo, createActivity } = require('./utils.fn')
 
-function TimeTrackerUser(info, now = () => (new Date())) {
+function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     
     validateInfo(info)
 
@@ -73,10 +74,10 @@ function TimeTrackerUser(info, now = () => (new Date())) {
          * check inactive seconds
          */
         if (user.inactiveSeconds) {
-            if (user.inactiveSeconds < 120) {
+            if (user.inactiveSeconds < 10) {
                 user.respondToModal(true)
             }
-            else if (user.inactiveSeconds < 600) {
+            else if (user.inactiveSeconds < 20) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
