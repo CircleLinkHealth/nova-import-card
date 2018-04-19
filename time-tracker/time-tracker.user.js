@@ -111,7 +111,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
         ws.active = true
 
-        $emitter.emit(`server:enter:${user.providerId}`, user.patientFamilyId)
+        $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId)
     }
 
     user.closeAllModals = () => {
@@ -192,8 +192,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
     }
 
-    const serverEnterHandler = (patientFamilyId) => {
-        if (patientFamilyId != user.patientFamilyId) {
+    const serverEnterHandler = (patientId, patientFamilyId) => {
+        if (Number(patientId) && Number(patientFamilyId) && (patientFamilyId != user.patientFamilyId)) {
             user.exitCallMode(info)
         }
     }
