@@ -9,7 +9,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
     }
-    
+
     const user = {
         key: key,
         inactiveSeconds: 0, //inactive time in seconds
@@ -21,6 +21,7 @@ function TimeTrackerUser(info, now = () => (new Date())) {
         ipAddr: info.ipAddr,
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
+        callMode: false,
         get totalSeconds() {
             return this.activities.reduce((a, b) => a + b.duration, 0) + this.totalTime
         },
@@ -166,6 +167,11 @@ function TimeTrackerUser(info, now = () => (new Date())) {
             }
             activity.inactiveModalShowTime = null
         }
+    }
+
+    user.enterCallMode = (info) => {
+        let activity = user.activities.find(item => item.name === info.activity)
+
     }
 
     user.close = () => {
