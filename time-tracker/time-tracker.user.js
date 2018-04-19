@@ -68,6 +68,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
              */
             activity.duration += info.initSeconds
         }
+        if (user.callMode) {
+            ws.send(JSON.stringify({ message: 'server:call-mode:enter' }))
+        }
+        else {
+            ws.send(JSON.stringify({ message: 'server:call-mode:exit' }))
+        }
     }
 
     user.enter = (info, ws) => {
