@@ -131,6 +131,28 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:call-mode:enter') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.enterCallMode(info)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
+            else if (data.message === 'client:call-mode:exit') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.exitCallMode(info)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }
@@ -208,7 +230,8 @@ module.exports = app => {
           'total-seconds:', user.totalSeconds,
           'inactive-seconds:', user.inactiveSeconds,
           'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
-          'sockets:', user.allSockets.length
+          'sockets:', user.allSockets.length,
+          'call-mode:', (user.callMode ? colors.FgBlue : '') + user.callMode + colors.Reset
         )
       }
     }

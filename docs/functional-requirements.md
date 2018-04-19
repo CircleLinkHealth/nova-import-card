@@ -6,7 +6,7 @@
   - [x] If the time spent off a CCM page is > 2 mins, then show a modal with (yes/no) options
     - [x] If the user clicks yes, add the full time spent off the page
     - [x] If the user clicks no, add only 30 seconds
-  - [x] If the time spent off a CCM page is > 10 mins, then sign the user off
+  - [x] If the time spent off a CCM page is > 10 mins, then add only 30 seconds and sign the user off
 
 ## Page Load Count
 
