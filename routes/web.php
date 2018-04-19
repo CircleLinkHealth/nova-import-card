@@ -1028,6 +1028,31 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
             ]);
+            Route::group([
+                'prefix' => 'calls-dashboard',
+            ], function () {
+
+                Route::get('/index', [
+                    'uses' => 'CallsDashboardController@index',
+                    'as'   => 'CallsDashboard.index'
+                ]);
+
+                Route::get('/create', [
+                    'uses' => 'CallsDashboardController@create',
+                    'as'   => 'CallsDashboard.create'
+                ]);
+
+                Route::patch('/edit', [
+                    'uses' => 'CallsDashboardController@edit',
+                    'as'   => 'CallsDashboard.edit'
+                ]);
+
+                Route::post('/create-call', [
+                    'uses' => 'CallsDashboardController@createCall',
+                    'as'   => 'CallsDashboard.create-call'
+                ]);
+
+            });
 
             Route::group([
                 'prefix' => 'ops-dashboard',
