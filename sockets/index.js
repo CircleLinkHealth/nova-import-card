@@ -230,7 +230,8 @@ module.exports = app => {
           'total-seconds:', user.totalSeconds,
           'inactive-seconds:', user.inactiveSeconds,
           'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
-          'sockets:', user.allSockets.length
+          'sockets:', user.allSockets.length,
+          'call-mode:', colors.FgBlue + user.callMode + colors.Reset
         )
       }
     }
