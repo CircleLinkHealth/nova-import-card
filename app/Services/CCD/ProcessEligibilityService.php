@@ -17,6 +17,7 @@ use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Readers\Batch;
 use ZanySoft\Zip\Zip;
 
 
@@ -174,18 +175,9 @@ class ProcessEligibilityService
                         ->values();
     }
 
-    public function queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    public function queueFromGoogleDrive(Batch $batch)
     {
-        ProcessEligibilityFromGoogleDrive::dispatch(EligibilityBatch::create([
-            'type'    => EligibilityBatch::TYPE_GOOGLE_DRIVE,
-            'options' => [
-                'dir'                 => $dir,
-                'practiceName'        => $practiceName,
-                'filterLastEncounter' => (boolean) $filterLastEncounter,
-                'filterInsurance'     => (boolean) $filterInsurance,
-                'filterProblems'      => (boolean) $filterProblems,
-            ],
-        ]));
+        ProcessEligibilityFromGoogleDrive::dispatch($batch);
     }
 
     public function handleAlreadyDownloadedZip(
@@ -302,5 +294,20 @@ class ProcessEligibilityService
     public function isCcda($medicalRecordType)
     {
         return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
+    }
+
+    public function createBatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    {
+        return EligibilityBatch::create([
+            'type'    => EligibilityBatch::TYPE_GOOGLE_DRIVE,
+            'status'  => EligibilityBatch::STATUSES['not_started'],
+            'options' => [
+                'dir'                 => $dir,
+                'practiceName'        => $practiceName,
+                'filterLastEncounter' => (boolean)$filterLastEncounter,
+                'filterInsurance'     => (boolean)$filterInsurance,
+                'filterProblems'      => (boolean)$filterProblems,
+            ],
+        ]);
     }
 }
