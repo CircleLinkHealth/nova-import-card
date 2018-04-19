@@ -1,6 +1,7 @@
+const { EventEmitter } = require('events')
 const { validateInfo, createActivity } = require('./utils.fn')
 
-function TimeTrackerUser(info, now = () => (new Date())) {
+function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     
     validateInfo(info)
 

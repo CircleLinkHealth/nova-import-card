@@ -8,8 +8,10 @@ module.exports = app => {
 
   const axios = require('axios')
 
-  const timeTracker = new TimeTracker()
-  const timeTrackerNoLiveCount = new TimeTracker()
+  const $emitter = require('./sockets.events')
+
+  const timeTracker = new TimeTracker($emitter)
+  const timeTrackerNoLiveCount = new TimeTracker($emitter)
 
   app.timeTracker = timeTracker
   app.timeTrackerNoLiveCount = timeTrackerNoLiveCount
@@ -32,6 +34,19 @@ module.exports = app => {
       }
     }
   }
+
+  app.ws('/events', (ws, req) => {
+    try {
+      $emitter.emit('socket:add', ws)
+
+      ws.on('close', () => {
+        $emitter.emit('socket:remove', ws)
+      })
+    }
+    catch (ex) {
+      errorThrow(ex, ws);
+    }
+  })
 
   app.ws('/time', (ws, req) => {
     ws.on('message', (message = '') => {
@@ -165,6 +180,8 @@ module.exports = app => {
           }).catch((err) => {
             console.error(err)
           })
+
+          $emitter.emit('socket:server:logout', requestData)
 
           user.close()
         }

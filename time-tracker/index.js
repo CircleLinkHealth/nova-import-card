@@ -1,10 +1,11 @@
 require('../prototypes/date.prototype')
 require('../prototypes/array.prototype')
 
+const { EventEmitter } = require('events')
 const { validateInfo } = require('./utils.fn')
 const TimeTrackerUser = require('./time-tracker.user')
 
-function TimeTracker(now = () => (new Date())) {
+function TimeTracker($emitter = new EventEmitter()) {
     const users = {}
 
     this.key = (info) => `${info.providerId}-${info.patientId}`
@@ -28,7 +29,7 @@ function TimeTracker(now = () => (new Date())) {
         
         this.validateInfo(info)
 
-        return new TimeTrackerUser(info, now)
+        return new TimeTrackerUser(info, $emitter)
     }
 
     this.users = () => {
