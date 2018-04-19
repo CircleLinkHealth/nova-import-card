@@ -13,6 +13,7 @@ const createActivity = (info) => {
         url_short: info.urlShort,
         start_time: info.startTime,
         sockets: [],
+        callMode: false,
         get isActive() {
             return this.sockets.some(socket => socket.active)
         }
