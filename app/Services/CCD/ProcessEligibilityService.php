@@ -17,14 +17,19 @@ use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Readers\Batch;
 use ZanySoft\Zip\Zip;
 
 
 class ProcessEligibilityService
 {
-    public function fromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    public function fromGoogleDrive(EligibilityBatch $batch)
     {
+        $dir                 = $batch->options['dir'];
+        $practiceName        = $batch->options['practiceName'];
+        $filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
+        $filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $filterProblems      = (boolean)$batch->options['filterProblems'];
+
         $cloudDisk = Storage::cloud();
 
         $practice  = Practice::whereName($practiceName)->firstOrFail();
@@ -54,7 +59,8 @@ class ProcessEligibilityService
                 $filterLastEncounter,
                 $filterInsurance,
                 $filterProblems,
-                $processedDir
+                $processedDir,
+                $batch
             ) {
                 $cloudFilePath = $file['path'];
                 $cloudFileName = $file['filename'];
@@ -105,8 +111,7 @@ class ProcessEligibilityService
                         $ccda->save();
 
                         ProcessCcda::withChain([
-                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                                (bool)$filterInsurance, (bool)$filterProblems),
+                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
                         ])->dispatch($ccda->id);
 
                         $localDisk->delete($path);
@@ -126,56 +131,64 @@ class ProcessEligibilityService
             return 'done';
         }
 
-        return $contents->where('type', '=', 'file')
-                        ->whereIn('mimetype', [
-                            'text/xml',
-                            'application/xml',
-                        ])
-                        ->map(function ($file) use (
-                            $cloudDisk,
-                            $practice,
-                            $dir,
-                            $filterLastEncounter,
-                            $filterInsurance,
-                            $filterProblems,
-                            $processedDir
-                        ) {
-                            $driveFilePath = $file['path'];
+        $ccds = $contents->where('type', '=', 'file')
+                         ->whereIn('mimetype', [
+                             'text/xml',
+                             'application/xml',
+                         ]);
 
-                            $rawData = $cloudDisk->get($driveFilePath);
+        if ($ccds->isEmpty()) {
+            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->save();
 
-                            if (str_contains($file['filename'], ['processed'])) {
-                                $cloudDisk->move($file['path'], "{$processedDir['path']}/{$file['filename']}");
+            return false;
+        }
 
-                                return $file;
-                            }
+        return $ccds->map(function ($file) use (
+            $cloudDisk,
+            $practice,
+            $dir,
+            $filterLastEncounter,
+            $filterInsurance,
+            $filterProblems,
+            $processedDir,
+            $batch
+        ) {
+            $driveFilePath = $file['path'];
 
-                            $ccda = Ccda::create([
-                                'source'   => Ccda::GOOGLE_DRIVE . "_$dir",
-                                'xml'      => $rawData,
-                                'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                                'imported' => false,
-                            ]);
+            $rawData = $cloudDisk->get($driveFilePath);
 
-                            //for some reason it doesn't save practice_id when using Ccda::create([])
-                            $ccda->practice_id = (int)$practice->id;
-                            $ccda->save();
+            if (str_contains($file['filename'], ['processed'])) {
+                $cloudDisk->move($file['path'], "{$processedDir['path']}/{$file['filename']}");
 
-                            ProcessCcda::withChain([
-                                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                                    (bool)$filterInsurance, (bool)$filterProblems),
-                            ])->dispatch($ccda->id);
+                return $file;
+            }
 
-                            $cloudDisk->move($file['path'],
-                                "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
+            $ccda = Ccda::create([
+                'source'   => Ccda::GOOGLE_DRIVE . "_$dir",
+                'xml'      => $rawData,
+                'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                'imported' => false,
+            ]);
 
-                            return $file;
-                        })
-                        ->filter()
-                        ->values();
+            //for some reason it doesn't save practice_id when using Ccda::create([])
+            $ccda->practice_id = (int)$practice->id;
+            $ccda->save();
+
+            ProcessCcda::withChain([
+                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
+            ])->dispatch($ccda->id);
+
+            $cloudDisk->move($file['path'],
+                "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
+
+            return $file;
+        })
+                    ->filter()
+                    ->values();
     }
 
-    public function queueFromGoogleDrive(Batch $batch)
+    public function queueFromGoogleDrive(EligibilityBatch $batch)
     {
         ProcessEligibilityFromGoogleDrive::dispatch($batch);
     }

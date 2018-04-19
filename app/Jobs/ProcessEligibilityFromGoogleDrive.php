@@ -26,27 +26,28 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param EligibilityBatch $batch
      */
     public function __construct(EligibilityBatch $batch)
     {
         $this->dir                 = $batch->options['dir'];
         $this->practiceName        = $batch->options['practiceName'];
-        $this->filterLastEncounter = (boolean) $batch->options['filterLastEncounter'];
-        $this->filterInsurance     = (boolean) $batch->options['filterInsurance'];
-        $this->filterProblems      = (boolean) $batch->options['filterProblems'];
-        $this->batch = $batch;
+        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
+        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->batch               = $batch;
     }
 
     /**
      * Execute the job.
+     *
+     * @param ProcessEligibilityService $processEligibilityService
      *
      * @return void
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
         $processEligibilityService
-            ->fromGoogleDrive($this->dir, $this->practiceName, $this->filterLastEncounter, $this->filterInsurance,
-                $this->filterProblems);
+            ->fromGoogleDrive($this->batch);
     }
 }

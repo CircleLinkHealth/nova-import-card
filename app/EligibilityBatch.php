@@ -22,15 +22,45 @@ class EligibilityBatch extends Model
      */
     protected $casts = [
         'options' => 'array',
+        'stats'   => 'array',
     ];
 
     protected $fillable = [
         'type',
         'options',
+        'stats',
         'status',
     ];
 
     protected $attributes = [
-        'status' => 0
+        'status' => 0,
     ];
+
+    public function incrementEligibleCount()
+    {
+        $this->incrementCount('eligible');
+    }
+
+    public function incrementIneligibleCount()
+    {
+        $this->incrementCount('ineligible');
+    }
+
+    public function incrementErrorCount()
+    {
+        $this->incrementCount('errors');
+    }
+
+    public function incrementDuplicateCount()
+    {
+        $this->incrementCount('duplicates');
+    }
+
+    private function incrementCount($key) {
+        $stats = $this->stats;
+
+        $stats[$key] = $this->stats[$key] + 1;
+
+        $this->stats = $stats;
+    }
 }

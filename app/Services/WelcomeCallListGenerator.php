@@ -10,6 +10,7 @@ namespace App\Services;
 
 use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Constants;
+use App\EligibilityBatch;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Practice;
@@ -67,7 +68,7 @@ class WelcomeCallListGenerator
     /**
      * @var null
      */
-    private $batchId;
+    private $batch;
 
     /**
      * WelcomeCallListGenerator constructor.
@@ -80,7 +81,7 @@ class WelcomeCallListGenerator
      * @param Practice|null $practice
      * @param null $medicalRecordType
      * @param null $medicalRecordId
-     * @param null $batchId
+     * @param null $batch
      */
     public function __construct(
         Collection $patientList,
@@ -91,7 +92,7 @@ class WelcomeCallListGenerator
         Practice $practice = null,
         $medicalRecordType = null,
         $medicalRecordId = null,
-        $batchId = null
+        EligibilityBatch $batch = null
     ) {
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
@@ -103,11 +104,16 @@ class WelcomeCallListGenerator
         $this->practice            = $practice;
         $this->medicalRecordType   = $medicalRecordType;
         $this->medicalRecordId     = $medicalRecordId;
-        $this->batchId             = $batchId;
+        $this->batch               = $batch;
 
         $this->filterPatientList();
 
         $this->createEnrollees();
+    }
+
+    public function __destruct()
+    {
+        $this->batch->save();
     }
 
     protected function filterPatientList()
@@ -258,6 +264,7 @@ class WelcomeCallListGenerator
 
             if (count($qualifyingProblems) < 2) {
                 $this->ineligiblePatients->push($row);
+                $this->batch->incrementIneligibleCount();
 
                 return false;
             }
@@ -313,6 +320,8 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
+            $this->batch->incrementIneligibleCount();
+
             return false;
         }
 
@@ -355,6 +364,8 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
+            $this->batch->incrementIneligibleCount();
+
             return false;
         }
 
@@ -378,12 +389,14 @@ class WelcomeCallListGenerator
 
             if ( ! isset($row['last_encounter'])) {
                 $this->ineligiblePatients->push($row);
+                $this->batch->incrementIneligibleCount();
 
                 return true;
             }
 
             if ( ! $row['last_encounter']) {
                 $this->ineligiblePatients->push($row);
+                $this->batch->incrementIneligibleCount();
 
                 return true;
             }
@@ -394,6 +407,7 @@ class WelcomeCallListGenerator
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
+                $this->batch->incrementIneligibleCount();
 
                 return true;
             }
@@ -441,7 +455,7 @@ class WelcomeCallListGenerator
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
             $args['last_encounter']      = Carbon::parse($args['last_encounter']);
-            $args['batch_id']            = $this->batchId;
+            $args['batch_id']            = $this->batch->id;
 
             $exists = Enrollee::where([
                 [
@@ -469,8 +483,12 @@ class WelcomeCallListGenerator
             if ( ! $exists) {
                 $this->enrollees = Enrollee::create($args);
 
+                $this->batch->incrementEligibleCount();
+
                 return false;
             }
+
+            $this->batch->incrementDuplicateCount();
 
             return true;
         });

@@ -18,6 +18,7 @@ class CreateEligibilityBatchesTable extends Migration
             $table->string('type');
             $table->integer('status');
             $table->json('options');
+            $table->json('stats');
             $table->timestamps();
         });
 
