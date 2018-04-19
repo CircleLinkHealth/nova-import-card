@@ -26,6 +26,8 @@ function TimeTrackerInfo (options = {}) {
 
     this.disabled = options.disabled || false
 
+    this.patientFamilyId = options.patientFamilyId || 101
+
     this.createKey = function () {
         return `${this.patientId}-${this.providerId}`
     }
