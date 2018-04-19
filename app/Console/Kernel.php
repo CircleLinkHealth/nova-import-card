@@ -6,6 +6,7 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -27,6 +28,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command(QueueEligibilityBatchForProcessing::class)
+                 ->everyMinute()
+                 ->withoutOverlapping();
+
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
         $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
