@@ -43,9 +43,10 @@
                                 if (data.message === 'server:logout') {
                                     const totalDuration = data.activities.reduce((a, b) => a + b.duration, 0)
                                     const patientSuffix = ((Number(data.patientId) ? ` when working on patient ${data.patientId}` : ''))
+                                    const activities = data.activities.map(activity => activity.name).join(', ')
 
                                     EventBus.$emit('notifications:create', ({
-                                        text: `Logged +${timeDisplay(totalDuration)} for practitioner ${data.providerId}` + patientSuffix,
+                                        text: `Logged +${timeDisplay(totalDuration)} for practitioner ${data.providerId}` + patientSuffix + ` in ${activities}`,
                                         noTimeout: true
                                     }))
                                 }
