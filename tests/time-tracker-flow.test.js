@@ -129,4 +129,40 @@ describe('TimeTrackerFlow', () => {
             })
         })
     })
+
+    describe('Call Mode', () => {
+        const timeTracker = new TimeTracker()
+        const info1 = { ...info, ...{ patientFamilyId: 1 } }
+        const info2 = { ...info, ...{ patientId: 5, patientFamilyId: 2 } }
+        const user1 = timeTracker.get(info1)
+        const user2 = timeTracker.get(info2)
+
+        describe('Test Users', () => {
+            it('should have same practitioner ID', () => {
+                assert.equal(info1.providerId, info2.providerId)
+            })
+            it('should have different patientIDs', () => {
+                assert.notEqual(info1.patientId, info2.patientId)
+            })
+            it('should have different patientFamilyIDs', () => {
+                assert.notEqual(info1.patientFamilyId, info2.patientFamilyId)
+            })
+        })
+        
+        describe('Exits If User With Different Family ID Is Entered', () => {
+            user1.enter(info1, ws)
+            user1.enterCallMode(info1, ws)
+
+            assert.isTrue(user1.callMode)
+            assert.isFalse(user2.callMode)
+
+            user2.enter(info2, ws)
+
+            assert.isFalse(user1.callMode)
+
+            it('should pass', () => {
+
+            })
+        })
+    })
 })

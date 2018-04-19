@@ -110,6 +110,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             }
         }
         ws.active = true
+
+        $emitter.emit(`server:enter:${user.providerId}`, user.patientFamilyId)
     }
 
     user.closeAllModals = () => {
@@ -190,11 +192,19 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
     }
 
+    const serverEnterHandler = (patientFamilyId) => {
+        if (patientFamilyId != user.patientFamilyId) {
+            user.exitCallMode(info)
+        }
+    }
+
     user.enterCallMode = (info) => {
         let activity = user.activities.find(item => item.name === info.activity)
         activity.callMode = true
 
         user.broadcast({ message: 'server:call-mode:enter' })
+
+        $emitter.on(`server:enter:${user.providerId}`, serverEnterHandler)
     }
 
     user.exitCallMode = (info) => {
@@ -203,6 +213,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         })
 
         user.broadcast({ message: 'server:call-mode:exit' })
+
+        $emitter.removeListener(`server:enter:${user.providerId}`, serverEnterHandler)
     }
 
     user.close = () => {
