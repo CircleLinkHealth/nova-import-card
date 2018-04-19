@@ -1287,6 +1287,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\PatientCallManagementController@update',
                 'as'   => 'admin.patientCallManagement.update',
             ]);
+            Route::get('time-tracker', [
+                'uses' => 'Admin\TimeTrackerController@index',
+                'as'   => 'admin.timeTracker.index',
+            ]);
         });
 
         // families
