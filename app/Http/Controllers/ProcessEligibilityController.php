@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Http\Request;
 

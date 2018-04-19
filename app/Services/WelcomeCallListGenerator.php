@@ -64,6 +64,10 @@ class WelcomeCallListGenerator
      * @var bool
      */
     public $createEnrollees;
+    /**
+     * @var null
+     */
+    private $batchId;
 
     /**
      * WelcomeCallListGenerator constructor.
@@ -76,6 +80,7 @@ class WelcomeCallListGenerator
      * @param Practice|null $practice
      * @param null $medicalRecordType
      * @param null $medicalRecordId
+     * @param null $batchId
      */
     public function __construct(
         Collection $patientList,
@@ -85,7 +90,8 @@ class WelcomeCallListGenerator
         $createEnrollees = true,
         Practice $practice = null,
         $medicalRecordType = null,
-        $medicalRecordId = null
+        $medicalRecordId = null,
+        $batchId = null
     ) {
         $this->patientList        = $patientList;
         $this->ineligiblePatients = new Collection();
@@ -97,6 +103,7 @@ class WelcomeCallListGenerator
         $this->practice            = $practice;
         $this->medicalRecordType   = $medicalRecordType;
         $this->medicalRecordId     = $medicalRecordId;
+        $this->batchId             = $batchId;
 
         $this->filterPatientList();
 
@@ -434,6 +441,7 @@ class WelcomeCallListGenerator
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
             $args['last_encounter']      = Carbon::parse($args['last_encounter']);
+            $args['batch_id']            = $this->batchId;
 
             $exists = Enrollee::where([
                 [

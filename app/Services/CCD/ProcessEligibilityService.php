@@ -8,6 +8,7 @@
 
 namespace App\Services\CCD;
 
+use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
@@ -91,10 +92,10 @@ class ProcessEligibilityService
                             fopen($localDisk->path($path), 'r+'));
 
                         $ccda = Ccda::create([
-                            'source'   => Ccda::GOOGLE_DRIVE."_$dir",
-                            'xml'      => stream_get_contents(fopen($localDisk->path($path), 'r+')),
-                            'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                            'imported' => false,
+                            'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
+                            'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+                            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+                            'imported'    => false,
                             'practice_id' => (int)$practice->id,
                         ]);
 
@@ -149,7 +150,7 @@ class ProcessEligibilityService
                             }
 
                             $ccda = Ccda::create([
-                                'source'   => Ccda::GOOGLE_DRIVE."_$dir",
+                                'source'   => Ccda::GOOGLE_DRIVE . "_$dir",
                                 'xml'      => $rawData,
                                 'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
                                 'imported' => false,
@@ -173,11 +174,27 @@ class ProcessEligibilityService
                         ->values();
     }
 
-    public function queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
-        ProcessEligibilityFromGoogleDrive::dispatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems);
+    public function queueFromGoogleDrive($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    {
+        ProcessEligibilityFromGoogleDrive::dispatch(EligibilityBatch::create([
+            'type'    => EligibilityBatch::TYPE_GOOGLE_DRIVE,
+            'options' => [
+                'dir'                 => $dir,
+                'practiceName'        => $practiceName,
+                'filterLastEncounter' => (boolean) $filterLastEncounter,
+                'filterInsurance'     => (boolean) $filterInsurance,
+                'filterProblems'      => (boolean) $filterProblems,
+            ],
+        ]));
     }
 
-    public function handleAlreadyDownloadedZip($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems) {
+    public function handleAlreadyDownloadedZip(
+        $dir,
+        $practiceName,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems
+    ) {
         $cloudDisk = Storage::cloud();
 
         $practice  = Practice::whereName($practiceName)->firstOrFail();
@@ -222,7 +239,7 @@ class ProcessEligibilityService
                         $now       = Carbon::now()->toAtomString();
                         $randomStr = str_random();
 
-                        $put       = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
+                        $put  = $cloudDisk->put("{$processedDir['path']}/$randomStr-$now",
                             fopen($localDisk->path($path), 'r+'));
                         $ccda = Ccda::create([
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
@@ -242,7 +259,7 @@ class ProcessEligibilityService
                         ])->dispatch($ccda->id);
                     } else {
                         $pathWithUnderscores = str_replace('/', '_', $path);
-                        $put       = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
+                        $put                 = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
                             fopen($localDisk->path($path), 'r+'));
                     }
 
@@ -267,7 +284,7 @@ class ProcessEligibilityService
             'imported' => false,
         ])->first();
 
-        if (!$ccda) {
+        if ( ! $ccda) {
             return false;
         }
 
@@ -282,7 +299,8 @@ class ProcessEligibilityService
         return $imr;
     }
 
-    public function isCcda($medicalRecordType) {
+    public function isCcda($medicalRecordType)
+    {
         return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
     }
 }
