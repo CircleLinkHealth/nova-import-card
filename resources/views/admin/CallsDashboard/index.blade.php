@@ -21,7 +21,7 @@
                     Note ID:
                     <input type="number" name="noteId" value="" required>
                     <br>
-                    <input align="center" type="submit" value="Submit">
+                    <input align="center" type="submit" value="Submit" class="btn btn-info">
                 </form>
             </div>
 

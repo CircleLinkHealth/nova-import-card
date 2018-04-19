@@ -74,7 +74,7 @@
                     <br>
                     <input type="hidden" name="callId" value="{{$call->id}}">
                     <input type="hidden" name="noteId" value="{{$note->id}}">
-                    <input align="center" type="submit" value="Submit">
+                    <input align="center" type="submit" value="Submit" class="btn btn-info">
                     {{csrf_field()}}
                     {{ method_field('PATCH') }}
                 </form>

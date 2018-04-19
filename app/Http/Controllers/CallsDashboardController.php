@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Call;
 use App\Note;
 use App\PatientMonthlySummary;
+use App\Services\NoteService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -22,15 +24,14 @@ class CallsDashboardController extends Controller
         $note = Note::find($request['noteId']);
 
 
-
-        if ($note){
+        if ($note) {
             $call = $note->call()->first();
             if ($call) {
 
                 return view('admin.CallsDashboard.edit', compact(['note', 'call']));
             }
-
-            return view('admin.CallsDashboard.create-call', compact(['note']));
+            $nurses = User::ofType('care-center')->get();
+            return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
 
         return back();
@@ -54,9 +55,14 @@ class CallsDashboardController extends Controller
             $call->status  = $status;
             $call->save();
 
-            $summary = PatientMonthlySummary::where('patient_id', $note->patient_id)
-                                            ->where('month_year', $date->copy()->startOfMonth())
-                                            ->first();
+//            $summary = PatientMonthlySummary::where('patient_id', $note->patient_id)
+//                                            ->where('month_year', $date->copy()->startOfMonth())
+//                                            ->first();
+
+            $summary = PatientMonthlySummary::firstOrCreate([
+                'patient_id' => $note->patient_id,
+                'month_year' => $date->copy()->startOfMonth()
+            ]);
 
             if ($initialStatus == 'scheduled') {
                 if ($status == 'reached') {
@@ -82,8 +88,40 @@ class CallsDashboardController extends Controller
 
     }
 
-    public function createCall(Request $request)
+    public function createCall(Request $request, NoteService $service)
     {
+        $note            = Note::find($request['noteId']);
+        $status          = $request['status'];
+        $patient         = User::find($note->patient_id);
+        $nurse           = User::find($request['nurseId']);
+        $phone_direction = $request['direction'];
+
+        $service->storeCallForNote(
+            $note,
+            $status,
+            $patient, $nurse,
+            $phone_direction,
+            null
+        );
+
+        //update monthly summaries
+        $date = Carbon::now();
+        $summary = PatientMonthlySummary::firstOrCreate([
+            'patient_id' => $note->patient_id,
+            'month_year' => $date->copy()->startOfMonth()
+        ]);
+
+        if ($status == 'reached') {
+            $summary->no_of_calls            += 1;
+            $summary->no_of_successful_calls += 1;
+        } else {
+            $summary->no_of_calls += 1;
+        }
+        $summary->save();
+
+
+
+        return redirect()->route('CallsDashboard.index');
+    }
 
     }
-}
