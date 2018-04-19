@@ -131,6 +131,28 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:call-mode:enter') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.enterCallMode(info)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
+            else if (data.message === 'client:call-mode:exit') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.exitCallMode(info)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }
