@@ -17,6 +17,15 @@
             <div>
                 <form action="{{route('CallsDashboard.create')}}">
                     <h4 class="ops-dboard-title">Insert Note ID to begin Operations</h4>
+                    <div class="form-group">
+                        @isset($message)
+                            <div class="row col-lg-12">
+                                <div class="alert alert-info">
+                                    <span>{{ $message }}</span>
+                                </div>
+                            </div>
+                        @endisset
+                    </div>
                     <br>
                     Note ID:
                     <input type="number" name="noteId" value="" required>

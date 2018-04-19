@@ -21,7 +21,7 @@ class CallsDashboardController extends Controller
     public function create(Request $request)
     {
 
-        $note = Note::find($request['noteId']);
+        $note = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
 
 
         if ($note) {
@@ -42,7 +42,7 @@ class CallsDashboardController extends Controller
     public function edit(Request $request)
     {
 
-        $note   = Note::find($request['noteId']);
+        $note   = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
         $call   = Call::find($request['callId']);
         $status = $request['status'];
         $date   = new Carbon($call->called_date);
@@ -90,7 +90,7 @@ class CallsDashboardController extends Controller
 
     public function createCall(Request $request, NoteService $service)
     {
-        $note            = Note::find($request['noteId']);
+        $note            = Note::with(['patient', 'author'])->where('id', $request['noteId'])->first();
         $status          = $request['status'];
         $patient         = User::find($note->patient_id);
         $nurse           = User::find($request['nurseId']);
@@ -119,9 +119,10 @@ class CallsDashboardController extends Controller
         }
         $summary->save();
 
+        $message = 'Call Successfully created!';
 
 
-        return redirect()->route('CallsDashboard.index');
+        return view('admin.CallsDashboard.index', compact(['message',]));
     }
 
     }

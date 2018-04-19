@@ -22,6 +22,14 @@
                         <td>{{$note->id}}</td>
                     </tr>
                     <tr>
+                        <td>Patient:</td>
+                        <td>{{$note->patient->display_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Author:</td>
+                        <td>{{$note->author->display_name}}</td>
+                    </tr>
+                    <tr>
                         <td>Note type:</td>
                         <td>{{$note->type}}</td>
                     </tr>
@@ -49,7 +57,6 @@
                         <div class="form-group">
                             <h5>Assign Nurse to Call:</h5>
                             <select name="nurseId" class="select2">
-                                <option value="none">Nurses</option>
                                 @foreach($nurses as $n)
                                     <option value="{{$n->id}}">{{$n->display_name}}</option>
                                 @endforeach

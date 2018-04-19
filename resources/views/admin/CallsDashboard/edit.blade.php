@@ -22,6 +22,14 @@
                         <td>{{$note->id}}</td>
                     </tr>
                     <tr>
+                        <td>Patient:</td>
+                        <td>{{$note->patient->display_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Author:</td>
+                        <td>{{$note->author->display_name}}</td>
+                    </tr>
+                    <tr>
                         <td>Note type:</td>
                         <td>{{$note->type}}</td>
                     </tr>
