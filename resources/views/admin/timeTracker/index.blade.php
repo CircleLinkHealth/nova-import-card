@@ -9,10 +9,18 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-body">
-
+                    <time-tracker-events ws-root-url="{{ env('WS_ROOT') }}" ref="timeTrackerEventsComponent"></time-tracker-events>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@push('styles')
+    <style>
+        .panel-body {
+            font-size: 20px;
+        }
+    </style>
+@endpush
 @endsection
