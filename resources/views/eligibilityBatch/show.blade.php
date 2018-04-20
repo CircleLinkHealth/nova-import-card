@@ -40,6 +40,8 @@
                         Ineligible: {{ $batch->stats['ineligible'] }}
                         <br>
                         Duplicates: {{ $batch->stats['duplicates'] }}
+                        <br>
+                        Not processed: {{ $unprocessed }}
 
                         <br><br>
 
