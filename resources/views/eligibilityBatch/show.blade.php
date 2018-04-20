@@ -37,9 +37,9 @@
                         <h4>Counts</h4>
                         Eligible: {{ $eligible }}
                         <br>
-                        Ineligible: {{ $batch->stats['ineligible'] }}
+                        Ineligible: {{ $ineligible }}
                         <br>
-                        Duplicates: {{ $batch->stats['duplicates'] }}
+                        Duplicates: {{ $duplicates }}
                         <br>
                         Not processed: {{ $unprocessed }}
 
