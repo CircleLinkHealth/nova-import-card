@@ -139,9 +139,6 @@ class ProcessEligibilityService
                          ]);
 
         if ($ccds->isEmpty()) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->save();
-
             return false;
         }
 

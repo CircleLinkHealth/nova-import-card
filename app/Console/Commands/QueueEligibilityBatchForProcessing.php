@@ -3,6 +3,10 @@
 namespace App\Console\Commands;
 
 use App\EligibilityBatch;
+use App\Jobs\CheckCcdaEnrollmentEligibility;
+use App\Jobs\ProcessCcda;
+use App\Models\MedicalRecords\Ccda;
+use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Console\Command;
 
@@ -50,7 +54,28 @@ class QueueEligibilityBatchForProcessing extends Command
                                  ->first();
 
         if ($batch) {
-            $this->processEligibilityService->fromGoogleDrive($batch);
+            $result = $this->processEligibilityService->fromGoogleDrive($batch);
+
+            if ( ! $result) {
+                $practice = Practice::whereName($batch->options['practiceName'])->firstOrFail();
+
+                $unprocessed = Ccda::whereBatchId($batch->id)
+                                   ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+                                   ->take(100)
+                                   ->get()
+                                   ->map(function ($ccda) use ($batch, $practice) {
+                                       ProcessCcda::withChain([
+                                           new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
+                                       ])->dispatch($ccda->id);
+
+                                       return $ccda;
+                                   });
+
+                if ($unprocessed->isEmpty()) {
+                    $batch->status = EligibilityBatch::STATUSES['complete'];
+                    $batch->save();
+                }
+            }
         }
     }
 }
