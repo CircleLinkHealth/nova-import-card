@@ -41,8 +41,8 @@ class ProcessCcda implements ShouldQueue
 
         $json = $ccda->bluebuttonJson();
 
-        if ( ! $json) {
-            return;
+        if ( ! $json || !is_json($json)) {
+            throw new \Exception("Non json response from ccd parser.");
         }
 
         $ccda->mrn = $json->demographics->mrn_number;
