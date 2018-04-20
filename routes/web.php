@@ -762,6 +762,13 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'eligibility-batches'], function() {
+            Route::get('{batch}', [
+                'uses' => 'EligibilityBatchController@show',
+                'as' => 'eligibility.batch.show'
+            ]);
+        });
+
         Route::group(['prefix' => 'enrollees'], function() {
             Route::get('', [
                 'uses' => 'EnrolleesController@index',
