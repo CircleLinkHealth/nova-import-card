@@ -192,13 +192,19 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'body'    => $xml,
         ]);
 
-        if (!in_array($response->getStatusCode(), [200,201])) {
-            return [
+        $responseBody = (string)$response->getBody();
+
+        if (!is_json($responseBody)) {
+            $id = $this->id ?? '';
+
+            $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
-            ];
+            ]);
+
+            throw new \Exception("Could not process ccd $id. Data: $data");
         }
 
-        return (string)$response->getBody();
+        return $responseBody;
     }
 }
