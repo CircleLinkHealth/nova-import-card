@@ -13,8 +13,8 @@
             </span>
             <inactivity-tracker ref="inactivityTracker" />
             <div class="top-20">
-                <input class="btn btn-primary" type="button" value="Start Call" @click="enterCallMode" v-if="!callMode" />
-                <input class="btn btn-danger" type="button" value="End Call" @click="exitCallMode" v-if="callMode" />
+                <input class="btn btn-primary" type="button" value="Start Call" @click="enterCallMode" v-if="Number(info.patientId) && !callMode" />
+                <input class="btn btn-danger" type="button" value="End Call" @click="exitCallMode" v-if="Number(info.patientId) && callMode" />
             </div>
             <away ref="away" />
         </span>
