@@ -26,19 +26,9 @@
                     <div class="panel-heading">Showing Batch {{$batch->id}}</div>
 
                     <div class="panel-body">
-                        <h4>Options</h4>
-                        Practice: {{ $batch->options['practiceName'] }}
+                        <h4>Practice Slug: {{ $batch->options['practiceName'] }}</h4>
+                        <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
-                        Drive Folder ID: {{ $batch->options['dir'] }}
-                        <br>
-                        Filtering for Last Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
-                        <br>
-                        Filtering for Problems?: {{ (boolean) $batch->options['filterProblems'] ? 'Yes' : 'No' }}
-                        <br>
-                        Filtering for Insurance (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
-                        <br>
-
-                        <br><br>
 
                         <h4>Counts</h4>
                         Eligible: {{ $batch->stats['eligible'] }}
@@ -47,6 +37,17 @@
                         <br>
                         Duplicates: {{ $batch->stats['duplicates'] }}
 
+                        <br><br>
+
+                        <h4>Batch Details</h4>
+                        Drive Folder ID: {{ $batch->options['dir'] }}
+                        <br>
+                        Filtering for Last Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
+                        <br>
+                        Filtering for Problems?: {{ (boolean) $batch->options['filterProblems'] ? 'Yes' : 'No' }}
+                        <br>
+                        Filtering for Insurance (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
+                        <br>
                     </div>
                 </div>
             </div>
