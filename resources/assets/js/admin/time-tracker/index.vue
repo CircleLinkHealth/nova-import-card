@@ -12,7 +12,7 @@
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <inactivity-tracker ref="inactivityTracker" />
-            <div class="top-20">
+            <div class="call-mode top-20" v-if="!info.noCallMode">
                 <input class="btn btn-primary" type="button" value="Start Call" @click="enterCallMode" v-if="Number(info.patientId) && !callMode" />
                 <input class="btn btn-danger" type="button" value="End Call" @click="exitCallMode" v-if="Number(info.patientId) && callMode" />
             </div>
