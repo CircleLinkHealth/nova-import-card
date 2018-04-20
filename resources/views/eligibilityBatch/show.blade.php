@@ -30,6 +30,10 @@
                         <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
 
+                        The check was initiated at <b>{{ $batch->created_at }}</b> and the last update on it was at <b>{{ $batch->updated_at }}</b>
+
+                        <br><br>
+
                         <h4>Counts</h4>
                         Eligible: {{ $batch->stats['eligible'] }}
                         <br>
