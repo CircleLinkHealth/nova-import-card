@@ -96,6 +96,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $fillable = [
+        'batch_id',
         'date',
         'mrn',
         'referring_provider_name',
