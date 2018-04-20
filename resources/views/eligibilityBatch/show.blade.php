@@ -35,7 +35,7 @@
                         <br><br>
 
                         <h4>Counts</h4>
-                        Eligible: {{ $batch->stats['eligible'] }}
+                        Eligible: {{ $eligible }}
                         <br>
                         Ineligible: {{ $batch->stats['ineligible'] }}
                         <br>
