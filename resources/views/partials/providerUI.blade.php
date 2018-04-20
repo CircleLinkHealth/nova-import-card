@@ -124,6 +124,7 @@
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
 @include('partials.providerUItimer')
