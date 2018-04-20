@@ -4,11 +4,13 @@ namespace App\Providers;
 
 use App\CarePlan;
 use App\CarePlanTemplate;
+use App\EligibilityBatch;
 use App\Models\Holiday;
 use App\Models\ProblemCode;
 use App\NurseContactWindow;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
+use App\Observers\EligibilityBatchObserver;
 use App\Observers\HolidayObserver;
 use App\Observers\NurseContactWindowObserver;
 use App\Observers\PageTimerObserver;
@@ -35,6 +37,7 @@ class ObserversServiceProvider extends ServiceProvider
     {
         CarePlan::observe(CarePlanObserver::class);
         CarePlanTemplate::observe(CarePlanTemplateObserver::class);
+        EligibilityBatch::observe(EligibilityBatchObserver::class);
         NurseContactWindow::observe(NurseContactWindowObserver::class);
         Holiday::observe(HolidayObserver::class);
         PageTimer::observe(PageTimerObserver::class);

@@ -71,7 +71,7 @@ class ImporterController extends Controller
     {    
         $this::handleCcdFilesUpload($request);
 
-        return redirect()->route('view.records.ready.to.import');
+        return redirect()->route('import.ccd.remix');
     }
 
     /**
@@ -212,7 +212,7 @@ class ImporterController extends Controller
             dispatch(new TrainCcdaImporter($ccda));
         }
 
-        return redirect()->route('view.files.ready.to.import');
+        return redirect()->route('import.ccd.remix');
     }
 
     public function storeTrainingFeatures(Request $request)
