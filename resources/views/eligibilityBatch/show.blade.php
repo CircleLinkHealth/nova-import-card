@@ -26,11 +26,27 @@
                     <div class="panel-heading">Showing Batch {{$batch->id}}</div>
 
                     <div class="panel-body">
+                        <h4>Options</h4>
+                        Practice: {{ $batch->options['practiceName'] }}
+                        <br>
+                        Drive Folder ID: {{ $batch->options['dir'] }}
+                        <br>
+                        Filtering for Last Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
+                        <br>
+                        Filtering for Problems?: {{ (boolean) $batch->options['filterProblems'] ? 'Yes' : 'No' }}
+                        <br>
+                        Filtering for Insurance (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
+                        <br>
+
+                        <br><br>
+
+                        <h4>Counts</h4>
                         Eligible: {{ $batch->stats['eligible'] }}
                         <br>
                         Ineligible: {{ $batch->stats['ineligible'] }}
                         <br>
                         Duplicates: {{ $batch->stats['duplicates'] }}
+
                     </div>
                 </div>
             </div>
