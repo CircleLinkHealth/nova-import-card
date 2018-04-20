@@ -53,7 +53,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var listener = app.listen(process.env.PORT || (process.env.NODE_ENV == 'production' ? 1337 : 3000), function(){
+var listener = app.listen((process.env.PORT || 3000), function(){
   console.log('Listening on port ' + listener.address().port); //Listening on port 3000
 });
 
