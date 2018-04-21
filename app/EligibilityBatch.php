@@ -66,7 +66,7 @@ class EligibilityBatch extends Model
 
     public function getStatus($statusId = null) {
         if (!$statusId) {
-            if (!$this->status) {
+            if (is_null($this->status)) {
                 return null;
             }
             $statusId = $this->status;
