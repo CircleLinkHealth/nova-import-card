@@ -234,4 +234,30 @@ describe('TimeTrackerFlow', () => {
 
         })
     })
+        
+    describe('should Exit If One User Has NULL Patient ID', () => {
+
+        const timeTracker = new TimeTracker()
+        const info1 = { ...info }
+        const info2 = { ...info, ...{ patientId: null } }
+        const user1 = timeTracker.get(info1)
+        const user2 = timeTracker.get(info2)
+
+        user1.enter(info1, ws)
+        user1.enterCallMode(info1, ws)
+
+        assert.isDefined(info1.patientId)
+        assert.isNull(info2.patientId)
+
+        assert.isTrue(user1.callMode)
+        assert.isFalse(user2.callMode)
+
+        user2.enter(info2, ws)
+
+        assert.isFalse(user1.callMode)
+
+        it('should pass', () => {
+
+        })
+    })
 })

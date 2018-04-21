@@ -199,7 +199,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     const serverEnterHandler = (patientId, patientFamilyId) => {
-        if (Number(patientId) && (Number(patientFamilyId) || Number(user.patientFamilyId)) && (patientFamilyId != user.patientFamilyId)) {
+        if (!patientId || (Number(patientId) && (Number(patientFamilyId) || Number(user.patientFamilyId)) && (patientFamilyId != user.patientFamilyId))) {
             user.exitCallMode(info)
         }
     }
