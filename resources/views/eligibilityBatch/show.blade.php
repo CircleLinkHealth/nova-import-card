@@ -30,29 +30,32 @@
                         <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
 
-                        The check was initiated at <b>{{ $batch->created_at }}</b> and the last update on it was at <b>{{ $batch->updated_at }}</b>
+                        The check was initiated at <b>{{ $batch->created_at }}</b> and the last update on it was at
+                        <b>{{ $batch->updated_at }}</b>
 
                         <br><br>
 
                         <h4>Counts</h4>
-                        Eligible: {{ $eligible }}
+                        Eligible: <span id="eligible">{{ $eligible }}</span>
                         <br>
-                        Ineligible: {{ $ineligible }}
+                        Ineligible: <span id="ineligible">{{ $ineligible }}</span>
                         <br>
-                        Duplicates: {{ $duplicates }}
+                        Duplicates: <span id="duplicates">{{ $duplicates }}</span>
                         <br>
-                        Not processed: {{ $unprocessed }}
+                        Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
 
                         <br><br>
 
                         <h4>Batch Details</h4>
                         Drive Folder ID: {{ $batch->options['dir'] }}
                         <br>
-                        Filtering for Last Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
+                        Filtering for Last
+                        Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
                         <br>
                         Filtering for Problems?: {{ (boolean) $batch->options['filterProblems'] ? 'Yes' : 'No' }}
                         <br>
-                        Filtering for Insurance (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
+                        Filtering for Insurance
+                        (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
                         <br>
                     </div>
                 </div>
@@ -62,5 +65,28 @@
 @endsection
 
 @push('scripts')
+    @if($batch->status == 1)
+        <script>
+            $(document).ready(function () {
+                function load() {
+                    setTimeout(function () {
+                        $.ajax({
+                            url: "{{ route('eligibility.batch.getCounts', [$batch->id]) }}",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (result) {
+                                $("#eligible").text(result.eligible)
+                                $("#ineligible").text(result.ineligible)
+                                $("#duplicates").text(result.duplicates)
+                                $("#unprocessed").text(result.unprocessed)
+                            },
+                            complete: load
+                        });
+                    }, 3000);
+                }
 
+                load();
+            });
+        </script>
+    @endif
 @endpush

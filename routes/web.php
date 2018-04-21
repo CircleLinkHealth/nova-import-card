@@ -767,6 +767,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EligibilityBatchController@show',
                 'as' => 'eligibility.batch.show'
             ]);
+
+            Route::get('{batch}/counts', [
+                'uses' => 'EligibilityBatchController@getCounts',
+                'as' => 'eligibility.batch.getCounts'
+            ]);
         });
 
         Route::group(['prefix' => 'enrollees'], function() {
