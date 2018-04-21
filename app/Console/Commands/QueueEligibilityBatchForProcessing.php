@@ -49,33 +49,32 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     public function handle()
     {
-        $batch = EligibilityBatch::where('status', '<', 2)
-                                 ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE)
-                                 ->first();
+        $batches = EligibilityBatch::where('status', '<', 2)
+                                   ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE)
+                                   ->map(function ($batch) {
+                                       $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
-        if ($batch) {
-            $result = $this->processEligibilityService->fromGoogleDrive($batch);
+                                       if ( ! $result) {
+                                           $practice = Practice::whereName($batch->options['practiceName'])->firstOrFail();
 
-            if ( ! $result) {
-                $practice = Practice::whereName($batch->options['practiceName'])->firstOrFail();
+                                           $unprocessed = Ccda::whereBatchId($batch->id)
+                                                              ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+                                                              ->take(100)
+                                                              ->get()
+                                                              ->map(function ($ccda) use ($batch, $practice) {
+                                                                  ProcessCcda::withChain([
+                                                                      new CheckCcdaEnrollmentEligibility($ccda->id,
+                                                                          $practice, $batch),
+                                                                  ])->dispatch($ccda->id);
 
-                $unprocessed = Ccda::whereBatchId($batch->id)
-                                   ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-                                   ->take(100)
-                                   ->get()
-                                   ->map(function ($ccda) use ($batch, $practice) {
-                                       ProcessCcda::withChain([
-                                           new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
-                                       ])->dispatch($ccda->id);
+                                                                  return $ccda;
+                                                              });
 
-                                       return $ccda;
+                                           if ($unprocessed->isEmpty()) {
+                                               $batch->status = EligibilityBatch::STATUSES['complete'];
+                                               $batch->save();
+                                           }
+                                       }
                                    });
-
-                if ($unprocessed->isEmpty()) {
-                    $batch->status = EligibilityBatch::STATUSES['complete'];
-                    $batch->save();
-                }
-            }
-        }
     }
 }
