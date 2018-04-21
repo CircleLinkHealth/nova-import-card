@@ -164,29 +164,6 @@ describe('TimeTrackerFlow', () => {
 
             })
         })
-        
-        describe('Does NOT Exit If User With "0" Patient ID Is Entered', () => {
-
-            const timeTracker = new TimeTracker()
-            const info1 = { ...info, ...{ patientFamilyId: 1 } }
-            const info2 = { ...info, ...{ patientId: '0', patientFamilyId: 2 } }
-            const user1 = timeTracker.get(info1)
-            const user2 = timeTracker.get(info2)
-
-            user1.enter(info1, ws)
-            user1.enterCallMode(info1, ws)
-
-            assert.isTrue(user1.callMode)
-            assert.isFalse(user2.callMode)
-
-            user2.enter(info2, ws)
-
-            assert.isTrue(user1.callMode)
-
-            it('should pass', () => {
-
-            })
-        })
     })
         
     describe('Does NOT Exit If Both Users Have NULL Patient Family IDs', () => {
@@ -248,6 +225,32 @@ describe('TimeTrackerFlow', () => {
 
         assert.isDefined(info1.patientId)
         assert.isNull(info2.patientId)
+
+        assert.isTrue(user1.callMode)
+        assert.isFalse(user2.callMode)
+
+        user2.enter(info2, ws)
+
+        assert.isFalse(user1.callMode)
+
+        it('should pass', () => {
+
+        })
+    })
+        
+    describe('should Exit If One User Has "0" Patient ID', () => {
+
+        const timeTracker = new TimeTracker()
+        const info1 = { ...info, ...{ patientId: 1 } }
+        const info2 = { ...info, ...{ patientId: '0' } }
+        const user1 = timeTracker.get(info1)
+        const user2 = timeTracker.get(info2)
+
+        user1.enter(info1, ws)
+        user1.enterCallMode(info1, ws)
+
+        assert.isDefined(info1.patientId)
+        assert.equal(info2.patientId, '0')
 
         assert.isTrue(user1.callMode)
         assert.isFalse(user2.callMode)
