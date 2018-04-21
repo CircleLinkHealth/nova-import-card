@@ -59,7 +59,7 @@ class QueueEligibilityBatchForProcessing extends Command
                                            $batch->status = EligibilityBatch::STATUSES['processing'];
                                            $batch->save();
 
-                                           return $result;
+                                           return $batch;
                                        }
 
                                        $practice = Practice::whereName($batch->options['practiceName'])->firstOrFail();
@@ -81,7 +81,14 @@ class QueueEligibilityBatchForProcessing extends Command
                                        if ($unprocessed->isEmpty()) {
                                            $batch->status = EligibilityBatch::STATUSES['complete'];
                                            $batch->save();
+
+                                           return $batch;
                                        }
+
+                                       $batch->status = EligibilityBatch::STATUSES['processing'];
+                                       $batch->save();
+
+                                       return $batch;
                                    });
     }
 }
