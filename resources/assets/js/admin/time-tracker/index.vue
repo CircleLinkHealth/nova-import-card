@@ -12,10 +12,6 @@
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <inactivity-tracker ref="inactivityTracker" />
-            <div class="call-mode top-20" v-if="!info.noCallMode">
-                <input class="btn btn-primary" type="button" value="Start Call" @click="enterCallMode" v-if="Number(info.patientId) && !callMode" />
-                <input class="btn btn-danger" type="button" value="End Call" @click="exitCallMode" v-if="Number(info.patientId) && callMode" />
-            </div>
             <away ref="away" />
         </span>
     </div>
@@ -109,9 +105,11 @@
                                 }
                                 else if (data.message === 'server:call-mode:enter') {
                                     self.callMode = true
+                                    EventBus.$emit('server:call-mode', self.callMode)
                                 }
                                 else if (data.message === 'server:call-mode:exit') {
                                     self.callMode = false
+                                    EventBus.$emit('server:call-mode', self.callMode)
                                 }
                                 else if (data.message === 'server:inactive-modal:close') {
                                     EventBus.$emit('modal-inactivity:reset', true)
@@ -153,12 +151,6 @@
                 catch (ex) {
                     console.error(ex);
                 }
-            },
-            enterCallMode () {
-                EventBus.$emit('tracker:call-mode:enter')
-            },
-            exitCallMode () {
-                EventBus.$emit('tracker:call-mode:exit')
             }
         },
         mounted() {
