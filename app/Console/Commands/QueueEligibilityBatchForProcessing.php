@@ -51,6 +51,7 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $batches = EligibilityBatch::where('status', '<', 2)
                                    ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE)
+                                   ->get()
                                    ->map(function ($batch) {
                                        $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
