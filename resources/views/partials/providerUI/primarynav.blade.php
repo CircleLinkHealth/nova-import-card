@@ -31,7 +31,7 @@ if (isset($patient)) {
             <ul class="nav navbar-nav">
                 @if (isset($patient) && (!isset($noLiveCountTimeTracking)) && ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')))
                     <li>
-                        <time-tracker-call-mode :patient-id="{{ isset($patient) ? optional($patient)->id : '0' }}"></time-tracker-call-mode>
+                        <time-tracker-call-mode :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
                     </li>
                 @endif
                 @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator'))
