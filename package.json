@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --watch -R spec --watch --recursive ./tests"
+    "test": "mocha -R spec --recursive ./tests",
+    "watch-test": "npm run test --  --watch",
+    "coverage": "nyc mocha ./tests"
   },
   "dependencies": {
     "axios": "^0.17.0",
