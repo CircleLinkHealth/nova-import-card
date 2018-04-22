@@ -1,6 +1,3 @@
-require('../prototypes/date.prototype')
-require('../prototypes/array.prototype')
-
 const { EventEmitter } = require('events')
 const { validateInfo } = require('./utils.fn')
 const TimeTrackerUser = require('./time-tracker.user')

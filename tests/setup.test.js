@@ -1,6 +1,3 @@
-require('../prototypes/array.prototype')
-require('../prototypes/date.prototype')
-
 const assert = require('chai').assert
 
 const TimeTracker = require('../time-tracker')
