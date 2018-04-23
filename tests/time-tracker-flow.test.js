@@ -50,6 +50,21 @@ describe('TimeTrackerFlow', () => {
         })
     })
 
+    describe('Logout', () => {
+        it('should logout if inactivity-seconds is more than 600', () => {
+            const timeTracker = new TimeTracker()
+            const user = timeTracker.get(info)
+
+            user.start(info, ws)
+
+            user.inactiveSeconds = 601
+
+            user.enter(info, ws)
+
+            assert.isTrue(user.allSockets[0].messages.some(data => JSON.parse(data).message === 'server:logout'))
+        })
+    })
+
     describe('InactivityAction', () => {
         const timeTracker = new TimeTracker()
         const user = timeTracker.get(info)

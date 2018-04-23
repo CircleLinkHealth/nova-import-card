@@ -175,19 +175,19 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.inactiveSeconds = 0
     }
     
-    user.showInactiveModal = (info) => {
+    user.showInactiveModal = (info, now = () => (new Date())) => {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity) {
             activity.isInActiveModalShown = true
-            activity.inactiveModalShowTime = new Date()
+            activity.inactiveModalShowTime = now()
         }
     } 
     
-    user.closeInactiveModal = (info, response) => {
+    user.closeInactiveModal = (info, response, now = () => (new Date())) => {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity && activity.inactiveModalShowTime) {
             activity.isInActiveModalShown = false
-            const elapsedSeconds = moment(new Date((new Date()) - activity.inactiveModalShowTime)).seconds()
+            const elapsedSeconds = (new Date(now() - activity.inactiveModalShowTime)).getSeconds()
             if (response) {
                 activity.duration += elapsedSeconds
             }

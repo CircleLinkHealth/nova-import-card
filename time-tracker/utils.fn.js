@@ -20,5 +20,12 @@ const createActivity = (info) => {
     }
 }
 
+const addSeconds = (seconds = 0) => () => {
+    const d = new Date()
+    d.setSeconds(d.getSeconds() + seconds)
+    return d
+}
+
 module.exports.validateInfo = validateInfo
 module.exports.createActivity = createActivity
+module.exports.addSeconds = addSeconds
