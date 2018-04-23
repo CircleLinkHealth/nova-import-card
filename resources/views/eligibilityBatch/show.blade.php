@@ -86,7 +86,7 @@
 @endsection
 
 @push('scripts')
-    @if($batch->status == 1)
+    @if($batch->status == 1 && $batch->type == App\EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
         <script>
             $(document).ready(function () {
                 function load() {
