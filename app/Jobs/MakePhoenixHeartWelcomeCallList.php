@@ -87,15 +87,27 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $patient->put('primary_insurance', $insurances->get(0)->name ?? null);
             $patient->put('secondary_insurance', $insurances->get(1)->name ?? null);
 
-            PhoenixHeartName::where('patient_id', '=', $patient['patient_id'])
-                            ->update([
-                                'processed' => true,
-                            ]);
-
             return $patient;
+        })->map(function ($p) {
+            $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
+                Practice::whereName('phoenix-heart')->firstOrFail(), null, null, $this->batch));
+
+            if ($list->patientList->count() > 0) {
+                $attr = [
+                    'processed' => true,
+                    'eligible'  => true,
+                ];
+            } else {
+                $attr = [
+                    'processed' => true,
+                    'eligible'  => false,
+                ];
+            }
+
+            return PhoenixHeartName::where('patient_id', '=', $p['patient_id'])
+                                   ->update($attr);
         });
 
-        $list = (new WelcomeCallListGenerator($patientList, false, true, true, true,
-            Practice::whereName('phoenix-heart')->firstOrFail()->id, null, null, $this->batch));
+
     }
 }
