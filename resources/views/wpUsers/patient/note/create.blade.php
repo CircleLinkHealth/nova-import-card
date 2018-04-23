@@ -288,16 +288,34 @@
     <script>
 
         $(document).ready(function () {
-            $('#phone').change(function () {
-                $('#collapseOne').toggle();
+            function phoneSessionChange(e) {
+                if (e) {
+                    if (e.currentTarget.checked) {
+                        $('#collapseOne').show()
+                    }
+                    else {
+                        $('#collapseOne').hide()
+                    }
+                }
+                else {
+                    $('#collapseOne').toggle();
+                }
                 $("#Outbound").prop("checked", true);
-            });
+            }
+
+            $('#phone').change(phoneSessionChange);
+
+            phoneSessionChange({
+                currentTarget: {
+                    checked: $('#phone').is(':checked')
+                }
+            })
         });
 
         $('#newNote').submit(function (e) {
             e.preventDefault()
             var form = this
-            $.get('/api/test').always(response => {
+            $.get('/api/test').always(function (response) {
                 if (response.status == 200 || response.message == 'clh') {
                     var key = 'notes:{{$patient->id}}:add'
                     window.sessionStorage.removeItem(key)

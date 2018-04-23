@@ -22,7 +22,10 @@
     import { Event } from 'vue-tables-2'
 
     export default {
-        props: [ 'name' ],
+        props: {
+            name: String,
+            reverse: Boolean
+        },
         data() {
             return {
                 notes: [],
@@ -71,7 +74,8 @@
                         }, note.interval || 15000)
                     }
                     
-                    this.notes.push(newNote)
+                    if (!this.reverse) this.notes.push(newNote)
+                    else this.notes.unshift(newNote)
                     console.log(`${this.componentName}:create`, newNote)
                 }
             }

@@ -51,7 +51,8 @@
                 socket: null,
                 startCount: 0,
                 showTimer: true,
-                showLoader: true
+                showLoader: true,
+                callMode: false
             }
         },
         components: { 
@@ -102,6 +103,14 @@
                                     EventBus.$emit("tracker:stop")
                                     location.href = rootUrl('auth/logout')
                                 }
+                                else if (data.message === 'server:call-mode:enter') {
+                                    self.callMode = true
+                                    EventBus.$emit('server:call-mode', self.callMode)
+                                }
+                                else if (data.message === 'server:call-mode:exit') {
+                                    self.callMode = false
+                                    EventBus.$emit('server:call-mode', self.callMode)
+                                }
                                 else if (data.message === 'server:inactive-modal:close') {
                                     EventBus.$emit('modal-inactivity:reset', true)
                                 }
@@ -112,6 +121,7 @@
                         socket.onopen = (ev) => {
                             if (EventBus.isInFocus) {
                                 self.updateTime()
+                                self.callMode = false
                             }
                             else {
                                 self.startCount = 0;
@@ -164,7 +174,9 @@
                     INACTIVITY_CANCEL: 'inactivity-cancel',
                     MODAL_RESPONSE: 'client:modal',
                     SHOW_INACTIVE_MODAL: 'client:inactive-modal:show',
-                    CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close'
+                    CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
+                    ENTER_CALL_MODE: 'client:call-mode:enter',
+                    EXIT_CALL_MODE: 'client:call-mode:exit'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -218,6 +230,18 @@
                     }
                 })
 
+                EventBus.$on('tracker:call-mode:enter', () => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.ENTER_CALL_MODE, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:call-mode:exit', () => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.EXIT_CALL_MODE, info: this.info }))
+                    }
+                })
+
                 this.createSocket()
 
                 setInterval(() => {
@@ -248,5 +272,9 @@
 
     .hide-tracker {
         display: none;
+    }
+
+    .top-20 {
+        margin-top: 20px;
     }
 </style>

@@ -27,8 +27,14 @@ use App\Patient;
         if (isset($patient)) {
             $patientId = $patient->id;
 
+            $patientFamilyId = null;
+
             if (is_a($patient, Patient::class)) {
                 $patientId = optional($patient->user()->first())->id;
+                $patientFamilyId = $patient->family_id;
+            }
+            else {
+                $patientFamilyId = optional($patient->patientInfo()->first())->family_id;
             }
         }
         $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
@@ -58,7 +64,9 @@ use App\Patient;
                 "title": '{{$title}}',
                 "submitUrl": '{{route("api.pagetracking")}}',
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
-                "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0
+                "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
+                "noCallMode": "{{ !((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')) }}",
+                "patientFamilyId": "{{ $patientFamilyId ?? 0 }}"
             }
         </script>
         @endpush

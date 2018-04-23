@@ -762,6 +762,36 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'eligibility-batches'], function() {
+            Route::group(['prefix' => '{batch}'], function (){
+                Route::get('', [
+                    'uses' => 'EligibilityBatchController@show',
+                    'as' => 'eligibility.batch.show'
+                ]);
+
+                Route::get('/counts', [
+                    'uses' => 'EligibilityBatchController@getCounts',
+                    'as' => 'eligibility.batch.getCounts'
+                ]);
+
+                Route::get('/eligible-csv', [
+                    'uses' => 'EligibilityBatchController@downloadEligibleCsv',
+                    'as' => 'eligibility.download.eligible'
+                ]);
+            });
+        });
+
+        Route::group(['prefix' => 'enrollees'], function() {
+            Route::get('', [
+                'uses' => 'EnrolleesController@index',
+                'as'    => 'admin.enrollees.index'
+            ]);
+            Route::post('import', [
+                'uses' => 'EnrolleesController@import',
+                'as'    => 'admin.enrollees.import'
+            ]);
+        });
+
         Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');
 
         Route::get('eligible-lists/phoenix-heart', 'Admin\WelcomeCallListController@makePhoenixHeartCallList');
@@ -1286,6 +1316,10 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@update',
                 'as'   => 'admin.patientCallManagement.update',
+            ]);
+            Route::get('time-tracker', [
+                'uses' => 'Admin\TimeTrackerController@index',
+                'as'   => 'admin.timeTracker.index',
             ]);
         });
 

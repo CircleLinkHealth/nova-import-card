@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
@@ -70,8 +71,10 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
                                 return false;
                             }
 
+                            $batch = EligibilityBatch::findOrFail($ccda->batch_id);
+
                             dispatch(
-                                (new CheckCcdaEnrollmentEligibility($ccda, $practice))
+                                (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
                                     ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('ccda-processor')
                             );

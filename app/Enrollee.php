@@ -145,6 +145,7 @@ class Enrollee extends \App\BaseModel
 
     protected $fillable = [
         'id',
+        'batch_id',
 
         'medical_record_type',
         'medical_record_id',

@@ -63,7 +63,7 @@ class ObservationController extends Controller
             abort(403);
         }
         // display view
-        return view('admin.observations.create', []);
+        return view('observations.create', []);
     }
 
     /**

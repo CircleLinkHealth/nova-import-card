@@ -21,8 +21,8 @@
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
+    <!--[if lt IE 9]-->
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
@@ -51,6 +51,10 @@
 
         .modal-dialog {
             z-index: 1051 !important;
+        }
+
+        .select2 {
+            width: 100%;
         }
     </style>
     @stack('styles')
@@ -327,6 +331,13 @@
     @yield('content')
 </div>
 
+
+@if (Agent::isIE())
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+    
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+@endif
 
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>

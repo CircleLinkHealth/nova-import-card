@@ -156,8 +156,8 @@ class Call extends \App\BaseModel
      */
     public function scopeOfMonth($builder, Carbon $monthYear) {
         $builder->whereBetween('called_date', [
-            $monthYear->startOfMonth()->toDateString(),
-            $monthYear->copy()->endOfMonth()->toDateString(),
+            $monthYear->startOfMonth()->toDateTimeString(),
+            $monthYear->copy()->endOfMonth()->toDateTimeString(),
         ]);
     }
 

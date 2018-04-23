@@ -1,6 +1,7 @@
 require('./bootstrap')
 
 
+import 'es6-string-polyfills'
 import './prototypes/array.prototype'
 import Vue from 'vue'
 import axios from './bootstrap-axios'
@@ -35,6 +36,7 @@ const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const Select2Component = () => import(/* webpackChunkName: "chunk-admin" */ './components/src/select2')
+const TimeTrackerEventsComponent = () => import(/* webpackChunkName: "chunk-time-tracker-events" */ './admin/time-tracker/time-tracker-events')
 const PassportClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/Clients')
 const PassportAuthorizedClientsComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/AuthorizedClients')
 const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: "chunk-admin" */ './components/passport/PersonalAccessTokens')
@@ -44,6 +46,7 @@ Vue.use(ClientTable, {}, false)
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
+Vue.component('time-tracker-events', TimeTrackerEventsComponent)
 Vue.component('passport-clients', PassportClientsComponent)
 Vue.component('passport-authorized-clients', PassportAuthorizedClientsComponent)
 Vue.component('importer-trainer', ImporterTrainerComponent)
