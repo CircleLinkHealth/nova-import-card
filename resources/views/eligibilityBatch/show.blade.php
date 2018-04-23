@@ -30,7 +30,8 @@
                     <div class="panel-body">
                         @if($eligible > 0)
                             <div class="pull-right">
-                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}" class="btn btn-default">Download
+                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
+                                   class="btn btn-default">Download
                                     Eligible Patients CSV</a>
                             </div>
                         @endif
@@ -55,8 +56,10 @@
                         <br><br>
 
                         <h4>Batch Details</h4>
-                        Drive Folder ID: {{ $batch->options['dir'] }}
-                        <br>
+                        @isset($batch->options['dir'])
+                            Drive Folder ID: {{ $batch->options['dir'] }}
+                            <br>
+                        @endisset
                         Filtering for Last
                         Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
                         <br>
