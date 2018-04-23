@@ -23,18 +23,35 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
+        /**
+         * @returns {Number} total duration in seconds of activities excluding initial-total-time
+         */
         get totalDuration() {
             return this.activities.reduce((a, b) => a + b.duration, 0)
         },
+        /**
+         * @returns {Number} total duration in seconds of activities plus initial-total-time
+         */
         get totalSeconds() {
             return this.totalDuration + this.totalTime
         },
+        /**
+         * @returns {Array} list of all sockets in all activities belongs to this user
+         */
         get allSockets() {
             return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])
         },
+        /**
+         * @returns {Boolean} whether or not a call is being made
+         */
         get callMode() {
             return this.activities.reduce((a, b) => (a || b.callMode), false)
         },
+        /**
+         * 
+         * @param {any} data JSON or string you want to send via web sockets
+         * @param {*} socket WebSocket instance you want to exclude from broadcast
+         */
         broadcast (data, socket) {
             this.allSockets.forEach(ws => {
                 const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
