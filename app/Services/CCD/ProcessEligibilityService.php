@@ -25,14 +25,13 @@ class ProcessEligibilityService
     public function fromGoogleDrive(EligibilityBatch $batch)
     {
         $dir                 = $batch->options['dir'];
-        $practiceName        = $batch->options['practiceName'];
         $filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
         $filterInsurance     = (boolean)$batch->options['filterInsurance'];
         $filterProblems      = (boolean)$batch->options['filterProblems'];
 
         $cloudDisk = Storage::cloud();
 
-        $practice  = Practice::whereName($practiceName)->firstOrFail();
+        $practice  = Practice::findOrFail($batch->practice_id);
         $recursive = false; // Get subdirectories also?
         $contents  = collect($cloudDisk->listContents($dir, $recursive));
 
