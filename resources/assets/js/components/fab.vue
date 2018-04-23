@@ -96,7 +96,7 @@
         bottom: 30px;
         right: 60px;
         width: 56px;
-        height: 360px;
+        height: 60px;
     }
 
     .fab .action-button, .fab .mini-action-button {
@@ -118,6 +118,10 @@
         bottom: 0;
         right: 49px;
         display: none;
+    }
+
+    .fab:hover {
+        height: 360px;
     }
 
     .fab:hover .mini-action-container {
@@ -172,42 +176,42 @@
     }
 
     .mini-action-button:nth-child(1) {
-        bottom: 80px;
+        bottom: 60px;
     }
 
     .mini-action-button:nth-child(2) {
-        bottom: 140px;
+        bottom: 120px;
     }
 
     .mini-action-button:nth-child(3) {
-        bottom: 200px;
+        bottom: 180px;
     }
 
     .mini-action-button:nth-child(4) {
-        bottom: 260px;
+        bottom: 240px;
     }
 
     .mini-action-button:nth-child(5) {
-        bottom: 320px;
+        bottom: 300px;
     }
 
     .mini-action-button:nth-child(6) {
-        bottom: 380px;
+        bottom: 360px;
     }
 
     .mini-action-button:nth-child(7) {
-        bottom: 440px;
+        bottom: 420px;
     }
 
     .mini-action-button:nth-child(8) {
-        bottom: 500px;
+        bottom: 480px;
     }
 
     .mini-action-button:nth-child(9) {
-        bottom: 560px;
+        bottom: 540px;
     }
 
     .mini-action-button:nth-child(10) {
-        bottom: 620px;
+        bottom: 600px;
     }
 </style>
