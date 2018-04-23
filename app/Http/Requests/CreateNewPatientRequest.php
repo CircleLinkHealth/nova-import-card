@@ -29,7 +29,6 @@ class CreateNewPatientRequest extends FormRequest
             return [];
         }
 
-
         return [
             'first_name' => [
                 'required',
