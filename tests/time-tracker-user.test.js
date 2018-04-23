@@ -134,6 +134,18 @@ describe('TimeTrackerUser', () => {
 
             assert.equal(user.activities[0].name, info.activity)
         })
+
+        describe('Activity with different socket (new tab)', () => {
+            it('should have two sockets', () => {
+                const ws2 = new WebSocket()
+
+                user.enter(info, ws2)
+
+                assert.equal(user.activities.length, 1)
+
+                assert.equal(user.allSockets.length, 2)
+            })
+        })
     })
     
     describe('TimeTrackerUser.prototype.leave', () => {

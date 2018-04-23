@@ -28,6 +28,8 @@ function TimeTrackerInfo (options = {}) {
 
     this.patientFamilyId = options.patientFamilyId || 101
 
+    this.initSeconds = options.initSeconds || 0
+
     this.createKey = function () {
         return `${this.patientId}-${this.providerId}`
     }

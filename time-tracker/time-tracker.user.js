@@ -23,8 +23,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
+        get totalDuration() {
+            return this.activities.reduce((a, b) => a + b.duration, 0)
+        },
         get totalSeconds() {
-            return this.activities.reduce((a, b) => a + b.duration, 0) + this.totalTime
+            return this.totalDuration + this.totalTime
         },
         get allSockets() {
             return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])
