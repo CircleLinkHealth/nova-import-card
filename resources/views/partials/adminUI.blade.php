@@ -104,8 +104,7 @@
                                     <li><a href="{{ route('algo.mock.create', array()) }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                     <li><a href="{{ route('CallReportController.exportxls', array()) }}">Export
-                                            Calls</a></li>
-
+                                            Calls</a></li> <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
                         @endif
