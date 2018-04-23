@@ -6,7 +6,8 @@
     "start": "node ./bin/www",
     "test": "mocha -R spec --recursive ./tests",
     "watch-test": "npm run test --  --watch",
-    "coverage": "nyc mocha ./tests"
+    "coverage": "nyc mocha ./tests",
+    "watch-coverage": "nodemon --exec nyc report"
   },
   "dependencies": {
     "axios": "^0.17.0",
