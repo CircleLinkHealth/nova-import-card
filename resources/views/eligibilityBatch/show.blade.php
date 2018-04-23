@@ -23,9 +23,17 @@
 
             <div class="col-md-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Showing Batch {{$batch->id}}</div>
+                    <div class="panel-heading">
+                        Showing Batch {{$batch->id}}
+                    </div>
 
                     <div class="panel-body">
+                        @if($eligible > 0)
+                            <div class="pull-right">
+                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}" class="btn btn-default">Download
+                                    Eligible Patients CSV</a>
+                            </div>
+                        @endif
                         <h4>Practice Slug: {{ $batch->options['practiceName'] }}</h4>
                         <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
