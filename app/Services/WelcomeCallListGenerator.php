@@ -456,6 +456,7 @@ class WelcomeCallListGenerator
             $args['medical_record_id']   = $this->medicalRecordId;
             $args['last_encounter']      = Carbon::parse($args['last_encounter']);
             $args['batch_id']            = $this->batch->id;
+            $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'];
 
             $exists = Enrollee::where([
                 [
