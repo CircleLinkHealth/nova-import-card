@@ -6,6 +6,7 @@ use App\EligibilityBatch;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
+use App\Practice;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\Cache\NotificationService;
 use App\Services\WelcomeCallListGenerator;
@@ -44,10 +45,20 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                                  ->get()
                                  ->keyBy('patient_id');
 
+        if ($names->isEmpty()) {
+            $this->batch->status = EligibilityBatch::STATUSES['complete'];
+            $this->batch->save();
+
+            return true;
+        } else {
+            $this->batch->status = EligibilityBatch::STATUSES['processing'];
+            $this->batch->save();
+        }
+
         $patientList = $names->map(function ($patient) {
             //format problems list
             $problems = PhoenixHeartProblem::where('patient_id', '=', $patient->patient_id)->get();
-            $patient    = collect($patient->toArray());
+            $patient  = collect($patient->toArray());
             $patient->put('problems', collect());
 
             foreach ($problems as $problem) {
@@ -61,7 +72,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                     $problemCode = $problem->code;
                 }
 
-                if (!$problemCode) {
+                if ( ! $problemCode) {
                     continue;
                 }
 
@@ -84,6 +95,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             return $patient;
         });
 
-        $list = (new WelcomeCallListGenerator($patientList, false, true, true, true));
+        $list = (new WelcomeCallListGenerator($patientList, false, true, true, true,
+            Practice::whereName('phoenix-heart')->firstOrFail()->id, null, null, $this->batch));
     }
 }

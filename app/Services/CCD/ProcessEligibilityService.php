@@ -324,9 +324,8 @@ class ProcessEligibilityService
         $filterInsurance,
         $filterProblems
     ) {
-        return $this->createBatch(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS, [
+        return $this->createBatch(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS, $practiceId, [
             'dir'                 => $dir,
-            'practiceName'        => $practiceId,
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
@@ -344,9 +343,10 @@ class ProcessEligibilityService
     public function createBatch($type, int $practiceId, $options = [])
     {
         return EligibilityBatch::create([
-            'type'    => $type,
-            'status'  => EligibilityBatch::STATUSES['not_started'],
-            'options' => $options,
+            'type'        => $type,
+            'practice_id' => $practiceId,
+            'status'      => EligibilityBatch::STATUSES['not_started'],
+            'options'     => $options,
         ]);
     }
 
@@ -356,6 +356,10 @@ class ProcessEligibilityService
     public function createPhoenixHeartBatch()
     {
         return $this->createBatch(EligibilityBatch::TYPE_PHX_DB_TABLES,
-            Practice::whereName('phoenix-heart')->firstOrFail()->id);
+            Practice::whereName('phoenix-heart')->firstOrFail()->id, [
+                'filterLastEncounter' => false,
+                'filterInsurance'     => true,
+                'filterProblems'      => true,
+            ]);
     }
 }
