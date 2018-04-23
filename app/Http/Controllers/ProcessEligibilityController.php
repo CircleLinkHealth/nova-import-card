@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Http\Request;
 
@@ -24,8 +25,10 @@ class ProcessEligibilityController extends Controller
                 ->handleAlreadyDownloadedZip($request['dir'], $request['practiceName'], $request['filterLastEncounter'],
                     $request['filterInsurance'], $request['filterProblems']);
         } else {
+            $practice = Practice::whereName($request['practiceName'])->firstOrFail();
+
             $batch = $this->processEligibilityService
-                ->createBatch($request['dir'], $request['practiceName'], $request['filterLastEncounter'],
+                ->createGoogleDriveCcdsBatch($request['dir'], $practice->id, $request['filterLastEncounter'],
                     $request['filterInsurance'], $request['filterProblems']);
         }
 

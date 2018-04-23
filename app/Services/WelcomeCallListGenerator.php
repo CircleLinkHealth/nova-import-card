@@ -13,8 +13,10 @@ use App\Constants;
 use App\EligibilityBatch;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
+use App\Patient;
 use App\Practice;
 use App\Services\Eligibility\Entities\Problem;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
@@ -456,8 +458,9 @@ class WelcomeCallListGenerator
             $args['medical_record_id']   = $this->medicalRecordId;
             $args['last_encounter']      = Carbon::parse($args['last_encounter']);
             $args['batch_id']            = $this->batch->id;
+            $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'];
 
-            $exists = Enrollee::where([
+            $enrolleeExists = Enrollee::where([
                 [
                     'practice_id',
                     '=',
@@ -480,7 +483,34 @@ class WelcomeCallListGenerator
                 ],
             ])->first();
 
-            if ( ! $exists) {
+            $enrolledPatientExists = User::where(function ($u) use ($args) {
+                $u->whereHas('patientInfo', function ($q) use ($args) {
+                    $q->whereMrnNumber($args['mrn']);
+                });
+            })->orWhere(function ($u) use ($args) {
+                $u->where([
+                    [
+                        'practice_id',
+                        '=',
+                        $args['practice_id'],
+                    ],
+                    [
+                        'first_name',
+                        '=',
+                        $args['first_name'],
+                    ],
+                    [
+                        'last_name',
+                        '=',
+                        $args['last_name'],
+                    ],
+                ])->whereHas('patientInfo', function ($q) use ($args) {
+                    $q->whereBirthDate($args['dob']);
+                });
+            })->first();
+
+
+            if ( ! $enrolleeExists && ! $enrolledPatientExists) {
                 $this->enrollees = Enrollee::create($args);
 
                 $this->batch->incrementEligibleCount();
