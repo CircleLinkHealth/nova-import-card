@@ -30,11 +30,12 @@
                     <div class="panel-body">
                         @if($eligible > 0)
                             <div class="pull-right">
-                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}" class="btn btn-default">Download
+                                <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
+                                   class="btn btn-default">Download
                                     Eligible Patients CSV</a>
                             </div>
                         @endif
-                        <h4>Practice Slug: {{ $batch->options['practiceName'] }}</h4>
+                        <h4>Practice: {{ $practice->display_name }}</h4>
                         <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
 
@@ -45,18 +46,30 @@
 
                         <h4>Counts</h4>
                         Eligible: <span id="eligible">{{ $eligible }}</span>
-                        <br>
-                        Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                        <br>
-                        Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                        <br>
-                        Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
+
+                            @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
+                                <br>
+                                Ineligible & Duplicates: <span
+                                        id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
+                                <br>
+                                Not processed: <span
+                                        id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
+                            @else
+                                <br>
+                                Ineligible: <span id="ineligible">{{ $ineligible }}</span>
+                                <br>
+                                Duplicates: <span id="duplicates">{{ $duplicates }}</span>
+                                <br>
+                                Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
+                            @endif
 
                         <br><br>
 
                         <h4>Batch Details</h4>
-                        Drive Folder ID: {{ $batch->options['dir'] }}
-                        <br>
+                        @isset($batch->options['dir'])
+                            Drive Folder ID: {{ $batch->options['dir'] }}
+                            <br>
+                        @endisset
                         Filtering for Last
                         Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
                         <br>
@@ -73,7 +86,7 @@
 @endsection
 
 @push('scripts')
-    @if($batch->status == 1)
+    @if($batch->status == 1 && $batch->type == App\EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
         <script>
             $(document).ready(function () {
                 function load() {

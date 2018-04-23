@@ -71,16 +71,6 @@ class PatientSummaryEloquentRepository
             $summary = $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
         }
 
-        if ($this->lacksProblems($summary)) {
-            $newProblems = $this->buildCcdProblemsFromCpmProblems($patient);
-
-            if ($newProblems->isNotEmpty()) {
-                $patient->load('ccdProblems');
-            }
-
-            $summary = $this->fillProblems($patient, $summary, $newProblems);
-        }
-
         if ($this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
             $patient->load(['billableProblems', 'ccdProblems']);
             $summary = $this->attachBillableProblems($patient, $summary);
@@ -180,58 +170,6 @@ class PatientSummaryEloquentRepository
                                     })
                                     ->unique('cpm_problem_id')
                                     ->values();
-    }
-
-    /**
-     * Create CCDProblems from related CPMProblems
-     *
-     * @param User $patient
-     *
-     * @return Collection
-     */
-    public function buildCcdProblemsFromCpmProblems(User $patient)
-    {
-        $newProblems = [];
-        $ccdProblems = $patient->ccdProblems;
-
-        $updated  = null;
-        $toUpdate = $this->getValidCcdProblems($patient)
-                         ->where('billable', '=', null)
-                         ->take(2);
-
-        if ($toUpdate->isNotEmpty()) {
-            $updated = Problem::whereIn('id', $toUpdate->pluck('id')->all())->update([
-                'billable' => true,
-            ]);
-        }
-
-        if ($updated) {
-            return $toUpdate;
-        }
-
-        $newProblems = $patient->cpmProblems->reject(function ($problem) use ($ccdProblems, $patient) {
-            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
-                return false;
-            }
-
-            return true;
-        })
-                                            ->filter()
-                                            ->values()
-                                            ->take(2)
-                                            ->map(function ($problem) use ($ccdProblems, $patient) {
-                                                return $this->storeCcdProblem($patient, [
-                                                    'name'             => $problem->name,
-                                                    'cpm_problem_id'   => $problem->id,
-                                                    'code_system_name' => 'ICD-10',
-                                                    'code_system_oid'  => '2.16.840.1.113883.6.3',
-                                                    'code'             => $problem->default_icd_10_code,
-                                                    'billable'         => true,
-                                                    'is_monitored'     => true,
-                                                ]);
-                                            });
-
-        return collect($newProblems);
     }
 
     /**
