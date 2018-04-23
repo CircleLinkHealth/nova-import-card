@@ -13,11 +13,17 @@ class EligibilityBatchController extends Controller
 {
     public function show(EligibilityBatch $batch)
     {
-        $unprocessed = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->count();
-        $ineligible  = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::INELIGIBLE)->count();
-        $duplicates  = Ccda::onlyTrashed()->whereBatchId($batch->id)->count();
-        $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
+        $unprocessed = 'N/A';
+        $ineligible  = 'N/A';
+        $duplicates  = 'N/A';
 
+        if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
+            $unprocessed = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->count();
+            $ineligible  = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::INELIGIBLE)->count();
+            $duplicates  = Ccda::onlyTrashed()->whereBatchId($batch->id)->count();
+        }
+
+        $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
         $practice = Practice::findOrFail($batch->practice_id);
 
         return view('eligibilityBatch.show',
@@ -26,11 +32,23 @@ class EligibilityBatchController extends Controller
 
     public function getCounts(EligibilityBatch $batch)
     {
+        $unprocessed = 'N/A';
+        $ineligible  = 'N/A';
+        $duplicates  = 'N/A';
+
+        if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
+            $unprocessed = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->count();
+            $ineligible  = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::INELIGIBLE)->count();
+            $duplicates  = Ccda::onlyTrashed()->whereBatchId($batch->id)->count();
+        }
+
+        $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
+
         return $this->ok([
-            'unprocessed' => Ccda::whereBatchId($batch->id)->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->count(),
-            'ineligible'  => Ccda::whereBatchId($batch->id)->whereStatus(Ccda::INELIGIBLE)->count(),
-            'duplicates'  => Ccda::onlyTrashed()->whereBatchId($batch->id)->count(),
-            'eligible'    => Enrollee::whereBatchId($batch->id)->count(),
+            'unprocessed' => $unprocessed,
+            'ineligible'  => $ineligible,
+            'duplicates'  => $duplicates,
+            'eligible'    => $eligible,
         ]);
     }
 
