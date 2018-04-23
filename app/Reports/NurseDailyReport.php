@@ -13,13 +13,14 @@ use App\Activity;
 use App\PageTimer;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class NurseDailyReport
 {
     public static function data()
     {
-        $nurse_users = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurse_users = User::ofType('care-center')
+                           ->where('access_disabled', 0)
+                           ->get();
 
         $nurses = [];
 
@@ -28,25 +29,25 @@ class NurseDailyReport
         foreach ($nurse_users as $nurse) {
             $nurses[$i]['name'] = $nurse->fullName;
 
-            $last_activity_date = DB::table('lv_page_timer')
-                ->select(DB::raw('max(`end_time`) as last_activity'))
-                ->where('provider_id', $nurse->id)
-                ->get();
+            $last_activity = PageTimer::orderBy('id', 'desc')
+                                      ->where('provider_id', $nurse->id)
+                                      ->firstOrNew([
+                                          'end_time' => null,
+                                      ]);
 
-            if ($last_activity_date[0]->last_activity == null) {
+            if ( ! $last_activity->end_time) {
                 $nurses[$i]['Time Since Last Activity'] = 'N/A';
             } else {
-                $nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity_date[0]->last_activity)->diffForHumans();
+                $nurses[$i]['Time Since Last Activity'] = Carbon::parse($last_activity->end_time)->diffForHumans();
             }
 
             $nurses[$i]['# Scheduled Calls Today'] = $nurse->nurseInfo->countScheduledCallsForToday();
             $nurses[$i]['# Completed Calls Today'] = $nurse->nurseInfo->countCompletedCallsForToday();
             $nurses[$i]['# Successful Calls Today'] = $nurse->nurseInfo->countSuccessfulCallsMadeToday();
 
-            $activity_time = Activity::
-            where('provider_id', $nurse->id)
-                ->createdToday()
-                ->sum('duration');
+            $activity_time = Activity::where('provider_id', $nurse->id)
+                                     ->createdToday()
+                                     ->sum('duration');
 
             $H1 = floor($activity_time / 3600);
             $m1 = ($activity_time / 60) % 60;
@@ -66,10 +67,10 @@ class NurseDailyReport
 
             $nurses[$i]['lessThan20MinsAgo'] = false;
 
-            if ($last_activity_date == null) {
+            if ( ! $last_activity->end_time) {
                 $nurses[$i]['last_activity'] = 'N/A';
             } else {
-                $carbon_last_act = Carbon::parse($last_activity_date[0]->last_activity);
+                $carbon_last_act             = Carbon::parse($last_activity->end_time);
                 $nurses[$i]['last_activity'] = $carbon_last_act->toDateTimeString();
 
                 $diff = $carbon_now->diffInSeconds($carbon_last_act);
