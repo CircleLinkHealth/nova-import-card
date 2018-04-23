@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --watch -R spec --watch --recursive ./tests"
+    "test": "mocha -R spec --recursive ./tests",
+    "watch-test": "npm run test --  --watch",
+    "coverage": "nyc mocha ./tests",
+    "watch-coverage": "nodemon --exec npm run coverage"
   },
   "dependencies": {
     "axios": "^0.17.0",
@@ -22,6 +25,8 @@
     "ssl-root-cas": "^1.2.4"
   },
   "devDependencies": {
+    "nodemon": "^1.17.3",
+    "nyc": "^11.7.1",
     "swagger-jsdoc": "^1.9.7"
   }
 }

@@ -33,6 +33,8 @@ describe('TimeTrackerUser', () => {
         const timeTracker = new TimeTracker()
     
         const user = timeTracker.get(info)
+
+        user.start(info, ws)
     
         it('should have activities.length === 1', () => {
             user.enter(info, ws)
@@ -95,6 +97,139 @@ describe('TimeTrackerUser', () => {
 
             assert.isArray(user.allSockets)
             assert.equal(user.allSockets.length, 1)
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.callMode', () => {
+
+        it('should have callMode as false', () => {
+            user.enter(info, ws)
+
+            assert.isFalse(user.callMode)
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.close', () => {
+
+        it('should have callMode as false', () => {
+            user.enter(info, ws)
+
+            user.close()
+
+            assert.notEqual(user.activities.length, 0)
+            user.activities.forEach(activity => {
+                assert.equal(activity.duration, 0)
+            })
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.activities', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        it('should have activities', () => {
+            user.enter(info, ws)
+
+            assert.equal(user.activities.length, 1)
+
+            assert.equal(user.activities[0].name, info.activity)
+        })
+
+        describe('Activity with different socket (new tab)', () => {
+            it('should have two sockets', () => {
+                const ws2 = new WebSocket()
+
+                user.enter(info, ws2)
+
+                assert.equal(user.activities.length, 1)
+
+                assert.equal(user.allSockets.length, 2)
+            })
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.leave', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        it('should have ws.active as false', () => {
+            user.leave(ws)
+
+            assert.isFalse(ws.active)
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.closeInactiveModal', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        it('should have first activity duration as 45', () => {
+            user.enter(info, ws)
+
+            user.showInactiveModal(info, addSeconds(0))
+
+            user.closeInactiveModal(info, true, addSeconds(45))
+
+            assert.equal(user.activities[0].duration, 45)
+        })
+
+        it('should have first activity duration as 0', () => {
+            user.enter(info, ws)
+
+            user.showInactiveModal(info, addSeconds(0))
+
+            user.closeInactiveModal(info, false, addSeconds(45))
+
+            assert.equal(user.activities[0].duration, 0)
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.sync()', () => {
+        it('should have sent data with message as "server:sync"', () => {
+            const timeTracker = new TimeTracker()
+            const user = timeTracker.get(info)
+
+            user.start(info, ws)
+            user.enter(info, ws)
+
+            user.sync()
+
+            assert.isTrue(user.allSockets[0].messages.some(data => {
+                return JSON.parse(data).message === 'server:sync'
+            }))
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.exit()', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        user.start(info, ws)
+
+        describe('Activity', () => {
+            it('should have no sockets', () => {
+                user.enter(info, ws)
+    
+                assert.isTrue(user.activities.length > 0)
+                assert.isTrue(user.activities[0].sockets.length > 0)
+
+                user.exit(ws)
+
+                assert.isFalse(user.activities[0].sockets.length > 0)
+            })
+        })
+    })
+    
+    describe('TimeTrackerUser.prototype.report()', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        user.start(info, ws)
+
+        it('should have same number of activities as user', () => {
+            user.enter(info, ws)
+
+            assert.equal(user.report().activities.length, user.activities.length)
         })
     })
 })

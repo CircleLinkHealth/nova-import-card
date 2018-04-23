@@ -23,15 +23,35 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
-        get totalSeconds() {
-            return this.activities.reduce((a, b) => a + b.duration, 0) + this.totalTime
+        /**
+         * @returns {Number} total duration in seconds of activities excluding initial-total-time
+         */
+        get totalDuration() {
+            return this.activities.reduce((a, b) => a + b.duration, 0)
         },
+        /**
+         * @returns {Number} total duration in seconds of activities plus initial-total-time
+         */
+        get totalSeconds() {
+            return this.totalDuration + this.totalTime
+        },
+        /**
+         * @returns {Array} list of all sockets in all activities belongs to this user
+         */
         get allSockets() {
             return this.activities.map(activity => activity.sockets).reduce((a, b) => a.concat(b), [])
         },
+        /**
+         * @returns {Boolean} whether or not a call is being made
+         */
         get callMode() {
             return this.activities.reduce((a, b) => (a || b.callMode), false)
         },
+        /**
+         * 
+         * @param {any} data JSON or string you want to send via web sockets
+         * @param {*} socket WebSocket instance you want to exclude from broadcast
+         */
         broadcast (data, socket) {
             this.allSockets.forEach(ws => {
                 const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
@@ -175,19 +195,19 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.inactiveSeconds = 0
     }
     
-    user.showInactiveModal = (info) => {
+    user.showInactiveModal = (info, now = () => (new Date())) => {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity) {
             activity.isInActiveModalShown = true
-            activity.inactiveModalShowTime = new Date()
+            activity.inactiveModalShowTime = now()
         }
     } 
     
-    user.closeInactiveModal = (info, response) => {
+    user.closeInactiveModal = (info, response, now = () => (new Date())) => {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity && activity.inactiveModalShowTime) {
             activity.isInActiveModalShown = false
-            const elapsedSeconds = moment(new Date((new Date()) - activity.inactiveModalShowTime)).seconds()
+            const elapsedSeconds = (new Date(now() - activity.inactiveModalShowTime)).getSeconds()
             if (response) {
                 activity.duration += elapsedSeconds
             }

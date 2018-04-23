@@ -50,6 +50,84 @@ describe('TimeTrackerFlow', () => {
         })
     })
 
+    describe('UserStart', () => {
+        describe('PageLoadTime', () => {
+            it('should add to activity duration', () => {
+                const timeTracker = new TimeTracker()
+                const info = new TimeTrackerInfo({ initSeconds: 5 })
+                const user = timeTracker.get(info)
+    
+                user.start(info, ws)
+
+                assert.equal(user.totalDuration, 5)
+            })
+        })
+
+        describe('UserInCallMode', () => {
+            const timeTracker = new TimeTracker()
+            const info = new TimeTrackerInfo({ initSeconds: 5 })
+            const user = timeTracker.get(info)
+
+            user.callMode = true
+
+            user.start(info, ws)
+    
+            // assert.isTrue(user.allSockets[0].messages.some(data => {
+            //     return JSON.parse(data).message === 'server:call-mode:enter'
+            // }))
+        })
+    })
+
+    describe('UserEnter', () => {
+        describe('NoModalRequired', () => {
+            it('should have total duration equal to 100', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+    
+                user.start(info, ws)
+    
+                user.inactiveSeconds = 100
+    
+                user.enter(info, ws)
+    
+                assert.equal(user.totalDuration, 100)
+            })
+        })
+
+        describe('Modal Required', () => {
+            it('should trigger inactive modal', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+    
+                user.start(info, ws)
+    
+                user.inactiveSeconds = 120
+    
+                user.enter(info, ws)
+    
+                assert.equal(user.totalDuration, 0)
+    
+                assert.equal(JSON.parse(user.allSockets[0].messages.slice(-1)[0]).message, 'server:modal')
+            })
+        })
+
+        describe('Logout', () => {
+            it('should logout if inactivity-seconds is more than 600', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+    
+                user.start(info, ws)
+    
+                user.inactiveSeconds = 601
+    
+                user.enter(info, ws)
+    
+                assert.equal(JSON.parse(user.allSockets[0].messages.slice(-1)[0]).message, 'server:logout')
+            })
+        })
+        
+    })
+
     describe('InactivityAction', () => {
         const timeTracker = new TimeTracker()
         const user = timeTracker.get(info)
