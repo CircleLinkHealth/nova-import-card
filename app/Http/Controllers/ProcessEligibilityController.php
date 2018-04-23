@@ -32,7 +32,10 @@ class ProcessEligibilityController extends Controller
                     $request['filterInsurance'], $request['filterProblems']);
         }
 
-        return "Processing eligibility has been scheduled, and will process in the background.";
+        $link = link_to_route('eligibility.batch.show',
+            'Click here to view progress. Save this link as it will not be listed anywhere else.', [$batch->id]);
+
+        return "Processing eligibility has been scheduled, and will process in the background. $link";
     }
 
     public function fromGoogleDriveDownloadedLocally(
