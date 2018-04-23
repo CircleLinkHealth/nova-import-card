@@ -35,8 +35,7 @@ class CreateNewPatientRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     $count = User::whereHas('patientInfo', function ($q) {
-                        $q->where('mrn_number', $this->input('mrn_number'))
-                          ->where('birth_date', $this->input('birth_date'));
+                        $q->where('birth_date', $this->input('birth_date'));
                     })
                                  ->where('first_name', $this->input('first_name'))
                                  ->where('last_name', $this->input('last_name'))
