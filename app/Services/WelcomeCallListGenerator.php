@@ -491,7 +491,7 @@ class WelcomeCallListGenerator
             })->orWhere(function ($u) use ($args) {
                 $u->where([
                     [
-                        'practice_id',
+                        'program_id',
                         '=',
                         $args['practice_id'],
                     ],
