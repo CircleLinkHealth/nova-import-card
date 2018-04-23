@@ -13,7 +13,6 @@ use App\Constants;
 use App\EligibilityBatch;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
-use App\Patient;
 use App\Practice;
 use App\Services\Eligibility\Entities\Problem;
 use App\User;
@@ -115,7 +114,9 @@ class WelcomeCallListGenerator
 
     public function __destruct()
     {
-        $this->batch->save();
+        if ($this->batch) {
+            $this->batch->save();
+        }
     }
 
     protected function filterPatientList()
