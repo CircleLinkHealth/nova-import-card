@@ -75,7 +75,7 @@ class CCDImporterRepository
 
         $responseBody = (string)$response->getBody();
 
-        if (!is_json($responseBody)) {
+        if ( ! in_array($response->getStatusCode(), [200, 201])) {
             $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),

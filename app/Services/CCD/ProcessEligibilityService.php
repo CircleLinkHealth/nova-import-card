@@ -99,6 +99,7 @@ class ProcessEligibilityService
                             fopen($localDisk->path($path), 'r+'));
 
                         $ccda = Ccda::create([
+                            'batch_id'    => $batch->id,
                             'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
                             'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
                             'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
@@ -138,9 +139,6 @@ class ProcessEligibilityService
                          ]);
 
         if ($ccds->isEmpty()) {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->save();
-
             return false;
         }
 
@@ -165,6 +163,7 @@ class ProcessEligibilityService
             }
 
             $ccda = Ccda::create([
+                'batch_id' => $batch->id,
                 'source'   => Ccda::GOOGLE_DRIVE . "_$dir",
                 'xml'      => $rawData,
                 'status'   => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,

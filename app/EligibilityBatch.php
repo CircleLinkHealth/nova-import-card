@@ -63,4 +63,22 @@ class EligibilityBatch extends Model
 
         $this->stats = $stats;
     }
+
+    public function getStatus($statusId = null) {
+        if (!$statusId) {
+            if (is_null($this->status)) {
+                return null;
+            }
+            $statusId = $this->status;
+        }
+
+
+        foreach (self::STATUSES as $name => $id) {
+            if ($id == $statusId) {
+                return $name;
+            }
+        }
+
+        return null;
+    }
 }

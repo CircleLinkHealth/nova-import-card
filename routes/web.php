@@ -762,6 +762,25 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'eligibility-batches'], function() {
+            Route::group(['prefix' => '{batch}'], function (){
+                Route::get('', [
+                    'uses' => 'EligibilityBatchController@show',
+                    'as' => 'eligibility.batch.show'
+                ]);
+
+                Route::get('/counts', [
+                    'uses' => 'EligibilityBatchController@getCounts',
+                    'as' => 'eligibility.batch.getCounts'
+                ]);
+
+                Route::get('/eligible-csv', [
+                    'uses' => 'EligibilityBatchController@downloadEligibleCsv',
+                    'as' => 'eligibility.download.eligible'
+                ]);
+            });
+        });
+
         Route::group(['prefix' => 'enrollees'], function() {
             Route::get('', [
                 'uses' => 'EnrolleesController@index',
