@@ -308,18 +308,54 @@ class ProcessEligibilityService
         return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
     }
 
-    public function createBatch($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    /**
+     * @param $dir
+     * @param int $practiceId
+     * @param $filterLastEncounter
+     * @param $filterInsurance
+     * @param $filterProblems
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createGoogleDriveCcdsBatch(
+        $dir,
+        int $practiceId,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems
+    ) {
+        return $this->createBatch(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS, [
+            'dir'                 => $dir,
+            'practiceName'        => $practiceId,
+            'filterLastEncounter' => (boolean)$filterLastEncounter,
+            'filterInsurance'     => (boolean)$filterInsurance,
+            'filterProblems'      => (boolean)$filterProblems,
+        ]);
+    }
+
+    /**
+     * @param $type
+     *
+     * @param int $practiceId
+     * @param array $options
+     *
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createBatch($type, int $practiceId, $options = [])
     {
         return EligibilityBatch::create([
-            'type'    => EligibilityBatch::TYPE_GOOGLE_DRIVE,
+            'type'    => $type,
             'status'  => EligibilityBatch::STATUSES['not_started'],
-            'options' => [
-                'dir'                 => $dir,
-                'practiceName'        => $practiceName,
-                'filterLastEncounter' => (boolean)$filterLastEncounter,
-                'filterInsurance'     => (boolean)$filterInsurance,
-                'filterProblems'      => (boolean)$filterProblems,
-            ],
+            'options' => $options,
         ]);
+    }
+
+    /**
+     * @return $this|\Illuminate\Database\Eloquent\Model
+     */
+    public function createPhoenixHeartBatch()
+    {
+        return $this->createBatch(EligibilityBatch::TYPE_PHX_DB_TABLES,
+            Practice::whereName('phoenix-heart')->firstOrFail()->id);
     }
 }

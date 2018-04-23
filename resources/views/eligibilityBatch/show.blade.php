@@ -34,7 +34,7 @@
                                     Eligible Patients CSV</a>
                             </div>
                         @endif
-                        <h4>Practice Slug: {{ $batch->options['practiceName'] }}</h4>
+                        <h4>Practice: {{ $practice->display_name }}</h4>
                         <h4>Process Status: {{ $batch->getStatus() }}</h4>
                         <br>
 

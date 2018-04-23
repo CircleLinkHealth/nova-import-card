@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class EligibilityBatch extends Model
 {
-    const TYPE_GOOGLE_DRIVE = 'google_drive';
+    const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
+    const TYPE_PHX_DB_TABLES = 'phoenix_heart_db_tables';
 
     const STATUSES = [
         'not_started' => 0,
@@ -26,6 +27,7 @@ class EligibilityBatch extends Model
     ];
 
     protected $fillable = [
+        'practice_id',
         'type',
         'options',
         'stats',
@@ -56,7 +58,8 @@ class EligibilityBatch extends Model
         $this->incrementCount('duplicates');
     }
 
-    private function incrementCount($key) {
+    private function incrementCount($key)
+    {
         $stats = $this->stats;
 
         $stats[$key] = $this->stats[$key] + 1;
@@ -64,8 +67,9 @@ class EligibilityBatch extends Model
         $this->stats = $stats;
     }
 
-    public function getStatus($statusId = null) {
-        if (!$statusId) {
+    public function getStatus($statusId = null)
+    {
+        if ( ! $statusId) {
             if (is_null($this->status)) {
                 return null;
             }

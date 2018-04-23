@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
+use App\Practice;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EligibilityBatchController extends Controller
@@ -18,7 +18,10 @@ class EligibilityBatchController extends Controller
         $duplicates  = Ccda::onlyTrashed()->whereBatchId($batch->id)->count();
         $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
 
-        return view('eligibilityBatch.show', compact(['batch', 'unprocessed', 'eligible', 'ineligible', 'duplicates']));
+        $practice = Practice::findOrFail($batch->practice_id);
+
+        return view('eligibilityBatch.show',
+            compact(['batch', 'unprocessed', 'eligible', 'ineligible', 'duplicates', 'practice']));
     }
 
     public function getCounts(EligibilityBatch $batch)
