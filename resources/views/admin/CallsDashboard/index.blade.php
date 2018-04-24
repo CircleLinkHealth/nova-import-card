@@ -11,7 +11,7 @@
     @endpush
 
     <div class="container">
-        <h3 align="center">Edit Call Status or create new Call for Note</h3>
+        <h3 align="center">Edit Call Status or Create new Call for Note</h3>
         <hr><br>
         <div class="text-center">
             <div>
