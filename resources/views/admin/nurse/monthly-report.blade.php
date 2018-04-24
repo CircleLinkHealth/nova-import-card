@@ -38,6 +38,7 @@
     @endpush
 
     <div class="container">
+        <h3 align="center">Nurse Monthly Report</h3>
         <div class="input-group input-group-sm">
             <form action="{{route('admin.reports.nurse.monthly')}}" method="GET">
                 <div class="form-group">
@@ -55,6 +56,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <table class="table table-striped table-bordered table-curved table-condensed table-hover">
+                    <h5 align="center">Showing results for: {{$date->format('M, Y')}}</h5>
                     <thead>
                     <tr>
                         <th>Nurse</th>

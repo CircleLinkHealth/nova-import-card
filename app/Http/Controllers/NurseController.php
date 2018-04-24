@@ -166,14 +166,16 @@ class NurseController extends Controller
 
         foreach ($nurses as $nurse) {
 
-            $seconds = Activity::where('provider_id', $nurse->user_id)
+            $seconds = Activity::where('provider_id', $nurse->id)
                                ->where(function ($q) use ($fromDate, $toDate) {
                                    $q->where('performed_at', '>=', $fromDate)
                                      ->where('performed_at', '<=', $toDate);
                                })
                                ->sum('duration');
-            //if 0 remove
-            $rows[$nurse->display_name] = $seconds / 60;
+            if ($seconds == 0){
+                continue;
+            }
+            $rows[$nurse->display_name] = round($seconds / 60, 2);
         }
 
         $rows = collect($rows);
@@ -205,14 +207,16 @@ class NurseController extends Controller
 
         foreach ($nurses as $nurse) {
 
-            $seconds = Activity::where('provider_id', $nurse->user_id)
+            $seconds = Activity::where('provider_id', $nurse->id)
                                ->where(function ($q) use ($fromDate, $toDate) {
                                    $q->where('performed_at', '>=', $fromDate)
                                      ->where('performed_at', '<=', $toDate);
                                })
                                ->sum('duration');
-            //if 0 remove
-            $rows[$nurse->display_name] = $seconds / 60;
+            if ($seconds == 0){
+                continue;
+            }
+            $rows[$nurse->display_name] = round($seconds / 60, 2);
         }
 
         $rows = collect($rows);
