@@ -44,7 +44,8 @@ class Zip extends BaseProcessable
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
                     $this->filterInsurance, $this->filterProblems),
-            ])->dispatch($ccda->id);
+            ])->dispatch($ccda->id)
+                       ->onQueue('ccda-processor');
         }
     }
 

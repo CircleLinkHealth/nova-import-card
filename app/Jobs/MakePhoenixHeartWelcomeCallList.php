@@ -41,7 +41,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
     public function handle(NotificationService $notificationService)
     {
         $names = PhoenixHeartName::where('processed', '=', false)
-                                 ->take(1000)
+                                 ->take(50)
                                  ->get()
                                  ->keyBy('patient_id');
 
@@ -82,20 +82,41 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             //format insurances
             $insurances = PhoenixHeartInsurance::where('patient_id', '=', $patient->get('patient_id'))
                                                ->get()
-                                               ->sortBy('order');
+                                               ->sortBy('order')
+                                               ->pluck('name')
+                                               ->map(function ($ins) {
+                                                   if ( ! $ins) {
+                                                       return null;
+                                                   }
 
-            $patient->put('primary_insurance', $insurances->get(0)->name ?? null);
-            $patient->put('secondary_insurance', $insurances->get(1)->name ?? null);
+                                                   return ['type' => $ins];
+                                               })
+                                               ->filter()
+                                               ->values();
 
-            PhoenixHeartName::where('patient_id', '=', $patient['patient_id'])
-                            ->update([
-                                'processed' => true,
-                            ]);
+            $patient->put('insurances', $insurances);
 
             return $patient;
+        })->map(function ($p) {
+            $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
+                Practice::whereName('phoenix-heart')->firstOrFail(), null, null, $this->batch));
+
+            if ($list->patientList->count() > 0) {
+                $attr = [
+                    'processed' => true,
+                    'eligible'  => true,
+                ];
+            } else {
+                $attr = [
+                    'processed' => true,
+                    'eligible'  => false,
+                ];
+            }
+
+            return PhoenixHeartName::where('patient_id', '=', $p['patient_id'])
+                                   ->update($attr);
         });
 
-        $list = (new WelcomeCallListGenerator($patientList, false, true, true, true,
-            Practice::whereName('phoenix-heart')->firstOrFail()->id, null, null, $this->batch));
+
     }
 }

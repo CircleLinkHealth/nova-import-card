@@ -27,6 +27,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
 use App\Filters\Filterable;
 use Carbon\Carbon;
@@ -239,6 +240,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         HasMediaTrait,
         Impersonate,
+        MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
         SoftDeletes;
@@ -2861,5 +2863,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    || Carbon::today()->dayOfWeek == 5)
                     ? true
                     : false;
+    }
+
+    public function pageTimersAsProvider()
+    {
+        return $this->hasMany(PageTimer::class, 'provider_id');
+    }
+
+    public function activitiesAsProvider()
+    {
+        return $this->hasMany(Activity::class, 'provider_id');
+    }
+
+    public function calls()
+    {
+        return $this->outboundCalls();
     }
 }

@@ -84,30 +84,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    @if($batch->status == 1 && $batch->type == App\EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
-        <script>
-            $(document).ready(function () {
-                function load() {
-                    setTimeout(function () {
-                        $.ajax({
-                            url: "{{ route('eligibility.batch.getCounts', [$batch->id]) }}",
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function (result) {
-                                $("#eligible").text(result.eligible)
-                                $("#ineligible").text(result.ineligible)
-                                $("#duplicates").text(result.duplicates)
-                                $("#unprocessed").text(result.unprocessed)
-                            },
-                            complete: load
-                        });
-                    }, 3000);
-                }
-
-                load();
-            });
-        </script>
-    @endif
-@endpush
