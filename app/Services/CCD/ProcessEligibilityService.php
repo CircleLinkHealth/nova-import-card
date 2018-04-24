@@ -112,7 +112,8 @@ class ProcessEligibilityService
 
                         ProcessCcda::withChain([
                             new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
-                        ])->dispatch($ccda->id);
+                        ])->dispatch($ccda->id)
+                                   ->onQueue('ccda-processor');
 
                         $localDisk->delete($path);
                     }
@@ -175,7 +176,8 @@ class ProcessEligibilityService
 
             ProcessCcda::withChain([
                 new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
-            ])->dispatch($ccda->id);
+            ])->dispatch($ccda->id)
+                       ->onQueue('ccda-processor');
 
             $cloudDisk->move($file['path'],
                 "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
@@ -259,7 +261,8 @@ class ProcessEligibilityService
                         ProcessCcda::withChain([
                             new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
                                 (bool)$filterInsurance, (bool)$filterProblems),
-                        ])->dispatch($ccda->id);
+                        ])->dispatch($ccda->id)
+                                   ->onQueue('ccda-processor');
                     } else {
                         $pathWithUnderscores = str_replace('/', '_', $path);
                         $put                 = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
