@@ -193,8 +193,8 @@ class ImporterController extends Controller
                 dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
 
                 $link = link_to_route(
-                    'view.files.ready.to.import',
-                    'Visit to CCDs Ready to Import page to review imported files.'
+                    'import.ccd.remix',
+                    'Click here to view imported CCDs (refresh ...a lot).'
                 );
 
                 return "The CSV list is being processed. $link";
