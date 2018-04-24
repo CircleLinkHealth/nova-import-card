@@ -200,21 +200,17 @@ class SchedulerService
         //get all patients that are withdrawn
         $withdrawn = Patient::where('ccm_status', 'withdrawn')
                             ->orWhere('ccm_status', 'paused')
-                            ->pluck('user_id');
+                            ->pluck('user_id')
+                            ->all();
 
-        $removed = [];
-
-        //get scheduled calls for them, if any, and delete them.
-        foreach ($withdrawn as $patient) {
-            $temp = $this->getScheduledCallForPatient(User::find($patient));
-
-            if (is_object($temp)) {
-                $removed[] = $temp;
-                $temp->delete();
-            }
-        }
-
-        return $removed;
+        return Call::where(function ($q) use (
+            $withdrawn
+        ) {
+            $q->whereIn('outbound_cpm_id', $withdrawn)
+              ->orWhereIn('inbound_cpm_id', $withdrawn);
+        })
+                   ->where('status', '=', 'scheduled')
+                   ->delete();
     }
 
     public function importCallsFromCsv($csv)
