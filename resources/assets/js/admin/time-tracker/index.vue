@@ -11,7 +11,7 @@
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
-            <inactivity-tracker ref="inactivityTracker" />
+            <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
         </span>
     </div>
