@@ -18,9 +18,15 @@ class EligibilityBatchController extends Controller
         $duplicates  = 'N/A';
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
-            $unprocessed = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->count();
-            $ineligible  = Ccda::whereBatchId($batch->id)->whereStatus(Ccda::INELIGIBLE)->count();
-            $duplicates  = Ccda::onlyTrashed()->whereBatchId($batch->id)->count();
+            $statuses = Ccda::select(['status', 'deleted_at'])
+                            ->withTrashed()
+                            ->whereBatchId($batch->id)
+                            ->get();
+
+            $unprocessed = $statuses->where('status', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)->where('deleted_at',
+                null)->count();
+            $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
+            $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
         }
 
         $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
