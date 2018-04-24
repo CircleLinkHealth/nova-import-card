@@ -441,6 +441,10 @@ class WelcomeCallListGenerator
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
 
+            if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
+                $args['primary_insurance'] = implode(' || ', $args['insurances']);
+            }
+
             $args['practice_id'] = $this->practice->id;
             $args['provider_id'] = $this->practice->user_id;
 
