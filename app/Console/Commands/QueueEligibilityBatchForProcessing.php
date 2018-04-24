@@ -63,7 +63,7 @@ class QueueEligibilityBatchForProcessing extends Command
                                                    return $batch;
                                                }
 
-                                               $practice = Practice::whereName($batch->options['practiceName'])->firstOrFail();
+                                               $practice = Practice::findOrFail($batch->practice_id);
 
                                                $unprocessed = Ccda::whereBatchId($batch->id)
                                                                   ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
