@@ -127,7 +127,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
-                user.respondToModal()
+                user.removeInactiveDuration(info)
                 user.allSockets.forEach(socket => {
                     if (socket.readyState === socket.OPEN) {
                         socket.send(JSON.stringify({ message: 'server:logout' }))
@@ -212,9 +212,16 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 activity.duration += elapsedSeconds
             }
             else {
-                activity.duration = Math.max((activity.duration - 90), 0)
+                user.removeInactiveDuration(info)
             }
             activity.inactiveModalShowTime = null
+        }
+    }
+
+    user.removeInactiveDuration = (info) => {
+        let activity = user.activities.find(item => item.name === info.activity)
+        if (activity) {
+            activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 0)
         }
     }
 

@@ -190,6 +190,42 @@ describe('TimeTrackerUser', () => {
 
             assert.equal(user.activities[0].duration, 30)
         })
+
+        describe('call-mode', () => {
+            it('should have first activity duration as 165', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+    
+                user.enter(info, ws)
+                
+                user.enterCallMode(info)
+
+                user.activities[0].duration = 900
+    
+                user.showInactiveModal(info, addSeconds(0))
+    
+                user.closeInactiveModal(info, true, addSeconds(45))
+    
+                assert.equal(user.activities[0].duration, 945)
+            })
+    
+            it('should have first activity duration as 30', () => {
+                const timeTracker = new TimeTracker()
+                const user = timeTracker.get(info)
+    
+                user.enter(info, ws)
+                
+                user.enterCallMode(info)
+    
+                user.activities[0].duration = 900
+    
+                user.showInactiveModal(info, addSeconds(0))
+    
+                user.closeInactiveModal(info, false, addSeconds(45))
+    
+                assert.equal(user.activities[0].duration, 30)
+            })
+        })
     })
     
     describe('TimeTrackerUser.prototype.sync()', () => {
