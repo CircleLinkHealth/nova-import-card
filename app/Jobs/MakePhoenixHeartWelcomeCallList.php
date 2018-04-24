@@ -84,6 +84,13 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                                                ->get()
                                                ->sortBy('order')
                                                ->pluck('name')
+                                               ->map(function ($ins) {
+                                                   if ( ! $ins) {
+                                                       return null;
+                                                   }
+
+                                                   return ['type' => $ins];
+                                               })
                                                ->filter()
                                                ->values();
 
