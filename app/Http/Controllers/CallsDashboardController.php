@@ -34,7 +34,7 @@ class CallsDashboardController extends Controller
             return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
         $message = 'Note does not exist.';
-        return view('admin.CallsDashboard.index', compact(['message']));
+        return redirect()->route('CallsDashboard.index')->with('msg', $message);
 
 
     }
@@ -54,10 +54,6 @@ class CallsDashboardController extends Controller
             $initialStatus = $call->status;
             $call->status  = $status;
             $call->save();
-
-//            $summary = PatientMonthlySummary::where('patient_id', $note->patient_id)
-//                                            ->where('month_year', $date->copy()->startOfMonth())
-//                                            ->first();
 
             $summary = PatientMonthlySummary::firstOrCreate([
                 'patient_id' => $note->patient_id,
@@ -83,7 +79,9 @@ class CallsDashboardController extends Controller
             $message = 'Call Status successfully changed!';
         }
 
-        return view('admin.CallsDashboard.edit', compact(['note', 'call', 'message']));
+
+        return redirect()->route('CallsDashboard.create', ['noteId'=> $request['noteId']])->with('msg', $message);
+
 
 
     }
@@ -130,7 +128,8 @@ class CallsDashboardController extends Controller
         $message = 'Call Successfully created!';
 
 
-        return view('admin.CallsDashboard.index', compact(['message',]));
+        return redirect()->route('CallsDashboard.index')->with('msg', $message);
+
     }
 
     }
