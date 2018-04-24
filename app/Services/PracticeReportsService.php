@@ -200,31 +200,29 @@ class PracticeReportsService
             'SalesTerm'             => (string)'Net' . ' ' . $data['practice']->term_days,
             'ToBePrinted'           => 'N',
             'ToBeEmailed'           => 'Y',
-            'PT.Billing Report:'    => (string)$link,
+            'Pt. billing report:'    => (string)$link,
             'Line Item'             => (string)$chargeableService->code . $providerName,
             'LineQty'               => (string)$data['billable'],
             'LineDesc'              => (string)$chargeableService->description,
             'LineUnitPrice'         => (string)'$' . ' ' . $lineUnitPrice,
-            'Msg'                   => 'Thank you for your business. 
+            'Msg'                   => 'Send Check Payments to:
+CircleLink Health Inc. 
+C/O I2BF Ventures
+304 Park Avenue South, 9th FLoor
+New York, NY 10010
 
-Check Payments:
-CircleLink Health
-Shippan Landing Workpoint
-290 Harbor Drive, Stamford, CT 06902
+ACH Payments: JPMorgan Chase Bank 
+Routing Number (ABA): 02110361 
+Account Number: 693139136 
+Account Name: CircleLink Health Account 
+Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902 
 
-ACH Payments:
-JPMorgan Chase Bank
-Routing Number (ABA): 02110361
-Account Number: 693139136
-Account Name: CircleLink Health
-Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
-
-Wire Payments:
-JPMorgan Chase Bank
-Routing Number (ABA): 021000021
-Account Number: 693139136
-Account Name: CircleLink Health
-Account Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902',
+Wire Payments: JPMorgan Chase Bank 
+Routing Number (ABA): 021000021 
+Account Number: 693139136 
+Account Name: Circle Link Health Account 
+Address: Shippan Landing Workpoint, 290 Harbor Drive, Stamford, CT 06902
+',
         ];
 
         $quickBooksRow = new QuickBooksRow($rowData);

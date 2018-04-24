@@ -19,7 +19,7 @@ class PageTimerController extends Controller
         TimeTrackingService $timeTrackingService,
         ActivityService $activityService
     ) {
-        $this->activityService = $activityService;
+        $this->activityService     = $activityService;
         $this->timeTrackingService = $timeTrackingService;
     }
 
@@ -73,7 +73,12 @@ class PageTimerController extends Controller
             $newActivity->user_agent        = $request->userAgent();
             $newActivity->save();
 
-            $activityId = $this->addPageTimerActivities($newActivity);
+
+            $activityId = null;
+
+            if ($newActivity->billable_duration > 0) {
+                $activityId = $this->addPageTimerActivities($newActivity);
+            }
 
             if ($activityId) {
                 $this->handleNurseLogs($activityId);
@@ -143,14 +148,14 @@ class PageTimerController extends Controller
         $activity = Activity::find($activityId);
 
         if ($activity) {
-            $nurse    = User::find($activity->provider_id)->nurseInfo;
+            $nurse = User::find($activity->provider_id)->nurseInfo;
             if ($nurse) {
                 $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
-    
+
                 $alternativePayComputer->adjustCCMPaybleForActivity($activity);
             }
         }
-        
+
         return false;
     }
 
