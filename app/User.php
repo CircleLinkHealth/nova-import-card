@@ -2810,4 +2810,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $summary->chargeableServices
             ->implode('code', ', ');
     }
+
+    public function pageTimersAsProvider()
+    {
+        return $this->hasMany(PageTimer::class, 'provider_id');
+    }
+
+    public function activitiesAsProvider()
+    {
+        return $this->hasMany(Activity::class, 'provider_id');
+    }
 }
