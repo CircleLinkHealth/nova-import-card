@@ -41,7 +41,7 @@
         <div class="input-group input-group-sm">
             <form action="{{route('admin.reports.nurse.monthly')}}" method="GET">
                 <div class="form-group">
-                    <article>Select Month</article>
+                    <article>Select Month:</article>
                     <input id="date" type="date" name="date" value="{{$date->toDateString()}}" required class="form-control">
                 </div>
                 <div class="form-group">
@@ -53,7 +53,6 @@
     </div>
     <div class="container">
         <div class="panel panel-default">
-            {{--<div class="panel-heading">CarePlan Manager Patient Totals for {{$date->toDateString()}}</div>--}}
             <div class="panel-body">
                 <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                     <thead>
@@ -72,11 +71,14 @@
                             </div>
                     @endforeach
                     </tbody>
+
                 </table>
             </div>
+
             <div class="panel-footer">
                 <div class="row">
                     <div class="col-md-4">
+                        {!! $rows->appends(Input::except('page'))->links() !!}
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ use App\Reports\NurseDailyReport;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Yajra\Datatables\Facades\Datatables;
 
 class NurseController extends Controller
@@ -150,7 +151,7 @@ class NurseController extends Controller
         ]);
     }
 
-    public function monthlyReportIndex(Request $request)
+    public function monthlyReportIndex()
     {
 
         $date = Carbon::now();
@@ -176,6 +177,12 @@ class NurseController extends Controller
         }
 
         $rows = collect($rows);
+        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+        $perPage                  = 10;
+        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
+
+        $rows = $rows->withPath("admin/reports/nurse/monthly-index");
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
 
@@ -209,6 +216,12 @@ class NurseController extends Controller
         }
 
         $rows = collect($rows);
+        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+        $perPage                  = 10;
+        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
+
+        $rows = $rows->withPath("admin/reports/nurse/monthly");
 
         return view('admin.nurse.monthly-report', compact(['date', 'rows']));
 
