@@ -72,8 +72,9 @@ class QueueEligibilityBatchForProcessing extends Command
                                                                   ->get()
                                                                   ->map(function ($ccda) use ($batch, $practice) {
                                                                       ProcessCcda::withChain([
-                                                                          new CheckCcdaEnrollmentEligibility($ccda->id,
-                                                                              $practice, $batch),
+                                                                          (new CheckCcdaEnrollmentEligibility($ccda->id,
+                                                                              $practice,
+                                                                              $batch))->onQueue('ccda-processor'),
                                                                       ])->dispatch($ccda->id)
                                                                                  ->onQueue('ccda-processor');
 

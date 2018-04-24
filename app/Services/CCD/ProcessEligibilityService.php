@@ -175,7 +175,7 @@ class ProcessEligibilityService
             $ccda->save();
 
             ProcessCcda::withChain([
-                new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
+                (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch))->onQueue('ccda-processor'),
             ])->dispatch($ccda->id)
                        ->onQueue('ccda-processor');
 
@@ -259,8 +259,8 @@ class ProcessEligibilityService
                         $ccda->save();
 
                         ProcessCcda::withChain([
-                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                                (bool)$filterInsurance, (bool)$filterProblems),
+                            (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
+                                (bool)$filterInsurance, (bool)$filterProblems))->onQueue('ccda-processor'),
                         ])->dispatch($ccda->id)
                                    ->onQueue('ccda-processor');
                     } else {
