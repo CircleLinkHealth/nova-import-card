@@ -18,7 +18,9 @@ class NurseDailyReport
 {
     public static function data()
     {
-        $nurse_users = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurse_users = User::ofType('care-center')
+                           ->where('access_disabled', 0)
+                           ->get();
 
         $nurses = [];
 
@@ -38,12 +40,11 @@ class NurseDailyReport
             $nurses[$i]['name']                     = $nurse->fullName;
             $nurses[$i]['Time Since Last Activity'] = Carbon::parse($mostRecentPageTimer->end_time)->diffForHumans();
 
-            $nurses[$i]['# Scheduled Calls Today']  = $nurse->nurseInfo->countScheduledCallsForToday();
-            $nurses[$i]['# Completed Calls Today']  = $nurse->nurseInfo->countCompletedCallsForToday();
-            $nurses[$i]['# Successful Calls Today'] = $nurse->nurseInfo->countSuccessfulCallsMadeToday();
+            $nurses[$i]['# Scheduled Calls Today']  = $nurse->countScheduledCallsForToday();
+            $nurses[$i]['# Completed Calls Today']  = $nurse->countCompletedCallsForToday();
+            $nurses[$i]['# Successful Calls Today'] = $nurse->countSuccessfulCallsMadeToday();
 
-            $activity_time = Activity::
-            where('provider_id', $nurse->id)
+            $activity_time = Activity::where('provider_id', $nurse->id)
                                      ->createdToday()
                                      ->sum('duration');
 

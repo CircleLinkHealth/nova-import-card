@@ -26,6 +26,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use DateTime;
@@ -236,6 +237,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         HasMediaTrait,
         Impersonate,
+        MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
         SoftDeletes;
@@ -2819,5 +2821,10 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function activitiesAsProvider()
     {
         return $this->hasMany(Activity::class, 'provider_id');
+    }
+
+    public function calls()
+    {
+        return $this->outboundCalls();
     }
 }

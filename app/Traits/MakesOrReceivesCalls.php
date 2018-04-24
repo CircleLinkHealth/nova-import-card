@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
  * Trait MakesOrReceivesCalls
  * @package App\Traits
  */
-
 trait MakesOrReceivesCalls
 {
     public function countCompletedCallsFor(Carbon $date)
@@ -19,35 +18,33 @@ trait MakesOrReceivesCalls
 
     public function completedCallsFor(Carbon $date)
     {
-        $calls = $this->calls()
-            ->where([
-                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
-            ])->whereIn('calls.status', ['reached', 'not reached'])
-            ->get();
-
-        return $calls;
+        return $this->calls()
+                    ->where([
+                        ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                        ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                    ])->whereIn('calls.status', ['reached', 'not reached']);
     }
 
     public function countCompletedCallsForToday()
     {
-        return $this->completedCallsForToday()->count();
+        return $this->completedCallsFor(Carbon::now())->count();
     }
 
     /**
      * Returns today's completed calls.
-     * Completed Call: A call that was placed today and was either successful, or unsuccessful. It doesn’t matter when it was scheduled for.
+     * Completed Call: A call that was placed today and was either successful, or unsuccessful. It doesn’t matter when
+     * it was scheduled for.
      *
      * @return Collection
      */
     public function completedCallsForToday()
     {
-        return $this->completedCallsFor(Carbon::now());
+        return $this->completedCallsFor(Carbon::now())->get();
     }
 
     public function countScheduledCallsForToday()
     {
-        return $this->scheduledCallsForToday()->count();
+        return $this->scheduledCallsFor(Carbon::now())->count();
     }
 
     /**
@@ -58,7 +55,8 @@ trait MakesOrReceivesCalls
      */
     public function scheduledCallsForToday()
     {
-        return $this->scheduledCallsFor(Carbon::now());
+        return $this->scheduledCallsFor(Carbon::now())
+                    ->get();
     }
 
     /**
@@ -79,31 +77,28 @@ trait MakesOrReceivesCalls
      *
      * @param Carbon $date
      *
-     * @return Collection
+     * @return mixed
      */
     public function scheduledCallsFor(Carbon $date)
     {
-        $calls = $this->calls()
-            ->where(function ($q) use ($date) {
-                $q->where([
-                    ['scheduled_date', '=', $date->toDateString()],
-                    ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                    ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
-                ])
-                    ->orWhere([
-                        ['scheduled_date', '=', $date->toDateString()],
-                        ['called_date', '=', null],
-                        ['calls.status', '=', 'scheduled'],
-                    ])
-                    ->orWhere([
-                        ['scheduled_date', '=', $date->toDateString()],
-                        ['called_date', '=', null],
-                        ['calls.status', '=', 'dropped'],
-                    ]);
-            })
-            ->get();
-
-        return $calls;
+        return $this->calls()
+                    ->where(function ($q) use ($date) {
+                        $q->where([
+                            ['scheduled_date', '=', $date->toDateString()],
+                            ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                            ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                        ])
+                          ->orWhere([
+                              ['scheduled_date', '=', $date->toDateString()],
+                              ['called_date', '=', null],
+                              ['calls.status', '=', 'scheduled'],
+                          ])
+                          ->orWhere([
+                              ['scheduled_date', '=', $date->toDateString()],
+                              ['called_date', '=', null],
+                              ['calls.status', '=', 'dropped'],
+                          ]);
+                    });
     }
 
     /**
@@ -113,30 +108,33 @@ trait MakesOrReceivesCalls
      */
     public function countSuccessfulCallsMadeToday()
     {
-        return $this->successfulCallsMadeToday()->count();
+        return $this->successfulCallsFor(Carbon::now())->count();
     }
 
     /**
      * Returns today's successful calls.
-     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled for tomorrow.
+     * Successful Call: A call that was placed today and was successful. It does not matter if the call was scheduled
+     * for tomorrow.
      *
      * @return Collection
      */
     public function successfulCallsMadeToday()
     {
-        return $this->successfulCallsFor(Carbon::now());
+        return $this->successfulCallsFor(Carbon::now())->get();
     }
 
-    public function successfulCallsfor(Carbon $date)
+    /**
+     * @param Carbon $date
+     *
+     * @return mixed
+     */
+    public function successfulCallsFor(Carbon $date)
     {
-        $calls = $this->calls()
-            ->where([
-                ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
-                ['calls.status', '=', 'reached'],
-            ])
-            ->get();
-
-        return $calls;
+        return $this->calls()
+                    ->where([
+                        ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
+                        ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                        ['calls.status', '=', 'reached'],
+                    ]);
     }
 }
