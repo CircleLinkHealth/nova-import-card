@@ -35,6 +35,49 @@ trait UserHelpers
         $practiceId = 9,
         $roleName = 'provider'
     ): User {
+
+        $roles = [
+            Role::whereName($roleName)->first()->id,
+        ];
+
+        //creates the User
+        $user = $this->setupUser($practiceId, $roles);
+
+
+        $email = $user->email;
+        $locations = $user->locations->pluck('id')->all();
+
+        foreach ($locations as $locId) {
+            $this->assertDatabaseHas('location_user', [
+                'location_id' => $locId,
+                'user_id'     => $user->id,
+            ]);
+        }
+
+        //check that it was created
+        $this->assertDatabaseHas('users', ['email' => $email]);
+
+        //check that the roles were created
+        foreach ($roles as $role) {
+            $this->assertDatabaseHas('practice_role_user', [
+                'user_id'    => $user->id,
+                'role_id'    => $role,
+                'program_id' => $practiceId,
+            ]);
+        }
+
+        if ($roleName == 'participant') {
+            $user->carePlan()->create([
+                'status' => 'draft',
+            ]);
+        }
+
+        $user->load('practices');
+
+        return $user;
+    }
+
+    public function setupUser($practiceId, $roles){
         $faker = Factory::create();
 
         $firstName = $faker->firstName;
@@ -42,9 +85,6 @@ trait UserHelpers
         $email     = $faker->email;
         $workPhone = StringManipulation::formatPhoneNumber($faker->phoneNumber);
 
-        $roles = [
-            Role::whereName($roleName)->first()->id,
-        ];
 
         $bag = new ParameterBag([
             'email'             => $email,
@@ -85,33 +125,6 @@ trait UserHelpers
             ->all();
 
         $user->locations()->sync($locations);
-
-        foreach ($locations as $locId) {
-            $this->assertDatabaseHas('location_user', [
-                'location_id' => $locId,
-                'user_id'     => $user->id,
-            ]);
-        }
-
-        //check that it was created
-        $this->assertDatabaseHas('users', ['email' => $email]);
-
-        //check that the roles were created
-        foreach ($roles as $role) {
-            $this->assertDatabaseHas('practice_role_user', [
-                'user_id'    => $user->id,
-                'role_id'    => $role,
-                'program_id' => $practiceId,
-            ]);
-        }
-
-        if ($roleName == 'participant') {
-            $user->carePlan()->create([
-                'status' => 'draft',
-            ]);
-        }
-
-        $user->load('practices');
 
         return $user;
     }
