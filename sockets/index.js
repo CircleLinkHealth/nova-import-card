@@ -157,8 +157,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.removeInactiveDuration(info)
-                user.logout()
+                user.clientInactivityLogout()
               }
               catch (ex) {
                 errorThrow(ex, ws)

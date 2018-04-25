@@ -23,6 +23,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
+        isLoggingOut: null,
         /**
          * @returns {Number} total duration in seconds of activities excluding initial-total-time
          */
@@ -136,12 +137,27 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId)
     }
 
+    /**
+     * general logout
+     */
     user.logout = () => {
+        user.isLoggingOut = true
         user.allSockets.forEach(socket => {
             if (socket.readyState === socket.OPEN) {
                 socket.send(JSON.stringify({ message: 'server:logout' }))
             }
         })
+    }
+
+    /**
+     * logout because of mouse and keyboard inactivity while on client page
+     * removes about 90 seconds from the duration
+     */
+    user.clientInactivityLogout = () => {
+        if (!user.isLoggingOut) {
+            user.removeInactiveDuration(info)
+        }
+        user.logout()
     }
 
     user.closeAllModals = () => {
@@ -225,7 +241,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     user.removeInactiveDuration = (info) => {
         let activity = user.activities.find(item => item.name === info.activity)
         if (activity) {
-            activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 0)
+            activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 30)
         }
     }
 
@@ -263,6 +279,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.activities.forEach(activity => {
             activity.duration = 0
         })
+        user.isLoggingOut = null
     }
 
     user.report = () => ({
