@@ -40,9 +40,9 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = () => !this.callMode ? 120 : 900;
+                        const ALERT_INTERVAL = () => !this.callMode ? 10 : 900;
                         const LOGOUT_INTERVAL = () => !this.callMode ? 600 : 1200;
-                        if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL()) === 0)) {
+                        if (this.totalSeconds && !this.isModalShown && ((this.totalSeconds >= ALERT_INTERVAL()) && (this.totalSeconds < LOGOUT_INTERVAL()))) {
                             /**
                              * Stop Tracking Time
                              * Show Modal asking the user why he/she has been inactive
