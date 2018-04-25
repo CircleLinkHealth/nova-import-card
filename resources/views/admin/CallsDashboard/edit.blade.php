@@ -63,13 +63,11 @@
                 <form action="{{route('CallsDashboard.edit')}}" method="POST">
                     <br>
                     <div class="form-group">
-                        @isset($message)
-                            <div class="row col-lg-12">
-                                <div class="alert alert-info">
-                                    <span>{{ $message }}</span>
-                                </div>
+                        @if (session('msg'))
+                            <div class="alert alert-success">
+                                {{ session('msg') }}
                             </div>
-                            @endisset
+                        @endif
                     </div>
                     <div class="form-group">
                         <div class="form-group">

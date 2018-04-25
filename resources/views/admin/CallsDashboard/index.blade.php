@@ -11,20 +11,18 @@
     @endpush
 
     <div class="container">
-        <h3 align="center">Edit Call Status or create new Call for Note</h3>
+        <h3 align="center">Edit Call Status or Create new Call for Note</h3>
         <hr><br>
         <div class="text-center">
             <div>
                 <form action="{{route('CallsDashboard.create')}}">
                     <h4 class="ops-dboard-title">Insert Note ID to begin Operations</h4>
                     <div class="form-group">
-                        @isset($message)
-                            <div class="row col-lg-12">
-                                <div class="alert alert-info">
-                                    <span>{{ $message }}</span>
-                                </div>
+                        @if (session('msg'))
+                            <div class="alert alert-success">
+                                {{ session('msg') }}
                             </div>
-                        @endisset
+                        @endif
                     </div>
                     <br>
                     Note ID:
