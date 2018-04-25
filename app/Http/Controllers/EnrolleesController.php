@@ -45,7 +45,7 @@ class EnrolleesController extends Controller
 
         return redirect()->back()
                          ->with([
-                             'message' => 'Error',
+                             'message' => 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
                              'type'    => 'error',
                          ]);
     }
