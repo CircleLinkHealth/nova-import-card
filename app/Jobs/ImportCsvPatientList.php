@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
@@ -60,10 +59,10 @@ class ImportCsvPatientList implements ShouldQueue
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
                 if ($processEligibilityService->isCcda($row['medical_record_type'])) {
-                    $imr = $processEligibilityService->importExistingCcda($row['medical_record_id']);
+                    $response = $processEligibilityService->importExistingCcda($row['medical_record_id']);
 
-                    if ($imr) {
-                        $this->replaceWithValuesFromCsv($imr, $row);
+                    if ($response->success) {
+                        $this->replaceWithValuesFromCsv($response->imr, $row);
                     }
                     continue;
                 }

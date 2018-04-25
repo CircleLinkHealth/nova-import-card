@@ -29,7 +29,12 @@
 
                     <div class="panel-body">
                         @if($eligible > 0)
-                            <div class="pull-right">
+                            <div class="pull-right" style="padding-left: 2%;">
+                                <a href="{{route('admin.enrollees.show.batch', [$batch->id])}}"
+                                   class="btn btn-info">Import Patients</a>
+                            </div>
+
+                            <div class="pull-right" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
                                    class="btn btn-default">Download
                                     Eligible Patients CSV</a>

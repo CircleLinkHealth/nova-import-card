@@ -786,6 +786,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrolleesController@index',
                 'as'    => 'admin.enrollees.index'
             ]);
+            Route::get('batch/{batch}', [
+                'uses' => 'EnrolleesController@showBatch',
+                'as'   => 'admin.enrollees.show.batch',
+            ]);
             Route::post('import', [
                 'uses' => 'EnrolleesController@import',
                 'as'    => 'admin.enrollees.import'
