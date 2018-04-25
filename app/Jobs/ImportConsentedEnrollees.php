@@ -47,11 +47,32 @@ class ImportConsentedEnrollees implements ShouldQueue
         $imported = Enrollee::whereIn('id', $this->enrolleeIds)
                             ->get()
                             ->map(function ($enrollee) use ($processEligibilityService) {
+                                $url = route('import.ccd.remix',
+                                    'Click here to Create and a CarePlan and review.');
+                                
                                 if ($enrollee->user_id) {
                                     return [
-                                        'patient' => $enrollee->name(),
+                                        'patient' => $enrollee->nameAndDob(),
                                         'message' => 'This patient has already been imported',
                                         'type'    => 'error',
+                                    ];
+                                }
+
+                                $imr = $enrollee->getImportedMedicalRecord();
+
+                                if ($imr) {
+                                    if ($imr->patient_id) {
+                                        return [
+                                            'patient' => $enrollee->nameAndDob(),
+                                            'message' => 'This patient has already been imported',
+                                            'type'    => 'error',
+                                        ];
+                                    }
+
+                                    return [
+                                        'patient' => $enrollee->nameAndDob(),
+                                        'message' => "The CCD was imported. $url",
+                                        'type'    => 'success',
                                     ];
                                 }
 
@@ -59,11 +80,8 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     $response = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
 
                                     if ($response->imr) {
-                                        $url = route('import.ccd.remix',
-                                            'Click here to Create and a CarePlan and review.');
-
                                         return [
-                                            'patient' => $enrollee->name(),
+                                            'patient' => $enrollee->nameAndDob(),
                                             'message' => "The CCD was imported. $url",
                                             'type'    => 'success',
                                         ];
@@ -71,7 +89,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                                 }
 
                                 return [
-                                    'patient' => $enrollee->name(),
+                                    'patient' => $enrollee->nameAndDob(),
                                     'message' => 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
                                     'type'    => 'error',
                                 ];
