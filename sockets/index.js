@@ -153,6 +153,19 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:logout') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.removeInactiveDuration(info)
+                user.logout()
+                console.log('client:logout')
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }

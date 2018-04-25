@@ -61,10 +61,10 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             })
         },
         inactivityRequiresNoModal () {
-            return this.inactiveSeconds < (!this.callMode ? 120 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode
+            return this.inactiveSeconds < (!this.callMode ? 10 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
         inactivityRequiresModal () {
-            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode
+            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 20 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
@@ -127,17 +127,21 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
-                user.removeInactiveDuration(info)
-                user.allSockets.forEach(socket => {
-                    if (socket.readyState === socket.OPEN) {
-                        socket.send(JSON.stringify({ message: 'server:logout' }))
-                    }
-                })
+                user.respondToModal(false)
+                user.logout()
             }
         }
         ws.active = true
 
         $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId)
+    }
+
+    user.logout = () => {
+        user.allSockets.forEach(socket => {
+            if (socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify({ message: 'server:logout' }))
+            }
+        })
     }
 
     user.closeAllModals = () => {
