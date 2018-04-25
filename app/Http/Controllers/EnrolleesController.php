@@ -12,7 +12,7 @@ class EnrolleesController extends Controller
 {
     public function showBatch(EligibilityBatch $batch)
     {
-        $enrollees = Enrollee::whereBatchId($batch->id)->get();
+        $enrollees = Enrollee::whereBatchId($batch->id)->orderBy('last_name')->get();
         $practice  = Practice::findOrFail($batch->practice_id);
 
         return view('admin.enrollees.show-batch', compact(['enrollees', 'practice', 'batch']));
@@ -53,7 +53,7 @@ class EnrolleesController extends Controller
 
     public function index()
     {
-        $enrollees = Enrollee::all();
+        $enrollees = Enrollee::orderBy('last_name')->get();
         $practices = Practice::get()->keyBy('id');
 
         return view('admin.enrollees.index', compact(['enrollees', 'practices']));
