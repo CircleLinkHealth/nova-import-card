@@ -7,9 +7,9 @@ use App\Constants;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 if (!function_exists('parseIds')) {
     /**
@@ -818,7 +818,23 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection', 'vaccine', 'vaccination', 'vaccin']);
+        return ! str_contains(strtolower($name), [
+            'screening',
+            'history',
+            'scan',
+            'immunization',
+            'immunisation',
+            'injection',
+            'vaccine',
+            'vaccination',
+            'vaccin',
+            'screen',
+            'follow up',
+            'followup',
+            'labs',
+            'f/u',
+            'mo fu',
+        ]);
     }
 }
 
