@@ -837,6 +837,7 @@ if (!function_exists('validProblemName')) {
             'fu on',
             'fu from',
             'm fu',
+            'counsel',
         ]);
     }
 }
