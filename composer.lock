@@ -1067,6 +1067,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/ae39592553eb08e30b2f414e750de4868f7ea086",
                 "reference": "ae39592553eb08e30b2f414e750de4868f7ea086",
+
                 "shasum": ""
             },
             "require": {
@@ -1091,6 +1092,7 @@
                 "google"
             ],
             "time": "2018-04-07T00:23:23+00:00"
+
         },
         {
             "name": "google/auth",
