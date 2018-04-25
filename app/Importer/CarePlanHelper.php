@@ -423,8 +423,10 @@ class CarePlanHelper
             return $this;
         }
 
+        $cpmProblems = CpmProblem::get()->keyBy('id');
+
         foreach ($this->probs as $problem) {
-            $cpmProblem         = CpmProblem::find($problem->cpm_problem_id);
+            $cpmProblem         = $cpmProblems[$problem->cpm_problem_id];
             $defaultInstruction = optional($cpmProblem)->instruction();
 
             $ccdProblem = Problem::create([
