@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\Enrollee;
 use App\Jobs\ImportConsentedEnrollees;
+use App\Jobs\ImportMedicalRecordsById;
 use App\Practice;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,24 @@ class EnrolleesController extends Controller
         })->filter()->unique()->values()->all();
 
         ImportConsentedEnrollees::dispatch($ids);
+
+        $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
+
+        return redirect()->back()->with([
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+            'type'    => 'success',
+        ]);
+    }
+
+    public function importMedicalRecords(Request $request)
+    {
+        $ids = collect(explode(',', $request->input('medical_record_ids')))->map(function ($id) {
+            return trim($id);
+        })->filter()->unique()->values()->all();
+
+        $practice = Practice::findOrFail($request->input('practice_id'));
+
+        ImportMedicalRecordsById::dispatch($ids, $practice);
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 

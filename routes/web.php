@@ -807,6 +807,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrolleesController@importArray',
                 'as'   => 'admin.enrollees.import.array',
             ]);
+            Route::post('/import-using-medical-record-id', [
+                'uses' => 'EnrolleesController@importMedicalRecords',
+                'as'   => 'admin.enrollees.import.medical.records',
+            ]);
         });
 
         Route::resource('saas-accounts', 'Admin\CRUD\SaasAccountController');

@@ -36,6 +36,16 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
+                    <div class="panel-heading">Import Eligible Patients Medical Records</div>
+
+                    <div class="panel-body">
+                        @include('partials.importEligiblePatientsMedicalRecords')
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
                     <div class="panel-heading">Train Medical Record Importing Algorithm</div>
 
                     <div class="panel-body">
@@ -43,9 +53,7 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">Process Eligibility from CSV</div>
@@ -67,16 +75,18 @@
             </div>
 
 
-            <div class="panel panel-default">
-                <div class="panel-heading">Send Sample note via Direct Mail</div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Send Sample note via Direct Mail</div>
 
-                <div class="panel-body">
-                    <form action="/send-sample-direct-mail" method="POST">
-                        {{csrf_field()}}
-                        <input type="email" name="direct_address" placeholder="mail@direct.clh.com"
-                               required>
-                        <input type="submit" value="send">
-                    </form>
+                    <div class="panel-body">
+                        <form action="/send-sample-direct-mail" method="POST">
+                            {{csrf_field()}}
+                            <input type="email" name="direct_address" placeholder="mail@direct.clh.com"
+                                   required>
+                            <input type="submit" value="send">
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
