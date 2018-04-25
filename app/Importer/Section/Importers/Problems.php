@@ -34,7 +34,11 @@ class Problems extends BaseImporter
                                     ->where('medical_record_id', '=', $medicalRecordId)
                                     ->get()
                                     ->unique(function ($itemLog) {
-                                        return $itemLog->name ?? $itemLog->reference_title;
+                                        $name = $itemLog->name ?? $itemLog->reference_title;
+
+                                        return empty($name)
+                                            ? $itemLog->translation_name
+                                            : $name;
                                     })
                                     ->values()
                                     ->mapToGroups(function ($itemLog) use (
