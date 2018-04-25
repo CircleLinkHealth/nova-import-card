@@ -31,14 +31,16 @@ class EnrolleesController extends Controller
         }
 
         if ($processEligibilityService->isCcda($enrollee->medical_record_type)) {
-            $url = link_to_route('import.ccd.remix', 'Click here to Create and a CarePlan and review.');
-
             $imr = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
 
-            return redirect()->back()->with([
-                'message' => "The CCD was imported. $url",
-                'type'    => 'success',
-            ]);
+            if ($imr) {
+                $url = link_to_route('import.ccd.remix', 'Click here to Create and a CarePlan and review.');
+
+                return redirect()->back()->with([
+                    'message' => "The CCD was imported. $url",
+                    'type'    => 'success',
+                ]);
+            }
         }
 
         return redirect()->back()
