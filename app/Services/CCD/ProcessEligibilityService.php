@@ -331,7 +331,11 @@ class ProcessEligibilityService
         $ccda->imported = true;
         $ccda->save();
 
-        return $imr;
+        $response->success = true;
+        $response->message = "CCDA successfully imported.";
+        $response->imr     = $imr;
+
+        return $response;
     }
 
     public function isCcda($medicalRecordType)

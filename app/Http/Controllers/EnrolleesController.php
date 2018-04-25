@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\EligibilityBatch;
 use App\Enrollee;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Http\Request;
@@ -33,9 +32,9 @@ class EnrolleesController extends Controller
         }
 
         if ($processEligibilityService->isCcda($enrollee->medical_record_type)) {
-            $imr = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
+            $response = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
 
-            if (is_a($imr, ImportedMedicalRecord::class)) {
+            if ($response->imr) {
                 $url = link_to_route('import.ccd.remix', 'Click here to Create and a CarePlan and review.');
 
                 return redirect()->back()->with([
