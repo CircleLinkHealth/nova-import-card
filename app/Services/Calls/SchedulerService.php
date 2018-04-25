@@ -403,17 +403,23 @@ class SchedulerService
             if ($last_note_time != null && $last_activity_time != null) {
                 //then check if the note was made before the last activity
                 if ($last_note_time < $last_activity_time) {
-                    //have to pull the last scheduled call, but only if it was made by the algo
-                    //since we don't mess with calls scheduled manually
-                    $scheduled_call = $patient->user->inboundCalls()
-                                                    ->where('status', 'scheduled')
-                                                    ->where('scheduler', 'algorithm')
-                                                    ->first();
+                    try {
+                        //have to pull the last scheduled call, but only if it was made by the algo
+                        //since we don't mess with calls scheduled manually
+                        $scheduled_call = $patient->user->inboundCalls()
+                                                        ->where('status', 'scheduled')
+                                                        ->where('scheduler', 'algorithm')
+                                                        ->first();
 
-                    $last_attempted_call = $patient->user->inboundCalls()
-                                                         ->where('status', '!=', 'scheduled')
-                                                         ->orderBy('created_at', 'desc')
-                                                         ->first();
+                        $last_attempted_call = $patient->user->inboundCalls()
+                                                             ->where('status', '!=', 'scheduled')
+                                                             ->orderBy('created_at', 'desc')
+                                                             ->first();
+                    } catch (\Exception $exception) {
+                        \Log::critical($exception);
+                        \Log::info("Patient Info Id $patient->id");
+                        continue;
+                    }
 
                     //make sure we have a call attempt and a scheduled call.
                     if (is_object($scheduled_call) && is_object($last_attempted_call)) {

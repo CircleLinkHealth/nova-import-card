@@ -60,6 +60,8 @@ class EligibilityBatchController extends Controller
 
     public function downloadEligibleCsv(EligibilityBatch $batch)
     {
+        $practice = Practice::findOrFail($batch->practice_id);
+
         $eligible = Enrollee::select([
             'enrollees.id as eligible_patient_id',
             'cpm_problem_1',
@@ -98,7 +100,7 @@ class EligibilityBatchController extends Controller
                             ->get()
                             ->toArray();
 
-        $fileName = $batch->options['practiceName'] . '_' . Carbon::now()->toAtomString();
+        $fileName = $practice->display_name . '_' . Carbon::now()->toAtomString();
 
         return Excel::create($fileName, function ($excel) use ($eligible) {
             $excel->sheet('Eligible Patients', function ($sheet) use ($eligible) {

@@ -171,7 +171,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $patient = $patient->put('tertiary_insurance', $insurance[2] ?? '');
         }
 
-        if ((is_null($this->filterInsurance) || $this->filterInsurance)) {
+        if (is_null($this->filterInsurance)) {
             $count = 0;
 
             foreach (

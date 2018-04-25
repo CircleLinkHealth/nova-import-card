@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyMinute()
-                 ->withoutOverlapping(15);
+                 ->withoutOverlapping();
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
@@ -96,9 +96,9 @@ class Kernel extends ConsoleKernel
 //            ->withoutOverlapping();
 
 
-        $schedule->command('ccda:process')
-            ->everyMinute()
-            ->withoutOverlapping();
+//        $schedule->command('ccda:process')
+//            ->everyMinute()
+//            ->withoutOverlapping();
 
         //every 2 hours
 //        $schedule->command('ccdas:split-merged')
