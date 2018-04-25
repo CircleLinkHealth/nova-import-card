@@ -61,6 +61,8 @@ class ImportConsentedEnrollees implements ShouldQueue
 
                                 if ($imr) {
                                     if ($imr->patient_id) {
+                                        $enrollee->user_id = $imr->patient_id;
+                                        $enrollee->save();
                                         return [
                                             'patient' => $enrollee->nameAndDob(),
                                             'message' => 'This patient has already been imported',
