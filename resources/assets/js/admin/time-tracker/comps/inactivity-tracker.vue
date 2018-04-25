@@ -59,8 +59,7 @@
                             /**
                              * Logout the user automatically
                              */
-                            EventBus.$emit("tracker:stop")
-                            location.href = rootUrl('auth/logout')
+                            EventBus.$emit("tracker:logout")
                         }
                     }.bind(this),
                     1000
