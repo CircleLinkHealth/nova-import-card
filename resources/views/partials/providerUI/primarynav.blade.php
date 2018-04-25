@@ -29,7 +29,7 @@ if (isset($patient)) {
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
-                @if (isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)) && ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')))
+                @if (auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)) && ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')))
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
                     </li>
