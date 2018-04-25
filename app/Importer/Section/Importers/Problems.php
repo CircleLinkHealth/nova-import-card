@@ -62,10 +62,12 @@ class Problems extends BaseImporter
                                         $cpmProblemId = $this->getCpmProblemId($itemLog, $problemCodes->cons_name);
 
                                         if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
-                                            $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 2')->id;
+                                            $cpmProblemId = $this->cpmProblems->firstWhere('name',
+                                                'Diabetes Type 2')->id;
                                         }
                                         else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
-                                            $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 1')->id;
+                                            $cpmProblemId = $this->cpmProblems->firstWhere('name',
+                                                'Diabetes Type 1')->id;
                                         }
                                         else if ($cpmProblemId == 1) {
                                             return ['do_not_import' => $itemLog->id];
@@ -83,11 +85,16 @@ class Problems extends BaseImporter
                                             'itemLog'    => $itemLog,
                                         ];
 
-                                        $key = $cpmProblemId
-                                            ? 'monitored'
-                                            : 'not_monitored';
+                                        if ($cpmProblemId) {
+                                            return ['monitored' => $problem];
+                                        }
 
-                                        return [$key => $problem];
+                                        //do not import not monitored conditions for ottawa
+                                        if ($importedMedicalRecord->practice_id == 158) {
+                                            return ['do_not_import' => $problem];
+                                        }
+
+                                        return ['not_monitored' => $problem];
                                     });
 
         $callback = function ($monitored) {
@@ -98,13 +105,13 @@ class Problems extends BaseImporter
         };
 
         $monitored = $problemsGroups->get('monitored', collect())
-                                    ->unique(function($p) {
+                                    ->unique(function ($p) {
                                         return $p['attributes']['cpm_problem_id'];
                                     })
                                     ->map($callback);
 
         $notMonitored = $problemsGroups->get('not_monitored', collect())
-                                       ->unique(function($p) {
+                                       ->unique(function ($p) {
                                            return $p['attributes']['name'];
                                        })
                                        ->map($callback);

@@ -778,6 +778,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
                     'as' => 'eligibility.download.eligible'
                 ]);
+
+                Route::get('/last-import-session-logs', [
+                    'uses' => 'EligibilityBatchController@getLastImportLog',
+                    'as'   => 'eligibility.download.last.import.logs',
+                ]);
             });
         });
 
@@ -786,9 +791,25 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrolleesController@index',
                 'as'    => 'admin.enrollees.index'
             ]);
-            Route::post('import', [
+            Route::get('batch/{batch}', [
+                'uses' => 'EnrolleesController@showBatch',
+                'as'   => 'admin.enrollees.show.batch',
+            ]);
+            Route::post('{batch}/import', [
                 'uses' => 'EnrolleesController@import',
                 'as'    => 'admin.enrollees.import'
+            ]);
+            Route::post('import', [
+                'uses' => 'EnrolleesController@import',
+                'as'   => 'admin.enrollees.import.from.all.practices',
+            ]);
+            Route::post('/import-array-of-ids', [
+                'uses' => 'EnrolleesController@importArray',
+                'as'   => 'admin.enrollees.import.array',
+            ]);
+            Route::post('/import-using-medical-record-id', [
+                'uses' => 'EnrolleesController@importMedicalRecords',
+                'as'   => 'admin.enrollees.import.medical.records',
             ]);
         });
 

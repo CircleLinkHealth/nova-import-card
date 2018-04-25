@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Facades\StringManipulation;
+use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
 
 /**
@@ -233,6 +234,16 @@ class Enrollee extends \App\BaseModel
         return $this->belongsTo(Practice::class, 'practice_id');
     }
 
+    public function name()
+    {
+        return "$this->first_name $this->last_name";
+    }
+
+    public function nameAndDob()
+    {
+        return $this->name() . ', ' . $this->dob->toDateString();
+    }
+
     public function getProviderFullNameAttribute()
     {
 
@@ -426,5 +437,12 @@ class Enrollee extends \App\BaseModel
     public function getPrimaryPhoneAttribute($primaryPhone)
     {
         return StringManipulation::formatPhoneNumber($primaryPhone);
+    }
+
+    public function getImportedMedicalRecord()
+    {
+        return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
+                                    ->whereMedicalRecordType($this->medical_record_id)
+                                    ->first();
     }
 }

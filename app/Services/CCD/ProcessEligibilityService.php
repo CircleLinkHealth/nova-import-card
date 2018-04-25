@@ -13,8 +13,8 @@ use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Models\MedicalRecords\Ccda;
-use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Practice;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use ZanySoft\Zip\Zip;
@@ -281,17 +281,48 @@ class ProcessEligibilityService
      *
      * @param $ccdaId
      *
-     * @return ImportedMedicalRecord|bool
+     * @return \stdClass
      */
     public function importExistingCcda($ccdaId)
     {
-        $ccda = Ccda::where([
-            'id'       => $ccdaId,
-            'imported' => false,
-        ])->first();
+        $response = new \stdClass();
+
+        $ccda = Ccda::withTrashed()
+                    ->with('patient.patientInfo')
+                    ->find($ccdaId);
 
         if ( ! $ccda) {
-            return false;
+            $response->success = false;
+            $response->message = "We could not locate CCDA with id $ccdaId";
+            $response->imr     = null;
+
+            return $response;
+        }
+
+        if ($ccda->imported) {
+            if ($ccda->patient) {
+
+            }
+            $response->success = false;
+            $response->message = "CCDA with id $ccdaId has already been imported.";
+            $response->imr     = null;
+
+            return $response;
+        }
+
+        if ($ccda->mrn && $ccda->practice_id) {
+            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
+                $q->where('mrn_number', $ccda->mrn);
+            })->whereProgramId($ccda->practice_id)
+                          ->first();
+
+            if ($exists) {
+                $response->success = false;
+                $response->message = "CCDA with id $ccdaId has already been imported.";
+                $response->imr     = null;
+
+                return $response;
+            }
         }
 
         $imr = $ccda->import();
@@ -302,7 +333,11 @@ class ProcessEligibilityService
                           'imported' => true,
                       ]);
 
-        return $imr;
+        $response->success = true;
+        $response->message = "CCDA successfully imported.";
+        $response->imr     = $imr;
+
+        return $response;
     }
 
     public function isCcda($medicalRecordType)
