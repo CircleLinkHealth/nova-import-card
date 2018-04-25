@@ -834,6 +834,9 @@ if (!function_exists('validProblemName')) {
             'labs',
             'f/u',
             'mo fu',
+            'fu on',
+            'fu from',
+            'm fu',
         ]);
     }
 }
