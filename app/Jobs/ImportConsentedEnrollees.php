@@ -89,7 +89,7 @@ class ImportConsentedEnrollees implements ShouldQueue
 
                                 return [
                                     'patient' => $enrollee->nameAndDob(),
-                                    'message' => 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
+                                    'message' => $response->message ?? 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
                                     'type'    => 'error',
                                 ];
                             });

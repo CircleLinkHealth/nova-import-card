@@ -18,7 +18,7 @@ class EnrolleesController extends Controller
         return view('admin.enrollees.show-batch', compact(['enrollees', 'practice', 'batch']));
     }
 
-    public function import(Request $request, EligibilityBatch $batch)
+    public function import(Request $request, EligibilityBatch $batch = null)
     {
         $input = $request->input('enrollee_id');
 

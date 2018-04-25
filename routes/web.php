@@ -799,6 +799,10 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrolleesController@import',
                 'as'    => 'admin.enrollees.import'
             ]);
+            Route::post('import', [
+                'uses' => 'EnrolleesController@import',
+                'as'   => 'admin.enrollees.import.from.all.practices',
+            ]);
             Route::post('/import-array-of-ids', [
                 'uses' => 'EnrolleesController@importArray',
                 'as'   => 'admin.enrollees.import.array',
