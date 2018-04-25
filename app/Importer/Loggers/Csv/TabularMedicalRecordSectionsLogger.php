@@ -10,6 +10,7 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
+use App\Services\Eligibility\Entities\Problem as ProblemEntity;
 use App\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
@@ -206,6 +207,10 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
         }
 
         foreach ($problemsToImport as $problem) {
+            if (is_a($problem, ProblemEntity::class)) {
+                $problem = $problem->toArray();
+            }
+
             $problemLog = ProblemLog::create(
                 array_merge([
                     'name'                   => $problem['name'],
