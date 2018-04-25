@@ -159,7 +159,6 @@ module.exports = app => {
                 const user = app.getTimeTracker(info).get(info)
                 user.removeInactiveDuration(info)
                 user.logout()
-                console.log('client:logout')
               }
               catch (ex) {
                 errorThrow(ex, ws)
