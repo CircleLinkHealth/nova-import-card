@@ -40,10 +40,10 @@ class CarePlanHelper
         User $user,
         ImportedMedicalRecord $importedMedicalRecord
     ) {
-        $this->all   = $importedMedicalRecord->allergies->all();
-        $this->dem   = $importedMedicalRecord->demographics;
-        $this->meds  = $importedMedicalRecord->medications->all();
-        $this->probs = $importedMedicalRecord->problems->all();
+        $this->all   = $importedMedicalRecord->allergies()->get();
+        $this->dem   = $importedMedicalRecord->demographics()->first();
+        $this->meds  = $importedMedicalRecord->medications()->get();
+        $this->probs = $importedMedicalRecord->problems()->get();
         $this->user  = $user;
         $this->imr   = $importedMedicalRecord;
         $this->str   = new StringManipulation();
