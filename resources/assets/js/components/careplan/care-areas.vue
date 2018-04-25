@@ -9,14 +9,15 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">
-                    <div class="text-center">No Problems at this time</div>
-                </slot>
+                <div class="text-center" v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">No Problems at this time</div>
                 
-                <ul class="subareas__list" v-if="(cpmProblems && cpmProblems.length > 0) || (ccdMonitoredProblems.length > 0)">
-                    <li class='subareas__item inline-block col-sm-6 print-row' 
+                <ul class="subareas__list" v-if="(ccdMonitoredProblems.length > 0)">
+                    <li class='subareas__item inline-block col-sm-6 print-row' :class="{ ccd: problem.type === 'ccd' }" 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
-                        {{ccdProblemName(problem)}}
+                        {{problem.type === 'ccd' ? ((problem.related() || {}).name || problem.name) : problem.name}}
+                        <label class="label label-primary label-popover" v-if="problem.type === 'ccd'">
+                            {{ problem.title() }}
+                        </label>
                     </li>
                 </ul>
             </div>
@@ -82,6 +83,7 @@
                     name: null
                 })
                 problem.type = 'cpm'
+                problem.title = () => `${problem.code} ${problem.name}`
                 return problem
             },
             getCpmProblems() {
@@ -146,5 +148,23 @@
 
     .font-22 {
         font-size: 22px;
+    }
+
+    li.ccd:hover {
+        color: #109ace;
+    }
+
+    label.label.label-popover {
+        background-color: #109ace;
+        color: white;
+        display: none;
+        position: absolute;
+        margin-left: 10px;
+        z-index: 2;
+        top: -5px;
+    }
+
+    li:hover label.label.label-popover {
+        display: inline;
     }
 </style>

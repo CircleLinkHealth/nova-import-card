@@ -9,6 +9,7 @@ use App\Models\MedicalRecords\ImportedMedicalRecord;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Practice;
+use App\Services\CCD\ProcessEligibilityService;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -50,14 +51,16 @@ class ImportCsvPatientList implements ShouldQueue
     /**
      * Execute the job.
      *
+     * @param ProcessEligibilityService $processEligibilityService
+     *
      * @return void
      */
-    public function handle()
+    public function handle(ProcessEligibilityService $processEligibilityService)
     {
         foreach ($this->patientsArr as $row) {
             if (isset($row['medical_record_type']) && isset($row['medical_record_id'])) {
-                if (stripcslashes($row['medical_record_type']) == stripcslashes(Ccda::class)) {
-                    $imr = $this->importExistingCcda($row['medical_record_id']);
+                if ($processEligibilityService->isCcda($row['medical_record_type'])) {
+                    $imr = $processEligibilityService->importExistingCcda($row['medical_record_id']);
 
                     if ($imr) {
                         $this->replaceWithValuesFromCsv($imr, $row);
@@ -80,34 +83,7 @@ class ImportCsvPatientList implements ShouldQueue
         sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
-    /**
-     * Import a Patient whose CCDA we have already.
-     *
-     * @param $ccdaId
-     *
-     * @return ImportedMedicalRecord|bool
-     */
-    public function importExistingCcda($ccdaId)
-    {
-        $ccda = Ccda::where([
-            'id'       => $ccdaId,
-            'imported' => false,
-        ])->first();
 
-        if (!$ccda) {
-            return false;
-        }
-
-        $imr = $ccda->import();
-
-        $update = Ccda::whereId($ccdaId)
-            ->update([
-                'status'   => Ccda::QA,
-                'imported' => true,
-            ]);
-
-        return $imr;
-    }
 
     /**
      * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).

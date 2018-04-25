@@ -5,6 +5,7 @@ use App\CLH\Repositories\UserRepository;
 use App\Contracts\ReportFormatter;
 use App\Events\CarePlanWasApproved;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateNewPatientRequest;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CPM\Biometrics\CpmBloodPressure;
 use App\Models\CPM\Biometrics\CpmBloodSugar;
@@ -275,6 +276,8 @@ class PatientCareplanController extends Controller
             'id'
         )->all();
 
+        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck('display_name', 'id')->all();
+
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
         $patientRoleId = $patientRoleId->id;
@@ -374,6 +377,7 @@ class PatientCareplanController extends Controller
             'insurancePolicies',
             'contact_days_array',
             'contactWindows',
+            'billingProviders'
         ]));
     }
 
@@ -385,7 +389,7 @@ class PatientCareplanController extends Controller
      *
      * @return Response
      */
-    public function storePatientDemographics(Request $request)
+    public function storePatientDemographics(CreateNewPatientRequest $request)
     {
         // input
         $params    = new ParameterBag($request->input());
@@ -480,10 +484,15 @@ class PatientCareplanController extends Controller
                 'program_id'      => $params->get('program_id'),
                 'display_name'    => $params->get('first_name') . ' ' . $params->get('last_name'),
                 'roles'           => [$role->id],
-                'ccm_status'      => 'enrolled',
+                'ccm_status'      => $request->input('ccm_status', Patient::ENROLLED),
                 'careplan_status' => 'draft',
+                'careplan_mode'   => CarePlan::WEB,
             ]);
             $newUser = $userRepo->createNewUser($user, $params);
+
+            if ($request->has('provider_id')) {
+                $newUser->billing_provider_id = $request->input('provider_id');
+            }
 
             if ($newUser) {
                 //Update patient info changes

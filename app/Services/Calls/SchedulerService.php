@@ -200,21 +200,17 @@ class SchedulerService
         //get all patients that are withdrawn
         $withdrawn = Patient::where('ccm_status', 'withdrawn')
                             ->orWhere('ccm_status', 'paused')
-                            ->pluck('user_id');
+                            ->pluck('user_id')
+                            ->all();
 
-        $removed = [];
-
-        //get scheduled calls for them, if any, and delete them.
-        foreach ($withdrawn as $patient) {
-            $temp = $this->getScheduledCallForPatient(User::find($patient));
-
-            if (is_object($temp)) {
-                $removed[] = $temp;
-                $temp->delete();
-            }
-        }
-
-        return $removed;
+        return Call::where(function ($q) use (
+            $withdrawn
+        ) {
+            $q->whereIn('outbound_cpm_id', $withdrawn)
+              ->orWhereIn('inbound_cpm_id', $withdrawn);
+        })
+                   ->where('status', '=', 'scheduled')
+                   ->delete();
     }
 
     public function importCallsFromCsv($csv)
@@ -407,17 +403,23 @@ class SchedulerService
             if ($last_note_time != null && $last_activity_time != null) {
                 //then check if the note was made before the last activity
                 if ($last_note_time < $last_activity_time) {
-                    //have to pull the last scheduled call, but only if it was made by the algo
-                    //since we don't mess with calls scheduled manually
-                    $scheduled_call = $patient->user->inboundCalls()
-                                                    ->where('status', 'scheduled')
-                                                    ->where('scheduler', 'algorithm')
-                                                    ->first();
+                    try {
+                        //have to pull the last scheduled call, but only if it was made by the algo
+                        //since we don't mess with calls scheduled manually
+                        $scheduled_call = $patient->user->inboundCalls()
+                                                        ->where('status', 'scheduled')
+                                                        ->where('scheduler', 'algorithm')
+                                                        ->first();
 
-                    $last_attempted_call = $patient->user->inboundCalls()
-                                                         ->where('status', '!=', 'scheduled')
-                                                         ->orderBy('created_at', 'desc')
-                                                         ->first();
+                        $last_attempted_call = $patient->user->inboundCalls()
+                                                             ->where('status', '!=', 'scheduled')
+                                                             ->orderBy('created_at', 'desc')
+                                                             ->first();
+                    } catch (\Exception $exception) {
+                        \Log::critical($exception);
+                        \Log::info("Patient Info Id $patient->id");
+                        continue;
+                    }
 
                     //make sure we have a call attempt and a scheduled call.
                     if (is_object($scheduled_call) && is_object($last_attempted_call)) {

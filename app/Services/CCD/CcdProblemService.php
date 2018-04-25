@@ -40,6 +40,7 @@ class CcdProblemService
             $problem = [
                 'id'    => $p->id,
                 'name'  => $p->name,
+                'original_name' => $p->original_name,
                 'cpm_id'  => $p->cpm_problem_id,
                 'codes' => $p->codes()->get(),
                 'is_monitored' => $p->is_monitored,
@@ -113,6 +114,14 @@ class CcdProblemService
             ])->update([
                 'cpm_instruction_id' => $instructionData->id
             ]);
+        }
+        else {
+            $this->repo()->model()->where([
+                'id' => $ccdId
+            ])->update([
+                'cpm_instruction_id' => null
+            ]);
+            $problem['instruction'] = null;
         }
 
         if ($icd10) {

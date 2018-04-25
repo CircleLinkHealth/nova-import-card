@@ -29,9 +29,14 @@ class PatientReadRepository
     }
 
     public function patients(PatientFilters $filters) {
-        $users = $this->model()->filter($filters)->whereHas('patientInfo');
-        if (!$filters->isExcel()) { //check that an excel file is not requested
-            $users = $users->paginate($filters->filters()['rows'] ?? 15);
+        $users = $this->model()->filter($filters)->ofType('participant')->whereHas('patientInfo');
+        if (!$filters->isExcel()) { //check that an excel file is not requested]
+            if ($filters->filters()['rows'] == 'all') {
+                $users = $users->paginate($users->count());
+            }
+            else {
+                $users = $users->paginate($filters->filters()['rows'] ?? 15);
+            }
             $users->getCollection()->transform(function ($user) {
                 $user = optional($user)->safe();
                 return $user;

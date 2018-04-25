@@ -34,7 +34,11 @@ class Problems extends BaseImporter
                                     ->where('medical_record_id', '=', $medicalRecordId)
                                     ->get()
                                     ->unique(function ($itemLog) {
-                                        return $itemLog->name ?? $itemLog->reference_title;
+                                        $name = $itemLog->name ?? $itemLog->reference_title;
+
+                                        return empty($name)
+                                            ? $itemLog->translation_name
+                                            : $name;
                                     })
                                     ->values()
                                     ->mapToGroups(function ($itemLog) use (
@@ -60,8 +64,11 @@ class Problems extends BaseImporter
                                         if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 2')->id;
                                         }
-                                        if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
+                                        else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name', 'Diabetes Type 1')->id;
+                                        }
+                                        else if ($cpmProblemId == 1) {
+                                            return ['do_not_import' => $itemLog->id];
                                         }
 
                                         $problem = [
@@ -128,11 +135,13 @@ class Problems extends BaseImporter
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
-                if (empty($keyword)) {
+                if (!$keyword || empty($keyword)) {
                     continue;
                 }
 
-                if (str_contains(strtolower($problemName), strtolower($keyword))) {
+                $keyword = trim($keyword);
+
+                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(strtolower($keyword), strtolower($problemName))) {
                     return $cpmProblem->id;
                 }
             }

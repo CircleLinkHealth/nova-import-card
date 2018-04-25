@@ -11,9 +11,9 @@
 
     <base href="{{asset('')}}">
 
-    @include('partials.hotjar-code')
+@include('partials.hotjar-code')
 
-    <!-- Stylesheets -->
+<!-- Stylesheets -->
     <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
@@ -21,8 +21,8 @@
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    <!-- WARNING: Respond.js doesnt work if you view the page via file:// -->
+    <!--[if lt IE 9]-->
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
@@ -51,6 +51,10 @@
 
         .modal-dialog {
             z-index: 1051 !important;
+        }
+
+        .select2 {
+            width: 100%;
         }
     </style>
     @stack('styles')
@@ -100,8 +104,7 @@
                                     <li><a href="{{ route('algo.mock.create', array()) }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                     <li><a href="{{ route('CallReportController.exportxls', array()) }}">Export
-                                            Calls</a></li>
-
+                                            Calls</a></li> <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -207,6 +210,9 @@
                                 <li>
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
+                                <li>
+                                    <a href="{{route('OpsDashboard.billingChurnIndex')}}">Billing Churn</a>
+                                </li>
 
                             </ul>
                         </li>
@@ -227,27 +233,38 @@
                                     </a></li>
                             </ul>
                         </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Practices <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
+                                <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
 
+                                <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
+                                <li>
+                                    <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
+                                </li>
+                                <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
+                                <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
+                                        Patient Report</a></li>
+                            </ul>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Settings<span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
+                                <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
+                                    </a></li>
+                                <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
+                                    </a></li>
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Practices <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                    <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
-
-                                    <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                    <li>
-                                        <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                    </li>
-                                    <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
-                                    <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
-                                            Patient Report</a></li>
-                                </ul>
-                            </li>
+                            </ul>
+                        </li>
 
                         @if(auth()->user()->isSaas())
                             <li role="presentation" class="dropdown">
@@ -314,12 +331,24 @@
 </div>
 
 
+@if (Agent::isIE())
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+    
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+@endif
+
 <script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
 <script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>
 @stack('scripts')
 <script>
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/compiled/sw.js')
+        navigator.serviceWorker.register('/sw.js')
             .then(function (registration) {
                 console.log('Service Worker registration successful with scope: ',
                     registration.scope);

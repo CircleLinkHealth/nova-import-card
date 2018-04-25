@@ -10,10 +10,12 @@
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
             <template slot="name" scope="props">
-                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/summary')" target="_blank">{{props.row.name}}</a></div>
+                <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
             </template>
             <template slot="careplanStatus" scope="props">
-                {{ (({ qa_approved: 'QA Approved', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
+                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                </a>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
@@ -124,6 +126,7 @@
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
                     },
+                    perPage: this.isFilterActive() ? this.tableData.length : 10,
                     customSorting: {
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
@@ -142,6 +145,9 @@
         },
         methods: {
             rootUrl,
+            isFilterActive () {
+                return this.$refs.tblPatientList ? !!Object.values(this.$refs.tblPatientList.query).reduce((a, b) => a || b) : false
+            },
             columnMapping (name) {
                 const columns = {
                     program: 'practice'
@@ -155,10 +161,10 @@
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
             toggleProgramColumn () {
@@ -338,7 +344,7 @@
 
                 ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
                     option.innerText = ({
-                        qa_approved: 'QA Approved',
+                        qa_approved: 'Approve Now',
                         to_enroll: 'To Enroll',
                         provider_approved: 'Provider Approved',
                         none: 'None',
@@ -362,6 +368,7 @@
                     obj[key] = ''
                     this.$refs.tblPatientList.setFilter(obj)
                 })
+                this.$refs.tblPatientList.setOrder()
                 this.activateFilters()
             }
         },
@@ -419,4 +426,14 @@
     padding: 10px;
 }
 
+</style>
+
+<style scoped>
+    a:hover {
+        text-decoration: none;
+    }
+
+    a[href]:hover {
+        text-decoration: underline;
+    }
 </style>

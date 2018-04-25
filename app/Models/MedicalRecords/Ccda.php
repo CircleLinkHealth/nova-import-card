@@ -35,8 +35,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\AllergyLog[] $allergies
  * @property-read \App\Entities\CcdaRequest $ccdaRequest
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DemographicsLog[] $demographics
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[] $demographicsImports
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DemographicsLog[]
+ *     $demographics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[]
+ *     $demographicsImports
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DocumentLog[] $document
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\MedicationLog[] $medications
  * @property-read \App\User|null $patient
@@ -57,7 +59,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereMrn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePracticeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereReferringProviderName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda
+ *     whereReferringProviderName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereUpdatedAt($value)
@@ -96,6 +99,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $fillable = [
+        'batch_id',
         'date',
         'mrn',
         'referring_provider_name',
@@ -125,14 +129,15 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     public function importedMedicalRecord()
     {
         return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
-            ->where('medical_record_id', '=', $this->id)
-            ->first();
+                                    ->where('medical_record_id', '=', $this->id)
+                                    ->first();
     }
 
-    public function scopeExclude($query, $value = array()) 
+    public function scopeExclude($query, $value = [])
     {
         $defaultColumns = ['id', 'created_at', 'updated_at'];
-        return $query->select( array_diff( array_merge($defaultColumns, $this->fillable), (array) $value) );
+
+        return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array)$value));
     }
 
     /**
@@ -169,20 +174,16 @@ class Ccda extends MedicalRecordEloquent implements Transformable
 
     public function bluebuttonJson()
     {
-        if (!$this->id && !$this->xml) {
+        if ( ! $this->id && ! $this->xml) {
             return false;
         }
 
-        $key = "ccda:{$this->id}:json";
+        if ( ! $this->json) {
+            $this->json = $this->parseToJson($this->xml);
+            $this->save();
+        }
 
-        return Cache::remember($key, 7000, function () {
-            if (!$this->json) {
-                $this->json = $this->parseToJson($this->xml);
-                $this->save();
-            }
-
-            return json_decode($this->json);
-        });
+        return json_decode($this->json);
     }
 
     protected function parseToJson($xml)
@@ -196,13 +197,19 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'body'    => $xml,
         ]);
 
-        if (!in_array($response->getStatusCode(), [200,201])) {
-            return [
+        $responseBody = (string)$response->getBody();
+
+        if ( ! in_array($response->getStatusCode(), [200, 201])) {
+            $id = $this->id ?? '';
+
+            $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
-            ];
+            ]);
+
+            throw new \Exception("Could not process ccd $id. Data: $data");
         }
 
-        return (string)$response->getBody();
+        return $responseBody;
     }
 }

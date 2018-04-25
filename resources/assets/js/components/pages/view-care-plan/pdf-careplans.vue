@@ -5,9 +5,7 @@
     import modal from '../../shared/modal.vue'
     import Dropzone from 'vue2-dropzone'
 
-    import CreateCarePerson from '../../CareTeam/create-care-person.vue'
     import UpdateCarePerson from '../../pages/view-care-plan/update-care-person.vue'
-    import CareTeam from '../../pages/view-care-plan/care-team.vue'
     import CarePlanApi from '../../../api/patient-care-plan'
     import { rootUrl } from '../../../app.config'
 
@@ -15,9 +13,7 @@
         components: {
             modal,
             Dropzone,
-            CreateCarePerson,
-            UpdateCarePerson,
-            CareTeam,
+            UpdateCarePerson
         },
 
         props: ['mode'],
@@ -115,9 +111,20 @@
                 },
 
                 showSuccess() {
+                    this.modeBeforeUpload = this.patientCarePlan.mode
+
+                    console.log('mode:before:upload', this.modeBeforeUpload)
+                    
+                    if (this.modeBeforeUpload === 'web') {
+                        location.href = rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`)
+                    }
+
+                    if (this.modeBeforeUpload === 'pdf') {
+                        this.getPatientCarePlan(this.patientId)
+                    }
+
                     this.$refs.pdfCareplansDropzone.removeAllFiles()
                     this.showUploadModal = false;
-                    this.modeBeforeUpload = this.patientCarePlan.mode
 
                     this.addNotification({
                         title: "PDF Careplan(s) uploaded",
@@ -125,16 +132,6 @@
                         type: "success",
                         timeout: true
                     })
-
-                    if (this.modeBeforeUpload === 'web') {
-                        setTimeout(() => {
-                            window.location.replace(rootUrl(`manage-patients/${this.patientId}/view-careplan/pdf`))
-                        }, 1000)
-                    }
-
-                    if (this.modeBeforeUpload === 'pdf') {
-                        this.getPatientCarePlan(this.patientId)
-                    }
                 },
             }
         ),

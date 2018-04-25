@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
 use App\Practice;
+use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\EligibilityProcessorService;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
@@ -17,10 +17,18 @@ use Illuminate\Http\Request;
 class WelcomeCallListController extends Controller
 {
     protected $eligibilityService;
+    /**
+     * @var ProcessEligibilityService
+     */
+    private $processEligibilityService;
 
-    public function __construct(EligibilityProcessorService $eligibilityService)
+    public function __construct(
+        EligibilityProcessorService $eligibilityService,
+        ProcessEligibilityService $processEligibilityService
+    )
     {
         $this->eligibilityService = $eligibilityService;
+        $this->processEligibilityService = $processEligibilityService;
     }
 
     /**
@@ -45,7 +53,7 @@ class WelcomeCallListController extends Controller
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
-        $createEnrollees     = (boolean)$request->input('createEnrollees');
+        $createEnrollees     = true;
         $practice            = Practice::find($practiceId);
 
         return $this->eligibilityService->processEligibility($file, $practice, $filterLastEncounter,
@@ -142,8 +150,9 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        MakePhoenixHeartWelcomeCallList::dispatch();
+        $batch = $this->processEligibilityService->createPhoenixHeartBatch();
 
-        return "Job dispatched";
+        return link_to_route('eligibility.batch.show',
+            'Job Scheduled. Click here to view progress. Make sure you bookmark the link.', [$batch->id]);
     }
 }

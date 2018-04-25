@@ -2,9 +2,11 @@
 
 namespace App\Jobs;
 
+use App\EligibilityBatch;
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -23,23 +25,22 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
     private $filterLastEncounter;
     private $filterInsurance;
     private $filterProblems;
+    /**
+     * @var EligibilityBatch
+     */
+    private $batch;
 
     /**
      * Create a new job instance.
      *
      * @param $ccda
      * @param Practice $practice
-     * @param bool $filterLastEncounter
-     * @param bool $filterInsurance
-     * @param bool $filterProblems
-     * @param bool $createEnrollees
+     * @param EligibilityBatch $batch
      */
     public function __construct(
         $ccda,
         Practice $practice,
-        $filterLastEncounter = null,
-        $filterInsurance = null,
-        $filterProblems = true
+        EligibilityBatch $batch
     ) {
         if (is_a($ccda, Ccda::class)) {
             $ccda = $ccda->id;
@@ -48,9 +49,10 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $this->ccda                = Ccda::find($ccda);
         $this->transformer         = new CcdToLogTranformer();
         $this->practice            = $practice;
-        $this->filterLastEncounter = $filterLastEncounter;
-        $this->filterInsurance     = $filterInsurance;
-        $this->filterProblems      = $filterProblems;
+        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
+        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->batch               = $batch;
     }
 
     /**
@@ -75,21 +77,17 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
         $problems     = collect($json->problems)->map(function ($prob) {
             $problem = array_merge($this->transformer->problem($prob));
 
-            $codes = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
-                return $code['code'];
-            })->values();
+            $code = collect($this->transformer->problemCodes($prob))->sortByDesc(function ($code) {
+                    return empty($code['code'])
+                        ? false
+                        : $code['code'];
+                })->filter()->values()->first() ?? ['name' => null, 'code' => null, 'code_system_name' => null,];
 
-            foreach ($codes as $code) {
-                if ($code['code']) {
-                    return $code['code'];
-                } elseif ($problem['name']) {
-                    return $problem['name'];
-                } elseif ($code['name']) {
-                    return $code['name'];
-                }
-            }
-
-            return '';
+            return Problem::create([
+                'name'             => $problem['name'] ?? $code['name'],
+                'code'             => $code['code'],
+                'code_system_name' => $code['code_system_name'],
+            ]);
         });
         $insurance    = collect($json->payers)->map(function ($payer) {
             if (empty($payer->insurance)) {
@@ -101,7 +99,7 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
 
         $patient = $demographics->put('referring_provider_name', '');
 
-        if (!$patient->get('mrn', null) && !$patient->get('mrn_number', null)) {
+        if ( ! $patient->get('mrn', null) && ! $patient->get('mrn_number', null)) {
             $patient = $patient->put('mrn', $this->ccda->mrn);
         }
 
@@ -124,7 +122,8 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             true,
             $this->practice,
             Ccda::class,
-            $this->ccda->id
+            $this->ccda->id,
+            $this->batch
         ));
 
         $this->ccda->status = Ccda::ELIGIBLE;
@@ -172,10 +171,16 @@ class CheckCcdaEnrollmentEligibility implements ShouldQueue
             $patient = $patient->put('tertiary_insurance', $insurance[2] ?? '');
         }
 
-        if ((is_null($this->filterInsurance) || $this->filterInsurance)) {
+        if (is_null($this->filterInsurance)) {
             $count = 0;
 
-            foreach ([$patient['primary_insurance'], $patient['secondary_insurance'], $patient['tertiary_insurance']] as $string) {
+            foreach (
+                [
+                    $patient['primary_insurance'],
+                    $patient['secondary_insurance'],
+                    $patient['tertiary_insurance'],
+                ] as $string
+            ) {
                 if ($string) {
                     ++$count;
                 }

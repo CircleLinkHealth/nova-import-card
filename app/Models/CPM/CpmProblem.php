@@ -3,6 +3,7 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Keyword;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmInstructable;
 use App\Contracts\Serviceable;
@@ -141,6 +142,11 @@ class CpmProblem extends \App\BaseModel implements Serviceable
     public function instructable() {
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
     }
+
+    public function isDuplicateOf($name) {
+        return $this->where('contains', 'LIKE', "%$name%");
+    }
+
 
     /**
      * Get this Model's Service Class

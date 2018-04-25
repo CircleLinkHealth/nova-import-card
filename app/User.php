@@ -3,6 +3,7 @@
 use App\Contracts\Serviceable;
 use App\Facades\StringManipulation;
 use App\Importer\Models\ImportedItems\DemographicsImport;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -26,6 +27,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
 use App\Filters\Filterable;
 use Carbon\Carbon;
@@ -39,6 +41,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -237,6 +240,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         HasMediaTrait,
         Impersonate,
+        MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
         SoftDeletes;
@@ -1456,20 +1460,23 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function setBillingProviderIdAttribute($value)
     {
         if (empty($value)) {
-            $this->careTeamMembers()->where('type', 'billing_provider')->delete();
+            $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->delete();
 
             return true;
         }
-        $careTeamMember = $this->careTeamMembers()->where('type', 'billing_provider')->first();
+        $careTeamMember = $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->first();
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
             $careTeamMember                 = new CarePerson();
             $careTeamMember->user_id        = $this->id;
             $careTeamMember->member_user_id = $value;
-            $careTeamMember->type           = 'billing_provider';
+            $careTeamMember->type           = CarePerson::BILLING_PROVIDER;
         }
         $careTeamMember->save();
+
+        $this->load('billingProvider');
+        $this->load('careTeamMembers');
 
         return true;
     }
@@ -1789,6 +1796,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->carePlan->status = $value;
         $this->carePlan->save();
 
+        $this->load('carePlan');
+
         return true;
     }
 
@@ -1838,6 +1847,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 $this->dateWithdrawn = date("Y-m-d H:i:s");
             };
         }
+
+        $this->load('patientInfo');
 
         return true;
     }
@@ -2557,7 +2568,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->ofType('participant')
                    ->whereHas('patientInfo')
                    ->whereHas('carePlan', function ($q) {
-                       $q->where('status', '=', CarePlan::QA_APPROVED);
+                       $q->whereIn('status', [CarePlan::QA_APPROVED]);
                    })
                    ->whereHas('careTeamMembers', function ($q) {
                        $q->where([
@@ -2810,5 +2821,62 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         return $summary->chargeableServices
             ->implode('code', ', ');
+    }
+
+    /**
+     * Send a CarePlan Approval reminder, if there are CarePlans pending approval
+     *
+     * @param bool $force
+     *
+     * @return bool
+     */
+    public function sendCarePlanApprovalReminderEmail($force = false) {
+        if (!$this->shouldSendCarePlanApprovalReminderEmail() && !$force) {
+            return false;
+        }
+
+        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this);
+
+        if ($numberOfCareplans < 1) {
+            return false;
+        }
+
+        $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldSendCarePlanApprovalReminderEmail()
+    {
+        $settings = $this->emailSettings()->firstOrNew([]);
+
+        return $settings->frequency == EmailSettings::DAILY
+            ? true
+            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                ? true
+                : ($settings->frequency == EmailSettings::MWF) &&
+                  (Carbon::today()->dayOfWeek == 1
+                   || Carbon::today()->dayOfWeek == 3
+                   || Carbon::today()->dayOfWeek == 5)
+                    ? true
+                    : false;
+    }
+
+    public function pageTimersAsProvider()
+    {
+        return $this->hasMany(PageTimer::class, 'provider_id');
+    }
+
+    public function activitiesAsProvider()
+    {
+        return $this->hasMany(Activity::class, 'provider_id');
+    }
+
+    public function calls()
+    {
+        return $this->outboundCalls();
     }
 }

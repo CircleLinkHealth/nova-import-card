@@ -11,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
-use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
 {
@@ -70,18 +69,16 @@ class EmailWeeklyPracticeReport implements ShouldQueue
 
         if ($this->tester) {
             $this->tester->notify($notification);
+        } else {
+            foreach ($organizationSummaryRecipients as $recipient) {
+                $user = User::whereEmail($recipient)->first();
 
-            return;
-        }
-
-        foreach ($organizationSummaryRecipients as $recipient) {
-            $user = User::whereEmail($recipient)->first();
-
-            if ($user) {
-                $user->notify($notification);
-            } else {
-                Notification::route('mail', $recipient)
-                            ->notify($notification);
+                if ($user) {
+                    $user->notify($notification);
+                } else {
+                    Notification::route('mail', $recipient)
+                                ->notify($notification);
+                }
             }
         }
     }

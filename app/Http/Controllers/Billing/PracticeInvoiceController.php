@@ -238,6 +238,7 @@ class PracticeInvoiceController extends Controller
                 'approved' => $summary->approved,
                 'rejected' => $summary->rejected,
             ],
+            'actor_id' => $summary->actor_id
         ]);
     }
 
@@ -445,7 +446,7 @@ class PracticeInvoiceController extends Controller
 
     public function counts(Request $request)
     {
-        $date = Carbon::parse($request['date']);
+        $date = Carbon::createFromFormat('M, Y', $request->input('date'));
 
         $counts = $this->service->counts($request['practice_id'], $date->firstOfMonth());
 

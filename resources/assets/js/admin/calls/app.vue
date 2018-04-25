@@ -223,6 +223,7 @@
             obj[key] = ''
             this.$refs.tblCalls.setFilter(obj)
           })
+          this.$refs.tblCalls.setOrder()
           this.activateFilters()
         },
         exportExcel() {

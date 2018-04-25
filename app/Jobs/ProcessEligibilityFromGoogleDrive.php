@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\EligibilityBatch;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -17,30 +18,36 @@ class ProcessEligibilityFromGoogleDrive implements ShouldQueue
     private $filterLastEncounter;
     private $filterInsurance;
     private $filterProblems;
+    /**
+     * @var EligibilityBatch
+     */
+    private $batch;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param EligibilityBatch $batch
      */
-    public function __construct($dir, $practiceName, $filterLastEncounter, $filterInsurance, $filterProblems)
+    public function __construct(EligibilityBatch $batch)
     {
-        $this->dir                 = $dir;
-        $this->practiceName        = $practiceName;
-        $this->filterLastEncounter = $filterLastEncounter;
-        $this->filterInsurance     = $filterInsurance;
-        $this->filterProblems      = $filterProblems;
+        $this->dir                 = $batch->options['dir'];
+        $this->practiceName        = $batch->options['practiceName'];
+        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
+        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->batch               = $batch;
     }
 
     /**
      * Execute the job.
+     *
+     * @param ProcessEligibilityService $processEligibilityService
      *
      * @return void
      */
     public function handle(ProcessEligibilityService $processEligibilityService)
     {
         $processEligibilityService
-            ->fromGoogleDrive($this->dir, $this->practiceName, $this->filterLastEncounter, $this->filterInsurance,
-                $this->filterProblems);
+            ->fromGoogleDrive($this->batch);
     }
 }

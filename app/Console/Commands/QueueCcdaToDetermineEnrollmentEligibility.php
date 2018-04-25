@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\LGHDetermineCcdaEnrollmentEligibility;
 use App\Models\MedicalRecords\Ccda;
@@ -42,13 +43,15 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
      */
     public function handle()
     {
+        $practices = Practice::active()->get()->keyBy('id');
+
         $jobs = Ccda::where([
             ['status', '=', Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY],
         ])->whereNotNull('mrn')
                     ->inRandomOrder()
                     ->take(2000)
                     ->get(['id', 'practice_id'])
-                    ->map(function ($ccda) {
+                    ->map(function ($ccda) use ($practices) {
                         //lgh
                         if ($ccda->practice_id == 141) {
                             dispatch(
@@ -62,14 +65,16 @@ class QueueCcdaToDetermineEnrollmentEligibility extends Command
 
 
                         if ($ccda->practice_id) {
-                            $practice = Practice::find($ccda->practice_id);
+                            $practice = $practices[$ccda->practice_id] ?? null;
 
                             if ( ! $practice) {
                                 return false;
                             }
 
+                            $batch = EligibilityBatch::findOrFail($ccda->batch_id);
+
                             dispatch(
-                                (new CheckCcdaEnrollmentEligibility($ccda, $practice))
+                                (new CheckCcdaEnrollmentEligibility($ccda, $practice, $batch))
                                     ->delay(Carbon::now()->addSeconds(5))
                                     ->onQueue('ccda-processor')
                             );

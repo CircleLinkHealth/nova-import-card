@@ -7,7 +7,6 @@ use App\Models\Holiday;
 use App\Models\WorkHours;
 use App\Traits\MakesOrReceivesCalls;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Nurse
@@ -223,6 +222,6 @@ class Nurse extends \App\BaseModel
 
     public function calls()
     {
-        return $this->user->outboundCalls();
+        return $this->user->outboundCalls;
     }
 }

@@ -14,6 +14,7 @@ use App\Services\CPM\CpmMiscService;
 use App\Services\NoteService;
 use App\Services\AppointmentService;
 use App\Repositories\CareplanRepository;
+use Illuminate\Support\Collection;
 
 class CareplanService
 {

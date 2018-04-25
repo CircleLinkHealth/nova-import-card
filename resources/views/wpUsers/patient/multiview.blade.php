@@ -432,7 +432,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                     <div class="row">
-                        @if ($healthNote)
+                        <?php
+                            $noteIsAvailable = $healthNote && ($healthNote['body'] != '');
+                        ?>
+                        @if ($noteIsAvailable)
                             <div class="col-xs-12 top-10">
                                 {{ $healthNote['body'] }}
                                 <br><br><br>
@@ -441,8 +444,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         @if (!$healthGoalsForListing->count()) 
                             <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
                         @else
-                            <br><br>
-                            <ul class="col-sm-12 subareas__list top-20" style="padding-top:70px !important;">
+                            @if ($noteIsAvailable) 
+                                <br><br>
+                            @endif
+                            <ul class="col-sm-12 subareas__list top-20" style="{{ $noteIsAvailable ? 'padding-top:70px !important;' : '' }}">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach($healthGoalsForListing as $goal)
                                         <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
@@ -660,7 +665,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <p style="margin-left: -10px;">
                                                 <strong>
                                                     {{snakeToSentenceCase($carePerson->type)}}:
-                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}}
+                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}} {{ optional($carePerson->user)->suffix }}
                                             </p>
                                         </div>
                                     </li>

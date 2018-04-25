@@ -16,7 +16,7 @@ class EmailWeeklyReports extends Command
      *
      * @var string
      */
-    protected $signature = 'email:weeklyReports {--practice} {--provider} {testerUserId?} {practiceId?}';
+    protected $signature = 'email:weeklyReports {--practice} {--provider} {testerUserId?} {practiceId?} {endDate? : End date in YYYY-MM-DD. The report will be produced from a week before endDate, up to endDate}';
 
     /**
      * The console command description.
@@ -53,11 +53,17 @@ class EmailWeeklyReports extends Command
         }
 
         if ($this->argument('practiceId')) {
-            $onlyForPractice = Practice::find($this->argument('practiceId'));
+            $onlyForPractice = Practice::findOrFail($this->argument('practiceId'));
         }
 
-        $startRange = Carbon::now()->subWeek()->startOfDay();
-        $endRange = Carbon::now()->endOfDay();
+        $endDate = $this->argument('endDate') ?? null;
+
+        $endRange = $endDate
+            ? Carbon::parse($endDate)
+            : Carbon::now()->endOfDay();
+
+        $startRange = $endRange->copy()->subWeek()->startOfDay();
+
 
         if (isset($onlyForPractice)) {
             dispatch(new EmailWeeklyPracticeReport($onlyForPractice, $startRange, $endRange, $tester));

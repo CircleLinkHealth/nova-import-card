@@ -71,7 +71,7 @@ class ImporterController extends Controller
     {    
         $this::handleCcdFilesUpload($request);
 
-        return redirect()->route('view.records.ready.to.import');
+        return redirect()->route('import.ccd.remix');
     }
 
     /**
@@ -121,6 +121,8 @@ class ImporterController extends Controller
                     if ($providers->count() > 1 ||  !$mr->location_id || !$mr->location_id || !$mr->billing_provider_id) {
                         $summary['flag'] = true;
                     }
+
+                    $summary->checkDuplicity();
 
                     return $summary;
                 })->filter()
@@ -193,8 +195,8 @@ class ImporterController extends Controller
                 dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
 
                 $link = link_to_route(
-                    'view.files.ready.to.import',
-                    'Visit to CCDs Ready to Import page to review imported files.'
+                    'import.ccd.remix',
+                    'Click here to view imported CCDs (refresh ...a lot).'
                 );
 
                 return "The CSV list is being processed. $link";
@@ -210,7 +212,7 @@ class ImporterController extends Controller
             dispatch(new TrainCcdaImporter($ccda));
         }
 
-        return redirect()->route('view.files.ready.to.import');
+        return redirect()->route('import.ccd.remix');
     }
 
     public function storeTrainingFeatures(Request $request)

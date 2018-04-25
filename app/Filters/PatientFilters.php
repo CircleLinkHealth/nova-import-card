@@ -127,7 +127,7 @@ class PatientFilters extends QueryFilters
     }
     
     public function sort_registeredOn($type = null) {
-        return $this->builder->orderBy('users,created_at', $type);
+        return $this->builder->orderBy('users.created_at', $type);
     }
     
     public function sort_ccm($type = null) {
