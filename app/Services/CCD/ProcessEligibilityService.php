@@ -285,10 +285,12 @@ class ProcessEligibilityService
      */
     public function importExistingCcda($ccdaId)
     {
-        $ccda = Ccda::where([
-            'id'       => $ccdaId,
-            'imported' => false,
-        ])->first();
+        $ccda = Ccda::withTrashed()
+                    ->where([
+                        'id'       => $ccdaId,
+                        'imported' => false,
+                    ])
+                    ->first();
 
         if ( ! $ccda) {
             return false;
@@ -296,11 +298,9 @@ class ProcessEligibilityService
 
         $imr = $ccda->import();
 
-        $update = Ccda::whereId($ccdaId)
-                      ->update([
-                          'status'   => Ccda::QA,
-                          'imported' => true,
-                      ]);
+        $ccda->status   = Ccda::QA;
+        $ccda->imported = true;
+        $ccda->save();
 
         return $imr;
     }
