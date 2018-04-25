@@ -10,7 +10,6 @@ namespace App\Algorithms\Calls;
 
 use App\Call;
 use App\PatientContactWindow;
-use App\Patient;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
 
@@ -98,7 +97,8 @@ class ReschedulerHandler
             $call->scheduler = 'rescheduler algorithm';
             $call->save();
 
-            $patient = $call->inboundUser->patientInfo;
+            $patient = $call->inboundUser
+                ->patientInfo;
 
             if (is_object($patient)) {
                 //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
