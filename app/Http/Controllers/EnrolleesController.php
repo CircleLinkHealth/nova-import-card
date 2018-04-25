@@ -36,6 +36,22 @@ class EnrolleesController extends Controller
         ]);
     }
 
+    public function importArray(Request $request)
+    {
+        $ids = collect(explode(',', $request->input('enrollee_ids')))->map(function ($id) {
+            return trim($id);
+        })->filter()->unique()->values()->all();
+
+        ImportConsentedEnrollees::dispatch($ids);
+
+        $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
+
+        return redirect()->back()->with([
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+            'type'    => 'success',
+        ]);
+    }
+
     public function index()
     {
         $enrollees = Enrollee::orderBy('last_name')->get();

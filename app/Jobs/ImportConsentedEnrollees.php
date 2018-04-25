@@ -30,7 +30,6 @@ class ImportConsentedEnrollees implements ShouldQueue
      */
     public function __construct(array $enrolleeIds, EligibilityBatch $batch = null)
     {
-
         $this->enrolleeIds = $enrolleeIds;
         $this->batch       = $batch;
     }
@@ -95,7 +94,9 @@ class ImportConsentedEnrollees implements ShouldQueue
                                 ];
                             });
 
-        if ($this->batch) {
+        if ($this->batch && $imported->isNotEmpty()) {
+            \Log::info($imported->toJson());
+
             \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
         }
     }
