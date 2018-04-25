@@ -123,6 +123,8 @@
                                     </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily', array()) }}">Daily
                                             Report</a></li>
+                                    <li><a href="{{ route('admin.reports.nurse.monthly-index', array()) }}">Monthly
+                                            Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.invoice', array()) }}">
                                             Invoices</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.allocation', array()) }}">
