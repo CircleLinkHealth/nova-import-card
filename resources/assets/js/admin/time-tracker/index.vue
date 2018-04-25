@@ -176,7 +176,8 @@
                     SHOW_INACTIVE_MODAL: 'client:inactive-modal:show',
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
-                    EXIT_CALL_MODE: 'client:call-mode:exit'
+                    EXIT_CALL_MODE: 'client:call-mode:exit',
+                    LOGOUT: 'client:logout'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -239,6 +240,12 @@
                 EventBus.$on('tracker:call-mode:exit', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.EXIT_CALL_MODE, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:logout', () => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.LOGOUT, info: this.info }))
                     }
                 })
 
