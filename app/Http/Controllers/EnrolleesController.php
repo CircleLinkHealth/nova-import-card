@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\EligibilityBatch;
 use App\Enrollee;
+use App\Jobs\ImportConsentedEnrollees;
 use App\Practice;
-use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Http\Request;
 
 class EnrolleesController extends Controller
@@ -18,37 +18,22 @@ class EnrolleesController extends Controller
         return view('admin.enrollees.show-batch', compact(['enrollees', 'practice', 'batch']));
     }
 
-    public function import(Request $request, ProcessEligibilityService $processEligibilityService)
+    public function import(Request $request, EligibilityBatch $batch)
     {
-        $enrollee = Enrollee::findOrFail($request->input('enrollee_id'));
+        $input = $request->input('enrollee_id');
 
-        if ($enrollee->user_id) {
-            return redirect()->back()
-                             ->withInput()
-                             ->with([
-                                 'message' => 'This patient has already been imported',
-                                 'type'    => 'error',
-                             ]);
+        if ( ! is_array($input)) {
+            $input = [$input];
         }
 
-        if ($processEligibilityService->isCcda($enrollee->medical_record_type)) {
-            $response = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
+        ImportConsentedEnrollees::dispatch($input, $batch);
 
-            if ($response->imr) {
-                $url = link_to_route('import.ccd.remix', 'Click here to Create and a CarePlan and review.');
+        $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
-                return redirect()->back()->with([
-                    'message' => "The CCD was imported. $url",
-                    'type'    => 'success',
-                ]);
-            }
-        }
-
-        return redirect()->back()
-                         ->with([
-                             'message' => 'Sorry. Some random error occured. Please post to #qualityassurance to notify everyone to stop using the importer, and also tag Michalis to fix this asap.',
-                             'type'    => 'error',
-                         ]);
+        return redirect()->back()->with([
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+            'type'    => 'success',
+        ]);
     }
 
     public function index()

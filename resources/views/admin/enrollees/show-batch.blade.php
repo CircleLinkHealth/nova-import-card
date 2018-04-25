@@ -27,22 +27,22 @@
                         practice {{$practice->display_name}}</div>
 
                     <div class="panel-body">
-                        <form method="POST" action="{{ route('admin.enrollees.import') }}">
+                        <form method="POST" action="{{ route('admin.enrollees.import', [$batch->id]) }}">
                             {!! csrf_field() !!}
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <select class="select2" name="enrollee_id">
-                                            <option disabled {{old('enrollee_id') ?'':'selected'}}>search patients
-                                            </option>
-                                            @foreach($enrollees as $enrollee)
-                                                <option value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
-                                                    {{empty($enrollee->user_id) ?'': 'CAREPLAN EXISTS!!  '}} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'NO CCDA FOUND'}} {{ $enrollee->first_name }} {{ $enrollee->last_name }}
-                                                    , {{ $enrollee->dob->toDateString() }}, {{ $enrollee->mrn }}
-                                                    ({{ $practice->display_name }})
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                        @foreach($enrollees as $enrollee)
+                                            <div class="col-xs-12" style="padding-bottom: 3px;">
+                                                <span>import? </span>
+                                                <input id="enrollee_ids" name="enrollee_id[]" type="checkbox"
+                                                       value="{{$enrollee->id}}" {{empty($enrollee->user_id) ?'':'disabled'}} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'disabled'}} {{old('enrollee_id') == $enrollee->id ?'selected':''}} >
+                                                {!! empty($enrollee->user_id) ?'': '<u>Patient already has a careplan.</u>  ' !!} {{app(App\Services\CCD\ProcessEligibilityService::class)->isCcda($enrollee->medical_record_type) ?'':'Cannot import'}}
+                                                <b>{{ $enrollee->first_name }} {{ $enrollee->last_name }}</b>
+                                                , {{ $enrollee->dob->toDateString() }}, {{ $enrollee->mrn }}
+                                                </input>
+                                            </div>
+                                        @endforeach
                                     </div>
 
                                     <div class="form-group">
@@ -57,7 +57,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-
-@endpush

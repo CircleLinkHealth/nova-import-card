@@ -108,4 +108,17 @@ class EligibilityBatchController extends Controller
             });
         })->download('csv');
     }
+
+    public function getLastImportLog(EligibilityBatch $batch)
+    {
+        $arr = json_decode(\Cache::get("batch:{$batch->id}:last_consented_enrollee_import"), true);
+
+        $fileName = 'batch_id_' . $batch->id . '_' . Carbon::now()->toAtomString();
+
+        return Excel::create($fileName, function ($excel) use ($arr) {
+            $excel->sheet('Sheet', function ($sheet) use ($arr) {
+                $sheet->fromArray($arr);
+            });
+        })->download('csv');
+    }
 }

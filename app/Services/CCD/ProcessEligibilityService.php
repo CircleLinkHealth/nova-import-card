@@ -327,9 +327,11 @@ class ProcessEligibilityService
 
         $imr = $ccda->import();
 
-        $ccda->status   = Ccda::QA;
-        $ccda->imported = true;
-        $ccda->save();
+        $update = Ccda::whereId($ccdaId)
+                      ->update([
+                          'status'   => Ccda::QA,
+                          'imported' => true,
+                      ]);
 
         $response->success = true;
         $response->message = "CCDA successfully imported.";

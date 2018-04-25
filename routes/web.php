@@ -778,6 +778,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
                     'as' => 'eligibility.download.eligible'
                 ]);
+
+                Route::get('/last-import-session-logs', [
+                    'uses' => 'EligibilityBatchController@getLastImportLog',
+                    'as'   => 'eligibility.download.last.import.logs',
+                ]);
             });
         });
 
@@ -790,7 +795,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'EnrolleesController@showBatch',
                 'as'   => 'admin.enrollees.show.batch',
             ]);
-            Route::post('import', [
+            Route::post('{batch}/import', [
                 'uses' => 'EnrolleesController@import',
                 'as'    => 'admin.enrollees.import'
             ]);

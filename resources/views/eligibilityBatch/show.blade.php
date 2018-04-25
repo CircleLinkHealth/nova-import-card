@@ -34,6 +34,13 @@
                                    class="btn btn-info">Import Patients</a>
                             </div>
 
+                            @if(\Cache::has("batch:{$batch->id}:last_consented_enrollee_import"))
+                                <div class="pull-right" style="padding-left: 2%;">
+                                    <a href="{{route('eligibility.download.last.import.logs', [$batch->id])}}"
+                                       class="btn btn-warning">Download Last Import Session Logs</a>
+                                </div>
+                            @endif
+
                             <div class="pull-right" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
                                    class="btn btn-default">Download
@@ -52,21 +59,21 @@
                         <h4>Counts</h4>
                         Eligible: <span id="eligible">{{ $eligible }}</span>
 
-                            @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
-                                <br>
-                                Ineligible & Duplicates: <span
-                                        id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
-                                <br>
-                                Not processed: <span
-                                        id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
-                            @else
-                                <br>
-                                Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                                <br>
-                                Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                                <br>
-                                Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
-                            @endif
+                        @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
+                            <br>
+                            Ineligible & Duplicates: <span
+                                    id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
+                            <br>
+                            Not processed: <span
+                                    id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
+                        @else
+                            <br>
+                            Ineligible: <span id="ineligible">{{ $ineligible }}</span>
+                            <br>
+                            Duplicates: <span id="duplicates">{{ $duplicates }}</span>
+                            <br>
+                            Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
+                        @endif
 
                         <br><br>
 
