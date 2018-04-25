@@ -30,7 +30,7 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        $pendingApprovals = CarePlan::getNumberOfCareplansPendingApproval(auth()->user());
+        $pendingApprovals = auth()->user()->patientsPendingApproval()->count();
 
         $nurse                          = null;
         $patientsPendingApproval        = [];
