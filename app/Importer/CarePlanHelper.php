@@ -359,6 +359,8 @@ class CarePlanHelper
             return $this;
         }
 
+        $medicationGroups = [];
+
         foreach ($this->meds as $medication) {
             $ccdMedication = Medication::create([
                 'medication_import_id'  => $medication->id,
