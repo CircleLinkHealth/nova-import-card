@@ -401,13 +401,9 @@
             this.getPractices()
             this.getRecords()
 
-            EventBus.$on('vdropzone:success', (records) => {
-                console.log('vdropzone:success:records', records)
-                if (Array.isArray(records)) {
-                    this.tableData = records.map(this.setupRecord)
-                    if (this.tableData.length > 0) this.changePractice(this.tableData[0].id, this.tableData[0].Practice)
-                    EventBus.$emit('vdropzone:remove-all-files')
-                }
+            EventBus.$on('vdropzone:success', () => {
+                this.getRecords()
+                EventBus.$emit('vdropzone:remove-all-files')
             })
         }
     }
