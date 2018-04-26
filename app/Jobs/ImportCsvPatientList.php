@@ -140,32 +140,30 @@ class ImportCsvPatientList implements ShouldQueue
 
         $mr = $importedMedicalRecord->medicalRecord();
 
-        if ($mr) {
-            if (optional($mr->documents)->isNotEmpty()) {
-                DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
-                           ->update([
-                               'location_id'         => $importedMedicalRecord->location_id,
-                               'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                               'practice_id'         => $importedMedicalRecord->practice_id,
-                           ]);
-            }
+        if ($mr->documents->isNotEmpty()) {
+            DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
+                       ->update([
+                           'location_id'         => $importedMedicalRecord->location_id,
+                           'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                           'practice_id'         => $importedMedicalRecord->practice_id,
+                       ]);
+        }
 
-            if (optional($mr->providers)->isNotEmpty()) {
-                ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
-                           ->update([
-                               'location_id'         => $importedMedicalRecord->location_id,
-                               'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                               'practice_id'         => $importedMedicalRecord->practice_id,
-                           ]);
-            }
+        if ($mr->providers->isNotEmpty()) {
+            ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
+                       ->update([
+                           'location_id'         => $importedMedicalRecord->location_id,
+                           'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                           'practice_id'         => $importedMedicalRecord->practice_id,
+                       ]);
+        }
 
-            $demographicsLogs = optional($mr->demographics)->first();
+        $demographicsLogs = optional($mr->demographics)->first();
 
-            if ($demographicsLogs) {
-                if ( ! $demographicsLogs->mrn_number) {
-                    $demographicsLogs->mrn_number = "clh#$mr->id";
-                    $demographicsLogs->save();
-                }
+        if ($demographicsLogs) {
+            if ( ! $demographicsLogs->mrn_number) {
+                $demographicsLogs->mrn_number = "clh#$mr->id";
+                $demographicsLogs->save();
             }
         }
 

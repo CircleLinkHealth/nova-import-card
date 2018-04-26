@@ -9,12 +9,10 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Location;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -108,7 +106,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
      */
     public function medicalRecord()
     {
-        return (app($this->medical_record_type))->find($this->medical_record_id);
+        return (app($this->medical_record_type))->withTrashed()->find($this->medical_record_id);
     }
 
     public function getPractice() : Practice
