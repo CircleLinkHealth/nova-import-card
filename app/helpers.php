@@ -98,9 +98,7 @@ if ( ! function_exists('sendSlackMessage')) {
             return;
         }
 
-        $job = new SendSlackMessage($to, $message);
-
-        dispatch($job);
+        SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
 
