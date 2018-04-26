@@ -1611,6 +1611,16 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'observations-dashboard.index',
             ]);
 
+            Route::get('list', [
+                'uses' => 'ObservationController@getObservationsList',
+                'as'   => 'observations-dashboard.list',
+            ]);
+
+            Route::get('edit', [
+                'uses' => 'ObservationController@editObservation',
+                'as'   => 'observations-dashboard.edit',
+            ]);
+
         });
 
 

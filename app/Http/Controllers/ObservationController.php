@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
 use App\User;
@@ -215,12 +216,22 @@ class ObservationController extends Controller
 
     public function dashboardIndex(){
 
+
         return view('admin.observations.dashboard.index');
 
     }
 
-    public function getPatientObservations(){
-        return view();
+    public function getObservationsList(Request $request){
+
+        $user = User::find($request['userId']);
+
+        if (!$user){
+            return redirect()->route('observations-dashboard.index')->with('msg', 'User not found.');
+        }
+
+        $observations = Observation::where('user_id', $user->id)->get();
+
+        return view('admin.observations.dashboard.index', compact(['user', 'observations']));
     }
 
     public function editObservation(){

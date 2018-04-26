@@ -86,7 +86,7 @@
                                     <li><a href="{{ route('admin.users.index', array()) }}">All Users</a></li>
                                     <li><a href="{{ route('admin.users.create', array()) }}">New User</a></li>
                                     <li><a href="{{ route('admin.observations.index', array()) }}">Observations</a></li>
-                                    <li><a href="{{ route('observations-dashboard.index', array()) }}">Observations Dashboard</a></li>
+                                    <li><a href="{{ route('observations-dashboard.index', array()) }}">Edit/Delete Observations</a></li>
                                 </ul>
                             </li>
                         @endif
