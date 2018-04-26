@@ -194,7 +194,8 @@ class ImporterController extends Controller
 
         foreach ($request->allFiles()['medical_records'] as $file) {
             if ($file->getClientOriginalExtension() == 'csv') {
-                dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
+                ImportCsvPatientList::dispatch(parseCsvToArray($file),
+                    $file->getClientOriginalName())->onQueue('medical-records');
 
                 $link = link_to_route(
                     'import.ccd.remix',

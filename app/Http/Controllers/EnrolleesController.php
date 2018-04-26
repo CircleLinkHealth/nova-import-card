@@ -27,7 +27,7 @@ class EnrolleesController extends Controller
             $input = [$input];
         }
 
-        ImportConsentedEnrollees::dispatch($input, $batch);
+        ImportConsentedEnrollees::dispatch($input, $batch)->onQueue('medical-records');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
@@ -43,7 +43,7 @@ class EnrolleesController extends Controller
             return trim($id);
         })->filter()->unique()->values()->all();
 
-        ImportConsentedEnrollees::dispatch($ids);
+        ImportConsentedEnrollees::dispatch($ids)->onQueue('medical-records');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
@@ -61,7 +61,7 @@ class EnrolleesController extends Controller
 
         $practice = Practice::findOrFail($request->input('practice_id'));
 
-        ImportMedicalRecordsById::dispatch($ids, $practice);
+        ImportMedicalRecordsById::dispatch($ids, $practice)->onQueue('medical-records');
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
