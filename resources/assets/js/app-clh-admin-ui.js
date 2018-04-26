@@ -30,6 +30,7 @@ Vue.use(VueForm, {
     }
 });
 
+import EventBus from './admin/time-tracker/comps/event-bus'
 import { ClientTable } from 'vue-tables-2'
 
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
@@ -56,6 +57,8 @@ const App = new Vue({
     el: '#app',
     store
 })
+
+App.EventBus = EventBus
 
 export default App
 

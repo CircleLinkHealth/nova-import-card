@@ -123,6 +123,8 @@ const App = new Vue({
     }
 })
 
+App.EventBus = EventBus
+
 export default App
 
 if (window) {
