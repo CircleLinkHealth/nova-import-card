@@ -369,6 +369,21 @@ class ProcessEligibilityService
         ]);
     }
 
+    public function createSingleCSVBatch(
+        $patientList,
+        int $practiceId,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems
+    ) {
+        return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
+            'patientList'         => $patientList,
+            'filterLastEncounter' => (boolean)$filterLastEncounter,
+            'filterInsurance'     => (boolean)$filterInsurance,
+            'filterProblems'      => (boolean)$filterProblems,
+        ]);
+    }
+
     /**
      * @param $type
      *

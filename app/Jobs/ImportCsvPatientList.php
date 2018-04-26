@@ -82,8 +82,6 @@ class ImportCsvPatientList implements ShouldQueue
         sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
-
-
     /**
      * Get the most updated information from the csv (phone numbers, preferred call days/times, provider and so on).
      *
