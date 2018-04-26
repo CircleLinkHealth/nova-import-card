@@ -12,9 +12,9 @@ use App\Contracts\Importer\MedicalRecord\Section\Logger;
 
 class CommaDelimitedListAllergyLogger implements Logger
 {
-    public function handle($medicalRecord): array
+    public function handle($allergiesString): array
     {
-        $allergies = explode(',', $medicalRecord->allergies_string);
+        $allergies = explode(',', $allergiesString);
 
         $allergiesToImport = [];
 
@@ -29,8 +29,8 @@ class CommaDelimitedListAllergyLogger implements Logger
         return $allergiesToImport;
     }
 
-    public function shouldHandle($medicalRecord): bool
+    public function shouldHandle($allergiesString): bool
     {
-        return str_contains($medicalRecord->allergies_string, ',') && !starts_with($medicalRecord->allergies_string, ['[', '{']);
+        return str_contains($allergiesString, ',') && ! starts_with($allergiesString, ['[', '{']);
     }
 }

@@ -50,6 +50,6 @@ class JsonListProblemLogger implements Logger
             throw new \Exception("The string contains invalid json. String: `$problemsString`");
         }
 
-        return $check;
+        return (boolean)$check;
     }
 }
