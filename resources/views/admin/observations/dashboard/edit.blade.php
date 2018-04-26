@@ -52,16 +52,16 @@
                                             <textarea name="obs_message_id">{{$observation->obs_message_id}}</textarea>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <th>Date</th>
-                                        <td>
-                                            <input type="date" name="obs_date" value="{{Carbon\Carbon::parse($observation->obs_date)->toDateString()}}">
-                                        </td>
-                                    </tr>
+
 
                                 </table>
                                 <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                                     <p><strong>Additional Information:</strong></p>
+                                    <tr>
+                                        <th>Date</th>
+                                        <td>{{$observation->obs_date}}
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <th>User </th>
                                         <td>{{$observation->user->display_name}}</td>
