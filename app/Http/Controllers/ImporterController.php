@@ -26,6 +26,8 @@ class ImporterController extends Controller
             return response()->json('No file found', 400);
         }
 
+        $records = new Collection();
+
         foreach ($request->file('file') as $file) {
             \Log::info('Begin processing CCD ' . Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
@@ -37,9 +39,10 @@ class ImporterController extends Controller
                 'source'    => Ccda::IMPORTER,
             ]);
 
-            $ccda->import();
+            $records->push($ccda->import());
             \Log::info('End processing CCD ' . Carbon::now()->toDateTimeString());
         }
+        return $records;
     }
 
     /**
@@ -69,9 +72,10 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request) 
     {    
-        $this::handleCcdFilesUpload($request);
+        $records = $this::handleCcdFilesUpload($request);
 
-        return redirect()->route('import.ccd.remix');
+        if (!$request->has('json')) return redirect()->route('import.ccd.remix');
+        else return response()->json($records);
     }
 
     /**

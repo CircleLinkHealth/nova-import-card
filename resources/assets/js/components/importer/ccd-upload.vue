@@ -21,7 +21,7 @@
         data() {
             return {
                 dzOptions: {
-                    url: rootUrl('api/ccd-importer/imported-medical-records'),
+                    url: rootUrl('api/ccd-importer/imported-medical-records?json'),
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken()
                     },
