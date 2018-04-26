@@ -111,11 +111,13 @@ class MedicalRecordImportController extends Controller
                             ]);
                         }
                         catch (\Exception $ex) {
-                            array_push($importedRecords, [
-                                'id' => $id,
-                                'completed' => false,
-                                'error' => $ex->getMessage()
-                            ]);
+                            //throwing Exceptions to help debug importing issues
+                            throw $ex;
+//                            array_push($importedRecords, [
+//                                'id' => $id,
+//                                'completed' => false,
+//                                'error' => $ex->getMessage()
+//                            ]);
                         }
                     }
                 }
