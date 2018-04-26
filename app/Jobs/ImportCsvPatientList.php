@@ -140,7 +140,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         $mr = $importedMedicalRecord->medicalRecord();
 
-        if ($mr->documents->isNotEmpty()) {
+        if (optional($mr->documents)->isNotEmpty()) {
             DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
                        ->update([
                            'location_id'         => $importedMedicalRecord->location_id,
@@ -149,7 +149,7 @@ class ImportCsvPatientList implements ShouldQueue
                        ]);
         }
 
-        if ($mr->providers->isNotEmpty()) {
+        if (optional($mr->providers)->isNotEmpty()) {
             ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
                        ->update([
                            'location_id'         => $importedMedicalRecord->location_id,
