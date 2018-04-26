@@ -25,7 +25,7 @@ class MedicalRecordImportController extends Controller
             $imr = ImportedMedicalRecord::find($id);
 
             if ($imr) {
-                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
+                $medicalRecord = $imr->medicalRecord();
                 $medicalRecord->update([
                     'imported' => false
                 ]);
