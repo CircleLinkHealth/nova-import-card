@@ -41,7 +41,8 @@
                 Observations List for: {{$user->display_name}}.
             </div>
             <div class="panel-body">
-                <table class="table table-striped table-bordered table-curved table-condensed table-hover">
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search by key.." title="Type in a name">
+                <table id="myTable" class="table table-striped table-bordered table-curved table-condensed table-hover">
                     <tr>
                         <th>Observation Key</th>
                         <th>Value</th>
@@ -79,6 +80,25 @@
                     @endforeach
 
                 </table>
+                <script>
+                    function myFunction() {
+                        var input, filter, table, tr, td, i;
+                        input = document.getElementById("myInput");
+                        filter = input.value.toUpperCase();
+                        table = document.getElementById("myTable");
+                        tr = table.getElementsByTagName("tr");
+                        for (i = 0; i < tr.length; i++) {
+                            td = tr[i].getElementsByTagName("td")[0];
+                            if (td) {
+                                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                    tr[i].style.display = "";
+                                } else {
+                                    tr[i].style.display = "none";
+                                }
+                            }
+                        }
+                    }
+                </script>
 
                 {!! $observations->appends(Input::except('page'))->links() !!}
             </div>
