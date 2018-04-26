@@ -81,18 +81,6 @@
                             </div>
                             <div>
 
-
-
-                        {{--<div class="form-group">--}}
-                            {{--Edit keywords for CPM Problem @if($problem != null): <strong>{{$problem->name}}</strong>. @elseif($problem == null) -select problem above. @endif (Remember to seperate by comma!)--}}
-                        {{--</div>--}}
-                        {{--@if($problem != null)--}}
-                            {{--<textarea class="col-md-12 form-group" name="contains">{{$problem->contains}}</textarea>--}}
-                            {{--<input type="hidden" name="problemId" value="{{$problem->id}}">--}}
-                        {{--@else--}}
-                            {{--<textarea class="col-md-12" name="contains">Select CPM Problem.</textarea>--}}
-                            {{--<input type="hidden" name="problemId" value="{{null}}">--}}
-                        {{--@endif--}}
                         <div class="form-group">
                             <input type="hidden" name="obsId" value="{{$observation->id}}">
                             <input type="submit" value="Submit Changes" class="btn btn-info">
@@ -103,6 +91,8 @@
                             @endif
                         </div>
                         {{csrf_field()}}
+                            </div>
+                        </div>
                     </form>
             </div>
         </div>

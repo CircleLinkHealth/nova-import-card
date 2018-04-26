@@ -66,12 +66,10 @@
                                                 <br>
                                             </form>
                                         </td>
-                            <td><form action="" method="POST">
+                            <td><form action="{{route('observations-dashboard.delete')}}" method="POST">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="fromDate" value="">
-                                    <input type="hidden" name="toDate" value="">
-                                    <input type="hidden" name="status" value="">
-                                    <input type="hidden" name="practice_id" value="">
+                                    {!! method_field('delete') !!}
+                                    <input type="hidden" name="obsId" value="{{$o->id}}">
                                     <input align="center" type="submit" value="Delete" class="btn btn-danger">
                                     <br>
                                 </form>

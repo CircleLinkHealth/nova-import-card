@@ -1626,6 +1626,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'observations-dashboard.update',
             ]);
 
+            Route::delete('delete', [
+                'uses' => 'ObservationController@deleteObservation',
+                'as'   => 'observations-dashboard.delete',
+            ]);
+
         });
 
 

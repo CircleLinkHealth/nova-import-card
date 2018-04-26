@@ -254,7 +254,7 @@ class ObservationController extends Controller
         $value = $request['obs_value'];
         $method = $request['obs_method'];
         $messageId = $request['obs_message_id'];
-        //ask about date
+        //ask about date TODO
         $date = new Carbon($request['date']);
 
         if ($observation->obs_key == $key &&
@@ -275,7 +275,16 @@ class ObservationController extends Controller
         return redirect()->route('observations-dashboard.edit', ['obsId'=> $observation->id])->with('msg', 'Changes Successfully applied.');
     }
 
-    public function deleteObservation(){
-        return redirect()->route()->with();
+    public function deleteObservation(Request $request){
+
+
+        $observation = Observation::find($request['obsId']);
+
+        $userId = $observation->user_id;
+
+        $observation->delete();
+
+
+        return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with('msg', 'Observation Successfully deleted.');
     }
 }
