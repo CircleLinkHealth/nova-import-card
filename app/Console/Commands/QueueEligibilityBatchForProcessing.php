@@ -110,7 +110,7 @@ class QueueEligibilityBatchForProcessing extends Command
                                                $unprocessed = Ccda::whereBatchId($batch->id)
                                                                   ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
                                                                   ->inRandomOrder()
-                                                                  ->take(500)
+                                                                  ->take(200)
                                                                   ->get()
                                                                   ->map(function ($ccda) use ($batch, $practice) {
                                                                       ProcessCcda::withChain([
