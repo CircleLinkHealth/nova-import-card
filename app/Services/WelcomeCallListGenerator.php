@@ -489,9 +489,10 @@ class WelcomeCallListGenerator
             ])->first();
 
             $enrolledPatientExists = User::where(function ($u) use ($args) {
-                $u->whereHas('patientInfo', function ($q) use ($args) {
-                    $q->whereMrnNumber($args['mrn']);
-                });
+                $u->whereProgramId($args['practice_id'])
+                  ->whereHas('patientInfo', function ($q) use ($args) {
+                      $q->whereMrnNumber($args['mrn']);
+                  });
             })->orWhere(function ($u) use ($args) {
                 $u->where([
                     [
