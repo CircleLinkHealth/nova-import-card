@@ -3,8 +3,8 @@
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Jobs\ImportCcda;
 use App\Jobs\ImportCsvPatientList;
-use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
@@ -212,7 +212,7 @@ class ImporterController extends Controller
                 'source'    => Ccda::IMPORTER,
             ]);
 
-            dispatch(new TrainCcdaImporter($ccda));
+            ImportCcda::dispatch($ccda)->onQueue('medical-records');
         }
 
         return redirect()->route('import.ccd.remix');
