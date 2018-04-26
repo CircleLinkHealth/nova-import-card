@@ -80,7 +80,7 @@
 
                 </table>
 
-                {{--{!! $observations->appends(Input::except('page'))->links() !!}--}}
+                {!! $observations->appends(Input::except('page'))->links() !!}
             </div>
         </div>
     </div>

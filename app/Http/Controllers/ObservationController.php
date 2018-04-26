@@ -7,6 +7,7 @@ use App\User;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Crypt;
 use Validator;
 
@@ -37,17 +38,17 @@ class ObservationController extends Controller
     public function store(Request $request)
     {
         $observationService = new ObservationService;
-        $msgCPRules = new MsgCPRules;
+        $msgCPRules         = new MsgCPRules;
         if ($request->header('Client') == 'mobi') {
             // get and validate current user
             \JWTAuth::setIdentifier('id');
             $wpUser = \JWTAuth::parseToken()->authenticate();
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
-            $params = $request->input();
-            $params['user_id'] = $wpUser->id;
-            $params['source'] = 'manual_input';
+            $params                  = $request->input();
+            $params['user_id']       = $wpUser->id;
+            $params['source']        = 'manual_input';
             $params['isStartingObs'] = 'N';
         } else {
             if ($request->header('Client') == 'ui') { // WP Site
@@ -57,9 +58,9 @@ class ObservationController extends Controller
             }
         }
 
-        if ((!$request->header('Client')) || $request->header('Client') == 'ui') {
+        if (( ! $request->header('Client')) || $request->header('Client') == 'ui') {
             $wpUser = User::find($input['userId']);
-            if (!$wpUser) {
+            if ( ! $wpUser) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
             $validator = Validator::make($input, [
@@ -86,15 +87,15 @@ class ObservationController extends Controller
             if (isset($input['parent_id'])) {
                 $params['parent_id'] = $input['parent_id'];
             }
-            $params['parent_id'] = 0;
-            $params['obs_value'] = str_replace("/", "_", $input['observationValue']);
-            $params['obs_date'] = $date;
+            $params['parent_id']      = 0;
+            $params['obs_value']      = str_replace("/", "_", $input['observationValue']);
+            $params['obs_date']       = $date;
             $params['obs_message_id'] = $input['observationType'];
-            $params['obs_key'] = ''; // need to get from obs_message_id
-            $params['timezone'] = 'America/New_York';
-            $params['qstype'] = '';
-            $params['source'] = $input['observationSource'];
-            $params['isStartingObs'] = 'N';
+            $params['obs_key']        = ''; // need to get from obs_message_id
+            $params['timezone']       = 'America/New_York';
+            $params['qstype']         = '';
+            $params['source']         = $input['observationSource'];
+            $params['isStartingObs']  = 'N';
             if (isset($input['isStartingObs'])) {
                 $params['isStartingObs'] = $input['isStartingObs'];
             }
@@ -110,13 +111,13 @@ class ObservationController extends Controller
         } else {
             if (count($pieces) == 2) {
                 // semi-normal message, qstype/messageId
-                $qstype = $pieces[0];
+                $qstype       = $pieces[0];
                 $obsMessageId = $pieces[1];
             }
         }
 
         // validate answer
-        $qsType = $msgCPRules->getQsType($obsMessageId, '16');
+        $qsType         = $msgCPRules->getQsType($obsMessageId, '16');
         $answerResponse = $msgCPRules->getValidAnswer('16', $qsType, $obsMessageId, $params['obs_value'], false);
 
         //Hack to validate a1c.
@@ -125,15 +126,15 @@ class ObservationController extends Controller
             $params['obs_value'] = str_replace('%', '', $params['obs_value']);
 
             if (str_contains(
-                $params['obs_value'],
-                '.'
-            ) && strlen($params['obs_value']) == 3 && is_numeric($params['obs_value'])
+                    $params['obs_value'],
+                    '.'
+                ) && strlen($params['obs_value']) == 3 && is_numeric($params['obs_value'])
             ) {
                 $answerResponse = true;
             }
         }
 
-        if (!$answerResponse) {
+        if ( ! $answerResponse) {
             return redirect()->back()->withErrors(['You entered an invalid value, please review and resubmit.'])->withInput();
         }
 
@@ -215,67 +216,81 @@ class ObservationController extends Controller
     }
 
 
-    public function dashboardIndex(){
+    public function dashboardIndex()
+    {
 
 
         return view('admin.observations.dashboard.index');
 
     }
 
-    public function getObservationsList(Request $request){
+    public function getObservationsList(Request $request)
+    {
 
         $user = User::find($request['userId']);
 
-        if (!$user){
+        if ( ! $user) {
             return redirect()->route('observations-dashboard.index')->with('msg', 'User not found.');
         }
 
         $observations = Observation::where('user_id', $user->id)->get();
 
+        $observations             = collect($observations);
+        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+        $perPage                  = 10;
+        $currentPageSearchResults = $observations->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $observations             = new LengthAwarePaginator($currentPageSearchResults, count($observations), $perPage);
+
+        $observations = $observations->withPath("admin/observations-dashboard/list");
+
         return view('admin.observations.dashboard.index', compact(['user', 'observations']));
     }
 
-    public function editObservation(Request $request){
+    public function editObservation(Request $request)
+    {
 
         $obsId = $request['obsId'];
 
         $observation = Observation::with(['user', 'comment'])
-            ->where('id', $obsId)
-            ->first();
+                                  ->where('id', $obsId)
+                                  ->first();
 
         return view('admin.observations.dashboard.edit', compact('observation'));
     }
 
-    public function updateObservation(Request $request){
+    public function updateObservation(Request $request)
+    {
 
         $observation = Observation::find($request['obsId']);
 
-        $key = $request['obs_key'];
-        $value = $request['obs_value'];
-        $method = $request['obs_method'];
+        $key       = $request['obs_key'];
+        $value     = $request['obs_value'];
+        $method    = $request['obs_method'];
         $messageId = $request['obs_message_id'];
         //ask about date TODO
         $date = new Carbon($request['date']);
 
         if ($observation->obs_key == $key &&
-        $observation->obs_value == $value &&
-        $observation->obs_method == $method &&
-        $observation->obs_message_id == $messageId){
-            return redirect()->route('observations-dashboard.edit', ['obsId'=> $observation->id])->with('msg', 'No changes have been made.');
+            $observation->obs_value == $value &&
+            $observation->obs_method == $method &&
+            $observation->obs_message_id == $messageId) {
+            return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with('msg',
+                'No changes have been made.');
         }
 
-        $observation->obs_key = $key;
-        $observation->obs_value = $value;
-        $observation->obs_method = $method;
+        $observation->obs_key        = $key;
+        $observation->obs_value      = $value;
+        $observation->obs_method     = $method;
         $observation->obs_message_id = $messageId;
         $observation->save();
 
 
-
-        return redirect()->route('observations-dashboard.edit', ['obsId'=> $observation->id])->with('msg', 'Changes Successfully applied.');
+        return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with('msg',
+            'Changes Successfully applied.');
     }
 
-    public function deleteObservation(Request $request){
+    public function deleteObservation(Request $request)
+    {
 
 
         $observation = Observation::find($request['obsId']);
@@ -285,6 +300,7 @@ class ObservationController extends Controller
         $observation->delete();
 
 
-        return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with('msg', 'Observation Successfully deleted.');
+        return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with('msg',
+            'Observation Successfully deleted.');
     }
 }
