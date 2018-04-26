@@ -1621,6 +1621,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'observations-dashboard.edit',
             ]);
 
+            Route::patch('update', [
+                'uses' => 'ObservationController@updateObservation',
+                'as'   => 'observations-dashboard.update',
+            ]);
+
         });
 
 

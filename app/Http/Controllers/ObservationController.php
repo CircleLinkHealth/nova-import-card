@@ -4,6 +4,7 @@ use App\Observation;
 use App\Services\MsgCPRules;
 use App\Services\ObservationService;
 use App\User;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -234,14 +235,44 @@ class ObservationController extends Controller
         return view('admin.observations.dashboard.index', compact(['user', 'observations']));
     }
 
-    public function editObservation(){
+    public function editObservation(Request $request){
 
-        return view();
+        $obsId = $request['obsId'];
+
+        $observation = Observation::with(['user', 'comment'])
+            ->where('id', $obsId)
+            ->first();
+
+        return view('admin.observations.dashboard.edit', compact('observation'));
     }
 
-    public function updateObservation(){
+    public function updateObservation(Request $request){
 
-        return redirect()->route()->with();
+        $observation = Observation::find($request['obsId']);
+
+        $key = $request['obs_key'];
+        $value = $request['obs_value'];
+        $method = $request['obs_method'];
+        $messageId = $request['obs_message_id'];
+        //ask about date
+        $date = new Carbon($request['date']);
+
+        if ($observation->obs_key == $key &&
+        $observation->obs_value == $value &&
+        $observation->obs_method == $method &&
+        $observation->obs_message_id == $messageId){
+            return redirect()->route('observations-dashboard.edit', ['obsId'=> $observation->id])->with('msg', 'No changes have been made.');
+        }
+
+        $observation->obs_key = $key;
+        $observation->obs_value = $value;
+        $observation->obs_method = $method;
+        $observation->obs_message_id = $messageId;
+        $observation->save();
+
+
+
+        return redirect()->route('observations-dashboard.edit', ['obsId'=> $observation->id])->with('msg', 'Changes Successfully applied.');
     }
 
     public function deleteObservation(){

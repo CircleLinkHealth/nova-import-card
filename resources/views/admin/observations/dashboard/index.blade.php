@@ -18,7 +18,7 @@
                 <div>
                     <form action="{{route('observations-dashboard.list')}}" method="GET">
                         <div class="form-group">
-                            <p>Insert User Id</p>
+                            <p>Insert User Id:</p>
                             <input type="number" name="userId"required>
                         </div>
                         <div>
@@ -49,6 +49,8 @@
                         <th>Message Id</th>
                         <th>Practice Id</th>
                         <th>Date</th>
+                        <th> </th>
+                        <th> </th>
                     </tr>
                     @foreach($observations as $o)
                         <tr>
@@ -58,6 +60,22 @@
                             <td>{{$o->obs_message_id}}</td>
                             <td>{{$o->program_id}}</td>
                             <td>{{$o->obs_date}}</td>
+                            <td><form action="{{route('observations-dashboard.edit')}}" method="GET">
+                                                <input type="hidden" name="obsId" value="{{$o->id}}">
+                                                <input align="center" type="submit" value="Edit" class="btn btn-warning">
+                                                <br>
+                                            </form>
+                                        </td>
+                            <td><form action="" method="POST">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="fromDate" value="">
+                                    <input type="hidden" name="toDate" value="">
+                                    <input type="hidden" name="status" value="">
+                                    <input type="hidden" name="practice_id" value="">
+                                    <input align="center" type="submit" value="Delete" class="btn btn-danger">
+                                    <br>
+                                </form>
+                            </td>
                         </tr>
 
                     @endforeach
