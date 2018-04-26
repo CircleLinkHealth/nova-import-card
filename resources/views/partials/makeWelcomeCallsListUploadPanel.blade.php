@@ -16,13 +16,13 @@
                     <label for="patient_list">Upload *.csv patient list:</label>
                     <input type="file" name="patient_list" id="patient_list" required>
 
-                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter" checked>
+                    <input type="checkbox" name="filterLastEncounter" id="filterLastEncounter">
                     <label for="">filterLastEncounter</label>
 
                     <input type="checkbox" name="filterProblems" id="filterProblems" checked>
                     <label for="">filterProblems</label>
 
-                    <input type="checkbox" name="filterInsurance" id="filterInsurance" checked>
+                    <input type="checkbox" name="filterInsurance" id="filterInsurance">
                     <label for="">filterInsurance</label>
 
                     <br>

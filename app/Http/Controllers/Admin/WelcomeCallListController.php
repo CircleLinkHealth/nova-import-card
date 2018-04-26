@@ -52,6 +52,20 @@ class WelcomeCallListController extends Controller
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
 
+        $columnNames = array_key_exists(0, $patients)
+            ? array_keys($patients[0])
+            : [];
+
+        $validationErrors = $this->processEligibilityService
+            ->validationErrorsForSingleCsvColumnNames($columnNames);
+
+        if ($validationErrors) {
+            return [
+                'errors'          => $validationErrors,
+                'required_fields' => $this->processEligibilityService->getSingleCsvRequiredFields(),
+            ];
+        }
+
         $batch = $this->processEligibilityService
             ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
 

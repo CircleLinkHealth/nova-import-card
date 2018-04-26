@@ -414,4 +414,62 @@ class ProcessEligibilityService
                 'filterProblems'      => true,
             ]);
     }
+
+    /**
+     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
+     * Returns false if there's no errors, and an array of errors if errors are found.
+     *
+     * @param array $columnNames
+     *
+     * @return array|bool
+     */
+    public function validationErrorsForSingleCsvColumnNames(array $columnNames)
+    {
+        $toValidate = [];
+        $rules      = [];
+
+        foreach ($columnNames as $cn) {
+            $toValidate[$cn] = $cn;
+        }
+
+        foreach ($this->getSingleCsvRequiredFields() as $name) {
+            $rules[$name] = 'required|filled|same:' . $name;
+        }
+
+        $validator = \Validator::make($toValidate, $rules);
+
+        return $validator->passes()
+            ? false
+            : $validator->errors()->all();
+    }
+
+    public function getSingleCsvRequiredFields()
+    {
+        return [
+            'mrn',
+            'last_name',
+            'first_name',
+            'dob',
+            'gender',
+            'lang',
+            'referring_provider_name',
+            'cell_phone',
+            'home_phone',
+            'other_phone',
+            'primary_phone',
+            'email',
+            'street',
+            'street2',
+            'city',
+            'state',
+            'zip',
+            'primary_insurance',
+            'secondary_insurance',
+            'tertiary_insurance',
+            'last_encounter',
+            'problems_string',
+            'allergies_string',
+            'medications_string',
+        ];
+    }
 }
