@@ -146,7 +146,6 @@ class CpmDefaultInstructionSeeder extends Seeder
             ],
             'Psychosis & Schizophrenia' => [
                 'problems' => [   
-                    'Puerperal psychosis',
                     'Unspecified psychosis not due to a substance or known physiological condition',
                     'Residual schizophrenia',
                     'Schizoaffective disorder, bipolar type',
