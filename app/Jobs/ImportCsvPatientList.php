@@ -43,7 +43,7 @@ class ImportCsvPatientList implements ShouldQueue
 
         $this->practice = Practice::whereDisplayName(explode('-', $filename)[0])->first();
 
-        if (!$this->practice) {
+        if ( ! $this->practice) {
             dd('Please include the Practice name (as it appears on CPM) in the beginning of the csv filename as such. Demo name - Import List.');
         }
     }
@@ -70,9 +70,9 @@ class ImportCsvPatientList implements ShouldQueue
             }
 
             if (isset($row['patient_name'])) {
-                $names = explode(', ', $row['patient_name']);
+                $names             = explode(', ', $row['patient_name']);
                 $row['first_name'] = $names[0];
-                $row['last_name'] = $names[1];
+                $row['last_name']  = $names[1];
             }
 
             $this->createTabularMedicalRecordAndImport($row);
@@ -80,7 +80,8 @@ class ImportCsvPatientList implements ShouldQueue
 
         $url = url('view.files.ready.to.import');
 
-        sendSlackMessage('#background-tasks', "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
+        sendSlackMessage('#background-tasks',
+            "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");
     }
 
     /**
@@ -93,12 +94,12 @@ class ImportCsvPatientList implements ShouldQueue
     {
         $demographics = $importedMedicalRecord->demographics;
 
-        $demographics->primary_phone = $row['primary_phone'] ?? '';
+        $demographics->primary_phone        = $row['primary_phone'] ?? '';
         $demographics->preferred_call_times = $row['preferred_call_times'] ?? '';
-        $demographics->preferred_call_days = $row['preferred_call_days'] ?? '';
+        $demographics->preferred_call_days  = $row['preferred_call_days'] ?? '';
 
         foreach (['cell_phone', 'home_phone', 'work_phone'] as $phone) {
-            if (!array_key_exists($phone, $row)) {
+            if ( ! array_key_exists($phone, $row)) {
                 continue;
             }
 
@@ -111,11 +112,11 @@ class ImportCsvPatientList implements ShouldQueue
 
         $demographics->save();
 
-        if (!$importedMedicalRecord->practice_id) {
+        if ( ! $importedMedicalRecord->practice_id) {
             $importedMedicalRecord->practice_id = $this->practice->id;
         }
 
-        if (!$importedMedicalRecord->location_id) {
+        if ( ! $importedMedicalRecord->location_id) {
             $importedMedicalRecord->location_id = $this->practice->primary_location_id;
         }
 
@@ -124,11 +125,11 @@ class ImportCsvPatientList implements ShouldQueue
 
             if (count($providerName) >= 2) {
                 $provider = User::whereFirstName($providerName[0])
-                    ->whereLastName($providerName[1])
-                    ->first();
+                                ->whereLastName($providerName[1])
+                                ->first();
             }
 
-            if (!empty($provider)) {
+            if ( ! empty($provider)) {
                 $importedMedicalRecord->billing_provider_id = $provider->id;
 
                 if ($provider->locations->first()) {
@@ -139,26 +140,32 @@ class ImportCsvPatientList implements ShouldQueue
 
         $mr = $importedMedicalRecord->medicalRecord();
 
-        DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
-            ->update([
-                'location_id'         => $importedMedicalRecord->location_id,
-                'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                'practice_id'         => $importedMedicalRecord->practice_id,
-            ]);
+        if ($mr) {
+            if (optional($mr->documents)->isNotEmpty()) {
+                DocumentLog::whereIn('id', $mr->document->pluck('id')->all())
+                           ->update([
+                               'location_id'         => $importedMedicalRecord->location_id,
+                               'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                               'practice_id'         => $importedMedicalRecord->practice_id,
+                           ]);
+            }
 
-        ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
-            ->update([
-                'location_id'         => $importedMedicalRecord->location_id,
-                'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
-                'practice_id'         => $importedMedicalRecord->practice_id,
-            ]);
+            if (optional($mr->providers)->isNotEmpty()) {
+                ProviderLog::whereIn('id', $mr->providers->pluck('id')->all())
+                           ->update([
+                               'location_id'         => $importedMedicalRecord->location_id,
+                               'billing_provider_id' => $importedMedicalRecord->billing_provider_id,
+                               'practice_id'         => $importedMedicalRecord->practice_id,
+                           ]);
+            }
 
-        $demographicsLogs = $mr->demographics->first();
+            $demographicsLogs = optional($mr->demographics)->first();
 
-        if ($demographicsLogs) {
-            if (!$demographicsLogs->mrn_number) {
-                $demographicsLogs->mrn_number = "clh#$mr->id";
-                $demographicsLogs->save();
+            if ($demographicsLogs) {
+                if ( ! $demographicsLogs->mrn_number) {
+                    $demographicsLogs->mrn_number = "clh#$mr->id";
+                    $demographicsLogs->save();
+                }
             }
         }
 
@@ -174,7 +181,7 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function createTabularMedicalRecordAndImport($row)
     {
-        $row['dob'] = $row['dob']
+        $row['dob']         = $row['dob']
             ? Carbon::parse($row['dob'])->toDateString()
             : null;
         $row['practice_id'] = $this->practice->id;
@@ -214,8 +221,8 @@ class ImportCsvPatientList implements ShouldQueue
 
         $exists = TabularMedicalRecord::where([
             'first_name' => $row['first_name'],
-            'last_name' => $row['last_name'],
-            'dob' => $row['dob'],
+            'last_name'  => $row['last_name'],
+            'dob'        => $row['dob'],
         ])->first();
 
         if ($exists) {
@@ -229,7 +236,7 @@ class ImportCsvPatientList implements ShouldQueue
         if ($this->practice->id == 139) {
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
 
-            if (!$mrn) {
+            if ( ! $mrn) {
                 return false;
             }
 
@@ -241,7 +248,8 @@ class ImportCsvPatientList implements ShouldQueue
         $importedMedicalRecords[] = $mr->import();
     }
 
-    private function lookupPHXmrn($firstName, $lastName, $dob) {
+    private function lookupPHXmrn($firstName, $lastName, $dob)
+    {
         $dob = Carbon::parse($dob)->toDateString();
 
         $row = PhoenixHeartName::where('patient_first_name', $firstName)
