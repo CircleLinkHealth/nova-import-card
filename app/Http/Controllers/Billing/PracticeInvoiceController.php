@@ -433,4 +433,25 @@ class PracticeInvoiceController extends Controller
 
         return $logger;
     }
+
+    /**
+     * @deprecated This will be phased out. It's here only to support older links
+     *
+     * @param $practice
+     * @param $name
+     *
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|void
+     */
+    public function downloadInvoice(
+        $practice,
+        $name
+    ) {
+        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->hasRole('administrator')) {
+            return abort(403, 'Unauthorized action.');
+        }
+
+        return response()->download(storage_path('/download/' . $name), $name, [
+            'Content-Length: ' . filesize(storage_path('/download/' . $name)),
+        ]);
+    }
 }
