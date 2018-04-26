@@ -50,16 +50,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.54.6",
+            "version": "3.55.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ea86c808c9c8a1cd39dab2baa1b9dd38e03323ec"
+                "reference": "28a1828814ce34d056492fa494f1e4bbaddaf33e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ea86c808c9c8a1cd39dab2baa1b9dd38e03323ec",
-                "reference": "ea86c808c9c8a1cd39dab2baa1b9dd38e03323ec",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/28a1828814ce34d056492fa494f1e4bbaddaf33e",
+                "reference": "28a1828814ce34d056492fa494f1e4bbaddaf33e",
                 "shasum": ""
             },
             "require": {
@@ -126,7 +126,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-04-20T18:14:14+00:00"
+            "time": "2018-04-26T21:09:13+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -259,16 +259,16 @@
         },
         {
             "name": "defuse/php-encryption",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/defuse/php-encryption.git",
-                "reference": "5176f5abb38d3ea8a6e3ac6cd3bbb54d8185a689"
+                "reference": "0d4d27c368ca6798bc162469e43248c363c73495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/5176f5abb38d3ea8a6e3ac6cd3bbb54d8185a689",
-                "reference": "5176f5abb38d3ea8a6e3ac6cd3bbb54d8185a689",
+                "url": "https://api.github.com/repos/defuse/php-encryption/zipball/0d4d27c368ca6798bc162469e43248c363c73495",
+                "reference": "0d4d27c368ca6798bc162469e43248c363c73495",
                 "shasum": ""
             },
             "require": {
@@ -277,7 +277,7 @@
                 "php": ">=5.4.0"
             },
             "require-dev": {
-                "nikic/php-parser": "^2.0|^3.0",
+                "nikic/php-parser": "^2.0|^3.0|^4.0",
                 "phpunit/phpunit": "^4|^5"
             },
             "bin": [
@@ -318,7 +318,7 @@
                 "security",
                 "symmetric key cryptography"
             ],
-            "time": "2017-05-18T21:28:48+00:00"
+            "time": "2018-04-23T19:33:40+00:00"
         },
         {
             "name": "dionera/laravel-beanstalkd-ui",
@@ -3466,16 +3466,16 @@
         },
         {
             "name": "nao-pon/flysystem-google-drive",
-            "version": "1.1.7",
+            "version": "1.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nao-pon/flysystem-google-drive.git",
-                "reference": "7050e23e36f6ffb89b9c36e51bd79353188b0810"
+                "reference": "734a5f3c0cfe1ac5007203dc22c1d0b7574ab192"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/7050e23e36f6ffb89b9c36e51bd79353188b0810",
-                "reference": "7050e23e36f6ffb89b9c36e51bd79353188b0810",
+                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/734a5f3c0cfe1ac5007203dc22c1d0b7574ab192",
+                "reference": "734a5f3c0cfe1ac5007203dc22c1d0b7574ab192",
                 "shasum": ""
             },
             "require": {
@@ -3511,7 +3511,7 @@
                 }
             ],
             "description": "Flysystem adapter for Google Drive",
-            "time": "2018-02-24T11:55:31+00:00"
+            "time": "2018-04-24T12:09:49+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -9155,16 +9155,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.13.5",
+            "version": "v3.13.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "44c3f09abe9ac130a471361b7ade7721349a33be"
+                "reference": "d981f0f26ecc793c68ee67e0ddb53ee642f2bc1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/44c3f09abe9ac130a471361b7ade7721349a33be",
-                "reference": "44c3f09abe9ac130a471361b7ade7721349a33be",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/d981f0f26ecc793c68ee67e0ddb53ee642f2bc1c",
+                "reference": "d981f0f26ecc793c68ee67e0ddb53ee642f2bc1c",
                 "shasum": ""
             },
             "type": "library",
@@ -9208,7 +9208,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-04-21T03:34:43+00:00"
+            "time": "2018-04-24T07:18:38+00:00"
         },
         {
             "name": "symfony/class-loader",

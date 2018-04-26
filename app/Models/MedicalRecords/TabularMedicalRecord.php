@@ -9,6 +9,7 @@ use App\Importer\Loggers\Csv\TabularMedicalRecordSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Practice;
 use App\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * App\Models\MedicalRecords\TabularMedicalRecord
@@ -93,6 +94,8 @@ use App\User;
  */
 class TabularMedicalRecord extends MedicalRecordEloquent
 {
+    use SoftDeletes;
+
     protected $dates = [
         'dob',
         'consent_date',
