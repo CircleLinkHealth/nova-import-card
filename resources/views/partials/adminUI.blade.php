@@ -227,7 +227,6 @@
                         </li>
 
 
-
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -259,6 +258,15 @@
                             </li>
                         @endif
 
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Medical Records <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('admin.programs.create') }}">Process Eligibility</a></li>
+                                </ul>
+                            </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())

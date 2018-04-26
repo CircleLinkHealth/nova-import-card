@@ -24,6 +24,10 @@ class EligibilityBatchObserver
                 'duplicates' => 0,
             ];
         }
+
+        if (auth()->check()) {
+            $eligibilityBatch->initiator_id = auth()->id();
+        }
     }
 
     public function saving(EligibilityBatch $eligibilityBatch)

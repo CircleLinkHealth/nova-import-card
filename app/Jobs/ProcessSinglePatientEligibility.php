@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
@@ -45,6 +46,10 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      * @var bool
      */
     private $filterProblems;
+    /**
+     * @var EligibilityJob
+     */
+    private $eligibilityJob;
 
     /**
      * Create a new job instance.
@@ -52,18 +57,21 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      * @param Collection $patient
      * @param Practice $practice
      * @param EligibilityBatch $batch
+     * @param EligibilityJob $eligibilityJob
      */
     public function __construct(
         Collection $patient,
-        Practice $practice,
-        EligibilityBatch $batch
+        EligibilityJob $eligibilityJob,
+        EligibilityBatch $batch,
+        Practice $practice
     ) {
         $this->patient             = $patient;
         $this->practice            = $practice;
         $this->batch               = $batch;
         $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
-        $this->filterInsurance     = (boolean)$batch->options['filterProblems'];
-        $this->filterProblems      = (boolean)$batch->options['filterInsurance'];
+        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->eligibilityJob      = $eligibilityJob;
     }
 
     /**
@@ -82,7 +90,8 @@ class ProcessSinglePatientEligibility implements ShouldQueue
             $this->practice,
             null,
             null,
-            $this->batch
+            $this->batch,
+            $this->eligibilityJob
         );
     }
 }

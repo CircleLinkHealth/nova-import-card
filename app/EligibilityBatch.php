@@ -33,6 +33,7 @@ class EligibilityBatch extends Model
         'options',
         'stats',
         'status',
+        'initiator_id',
     ];
 
     protected $attributes = [
@@ -85,5 +86,10 @@ class EligibilityBatch extends Model
         }
 
         return null;
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
     }
 }
