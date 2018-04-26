@@ -12,6 +12,7 @@ use App\EligibilityBatch;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
+use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\User;
@@ -471,5 +472,22 @@ class ProcessEligibilityService
             'allergies_string',
             'medications_string',
         ];
+    }
+
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @throws \Exception
+     */
+    public function processCsvForEligibility(EligibilityBatch $batch)
+    {
+        if ($batch->type != EligibilityBatch::TYPE_ONE_CSV) {
+            throw new \Exception('$batch is not of type `' . EligibilityBatch::TYPE_ONE_CSV . '`.`');
+        }
+
+        collect(parseCsvToArray($batch->options['patients']))
+            ->map(function ($patient) use ($batch) {
+                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $batch);
+            });
     }
 }

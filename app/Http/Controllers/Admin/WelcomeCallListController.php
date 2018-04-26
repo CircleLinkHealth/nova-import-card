@@ -9,23 +9,16 @@ use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\Eligibility\EligibilityProcessorService;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 
 class WelcomeCallListController extends Controller
 {
-    protected $eligibilityService;
-    /**
-     * @var ProcessEligibilityService
-     */
-    private $processEligibilityService;
+    protected $processEligibilityService;
 
     public function __construct(
-        EligibilityProcessorService $eligibilityService,
         ProcessEligibilityService $processEligibilityService
     ) {
-        $this->eligibilityService        = $eligibilityService;
         $this->processEligibilityService = $processEligibilityService;
     }
 
