@@ -1601,6 +1601,19 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
+        //observations dashboard
+
+        Route::group([
+            'prefix' => 'observations-dashboard',
+        ], function () {
+            Route::get('index', [
+                'uses' => 'ObservationController@dashboardIndex',
+                'as'   => 'observations-dashboard.index',
+            ]);
+
+        });
+
+
 
         // programs
         Route::group([

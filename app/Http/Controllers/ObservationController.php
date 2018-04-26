@@ -211,4 +211,29 @@ class ObservationController extends Controller
     {
         //
     }
+
+
+    public function dashboardIndex(){
+
+        return view('admin.observations.dashboard.index');
+
+    }
+
+    public function getPatientObservations(){
+        return view();
+    }
+
+    public function editObservation(){
+
+        return view();
+    }
+
+    public function updateObservation(){
+
+        return redirect()->route()->with();
+    }
+
+    public function deleteObservation(){
+        return redirect()->route()->with();
+    }
 }
