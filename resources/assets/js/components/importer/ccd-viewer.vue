@@ -350,12 +350,21 @@
                                     this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
                                 }
                                 console.log('submit-one', record, response.data)
-                                const patient = (((response.data || [])[0] || {}).patient || {})
-                                EventBus.$emit('notifications:create', { 
-                                    message: `Patient Created (${patient.id}): ${patient.display_name}`, 
-                                    href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                    noTimeout: true
-                                })
+                                if ((response.data || []).completed) {
+                                    const patient = (((response.data || [])[0] || {}).patient || {})
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                        href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                        noTimeout: true
+                                    })
+                                }
+                                else {
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Error when creating patient ${record.Name}`,
+                                        type: 'warning',
+                                        noTimeout: true
+                                    })
+                                }
                                 return this.getRecords()
                             }).catch((err) => {
                                 record.loaders.confirm = false
