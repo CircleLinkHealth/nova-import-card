@@ -751,7 +751,7 @@ class WelcomeCallListGenerator
             return;
         }
 
-        $this->eligibilityJob->status   = EligibilityJob::STATUSES['error'];
+        $this->eligibilityJob->status   = $status;
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
     }
