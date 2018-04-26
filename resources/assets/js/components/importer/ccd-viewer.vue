@@ -324,7 +324,7 @@
                             this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
                         }
                         console.log('submit-one', record, response.data)
-                        if ((response.data || []).completed) {
+                        if (((response.data || [])[0] || {}).completed) {
                             const patient = (((response.data || [])[0] || {}).patient || {})
                             EventBus.$emit('notifications:create', { 
                                 message: `Patient Created (${patient.id}): ${patient.display_name}`, 
