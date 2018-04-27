@@ -39,15 +39,27 @@
 
     <div class="container">
         <h3 align="center">Nurse Monthly Report</h3>
-        <div class="input-group input-group-sm">
+        <div>
             <form action="{{route('admin.reports.nurse.monthly')}}" method="GET">
-                <div class="form-group">
-                    <article>Select Month:</article>
-                    <v-datepicker name="date" class="form-control" format="yyyy-MM-dd" placeholder="YYYY-MM"
-                        minimum-view="month" maximum-view="year" required></v-datepicker>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-info">
+                <div class="row form-group">
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label>Select Month:</label>
+                            </div>
+                            <div class="col-sm-4">
+                                <v-datepicker name="date" class="form-control" format="yyyy-MM-dd" placeholder="YYYY-MM"
+                                    minimum-view="month" maximum-view="year" required></v-datepicker>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="submit" value="Submit" class="btn btn-success">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <a href="{{route('admin.reports.nurse.monthly')}}?{{ request()->getQueryString() }}&excel" class="btn btn-info">Export as Excel</a>
+                    </div>
+                    
                 </div>
             </form>
         </div>

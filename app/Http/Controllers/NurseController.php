@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Yajra\Datatables\Facades\Datatables;
+use Excel;
 
 class NurseController extends Controller
 {
@@ -191,9 +192,46 @@ class NurseController extends Controller
     }
     public function monthlyReport(Request $request)
     {
-
-
         $date = new Carbon($request['date']);
+        $rows = $this->getMonthlyReportRows($date);
+
+        if ($request->has('json')) {
+            return response()->json($rows);
+        }
+        else if ($request->has('excel')) {
+            return Excel::create('CLH-Nurse-Monthly-Report-' . $date, function ($excel) use ($date, $rows) {
+
+                // Set the title
+                $excel->setTitle('CLH Nurse Monthly Report - ' . $date);
+    
+                // Chain the setters
+                $excel->setCreator('CLH System')
+                    ->setCompany('CircleLink Health');
+    
+                // Call them separately
+                $excel->setDescription('CLH Call Report - ' . $date);
+    
+                // Our first sheet
+                $excel->sheet('Sheet 1', function ($sheet) use ($rows) {
+                    $i = 0;
+                    // header
+                    $userColumns = [
+                        'Nurse',
+                        'CCM Time (HH:MM:SS)'
+                    ];
+                    $sheet->appendRow($userColumns);
+    
+                    foreach ($rows as $name => $time) {
+                        $columns = [$name, $time];
+                        $sheet->appendRow($columns);
+                    }
+                });
+            })->export('xls'); 
+        }
+        else return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+    }
+
+    public function getMonthlyReportRows($date) {
 
 
 
@@ -226,9 +264,7 @@ class NurseController extends Controller
 
         $rows = $rows->withPath("admin/reports/nurse/monthly");
 
-        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
-
-
+        return $rows;
     }
 
 }
