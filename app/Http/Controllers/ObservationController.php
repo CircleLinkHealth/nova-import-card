@@ -286,7 +286,7 @@ class ObservationController extends Controller
 
 
         return redirect()->route('observations-dashboard.edit', ['obsId' => $observation->id])->with('msg',
-            'Changes Successfully applied.');
+            'Changes Successfully Applied.');
     }
 
     public function deleteObservation(Request $request)
@@ -301,6 +301,6 @@ class ObservationController extends Controller
 
 
         return redirect()->route('observations-dashboard.list', ['userId' => $userId])->with('msg',
-            'Observation Successfully deleted.');
+            'Observation Successfully Deleted.');
     }
 }

@@ -27,7 +27,7 @@
                             <br>
                             <div class="panel-body">
                                 <table class="table table-striped table-bordered table-curved table-condensed table-hover">
-                                    <p><strong>Editable Data:</strong></p>
+                                    <p><strong>Editable Data:</strong> (warning: the following data will be stored in the database exactly as edited here)</p>
                                     <tr>
                                         <th>Observation Key</th>
                                         <td>
