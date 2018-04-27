@@ -14,6 +14,12 @@ class AddNewProblems extends Seeder
      */
     public function run()
     {
+        $this->removeProblems();
+
+        $this->addProblems();
+    }
+
+    public function addProblems() {
         $defaultCarePlan = getDefaultCarePlanTemplate();
 
         foreach ($this->problems() as $name => $codes) {
@@ -21,6 +27,7 @@ class AddNewProblems extends Seeder
             $cpmProblem = CpmProblem::firstOrCreate([
                 'name' => $name,
                 'default_icd_10_code' => $codes['icd10'][0] ?? null,
+                'is_behavioral' => true
             ]);
 
             if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
@@ -49,10 +56,25 @@ class AddNewProblems extends Seeder
                     'icd_10_name'    => $cpmProblem->name,
                 ]);
             }
+
+            $this->command->info("$name has been added");
         }
     }
 
-
+    public function removeProblems() {
+        foreach ($this->problemsForRemoval() as $code => $name) {
+            $problems = CpmProblem::where([
+                'name' => $name,
+                'is_behavioral' => true
+            ]);
+            $problems->get()->map(function ($problem) {
+                $problem->problemImports()->delete();
+            });
+            $problems->delete();
+            
+            $this->command->warn("$name has been deleted");
+        }
+    }
 
 
     /**
@@ -89,12 +111,187 @@ class AddNewProblems extends Seeder
         return $problems;
     }
 
+    public function problemsForRemoval(): array {
+        $problemsForRemoval['F40.241'] = 'Acrophobia';
+        $problemsForRemoval['F50.82']  = 'Avoidant/restrictive food intake disorder';
+        $problemsForRemoval['F51.02']  = 'Adjustment insomnia';
+        $problemsForRemoval['F98.5']   = 'Adult onset fluency disorder';
+        $problemsForRemoval['F50.02']  = 'Anorexia nervosa, binge eating/purging type';
+        $problemsForRemoval['F50.01']  = 'Anorexia nervosa, restricting type';
+        $problemsForRemoval['F50.00']  = 'Anorexia nervosa, unspecified';
+        $problemsForRemoval['F40.210'] = 'Arachnophobia';
+        $problemsForRemoval['F84.5']   = "Asperger's syndrome";
+        $problemsForRemoval['F90.2']   = 'Attention-deficit hyperactivity disorder, combined type';
+        $problemsForRemoval['F90.8']   = 'Attention-deficit hyperactivity disorder, other type';
+        $problemsForRemoval['F90.1']   = 'Attention-deficit hyperactivity disorder, predominantly hyperactive type';
+        $problemsForRemoval['F90.0']   = 'Attention-deficit hyperactivity disorder, predominantly inattentive type';
+        $problemsForRemoval['F90.9']   = 'Attention-deficit hyperactivity disorder, unspecified type';
+        $problemsForRemoval['F84.0']   = 'Autistic disorder';
+        $problemsForRemoval['F60.6']   = 'Avoidant personality disorder';
+        $problemsForRemoval['F50.81']  = 'Binge eating disorder';
+        $problemsForRemoval['F45.22']  = 'Body dysmorphic disorder';
+        $problemsForRemoval['F50.2']   = 'Bulimia nervosa';
+        $problemsForRemoval['F93.9']   = 'Childhood emotional disorder, unspecified';
+        $problemsForRemoval['F80.81']  = 'Childhood onset fluency disorder';
+        $problemsForRemoval['F95.1']   = 'Chronic motor or vocal tic disorder';
+        $problemsForRemoval['F40.240'] = 'Claustrophobia';
+        $problemsForRemoval['F91.0']   = 'Conduct disorder confined to family context';
+        $problemsForRemoval['F91.2']   = 'Conduct disorder, adolescent-onset type';
+        $problemsForRemoval['F91.1']   = 'Conduct disorder, childhood-onset type';
+        $problemsForRemoval['F91.9']   = 'Conduct disorder, unspecified';
+        $problemsForRemoval['F44.7']   = 'Conversion disorder with mixed symptom presentation';
+        $problemsForRemoval['F44.4']   = 'Conversion disorder with motor symptom or deficit';
+        $problemsForRemoval['F44.5']   = 'Conversion disorder with seizures or convulsions';
+        $problemsForRemoval['F44.6']   = 'Conversion disorder with sensory symptom or deficit';
+        $problemsForRemoval['F05']     = 'Delirium due to known physiological condition';
+        $problemsForRemoval['F22']     = 'Delusional disorders';
+        $problemsForRemoval['F48.1']   = 'Depersonalization-derealization syndrome';
+        $problemsForRemoval['F94.2']   = 'Disinhibited attachment disorder of childhood';
+        $problemsForRemoval['F44.9']   = 'Dissociative and conversion disorder, unspecified';
+        $problemsForRemoval['F44.1']   = 'Dissociative fugue';
+        $problemsForRemoval['F44.81']  = 'Dissociative identity disorder';
+        $problemsForRemoval['F44.2']   = 'Dissociative stupor';
+        $problemsForRemoval['F52.6']   = 'Dyspareunia not due to a substance or known physiological condition';
+        $problemsForRemoval['F34.1']   = 'Dysthymic disorder';
+        $problemsForRemoval['F50.9']   = 'Eating disorder, unspecified';
+        $problemsForRemoval['F98.1']   = 'Encopresis not due to a substance or known physiological condition';
+        $problemsForRemoval['F98.0']   = 'Enuresis not due to a substance or known physiological condition';
+        $problemsForRemoval['F42.4']   = 'Excoriation (skin-picking) disorder';
+        $problemsForRemoval['F65.2']   = 'Exhibitionism';
+        $problemsForRemoval['F68.13']  = 'Factitious disorder with combined psychological and physical signs and symptoms';
+        $problemsForRemoval['F68.12']  = 'Factitious disorder with predominantly physical signs and symptoms';
+        $problemsForRemoval['F68.11']  = 'Factitious disorder with predominantly psychological signs and symptoms';
+        $problemsForRemoval['F68.10']  = 'Factitious disorder, unspecified';
+        $problemsForRemoval['F40.230'] = 'Fear of blood';
+        $problemsForRemoval['F40.242'] = 'Fear of bridges';
+        $problemsForRemoval['F40.243'] = 'Fear of flying';
+        $problemsForRemoval['F40.231'] = 'Fear of injections and transfusions';
+        $problemsForRemoval['F40.233'] = 'Fear of injury';
+        $problemsForRemoval['F40.232'] = 'Fear of other medical care';
+        $problemsForRemoval['F40.220'] = 'Fear of thunderstorms';
+        $problemsForRemoval['F52.31']  = 'Female orgasmic disorder';
+        $problemsForRemoval['F52.22']  = 'Female sexual arousal disorder';
+        $problemsForRemoval['F65.0']   = 'Fetishism';
+        $problemsForRemoval['F65.81']  = 'Frotteurism';
+        $problemsForRemoval['F64.1']   = 'Gender identity disorder in adolescence and adulthood';
+        $problemsForRemoval['F64.2']   = 'Gender identity disorder of childhood';
+        $problemsForRemoval['F64.9']   = 'Gender identity disorder, unspecified';
+        $problemsForRemoval['F40.291'] = 'Gynephobia';
+        $problemsForRemoval['F42.3']   = 'Hoarding disorder';
+        $problemsForRemoval['F52.0']   = 'Hypoactive sexual desire disorder';
+        $problemsForRemoval['F45.20']  = 'Hypochondriacal disorder, unspecified';
+        $problemsForRemoval['F45.21']  = 'Hypochondriasis';
+        $problemsForRemoval['F63.9']   = 'Impulse disorder, unspecified';
+        $problemsForRemoval['F51.05']  = 'Insomnia due to other mental disorder';
+        $problemsForRemoval['F51.12']  = 'Insufficient sleep syndrome';
+        $problemsForRemoval['F63.81']  = 'Intermittent explosive disorder';
+        $problemsForRemoval['F63.2']   = 'Kleptomania';
+        $problemsForRemoval['F52.21']  = 'Male erectile disorder';
+        $problemsForRemoval['F52.32']  = 'Male orgasmic disorder';
+        $problemsForRemoval['F42.2']   = 'Mixed obsessional thoughts and acts';
+        $problemsForRemoval['F06.31']  = 'Mood disorder due to known physiological condition with depressive features';
+        $problemsForRemoval['F06.32']  = 'Mood disorder due to known physiological condition with major depressive-like episode';
+        $problemsForRemoval['F06.33']  = 'Mood disorder due to known physiological condition with manic features';
+        $problemsForRemoval['F06.34']  = 'Mood disorder due to known physiological condition with mixed features';
+        $problemsForRemoval['F06.30']  = 'Mood disorder due to known physiological condition, unspecified';
+        $problemsForRemoval['F60.81']  = 'Narcissistic personality disorder';
+        $problemsForRemoval['F51.5']   = 'Nightmare disorder';
+        $problemsForRemoval['F48.9']   = 'Nonpsychotic mental disorder, unspecified';
+        $problemsForRemoval['F42']     = 'Obsessive-compulsive disorder';
+        $problemsForRemoval['F60.5']   = 'Obsessive-compulsive personality disorder';
+        $problemsForRemoval['F91.3']   = 'Oppositional defiant disorder';
+        $problemsForRemoval['F40.218'] = 'Other animal type phobia';
+        $problemsForRemoval['F84.3']   = 'Other childhood disintegrative disorder';
+        $problemsForRemoval['F94.8']   = 'Other childhood disorders of social functioning';
+        $problemsForRemoval['F93.8']   = 'Other childhood emotional disorders';
+        $problemsForRemoval['F91.8']   = 'Other conduct disorders';
+        $problemsForRemoval['F80.89']  = 'Other developmental disorders of speech and language';
+        $problemsForRemoval['F88']     = 'Other disorders of psychological development';
+        $problemsForRemoval['F50.8']   = 'Other eating disorders';
+        $problemsForRemoval['F98.29']  = 'Other feeding disorders of infancy and early childhood';
+        $problemsForRemoval['F64.8']   = 'Other gender identity disorders';
+        $problemsForRemoval['F45.29']  = 'Other hypochondriacal disorders';
+        $problemsForRemoval['F63.8']   = 'Other impulse disorders';
+        $problemsForRemoval['F51.09']  = 'Other insomnia not due to a substance or known physiological condition';
+        $problemsForRemoval['F42.8']   = 'Other obsessive compulsive disorder';
+        $problemsForRemoval['F40.228'] = 'Other natural environment type phobia';
+        $problemsForRemoval['F65.89']  = 'Other paraphilias';
+        $problemsForRemoval['F34.8']   = 'Other persistent mood ºaffective» disorders';
+        $problemsForRemoval['F07.89']  = 'Other personality and behavioral disorders due to known physiological condition';
+        $problemsForRemoval['F84.8']   = 'Other pervasive developmental disorders';
+        $problemsForRemoval['F43.8']   = 'Other reactions to severe stress';
+        $problemsForRemoval['F66']     = 'Other sexual disorders';
+        $problemsForRemoval['F52.8']   = 'Other sexual dysfunction not due to a substance or known physiological condition';
+        $problemsForRemoval['F40.248'] = 'Other situational type phobia';
+        $problemsForRemoval['F51.8']   = 'Other sleep disorders not due to a substance or known physiological condition';
+        $problemsForRemoval['F45.8']   = 'Other somatoform disorders';
+        $problemsForRemoval['F50.89']  = 'Other specified eating disorder';
+        $problemsForRemoval['F34.89']  = 'Other specified persistent mood disorders';
+        $problemsForRemoval['F60.89']  = 'Other specific personality disorders';
+        $problemsForRemoval['F98.8']   = 'Other specified behavioral and emotional disorders with onset usually occurring in childhood and ado';
+        $problemsForRemoval['F68.8']   = 'Other specified disorders of adult personality and behavior';
+        $problemsForRemoval['F06.8']   = 'Other specified mental disorders due to known physiological condition';
+        $problemsForRemoval['F40.298'] = 'Other specified phobia';
+        $problemsForRemoval['F95.8']   = 'Other tic disorders';
+        $problemsForRemoval['F45.41']  = 'Pain disorder exclusively related to psychological factors';
+        $problemsForRemoval['F45.42']  = 'Pain disorder with related psychological factors';
+        $problemsForRemoval['F51.03']  = 'Paradoxical insomnia';
+        $problemsForRemoval['F60.0']   = 'Paranoid personality disorder';
+        $problemsForRemoval['F65.9']   = 'Paraphilia, unspecified';
+        $problemsForRemoval['F63.0']   = 'Pathological gambling';
+        $problemsForRemoval['F65.4']   = 'Pedophilia';
+        $problemsForRemoval['F34.9']   = 'Persistent mood ºaffective» disorder, unspecified';
+        $problemsForRemoval['F07.0']   = 'Personality change due to known physiological condition';
+        $problemsForRemoval['F60.9']   = 'Personality disorder, unspecified';
+        $problemsForRemoval['F84.9']   = 'Pervasive developmental disorder, unspecified';
+        $problemsForRemoval['F98.3']   = 'Pica of infancy and childhood';
+        $problemsForRemoval['F07.81']  = 'Postconcussional syndrome';
+        $problemsForRemoval['F52.4']   = 'Premature ejaculation';
+        $problemsForRemoval['F32.81']  = 'Premenstrual dysphonic disorder';
+        $problemsForRemoval['F51.11']  = 'Primary hypersomnia';
+        $problemsForRemoval['F51.01']  = 'Primary insomnia';
+        $problemsForRemoval['F48.2']   = 'Pseudobulbar affect';
+        $problemsForRemoval['F53']     = 'Puerperal psychosis';
+        $problemsForRemoval['F63.1']   = 'Pyromania';
+        $problemsForRemoval['F43.9']   = 'Reaction to severe stress, unspecified';
+        $problemsForRemoval['F94.1']   = 'Reactive attachment disorder of childhood';
+        $problemsForRemoval['F98.21']  = 'Rumination disorder of infancy';
+        $problemsForRemoval['F65.50']  = 'Sadomasochism, unspecified';
+        $problemsForRemoval['F94.0']   = 'Selective mutism';
+        $problemsForRemoval['F52.1']   = 'Sexual aversion disorder';
+        $problemsForRemoval['F65.51']  = 'Sexual masochism';
+        $problemsForRemoval['F65.52']  = 'Sexual sadism';
+        $problemsForRemoval['F51.9']   = 'Sleep disorder not due to a substance or known physiological condition, unspecified';
+        $problemsForRemoval['F51.4']   = 'Sleep terrors [night terrors]';
+        $problemsForRemoval['F51.3']   = 'Sleepwalking [somnambulism]';
+        $problemsForRemoval['F80.82']  = 'Social pragmatic communication disorder';
+        $problemsForRemoval['F45.0']   = 'Somatization disorder';
+        $problemsForRemoval['F45.9']   = 'Somatoform disorder, unspecified';
+        $problemsForRemoval['F98.4']   = 'Stereotyped movement disorders';
+        $problemsForRemoval['F95.9']   = 'Tic disorder, unspecified';
+        $problemsForRemoval['F95.2']   = "Tourette's disorder";
+        $problemsForRemoval['F95.0']   = 'Transient tic disorder';
+        $problemsForRemoval['F64.0']   = 'Transsexualism';
+        $problemsForRemoval['F65.1']   = 'Transvestic fetishism';
+        $problemsForRemoval['F63.3']   = 'Trichotillomania';
+        $problemsForRemoval['F45.1']  = 'Undifferentiated somatoform disorder';
+        $problemsForRemoval['F98.9']  = 'Unspecified behavioral and emotional disorders with onset usually occurring in childhood and adolesc';
+        $problemsForRemoval['F59']    = 'Unspecified behavioral syndromes associated with physiological disturbances and physical factors';
+        $problemsForRemoval['F89']    = 'Unspecified disorder of psychological development';
+        $problemsForRemoval['F09']    = 'Unspecified mental disorder due to known physiological condition';
+        $problemsForRemoval['F39']    = 'Unspecified mood ºaffective» disorder';
+        $problemsForRemoval['F52.9']  = 'Unspecified sexual dysfunction not due to a substance or known physiological condition';
+        $problemsForRemoval['F52.5']  = 'Vaginismus not due to a substance or known physiological condition';
+        $problemsForRemoval['F65.3']  = 'Voyeurism';
+
+        return $problemsForRemoval;
+    }
+
     public function importedProblems(): array
     {
 
         //description text at the end cut-off from pdf in some rows
 //page 1
-        $importedProblems['F40.241'] = 'Acrophobia';
         $importedProblems['F41.0']   = 'Panic Disorder (episodic paroxysmal anxiety)';
         $importedProblems['F43.0']   = 'Acute stress reaction';
         $importedProblems['F43.22']  = 'Adjustment disorder with anxiety';
@@ -104,9 +301,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F43.25']  = 'Adjustment disorder with mixed disturbance of emotions and conduct';
         $importedProblems['F43.29']  = 'Adjustment disorder with other symptoms';
         $importedProblems['F43.20']  = 'Adjustment disorder, unspecified';
-        $importedProblems['F50.82']  = 'Avoidant/restrictive food intake disorder';
-        $importedProblems['F51.02']  = 'Adjustment insomnia';
-        $importedProblems['F98.5']   = 'Adult onset fluency disorder';
         $importedProblems['F40.01']  = 'Agoraphobia with panic disorder';
         $importedProblems['F40.02']  = 'Agoraphobia without panic disorder';
         $importedProblems['F40.00']  = 'Agoraphobia, unspecified';
@@ -150,22 +344,9 @@ class AddNewProblems extends Seeder
         $importedProblems['F10.988'] = 'Alcohol use, unspecified with other alcohol-induced disorder';
         $importedProblems['F04']     = 'Amnestic disorder due to known physiological condition';
         $importedProblems['F40.290'] = 'Androphobia';
-        $importedProblems['F50.02']  = 'Anorexia nervosa, binge eating/purging type';
-        $importedProblems['F50.01']  = 'Anorexia nervosa, restricting type';
-        $importedProblems['F50.00']  = 'Anorexia nervosa, unspecified';
         $importedProblems['F60.2']   = 'Antisocial personality disorder';
         $importedProblems['F06.4']   = 'Anxiety disorder due to known physiological condition';
         $importedProblems['F41.9']   = 'Anxiety disorder, unspecified';
-        $importedProblems['F40.210'] = 'Arachnophobia';
-        $importedProblems['F84.5']   = "Asperger's syndrome";
-        $importedProblems['F90.2']   = 'Attention-deficit hyperactivity disorder, combined type';
-        $importedProblems['F90.8']   = 'Attention-deficit hyperactivity disorder, other type';
-        $importedProblems['F90.1']   = 'Attention-deficit hyperactivity disorder, predominantly hyperactive type';
-        $importedProblems['F90.0']   = 'Attention-deficit hyperactivity disorder, predominantly inattentive type';
-        $importedProblems['F90.9']   = 'Attention-deficit hyperactivity disorder, unspecified type';
-        $importedProblems['F84.0']   = 'Autistic disorder';
-        $importedProblems['F60.6']   = 'Avoidant personality disorder';
-        $importedProblems['F50.81']  = 'Binge eating disorder';
         $importedProblems['F31.81']  = 'Bipolar II disorder';
         $importedProblems['F31.31']  = 'Bipolar disorder, current episode depressed, mild';
         $importedProblems['F31.30']  = 'Bipolar disorder, current episode depressed, mild or moderate severity, unspecified';
@@ -195,10 +376,8 @@ class AddNewProblems extends Seeder
         $importedProblems['F31.73']  = 'Bipolar disorder, in partial remission, most recent episode manic';
         $importedProblems['F31.77']  = 'Bipolar disorder, in partial remission, most recent episode mixed';
         $importedProblems['F31.9']   = 'Bipolar disorder, unspecified';
-        $importedProblems['F45.22']  = 'Body dysmorphic disorder';
         $importedProblems['F60.3']   = 'Borderline personality disorder';
         $importedProblems['F23']     = 'Brief psychotic disorder';
-        $importedProblems['F50.2']   = 'Bulimia nervosa';
         $importedProblems['F12.180'] = 'Cannabis abuse with cannabis-induced anxiety disorder';
         $importedProblems['F12.121'] = 'Cannabis abuse with intoxication delirium';
         $importedProblems['F12.122'] = 'Cannabis abuse with intoxication with perceptual disturbance';
@@ -226,10 +405,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F12.959'] = 'Cannabis use, unspecified with psychotic disorder, unspecified';
         $importedProblems['F06.1']   = 'Catatonic disorder due to known physiological condition';
         $importedProblems['F20.2']   = 'Catatonic schizophrenia';
-        $importedProblems['F93.9']   = 'Childhood emotional disorder, unspecified';
-        $importedProblems['F80.81']  = 'Childhood onset fluency disorder';
-        $importedProblems['F95.1']   = 'Chronic motor or vocal tic disorder';
-        $importedProblems['F40.240'] = 'Claustrophobia';
         $importedProblems['F14.180'] = 'Cocaine abuse with cocaine-induced anxiety disorder';
         $importedProblems['F14.14']  = 'Cocaine abuse with cocaine-induced mood disorder';
         $importedProblems['F14.150'] = 'Cocaine abuse with cocaine-induced psychotic disorder with delusions';
@@ -264,60 +439,18 @@ class AddNewProblems extends Seeder
         $importedProblems['F14.921'] = 'Cocaine use, unspecified with intoxication delirium';
         $importedProblems['F14.922'] = 'Cocaine use, unspecified with intoxication with perceptual disturbance';
         $importedProblems['F14.988'] = 'Cocaine use, unspecified with other cocaine-induced disorder';
-        $importedProblems['F91.0']   = 'Conduct disorder confined to family context';
-        $importedProblems['F91.2']   = 'Conduct disorder, adolescent-onset type';
-        $importedProblems['F91.1']   = 'Conduct disorder, childhood-onset type';
-        $importedProblems['F91.9']   = 'Conduct disorder, unspecified';
-        $importedProblems['F44.7']   = 'Conversion disorder with mixed symptom presentation';
-        $importedProblems['F44.4']   = 'Conversion disorder with motor symptom or deficit';
-        $importedProblems['F44.5']   = 'Conversion disorder with seizures or convulsions';
-        $importedProblems['F44.6']   = 'Conversion disorder with sensory symptom or deficit';
         $importedProblems['F34.0']   = 'Cyclothymic disorder';
-        $importedProblems['F05']     = 'Delirium due to known physiological condition';
-        $importedProblems['F22']     = 'Delusional disorders';
         $importedProblems['F02.81']  = 'Dementia in other diseases classified elsewhere with behavioral disturbance';
         $importedProblems['F02.80']  = 'Dementia in other diseases classified elsewhere without behavioral disturbance';
         $importedProblems['F60.7']   = 'Dependent personality disorder';
-        $importedProblems['F48.1']   = 'Depersonalization-derealization syndrome';
-        $importedProblems['F94.2']   = 'Disinhibited attachment disorder of childhood';
         $importedProblems['F20.1']   = 'Disorganized schizophrenia';
         $importedProblems['F34.81']  = 'Dispruptive mood dysregulation disorder';
         $importedProblems['F44.0']   = 'Dissociative amnesia';
-        $importedProblems['F44.9']   = 'Dissociative and conversion disorder, unspecified';
-        $importedProblems['F44.1']   = 'Dissociative fugue';
-        $importedProblems['F44.81']  = 'Dissociative identity disorder';
-        $importedProblems['F44.2']   = 'Dissociative stupor';
-        $importedProblems['F52.6']   = 'Dyspareunia not due to a substance or known physiological condition';
-        $importedProblems['F34.1']   = 'Dysthymic disorder';
-        $importedProblems['F50.9']   = 'Eating disorder, unspecified';
-        $importedProblems['F98.1']   = 'Encopresis not due to a substance or known physiological condition';
-        $importedProblems['F98.0']   = 'Enuresis not due to a substance or known physiological condition';
-        $importedProblems['F42.4']   = 'Excoriation (skin-picking) disorder';
 
         //page 6
 
 
-        $importedProblems['F65.2']   = 'Exhibitionism';
-        $importedProblems['F68.13']  = 'Factitious disorder with combined psychological and physical signs and symptoms';
-        $importedProblems['F68.12']  = 'Factitious disorder with predominantly physical signs and symptoms';
-        $importedProblems['F68.11']  = 'Factitious disorder with predominantly psychological signs and symptoms';
-        $importedProblems['F68.10']  = 'Factitious disorder, unspecified';
-        $importedProblems['F40.230'] = 'Fear of blood';
-        $importedProblems['F40.242'] = 'Fear of bridges';
-        $importedProblems['F40.243'] = 'Fear of flying';
-        $importedProblems['F40.231'] = 'Fear of injections and transfusions';
-        $importedProblems['F40.233'] = 'Fear of injury';
-        $importedProblems['F40.232'] = 'Fear of other medical care';
-        $importedProblems['F40.220'] = 'Fear of thunderstorms';
-        $importedProblems['F52.31']  = 'Female orgasmic disorder';
-        $importedProblems['F52.22']  = 'Female sexual arousal disorder';
-        $importedProblems['F65.0']   = 'Fetishism';
-        $importedProblems['F65.81']  = 'Frotteurism';
-        $importedProblems['F64.1']   = 'Gender identity disorder in adolescence and adulthood';
-        $importedProblems['F64.2']   = 'Gender identity disorder of childhood';
-        $importedProblems['F64.9']   = 'Gender identity disorder, unspecified';
         $importedProblems['F41.1']   = 'Generalized anxiety disorder';
-        $importedProblems['F40.291'] = 'Gynephobia';
         $importedProblems['F16.183'] = 'Hallucinogen abuse with hallucinogen persisting perception disorder (flashbacks)';
         $importedProblems['F16.180'] = 'Hallucinogen abuse with hallucinogen-induced anxiety disorder';
         $importedProblems['F16.14']  = 'Hallucinogen abuse with hallucinogen-induced mood disorder';
@@ -348,11 +481,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F16.921'] = 'Hallucinogen use, unspecified with intoxication with delirium';
         $importedProblems['F16.988'] = 'Hallucinogen use, unspecified with other hallucinogen-induced disorder';
         $importedProblems['F60.4']   = 'Histrionic personality disorder';
-        $importedProblems['F42.3']   = 'Hoarding disorder';
-        $importedProblems['F52.0']   = 'Hypoactive sexual desire disorder';
-        $importedProblems['F45.20']  = 'Hypochondriacal disorder, unspecified';
-        $importedProblems['F45.21']  = 'Hypochondriasis';
-        $importedProblems['F63.9']   = 'Impulse disorder, unspecified';
         $importedProblems['F18.180'] = 'Inhalant abuse with inhalant-induced anxiety disorder';
         $importedProblems['F18.17']  = 'Inhalant abuse with inhalant-induced dementia';
         $importedProblems['F18.14']  = 'Inhalant abuse with inhalant-induced mood disorder';
@@ -378,10 +506,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F18.951'] = 'Inhalant use, unspecified with inhalant-induced psychotic disorder with hallucinations';
         $importedProblems['F18.959'] = 'Inhalant use, unspecified with inhalant-induced psychotic disorder, unspecified';
         $importedProblems['F18.921'] = 'Inhalant use, unspecified with intoxication with delirium';
-        $importedProblems['F51.05']  = 'Insomnia due to other mental disorder';
-        $importedProblems['F51.12']  = 'Insufficient sleep syndrome';
-        $importedProblems['F63.81']  = 'Intermittent explosive disorder';
-        $importedProblems['F63.2']   = 'Kleptomania';
         $importedProblems['F33.2']   = 'Major depressive disorder, recurrent severe without psychotic features';
         $importedProblems['F33.42']  = 'Major depressive disorder, recurrent, in full remission';
         $importedProblems['F33.41']  = 'Major depressive disorder, recurrent, in partial remission';
@@ -397,8 +521,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F32.3']   = 'Major depressive disorder, single episode, severe with psychotic features';
         $importedProblems['F32.2']   = 'Major depressive disorder, single episode, severe without psychotic features';
         $importedProblems['F32.9']   = 'Major depressive disorder, single episode, unspecified';
-        $importedProblems['F52.21']  = 'Male erectile disorder';
-        $importedProblems['F52.32']  = 'Male orgasmic disorder';
         $importedProblems['F30.4']   = 'Manic episode in full remission';
         $importedProblems['F30.3']   = 'Manic episode in partial remission';
         $importedProblems['F30.11']  = 'Manic episode without psychotic symptoms, mild';
@@ -407,19 +529,6 @@ class AddNewProblems extends Seeder
         $importedProblems['F30.2']   = 'Manic episode, severe with psychotic symptoms';
         $importedProblems['F30.13']  = 'Manic episode, severe, without psychotic symptoms';
         $importedProblems['F30.9']   = 'Manic episode, unspecified';
-        $importedProblems['F42.2']   = 'Mixed obsessional thoughts and acts';
-        $importedProblems['F06.31']  = 'Mood disorder due to known physiological condition with depressive features';
-        $importedProblems['F06.32']  = 'Mood disorder due to known physiological condition with major depressive-like episode';
-        $importedProblems['F06.33']  = 'Mood disorder due to known physiological condition with manic features';
-
-        //page 9
-        $importedProblems['F06.34']  = 'Mood disorder due to known physiological condition with mixed features';
-        $importedProblems['F06.30']  = 'Mood disorder due to known physiological condition, unspecified';
-        $importedProblems['F60.81']  = 'Narcissistic personality disorder';
-        $importedProblems['F51.5']   = 'Nightmare disorder';
-        $importedProblems['F48.9']   = 'Nonpsychotic mental disorder, unspecified';
-        $importedProblems['F42']     = 'Obsessive-compulsive disorder';
-        $importedProblems['F60.5']   = 'Obsessive-compulsive personality disorder';
         $importedProblems['F11.121'] = 'Opioid abuse with intoxication delirium';
         $importedProblems['F11.122'] = 'Opioid abuse with intoxication with perceptual disturbance';
         $importedProblems['F11.14']  = 'Opioid abuse with opioid-induced mood disorder';
@@ -448,32 +557,12 @@ class AddNewProblems extends Seeder
         $importedProblems['F11.981'] = 'Opioid use, unspecified with opioid-induced sexual dysfunction';
         $importedProblems['F11.982'] = 'Opioid use, unspecified with opioid-induced sleep disorder';
         $importedProblems['F11.988'] = 'Opioid use, unspecified with other opioid-induced disorder';
-        $importedProblems['F91.3']   = 'Oppositional defiant disorder';
-        $importedProblems['F40.218'] = 'Other animal type phobia';
         $importedProblems['F31.89']  = 'Other bipolar disorder';
-        $importedProblems['F84.3']   = 'Other childhood disintegrative disorder';
 
         //page 10
-        $importedProblems['F94.8']   = 'Other childhood disorders of social functioning';
-        $importedProblems['F93.8']   = 'Other childhood emotional disorders';
-        $importedProblems['F91.8']   = 'Other conduct disorders';
         $importedProblems['F32.8']   = 'Other depressive episodes';
-        $importedProblems['F80.89']  = 'Other developmental disorders of speech and language';
-        $importedProblems['F88']     = 'Other disorders of psychological development';
-        $importedProblems['F50.8']   = 'Other eating disorders';
-        $importedProblems['F98.29']  = 'Other feeding disorders of infancy and early childhood';
-        $importedProblems['F64.8']   = 'Other gender identity disorders';
-        $importedProblems['F45.29']  = 'Other hypochondriacal disorders';
-        $importedProblems['F63.8']   = 'Other impulse disorders';
-        $importedProblems['F51.09']  = 'Other insomnia not due to a substance or known physiological condition';
-        $importedProblems['F42.8']   = 'Other obsessive compulsive disorder';
         $importedProblems['F30.8']   = 'Other manic episodes';
         $importedProblems['F41.3']   = 'Other mixed anxiety disorders';
-        $importedProblems['F40.228'] = 'Other natural environment type phobia';
-        $importedProblems['F65.89']  = 'Other paraphilias';
-        $importedProblems['F34.8']   = 'Other persistent mood ºaffective» disorders';
-        $importedProblems['F07.89']  = 'Other personality and behavioral disorders due to known physiological condition';
-        $importedProblems['F84.8']   = 'Other pervasive developmental disorders';
         $importedProblems['F40.8']   = 'Other phobic anxiety disorders';
         $importedProblems['F19.121'] = 'Other psychoactive substance abuse with intoxication delirium';
         $importedProblems['F19.122'] = 'Other psychoactive substance abuse with intoxication with perceptual disturbances';
@@ -523,24 +612,11 @@ class AddNewProblems extends Seeder
         $importedProblems['F19.931'] = 'Other psychoactive substance use, unspecified with withdrawal delirium';
         $importedProblems['F19.932'] = 'Other psychoactive substance use, unspecified with withdrawal with perceptual disturbance';
         $importedProblems['F28']     = 'Other psychotic disorder not due to a substance or known physiological condition';
-        $importedProblems['F43.8']   = 'Other reactions to severe stress';
         $importedProblems['F33.8']   = 'Other recurrent depressive disorders';
         $importedProblems['F25.8']   = 'Other schizoaffective disorders';
         $importedProblems['F20.89']  = 'Other schizophrenia';
-        $importedProblems['F66']     = 'Other sexual disorders';
-        $importedProblems['F52.8']   = 'Other sexual dysfunction not due to a substance or known physiological condition';
-        $importedProblems['F40.248'] = 'Other situational type phobia';
-        $importedProblems['F51.8']   = 'Other sleep disorders not due to a substance or known physiological condition';
-        $importedProblems['F45.8']   = 'Other somatoform disorders';
         $importedProblems['F32.89']  = 'Other specified depressive episodes';
-        $importedProblems['F50.89']  = 'Other specified eating disorder';
-        $importedProblems['F34.89']  = 'Other specified persistent mood disorders';
-        $importedProblems['F60.89']  = 'Other specific personality disorders';
         $importedProblems['F41.8']   = 'Other specified anxiety disorders';
-        $importedProblems['F98.8']   = 'Other specified behavioral and emotional disorders with onset usually occurring in childhood and ado';
-        $importedProblems['F68.8']   = 'Other specified disorders of adult personality and behavior';
-        $importedProblems['F06.8']   = 'Other specified mental disorders due to known physiological condition';
-        $importedProblems['F40.298'] = 'Other specified phobia';
         $importedProblems['F15.121'] = 'Other stimulant abuse with intoxication delirium';
         $importedProblems['F15.122'] = 'Other stimulant abuse with intoxication with perceptual disturbance';
         $importedProblems['F15.188'] = 'Other stimulant abuse with other stimulant-induced disorder';
@@ -575,42 +651,17 @@ class AddNewProblems extends Seeder
         $importedProblems['F15.959'] = 'Other stimulant use, unspecified with stimulant-induced psychotic disorder,  unspecified';
         $importedProblems['F15.981'] = 'Other stimulant use, unspecified with stimulant-induced sexual dysfunction';
         $importedProblems['F15.982'] = 'Other stimulant use, unspecified with stimulant-induced sleep disorder';
-        $importedProblems['F95.8']   = 'Other tic disorders';
-        $importedProblems['F45.41']  = 'Pain disorder exclusively related to psychological factors';
-        $importedProblems['F45.42']  = 'Pain disorder with related psychological factors';
         $importedProblems['F41.0']   = 'Panic disorder ºepisodic paroxysmal anxiety» without agoraphobia';
-        $importedProblems['F51.03']  = 'Paradoxical insomnia';
-        $importedProblems['F60.0']   = 'Paranoid personality disorder';
         $importedProblems['F20.0']   = 'Paranoid schizophrenia';
-        $importedProblems['F65.9']   = 'Paraphilia, unspecified';
 
         //page 14
-        $importedProblems['F63.0']   = 'Pathological gambling';
-        $importedProblems['F65.4']   = 'Pedophilia';
-        $importedProblems['F34.9']   = 'Persistent mood ºaffective» disorder, unspecified';
-        $importedProblems['F07.0']   = 'Personality change due to known physiological condition';
-        $importedProblems['F60.9']   = 'Personality disorder, unspecified';
-        $importedProblems['F84.9']   = 'Pervasive developmental disorder, unspecified';
         $importedProblems['F40.9']   = 'Phobic anxiety disorder, unspecified';
-        $importedProblems['F98.3']   = 'Pica of infancy and childhood';
         $importedProblems['F43.11']  = 'Post-traumatic stress disorder, acute';
         $importedProblems['F43.12']  = 'Post-traumatic stress disorder, chronic';
         $importedProblems['F43.10']  = 'Post-traumatic stress disorder, unspecified';
-        $importedProblems['F07.81']  = 'Postconcussional syndrome';
-        $importedProblems['F52.4']   = 'Premature ejaculation';
-        $importedProblems['F32.81']  = 'Premenstrual dysphonic disorder';
-        $importedProblems['F51.11']  = 'Primary hypersomnia';
-        $importedProblems['F51.01']  = 'Primary insomnia';
-        $importedProblems['F48.2']   = 'Pseudobulbar affect';
         $importedProblems['F06.2']   = 'Psychotic disorder with delusions due to known physiological condition';
         $importedProblems['F06.0']   = 'Psychotic disorder with hallucinations due to known physiological condition';
-        $importedProblems['F53']     = 'Puerperal psychosis';
-        $importedProblems['F63.1']   = 'Pyromania';
-        $importedProblems['F43.9']   = 'Reaction to severe stress, unspecified';
-        $importedProblems['F94.1']   = 'Reactive attachment disorder of childhood';
         $importedProblems['F20.5']   = 'Residual schizophrenia';
-        $importedProblems['F98.21']  = 'Rumination disorder of infancy';
-        $importedProblems['F65.50']  = 'Sadomasochism, unspecified';
         $importedProblems['F25.0']   = 'Schizoaffective disorder, bipolar type';
         $importedProblems['F25.1']   = 'Schizoaffective disorder, depressive type';
         $importedProblems['F25.9']   = 'Schizoaffective disorder, unspecified';
@@ -660,46 +711,20 @@ class AddNewProblems extends Seeder
         $importedProblems['F13.982'] = 'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced slee';
         $importedProblems['F13.931'] = 'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal delirium';
         $importedProblems['F13.932'] = 'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal with perceptual disturbances';
-        $importedProblems['F94.0']   = 'Selective mutism';
         $importedProblems['F93.0']   = 'Separation anxiety disorder of childhood';
-        $importedProblems['F52.1']   = 'Sexual aversion disorder';
-        $importedProblems['F65.51']  = 'Sexual masochism';
-        $importedProblems['F65.52']  = 'Sexual sadism';
         $importedProblems['F24']     = 'Shared psychotic disorder';
-        $importedProblems['F51.9']   = 'Sleep disorder not due to a substance or known physiological condition, unspecified';
-        $importedProblems['F51.4']   = 'Sleep terrors [night terrors]';
-        $importedProblems['F51.3']   = 'Sleepwalking [somnambulism]';
         $importedProblems['F40.11']  = 'Social phobia, generalized';
         $importedProblems['F40.10']  = 'Social phobia, unspecified';
-        $importedProblems['F80.82']  = 'Social pragmatic communication disorder';
-        $importedProblems['F45.0']   = 'Somatization disorder';
-        $importedProblems['F45.9']   = 'Somatoform disorder, unspecified';
         $importedProblems['R45.7']   = 'State of emotional shock and stress, unspecified';
-        $importedProblems['F98.4']   = 'Stereotyped movement disorders';
-        $importedProblems['F95.9']   = 'Tic disorder, unspecified';
-        $importedProblems['F95.2']   = "Tourette's disorder";
-        $importedProblems['F95.0']   = 'Transient tic disorder';
-        $importedProblems['F64.0']   = 'Transsexualism';
-        $importedProblems['F65.1']   = 'Transvestic fetishism';
-        $importedProblems['F63.3']   = 'Trichotillomania';
 
         //page 17
         $importedProblems['F20.3']  = 'Undifferentiated schizophrenia';
-        $importedProblems['F45.1']  = 'Undifferentiated somatoform disorder';
-        $importedProblems['F98.9']  = 'Unspecified behavioral and emotional disorders with onset usually occurring in childhood and adolesc';
-        $importedProblems['F59']    = 'Unspecified behavioral syndromes associated with physiological disturbances and physical factors';
         $importedProblems['F03.91'] = 'Unspecified dementia with behavioral disturbance';
         $importedProblems['F03.90'] = 'Unspecified dementia without behavioral disturbance';
-        $importedProblems['F89']    = 'Unspecified disorder of psychological development';
-        $importedProblems['F09']    = 'Unspecified mental disorder due to known physiological condition';
-        $importedProblems['F39']    = 'Unspecified mood ºaffective» disorder';
         $importedProblems['F07.9']  = 'Unspecified personality and behavioral disorder due to known physiological condition';
         $importedProblems['F29']    = 'Unspecified psychosis not due to a substance or known physiological condition';
-        $importedProblems['F52.9']  = 'Unspecified sexual dysfunction not due to a substance or known physiological condition';
-        $importedProblems['F52.5']  = 'Vaginismus not due to a substance or known physiological condition';
         $importedProblems['F01.51'] = 'Vascular dementia with behavioral disturbance';
         $importedProblems['F01.50'] = 'Vascular dementia without behavioral disturbance';
-        $importedProblems['F65.3']  = 'Voyeurism';
 
         return $importedProblems;
 

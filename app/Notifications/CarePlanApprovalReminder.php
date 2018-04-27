@@ -20,7 +20,7 @@ class CarePlanApprovalReminder extends Notification
     protected $numberOfCareplans;
 
 
-    public function __construct($numberOfCareplans = null)
+    public function __construct($numberOfCareplans)
     {
         $this->numberOfCareplans = $numberOfCareplans;
     }

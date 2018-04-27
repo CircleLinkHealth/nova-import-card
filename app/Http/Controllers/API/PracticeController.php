@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\User;
 use App\Practice;
 use App\Location;
+use App\Http\Resources\User as UserResource;
+use App\Filters\UserFilters;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
@@ -60,6 +63,15 @@ class PracticeController extends Controller
             });
 
         return response()->json($practices->toArray());
+    }
+
+    /**
+    * get providers within a practice
+    */
+    public function getPracticeProviders($practiceId, UserFilters $filters) {
+        return response()->json(User::ofType('provider')->ofPractice($practiceId)->filter($filters)->get()->map(function ($user) {
+            return $user->safe();
+        }));
     }
 
     /**

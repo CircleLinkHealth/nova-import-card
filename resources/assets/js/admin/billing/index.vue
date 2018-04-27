@@ -46,7 +46,7 @@
                                         <div>
                                             <label>Set Chargeable Service</label>
                                         </div>
-                                        <select2 class="form-control" v-model="selectedService">
+                                        <select2 class="form-control" v-model="selectedService" :disabled="isClosed">
                                             <option :value="null">Set Default Code</option>
                                             <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
                                             </option>
@@ -55,8 +55,8 @@
                                     <div class="col-sm-4">
                                         <div>&nbsp;</div>
                                         <div>
-                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices">Attach</button>
-                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices">Detach</button>
+                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices || isClosed">Attach</button>
+                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices || isClosed">Detach</button>
                                             <loader class="inline-block absolute" v-if="loaders.chargeableServices"></loader>
                                         </div>
                                     </div>
@@ -65,6 +65,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-sm-12 text-right" v-if="tableData.length > 0">
+               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                <loader v-if="loaders.closeMonth"></loader>
+               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                <loader v-if="loaders.openMonth"></loader>
             </div>
             <div class="col-sm-12 text-center line-50 row">
                 <div class="col-sm-4">
@@ -133,6 +139,12 @@
                     </div>
                 </template>
             </v-client-table>
+            <div class="col-sm-12 text-right" v-if="tableData.length > 0">
+               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                <loader v-if="loaders.closeMonth"></loader>
+               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                <loader v-if="loaders.openMonth"></loader>
+            </div>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
             <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
@@ -172,7 +184,9 @@
                 loaders: {
                     practices: false,
                     billables: false,
-                    chargeableServices: false
+                    chargeableServices: false,
+                    openMonth: false,
+                    closeMonth: false
                 },
                 practices: window.practices || [],
                 cpmProblems: window.cpmProblems || [],
@@ -203,7 +217,8 @@
                     'approved',
                     'rejected',
                     'chargeable_services'],
-                tableData: []
+                tableData: [],
+                isClosed: false
             }
         },
         methods: {
@@ -240,6 +255,7 @@
                             this.counts.rejected = ((response.data || {}).counts || {}).rejected || 0
                             this.counts.flagged = ((response.data || {}).counts || {}).toQA || 0
                         }
+                        tablePatient.actorId = (response.data || {}).actor_id
                         console.log('billing-approve-reject', response.data)
                     }).catch(err => {
                         tablePatient.promises['approve_reject'] = false
@@ -250,6 +266,7 @@
             },
             changePractice() {
                 this.tableData = []
+                this.$refs.tblBillingReport.setPage(1)
                 this.retrieve()
                 this.getCounts()
             },
@@ -327,9 +344,11 @@
                     practice_id: this.selectedPractice,
                     date: this.selectedMonth
                 }).then(response => {
+                    console.log('billables:response', response)
                     const pagination = response.data || []
                     const ids = this.tableData.map(i => i.id)
                     this.url = pagination.next_page_url
+                    this.isClosed = !!Number(response.headers['is-closed'])
                     this.tableData = this.tableData.concat(pagination.data.filter(patient => !ids.includes(patient.id)).map((patient, index) => {
                         const item = {
                             id: patient.id,
@@ -337,6 +356,7 @@
                             approved: patient.approve,
                             rejected: patient.reject,
                             reportId: patient.report_id,
+                            actorId: patient.actor_id,
                             qa: patient.qa,
                             problems: patient.problems || [],
                             Provider: patient.provider,
@@ -472,6 +492,34 @@
                 link.href = window.URL.createObjectURL(blob)
                 link.download = `billable-patients-${this.practice.display_name.toLowerCase().replace(/ /g, '-')}-${this.selectedMonth.replace(', ', '-').toLowerCase()}-${Date.now()}.xlsx`
                 link.click()
+            },
+            openMonth() {
+                this.loaders.openMonth = true
+                return this.$http.post(rootUrl('admin/reports/monthly-billing/v2/open'), {
+                    practice_id: this.selectedPractice,
+                    date: this.selectedMonth
+                }).then(response => {
+                    this.loaders.openMonth = false
+                    console.log('billable:open-month', response.data)
+                    this.changePractice()
+                }).catch(err => {
+                    this.loaders.openMonth = false
+                    console.error('billable:open-month', err)
+                })
+            },
+            closeMonth() {
+                this.loaders.closeMonth = true
+                return this.$http.post(rootUrl('admin/reports/monthly-billing/v2/close'), {
+                    practice_id: this.selectedPractice,
+                    date: this.selectedMonth
+                }).then(response => {
+                    this.loaders.closeMonth = false
+                    console.log('billable:close-month', response.data)
+                    this.changePractice()
+                }).catch(err => {
+                    this.loaders.closeMonth = false
+                    console.error('billable:close-month', err)
+                })
             }
         },
         computed: {
@@ -482,8 +530,10 @@
                 return this.practices.find(p => p.id == this.selectedPractice)
             },
             options() {
+                const $vm = this
                 return {
                     rowClassCallback(row) {
+                        if ($vm.isClosed) return 'bg-closed'
                         if (row.qa) return 'bg-flagged'
                         return ''
                     },
@@ -518,7 +568,7 @@
     }
 </script>
 
-<style scoped>
+<style>
     .inline-block {
         display: inline-block;
     }
@@ -569,6 +619,22 @@
 
     .bg-flagged {
         background-color: rgba(255, 252, 96, 0.408) !important;
+    }
+
+    .bg-closed * {
+        color: #aaa !important;
+    }
+
+    .bg-closed label {
+        color: white !important;
+    }
+
+    .bg-closed span.blue.pointer, .bg-closed div.blue.pointer, .bg-closed input {
+        pointer-events: none;
+    }
+
+    .bg-closed input {
+        opacity: 0.7;
     }
 
     .error-btn {

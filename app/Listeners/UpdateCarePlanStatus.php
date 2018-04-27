@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\CarePlan;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
@@ -31,22 +32,23 @@ class UpdateCarePlanStatus
         $user = $event->patient;
 
         //Stop the propagation to other Listeners if the CarePlan is already approved.
-        if ($user->carePlanStatus == 'provider_approved') {
+        if ($user->carePlanStatus == CarePlan::PROVIDER_APPROVED) {
             return false;
         }
 
-        if ($user->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) {
-            $user->carePlanStatus = 'provider_approved'; // careplan_status
+        if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+            $user->carePlanStatus = CarePlan::PROVIDER_APPROVED; // careplan_status
             $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
 
             event(new PdfableCreated($user->carePlan));
-        } elseif ($user->carePlanStatus == 'draft' && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
-            $user->carePlanStatus = 'qa_approved'; // careplan_status
-            $user->carePlanQaApprover = auth()->user()->id; // careplan_qa_approver
+        } elseif ($user->carePlanStatus == CarePlan::DRAFT && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
+            $user->carePlan->status = CarePlan::QA_APPROVED; // careplan_status
+            $user->carePlan->qa_approver_id = auth()->id(); // careplan_qa_approver
+            $user->carePlan->save();
 
-            if ($user->carePlan->patient->primaryPractice->cpmSettings()->auto_approve_careplans) {
-                $user->carePlan->status = 'provider_approved';
+            if ((boolean) $user->carePlan->patient->primaryPractice->cpmSettings()->auto_approve_careplans) {
+                $user->carePlan->status = CarePlan::PROVIDER_APPROVED;
                 $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
                 $user->carePlan->save();
 

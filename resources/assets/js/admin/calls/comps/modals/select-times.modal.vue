@@ -9,13 +9,13 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-12">
                                 <datepicker class="form-control" :disabled="{ to: today }" v-model="props.info.nextCall"></datepicker>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4 hidden">
                                 <input class="form-control" type="time" v-model="props.info.callTimeStart" />
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4 hidden">
                                 <input class="form-control" type="time" v-model="props.info.callTimeEnd" />
                             </div>
                         </div>
@@ -53,6 +53,7 @@
                             </div>
                             <div class="col-sm-2">
                                 {{patient.callTimeEnd}}
+                                <loader v-if="patient.loaders.nextCall"></loader>
                             </div>
                         </div>
                     </div>
@@ -115,5 +116,7 @@
 </script>
 
 <style>
-    
+    .vdp-datepicker.form-control input[type='text'] {
+        width: 100%;
+    }
 </style>

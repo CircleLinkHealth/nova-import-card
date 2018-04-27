@@ -2,27 +2,38 @@
     <div>
         <notifications>
             <template scope="props">
-               <a :href="props.note.href">{{props.note.message}}</a>
+               <a :href="props.note.href" target="_blank" v-if="props.note.href">{{props.note.message}}</a>
+               <span v-if="!props.note.href">
+                   {{props.note.message}}
+                   <a :href="props.note.link.href" target="_blank" v-if="props.note.link">{{props.note.link.text}}</a>
+               </span>
             </template>
         </notifications>
+
+
+        <div v-if="loaders.records">
+            <center>
+                <loader></loader>
+            </center>
+        </div>
 
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
             <template slot="selected" scope="props">
                 <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
             </template>
-            <template slot="h__selected" scope="props">
+            <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
             <template slot="Practice" scope="props">
                 <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
                     <option value="">Select Practice</option>
-                    <option v-for="(practice, index) in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
+                    <option v-for="practice in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
                 </select>
             </template>
             <template slot="Location" scope="props">
                 <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
                     <option :value="null">Select Location</option>
-                    <option v-for="(location, index) in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
+                    <option v-for="location in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
                 </select>
                 <div v-if="props.row.loaders.locations">
                     <loader></loader>
@@ -31,7 +42,7 @@
             <template slot="Billing Provider" scope="props">
                 <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
                     <option :value="null">Select Billing Provider</option>
-                    <option v-for="(provider, index) in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
+                    <option v-for="provider in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
                 </select>
                 <div v-if="props.row.loaders.providers">
                     <loader></loader>
@@ -46,7 +57,10 @@
             <template slot="Supplemental Ins" scope="props">
                 <input class="row-select" v-model="props.row['Supplemental Ins']" type="checkbox" />
             </template>
-            <template slot="h__Remove" scope="props">
+            <template slot="duplicate" scope="props">
+                <a :href="rootUrl(`manage-patients/${props.row.duplicate_id}/view-careplan`)" target="_blank" v-if="props.row.duplicate_id">View</a>
+            </template>
+            <template slot="h__Remove">
                 <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
             </template>
             <template slot="Remove" scope="props">
@@ -55,11 +69,11 @@
                     <loader></loader>
                 </div>
             </template>
-            <template slot="h__Submit" scope="props">
+            <template slot="h__Submit">
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
             <template slot="Submit" scope="props">
-                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" />
+                <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
                 <div v-if="props.row.loaders.confirm">
                     <loader></loader>
                 </div>
@@ -96,7 +110,7 @@
             return {
                 url: rootUrl('api/ccd-importer/imported-medical-records'),
                 selected: false,
-                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
+                columns: ['selected', 'Name', 'DOB', 'Practice', 'Location', 'Billing Provider', 'duplicate', '2+ Cond', 'Medicare', 'Supplemental Ins', 'Submit', 'Remove'],
                 tableData: [],
                 options: {
                     sortable: ['Name', 'DOB']
@@ -108,7 +122,8 @@
                 },
                 loaders: {
                     delete: false,
-                    confirm: false
+                    confirm: false,
+                    records: false
                 }
             }
         },
@@ -118,6 +133,7 @@
             }
         },
         methods: {
+            rootUrl,
             getRowErrors(id) {
                 return () => this.tableData.find(record => record.id === id).errors
             },
@@ -139,6 +155,7 @@
                     '2+ Cond': false,
                     Medicare: false,
                     'Supplemental Ins': false,
+                    duplicate_id: record.duplicate_id,
                     errors: {
                         delete: null,
                         confirm: null,
@@ -166,6 +183,10 @@
                     changeProvider(id) {
                         self.changeProvider(record.id, id)
                         self.updateRecord(record.id)
+                    },
+                    validate () {
+                        const record = this
+                        return (!!record.Practice && !!record['Billing Provider'] && !!record.Location)
                     }
                 }
                 return newRecord
@@ -251,16 +272,19 @@
                 console.log('update-record', record)
             },
             getRecords() {
-                this.axios.get(this.url).then((response) => {
+                this.loaders.records = true
+                return this.axios.get(this.url).then((response) => {
                     const records = response.data || []
                     this.tableData = records.map(this.setupRecord)
                     console.log('get-records', this.tableData)
                     this.tableData.forEach(row => {
                         row.changePractice(row.Practice)
                     })
+                    this.loaders.records = false
                     return this.tableData
                 }).catch(err => {
                     console.error(err)
+                    this.loaders.records = false
                 })
             },
             select(e, id) {
@@ -317,34 +341,41 @@
             submitOne(id) {
                 const record = this.tableData.find(r => r.id === id)
                 if (record) {
-                    record.loaders.confirm = true
-                    return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
-                        record.loaders.confirm = false
-                        if ((response.data || []).some(item => item.id === id && item.completed)) {
-                            this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
-                        }
-                        console.log('submit-one', record, response.data)
-                        if (((response.data || [])[0] || {}).completed) {
-                            const patient = (((response.data || [])[0] || {}).patient || {})
-                            EventBus.$emit('notifications:create', { 
-                                message: `Patient Created (${patient.id}): ${patient.display_name}`, 
-                                href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                noTimeout: true
+                    if (!!record.Practice && !!record['Billing Provider'] && !!record.Location) {
+                        if (!record.duplicate_id || (record.duplicate_id && confirm(`This patient may be a duplicate of ${record.duplicate_id}. Are you sure you want to proceed with creating a careplan?`))) {
+                            record.loaders.confirm = true
+                            return this.axios.post(rootUrl('api/ccd-importer/records/confirm'), [record]).then((response) => {
+                                record.loaders.confirm = false
+                                if ((response.data || []).some(item => item.id === id && item.completed)) {
+                                    this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
+                                }
+                                console.log('submit-one', record, response.data)
+                                if (((response.data || [])[0] || {}).completed) {
+                                    const patient = (((response.data || [])[0] || {}).patient || {})
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                        href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                        noTimeout: true
+                                    })
+                                }
+                                else {
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Error when creating patient ${record.Name}`,
+                                        type: 'warning',
+                                        noTimeout: true
+                                    })
+                                }
+                                return this.getRecords()
+                            }).catch((err) => {
+                                record.loaders.confirm = false
+                                record.errors.confirm = err.message
+                                console.error('submit-one', record, err)
                             })
                         }
-                        else {
-                            EventBus.$emit('notifications:create', { 
-                                message: `Error when creating patient ${record.Name}`,
-                                type: 'warning',
-                                noTimeout: true
-                            })
-                        }
-                        return response
-                    }).catch((err) => {
-                        record.loaders.confirm = false
-                        record.errors.confirm = err.message
-                        console.error('submit-one', record, err)
-                    })
+                    }
+                    else {
+                        record.errors.confirm = 'select a practice, location and provider'
+                    }
                 }
                 else {
                     record.errors.confirm = 'record not found'
@@ -401,9 +432,27 @@
             this.getPractices()
             this.getRecords()
 
-            EventBus.$on('vdropzone:success', () => {
+            EventBus.$on('vdropzone:success', (records) => {
                 this.getRecords()
-                EventBus.$emit('vdropzone:remove-all-files')
+                const newRecords = records.filter(record => !this.tableData.find(row => row.id == record.id))
+                this.tableData = records.map(this.setupRecord)
+                this.tableData.forEach(row => {
+                    row.changePractice(row.Practice)
+                })
+                
+                //EventBus.$emit('vdropzone:remove-all-files')
+
+                newRecords.map(this.setupRecord).filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
+                    EventBus.$emit('notifications:create', { 
+                        message: `Imported Patient "${row.Name}" is a possible duplicate of`,
+                        link: {
+                            href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                            text: ` existing patient with ID ${row.duplicate_id}`
+                        },
+                        noTimeout: true,
+                        type: 'error'
+                    })
+                })
             })
         }
     }

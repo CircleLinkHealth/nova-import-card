@@ -25,7 +25,9 @@
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken()
                     },
-                    acceptedFileTypes: 'text/xml,application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    acceptedFileTypes: 'text/xml,application/xml,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    timeout: 120000,
+                    useCustomDropzoneOptions: true
                 }
             }
         },

@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="allergies.length === 0">
-            <div class="col-xs-12 text-center">
-                No Allergies at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="allergies.length === 0">
+            No Allergies at this time
+        </div>
         <div class="row gutter">
             <div class="col-xs-12">
                 <ul v-if="allergies && allergies.length > 0">

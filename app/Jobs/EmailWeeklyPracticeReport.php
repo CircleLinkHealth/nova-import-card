@@ -11,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
-use Maknz\Slack\Facades\Slack;
 
 class EmailWeeklyPracticeReport implements ShouldQueue
 {

@@ -60,7 +60,7 @@
                             </div>
                         @else
                             <?php
-                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                $noLiveCountTimeTracking = $useOldTimeTracker ? true : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
                                 $ccmCountableUser = auth()->user()->isCCMCountable();
                              ?>
                              @if ($noLiveCountTimeTracking)

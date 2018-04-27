@@ -102,7 +102,7 @@ class WebixFormatter implements ReportFormatter
 
         $billingProvider = $patient->billingProviderName;
 
-        $notes = $patient->notes->map(function ($note) use ($patient, $billingProvider) {
+        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
             $result = [
                 'id'            => $note->id,
                 'logger_name'   => $note->author->fullName,
@@ -208,8 +208,10 @@ class WebixFormatter implements ReportFormatter
 
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
-        if ( ! empty($other_problems)) {
-            $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
+        if ( ! empty($other_problems) && isset($careplanReport[$user->id]) && isset($careplanReport[$user->id]['problems'])) {
+            if (!is_string($careplanReport[$user->id]['problems'])) {
+                $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
+            }
         }
 
         //Get Biometrics with Values
