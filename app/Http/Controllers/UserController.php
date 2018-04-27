@@ -328,6 +328,10 @@ class UserController extends Controller
         $this->validate($request, $wpUser->rules);
 
         $wpUser = $userRepo->createNewUser($wpUser, $params);
+                
+        if ($request->has('provider_id')) {
+            $wpUser->billing_provider_id = $request->input('provider_id');
+        }
 
         //if location was selected save it
         if (is_numeric($locationId = $request->input('location_id'))) {
@@ -533,6 +537,10 @@ class UserController extends Controller
         $userRepo = new UserRepository();
 
         $userRepo->editUser($wpUser, $params);
+                
+        if ($request->has('provider_id')) {
+            $wpUser->billing_provider_id = $request->input('provider_id');
+        }
 
         return redirect()->back()->with('messages', ['successfully updated user']);
     }

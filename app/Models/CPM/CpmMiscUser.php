@@ -31,7 +31,7 @@ class CpmMiscUser extends \App\BaseModel
 
     public function cpmInstruction()
     {
-        return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id');
+        return $this->belongsTo(CpmInstruction::class, 'cpm_instruction_id')->orderBy('id', 'desc');
     }
     
     public function user()

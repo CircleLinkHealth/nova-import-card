@@ -8,12 +8,12 @@
                 </div>
                 <div class="col-sm-12 pad-top-10" :class="{ 'allergy-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'allergy-buttons': isExtendedView }">
-                        <button class="btn btn-secondary allergy-button" :class="{ selected: selectedAllergy && (selectedAllergy.id === allergy.id) }" 
+                        <div class="btn btn-secondary allergy-button" :class="{ selected: selectedAllergy && (selectedAllergy.id === allergy.id) }" 
                                 v-for="(allergy, index) in allergiesForListing" :key="index" @click="select(index)">
                             {{allergy.name}}
                             <span class="delete" title="remove this cpm allergy" @click="removeAllergy">x</span>
                             <loader class="absolute" v-if="loaders.removeAllergy && selectedAllergy && (selectedAllergy.id === allergy.id)"></loader>
-                        </button>
+                        </div>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedAllergy || !selectedAllergy.id }" value="+" @click="select(-1)" />
                     </div>
                 </div>

@@ -12,8 +12,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class CarePlanApprovalReminder extends Mailable
 {
     use Queueable, SerializesModels;
-    protected $numberOfCareplans;
-    protected $recipient;
+    public $numberOfCareplans;
+    public $recipient;
 
     /**
      * Create a new message instance.
@@ -21,39 +21,23 @@ class CarePlanApprovalReminder extends Mailable
      * @param User $recipient
      * @param $numberOfCareplans
      */
-    public function __construct(User $recipient, $numberOfCareplans = null)
+    public function __construct(User $recipient, $numberOfCareplans)
     {
-        if (!$numberOfCareplans) {
-            $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($recipient);
-        }
-
-        if ($numberOfCareplans < 1) {
-            return false;
-        }
-
-        $this->recipient = $recipient;
+        $this->recipient         = $recipient;
         $this->numberOfCareplans = $numberOfCareplans;
     }
 
     /**
      * Build the message.
      *
-     * @return $this
+     * @return CarePlanApprovalReminder|bool
      */
     public function build()
     {
-        $data = [
-            'numberOfCareplans' => $this->numberOfCareplans,
-            'recipient'         => $this->recipient,
-        ];
-
-        $view = 'emails.careplansPendingApproval';
-        $subject = "{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!";
-
-        return $this->from('notifications@careplanmanager.com', 'CircleLink Health')
+        return $this
+            ->view('emails.careplansPendingApproval')
+            ->from('notifications@careplanmanager.com', 'CircleLink Health')
             ->to($this->recipient->email, $this->recipient->fullName)
-            ->subject($subject)
-            ->view($view)
-            ->with($data);
+            ->subject("{$this->numberOfCareplans} CircleLink Care Plan(s) for your Approval!");
     }
 }

@@ -43,7 +43,7 @@ class QuickBooksRow
         $this->salesTerm             = $array['SalesTerm'];
         $this->toBePrinted           = $array['ToBePrinted'];
         $this->toBeEmailed           = $array['ToBeEmailed'];
-        $this->ptBillingReport       = $array['PT.Billing Report:'];
+        $this->ptBillingReport       = $array['Pt. billing report:'];
         $this->lineItem              = $array['Line Item'];
         $this->lineQty               = $array['LineQty'];
         $this->lineDesc              = $array['LineDesc'];
@@ -62,7 +62,7 @@ class QuickBooksRow
             'SalesTerm'             => $this->salesTerm,
             'ToBePrinted'           => $this->toBePrinted,
             'ToBeEmailed'           => $this->toBeEmailed,
-            'PT.Billing Report:'    => $this->ptBillingReport,
+            'Pt. billing report:'   => $this->ptBillingReport,
             'LineItem'              => $this->lineItem,
             'LineQty'               => $this->lineQty,
             'LineDesc'              => $this->lineDesc,

@@ -6,6 +6,7 @@
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+        <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
@@ -86,6 +87,11 @@
         </template>
       </v-client-table>
     </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <loader class="absolute" v-if="loaders.calls"></loader>
+      </div>
+    </div>
     <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
     <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
     <add-call-modal ref="addCallModal"></add-call-modal>
@@ -135,9 +141,11 @@
           tableData: [],
           nurses: [],
           loaders: {
-            nurses: false
+            nurses: false,
+            calls: false
           },
-          currentDate: new Date()
+          currentDate: new Date(),
+          $nextPromise: null
         }
       },
       computed: {
@@ -145,7 +153,7 @@
           return !!this.tableData.find(row => !!row.selected)
         },
         selectedPatients() {
-          return this.tableData.filter(row => row.selected).map(row => ({
+          return this.tableData.filter(row => row.selected && row.Patient).map(row => ({
             id: row['Patient ID'],
             callId: row.id,
             name: row.Patient,
@@ -155,7 +163,8 @@
             },
             nextCall: row['Next Call'],
             callTimeStart: row['Call Time Start'],
-            callTimeEnd: row['Call Time End']
+            callTimeEnd: row['Call Time End'],
+            loaders: row.loaders
           }))
         },
         options () {
@@ -163,13 +172,16 @@
             columnsClasses: {
               'selected': 'blank'
             },
-            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'CCM Time', 'Call Time Start', 'Call Time End', 'Patient Status', 'Practice', 'Scheduler'],
+            sortable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Scheduler'],
             filterable: ['Nurse','Patient ID', 'Patient','Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
             filterByColumn: true,
-            footerHeadings: true,
             texts: {
                 count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
             },
+            perPage: 100,
+            perPageValues: [
+              10, 25, 50, 100, 150, 200
+            ],
             customSorting: {
               Nurse: (ascending) => (a, b) => 0,
               'Patient ID': (ascending) => (a, b) => 0,
@@ -183,6 +195,8 @@
               'Patient Status': (ascending) => (a, b) => 0,
               Practice: (ascending) => (a, b) => 0,
               'Billing Provider': (ascending) => (a, b) => 0,
+              'Last Call Status': (ascending) => (a, b) => 0,
+              'Preferred Call Days': (ascending) => (a, b) => 0,
               Scheduler: (ascending) => (a, b) => 0
             }
           }
@@ -197,7 +211,8 @@
           const columns = {
             'Patient ID': 'patientId',
             'Next Call': 'scheduledDate',
-            'Last Call': 'lastCall'
+            'Last Call': 'lastCall',
+            'CCM Time': 'ccmTime'
           }
           //to camel case
           return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
@@ -208,6 +223,7 @@
             obj[key] = ''
             this.$refs.tblCalls.setFilter(obj)
           })
+          this.$refs.tblCalls.setOrder()
           this.activateFilters()
         },
         exportExcel() {
@@ -234,11 +250,15 @@
         activateFilters () {
             this.pagination = null
             this.tableData = []
+            this.$refs.tblCalls.setPage(1)
             this.next()
         },
         toggleAllSelect(e) {
+          const $elem = this.$refs.tblCalls
+          const filteredData = $elem.filteredData
+          const fiteredDataIDs = filteredData.map(row => row.id)
           this.tableData = this.tableData.map(row => {
-            row.selected = this.selected;
+            if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
             return row;
           })
         },
@@ -355,7 +375,7 @@
                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                     'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
                     'CCM Time': timeDisplay(call.getPatient().getInfo().cur_month_activity_time),
-                    'Successful Calls': ((call.getPatient().getInfo().monthly_summaries || []).slice(-1).no_of_successful_calls || 0),
+                    'Successful Calls': (((call.getPatient().patient_summaries || []).slice(-1)[0] || {}).no_of_successful_calls || 0),
                     'Time Zone': call.getPatient().timezone,
                     'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
                                                                     .map(time_window => time_window.shortDayOfWeek)
@@ -391,7 +411,10 @@
         },
         next() {
           const $vm = this
-          if (!this.$nextPromise) {
+          if (this.$nextPromise) {
+            this.$nextPromise.abort()
+          }
+          this.loaders.calls = true
             return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
               result = result.data;
               this.pagination = {
@@ -432,13 +455,14 @@
                       }
                   }
                   delete this.$nextPromise;
+                  this.loaders.calls = false
                   return tableCalls;
                 }
               }
             }).catch(function (err) {
               console.error('calls:response', err)
+              this.loaders.calls = false
             })
-          }
         }
       },
       mounted() {

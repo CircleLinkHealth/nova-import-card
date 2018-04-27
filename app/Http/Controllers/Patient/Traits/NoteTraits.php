@@ -20,7 +20,7 @@ trait NoteTraits
         $type = $request->input('type');
         $isTCM = $request->input('isTCM') ?? 0;
         $did_medication_recon = $request->input('did_medication_recon') ?? 0;
-        if ($userId && $body && $author_id) {
+        if ($userId && $author_id && ($body || $type == 'Biometrics')) {
             return $this->noteService->add($userId, $author_id, $body, $type, $isTCM, $did_medication_recon);
         }
         else return $this->badRequest('"userId" and "body" and "author_id" are important');

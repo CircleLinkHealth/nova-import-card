@@ -91,15 +91,14 @@
                             };
                             obs_alerts_dtable = new webix.ui({
                                 container: "obs_alerts_container",
-                                view: "treetable",
-                                // view:"datatable",
+                                view: "datatable",
                                 //css:"webix_clh_cf_style",
                                 autoheight: true,
-                                autowidth: true,
                                 fixedRowHeight: false, rowLineHeight: 25, rowHeight: 25,
                                 // leftSplit:2,
-                                scrollX: false,
+                                scrollX: true,
                                 resizeColumn: true,
+                                //tooltip:true,
                                 columns: [
                                     {
                                         id: "patient_name",
