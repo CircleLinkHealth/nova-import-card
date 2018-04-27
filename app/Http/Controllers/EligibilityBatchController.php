@@ -11,6 +11,28 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EligibilityBatchController extends Controller
 {
+    public function googleDriveCreate()
+    {
+        return view('eligibilityBatch.methods.google-drive');
+    }
+
+    public function csvCreate()
+    {
+        return view('eligibilityBatch.methods.single-csv');
+    }
+
+    public function index()
+    {
+        $batches = EligibilityBatch::orderByDesc('status')
+                                   ->orderByDesc('updated_at')
+                                   ->with('practice')
+                                   ->take(100)
+                                   ->get();
+
+        return view('eligibilityBatch.index',
+            compact(['batches']));
+    }
+
     public function show(EligibilityBatch $batch)
     {
         $unprocessed = 'N/A';
