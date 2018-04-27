@@ -30,7 +30,7 @@ class PatientController extends Controller
      */
     public function showDashboard(Request $request)
     {
-        $pendingApprovals = auth()->user()->patientsPendingApproval()->count();
+        $pendingApprovals = 0;
 
         $nurse                          = null;
         $patientsPendingApproval        = [];
@@ -43,8 +43,11 @@ class PatientController extends Controller
 
         if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
             $showPatientsPendingApprovalBox = true;
-            $patients                       = auth()->user()->patientsPendingApproval()->get();
+            $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
+                                                    return $user->careplanStatus == CarePlan::QA_APPROVED;
+                                              });
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
+            $pendingApprovals = $patients->count();
         }
         $noLiveCountTimeTracking = true;
         return view('wpUsers.patient.dashboard',
