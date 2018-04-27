@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\CarePlanWasApproved;
 use App\User;
+use App\CarePlan;
 use App\Services\ProviderInfoService;
 use Illuminate\Http\Request;
 
