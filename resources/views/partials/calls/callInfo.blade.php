@@ -99,7 +99,7 @@
                                         {{--<b> Call Success: {{round($success_percent, 2)}}%</b>--}}
                                     {{--</li>--}}
                                     <li class="list-group-item">
-                                        <b> Last Successful Call Date: {{$patient->last_successful_contact_time == '0000-00-00'
+                                        <b> Last Successful Call Date: {{ ($patient->last_successful_contact_time == '0000-00-00' || !$patient->last_successful_contact_time)
                                                                         ? 'N/A'
                                                                         : \Carbon\Carbon::parse($patient->last_successful_contact_time)->toFormattedDateString()}}</b>
                                     </li>

@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\User;
 use App\Patient;
+use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmMiscUser;
+use Illuminate\Support\Collection;
 
 class CpmMiscUserRepository
 {
@@ -23,8 +25,12 @@ class CpmMiscUserRepository
         });
     }
 
-    public function patientMisc($userId) {
-        return $this->model()->where([ 'patient_id' => $userId ])->groupBy('cpm_misc_id')->with(['cpmMisc'])->get()->map(function ($u) use ($userId) {
+    public function patientMisc($userId, $miscTypeId = null) {
+        $query = [ 'patient_id' => $userId ];
+        if ($miscTypeId) {
+            $query['cpm_misc_id'] = $miscTypeId;
+        }
+        $miscData = $this->model()->where($query)->groupBy('cpm_misc_id')->with(['cpmMisc'])->get()->map(function ($u) use ($userId) {
             $misc = $u->cpmMisc;
             $misc['instructions'] = array_values($this->model()
                                             ->where([ 'patient_id' => $userId, 'cpm_misc_id' => $misc->id ])
@@ -39,6 +45,16 @@ class CpmMiscUserRepository
                                             })->toArray());
             return $misc;
         });
+
+        if (!$miscData->count() && $miscTypeId) {
+            $misc = CpmMisc::findOrFail($miscTypeId);
+            $misc['instructions'] = [];
+            $miscCollection = new Collection();
+            $miscCollection->push($misc);
+            return $miscCollection;
+        }
+
+        return $miscData;
     }
     
     public function patientHasMisc($userId, $miscId, $instructionId = null) {
@@ -64,8 +80,8 @@ class CpmMiscUserRepository
         ];
     }
     
-    public function removeInstructionFromPatientMisc($miscId, $userId, $instructionId) {
-        $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId, 'cpm_instruction_id' => $instructionId ])->delete();
+    public function removeInstructionFromPatientMisc($userId, $miscId, $instructionId) {
+        $this->model()->where([ 'patient_id' => $userId, 'cpm_misc_id' => $miscId ])->delete();
         return [
             'message' => 'successful'
         ];

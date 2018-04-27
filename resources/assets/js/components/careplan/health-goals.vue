@@ -20,12 +20,10 @@
                     </div>
                 </div>
 
-                <slot v-if="goals.length === 0">
-                    <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
-                </slot>
+                <div class="text-center" v-if="goals.length === 0">No Health Goals at this time</div>
                 
                 <ul class="subareas__list top-10" v-if="goals && goals.length > 0">
-                    <li class='subareas__item subareas__item--wide row top-10' v-for="(goal, index) in goalsForListing()" :key="goal.id">
+                    <li class='subareas__item subareas__item--wide row top-10' v-for="goal in goalsForListing()" :key="goal.id">
                         <div class="col-xs-5 print-row text-bold">{{goal.info.verb}} {{goal.name}}</div>
                         <div class="col-xs-4 print-row text-bold">{{(goal.name == 'Weight' && !Number(goal.info.target)) ? 'to' : ((goal.info.verb === 'Regulate') ? 'keep under' :  'to') }} {{goal.end() || 'N/A'}} {{goal.unit}}</div>
                         <div class="col-xs-3 print-row">
@@ -114,25 +112,23 @@
             },
             editNote(e) {
                 e.preventDefault()
-                if (e.target.value != '') {
-                    this.loaders.editNote = true
-                    let $promise = null
-                    if (this.note.id) {
-                        $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
-                    }
-                    else {
-                        $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
-                    }
-                    return $promise.then(response => {
-                        console.log('health-goals:note-add', response.data)
-                        Event.$emit('health-goals:note-add', response.data)
-                        if (response.data) this.note = response.data
-                        this.loaders.editNote = false
-                    }).catch(err => {
-                        console.error('health-goals:note-add', err)
-                        this.loaders.editNote = false
-                    })
+                this.loaders.editNote = true
+                let $promise = null
+                if (this.note.id) {
+                    $promise = this.axios.put(rootUrl(`api/patients/${this.patientId}/notes/${this.note.id}`), this.note)
                 }
+                else {
+                    $promise = this.axios.post(rootUrl(`api/patients/${this.patientId}/notes`), this.note)
+                }
+                return $promise.then(response => {
+                    console.log('health-goals:note-add', response.data)
+                    Event.$emit('health-goals:note-add', response.data)
+                    if (response.data) this.note = response.data
+                    this.loaders.editNote = false
+                }).catch(err => {
+                    console.error('health-goals:note-add', err)
+                    this.loaders.editNote = false
+                })
             }
         },
         mounted() {

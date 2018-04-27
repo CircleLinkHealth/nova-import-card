@@ -13,7 +13,7 @@
 <meta name="providers-search-route" content="{{ route('providers.search') }}">
 
 <div id="v-fab">
-    <fab></fab>
+    <fab ref="fabComponent"></fab>
 </div>
 
 

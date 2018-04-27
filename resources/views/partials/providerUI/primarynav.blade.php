@@ -29,6 +29,11 @@ if (isset($patient)) {
 
         <div class="navbar-right hidden-xs" style="">
             <ul class="nav navbar-nav">
+                @if (auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)) && ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')))
+                    <li>
+                        <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
+                    </li>
+                @endif
                 @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator'))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -66,7 +71,7 @@ if (isset($patient)) {
                     </li>
                 @endif
                 <li>
-                    <a href="{{ url('/') }}"><i class="icon--home--white"></i> Home</a>
+                    <a href="{{ route('patients.dashboard') }}"><i class="icon--home--white"></i> Home</a>
                 </li>
                 <li>
                     <a href="{{ route('patients.listing') }}"><i class="icon--patients"></i> Patient List</a>

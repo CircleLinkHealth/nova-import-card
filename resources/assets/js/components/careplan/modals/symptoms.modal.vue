@@ -4,13 +4,13 @@
             <div class="row">
                 <div class="col-sm-12 pad-top-10" :class="{ 'symptom-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'symptom-buttons': isExtendedView }">
-                        <button class="btn btn-secondary symptom-button" 
+                        <div class="btn btn-secondary symptom-button" 
                                 v-for="(symptom, index) in symptoms" :key="index" @click="select(symptom)" 
                                 :class="{ selected: symptom.selected }">
                             {{symptom.name}}
                             <span class="delete" title="remove this cpm symptom" @click="removeSymptom(symptom)">x</span>
                             <loader class="absolute" v-if="symptom.loaders.removeSymptom || symptom.loaders.addSymptom"></loader>
-                        </button>
+                        </div>
                     </div>
                 </div>
             </div>

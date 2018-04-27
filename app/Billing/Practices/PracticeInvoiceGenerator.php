@@ -3,6 +3,7 @@
 namespace App\Billing\Practices;
 
 use App\AppConfig;
+use App\Models\CCD\Problem;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;

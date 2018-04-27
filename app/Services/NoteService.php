@@ -62,7 +62,7 @@ class NoteService
     }
 
     public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon) {
-        if ($userId && $authorId && $body) {
+        if ($userId && $authorId && ($body || $type == 'Biometrics')) {
             if (!$this->userRepo->exists($userId)) {
                 throw new Exception('user with id "' . $userId . '" does not exist');
             }

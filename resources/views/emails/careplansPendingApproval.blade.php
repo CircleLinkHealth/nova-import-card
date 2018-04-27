@@ -32,7 +32,7 @@
 </p>
 
 <p>
-    Please make any changes via the “Edit Care Plan” button in top center.
+    Please make any changes by clicking the green “edit” icons in each of the care plan’s blue section headers.
 </p>
 
 <p>
