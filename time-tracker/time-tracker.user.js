@@ -62,10 +62,10 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             })
         },
         inactivityRequiresNoModal () {
-            return this.inactiveSeconds < (!this.callMode ? 120 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
+            return this.inactiveSeconds < (!this.callMode ? 120 : 180) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
         inactivityRequiresModal () {
-            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
+            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 300) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
