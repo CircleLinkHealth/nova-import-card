@@ -160,6 +160,8 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property-read mixed $timezone_abbr
+ * @property-read mixed $timezone_offset
+ * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -2505,6 +2507,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->timezone
             ? Carbon::now($this->timezone)->format('T')
             : Carbon::now()->setTimezone('America/New_York')->format('T');
+    }
+
+    public function getTimezoneOffsetAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offset
+        : Carbon::now()->setTimezone('America/New_York')->offset;
+    }
+
+    public function getTimezoneOffsetHoursAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offsetHours
+        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
     }
 
     public function canApproveCarePlans()
