@@ -58,4 +58,5 @@ a {
 
 .vdp-datepicker.form-control input[type='text'] {
     height: 33px;
+    width: 100%;
 }

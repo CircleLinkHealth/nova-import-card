@@ -43,7 +43,8 @@
             <form action="{{route('admin.reports.nurse.monthly')}}" method="GET">
                 <div class="form-group">
                     <article>Select Month:</article>
-                    <input id="date" type="date" name="date" value="{{$date->toDateString()}}" required class="form-control">
+                    <v-datepicker name="date" class="form-control" format="yyyy-MM-dd" placeholder="YYYY-MM"
+                        minimum-view="month" maximum-view="year" required></v-datepicker>
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Submit" class="btn btn-info">
