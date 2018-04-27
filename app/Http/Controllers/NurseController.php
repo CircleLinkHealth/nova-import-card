@@ -215,7 +215,7 @@ class NurseController extends Controller
             if ($seconds == 0){
                 continue;
             }
-            $rows[$nurse->display_name] = round($seconds / 60, 2);
+            $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
         }
 
         $rows = collect($rows);

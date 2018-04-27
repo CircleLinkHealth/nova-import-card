@@ -61,7 +61,7 @@
                     <thead>
                     <tr>
                         <th>Nurse</th>
-                        <th>CCM Time</th>
+                        <th>CCM Time (HH:MM:SS)</th>
                     </tr>
                     </thead>
                     <tbody>
