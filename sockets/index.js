@@ -209,7 +209,7 @@ module.exports = app => {
           }
 
           axios.post(url, requestData).then((response) => {
-            console.log(response.status, response.data, requestData.activities.map(activity => activity.duration).join(', '))
+            console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
           }).catch((err) => {
             console.error(err)
           })
