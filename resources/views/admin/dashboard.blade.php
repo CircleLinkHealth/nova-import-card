@@ -56,27 +56,6 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Process Eligibility from CSV</div>
-
-                    <div class="panel-body">
-                        @include('partials.makeWelcomeCallsListUploadPanel')
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Process Eligibility from Google Drive</div>
-
-                    <div class="panel-body">
-                        @include('partials.makeWelcomeCallListGoogleDrivePanel')
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
                     <div class="panel-heading">Send Sample note via Direct Mail</div>
 
                     <div class="panel-body">

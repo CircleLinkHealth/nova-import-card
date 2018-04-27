@@ -62,10 +62,7 @@ class WelcomeCallListController extends Controller
         $batch = $this->processEligibilityService
             ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
 
-        $link = link_to_route('eligibility.batch.show',
-            'Click here to view progress. Save this link as it will not be listed anywhere else.', [$batch->id]);
-
-        return "Processing eligibility has been scheduled, and will process in the background. $link";
+        return redirect()->route('eligibility.batch.show', [$batch->id]);
     }
 
     /**

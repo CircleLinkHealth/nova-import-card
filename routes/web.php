@@ -763,6 +763,22 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
         Route::group(['prefix' => 'eligibility-batches'], function() {
+
+            Route::get('', [
+                'uses' => 'EligibilityBatchController@index',
+                'as'   => 'eligibility.batches.index',
+            ]);
+
+            Route::get('google-drive/create', [
+                'uses' => 'EligibilityBatchController@googleDriveCreate',
+                'as'   => 'eligibility.batches.google.drive.create',
+            ]);
+
+            Route::get('csv/create', [
+                'uses' => 'EligibilityBatchController@csvCreate',
+                'as'   => 'eligibility.batches.csv.create',
+            ]);
+
             Route::group(['prefix' => '{batch}'], function (){
                 Route::get('', [
                     'uses' => 'EligibilityBatchController@show',
