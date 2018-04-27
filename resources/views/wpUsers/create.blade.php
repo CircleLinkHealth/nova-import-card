@@ -106,9 +106,9 @@
                                             <div class="form-group">
                                                 <div class="row">
                                                     <div class="col-xs-2">{!! Form::label('ccm_status', 'CCM Status:') !!}</div>
-                                                    <div class="col-xs-4">{!! Form::select('ccm_status', array('paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                                    <div class="col-xs-4">{!! Form::select('ccm_status', array('enrolled' => 'Enrolled', 'paused' => 'Paused', 'withdrawn' => 'Withdrawn'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                                     <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
-                                                    <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                                    <div class="col-xs-4">{!! Form::select('careplan_status', array('to_enroll' => 'To Enroll', 'draft' => 'Draft', 'qa_approved' => 'QA Approved', 'provider_approved' => 'Provider Approved'), '', ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                                 </div>
                                             </div>
 
@@ -129,10 +129,39 @@
                                                     <div class="row">
                                                         <div class="col-xs-2">{!! Form::label('program_id', 'Primary Practice:') !!}</div>
                                                         <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, '', ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                                        <div class="col-xs-2">{!! Form::label('provider_id', 'Billing Provider:') !!}</div>
+                                                        <div class="col-xs-4">{!! Form::select('provider_id', [], '', ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                                        <div class="col-xs-6"></div>
                                                         <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
                                                         <div class="col-xs-2">
                                                             {!! Form::checkbox('auto_attach_programs', 0, 0) !!}
                                                         </div>
+                                                        @push('scripts')
+                                                            <script>
+                                                                (function () {
+                                                                    function setBillingProvider(practiceId) {
+                                                                        return $.ajax({
+                                                                            url: '/api/practices/' + practiceId + '/providers',
+                                                                            type: 'GET',
+                                                                            success: function (providers) {
+                                                                                console.log('practice:providers', providers)
+                                                                                $('[name="provider_id"]').html('')
+                                                                                providers.forEach(function (provider) {
+                                                                                    $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.name))
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                    }
+                
+                                                                    $('[name="program_id"]').change(function () {
+                                                                        setBillingProvider($(this).val())
+                                                                    })
+                
+                                                                    setBillingProvider($('[name="program_id"]').val())
+                                                                })();
+                                                                
+                                                            </script>
+                                                        @endpush
                                                     </div>
                                                 </div>
 

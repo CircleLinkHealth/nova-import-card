@@ -4,13 +4,13 @@
             <div class="row">
                 <div class="col-sm-12 pad-top-10" :class="{ 'lifestyle-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'lifestyle-buttons': isExtendedView }">
-                        <button class="btn btn-secondary lifestyle-button" 
+                        <div class="btn btn-secondary lifestyle-button" 
                                 v-for="(lifestyle, index) in lifestyles" :key="index" @click="select(lifestyle)" 
                                 :class="{ selected: lifestyle.selected }">
                             {{lifestyle.name}}
                             <span class="delete" title="remove this cpm lifestyle" @click="removeLifestyle(lifestyle)">x</span>
                             <loader class="absolute" v-if="lifestyle.loaders.removeLifestyle || lifestyle.loaders.addLifestyle"></loader>
-                        </button>
+                        </div>
                     </div>
                 </div>
             </div>

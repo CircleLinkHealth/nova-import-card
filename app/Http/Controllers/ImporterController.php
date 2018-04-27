@@ -126,6 +126,8 @@ class ImporterController extends Controller
                         $summary['flag'] = true;
                     }
 
+                    $summary->checkDuplicity();
+
                     return $summary;
                 })->filter()
                   ->values();

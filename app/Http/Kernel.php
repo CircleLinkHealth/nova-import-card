@@ -56,6 +56,7 @@ class Kernel extends HttpKernel
         'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
         'permission'                 => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
         'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
+        'checkWebSocketServer'     => \App\Http\Middleware\CheckWebSocketServer::class,
         'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
         'role'                       => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
         'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,

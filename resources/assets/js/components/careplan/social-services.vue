@@ -8,15 +8,13 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="!socialService || socialService.instructions.length === 0">
-            <div class="col-xs-12 text-center">
-                No Instructions at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="!socialService || socialService.instructions.length === 0">
+            No Instructions at this time
+        </div>
         <div class="row gutter">
             <div class="col-xs-12">
                 <ul v-if="socialService && socialService.instructions.length > 0">
-                    <li v-for="(instruction, index) in socialService.instructions.slice(0, 1)" :key="index" v-if="instruction.name">
+                    <li v-for="instruction in socialService.instructions.slice(0, 1)" :key="instruction.id" v-if="instruction.name">
                         <p v-for="(chunk, index) in instruction.name.split('\n')" :key="index" v-html="chunk || '<br>'"></p>
                     </li>
                 </ul>
@@ -77,8 +75,7 @@
 
             Event.$on('misc:change', (misc) => {
                 if (misc && misc.id === ((this.socialService || {}).id || MISC_ID)) {
-                    this.socialService = misc
-                    this.$forceUpdate()
+                    this.getSocialService()
                 }
             })
 

@@ -1,5 +1,7 @@
 require('./bootstrap');
 
+import './prototypes/array.prototype'
+
 import Vue from 'vue'
 import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
@@ -20,6 +22,7 @@ Vue.use(ClientTable, {}, false)
 
 Vue.config.debug = true
 
+import EventBus from './admin/time-tracker/comps/event-bus'
 import CcdUpload from './components/importer/ccd-upload'
 import CcdViewer from './components/importer/ccd-viewer'
 
@@ -29,6 +32,8 @@ Vue.component('ccd-viewer', CcdViewer)
 const App = new Vue({
     el: '#app'
 })
+
+App.EventBus = EventBus
 
 export default App
 

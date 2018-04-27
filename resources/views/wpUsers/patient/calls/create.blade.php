@@ -3,6 +3,10 @@
 @section('title', 'Patient Call Scheduler')
 @section('activity', 'Patient Call Scheduler')
 
+<?php
+    use \Carbon\Carbon;
+?>
+
 @section('content')
     @push('scripts')
         <script>
@@ -63,11 +67,9 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                        <input name="date" type="date" id="date"
-                                               class="selectpickerX form-control"
-                                               data-width="95px" data-size="10"
-                                               value="{{\Carbon\Carbon::parse($date)->format('Y-m-d')}}"
-                                               required>
+                                        <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" 
+                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
+                                            value="{{ Carbon::parse($date)->format('Y-m-d') }}" required></v-datepicker>
                                     </div>
                                 </div>
 

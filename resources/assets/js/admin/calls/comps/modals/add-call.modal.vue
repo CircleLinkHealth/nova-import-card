@@ -2,8 +2,11 @@
     <modal name="add-call" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
       <template slot="title">
         <div class="row">
-          <div class="col-sm-12">
+          <div class="col-sm-6">
             Add New Call
+          </div>
+          <div class="col-sm-6 text-right">
+            <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">Show Unscheduled Patients</button>
           </div>
         </div>
       </template>
@@ -274,10 +277,26 @@
                 console.error('add-call', err)
                 Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
               })
+            },
+            showUnscheduledPatients () {
+              Event.$emit('modal-add-call:hide')
+              Event.$emit('modal-unscheduled-patients:show')
             }
         },
         mounted() {
           this.getPractices()
+
+          Event.$on('add-call-modals:set', (data) => {
+            if (data) {
+              if (data.practiceId) {
+                this.formData.practiceId = data.practiceId
+                this.changePractice()
+              }
+              if (data.patientId) {
+                this.formData.patientId = data.patientId
+              }
+            }
+          })
         }
     }
 </script>

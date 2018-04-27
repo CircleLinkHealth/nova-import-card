@@ -113,9 +113,9 @@ export const onAttemptNoteUpdate = function (note) {
 export const updateMultiValues = function  ({ nextCall, callTimeStart, callTimeEnd }) {
     if (nextCall, callTimeStart, callTimeEnd) {
       return Promise.all([
-        onNextCallUpdate(nextCall),
-        onCallTimeStartUpdate(callTimeStart),
-        onCallTimeEndUpdate(callTimeEnd)
+        onNextCallUpdate.call(this, nextCall)
+        // onCallTimeStartUpdate.call(this, callTimeStart),
+        // onCallTimeEndUpdate.call(this, callTimeEnd)
       ])
     }
     else Promise.resolve({})

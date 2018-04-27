@@ -8,12 +8,12 @@
                 </div>
                 <div class="col-sm-12 pad-top-10" :class="{ 'medication-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'medication-buttons': isExtendedView }">
-                        <button class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
+                        <div class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
                                 v-for="(medication, index) in medications" :key="index" @click="select(index)">
                             {{medication.title()}}
                             <span class="delete" title="remove this cpm medication" @click="removeMedication">x</span>
                             <loader class="absolute" v-if="loaders.removeMedication && selectedMedication && (selectedMedication.id === medication.id)"></loader>
-                        </button>
+                        </div>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMedication || !selectedMedication.id }" value="+" @click="select(-1)" />
                     </div>
                 </div>

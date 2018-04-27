@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="!other || other.instructions.length === 0">
-            <div class="col-xs-12 text-center">
-                No Instructions at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="!other || other.instructions.length === 0">
+            No Instructions at this time
+        </div>
         <div class="row gutter">
             <div class="col-xs-12">
                 <ul v-if="other && other.instructions.length > 0">

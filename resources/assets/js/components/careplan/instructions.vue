@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="cpmProblemsWithInstructions.length === 0">
-            <div class="col-xs-12 text-center">
-                No Instructions at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="cpmProblemsWithInstructions.length === 0">
+            No Instructions at this time
+        </div>
         <div class="row gutter" v-if="cpmProblemsWithInstructions.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>

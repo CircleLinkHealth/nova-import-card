@@ -6,6 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CarePlanManager - Log In</title>
 
+	@include('partials.hotjar-code')
+
 	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
 	<link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
 	<link href="{{ asset('/img/favicon.png') }}" rel="icon">

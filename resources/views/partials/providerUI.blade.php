@@ -11,6 +11,8 @@
     <meta name="base-url" content="{{ url('/') }}">
     <base href="{{asset('')}}">
 
+    @include('partials.hotjar-code')
+
     <script type="text/javascript">
         window.heap = window.heap || [], heap.load = function (e, t) {
             window.heap.appid = e, window.heap.config = t = t || {};
@@ -30,7 +32,6 @@
     <title>CarePlanManager - @yield('title')</title>
 
     <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
-    <link href="{{ asset('/css/fab.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/patientsearch.css') }}" rel="stylesheet">
     <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
@@ -123,6 +124,7 @@
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
+    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
 @include('partials.providerUItimer')
@@ -138,7 +140,7 @@
     })
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/compiled/sw.js')
+        navigator.serviceWorker.register('/sw.js')
         .then(function(registration) {
             console.log('Service Worker registration successful with scope: ',
             registration.scope);
