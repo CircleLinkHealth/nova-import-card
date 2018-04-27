@@ -32,6 +32,7 @@ Vue.use(VueForm, {
 
 import { ClientTable } from 'vue-tables-2'
 
+const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const CallMgmtApp = () => import(/* webpackChunkName: "chunk-admin" */ './admin/calls/app')
 const NurseDailyHours = () => import(/* webpackChunkName: "chunk-admin" */ './components/pages/work-schedule/daily-hours')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
@@ -43,6 +44,7 @@ const PassportPersonalAccessTokensComponent = () => import(/* webpackChunkName: 
 
 Vue.use(ClientTable, {}, false)
 
+Vue.component('v-datepicker', DatepickerComponent)
 Vue.component('call-mgmt-app', CallMgmtApp)
 Vue.component('nurseDailyHours', NurseDailyHours)
 Vue.component('select2', Select2Component)
