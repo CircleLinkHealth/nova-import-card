@@ -20,8 +20,8 @@ Vue.use(ClientTable, {}, false)
 
 Vue.config.debug = true
 
-import CcdUpload from './components/Importer/ccd-upload'
-import CcdViewer from './components/Importer/ccd-viewer'
+import CcdUpload from './components/importer/ccd-upload'
+import CcdViewer from './components/importer/ccd-viewer'
 
 Vue.component('ccd-upload', CcdUpload)
 Vue.component('ccd-viewer', CcdViewer)
