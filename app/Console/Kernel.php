@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyMinute()->withoutOverlapping(5);
+                 ->everyFiveMinutes()->withoutOverlapping(15);
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
