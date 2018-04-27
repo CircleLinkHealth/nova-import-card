@@ -23,8 +23,8 @@ Vue.use(ClientTable, {}, false)
 Vue.config.debug = true
 
 import EventBus from './admin/time-tracker/comps/event-bus'
-import CcdUpload from './components/importer/ccd-upload'
-import CcdViewer from './components/importer/ccd-viewer'
+import CcdUpload from './components/Importer/ccd-upload'
+import CcdViewer from './components/Importer/ccd-viewer'
 
 Vue.component('ccd-upload', CcdUpload)
 Vue.component('ccd-viewer', CcdViewer)
