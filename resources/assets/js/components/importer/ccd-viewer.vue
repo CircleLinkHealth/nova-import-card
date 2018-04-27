@@ -432,25 +432,21 @@
             this.getPractices()
             this.getRecords()
 
-            EventBus.$on('vdropzone:success', (records) => {
-                this.getRecords()
-                const newRecords = records.filter(record => !this.tableData.find(row => row.id == record.id))
-                this.tableData = records.map(this.setupRecord)
-                this.tableData.forEach(row => {
-                    row.changePractice(row.Practice)
-                })
-                
-                //EventBus.$emit('vdropzone:remove-all-files')
+            EventBus.$on('vdropzone:success', () => {
+                const oldRecords = this.tableData.slice(0)
+                this.getRecords().then((records) => {
+                    const newRecords = records.filter(record => !oldRecords.find(row => row.id == record.id))
 
-                newRecords.map(this.setupRecord).filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
-                    EventBus.$emit('notifications:create', { 
-                        message: `Imported Patient "${row.Name}" is a possible duplicate of`,
-                        link: {
-                            href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
-                            text: ` existing patient with ID ${row.duplicate_id}`
-                        },
-                        noTimeout: true,
-                        type: 'error'
+                    newRecords.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
+                        EventBus.$emit('notifications:create', { 
+                            message: `Imported Patient "${row.Name}" is a possible duplicate of`,
+                            link: {
+                                href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                                text: ` existing patient with ID ${row.duplicate_id}`
+                            },
+                            noTimeout: true,
+                            type: 'error'
+                        })
                     })
                 })
             })
