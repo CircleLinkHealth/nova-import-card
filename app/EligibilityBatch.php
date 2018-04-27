@@ -8,6 +8,7 @@ class EligibilityBatch extends Model
 {
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_PHX_DB_TABLES = 'phoenix_heart_db_tables';
+    const TYPE_ONE_CSV = 'one_csv';
 
     const STATUSES = [
         'not_started' => 0,
@@ -32,6 +33,7 @@ class EligibilityBatch extends Model
         'options',
         'stats',
         'status',
+        'initiator_id',
     ];
 
     protected $attributes = [
@@ -84,5 +86,10 @@ class EligibilityBatch extends Model
         }
 
         return null;
+    }
+
+    public function practice()
+    {
+        return $this->belongsTo(Practice::class);
     }
 }

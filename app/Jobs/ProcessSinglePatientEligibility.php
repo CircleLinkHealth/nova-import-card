@@ -2,46 +2,76 @@
 
 namespace App\Jobs;
 
+use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Practice;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 
 class ProcessSinglePatientEligibility implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * @var Collection
+     */
     private $patient;
+
+    /**
+     * @var Practice
+     */
     private $practice;
+
+    /**
+     * @var EligibilityBatch
+     */
+    private $batch;
+
+    /**
+     * @var bool
+     */
     private $filterLastEncounter;
+
+    /**
+     * @var bool
+     */
     private $filterInsurance;
+
+    /**
+     * @var bool
+     */
     private $filterProblems;
+    /**
+     * @var EligibilityJob
+     */
+    private $eligibilityJob;
 
     /**
      * Create a new job instance.
      *
      * @param Collection $patient
      * @param Practice $practice
-     * @param bool $filterLastEncounter
-     * @param bool $filterInsurance
-     * @param bool $filterProblems
+     * @param EligibilityBatch $batch
+     * @param EligibilityJob $eligibilityJob
      */
     public function __construct(
         Collection $patient,
-        Practice $practice,
-        bool $filterLastEncounter,
-        bool $filterInsurance,
-        bool $filterProblems
+        EligibilityJob $eligibilityJob,
+        EligibilityBatch $batch,
+        Practice $practice
     ) {
-        //
         $this->patient             = $patient;
         $this->practice            = $practice;
-        $this->filterLastEncounter = $filterLastEncounter;
-        $this->filterInsurance     = $filterInsurance;
-        $this->filterProblems      = $filterProblems;
+        $this->batch               = $batch;
+        $this->filterLastEncounter = (boolean)$batch->options['filterLastEncounter'];
+        $this->filterProblems      = (boolean)$batch->options['filterProblems'];
+        $this->filterInsurance     = (boolean)$batch->options['filterInsurance'];
+        $this->eligibilityJob      = $eligibilityJob;
     }
 
     /**
@@ -57,7 +87,11 @@ class ProcessSinglePatientEligibility implements ShouldQueue
             $this->filterInsurance,
             $this->filterProblems,
             true,
-            $this->practice
+            $this->practice,
+            null,
+            null,
+            $this->batch,
+            $this->eligibilityJob
         );
     }
 }

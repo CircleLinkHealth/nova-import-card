@@ -8,26 +8,17 @@ use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
-use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
-use App\Services\Eligibility\EligibilityProcessorService;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 
 class WelcomeCallListController extends Controller
 {
-    protected $eligibilityService;
-    /**
-     * @var ProcessEligibilityService
-     */
-    private $processEligibilityService;
+    protected $processEligibilityService;
 
     public function __construct(
-        EligibilityProcessorService $eligibilityService,
         ProcessEligibilityService $processEligibilityService
-    )
-    {
-        $this->eligibilityService = $eligibilityService;
+    ) {
         $this->processEligibilityService = $processEligibilityService;
     }
 
@@ -48,16 +39,33 @@ class WelcomeCallListController extends Controller
         }
 
         $practiceId = $request->input('practice_id');
-        $file       = $request->file('patient_list');
+        $patients   = parseCsvToArray($request->file('patient_list'));
 
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
-        $createEnrollees     = true;
-        $practice            = Practice::find($practiceId);
 
-        return $this->eligibilityService->processEligibility($file, $practice, $filterLastEncounter,
-            $filterInsurance, $filterProblems, $createEnrollees);
+        $columnNames = array_key_exists(0, $patients)
+            ? array_keys($patients[0])
+            : [];
+
+        $validationErrors = $this->processEligibilityService
+            ->validationErrorsForSingleCsvColumnNames($columnNames);
+
+        if ($validationErrors) {
+            return [
+                'errors'          => $validationErrors,
+                'required_fields' => $this->processEligibilityService->getSingleCsvRequiredFields(),
+            ];
+        }
+
+        $batch = $this->processEligibilityService
+            ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
+
+        $link = link_to_route('eligibility.batch.show',
+            'Click here to view progress. Save this link as it will not be listed anywhere else.', [$batch->id]);
+
+        return "Processing eligibility has been scheduled, and will process in the background. $link";
     }
 
     /**

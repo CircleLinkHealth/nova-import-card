@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyFiveMinutes();
+                 ->everyFiveMinutes()->withoutOverlapping(15);
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
 //        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
 //                 ->weeklyOn(1, '10:00');

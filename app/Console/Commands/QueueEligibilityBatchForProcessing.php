@@ -3,9 +3,11 @@
 namespace App\Console\Commands;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Jobs\ProcessCcda;
+use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
@@ -50,6 +52,46 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     public function handle()
     {
+        $singleFileCsvs = EligibilityBatch::where('status', '<', 2)
+                                          ->whereType(EligibilityBatch::TYPE_ONE_CSV)
+                                          ->with('practice')
+                                          ->get()
+                                          ->map(function ($batch) {
+                                              $result = $this->processEligibilityService->processCsvForEligibility($batch);
+
+                                              if ($result) {
+                                                  $batch->status = EligibilityBatch::STATUSES['processing'];
+                                                  $batch->save();
+
+                                                  return $batch;
+                                              }
+
+                                              $unprocessed = EligibilityJob::whereBatchId($batch->id)
+                                                                           ->where('status', '<=', 2)
+                                                                           ->get();
+
+                                              if ($unprocessed->isEmpty()) {
+                                                  $batch->status = EligibilityBatch::STATUSES['complete'];
+                                                  $batch->save();
+
+                                                  return $batch;
+                                              }
+
+                                              $unprocessed->map(function ($job) use ($batch) {
+                                                  ProcessSinglePatientEligibility::dispatch(
+                                                      collect([$job->data]),
+                                                      $job,
+                                                      $batch,
+                                                      $batch->practice
+                                                  );
+                                              });
+
+                                              $batch->status = EligibilityBatch::STATUSES['processing'];
+                                              $batch->save();
+
+                                              return $batch;
+                                          });
+
         $googleDriveCcds = EligibilityBatch::where('status', '<', 2)
                                            ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
                                            ->get()
@@ -68,7 +110,7 @@ class QueueEligibilityBatchForProcessing extends Command
                                                $unprocessed = Ccda::whereBatchId($batch->id)
                                                                   ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
                                                                   ->inRandomOrder()
-                                                                  ->take(500)
+                                                                  ->take(10)
                                                                   ->get()
                                                                   ->map(function ($ccda) use ($batch, $practice) {
                                                                       ProcessCcda::withChain([

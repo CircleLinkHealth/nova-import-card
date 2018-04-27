@@ -9,9 +9,11 @@
 namespace App\Services\CCD;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
+use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\User;
@@ -369,6 +371,21 @@ class ProcessEligibilityService
         ]);
     }
 
+    public function createSingleCSVBatch(
+        $patientList,
+        int $practiceId,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems
+    ) {
+        return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
+            'patientList'         => $patientList,
+            'filterLastEncounter' => (boolean)$filterLastEncounter,
+            'filterInsurance'     => (boolean)$filterInsurance,
+            'filterProblems'      => (boolean)$filterProblems,
+        ]);
+    }
+
     /**
      * @param $type
      *
@@ -398,5 +415,106 @@ class ProcessEligibilityService
                 'filterInsurance'     => true,
                 'filterProblems'      => true,
             ]);
+    }
+
+    /**
+     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
+     * Returns false if there's no errors, and an array of errors if errors are found.
+     *
+     * @param array $columnNames
+     *
+     * @return array|bool
+     */
+    public function validationErrorsForSingleCsvColumnNames(array $columnNames)
+    {
+        $toValidate = [];
+        $rules      = [];
+
+        foreach ($columnNames as $cn) {
+            $toValidate[$cn] = $cn;
+        }
+
+        foreach ($this->getSingleCsvRequiredFields() as $name) {
+            $rules[$name] = 'required|filled|same:' . $name;
+        }
+
+        $validator = \Validator::make($toValidate, $rules);
+
+        return $validator->passes()
+            ? false
+            : $validator->errors()->all();
+    }
+
+    public function getSingleCsvRequiredFields()
+    {
+        return [
+            'mrn',
+            'last_name',
+            'first_name',
+            'dob',
+            'gender',
+            'lang',
+            'referring_provider_name',
+            'cell_phone',
+            'home_phone',
+            'other_phone',
+            'primary_phone',
+            'email',
+            'street',
+            'street2',
+            'city',
+            'state',
+            'zip',
+            'primary_insurance',
+            'secondary_insurance',
+            'tertiary_insurance',
+            'last_encounter',
+            'problems_string',
+            'allergies_string',
+            'medications_string',
+        ];
+    }
+
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @throws \Exception
+     */
+    public function processCsvForEligibility(EligibilityBatch $batch)
+    {
+        if ($batch->type != EligibilityBatch::TYPE_ONE_CSV) {
+            throw new \Exception('$batch is not of type `' . EligibilityBatch::TYPE_ONE_CSV . '`.`');
+        }
+
+        $collection = collect($batch->options['patientList']);
+
+        if ($collection->isEmpty()) {
+            return false;
+        }
+
+        return $collection
+            ->map(function ($patient) use ($batch) {
+                $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
+
+                $job = EligibilityJob::whereHash($hash)->first();
+
+                if ( ! $job) {
+                    $job = EligibilityJob::create([
+                        'batch_id' => $batch->id,
+                        'hash'     => $hash,
+                        'data'     => $patient,
+                    ]);
+                }
+
+                $patient['eligibility_job_id'] = $job->id;
+
+                if ($job->status == 0) {
+                    ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+
+                    return true;
+                }
+
+                return false;
+            })->filter()->values();
     }
 }

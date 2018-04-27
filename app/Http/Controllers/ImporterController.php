@@ -3,8 +3,8 @@
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Importer\Models\ItemLogs\DocumentLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Jobs\ImportCcda;
 use App\Jobs\ImportCsvPatientList;
-use App\Jobs\TrainCcdaImporter;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 use Carbon\Carbon;
@@ -26,6 +26,8 @@ class ImporterController extends Controller
             return response()->json('No file found', 400);
         }
 
+        $records = new Collection();
+
         foreach ($request->file('file') as $file) {
             \Log::info('Begin processing CCD ' . Carbon::now()->toDateTimeString());
             $xml = file_get_contents($file);
@@ -37,9 +39,10 @@ class ImporterController extends Controller
                 'source'    => Ccda::IMPORTER,
             ]);
 
-            $ccda->import();
+            $records->push($ccda->import());
             \Log::info('End processing CCD ' . Carbon::now()->toDateTimeString());
         }
+        return $records;
     }
 
     /**
@@ -69,9 +72,10 @@ class ImporterController extends Controller
      */
     public function uploadRecords(Request $request) 
     {    
-        $this::handleCcdFilesUpload($request);
+        $records = $this::handleCcdFilesUpload($request);
 
-        return redirect()->route('import.ccd.remix');
+        if (!$request->has('json')) return redirect()->route('import.ccd.remix');
+        else return response()->json($records);
     }
 
     /**
@@ -192,7 +196,8 @@ class ImporterController extends Controller
 
         foreach ($request->allFiles()['medical_records'] as $file) {
             if ($file->getClientOriginalExtension() == 'csv') {
-                dispatch((new ImportCsvPatientList(parseCsvToArray($file), $file->getClientOriginalName())));
+                ImportCsvPatientList::dispatch(parseCsvToArray($file),
+                    $file->getClientOriginalName())->onQueue('medical-records');
 
                 $link = link_to_route(
                     'import.ccd.remix',
@@ -209,7 +214,7 @@ class ImporterController extends Controller
                 'source'    => Ccda::IMPORTER,
             ]);
 
-            dispatch(new TrainCcdaImporter($ccda));
+            ImportCcda::dispatch($ccda)->onQueue('medical-records');
         }
 
         return redirect()->route('import.ccd.remix');

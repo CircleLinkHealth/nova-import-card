@@ -14,11 +14,11 @@ use App\Contracts\Importer\MedicalRecord\Section\Logger;
 class JsonListAllergyLogger implements Logger
 {
 
-    public function handle($medicalRecord): array
+    public function handle($allergiesString): array
     {
 //        Format
 //        {"Allergies":[{"Name":""}, {"Name":""}, {"Name":""}]}
-        $allergies = json_decode($medicalRecord->allergies_string, true);
+        $allergies = json_decode($allergiesString, true);
 
         if (is_array($allergies) && array_key_exists('Allergies', $allergies)) {
             return collect($allergies['Allergies'])
@@ -33,8 +33,14 @@ class JsonListAllergyLogger implements Logger
         return [];
     }
 
-    public function shouldHandle($medicalRecord): bool
+    public function shouldHandle($allergiesString): bool
     {
-        return starts_with($medicalRecord->allergies_string, ['[', '{']);
+        $check = is_json($allergiesString);
+
+        if ($check === false) {
+            throw new \Exception("The string contains invalid json. String: `$allergiesString`");
+        }
+
+        return (boolean)$check;
     }
 }

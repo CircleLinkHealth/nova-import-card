@@ -46,7 +46,7 @@ class ImportMedicalRecordsById implements ShouldQueue
                         ->wherePracticeId($this->practice->id)
                         ->get()
                         ->map(function ($ccda) {
-                            TrainCcdaImporter::dispatch($ccda);
+                            ImportCcda::dispatch($ccda)->onQueue('medical-records');
                         });
     }
 }

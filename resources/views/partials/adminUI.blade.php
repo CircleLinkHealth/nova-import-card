@@ -260,6 +260,24 @@
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Practices <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
+                                    <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
+
+                                    <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
+                                    <li>
+                                        <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
+                                    </li>
+                                    <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
+                                    <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
+                                            Patient Report</a></li>
+                                </ul>
+                            </li>
                                 <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
@@ -280,6 +298,15 @@
                             </li>
                         @endif
 
+                            {{--<li role="presentation" class="dropdown">--}}
+                            {{--<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"--}}
+                            {{--aria-expanded="false">--}}
+                            {{--Medical Records <span class="caret"></span>--}}
+                            {{--</a>--}}
+                            {{--<ul class="dropdown-menu" role="menu">--}}
+                            {{--<li><a href="{{ route('admin.programs.create') }}">Process Eligibility</a></li>--}}
+                            {{--</ul>--}}
+                            {{--</li>--}}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())
