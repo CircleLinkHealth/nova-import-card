@@ -66,7 +66,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $patient->put('mrn', $patient['patient_id']);
 
             $patient->put('dob', $patient['dob']);
-            $patient->put('first_name', $patient['provider_first_name']);
+            $patient->put('first_name', $patient['patient_first_name']);
             $patient->put('last_name', $patient['patient_last_name']);
             $patient->put('city', $patient['city']);
             $patient->put('state', $patient['state']);
