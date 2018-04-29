@@ -547,32 +547,33 @@ class WelcomeCallListGenerator
                 ],
             ])->first();
 
-            $enrolledPatientExists = User::where(function ($u) use ($args) {
-                $u->whereProgramId($args['practice_id'])
-                  ->whereHas('patientInfo', function ($q) use ($args) {
-                      $q->whereMrnNumber($args['mrn']);
-                  });
-            })->orWhere(function ($u) use ($args) {
-                $u->where([
-                    [
-                        'program_id',
-                        '=',
-                        $args['practice_id'],
-                    ],
-                    [
-                        'first_name',
-                        '=',
-                        $args['first_name'],
-                    ],
-                    [
-                        'last_name',
-                        '=',
-                        $args['last_name'],
-                    ],
-                ])->whereHas('patientInfo', function ($q) use ($args) {
-                    $q->whereBirthDate($args['dob']);
-                });
-            })->first();
+            $enrolledPatientExists = User::withTrashed()
+                                         ->where(function ($u) use ($args) {
+                                             $u->whereProgramId($args['practice_id'])
+                                               ->whereHas('patientInfo', function ($q) use ($args) {
+                                                   $q->withTrashed()->whereMrnNumber($args['mrn']);
+                                               });
+                                         })->orWhere(function ($u) use ($args) {
+                    $u->where([
+                        [
+                            'program_id',
+                            '=',
+                            $args['practice_id'],
+                        ],
+                        [
+                            'first_name',
+                            '=',
+                            $args['first_name'],
+                        ],
+                        [
+                            'last_name',
+                            '=',
+                            $args['last_name'],
+                        ],
+                    ])->whereHas('patientInfo', function ($q) use ($args) {
+                        $q->withTrashed()->whereBirthDate($args['dob']);
+                    });
+                })->first();
 
 
             if ( ! $enrolleeExists && ! $enrolledPatientExists) {
