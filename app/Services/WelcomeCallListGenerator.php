@@ -201,7 +201,7 @@ class WelcomeCallListGenerator
             if ($problems) {
                 foreach ($problems as $p) {
                     if ( ! is_a($p, Problem::class)) {
-                        break;
+                        throw new \Exception("This is not an object of type " . Problem::class);
                     }
 
                     $codeType = null;
@@ -478,6 +478,10 @@ class WelcomeCallListGenerator
         $this->patientList->reject(function ($patient) {
             $args = $patient;
 
+            if (is_a($args, Collection::class)) {
+                $args = $args->all();
+            }
+
 //            $args['status'] = Enrollee::TO_CALL;
 //
 //            if (isset($args['cell_phone'])) {
@@ -489,7 +493,13 @@ class WelcomeCallListGenerator
             }
 
             if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
-                $args['primary_insurance'] = implode(' || ', $args['insurances']);
+                $insurances = is_array($args['insurances'])
+                    ? collect($args['insurances'])
+                    : $args['insurances'];
+
+                $args['primary_insurance']   = $insurances[0]['type'] ?? '';
+                $args['secondary_insurance'] = $insurances[1]['type'] ?? '';
+                $args['tertiary_insurance']  = $insurances[2]['type'] ?? '';
             }
 
             $args['practice_id'] = $this->practice->id;
@@ -508,7 +518,9 @@ class WelcomeCallListGenerator
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
-            $args['last_encounter']      = Carbon::parse($args['last_encounter']);
+            $args['last_encounter']      = array_key_exists('last_encounter', $args)
+                ? Carbon::parse($args['last_encounter'])
+                : null;
             $args['batch_id']            = $this->batch->id;
             $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'];
 
