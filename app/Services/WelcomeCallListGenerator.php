@@ -488,6 +488,10 @@ class WelcomeCallListGenerator
 //                $args['status'] = Enrollee::TO_SMS;
 //            }
 
+            if (array_key_exists('id', $args)) {
+                unset($args['id']);
+            }
+
             if (array_key_exists('problems_string', $args)) {
                 $args['problems'] = $args['problems_string'];
             }
