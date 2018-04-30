@@ -31,6 +31,11 @@
                     <input align="center" type="submit" value="Submit" class="btn btn-info">
                 </form>
             </div>
+            <br>
+            <div>
+                <p style="color:green;">You can find the Note ID by opening a note and copying the number at the end of the Note's URL. <br>
+                    For example, the note ID is 28018 for the note with the following URL: <strong>http://www.careplanmanager.com/manage-patients/326/notes/view/28018</strong></p>
+            </div>
 
         </div>
     </div>
