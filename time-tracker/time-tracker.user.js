@@ -77,7 +77,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      * @param {{ activity: '', isBehavioral: false }} info 
      */
     user.findActivity = (info) => {
-        return user.activities.find(item => item.name == info.activity && item.isBehavioral == info.isBehavioral)
+        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isBehavioral))
     }
 
     user.start = (info, ws) => {
@@ -263,7 +263,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     user.enterCallMode = (info) => {
         let activity = user.findActivity(info)
-        activity.callMode = true
+        
+        if (activity) {
+            activity.callMode = true
+        }
+        
 
         user.broadcast({ message: 'server:call-mode:enter' })
 
