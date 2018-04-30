@@ -24,17 +24,33 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
         isLoggingOut: null,
+        get ccmDuration() {
+            return this.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
+        },
+
+        get bhiDuration() {
+            return this.activities.filter(activity => !!activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
+        },
+
+        get totalCcmSeconds() {
+            return this.ccmDuration + this.totalTime
+        },
+
+        get totalBhiSeconds() {
+            return this.bhiDuration + this.totalTime
+        },
+
         /**
          * @returns {Number} total duration in seconds of activities excluding initial-total-time
          */
         get totalDuration() {
-            return this.activities.reduce((a, b) => a + b.duration, 0)
+            return this.ccmDuration + this.bhiDuration
         },
         /**
          * @returns {Number} total duration in seconds of activities plus initial-total-time
          */
         get totalSeconds() {
-            return this.totalDuration + this.totalTime
+            return this.ccmDuration + this.bhiDuration + this.totalTime
         },
         /**
          * @returns {Array} list of all sockets in all activities belongs to this user
