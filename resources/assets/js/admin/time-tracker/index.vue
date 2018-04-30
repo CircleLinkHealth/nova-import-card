@@ -182,7 +182,8 @@
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
-                    LOGOUT: 'client:logout'
+                    LOGOUT: 'client:logout',
+                    BHI: 'client:bhi'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -251,6 +252,13 @@
                 EventBus.$on('tracker:logout', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.LOGOUT, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:bhi', (mode = false) => {
+                    this.info.isBehavioral = mode
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
                     }
                 })
 

@@ -1,11 +1,11 @@
 <template>
     <span>
-        <ul class="nav nav-pills bhi-nav" v-if="isBhi || isCcm">
-            <li class="nav-item" :class="{ active: isCcm }">
-                <a class="nav-link" data-toggle="tab" role="tab" title="switch to CCM mode">CCM</a>
+        <ul class="nav nav-pills bhi-nav" v-if="isBhi && isCcm">
+            <li class="nav-item" :class="{ active: !isBhi }">
+                <a class="nav-link" data-toggle="tab" role="tab" title="switch to CCM mode" @click="setBhi(false)">CCM</a>
             </li>
             <li class="nav-item" :class="{ active: isBhi }">
-                <a class="nav-link" data-toggle="tab" role="tab" title="switch to BHI mode">BHI</a>
+                <a class="nav-link" data-toggle="tab" role="tab" title="switch to BHI mode" @click="setBhi(true)">BHI</a>
             </li>
         </ul>
     </span>
@@ -33,7 +33,9 @@
             
         },
         methods: {
-            
+            setBhi (mode) {
+                EventBus.$emit('tracker:bhi', mode)
+            }
         },
         mounted () {
             console.log('isBhi', this.isBhi)
