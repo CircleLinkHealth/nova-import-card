@@ -1617,6 +1617,39 @@ Route::group(['middleware' => 'auth'], function () {
             ]);
         });
 
+        //observations dashboard
+
+        Route::group([
+            'prefix' => 'observations-dashboard',
+        ], function () {
+            Route::get('index', [
+                'uses' => 'ObservationController@dashboardIndex',
+                'as'   => 'observations-dashboard.index',
+            ]);
+
+            Route::get('list', [
+                'uses' => 'ObservationController@getObservationsList',
+                'as'   => 'observations-dashboard.list',
+            ]);
+
+            Route::get('edit', [
+                'uses' => 'ObservationController@editObservation',
+                'as'   => 'observations-dashboard.edit',
+            ]);
+
+            Route::patch('update', [
+                'uses' => 'ObservationController@updateObservation',
+                'as'   => 'observations-dashboard.update',
+            ]);
+
+            Route::delete('delete', [
+                'uses' => 'ObservationController@deleteObservation',
+                'as'   => 'observations-dashboard.delete',
+            ]);
+
+        });
+
+
 
         // programs
         Route::group([
