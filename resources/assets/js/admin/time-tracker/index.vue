@@ -9,7 +9,10 @@
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
-                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
+                    :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+                    <br><br>
+                <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"></bhi-switch>
             </span>
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
@@ -25,6 +28,7 @@
     import EventBus from './comps/event-bus'
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
+    import BhiComponent from './comps/bhi-switch'
     
     export default {
         name: 'time-tracker',
@@ -59,7 +63,8 @@
             'inactivity-tracker': InactivityTracker,
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
-            'away': AwayComponent
+            'away': AwayComponent,
+            'bhi-switch': BhiComponent
         },
         computed: {
             totalTime() {
