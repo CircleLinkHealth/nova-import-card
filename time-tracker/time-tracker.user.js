@@ -62,14 +62,22 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             })
         },
         inactivityRequiresNoModal () {
-            return this.inactiveSeconds < (!this.callMode ? 120 : 180) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
+            return this.inactiveSeconds < (!this.callMode ? 120 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
         inactivityRequiresModal () {
-            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 300) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
+            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
         }
+    }
+
+    /**
+     * 
+     * @param {{ activity: '', isBehavioral: false }} info 
+     */
+    user.findActivity = (info) => {
+        return user.activities.find(item => item.name == info.activity && item.isBehavioral == info.isBehavioral)
     }
 
     user.start = (info, ws) => {
@@ -82,7 +90,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         //user.totalTime = Math.max(user.totalTime, info.totalTime)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (!!Number(info.initSeconds) && user.allSockets.length <= 1 && activity) {
             /**
              * make sure the page load time is taken into account
@@ -103,7 +111,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
-        let activity = user.activities.find(item => item.name == info.activity)
+        let activity = user.findActivity(info)
         if (!activity) {
             activity = createActivity(info)
             activity.sockets.push(ws)
@@ -205,18 +213,20 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      * @param {boolean} response yes/no on whether the practitioner was busy on a patient during calculated inactive-time
      */
     user.respondToModal = (response) => {
-        let activity = user.activities.find(item => item.name == info.activity)
-        if (response) {
-            activity.duration += user.inactiveSeconds
-        }
-        else {
-            activity.duration += 30
+        let activity = user.findActivity(info)
+        if (activity) {
+            if (response) {
+                activity.duration += user.inactiveSeconds
+            }
+            else {
+                activity.duration += 30
+            }
         }
         user.inactiveSeconds = 0
     }
     
     user.showInactiveModal = (info, now = () => (new Date())) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity) {
             activity.isInActiveModalShown = true
             activity.inactiveModalShowTime = now()
@@ -224,7 +234,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     } 
     
     user.closeInactiveModal = (info, response, now = () => (new Date())) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity && activity.inactiveModalShowTime) {
             activity.isInActiveModalShown = false
             const elapsedSeconds = (new Date(now() - activity.inactiveModalShowTime)).getSeconds()
@@ -239,7 +249,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     user.removeInactiveDuration = (info) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity) {
             activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 30)
         }
@@ -252,7 +262,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     user.enterCallMode = (info) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         activity.callMode = true
 
         user.broadcast({ message: 'server:call-mode:enter' })
