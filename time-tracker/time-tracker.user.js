@@ -219,7 +219,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.allSockets.forEach(ws => {
             const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
             if (ws.readyState === ws.OPEN && shouldSend) {
-                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds }))
+                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds, ccmSeconds: user.totalCcmSeconds, bhiSeconds: user.totalBhiSeconds }))
             }
         })
     }

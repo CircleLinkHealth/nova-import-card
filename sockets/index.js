@@ -84,7 +84,7 @@ module.exports = app => {
                 return;
               }
             }
-            else if (data.message === 'client:enter') {
+            else if ([ 'client:enter', 'client:bhi' ].includes(data.message)) {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
