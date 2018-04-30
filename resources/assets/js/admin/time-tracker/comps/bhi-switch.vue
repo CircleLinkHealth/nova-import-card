@@ -34,7 +34,7 @@
         },
         methods: {
             setBhi (mode) {
-                EventBus.$emit('tracker:bhi', mode)
+                EventBus.$emit('tracker:bhi:switch', mode)
             }
         },
         mounted () {

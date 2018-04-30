@@ -26,6 +26,7 @@
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
+    import { Event } from 'vue-tables-2'
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
@@ -255,11 +256,16 @@
                     }
                 })
 
-                EventBus.$on('tracker:bhi', (mode = false) => {
+                EventBus.$on('tracker:bhi:switch', (mode = false) => {
                     this.info.isBehavioral = mode
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
                     }
+                })
+
+                Event.$on('careplan:bhi', ({ isCcm, isBehavioral }) => {
+                    this.info.isBehavioral = isBehavioral
+                    this.info.isCcm = isCcm
                 })
 
                 this.createSocket()
