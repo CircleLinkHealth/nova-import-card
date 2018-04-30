@@ -30,6 +30,18 @@ class CpmProblemService implements CpmModel
         return $this->problemRepo;
     }
 
+    public function all() {
+        $problems = $this->repo()->noDiabetesFilter()->get([
+            'id',
+            'name',
+            'default_icd_10_code',
+            'is_behavioral'
+        ])->map(function ($value) {
+            return $this->setupProblem($value);
+        });
+        return $problems;
+    }
+
     public function problems() {
         $problems = $this->repo()->noDiabetesFilter()->paginate(30);
         $problems->getCollection()->transform(function ($value) {
@@ -43,6 +55,7 @@ class CpmProblemService implements CpmModel
             'id'   => $p->id,
             'name' => $p->name,
             'code' => $p->default_icd_10_code,
+            'is_behavioral' => $p->is_behavioral,
             'instruction' => $p->instruction()
         ];
     }
