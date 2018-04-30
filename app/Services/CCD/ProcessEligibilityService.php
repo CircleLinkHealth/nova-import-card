@@ -436,6 +436,8 @@ class ProcessEligibilityService
 
         return $collection
             ->map(function ($patient) use ($batch) {
+                $patient = $this->transformCsvRow($patient);
+
                 $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
 
                 $job = EligibilityJob::whereHash($hash)->first();
@@ -458,5 +460,41 @@ class ProcessEligibilityService
 
                 return false;
             })->filter()->values();
+    }
+
+    private function transformCsvRow($patient)
+    {
+        if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
+            //{"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
+            $problems = [];
+            $i        = 1;
+
+            do {
+                if ( ! array_key_exists("problem_$i", $patient)) {
+                    break;
+                }
+
+                if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
+                    $problems[] = [
+                        'Name'        => $patient["problem_$i"],
+                        'CodeType'    => '',
+                        'Code'        => '',
+                        'AddedDate'   => '',
+                        'ResolveDate' => '',
+                        'Status'      => '',
+                    ];
+                }
+
+                unset($patient["problem_$i"]);
+
+                $i++;
+            } while (true);
+
+            $patient['problems'] = json_encode([
+                'Problems' => $problems,
+            ]);
+        }
+
+        return $patient;
     }
 }
