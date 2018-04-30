@@ -9,18 +9,8 @@
 namespace App\Services\Eligibility\Csv\Validators\PatientList;
 
 
-class NumberedFieldsValidator implements PatientListValidator
+class NumberedFieldsValidator extends BaseValidator
 {
-    public function isValid()
-    {
-        // TODO: Implement isValid() method.
-    }
-
-    public function errors()
-    {
-        // TODO: Implement errors() method.
-    }
-
     /**
      * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
      * Returns false if there's no errors, and an array of errors if errors are found.
@@ -31,22 +21,52 @@ class NumberedFieldsValidator implements PatientListValidator
      */
     public function validate()
     {
-        // TODO: Implement validate() method.
+
+        $toValidate = [];
+        $rules      = [];
+
+        foreach ($this->getColumnNames() as $cn) {
+            $toValidate[$cn] = $cn;
+        }
+
+        foreach ($this->required() as $name) {
+            $rules[$name] = 'required|filled|same:' . $name;
+        }
+
+        $rules['problem_1'] = 'required|filled|same:problem_1';
+        $rules['problem_2'] = 'required|filled|same:problem_2';
+
+        $this->validator = \Validator::make($toValidate, $rules);
+
+        return $this->validator->passes()
+            ? true
+            : $this->validator->errors()->all();
     }
 
     public function required()
     {
-        // TODO: Implement required() method.
-    }
-
-    public function getColumnNames(): array
-    {
-        // TODO: Implement getColumnNames() method.
-    }
-
-    public function setColumnNames(array $columnNames)
-    {
-        // TODO: Implement setColumnNames() method.
-        return $this;
+        return [
+            'mrn',
+            'last_name',
+            'first_name',
+            'dob',
+            'gender',
+            'lang',
+            'referring_provider_name',
+            'cell_phone',
+            'home_phone',
+            'other_phone',
+            'primary_phone',
+            'email',
+            'street',
+            'street2',
+            'city',
+            'state',
+            'zip',
+            'primary_insurance',
+            'secondary_insurance',
+            'tertiary_insurance',
+            'last_encounter',
+        ];
     }
 }

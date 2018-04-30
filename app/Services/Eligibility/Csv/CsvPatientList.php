@@ -91,6 +91,8 @@ class CsvPatientList
             if ($result === true) {
                 return true;
             }
+
+            $this->validator = null;
         }
 
         return null;
