@@ -2636,6 +2636,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $billableProblems;
     }
 
+    public function isCcm() {
+        return ($this->cpmProblems()->where('is_behavioral', 0)->count() > 0) || ($this->ccdProblems()->where('is_monitored', 1)->count() > 0);
+    }
+
+    public function isBehavioral() {
+        return ($this->cpmProblems()->where('is_behavioral', 1)->count() > 0);
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
