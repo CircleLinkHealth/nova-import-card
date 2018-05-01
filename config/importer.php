@@ -27,7 +27,6 @@ return [
 
     'problem_loggers' => [
         App\Importer\Loggers\Problem\JsonListProblemLogger::class,
-        App\Importer\Loggers\Problem\MultipleFieldsProblemLogger::class,
         //        App\Importer\Loggers\Problem\CommaDelimitedListProblemLogger::class, @todo: implement once a use case comes up
     ],
 ];
