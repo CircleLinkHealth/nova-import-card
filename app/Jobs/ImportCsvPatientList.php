@@ -235,7 +235,7 @@ class ImportCsvPatientList implements ShouldQueue
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
 
             if ( ! $mrn) {
-                return false;
+                throw new \Exception("Phoenix Heart Patient not found");
             }
 
             $row['mrn'] = $mrn;
@@ -248,7 +248,7 @@ class ImportCsvPatientList implements ShouldQueue
 
     private function lookupPHXmrn($firstName, $lastName, $dob)
     {
-        $dob = Carbon::parse($dob)->toDateString();
+        $dob = Carbon::parse($dob)->format('n/j/Y');
 
         $row = PhoenixHeartName::where('patient_first_name', $firstName)
                                ->where('patient_last_name', $lastName)
