@@ -294,7 +294,6 @@ class WelcomeCallListGenerator
 
             if (count($qualifyingProblems) < 2) {
                 $this->ineligiblePatients->push($row);
-                $this->batch->incrementIneligibleCount();
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has less than 2 ccm conditions'],
                     EligibilityJob::INELIGIBLE);
@@ -353,8 +352,6 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->batch->incrementIneligibleCount();
-
             $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
 
             return false;
@@ -399,7 +396,6 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->batch->incrementIneligibleCount();
             $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
 
             return false;
@@ -425,7 +421,6 @@ class WelcomeCallListGenerator
 
             if ( ! isset($row['last_encounter'])) {
                 $this->ineligiblePatients->push($row);
-                $this->batch->incrementIneligibleCount();
 
                 $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
                     EligibilityJob::INELIGIBLE);
@@ -435,7 +430,6 @@ class WelcomeCallListGenerator
 
             if ( ! $row['last_encounter']) {
                 $this->ineligiblePatients->push($row);
-                $this->batch->incrementIneligibleCount();
 
                 $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
                     EligibilityJob::INELIGIBLE);
@@ -449,7 +443,6 @@ class WelcomeCallListGenerator
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
-                $this->batch->incrementIneligibleCount();
 
                 $this->setEligibilityJobStatus(3,
                     ['last_encounter' => 'Patient last encounter is more than a year ago.'],
@@ -582,7 +575,6 @@ class WelcomeCallListGenerator
 
             if ( ! $enrolleeExists && ! $enrolledPatientExists) {
                 $this->enrollees = Enrollee::create($args);
-                $this->batch->incrementEligibleCount();
 
                 $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
 
@@ -600,7 +592,6 @@ class WelcomeCallListGenerator
                     EligibilityJob::DUPLICATE);
             }
 
-            $this->batch->incrementDuplicateCount();
 
             return true;
         });
