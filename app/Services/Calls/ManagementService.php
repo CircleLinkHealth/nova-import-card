@@ -25,7 +25,8 @@ class ManagementService
         return $this->repository->scheduledCalls($month);
     }
 
-    public function getPatientsWithoutScheduledCalls($practiceId, Carbon $start) {
-        return $this->repository->patientsWithoutScheduledCalls($practiceId, $start);
+    public function getPatientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
+    {
+        return $this->repository->patientsWithoutScheduledCalls($practiceId, $afterDate);
     }
 }

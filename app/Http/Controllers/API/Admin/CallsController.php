@@ -9,13 +9,13 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
 use App\Services\Calls\ManagementService;
-use App\Services\NoteService;
 use App\Services\CallService;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
-use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 
 class CallsController extends ApiController
@@ -360,7 +360,7 @@ class CallsController extends ApiController
 
     public function patientsWithoutScheduledCalls($practiceId)
     {
-        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
+        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId)
                                   ->get();
 
         return UserResource::collection($patients);
