@@ -30,7 +30,7 @@
                   Patient <span class="required">*</span>
                 </div>
                 <div class="col-sm-7">
-                  <select class="form-control" name="inbound_cpm_id" v-model="formData.patientId" required>
+                  <select class="form-control" name="inbound_cpm_id" v-model="formData.patientId" @change="checkIfSelectedPatientIsInDraftMode" required>
                     <option :value="null">Unassigned</option>
                     <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">{{patient.name}} ({{patient.id}})</option>
                   </select>
@@ -38,6 +38,7 @@
                     <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="getPatients"> <small>Show Only Unscheduled Patients</small>
                   </label>
                   <loader v-if="loaders.patients"></loader>
+                  <div class="alert alert-warning" v-if="selectedPatientIsInDraftMode">Patient is in draft mode</div>
                 </div>
               </div>
               <div class="row form-group">
@@ -158,7 +159,8 @@
                 formData: Object.create(defaultFormData),
                 filters: {
                   showUnscheduledPatients: false
-                }
+                },
+                selectedPatientIsInDraftMode: false
             }
         },
         computed: {
@@ -170,6 +172,9 @@
         methods: {
           selectedPatient () {
             return (this.patients.find(patient => patient.id === this.formData.patientId) || {})
+          },
+          checkIfSelectedPatientIsInDraftMode () {
+            this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
           },
           getPractices() {
                 this.loaders.practices = true
@@ -257,26 +262,43 @@
                 window_end: this.formData.endTime,
                 attempt_note: this.formData.text
               }
-              this.loaders.submit = true
-              this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
-                if (response) {
-                  this.loaders.submit = false
-                  this.formData = Object.create(defaultFormData)
-                  const call = response.data
-                  Event.$emit("modal-add-call:hide")
-                  Event.$emit('calls:add', call)
-                  console.log('calls:add', response.data)
-                  Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+              const patient = this.patients.find(patient => patient.id == this.formData.patientId)
+              if (patient) {
+                if (patient.status === 'draft') {
+                  Event.$emit('notifications-add-call-modal:create', { 
+                    text: `Call not allowed: This patient’s care plan is in draft mode. QA the care plan before scheduling a call`, 
+                    type: 'error'
+                  })
                 }
                 else {
-                  throw new Error('Could not create call. Patient already has a scheduled call')
+                  this.loaders.submit = true
+                  this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
+                    if (response) {
+                      this.loaders.submit = false
+                      this.formData = Object.create(defaultFormData)
+                      const call = response.data
+                      Event.$emit("modal-add-call:hide")
+                      Event.$emit('calls:add', call)
+                      console.log('calls:add', response.data)
+                      Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+                    }
+                    else {
+                      throw new Error('Could not create call. Patient already has a scheduled call')
+                    }
+                  }).catch(err => {
+                    this.errors.submit = err.message
+                    this.loaders.submit = false
+                    console.error('add-call', err)
+                    Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
+                  })
                 }
-              }).catch(err => {
-                this.errors.submit = err.message
-                this.loaders.submit = false
-                console.error('add-call', err)
-                Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
-              })
+              }
+              else {
+                Event.$emit('notifications-add-call-modal:create', { 
+                  text: `Patient not found`, 
+                  type: 'warning'
+                })
+              }
             },
             showUnscheduledPatients () {
               Event.$emit('modal-add-call:hide')
