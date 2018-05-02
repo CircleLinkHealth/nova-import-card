@@ -119,7 +119,7 @@ class PracticeController extends Controller
 
     public function getPatients($practiceId) {
         $practice = Practice::find($practiceId);
-        $patients = $practice->patients()->get([
+        $patients = $practice->patients()->with('carePlan')->get([
             'id',
             'first_name',
             'last_name',
@@ -134,7 +134,8 @@ class PracticeController extends Controller
                 'suffix' =>  $patient->suffix,
                 'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
                 'city' =>  $patient->city,
-                'state' =>  $patient->state
+                'state' =>  $patient->state,
+                'status' => optional($patient->carePlan)->status
             ];
         })->toArray();
         return response()->json($patients);
