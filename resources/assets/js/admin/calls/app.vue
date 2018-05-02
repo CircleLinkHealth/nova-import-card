@@ -145,7 +145,10 @@
             calls: false
           },
           currentDate: new Date(),
-          $nextPromise: null
+          $nextPromise: null,
+          requests: {
+            calls: null
+          }
         }
       },
       computed: {
@@ -411,11 +414,15 @@
         },
         next() {
           const $vm = this
-          if (this.$nextPromise) {
-            this.$nextPromise.abort()
-          }
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
+            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+              before(request) {
+                if (this.requests.calls) {
+                  this.requests.calls.abort()
+                }
+                this.requests.calls = request
+              }
+            }).then((result) => result).then(result => {
               result = result.data;
               this.pagination = {
                             current_page: result.meta.current_page,
