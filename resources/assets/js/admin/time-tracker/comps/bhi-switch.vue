@@ -1,6 +1,6 @@
 <template>
     <span>
-        <ul class="nav nav-pills bhi-nav" v-if="isBhi && isCcm">
+        <ul class="nav nav-pills bhi-nav" v-if="(isBhi && isCcm) || isManualOveride">
             <li class="nav-item" :class="{ active: !isBhi }">
                 <a class="nav-link" data-toggle="tab" role="tab" title="switch to CCM mode" @click="setBhi(false)">CCM</a>
             </li>
@@ -26,7 +26,7 @@
         },
         data () {
             return {
-                
+                isManualOveride: false
             }
         },
         components: {
@@ -40,6 +40,8 @@
         mounted () {
             console.log('isBhi', this.isBhi)
             console.log('isCcm', this.isCcm)
+
+
         }
     }
 </script>

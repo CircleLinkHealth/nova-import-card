@@ -11,9 +11,9 @@
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
                     :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
-                    <br><br>
-                <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"></bhi-switch>
             </span>
+            <br><br>
+            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"></bhi-switch>
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
         </span>
@@ -257,15 +257,22 @@
                 })
 
                 EventBus.$on('tracker:bhi:switch', (mode = false) => {
-                    this.info.isBehavioral = mode
-                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                        this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                    if (this.info.isBehavioral != mode) {
+                        this.info.isBehavioral = mode
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                            this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                        }
+                        console.log('tracker:bhi', mode)
                     }
                 })
 
                 Event.$on('careplan:bhi', ({ isCcm, isBehavioral }) => {
                     this.info.isBehavioral = isBehavioral
                     this.info.isCcm = isCcm
+                    
+                    if (isBehavioral && !isCcm) {
+                        EventBus.$emit('tracker:bhi:switch', true)
+                    }
                 })
 
                 this.createSocket()
