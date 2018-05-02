@@ -77,6 +77,7 @@ class CallRepository
     {
         return User::ofType('participant')
                    ->ofPractice($practiceId)
+                   ->with('carePlan')
                    ->whereDoesntHave('inboundScheduledCalls');
     }
 

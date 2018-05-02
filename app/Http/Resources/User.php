@@ -42,6 +42,7 @@ class User extends Resource
             'patient_summaries' => PatientMonthlySummary::collection($this->whenLoaded('patientSummaries')),
             'provider_info'     => ProviderInfo::make($this->whenLoaded('providerInfo')),
             'primary_practice'  => Practice::make($this->whenLoaded('primaryPractice')),
+            'status'            => optional($this->carePlan)->status
         ];
     }
 }
