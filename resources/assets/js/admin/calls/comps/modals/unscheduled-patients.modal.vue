@@ -35,8 +35,8 @@
 <script>
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
-    import { rootUrl } from '../../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../../app.config'
+    import {Event} from 'vue-tables-2'
 
     export default {
         name: 'unscheduled-patients-modal',
@@ -83,7 +83,7 @@
             getPatients() {
                 if (this.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-scheduled-calls`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-inbound-calls`)).then(response => {
                         this.loaders.patients = false
                         this.patients = (response.data.data || []).map(patient => {
                             patient.name = patient.full_name
