@@ -335,6 +335,10 @@ class PatientSummaryEloquentRepository
 
         $summary->save();
 
+        if ($summary->approved && $summary->rejected) {
+            $summary->approved = $summary->rejected = false;
+        }
+
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
                    ->update([
