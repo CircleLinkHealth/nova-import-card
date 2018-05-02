@@ -33,7 +33,7 @@
             </div>
             <br>
             <div>
-                <p style="color:green;font-size:20px;">You can find the Note ID by opening a note and copying the number at the end of the Note's URL. <br>
+                <p style="color:green;font-size:130%;">You can find the Note ID by opening a note and copying the number at the end of the Note's URL. <br>
                     For example, the note ID is 28018 for the note with the following URL: <strong>http://www.careplanmanager.com/manage-patients/326/notes/view/28018</strong></p>
             </div>
 
