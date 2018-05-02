@@ -387,7 +387,7 @@ class SchedulerService
 
         foreach ($patients as $patient) {
 
-            if ( ! $patient->user_id) {
+            if ( ! $patient->user) {
                 continue;
             }
 
