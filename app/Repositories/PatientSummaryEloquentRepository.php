@@ -321,7 +321,7 @@ class PatientSummaryEloquentRepository
                              || $summary->no_of_successful_calls == 0
                              || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
-        if (($summary->rejected || $summary->approved) && $summary->actor_id) {
+        if ($summary->rejected || $summary->approved || $summary->actor_id) {
             $summary->needs_qa = false;
         }
 
