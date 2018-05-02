@@ -386,6 +386,11 @@ class SchedulerService
         $reprocess_bucket = [];
 
         foreach ($patients as $patient) {
+
+            if ( ! $patient->user_id) {
+                continue;
+            }
+
             //Get time for last note entered
             $last_note_time = Activity::whereType('Patient Note Creation')
                                       ->wherePatientId($patient->user_id)
