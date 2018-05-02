@@ -100,9 +100,15 @@ class DetermineTargetPatientEligibility extends Command
                                          'city' => $demos['city'] ?? null,
                                          'zip' => $demos['zip'] ?? null,
 
-                                         'primary_insurance' => array_key_exists(0, $insurances) ? $insurances[0]['insurancetype'] . ': ' . $insurances[0]['insuranceplanname'] : '',
-                                         'secondary_insurance' => array_key_exists(1, $insurances) ? $insurances[1]['insurancetype'] . ': ' . $insurances[1]['insuranceplanname'] : '',
-                                         'tertiary_insurance' => array_key_exists(2, $insurances) ? $insurances[2]['insurancetype'] . ': ' . $insurances[2]['insuranceplanname'] : '',
+                                         'primary_insurance'   => array_key_exists(0, $insurances)
+                                             ? $insurances[0]['insurancetype'] ?? $insurances[0]['insuranceplanname']
+                                             : '',
+                                         'secondary_insurance' => array_key_exists(1, $insurances)
+                                             ? $insurances[1]['insurancetype'] ?? $insurances[1]['insuranceplanname']
+                                             : '',
+                                         'tertiary_insurance'  => array_key_exists(2, $insurances)
+                                             ? $insurances[2]['insurancetype'] ?? $insurances[2]['insuranceplanname']
+                                             : '',
 
                                          'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
                                          'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
