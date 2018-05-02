@@ -418,64 +418,6 @@ class ProcessEligibilityService
     }
 
     /**
-     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
-     * Returns false if there's no errors, and an array of errors if errors are found.
-     *
-     * @param array $columnNames
-     *
-     * @return array|bool
-     */
-    public function validationErrorsForSingleCsvColumnNames(array $columnNames)
-    {
-        $toValidate = [];
-        $rules      = [];
-
-        foreach ($columnNames as $cn) {
-            $toValidate[$cn] = $cn;
-        }
-
-        foreach ($this->getSingleCsvRequiredFields() as $name) {
-            $rules[$name] = 'required|filled|same:' . $name;
-        }
-
-        $validator = \Validator::make($toValidate, $rules);
-
-        return $validator->passes()
-            ? false
-            : $validator->errors()->all();
-    }
-
-    public function getSingleCsvRequiredFields()
-    {
-        return [
-            'mrn',
-            'last_name',
-            'first_name',
-            'dob',
-            'gender',
-            'lang',
-            'referring_provider_name',
-            'cell_phone',
-            'home_phone',
-            'other_phone',
-            'primary_phone',
-            'email',
-            'street',
-            'street2',
-            'city',
-            'state',
-            'zip',
-            'primary_insurance',
-            'secondary_insurance',
-            'tertiary_insurance',
-            'last_encounter',
-            'problems_string',
-            'allergies_string',
-            'medications_string',
-        ];
-    }
-
-    /**
      * @param EligibilityBatch $batch
      *
      * @throws \Exception
@@ -494,6 +436,8 @@ class ProcessEligibilityService
 
         return $collection
             ->map(function ($patient) use ($batch) {
+                $patient = $this->transformCsvRow($patient);
+
                 $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
 
                 $job = EligibilityJob::whereHash($hash)->first();
@@ -516,5 +460,41 @@ class ProcessEligibilityService
 
                 return false;
             })->filter()->values();
+    }
+
+    private function transformCsvRow($patient)
+    {
+        if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
+            //{"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
+            $problems = [];
+            $i        = 1;
+
+            do {
+                if ( ! array_key_exists("problem_$i", $patient)) {
+                    break;
+                }
+
+                if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
+                    $problems[] = [
+                        'Name'        => $patient["problem_$i"],
+                        'CodeType'    => '',
+                        'Code'        => '',
+                        'AddedDate'   => '',
+                        'ResolveDate' => '',
+                        'Status'      => '',
+                    ];
+                }
+
+                unset($patient["problem_$i"]);
+
+                $i++;
+            } while (true);
+
+            $patient['problems'] = json_encode([
+                'Problems' => $problems,
+            ]);
+        }
+
+        return $patient;
     }
 }

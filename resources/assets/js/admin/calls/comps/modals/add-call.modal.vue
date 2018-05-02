@@ -103,10 +103,10 @@
 </template>
 
 <script>
-    import { Event } from 'vue-tables-2'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
-    import { rootUrl } from '../../../../app.config'
+    import {rootUrl} from '../../../../app.config'
     import moment from 'moment'
     import notifications from '../../../../components/notifications'
 
@@ -195,7 +195,7 @@
             getUnscheduledPatients() {
                 if (this.formData.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-scheduled-calls`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-inbound-calls`)).then(response => {
                         this.loaders.patients = false
                         const pagination = response.data
                         this.patients = ((pagination || {}).data || []).map(patient => {

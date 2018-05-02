@@ -64,6 +64,24 @@ class PatientSummaryEloquentRepository
         }
 
         if ($this->lacksProblems($summary)) {
+            $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
+                                                 ->orderBy('month_year', 'desc')
+                                                 ->where('month_year', '<=',
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth()->toDateString())
+                                                 ->whereApproved(true)
+                                                 ->first();
+
+            if ($olderSummary) {
+                $summary->problem_1              = $olderSummary->problem_1;
+                $summary->problem_2              = $olderSummary->problem_2;
+                $summary->billable_problem1      = $olderSummary->billable_problem1;
+                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
+                $summary->billable_problem2      = $olderSummary->billable_problem2;
+                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+            }
+        }
+
+        if ($this->lacksProblems($summary)) {
             $summary = $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', '=', true));
         }
 
@@ -316,6 +334,10 @@ class PatientSummaryEloquentRepository
         }
 
         $summary->save();
+
+        if ($summary->approved && $summary->rejected) {
+            $summary->approved = $summary->rejected = false;
+        }
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))

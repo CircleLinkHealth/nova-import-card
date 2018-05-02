@@ -9,6 +9,7 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Practice;
 use App\Repositories\Cache\UserNotificationList;
 use App\Services\Cache\NotificationService;
+use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,7 +42,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
     public function handle(NotificationService $notificationService)
     {
         $names = PhoenixHeartName::where('processed', '=', false)
-                                 ->take(10)
+                                 ->take(30)
                                  ->get()
                                  ->keyBy('patient_id');
 
@@ -60,6 +61,22 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $problems = PhoenixHeartProblem::where('patient_id', '=', $patient->patient_id)->get();
             $patient  = collect($patient->toArray());
             $patient->put('problems', collect());
+            $patient->put('street', $patient['address_1']);
+            $patient->put('street2', $patient['address_2']);
+            $patient->put('mrn', $patient['patient_id']);
+
+            $patient->put('dob', $patient['dob']);
+            $patient->put('first_name', $patient['patient_first_name']);
+            $patient->put('last_name', $patient['patient_last_name']);
+            $patient->put('city', $patient['city']);
+            $patient->put('state', $patient['state']);
+            $patient->put('zip', $patient['zip']);
+            $patient->put('primary_phone', $patient['phone_1']);
+            $patient->put('cell_phone', $patient['phone_2']);
+            $patient->put('home_phone', $patient['phone_3']);
+
+            $patient->put('referring_provider_name',
+                $patient['provider_last_name'] . ' ' . $patient['provider_first_name']);
 
             foreach ($problems as $problem) {
                 if (str_contains($problem->code, ['-'])) {
@@ -72,11 +89,14 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                     $problemCode = $problem->code;
                 }
 
-                if ( ! $problemCode) {
+                if ( ! $problemCode && ! $problem->description) {
                     continue;
                 }
 
-                $patient['problems']->push($problemCode);
+                $patient['problems']->push(Problem::create([
+                    'name' => $problem->name,
+                    'code' => $problemCode,
+                ]));
             }
 
             //format insurances

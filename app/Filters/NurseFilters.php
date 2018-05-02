@@ -4,8 +4,8 @@ namespace App\Filters;
 
 
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class NurseFilters extends QueryFilters
 {
@@ -64,7 +64,7 @@ class NurseFilters extends QueryFilters
 
     /**
      * Get the states the nurse is licenced in.
-     * By default the and operator is selected, which menas that only nurses that include all states will be included.
+     * By default the and operator is selected, which means that only nurses that include all states will be included.
      *
      * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
      * @param string $operator Can 'and' or 'or'
