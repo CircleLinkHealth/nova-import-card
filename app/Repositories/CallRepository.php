@@ -15,15 +15,18 @@ use Carbon\Carbon;
 
 class CallRepository
 {
-    public function model() {
+    public function model()
+    {
         return app(Call::class);
     }
-    
-    public function count() {
+
+    public function count()
+    {
         return $this->model()->select('id', DB::raw('count(*) as total'))->count();
     }
-    
-    public function call($id) {
+
+    public function call($id)
+    {
         return $this->model()->findOrFail($id);
     }
 
@@ -42,12 +45,12 @@ class CallRepository
         }
 
         return $this->model()
-            ->where([
-                ['inbound_cpm_id', '=', $patientUserId],
-                ['status', '!=', 'scheduled'],
-            ])
-            ->ofMonth($monthYear)
-            ->count();
+                    ->where([
+                        ['inbound_cpm_id', '=', $patientUserId],
+                        ['status', '!=', 'scheduled'],
+                    ])
+                    ->ofMonth($monthYear)
+                    ->count();
     }
 
     /**
@@ -65,12 +68,12 @@ class CallRepository
         }
 
         return $this->model()
-            ->where([
-                ['inbound_cpm_id', '=', $patientUserId],
-            ])
-            ->ofStatus('reached')
-            ->ofMonth($monthYear)
-            ->count();
+                    ->where([
+                        ['inbound_cpm_id', '=', $patientUserId],
+                    ])
+                    ->ofStatus('reached')
+                    ->ofMonth($monthYear)
+                    ->count();
     }
 
     public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate)
@@ -83,5 +86,12 @@ class CallRepository
     public function scheduledCalls()
     {
         return $this->model()->scheduled();
+    }
+
+    public function patientsWithoutAnyInboundCalls($practiceId)
+    {
+        return User::ofType('participant')
+                   ->ofPractice($practiceId)
+                   ->whereDoesntHave('inboundCalls');
     }
 }

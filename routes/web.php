@@ -292,7 +292,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses');
 
             Route::get('{practiceId}/patients/without-scheduled-calls', [
-                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
             ]);
         });
