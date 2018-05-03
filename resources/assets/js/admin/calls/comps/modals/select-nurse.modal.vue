@@ -127,27 +127,30 @@
             getNurses() {
                 return this.$nursePromise = Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
                     return this.cache().get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
-                        const nurses = ((response.data || {}).data || []).map(nurse => {
+                        const nurses = (response.data || []).map(nurse => {
                             nurse.user = nurse.user || {}
                             return {
                                 id: nurse.user_id,
-                                name: nurse.user.display_name,
+                                name: nurse.user.display_name + ' ' + nurse.user.suffix,
                                 email: nurse.user.email,
                                 status: nurse.status
                             }
                         })
                         const patient = this.patients.find(patient => patient.id === id)
+                        console.log('select-nurse:find-patient', id, patient, nurses)
                         if (patient) {
-                            patient.nurses = nurses
+                            patient.nurses = nurses.filter(nurse => nurse.id != patient.nurse.id)
                             return patient.nurses
                         }
                         return []
                     }).catch((err) => {
-                        console.error("error: get-available-nurses", id, err)
+                        console.error("error: get-patient-available-nurses", id, err)
                     })
                 })).then(results => {
                     this.$nursePromise = false
                     return (results || []).reduce((a, b) => a.concat(b), [])
+                }).catch((err) => {
+                    console.error("error: get-available-nurses", err)
                 })
             }
         },
@@ -169,9 +172,7 @@
                     }
                 }))
                 console.log('select-nurse:patients', this.patients)
-                this.getNurses().then((nurses) => {
-                    this.nurses = nurses
-                })
+                this.getNurses()
             }
         },
         mounted() {
