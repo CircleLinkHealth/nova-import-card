@@ -31,7 +31,7 @@
                   <v-select class="form-control" name="inbound_cpm_id" v-model="selectedPatientData" 
                     :options="patientsForSelect" :on-change="changePatient" required></v-select>
                   <label>
-                    <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="getPatients"> <small>Show Only Unscheduled Patients</small>
+                    <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="changeUnscheduledPatients"> <small>Show Only Unscheduled Patients</small>
                   </label>
                   <loader v-if="loaders.patients"></loader>
                   <div class="alert alert-warning" v-if="selectedPatientIsInDraftMode">Patient is in draft mode</div>
@@ -210,6 +210,11 @@
               }
             }
           },
+          changeUnscheduledPatients (e) {
+            if (e && e.target) {
+              return e.target.checked ? this.getUnscheduledPatients() : this.getPatients()
+            }
+          },
           getPractices() {
               this.loaders.practices = true
               this.axios.get(rootUrl(`api/practices`)).then(response => {
@@ -235,22 +240,21 @@
                     );
           },
           getUnscheduledPatients() {
-              if (this.formData.practiceId) {
-                  this.loaders.patients = true
-                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-inbound-calls`)).then(response => {
-                      this.loaders.patients = false
-                      const pagination = response.data
-                      this.patients = ((pagination || {}).data || []).map(patient => {
-                          patient.name = patient.full_name
-                          return patient;
-                      }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                      console.log('add-call-get-patients', pagination)
-                  }).catch(err => {
-                      this.loaders.patients = false
-                      this.errors.patients = err.message
-                      console.error('add-call-get-patients', err)
-                  })
-              }
+              this.loaders.patients = true
+              const practice_addendum = this.formData.practiceId ? `practices/${this.formData.practiceId}/` : '';
+              this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+                  this.loaders.patients = false
+                  const pagination = response.data
+                  this.patients = ((pagination || {}).data || []).map(patient => {
+                      patient.name = patient.full_name
+                      return patient;
+                  }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
+                  console.log('add-call-get-patients', pagination)
+              }).catch(err => {
+                  this.loaders.patients = false
+                  this.errors.patients = err.message
+                  console.error('add-call-get-patients', err)
+              })
           },
           getPracticePatients() {
               if (this.formData.practiceId) {
