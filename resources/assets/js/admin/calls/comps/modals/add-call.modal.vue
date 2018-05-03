@@ -115,7 +115,7 @@
                               nurseId: null,
                               date: moment(new Date()).format('YYYY-MM-DD'),
                               startTime: '09:00',
-                              endTime: '09:10',
+                              endTime: '17:00',
                               text: null
                             }
 
