@@ -61,7 +61,7 @@
                 practices: [],
                 patients: [],
                 practiceId: null,
-                columns: ['id', 'name', 'city', 'state'],
+                columns: ['id', 'name'],
                 options: {
                     filterable: false
                 }
@@ -83,7 +83,7 @@
             getPatients() {
                 if (this.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-inbound-calls`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
                         this.patients = (response.data.data || []).map(patient => {
                             patient.name = patient.full_name
