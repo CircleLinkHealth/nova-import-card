@@ -110,27 +110,12 @@ class NurseFilters extends QueryFilters
      */
     public function canCallPatient($patientUserId)
     {
-        $patient = User::with('patientInfo.contactWindows')
+        $user = User::with('patientInfo.contactWindows')
                        ->where('id', $patientUserId)
                        ->first();
 
-        //check state
-        $this->states($patient->state);
-
-        $patientContactWindows = $patient->patientInfo->contactWindows->map(function ($window) {
-            //check schedule
-            $this->windows(function ($q) use ($window) {
-                $q->orWhere([
-                    ['day_of_week', '=', $window->day_of_week],
-                    ['window_time_start', '<=', $window->window_time_start],
-                    ['window_time_end', '>=', $window->window_time_end],
-                ]);
-            });
-
-            //check if the nurse is on holiday
-            $this->holidays(function ($q) use ($window) {
-                $q->orWhere('date', '!=', carbonGetNext($window->day_of_week)->toDateString());
-            });
+        return $this->builder->whereHas('user', function ($u) use ($user) {
+            $u->where('program_id', $user->program_id);
         });
     }
 
