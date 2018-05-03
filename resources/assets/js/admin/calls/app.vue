@@ -315,7 +315,8 @@
                 id: nurse.user_id,
                 nurseId: nurse.id,
                 display_name: ((nurse.user || {}).display_name || ''),
-                states: nurse.states
+                states: nurse.states,
+                practiceId: (nurse.user || {}).program_id
               }
             })
             console.log('calls:nurses', pagination)
@@ -394,8 +395,11 @@
                     'Call Time Start': call.window_start,
                     'Call Time End': call.window_end,
                     state: call.getPatient().state,
+                    practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
+                      return $vm.nurses.filter(nurse => nurse.practiceId == (call.getPatient() || {}).getPractice().id)
+                                      .filter(n => !!n.display_name)
+                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
                     },
                     loaders: {
                       nextCall: false,
