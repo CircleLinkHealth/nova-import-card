@@ -158,14 +158,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Social phobia, unspecified',
                     'State of emotional shock and stress, unspecified'
                 ],
-                'instruction' => "- Try to identify the areas of stress in your life: they may not be obvious, like:\n\n
-                    \t- Overload: feeling you have too many responsibilities and cannot take care of everything at once\n
-                    \t- Helplessness: feeling that you cannot solve your problems\n
-                    \t- Daily hassles of life: vehicle trouble, traffic, bills\n
-                    \t- Major life challenges: both good and bad\n\n
-                    - Eating a healthy diet reduces stress: More vegetables and less sugary or fried foods.\n\n
-                    - Exercise at least three times a week. Even moderate exercise will help you feel better. \n\n
-                    - Let us know if you have trouble breathing or chest pain, severe headaches, bad thoughts, or irregular heartbeats.
+                'instruction' => "- Try to identify the areas of stress in your life: they may not be obvious, like:\n\n\t- Overload: feeling you have too many responsibilities and cannot take care of everything at once\n\t- Helplessness: feeling that you cannot solve your problems\n\t- Daily hassles of life: vehicle trouble, traffic, bills\n\t- Major life challenges: both good and bad\n\n- Eating a healthy diet reduces stress: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better. \n\n- Let us know if you have trouble breathing or chest pain, severe headaches, bad thoughts, or irregular heartbeats.
                 "
             ],
             'Psychosis & Schizophrenia' => [
@@ -190,14 +183,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Undifferentiated schizophrenia',
                     'Unspecified psychosis not due to a substance or known physiological condition'
                 ],
-                'instruction' => "- Avoid drugs that are known to cause you trouble.\n\n
-                - Do not stop your medications on your own.\n\n
-                - Avoid narcotics and alcohol.\n\n
-                - Focus on and schedule meaningful activities.\n\n
-                - Spend time and gain support from staff, family and other supportive people\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help.\n\n
-                - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.
+                'instruction' => "- Avoid drugs that are known to cause you trouble.\n\n- Do not stop your medications on your own.\n\n- Avoid narcotics and alcohol.\n\n- Focus on and schedule meaningful activities.\n\n- Spend time and gain support from staff, family and other supportive people\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.
                 "
             ],
             'Substance Abuse' => [
@@ -450,11 +436,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal delirium',
                     'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal with perceptual disturbances',
                 ],
-                'instruction' => "- Develop alternative behaviours to drug use, such as exercise and scheduling meaningful activities you enjoy.\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
-                - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n
-                - Help is just a phone call away: 1-800-662-HELP
+                'instruction' => "- Develop alternative behaviours to drug use, such as exercise and scheduling meaningful activities you enjoy.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n- Help is just a phone call away: 1-800-662-HELP
                 "
             ],
             'Alcoholism' => [
@@ -496,12 +478,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Alcohol use, unspecified with intoxication delirium',
                     'Alcohol use, unspecified with other alcohol-induced disorder'
                 ],
-                'instruction' => "- Sobriety is achievable.\n\n
-                    - Develop alternative behaviours to alcohol use, such as exercise and scheduling meaningful activities you enjoy.\n\n
-                    - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                    - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
-                    - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n
-                    - Seek immediate medical assistance if you have abdominal pain, fever over 100.5, repeated vomiting or vomiting blood.
+                'instruction' => "- Sobriety is achievable.\n\n- Develop alternative behaviours to alcohol use, such as exercise and scheduling meaningful activities you enjoy.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n- Seek immediate medical assistance if you have abdominal pain, fever over 100.5, repeated vomiting or vomiting blood.
                 "
             ],
             'Bipolar' => [
@@ -543,10 +520,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Manic episode, unspecified',
                     'Other bipolar disorder'
                 ],
-                'instruction' => "- Bipolar is one of most treatable conditions.\n\n
-                - Do NOT discontinue medications when you feel better, always consult with your doctor before changing your care plan.\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
+                'instruction' => "- Bipolar is one of most treatable conditions.\n\n- Do NOT discontinue medications when you feel better, always consult with your doctor before changing your care plan.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
                 "
             ]
         ];
