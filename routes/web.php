@@ -193,6 +193,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
+
+            Route::get('without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as'   => 'patients.without-scheduled-calls',
+            ]);
+
+            Route::get('without-inbound-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'as'   => 'patients.without-inbound-calls',
+            ]);
+
             Route::group([
                 'prefix' => '{userId}'
             ], function () {
@@ -294,6 +305,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/patients/without-inbound-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
                 'as'   => 'practice.patients.without-inbound-calls',
+            ]);
+
+            Route::get('{practiceId}/patients/without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as'   => 'practice.patients.without-scheduled-calls',
             ]);
         });
 
