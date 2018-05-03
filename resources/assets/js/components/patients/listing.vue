@@ -12,6 +12,9 @@
             <template slot="name" scope="props">
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
             </template>
+            <template slot="provider" scope="props">
+                <div>{{ props.row.provider_name }}</div>
+            </template>
             <template slot="careplanStatus" scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
                     {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
@@ -210,7 +213,7 @@
                 this.loaders.providers = true
                 return this.axios.get(rootUrl('api/providers/list')).then(response => {
                     console.log('patient-list:providers', response.data)
-                    this.providersForSelect = (response.data || []).map(provider => ({ id: provider.name, text: provider.name })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
+                    this.providersForSelect = (response.data || []).map(provider => ({ id: provider.id, text: provider.name })).filter(provider => !!provider.text).sort((a, b) => a.text < b.text ? -1 : 1)
                     this.loaders.providers = false
                     return this.providersForSelect
                 }).catch(err => {
@@ -261,7 +264,8 @@
                         patient.name = (patient.name || '').trim()
                         patient.firstName = patient.name.split(' ')[0]
                         patient.lastName = patient.name.split(' ').slice(1).join(' ')
-                        patient.provider = patient.billing_provider_name
+                        patient.provider = patient.billing_provider_id
+                        patient.provider_name = patient.billing_provider_name
                         patient.ccmStatus = (patient.patient_info || {}).ccm_status || 'none'
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
@@ -276,14 +280,14 @@
                         return patient
                     }).map(patient => {
                         const loadColumnList = (list = [], item = null) => {
-                            if ((item || '').trim() && !list.find(orb => orb.text == item)) {
+                            if ((item || '').toString().trim() && !list.find(orb => orb.text == item)) {
                                 list.push({
                                     id: item,
                                     text: item
                                 })
                             }
                         }
-                        loadColumnList(this.options.listColumns.provider, patient.provider)
+                        // loadColumnList(this.options.listColumns.provider, patient.provider)
                         loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
                         loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
                         loadColumnList(this.options.listColumns.program, patient.program)
