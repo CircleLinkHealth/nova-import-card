@@ -137,7 +137,7 @@
         return {
           pagination: null,
           selected: false,
-          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           nurses: [],
           loaders: {
