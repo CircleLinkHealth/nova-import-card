@@ -30,23 +30,15 @@ class CallObserver
                 $date = Carbon::parse($call->updated_at);
 
                 $summary = PatientMonthlySummary::where('patient_id', $patient->id)
-                                                ->where('month_year', $date->toDateString())
+                                                ->where('month_year', $date->startOfMonth())
                                                 ->first();
 
-                $total = Call::where(function ($query) use ($patient) {
-                    $query->where('outbound_cpm_id', $patient->id)
-                        ->orWhere('inbound_cpm_id', $patient->id);
-                })
-                    ->where('updated_at', '>=', $date->startOfMonth())
-                    ->where('updated_at', '<=', $date->endOfMonth())
-                    ->whereIn('status', ['reached', 'not reached'])
-                    ->get();
 
-                $totalReached = $total->where('status', 'reached')->count();
 
-                $summary->no_of_calls = $total->count();
-                $summary->no_of_successful_calls = $totalReached;
-                $summary->save();
+            $ccmTime = $patient->getCcmTimeAttribute();
+
+            $summary->updateMonthlyReportForPatient($patient, $ccmTime);
+
         }
 
     }
