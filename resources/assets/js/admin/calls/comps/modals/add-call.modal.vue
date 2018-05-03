@@ -19,10 +19,8 @@
                   Practice
                 </div>
                 <div class="col-sm-7">
-                  <select class="form-control" v-model="formData.practiceId" @change="changePractice">
-                    <option :value="null">Unassigned</option>
-                    <option v-for="(practice, index) in practices" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
-                  </select>
+                  <v-select class="form-control" v-model="selectedPracticeData" 
+                    :options="practicesForSelect" :on-change="changePractice"></v-select>
                 </div>
               </div>
               <div class="row form-group">
@@ -110,6 +108,8 @@
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
 
+    const UNASSIGNED_VALUE = { label: 'Unassigned', value: null }
+
     const defaultFormData = {
                               practiceId: null,
                               patientId: null,
@@ -159,7 +159,8 @@
                 patients: [],
                 nurses: [],
                 formData: Object.assign({}, defaultFormData),
-                selectedPatientData: null,
+                selectedPatientData: UNASSIGNED_VALUE,
+                selectedPracticeData: UNASSIGNED_VALUE,
                 filters: {
                   showUnscheduledPatients: false
                 },
@@ -171,12 +172,17 @@
             const selectedPatient = this.selectedPatient()
             return this.nurses.filter(nurse => nurse.states.indexOf((selectedPatient).state) >= 0)
           },
+          practicesForSelect () {
+            return [
+              UNASSIGNED_VALUE, 
+              ...this.practices.map(practice => ({
+                label: practice.display_name,
+                value: practice.id
+              }))]
+          },
           patientsForSelect () {
             return [
-              { 
-                label: 'Unassigned', 
-                value: null 
-              }, 
+              UNASSIGNED_VALUE, 
               ...this.patients.map(patient => ({
                 label: patient.name + ' (' + patient.id + ')',
                 value: patient.id
@@ -192,152 +198,166 @@
               this.formData.patientId = patient.value
               this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
               this.formData.practiceId = this.selectedPatient().program_id
-            }
-          },
-          getPractices() {
-                this.loaders.practices = true
-                this.axios.get(rootUrl(`api/practices`)).then(response => {
-                    this.loaders.practices = false
-                    this.practices = (response.data || []).sort((a, b) => {
-                      if (a.display_name < b.display_name) return -1;
-                      else if (a.display_name > b.display_name) return 1
-                      else return 0
-                    }).distinct(patient => patient.id)
-                    console.log('add-call-get-practices', response.data)
-                }).catch(err => {
-                    this.loaders.practices = false
-                    this.errors.practices = err.message
-                    console.error('add-call-get-practices', err)
-                })
-            },
-            getPatients() {
-              return !this.formData.practiceId ? 
-                      this.getAllPatients() : 
-                      (this.filters.showUnscheduledPatients ? 
-                        this.getUnscheduledPatients() : 
-                        this.getPracticePatients()
-                      );
-            },
-            getUnscheduledPatients() {
-                if (this.formData.practiceId) {
-                    this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-inbound-calls`)).then(response => {
-                        this.loaders.patients = false
-                        const pagination = response.data
-                        this.patients = ((pagination || {}).data || []).map(patient => {
-                            patient.name = patient.full_name
-                            return patient;
-                        }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                        console.log('add-call-get-patients', pagination)
-                    }).catch(err => {
-                        this.loaders.patients = false
-                        this.errors.patients = err.message
-                        console.error('add-call-get-patients', err)
-                    })
-                }
-            },
-            getPracticePatients() {
-                if (this.formData.practiceId) {
-                    this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
-                        this.loaders.patients = false
-                        this.patients = (response.data || []).map(patient => {
-                            patient.name = patient.full_name
-                            return patient;
-                        }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                        console.log('add-call-get-patients', response.data)
-                    }).catch(err => {
-                        this.loaders.patients = false
-                        this.errors.patients = err.message
-                        console.error('add-call-get-patients', err)
-                    })
-                }
-            },
-            getAllPatients() {
-              this.loaders.patients = true
-              this.cache().get(rootUrl(`api/patients?rows=all`)).then(response => {
-                  this.loaders.patients = false
-                  this.patients = (response.data || []).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                  console.log('add-call-get-patients', response.data)
-              }).catch(err => {
-                  this.loaders.patients = false
-                  this.errors.patients = err.message
-                  console.error('add-call-get-patients', err)
-              })
-            },
-            getNurses() {
-                if (this.formData.practiceId) {
-                    this.loaders.nurses = true
-                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/nurses`)).then(response => {
-                        this.loaders.nurses = false
-                        this.nurses = (response.data || []).map(nurse => {
-                            nurse.name = nurse.full_name
-                            return nurse;
-                        }).filter(nurse => nurse.name && nurse.name.trim() != '')
-                        console.log('add-call-get-nurses', this.nurses)
-                    }).catch(err => {
-                        this.loaders.nurses = false
-                        this.errors.nurses = err.message
-                        console.error('add-call-get-nurses', err)
-                    })
-                }
-            },
-            changePractice() {
-              this.getPatients()
-              this.getNurses()
-            },
-            submitForm(e) {
-              e.preventDefault();
-              const formData = {
-                inbound_cpm_id: this.formData.patientId,
-                outbound_cpm_id: this.formData.nurseId,
-                scheduled_date: this.formData.date,
-                window_start: this.formData.startTime,
-                window_end: this.formData.endTime,
-                attempt_note: this.formData.text
-              }
-              const patient = this.patients.find(patient => patient.id == this.formData.patientId)
-              if (patient) {
-                if (patient.status === 'draft') {
-                  Event.$emit('notifications-add-call-modal:create', { 
-                    text: `Call not allowed: This patient’s care plan is in draft mode. QA the care plan before scheduling a call`, 
-                    type: 'error'
-                  })
-                }
-                else {
-                  this.loaders.submit = true
-                  this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
-                    if (response) {
-                      this.loaders.submit = false
-                      this.formData = Object.create(defaultFormData)
-                      const call = response.data
-                      Event.$emit("modal-add-call:hide")
-                      Event.$emit('calls:add', call)
-                      console.log('calls:add', response.data)
-                      Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
-                    }
-                    else {
-                      throw new Error('Could not create call. Patient already has a scheduled call')
-                    }
-                  }).catch(err => {
-                    this.errors.submit = err.message
-                    this.loaders.submit = false
-                    console.error('add-call', err)
-                    Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
-                  })
+              
+              const practice = this.practices.find(practice => practice.id === this.formData.practiceId)
+              if (practice) {
+                if (!this.selectedPracticeData || this.selectedPracticeData.value !== practice.id) {
+                  this.selectedPracticeData = { label: practice.display_name, value: practice.id }
                 }
               }
               else {
+                this.selectedPracticeData = UNASSIGNED_VALUE
+              }
+            }
+          },
+          getPractices() {
+              this.loaders.practices = true
+              this.axios.get(rootUrl(`api/practices`)).then(response => {
+                  this.loaders.practices = false
+                  this.practices = (response.data || []).sort((a, b) => {
+                    if (a.display_name < b.display_name) return -1;
+                    else if (a.display_name > b.display_name) return 1
+                    else return 0
+                  }).distinct(patient => patient.id)
+                  console.log('add-call-get-practices', response.data)
+              }).catch(err => {
+                  this.loaders.practices = false
+                  this.errors.practices = err.message
+                  console.error('add-call-get-practices', err)
+              })
+          },
+          getPatients() {
+            return !this.formData.practiceId ? 
+                    this.getAllPatients() : 
+                    (this.filters.showUnscheduledPatients ? 
+                      this.getUnscheduledPatients() : 
+                      this.getPracticePatients()
+                    );
+          },
+          getUnscheduledPatients() {
+              if (this.formData.practiceId) {
+                  this.loaders.patients = true
+                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-inbound-calls`)).then(response => {
+                      this.loaders.patients = false
+                      const pagination = response.data
+                      this.patients = ((pagination || {}).data || []).map(patient => {
+                          patient.name = patient.full_name
+                          return patient;
+                      }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
+                      console.log('add-call-get-patients', pagination)
+                  }).catch(err => {
+                      this.loaders.patients = false
+                      this.errors.patients = err.message
+                      console.error('add-call-get-patients', err)
+                  })
+              }
+          },
+          getPracticePatients() {
+              if (this.formData.practiceId) {
+                  this.loaders.patients = true
+                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
+                      this.loaders.patients = false
+                      this.patients = (response.data || []).map(patient => {
+                          patient.name = patient.full_name
+                          return patient;
+                      }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
+                      console.log('add-call-get-patients', response.data)
+                  }).catch(err => {
+                      this.loaders.patients = false
+                      this.errors.patients = err.message
+                      console.error('add-call-get-patients', err)
+                  })
+              }
+          },
+          getAllPatients() {
+            this.loaders.patients = true
+            this.cache().get(rootUrl(`api/patients?rows=all`)).then(response => {
+                this.loaders.patients = false
+                this.patients = (response.data || []).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
+                console.log('add-call-get-patients', response.data)
+            }).catch(err => {
+                this.loaders.patients = false
+                this.errors.patients = err.message
+                console.error('add-call-get-patients', err)
+            })
+          },
+          getNurses() {
+              if (this.formData.practiceId) {
+                  this.loaders.nurses = true
+                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/nurses`)).then(response => {
+                      this.loaders.nurses = false
+                      this.nurses = (response.data || []).map(nurse => {
+                          nurse.name = nurse.full_name
+                          return nurse;
+                      }).filter(nurse => nurse.name && nurse.name.trim() != '')
+                      console.log('add-call-get-nurses', this.nurses)
+                  }).catch(err => {
+                      this.loaders.nurses = false
+                      this.errors.nurses = err.message
+                      console.error('add-call-get-nurses', err)
+                  })
+              }
+          },
+          changePractice(practice) {
+            if (practice) {
+              this.selectedPatientData = UNASSIGNED_VALUE
+              this.formData.practiceId = practice.value
+              this.getPatients()
+              this.getNurses()
+            }
+          },
+          submitForm(e) {
+            e.preventDefault();
+            const formData = {
+              inbound_cpm_id: this.formData.patientId,
+              outbound_cpm_id: this.formData.nurseId,
+              scheduled_date: this.formData.date,
+              window_start: this.formData.startTime,
+              window_end: this.formData.endTime,
+              attempt_note: this.formData.text
+            }
+            const patient = this.patients.find(patient => patient.id == this.formData.patientId)
+            if (patient) {
+              if (patient.status === 'draft') {
                 Event.$emit('notifications-add-call-modal:create', { 
-                  text: `Patient not found`, 
-                  type: 'warning'
+                  text: `Call not allowed: This patient’s care plan is in draft mode. QA the care plan before scheduling a call`, 
+                  type: 'error'
                 })
               }
-            },
-            showUnscheduledPatients () {
-              Event.$emit('modal-add-call:hide')
-              Event.$emit('modal-unscheduled-patients:show')
+              else {
+                this.loaders.submit = true
+                this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
+                  if (response) {
+                    this.loaders.submit = false
+                    this.formData = Object.create(defaultFormData)
+                    const call = response.data
+                    Event.$emit("modal-add-call:hide")
+                    Event.$emit('calls:add', call)
+                    console.log('calls:add', response.data)
+                    Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+                  }
+                  else {
+                    throw new Error('Could not create call. Patient already has a scheduled call')
+                  }
+                }).catch(err => {
+                  this.errors.submit = err.message
+                  this.loaders.submit = false
+                  console.error('add-call', err)
+                  Event.$emit('notifications-add-call-modal:create', { text: err.message, type: 'error' })
+                })
+              }
             }
+            else {
+              Event.$emit('notifications-add-call-modal:create', { 
+                text: `Patient not found`, 
+                type: 'warning'
+              })
+            }
+          },
+          showUnscheduledPatients () {
+            Event.$emit('modal-add-call:hide')
+            Event.$emit('modal-unscheduled-patients:show')
+          }
         },
         mounted() {
           this.getPractices()
