@@ -11,7 +11,7 @@
                     <br>
                     <input type="submit" class="btn btn-success" value="Create Careplan(s)" name="submit">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <a href="{{route('view.files.ready.to.import')}}" class="btn btn-default">View Imported CCDAs</a>
+                    <a href="{{route('import.ccd.remix')}}" class="btn btn-default">View Imported CCDAs</a>
                 </div>
             </form>
         </div>
