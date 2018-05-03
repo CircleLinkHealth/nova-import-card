@@ -78,7 +78,7 @@ class ImportCsvPatientList implements ShouldQueue
             $this->createTabularMedicalRecordAndImport($row);
         }
 
-        $url = url('view.files.ready.to.import');
+        $url = url('import.ccd.remix');
 
         sendSlackMessage('#background-tasks',
             "Queued job Import CSV for {$this->practice->display_name} completed! Visit $url.");

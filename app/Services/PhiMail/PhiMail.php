@@ -291,7 +291,7 @@ class PhiMail implements DirectMail
             return;
         }
 
-        $link = route('view.files.ready.to.import');
+        $link = route('import.ccd.remix');
 
         sendSlackMessage(
             '#ccd-file-status',
