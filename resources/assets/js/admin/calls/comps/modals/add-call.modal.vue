@@ -197,12 +197,9 @@
           selectedPatient () {
             return (this.patients.find(patient => patient.id === this.formData.patientId) || {})
           },
-          changePatient (patient) {
-            if (patient) {
-              this.formData.patientId = patient.value
-              this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
-              this.formData.practiceId = this.selectedPatient().program_id
-              
+          setPractice (practiceId) {
+            if (practiceId) {
+              this.formData.practiceId = practiceId
               const practice = this.practices.find(practice => practice.id === this.formData.practiceId)
               if (practice) {
                 if (!this.selectedPracticeData || this.selectedPracticeData.value !== practice.id) {
@@ -214,9 +211,17 @@
               }
             }
           },
+          changePatient (patient) {
+            if (patient) {
+              this.formData.patientId = patient.value
+              this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
+              
+              this.setPractice(this.selectedPatient().program_id)
+            }
+          },
           changePractice(practice) {
             if (practice) {
-              this.selectedPatientData = UNASSIGNED_VALUE
+              if (this.formData.practiceId != practice.value) this.selectedPatientData = UNASSIGNED_VALUE
               this.formData.practiceId = practice.value
               this.getPatients()
               this.getNurses()
@@ -368,18 +373,24 @@
             Event.$emit('modal-unscheduled-patients:show')
           }
         },
-        mounted() {
+        created() {
           this.getPractices()
           this.getPatients()
+        },
+        mounted() {
+          
 
           Event.$on('add-call-modals:set', (data) => {
             if (data) {
               if (data.practiceId) {
-                this.formData.practiceId = data.practiceId
-                this.changePractice()
+                // this.setPractice(data.practiceId)
               }
               if (data.patientId) {
                 this.formData.patientId = data.patientId
+                console.log(data)
+                this.selectedPatientData = { label: data.patientName, value: data.patientId }
+                this.selectedPatientData.label = data.patientName
+                this.selectedPatientData.value = data.patientId
               }
             }
           })
