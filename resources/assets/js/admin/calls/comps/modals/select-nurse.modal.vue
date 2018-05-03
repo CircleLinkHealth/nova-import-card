@@ -131,7 +131,7 @@
                             nurse.user = nurse.user || {}
                             return {
                                 id: nurse.user_id,
-                                name: nurse.user.display_name + ' ' + nurse.user.suffix,
+                                name: nurse.user.display_name,
                                 email: nurse.user.email,
                                 status: nurse.status
                             }
