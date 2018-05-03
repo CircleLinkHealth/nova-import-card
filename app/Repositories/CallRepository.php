@@ -98,6 +98,9 @@ class CallRepository
     public function patientsWithoutAnyInboundCalls($practiceId)
     {
         return User::ofType('participant')
+                   ->whereHas('patientInfo', function ($q) {
+                       $q->enrolled();
+                   })
                    ->ofPractice($practiceId)
                    ->whereDoesntHave('inboundCalls');
     }
