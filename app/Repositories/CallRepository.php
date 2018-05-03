@@ -76,7 +76,7 @@ class CallRepository
                     ->count();
     }
 
-    public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate)
+    public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
     {
         $users = User::ofType('participant');
         if ($practiceId) {

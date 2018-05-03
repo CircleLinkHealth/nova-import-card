@@ -190,7 +190,7 @@
             getUnscheduledPatients() {
                 if (this.formData.practiceId) {
                     this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-inbound-calls`)).then(response => {
+                    this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients/without-scheduled-calls`)).then(response => {
                         this.loaders.patients = false
                         const pagination = response.data
                         this.patients = ((pagination || {}).data || []).map(patient => {
