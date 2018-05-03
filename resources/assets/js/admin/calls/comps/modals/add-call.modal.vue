@@ -16,10 +16,10 @@
             <div class="col-sm-12">
               <div class="row form-group">
                 <div class="col-sm-5">
-                  Practice <span class="required">*</span>
+                  Practice
                 </div>
                 <div class="col-sm-7">
-                  <select class="form-control" v-model="formData.practiceId" @change="changePractice" required>
+                  <select class="form-control" v-model="formData.practiceId" @change="changePractice">
                     <option :value="null">Unassigned</option>
                     <option v-for="(practice, index) in practices" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
                   </select>
@@ -30,10 +30,8 @@
                   Patient <span class="required">*</span>
                 </div>
                 <div class="col-sm-7">
-                  <select class="form-control" name="inbound_cpm_id" v-model="formData.patientId" @change="checkIfSelectedPatientIsInDraftMode" required>
-                    <option :value="null">Unassigned</option>
-                    <option v-for="(patient, index) in patients" :key="patient.id" :value="patient.id">{{patient.name}} ({{patient.id}})</option>
-                  </select>
+                  <v-select class="form-control" name="inbound_cpm_id" v-model="selectedPatientData" 
+                    :options="patientsForSelect" :on-change="changePatient" required></v-select>
                   <label>
                     <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="getPatients"> <small>Show Only Unscheduled Patients</small>
                   </label>
@@ -109,6 +107,8 @@
     import {rootUrl} from '../../../../app.config'
     import moment from 'moment'
     import notifications from '../../../../components/notifications'
+    import VueSelect from 'vue-select'
+    import VueCache from '../../../../util/vue-cache'
 
     const defaultFormData = {
                               practiceId: null,
@@ -122,9 +122,11 @@
 
     export default {
         name: 'add-call-modal',
+        mixins: [ VueCache ],
         components: {
             'modal': Modal,
             'loader': LoaderComponent,
+            'v-select': VueSelect,
             notifications
         },
         data() {
@@ -156,7 +158,8 @@
                 practices: [],
                 patients: [],
                 nurses: [],
-                formData: Object.create(defaultFormData),
+                formData: Object.assign({}, defaultFormData),
+                selectedPatientData: null,
                 filters: {
                   showUnscheduledPatients: false
                 },
@@ -167,14 +170,29 @@
           nursesForSelect () {
             const selectedPatient = this.selectedPatient()
             return this.nurses.filter(nurse => nurse.states.indexOf((selectedPatient).state) >= 0)
+          },
+          patientsForSelect () {
+            return [
+              { 
+                label: 'Unassigned', 
+                value: null 
+              }, 
+              ...this.patients.map(patient => ({
+                label: patient.name + ' (' + patient.id + ')',
+                value: patient.id
+              }))]
           }
         },
         methods: {
           selectedPatient () {
             return (this.patients.find(patient => patient.id === this.formData.patientId) || {})
           },
-          checkIfSelectedPatientIsInDraftMode () {
-            this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
+          changePatient (patient) {
+            if (patient) {
+              this.formData.patientId = patient.value
+              this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
+              this.formData.practiceId = this.selectedPatient().program_id
+            }
           },
           getPractices() {
                 this.loaders.practices = true
@@ -192,6 +210,14 @@
                     console.error('add-call-get-practices', err)
                 })
             },
+            getPatients() {
+              return !this.formData.practiceId ? 
+                      this.getAllPatients() : 
+                      (this.filters.showUnscheduledPatients ? 
+                        this.getUnscheduledPatients() : 
+                        this.getPracticePatients()
+                      );
+            },
             getUnscheduledPatients() {
                 if (this.formData.practiceId) {
                     this.loaders.patients = true
@@ -201,7 +227,7 @@
                         this.patients = ((pagination || {}).data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        }).distinct(patient => patient.id)
+                        }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
                         console.log('add-call-get-patients', pagination)
                     }).catch(err => {
                         this.loaders.patients = false
@@ -210,11 +236,7 @@
                     })
                 }
             },
-            getPatients() {
-              return this.filters.showUnscheduledPatients ? 
-                    this.getUnscheduledPatients() : this.getAllPatients();
-            },
-            getAllPatients() {
+            getPracticePatients() {
                 if (this.formData.practiceId) {
                     this.loaders.patients = true
                     this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
@@ -222,7 +244,7 @@
                         this.patients = (response.data || []).map(patient => {
                             patient.name = patient.full_name
                             return patient;
-                        }).distinct(patient => patient.id)
+                        }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
                         console.log('add-call-get-patients', response.data)
                     }).catch(err => {
                         this.loaders.patients = false
@@ -230,6 +252,18 @@
                         console.error('add-call-get-patients', err)
                     })
                 }
+            },
+            getAllPatients() {
+              this.loaders.patients = true
+              this.cache().get(rootUrl(`api/patients?rows=all`)).then(response => {
+                  this.loaders.patients = false
+                  this.patients = (response.data || []).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
+                  console.log('add-call-get-patients', response.data)
+              }).catch(err => {
+                  this.loaders.patients = false
+                  this.errors.patients = err.message
+                  console.error('add-call-get-patients', err)
+              })
             },
             getNurses() {
                 if (this.formData.practiceId) {
@@ -307,6 +341,7 @@
         },
         mounted() {
           this.getPractices()
+          this.getPatients()
 
           Event.$on('add-call-modals:set', (data) => {
             if (data) {
@@ -334,5 +369,15 @@
         position: absolute;
         top: -7px;
         margin-left: 5px;
+    }
+
+    .dropdown.v-select.form-control {
+      height: auto;
+      padding: 0;
+    }
+
+    .v-select .dropdown-toggle {
+      height: 34px;
+      overflow: hidden;
     }
 </style>
