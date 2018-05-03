@@ -142,13 +142,7 @@
                         lastReading: (ascending) => iSort,
                         ccm: (ascending) => iSort,
                         program: (ascending) => iSort
-                    },
-                    customFilters: [{
-                        name: 'provider',
-                        callback: function (row, query) {
-                            return true;
-                        }
-                    }]
+                    }
                 }
             }
         },
