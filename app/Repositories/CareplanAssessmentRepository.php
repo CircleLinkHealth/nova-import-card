@@ -24,11 +24,11 @@ class CareplanAssessmentRepository
     }
 
     public function editKeyTreatment($userId, $approverId, $keyTreatment) {
-        $model = $this->model()->where([ 'careplan_id' => $userId, 'provider_approver_id' => $approverId ]);
+        $model = $this->model()->where([ 'careplan_id' => $userId ]);
         $assessment = $model->firstOrNew([]);
         $assessment->key_treatment = $keyTreatment;
         $assessment->careplan_id = $userId;
-        $assessment->provider_approver_id = $approverId;
+        if (!$assessment->provider_approver_id) $assessment->provider_approver_id = $approverId;
         $assessment->save();
         return $model->first();
     }

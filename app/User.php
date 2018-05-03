@@ -2,8 +2,8 @@
 
 use App\Contracts\Serviceable;
 use App\Facades\StringManipulation;
+use App\Filters\Filterable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Notifications\CarePlanApprovalReminder;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -20,6 +20,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
@@ -27,8 +28,8 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
-use App\Filters\Filterable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -40,7 +41,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -159,6 +159,8 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property-read mixed $timezone_abbr
+ * @property-read mixed $timezone_offset
+ * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -239,6 +241,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         HasEmrDirectAddress,
         HasMediaTrait,
         Impersonate,
+        MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
         SoftDeletes;
@@ -569,14 +572,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     }
 
     public function inboundScheduledCalls(Carbon $after = null) {
-        if (!$after) {
-            $after = Carbon::now();
-        }
-
         return $this->inboundCalls()
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', $after->toDateString())
-            ->where('called_date', '=', null);
+                    ->where('status', '=', 'scheduled')
+                    ->when($after, function ($query) use ($after) {
+                        return $query->where('scheduled_date', '>=', $after->toDateString());
+                    })
+                    ->where('called_date', '=', null);
     }
 
     public function inboundMessages()
@@ -2505,6 +2506,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
+    public function getTimezoneOffsetAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offset
+        : Carbon::now()->setTimezone('America/New_York')->offset;
+    }
+
+    public function getTimezoneOffsetHoursAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offsetHours
+        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
+    }
+
     public function canApproveCarePlans()
     {
         return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
@@ -2772,7 +2787,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'name' => $this->name(),
+            'name' => $this->name() ?? $this->display_name,
             'address' => $this->address,
             'city' => $this->city,
             'state' => $this->state,
@@ -2861,5 +2876,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    || Carbon::today()->dayOfWeek == 5)
                     ? true
                     : false;
+    }
+
+    public function pageTimersAsProvider()
+    {
+        return $this->hasMany(PageTimer::class, 'provider_id');
+    }
+
+    public function activitiesAsProvider()
+    {
+        return $this->hasMany(Activity::class, 'provider_id');
+    }
+
+    public function calls()
+    {
+        return $this->outboundCalls();
     }
 }

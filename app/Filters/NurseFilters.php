@@ -4,8 +4,8 @@ namespace App\Filters;
 
 
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class NurseFilters extends QueryFilters
 {
@@ -64,7 +64,7 @@ class NurseFilters extends QueryFilters
 
     /**
      * Get the states the nurse is licenced in.
-     * By default the and operator is selected, which menas that only nurses that include all states will be included.
+     * By default the and operator is selected, which means that only nurses that include all states will be included.
      *
      * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
      * @param string $operator Can 'and' or 'or'
@@ -110,27 +110,12 @@ class NurseFilters extends QueryFilters
      */
     public function canCallPatient($patientUserId)
     {
-        $patient = User::with('patientInfo.contactWindows')
+        $user = User::with('patientInfo.contactWindows')
                        ->where('id', $patientUserId)
                        ->first();
 
-        //check state
-        $this->states($patient->state);
-
-        $patientContactWindows = $patient->patientInfo->contactWindows->map(function ($window) {
-            //check schedule
-            $this->windows(function ($q) use ($window) {
-                $q->orWhere([
-                    ['day_of_week', '=', $window->day_of_week],
-                    ['window_time_start', '<=', $window->window_time_start],
-                    ['window_time_end', '>=', $window->window_time_end],
-                ]);
-            });
-
-            //check if the nurse is on holiday
-            $this->holidays(function ($q) use ($window) {
-                $q->orWhere('date', '!=', carbonGetNext($window->day_of_week)->toDateString());
-            });
+        return $this->builder->whereHas('user', function ($q) use ($user) { 
+            return $q->ofPractice($user->program_id);
         });
     }
 
@@ -184,7 +169,7 @@ class NurseFilters extends QueryFilters
     public function user() {
         if ($this->request->has('compressed')) {
             return $this->builder->select([ 'id', 'user_id', 'status' ])->with(['user' => function ($q) {
-                return $q->select([ 'id', 'display_name' ]);
+                return $q->select([ 'id', 'display_name', 'program_id' ]);
             }])->with(['states' => function ($q) {
                 return $q->select(['code']);
             }]);

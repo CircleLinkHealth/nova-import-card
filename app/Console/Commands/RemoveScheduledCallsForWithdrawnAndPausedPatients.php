@@ -41,6 +41,8 @@ class RemoveScheduledCallsForWithdrawnAndPausedPatients extends Command
      */
     public function handle()
     {
-        return $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients();
+        $result = $this->schedulerService->removeScheduledCallsForWithdrawnAndPausedPatients();
+
+        $this->comment("$result calls deleted.");
     }
 }

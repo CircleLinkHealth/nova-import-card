@@ -2,12 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\CLH\Repositories\CCDImporterRepository;
-use App\Importer\Models\ItemLogs\DocumentLog;
-use App\Importer\Models\ItemLogs\ProviderLog;
-use App\Jobs\ImportCsvPatientList;
-use App\Jobs\TrainCcdaImporter;
-use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
 
 class ImporterController extends ApiController

@@ -14,9 +14,9 @@ use App\Contracts\Importer\MedicalRecord\Section\Logger;
 class CommaDelimitedListProblemLogger implements Logger
 {
 
-    public function handle($medicalRecord): array
+    public function handle($problemsString): array
     {
-        $problems = explode(',', $medicalRecord->problems_string);
+        $problems = explode(',', $problemsString);
 
         foreach ($problems as $problem) {
 //            @todo: implement once a use case comes up
@@ -38,8 +38,8 @@ class CommaDelimitedListProblemLogger implements Logger
         }
     }
 
-    public function shouldHandle($medicalRecord): bool
+    public function shouldHandle($problemsString): bool
     {
-        return str_contains($medicalRecord->problems_string, ',') && !starts_with($medicalRecord->problems_string, ['[', '{']);
+        return str_contains($problemsString, ',') && ! starts_with($problemsString, ['[', '{']);
     }
 }

@@ -2,16 +2,14 @@
 
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\MedicalRecords\Ccda;
-use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class TrainCcdaImporter implements ShouldQueue
+class ImportCcda implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     private $ccda;
@@ -34,13 +32,5 @@ class TrainCcdaImporter implements ShouldQueue
     public function handle()
     {
         $importedMedicalRecord = $this->ccda->import();
-
-        $link = link_to_route(
-            'get.importer.training.results',
-            "Click to review training results for Imported Medical Record with id {$importedMedicalRecord->id}",
-            [
-                'imrId' => $importedMedicalRecord->id,
-            ]
-        );
     }
 }

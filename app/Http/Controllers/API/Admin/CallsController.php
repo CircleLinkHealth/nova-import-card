@@ -9,13 +9,13 @@ use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
 use App\Services\Calls\ManagementService;
-use App\Services\NoteService;
 use App\Services\CallService;
+use App\Services\NoteService;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeZone;
-use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
+use Yajra\Datatables\Datatables;
 
 
 class CallsController extends ApiController
@@ -353,14 +353,22 @@ class CallsController extends ApiController
 
         return CallResource::collection($calls);
     }
-    
+
     public function show ($id) {
         return $this->json($this->callService->repo()->call($id));
     }
 
-    public function patientsWithoutScheduledCalls($practiceId)
+    public function patientsWithoutInboundCalls($practiceId = null)
     {
-        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now()->startOfMonth())
+        $patients = $this->service->getPatientsWithoutAnyInboundCalls($practiceId)
+                                  ->get();
+
+        return UserResource::collection($patients);
+    }
+
+    public function patientsWithoutScheduledCalls($practiceId = null)
+    {
+        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
                                   ->get();
 
         return UserResource::collection($patients);

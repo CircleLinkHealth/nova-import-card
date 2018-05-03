@@ -252,57 +252,6 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
-    /**
-     * This test assumes that the patient has no billable ccd problems, but has cpm problems.
-     * In this case billable ccd problems have to be created from cpm problems, and they should be set to billable.
-     */
-    public function test_it_creates_billable_ccd_problems_from_cpm_problems()
-    {
-        $this->patient->cpmProblems()->attach(2);
-        $this->patient->cpmProblems()->attach(7);
-
-        //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-                              ->getCollection();
-
-        $this->summary = $this->summary->fresh();
-        $problem1      = $this->summary->billableProblem1;
-        $problem2      = $this->summary->billableProblem2;
-
-        $this->assertTrue(in_array($problem1->cpm_problem_id, [2, 7]));
-        $this->assertTrue(in_array($problem2->cpm_problem_id, [2, 7]));
-
-        //Assert
-        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
-    }
-
-    /**
-     * This test assumes that the patient has 1 billable ccd problem, and cpm problems.
-     * In this case, the billable ccd problem will be selected, and a new billable problem will be created from a cpm
-     * problem.
-     */
-    public function test_it_creates_billable_ccd_problem_from_cpm_problem_and_selects_billable_problem()
-    {
-        //set up
-        $this->patient->cpmProblems()->attach(2);
-
-        $problem1 = $this->createProblem(true, 33);
-
-        //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-                              ->getCollection();
-
-        $this->summary = $this->summary->fresh();
-        $problem1      = $this->summary->billableProblem1;
-        $problem2      = $this->summary->billableProblem2;
-
-        $this->assertTrue($problem1->cpm_problem_id == 33);
-        $this->assertTrue($problem2->cpm_problem_id == 2);
-
-        //Assert
-        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
-    }
-
     public function test_it_stores_ccd_problem_with_cpm_id()
     {
         $uri = route('monthly.billing.store-problem');

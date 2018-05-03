@@ -64,21 +64,29 @@ class PatientSummaryEloquentRepository
         }
 
         if ($this->lacksProblems($summary)) {
+            $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
+                                                 ->orderBy('month_year', 'desc')
+                                                 ->where('month_year', '<=',
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth()->toDateString())
+                                                 ->whereApproved(true)
+                                                 ->first();
+
+            if ($olderSummary) {
+                $summary->problem_1              = $olderSummary->problem_1;
+                $summary->problem_2              = $olderSummary->problem_2;
+                $summary->billable_problem1      = $olderSummary->billable_problem1;
+                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
+                $summary->billable_problem2      = $olderSummary->billable_problem2;
+                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+            }
+        }
+
+        if ($this->lacksProblems($summary)) {
             $summary = $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', '=', true));
         }
 
         if ($this->lacksProblems($summary)) {
             $summary = $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
-        }
-
-        if ($this->lacksProblems($summary)) {
-            $newProblems = $this->buildCcdProblemsFromCpmProblems($patient);
-
-            if ($newProblems->isNotEmpty()) {
-                $patient->load('ccdProblems');
-            }
-
-            $summary = $this->fillProblems($patient, $summary, $newProblems);
         }
 
         if ($this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
@@ -180,58 +188,6 @@ class PatientSummaryEloquentRepository
                                     })
                                     ->unique('cpm_problem_id')
                                     ->values();
-    }
-
-    /**
-     * Create CCDProblems from related CPMProblems
-     *
-     * @param User $patient
-     *
-     * @return Collection
-     */
-    public function buildCcdProblemsFromCpmProblems(User $patient)
-    {
-        $newProblems = [];
-        $ccdProblems = $patient->ccdProblems;
-
-        $updated  = null;
-        $toUpdate = $this->getValidCcdProblems($patient)
-                         ->where('billable', '=', null)
-                         ->take(2);
-
-        if ($toUpdate->isNotEmpty()) {
-            $updated = Problem::whereIn('id', $toUpdate->pluck('id')->all())->update([
-                'billable' => true,
-            ]);
-        }
-
-        if ($updated) {
-            return $toUpdate;
-        }
-
-        $newProblems = $patient->cpmProblems->reject(function ($problem) use ($ccdProblems, $patient) {
-            if ($ccdProblems->where('cpm_problem_id', $problem->id)->count() == 0) {
-                return false;
-            }
-
-            return true;
-        })
-                                            ->filter()
-                                            ->values()
-                                            ->take(2)
-                                            ->map(function ($problem) use ($ccdProblems, $patient) {
-                                                return $this->storeCcdProblem($patient, [
-                                                    'name'             => $problem->name,
-                                                    'cpm_problem_id'   => $problem->id,
-                                                    'code_system_name' => 'ICD-10',
-                                                    'code_system_oid'  => '2.16.840.1.113883.6.3',
-                                                    'code'             => $problem->default_icd_10_code,
-                                                    'billable'         => true,
-                                                    'is_monitored'     => true,
-                                                ]);
-                                            });
-
-        return collect($newProblems);
     }
 
     /**
@@ -365,7 +321,7 @@ class PatientSummaryEloquentRepository
                              || $summary->no_of_successful_calls == 0
                              || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
-        if (($summary->rejected || $summary->approved) && $summary->actor_id) {
+        if ($summary->rejected || $summary->approved || $summary->actor_id) {
             $summary->needs_qa = false;
         }
 
@@ -378,6 +334,10 @@ class PatientSummaryEloquentRepository
         }
 
         $summary->save();
+
+        if ($summary->approved && $summary->rejected) {
+            $summary->approved = $summary->rejected = false;
+        }
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))

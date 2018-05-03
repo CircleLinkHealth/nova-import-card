@@ -94,10 +94,46 @@ class Observation extends \App\BaseModel
 
     public function getAlertLevelAttribute()
     {
-        $name = '';
-        $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
-        if (isset($meta)) {
-            $name = $meta->meta_value;
+        if ($this->obs_value) {
+            $value = preg_split("/\/|\_/", $this->obs_value)[0];
+
+            if ($this->obs_key == 'Blood_Pressure') {
+                if ($value < 80 || $value >= 180) {
+                    return 'danger';
+                }
+                else if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
+                    return 'warning';
+                }
+                else {
+                    return 'success';
+                }
+            }
+            else if ($this->obs_key == 'Blood_Sugar') {
+                if ($value < 60 || $value >= 350) {
+                    return 'danger';
+                }
+                else if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
+                    return 'warning';
+                }
+                else {
+                    return 'success';
+                }
+            }
+            else if ($this->obs_key == 'Cigarettes') {
+                if ($value < 4) {
+                    return 'success';
+                }
+                else {
+                    return 'danger';
+                }
+            }
+            else {
+                $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
+                if (isset($meta)) {
+                    return $meta->meta_value;
+                }
+            }
+            return '';
         }
 
         return $name;

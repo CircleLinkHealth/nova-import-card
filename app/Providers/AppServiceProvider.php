@@ -21,8 +21,8 @@ use App\Repositories\InviteRepositoryEloquent;
 use App\Repositories\LocationRepositoryEloquent;
 use App\Repositories\PracticeRepositoryEloquent;
 use App\Repositories\PrettusUserRepositoryEloquent;
-use App\Repositories\UserRepositoryEloquent;
 use App\Services\SnappyPdfWrapper;
+use DB;
 use Illuminate\Notifications\Channels\DatabaseChannel;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\HasDatabaseNotifications;
@@ -30,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
 use Orangehill\Iseed\IseedServiceProvider;
+use Queue;
 use Way\Generators\GeneratorsServiceProvider;
 use Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider;
 
@@ -43,7 +44,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Queue::looping(function () {
+            while (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+        });
     }
 
     /**

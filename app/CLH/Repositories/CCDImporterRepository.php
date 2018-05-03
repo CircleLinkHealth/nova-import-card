@@ -73,13 +73,17 @@ class CCDImporterRepository
             'body'    => $xml,
         ]);
 
-        if (!in_array($response->getStatusCode(), [200,201])) {
-            return [
+        $responseBody = (string)$response->getBody();
+
+        if ( ! in_array($response->getStatusCode(), [200, 201])) {
+            $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
-            ];
+            ]);
+
+            throw new \Exception("Could not process ccd. Data: $data");
         }
 
-        return (string)$response->getBody();
+        return $responseBody;
     }
 }

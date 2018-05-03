@@ -350,12 +350,21 @@
                                     this.tableData.splice(this.tableData.findIndex(item => item.id === id), 1)
                                 }
                                 console.log('submit-one', record, response.data)
-                                const patient = (((response.data || [])[0] || {}).patient || {})
-                                EventBus.$emit('notifications:create', { 
-                                    message: `Patient Created (${patient.id}): ${patient.display_name}`, 
-                                    href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
-                                    noTimeout: true
-                                })
+                                if (((response.data || [])[0] || {}).completed) {
+                                    const patient = (((response.data || [])[0] || {}).patient || {})
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Patient Created (${patient.id}): ${patient.display_name}`, 
+                                        href: rootUrl(`manage-patients/${patient.id}/view-careplan`),
+                                        noTimeout: true
+                                    })
+                                }
+                                else {
+                                    EventBus.$emit('notifications:create', { 
+                                        message: `Error when creating patient ${record.Name}`,
+                                        type: 'warning',
+                                        noTimeout: true
+                                    })
+                                }
                                 return this.getRecords()
                             }).catch((err) => {
                                 record.loaders.confirm = false
@@ -423,24 +432,21 @@
             this.getPractices()
             this.getRecords()
 
-            EventBus.$on('vdropzone:success', (records) => {
-                const newRecords = records.filter(record => !this.tableData.find(row => row.id == record.id))
-                this.tableData = records.map(this.setupRecord)
-                this.tableData.forEach(row => {
-                    row.changePractice(row.Practice)
-                })
-                
-                //EventBus.$emit('vdropzone:remove-all-files')
+            EventBus.$on('vdropzone:success', () => {
+                const oldRecords = this.tableData.slice(0)
+                this.getRecords().then((records) => {
+                    const newRecords = records.filter(record => !oldRecords.find(row => row.id == record.id))
 
-                newRecords.map(this.setupRecord).filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
-                    EventBus.$emit('notifications:create', { 
-                        message: `Imported Patient "${row.Name}" is a possible duplicate of`,
-                        link: {
-                            href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
-                            text: ` existing patient with ID ${row.duplicate_id}`
-                        },
-                        noTimeout: true,
-                        type: 'error'
+                    newRecords.filter(row => !!row.duplicate_id).distinct(row => row.duplicate_id).map(row => {
+                        EventBus.$emit('notifications:create', { 
+                            message: `Imported Patient "${row.Name}" is a possible duplicate of`,
+                            link: {
+                                href: rootUrl(`manage-patients/${row.duplicate_id}/view-careplan`),
+                                text: ` existing patient with ID ${row.duplicate_id}`
+                            },
+                            noTimeout: true,
+                            type: 'error'
+                        })
                     })
                 })
             })

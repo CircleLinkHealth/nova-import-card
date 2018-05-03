@@ -6,6 +6,16 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
+                    <div class="panel-heading">Import Eligible Patients Using Eligible Patient Id (enrollee id)</div>
+
+                    <div class="panel-body">
+                        @include('partials.importEligiblePatientsCsv')
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
                     <div class="panel-heading">Grab Athena CCDs</div>
 
                     <div class="panel-body">
@@ -26,6 +36,16 @@
 
             <div class="col-md-4">
                 <div class="panel panel-default">
+                    <div class="panel-heading">Import Eligible Patients Medical Records</div>
+
+                    <div class="panel-body">
+                        @include('partials.importEligiblePatientsMedicalRecords')
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
                     <div class="panel-heading">Train Medical Record Importing Algorithm</div>
 
                     <div class="panel-body">
@@ -33,43 +53,8 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Process Eligibility from CSV</div>
-
-                    <div class="panel-body">
-                        @include('partials.makeWelcomeCallsListUploadPanel')
-                    </div>
-                </div>
-            </div>
 
             <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Process Eligibility from Google Drive</div>
-
-                    <div class="panel-body">
-                        @include('partials.makeWelcomeCallListGoogleDrivePanel')
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Send Sample note via Fax</div>
-
-                    <div class="panel-body">
-                        <form action="/send-sample-fax" method="POST">
-                            {{csrf_field()}}
-                            <input type="text" name="fax_number" placeholder="+12223334444 or 111-111-1111"
-                                   required>
-                            <input type="submit" value="send">
-                        </form>
-                    </div>
-                </div>
-
                 <div class="panel panel-default">
                     <div class="panel-heading">Send Sample note via Direct Mail</div>
 
@@ -84,5 +69,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

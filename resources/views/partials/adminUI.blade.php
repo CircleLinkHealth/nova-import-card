@@ -52,6 +52,10 @@
         .modal-dialog {
             z-index: 1051 !important;
         }
+
+        .select2 {
+            width: 100%;
+        }
     </style>
     @stack('styles')
 </head>
@@ -82,6 +86,7 @@
                                     <li><a href="{{ route('admin.users.index', array()) }}">All Users</a></li>
                                     <li><a href="{{ route('admin.users.create', array()) }}">New User</a></li>
                                     <li><a href="{{ route('admin.observations.index', array()) }}">Observations</a></li>
+                                    <li><a href="{{ route('observations-dashboard.index', array()) }}">Edit/Delete Observations</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -100,8 +105,7 @@
                                     <li><a href="{{ route('algo.mock.create', array()) }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
                                     <li><a href="{{ route('CallReportController.exportxls', array()) }}">Export
-                                            Calls</a></li>
-
+                                            Calls</a></li> <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -119,6 +123,8 @@
                                             Time</a>
                                     </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily', array()) }}">Daily
+                                            Report</a></li>
+                                    <li><a href="{{ route('admin.reports.nurse.monthly-index', array()) }}">Monthly
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.invoice', array()) }}">
                                             Invoices</a></li>
@@ -184,7 +190,7 @@
                                 Reports<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="{{ route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                                <li><a href="{{ route('import.ccd.remix', []) }}">CCDs To Import</a></li>
                                 <li><a href="{{ route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
                                     </a></li>
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
@@ -255,6 +261,24 @@
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Practices <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
+                                    <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
+
+                                    <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
+                                    <li>
+                                        <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
+                                    </li>
+                                    <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
+                                    <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
+                                            Patient Report</a></li>
+                                </ul>
+                            </li>
                                 <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
@@ -275,6 +299,15 @@
                             </li>
                         @endif
 
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                   aria-expanded="false">
+                                    Medical Records <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
+                                </ul>
+                            </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())

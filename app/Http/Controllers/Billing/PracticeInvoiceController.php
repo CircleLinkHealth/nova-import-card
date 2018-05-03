@@ -280,7 +280,8 @@ class PracticeInvoiceController extends Controller
         })->where('month_year', $date->startOfMonth());
 
         $summaries->update([
-            'actor_id' => $user->id
+            'actor_id' => $user->id,
+            'needs_qa' => false
         ]);
 
         return response()->json($summaries->get());

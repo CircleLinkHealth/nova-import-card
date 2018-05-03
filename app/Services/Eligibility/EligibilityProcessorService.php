@@ -37,11 +37,6 @@ class EligibilityProcessorService
     ) {
         $fileExtension = $uploadedFile->clientExtension();
 
-        if ($fileExtension == 'csv') {
-            $processor = new Csv($uploadedFile, $practice, $filterLastEncounter, $filterInsurance, $filterProblems,
-                $createEnrollees);
-        }
-
         if (in_array($fileExtension, ['zip'])) {
             $processor = new Zip($uploadedFile, $practice, $filterLastEncounter, $filterInsurance, $filterProblems,
                 $createEnrollees);

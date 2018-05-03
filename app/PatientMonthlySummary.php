@@ -86,23 +86,6 @@ class PatientMonthlySummary extends \App\BaseModel
             'ccm_time' => $ccmTime,
         ]);
 
-        if ( ! $record->problem_1 || ! $record->problem_2) {
-            $existingRecord = PatientMonthlySummary::where('patient_id', $userId)
-                                                   ->where('id', '!=', $record->id)
-                                                   ->orderBy('id', 'DESC')
-                                                   ->first();
-
-            if ($existingRecord) {
-                if ($existingRecord->problem_1 && ! $record->problem_1) {
-                    $record->problem_1 = $existingRecord->problem_1;
-                }
-                if ($existingRecord->problem_2 && ! $record->problem_2) {
-                    $record->problem_2 = $existingRecord->problem_2;
-                }
-                $record->save();
-            }
-        }
-
         return $record;
     }
 

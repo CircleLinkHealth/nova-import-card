@@ -13,6 +13,7 @@ use App\Location;
 use App\Models\CPM\CpmProblem;
 use App\Patient;
 use App\Practice;
+use App\Role;
 use Carbon\Carbon;
 use Faker\Factory;
 
@@ -90,9 +91,11 @@ trait SetupTestCustomer
      */
     public function createPatient(Practice $practice, $providerId)
     {
+        $roles = [
+            Role::whereName('participant')->first()->id,
+        ];
 
-
-        $patient = $this->createUser($practice->id, 'participant');
+        $patient = $this->setupUser($practice->id, $roles);
         $date    = Carbon::now();
 
         //status
@@ -167,8 +170,11 @@ trait SetupTestCustomer
      */
     public function createProvider(Practice $practice)
     {
+        $roles = [
+            Role::whereName('provider')->first()->id,
+        ];
 
-        $provider = $this->createUser($practice->id, 'provider');
+        $provider = $this->setupUser($practice->id, $roles);
 
         return $provider;
     }
@@ -178,7 +184,7 @@ trait SetupTestCustomer
      *
      * @return mixed
      */
-    public function createTestCustomerData($patientCount = 10)
+    public function createTestCustomerData($patientCount = 100)
     {
 
         $practice = $this->createPractice();

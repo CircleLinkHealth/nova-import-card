@@ -25,7 +25,7 @@ class MedicalRecordImportController extends Controller
             $imr = ImportedMedicalRecord::find($id);
 
             if ($imr) {
-                $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
+                $medicalRecord = $imr->medicalRecord();
                 $medicalRecord->update([
                     'imported' => false
                 ]);
@@ -111,11 +111,13 @@ class MedicalRecordImportController extends Controller
                             ]);
                         }
                         catch (\Exception $ex) {
-                            array_push($importedRecords, [
-                                'id' => $id,
-                                'completed' => false,
-                                'error' => $ex->getMessage()
-                            ]);
+                            //throwing Exceptions to help debug importing issues
+                            throw $ex;
+//                            array_push($importedRecords, [
+//                                'id' => $id,
+//                                'completed' => false,
+//                                'error' => $ex->getMessage()
+//                            ]);
                         }
                     }
                 }
