@@ -78,10 +78,11 @@ class CallRepository
 
     public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate)
     {
-        return User::ofType('participant')
-                   ->ofPractice($practiceId)
-                   ->with('carePlan')
-                   ->whereDoesntHave('inboundScheduledCalls');
+        $users = User::ofType('participant');
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+        return $users->with('carePlan')->whereDoesntHave('inboundScheduledCalls');
     }
 
     public function scheduledCalls()
@@ -91,8 +92,10 @@ class CallRepository
 
     public function patientsWithoutAnyInboundCalls($practiceId)
     {
-        return User::ofType('participant')
-                   ->ofPractice($practiceId)
-                   ->whereDoesntHave('inboundCalls');
+        $users = User::ofType('participant');
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+        return $users->whereDoesntHave('inboundCalls');
     }
 }

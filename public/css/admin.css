@@ -60,3 +60,7 @@ a {
     height: 33px;
     width: 100%;
 }
+
+.dropdown.v-select.form-control {
+  padding: 0;
+}

@@ -358,9 +358,17 @@ class CallsController extends ApiController
         return $this->json($this->callService->repo()->call($id));
     }
 
-    public function patientsWithoutInboundCalls($practiceId)
+    public function patientsWithoutInboundCalls($practiceId = null)
     {
         $patients = $this->service->getPatientsWithoutAnyInboundCalls($practiceId)
+                                  ->get();
+
+        return UserResource::collection($patients);
+    }
+
+    public function patientsWithoutScheduledCalls($practiceId = null)
+    {
+        $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
                                   ->get();
 
         return UserResource::collection($patients);

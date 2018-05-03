@@ -39,9 +39,11 @@ export default (App, Event) => {
 
     Event.$on('select-nurse:update', (data) => {
         const call = App.tableData.find(row => row.id == data.callId)
+        const nurse = App.nurses.find(nurse => nurse.id == data.nurseId)
         if (call) {
-            call.Nurse = data.nurseId
-            console.log('calls:row-update', data)
+            call.NurseId = data.nurseId
+            call.Nurse = nurse.display_name
+            console.log('calls:row-update', data, call.Nurse)
         }
     })
 
