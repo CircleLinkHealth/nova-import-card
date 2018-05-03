@@ -310,13 +310,14 @@
           this.loaders.nurses = true
           return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
             const pagination = (response || {}).data
-            this.nurses = ((pagination || {}).data || []).map(nurse => {
+            this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
               return {
                 id: nurse.user_id,
                 nurseId: nurse.id,
                 display_name: ((nurse.user || {}).display_name || ''),
                 states: nurse.states,
-                practiceId: (nurse.user || {}).program_id
+                practiceId: (nurse.user || {}).program_id,
+                practices: (nurse.practices || [])
               }
             })
             console.log('calls:nurses', pagination)
@@ -397,7 +398,8 @@
                     state: call.getPatient().state,
                     practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(nurse => nurse.practiceId == (call.getPatient() || {}).getPractice().id)
+                      return $vm.nurses.filter(Boolean)
+                                      .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
                                       .filter(n => !!n.display_name)
                                       .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
                     },

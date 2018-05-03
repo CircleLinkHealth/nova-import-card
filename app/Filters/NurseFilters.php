@@ -114,8 +114,8 @@ class NurseFilters extends QueryFilters
                        ->where('id', $patientUserId)
                        ->first();
 
-        return $this->builder->whereHas('user', function ($u) use ($user) {
-            $u->where('program_id', $user->program_id);
+        return $this->builder->whereHas('user', function ($q) use ($user) { 
+            return $q->ofPractice($user->program_id);
         });
     }
 
