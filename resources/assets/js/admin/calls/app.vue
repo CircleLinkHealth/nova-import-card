@@ -530,4 +530,8 @@
     position: relative;
     left: 0px;
   }
+
+  .table-bordered>tbody>tr>td {
+    white-space: nowrap;
+  }
 </style>
