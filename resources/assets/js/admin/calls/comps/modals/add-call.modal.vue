@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-sm-7">
                   <textarea class="form-control" name="attempt_note" v-model="formData.text" required></textarea>
-                  <button class="hidden"></button>
+                  <button class="submit hidden"></button>
                 </div>
               </div>
               <div class="row form-group">
@@ -133,9 +133,9 @@
                 addCallModalInfo: {
                     okHandler() {
                         const form = this.$form()
-                        form.querySelector('button').click()
                         this.errors().submit = null
-                        console.log("okay clicked", form)
+                        console.log("form:add-call:submit", form)
+                        form.querySelector('button.submit.hidden').click()
                     },
                     cancelHandler() {
                       this.errors().submit = null
@@ -335,7 +335,7 @@
               if (patient.status === 'draft') {
                 Event.$emit('notifications-add-call-modal:create', { 
                   text: `Call not allowed: This patient’s care plan is in draft mode. QA the care plan before scheduling a call`, 
-                  type: 'error'
+                  type: 'warning'
                 })
               }
               else {
@@ -343,7 +343,7 @@
                 this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
                   if (response) {
                     this.loaders.submit = false
-                    this.formData = Object.create(defaultFormData)
+                    this.formData = Object.assign({}, defaultFormData)
                     const call = response.data
                     Event.$emit("modal-add-call:hide")
                     Event.$emit('calls:add', call)
