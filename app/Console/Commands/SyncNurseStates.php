@@ -46,8 +46,20 @@ class SyncNurseStates extends Command
         Nurse::with('user.practices.locations')
              ->get()
              ->each(function ($n) use ($states) {
-                 $stateIDs = $n->user
-                     ->practices
+                 $user = $n->user;
+
+                 if ( ! $user) {
+                     return false;
+                 }
+
+                 $practices = $user
+                     ->practices;
+
+                 if ( ! $practices) {
+                     return false;
+                 }
+
+                 $stateIDs = $practices
                      ->map(function ($p) use ($states) {
                          return $p->locations
                              ->map(function ($l) use ($states) {
