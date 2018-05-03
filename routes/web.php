@@ -465,10 +465,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ImporterController@uploadRawFiles',
             'as'   => 'upload.ccda',
         ]);
-        Route::get('imported-medical-records', [
-            'uses' => 'ImporterController@index',
-            'as'   => 'view.files.ready.to.import',
-        ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
 

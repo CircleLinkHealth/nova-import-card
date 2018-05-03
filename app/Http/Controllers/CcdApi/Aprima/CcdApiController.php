@@ -406,7 +406,7 @@ class CcdApiController extends Controller
         $line = null,
         $errorMessage = null
     ) {
-        $link = route('view.files.ready.to.import');
+        $link = route('import.ccd.remix');
 
         sendSlackMessage('#ccd-file-status', "Aprima sent a CCD. It went {$status}. \n Please visit {$link} to import.");
     }

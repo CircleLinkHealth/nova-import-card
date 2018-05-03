@@ -22,9 +22,11 @@
                 </ul>
             </div>
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                <h2 class="color-blue pointer" @click="toggleOtherConditions">Other Conditions <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span></h2>
+                <h2 class="color-blue pointer">Other Conditions
+                     <!-- <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span> -->
+                </h2>
                 
-                <ul class="row" v-if="isOtherConditionsVisible">
+                <ul class="row">
                     <li class='top-10 col-sm-6' 
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}

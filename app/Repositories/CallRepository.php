@@ -82,7 +82,12 @@ class CallRepository
         if ($practiceId) {
             $users = $users->ofPractice($practiceId);
         }
-        return $users->with('carePlan')->whereDoesntHave('inboundScheduledCalls');
+
+        return $users->with('carePlan')
+                     ->whereHas('patientInfo', function ($q) {
+                         $q->enrolled();
+                     })
+                     ->whereDoesntHave('inboundScheduledCalls');
     }
 
     public function scheduledCalls()
