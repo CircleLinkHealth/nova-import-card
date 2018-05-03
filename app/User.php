@@ -2787,7 +2787,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'name' => $this->name(),
+            'name' => $this->name() ?? $this->display_name,
             'address' => $this->address,
             'city' => $this->city,
             'state' => $this->state,
