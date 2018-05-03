@@ -42,10 +42,9 @@
                   Nurse <span class="required">*</span>
                 </div>
                 <div class="col-sm-7">
-                  <select class="form-control" name="outbound_cpm_id" v-model="formData.nurseId" required>
-                    <option :value="null">Unassigned</option>
-                    <option v-for="(nurse, index) in nursesForSelect" :key="nurse.id" :value="nurse.id">{{nurse.name}} ({{nurse.id}})</option>
-                  </select>
+                  <v-select class="form-control" name="outbound_cpm_id" v-model="selectedNurseData" 
+                    :options="nursesForSelect" required>
+                  </v-select>
                   <loader v-if="loaders.nurses"></loader>
                   <div class="alert alert-danger" v-if="formData.practiceId && (nursesForSelect.length == 0)">No available nurses for selected patient</div>
                 </div>
@@ -161,6 +160,7 @@
                 formData: Object.assign({}, defaultFormData),
                 selectedPatientData: UNASSIGNED_VALUE,
                 selectedPracticeData: UNASSIGNED_VALUE,
+                selectedNurseData: UNASSIGNED_VALUE,
                 filters: {
                   showUnscheduledPatients: false
                 },
@@ -169,8 +169,12 @@
         },
         computed: {
           nursesForSelect () {
-            const selectedPatient = this.selectedPatient()
-            return this.nurses.filter(nurse => nurse.states.indexOf((selectedPatient).state) >= 0)
+            return [
+              UNASSIGNED_VALUE, 
+              ...this.nurses.map(nurse => ({
+                label: nurse.full_name,
+                value: nurse.id
+              }))]
           },
           practicesForSelect () {
             return [
@@ -208,6 +212,15 @@
               else {
                 this.selectedPracticeData = UNASSIGNED_VALUE
               }
+            }
+          },
+          changePractice(practice) {
+            if (practice) {
+              this.selectedPatientData = UNASSIGNED_VALUE
+              this.formData.practiceId = practice.value
+              this.getPatients()
+              this.getNurses()
+              this.selectedNurseData = UNASSIGNED_VALUE
             }
           },
           changeUnscheduledPatients (e) {
@@ -301,14 +314,6 @@
                       console.error('add-call-get-nurses', err)
                   })
               }
-          },
-          changePractice(practice) {
-            if (practice) {
-              this.selectedPatientData = UNASSIGNED_VALUE
-              this.formData.practiceId = practice.value
-              this.getPatients()
-              this.getNurses()
-            }
           },
           submitForm(e) {
             e.preventDefault();
