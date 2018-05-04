@@ -16,6 +16,7 @@ use App\PatientContactWindow;
 use App\Practice;
 use App\Repositories\PatientReadRepository;
 use App\Role;
+use App\Services\CareplanService;
 use App\Services\CarePlanViewService;
 use App\Services\CPM\CpmBiometricService;
 use App\Services\CPM\CpmLifestyleService;
@@ -23,17 +24,14 @@ use App\Services\CPM\CpmMedicationGroupService;
 use App\Services\CPM\CpmMiscService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\CPM\CpmSymptomService;
-use App\Services\PdfService;
-use App\Services\ReportsService;
-use App\Services\UserService;
-use App\Services\CareplanService;
 use App\Services\PatientService;
+use App\Services\PdfService;
+use App\Services\UserService;
 use App\User;
 use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -43,11 +41,14 @@ class PatientCareplanController extends Controller
     private $pdfService;
     private $formatter;
 
-    public function __construct(ReportFormatter $formatter, PatientReadRepository $patientReadRepository, PdfService $pdfService)
-    {
-        $this->formatter = $formatter;
+    public function __construct(
+        ReportFormatter $formatter,
+        PatientReadRepository $patientReadRepository,
+        PdfService $pdfService
+    ) {
+        $this->formatter             = $formatter;
         $this->patientReadRepository = $patientReadRepository;
-        $this->pdfService = $pdfService;
+        $this->pdfService            = $pdfService;
     }
 
     //Show Patient Careplan Print List  (URL: /manage-patients/careplan-print-list)
@@ -144,8 +145,11 @@ class PatientCareplanController extends Controller
         ]));
     }
 
-    public function printMultiCareplan(Request $request, CareplanService $careplanService, PatientService $patientService)
-    {
+    public function printMultiCareplan(
+        Request $request,
+        CareplanService $careplanService,
+        PatientService $patientService
+    ) {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
         }
@@ -157,19 +161,14 @@ class PatientCareplanController extends Controller
             $letter = true;
         }
 
-        $users         = explode(',', $request['users']);
+        $users = explode(',', $request['users']);
 
         if ($request->input('final')) {
-            foreach($users as $userId) {
+            foreach ($users as $userId) {
                 $careplanService->repo()->approve($userId, auth()->user()->id);
                 $patientService->setStatus($userId, Patient::ENROLLED);
             }
         }
-
-        CarePlan::whereIn('user_id', $users)
-            ->update([
-                'last_printed' => Carbon::now()->toDateTimeString()
-            ]);
 
         $storageDirectory = 'storage/pdfs/careplans/';
         $pageFileNames    = [];
@@ -180,9 +179,10 @@ class PatientCareplanController extends Controller
         $p = 1;
         foreach ($users as $user_id) {
             // add p to datetime prefix
-            $datetimePrefix   = date('Y-m-d-' . $user_id . '-H-i-s');
-            $prefix   = $datetimePrefix . '-' . $p;
-            $user     = User::find($user_id);
+            $datetimePrefix = date('Y-m-d-' . $user_id . '-H-i-s');
+            $prefix         = $datetimePrefix . '-' . $p;
+            $user           = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
+
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];
             if (empty($careplan)) {
@@ -190,17 +190,17 @@ class PatientCareplanController extends Controller
             }
 
             $fileNameWithPath = base_path($storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf');
-            $pageCount = 0;
+            $pageCount        = 0;
             try {
                 //HTML render to help us with debugging
                 if ($request->filled('render') && $request->input('render') == 'html') {
                     return view('wpUsers.patient.multiview', [
-                        'careplans'    => [ $user_id => $careplan],
+                        'careplans'    => [$user_id => $careplan],
                         'isPdf'        => true,
                         'letter'       => $letter,
                         'problemNames' => $careplan['problem'],
                         'careTeam'     => $user->careTeamMembers,
-                        'data'         => $careplanService->careplan($user_id)
+                        'data'         => $careplanService->careplan($user_id),
                     ]);
                 }
 
@@ -210,7 +210,7 @@ class PatientCareplanController extends Controller
                     'letter'       => $letter,
                     'problemNames' => $careplan['problem'],
                     'careTeam'     => $user->careTeamMembers,
-                    'data'         => $careplanService->careplan($user_id)
+                    'data'         => $careplanService->careplan($user_id),
                 ], $fileNameWithPath);
 
                 $pageCount = $this->pdfService->countPages($fileNameWithPath);
@@ -219,20 +219,28 @@ class PatientCareplanController extends Controller
             }
             // append blank page if needed
             if ((count($users) > 1) && $pageCount % 2 != 0) {
-                $fileNameWithPath         = $this->pdfService->mergeFiles([
-                        $fileNameWithPath,
-                        $fileNameWithPathBlankPage,
-                    ], base_path($storageDirectory . $prefix . "-merged.pdf"));
+                $fileNameWithPath = $this->pdfService->mergeFiles([
+                    $fileNameWithPath,
+                    $fileNameWithPathBlankPage,
+                ], base_path($storageDirectory . $prefix . "-merged.pdf"));
             }
 
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
+            $careplanObj               = $user->carePlan;
+            $careplanObj->last_printed = Carbon::now()->toDateTimeString();
+            if ( ! $careplanObj->first_printed) {
+                $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
+                $careplanObj->first_printed_by = auth()->id();
+            }
+            $careplanObj->save();
+
             $p++;
         }
 
         // merge to final file
-        $mergedFileNameWithPath         = $this->pdfService->mergeFiles($pageFileNames, $fileNameWithPath);
+        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames, $fileNameWithPath);
 
         return response()->file($mergedFileNameWithPath);
     }
@@ -276,7 +284,8 @@ class PatientCareplanController extends Controller
             'id'
         )->all();
 
-        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck('display_name', 'id')->all();
+        $billingProviders = User::ofType('provider')->ofPractice(Auth::user()->program_id)->pluck('display_name',
+            'id')->all();
 
         // roles
         $patientRoleId = Role::where('name', '=', 'participant')->first();
@@ -377,7 +386,7 @@ class PatientCareplanController extends Controller
             'insurancePolicies',
             'contact_days_array',
             'contactWindows',
-            'billingProviders'
+            'billingProviders',
         ]));
     }
 
