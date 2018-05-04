@@ -104,6 +104,7 @@
                     this.patients = (response.data || []).map(patient => {
                         patient.name = patient.full_name
                         return patient;
+                    })
                     console.log('unscheduled-patients-get-patients', response.data)
                 }).catch(err => {
                     this.loaders.patients = false
