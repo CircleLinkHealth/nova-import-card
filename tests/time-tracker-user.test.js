@@ -276,4 +276,57 @@ describe('TimeTrackerUser', () => {
             assert.equal(user.report().activities.length, user.activities.length)
         })
     })
+
+    describe('TimeTrackerUser default timeout values', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        user.start(info, ws)
+
+        it('should have ALERT_TIMEOUT as 120', () => {
+            assert.equal(user.ALERT_TIMEOUT, 120)
+        })
+
+        it('should have LOGOUT_TIMEOUT as 600', () => {
+            assert.equal(user.LOGOUT_TIMEOUT, 600)
+        })
+
+        it('should have ALERT_TIMEOUT_CALL_MODE as 900', () => {
+            assert.equal(user.ALERT_TIMEOUT_CALL_MODE, 900)
+        })
+
+        it('should have LOGOUT_TIMEOUT_CALL_MODE as 1200', () => {
+            assert.equal(user.LOGOUT_TIMEOUT_CALL_MODE, 1200)
+        })
+    })
+
+    describe('TimeTrackerUser.prototype.overrideTimeouts()', () => {
+        const timeTracker = new TimeTracker()
+        const user = timeTracker.get(info)
+
+        user.start(info, ws)
+
+        user.overrideTimeouts({
+            alertTimeout: 5, 
+            logoutTimeout: 10,
+            alertTimeoutCallMode: 10, 
+            logoutTimeoutCallMode: 15
+        })
+
+        it('should have ALERT_TIMEOUT as 5', () => {
+            assert.equal(user.ALERT_TIMEOUT, 5)
+        })
+
+        it('should have LOGOUT_TIMEOUT as 10', () => {
+            assert.equal(user.LOGOUT_TIMEOUT, 10)
+        })
+
+        it('should have ALERT_TIMEOUT_CALL_MODE as 10', () => {
+            assert.equal(user.ALERT_TIMEOUT_CALL_MODE, 10)
+        })
+
+        it('should have LOGOUT_TIMEOUT_CALL_MODE as 15', () => {
+            assert.equal(user.LOGOUT_TIMEOUT_CALL_MODE, 15)
+        })
+    })
 })
