@@ -55,6 +55,7 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        $skipValidation = false;
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
@@ -78,6 +79,7 @@ class PatientSummaryEloquentRepository
                 $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
                 $summary->billable_problem2      = $olderSummary->billable_problem2;
                 $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+                $skipValidation                  = true;
             }
         }
 
@@ -89,7 +91,7 @@ class PatientSummaryEloquentRepository
             $summary = $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
         }
 
-        if ($this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
+        if ( ! $skipValidation && $this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
             $patient->load(['billableProblems', 'ccdProblems']);
             $summary = $this->attachBillableProblems($patient, $summary);
         }
