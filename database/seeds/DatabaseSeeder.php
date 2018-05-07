@@ -42,5 +42,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(SnomedToIcd9MapTableSeeder::class);
         $this->call(AddActiveStatusToPractices::class);
+        $this->call(CpmProblemsTableSeeder::class);
     }
 }
