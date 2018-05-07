@@ -16,7 +16,7 @@ class CreateRulesItemmetaTable extends Migration {
 		{
 			$table->bigInteger('itemmeta_id', true);
 			$table->bigInteger('items_id')->nullable()->index('items_id');
-			$table->string('meta_key')->nullable()->index('meta_key');
+			$table->string('meta_key')->nullable()->index('rules_item_meta_key');
 			$table->text('meta_value')->nullable();
 			$table->index(['items_id','meta_key'], 'items_meta');
 		});

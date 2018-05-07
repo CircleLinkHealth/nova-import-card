@@ -18,7 +18,7 @@ class CreateLvActivitymetaTable extends Migration {
 			$table->integer('activity_id')->unsigned()->index('activity_id');
 			$table->integer('comment_id')->unsigned();
 			$table->string('message_id', 30);
-			$table->string('meta_key')->nullable()->index('meta_key');
+			$table->string('meta_key')->nullable()->index('lv_activitymeta_meta_key');
 			$table->text('meta_value');
 			$table->timestamps();
 			$table->softDeletes();

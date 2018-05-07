@@ -23,7 +23,7 @@ class CreateLvObservationmetaTable extends Migration {
 			$table->integer('program_id')->unsigned();
 			$table->integer('legacy_meta_id')->unsigned();
 			$table->timestamps();
-			$table->index(['obs_id','meta_key']);
+			$table->index(['obs_id','meta_key'], 'lv_observationmeta_obs_id_meta_key');
 		});
 	}
 

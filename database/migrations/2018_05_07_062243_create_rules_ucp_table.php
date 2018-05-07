@@ -19,7 +19,7 @@ class CreateRulesUcpTable extends Migration {
 			$table->bigInteger('user_id')->nullable();
 			$table->string('meta_key')->nullable();
 			$table->text('meta_value')->nullable();
-			$table->unique(['items_id','user_id','meta_key'], 'meta');
+			$table->unique(['items_id','user_id','meta_key'], 'rules_ucp_meta');
 		});
 	}
 

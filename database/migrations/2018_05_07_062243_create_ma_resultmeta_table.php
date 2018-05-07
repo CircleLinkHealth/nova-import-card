@@ -16,7 +16,7 @@ class CreateMaResultmetaTable extends Migration {
 		{
 			$table->bigInteger('meta_id', true)->unsigned();
 			$table->bigInteger('res_id')->unsigned()->default(0)->index('obs_id');
-			$table->string('meta_key')->nullable()->index('meta_key');
+			$table->string('meta_key')->nullable()->index('ma_result_meta_key');
 			$table->text('meta_value')->nullable();
 		});
 	}
