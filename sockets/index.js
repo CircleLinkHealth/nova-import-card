@@ -153,6 +153,18 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:timeouts:override') {
+              try {
+                const info = data.info
+                const timeouts = data.timeouts || {}
+                const user = app.getTimeTracker(info).get(info)
+                user.overrideTimeouts(timeouts)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'client:logout') {
               try {
                 const info = data.info

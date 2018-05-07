@@ -75,10 +75,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         ALERT_TIMEOUT_CALL_MODE: 900,
         LOGOUT_TIMEOUT_CALL_MODE: 1200,
         overrideTimeouts (options = {}) {
-            this.ALERT_TIMEOUT = options.alertTimeout || this.ALERT_TIMEOUT;
-            this.LOGOUT_TIMEOUT = options.logoutTimeout || this.LOGOUT_TIMEOUT;
-            this.ALERT_TIMEOUT_CALL_MODE = options.alertTimeoutCallMode || this.ALERT_TIMEOUT_CALL_MODE;
-            this.LOGOUT_TIMEOUT_CALL_MODE = options.logoutTimeoutCallMode || this.LOGOUT_TIMEOUT_CALL_MODE;
+            this.ALERT_TIMEOUT = Math.ceil(options.alertTimeout) || this.ALERT_TIMEOUT;
+            this.LOGOUT_TIMEOUT = Math.ceil(options.logoutTimeout) || this.LOGOUT_TIMEOUT;
+            this.ALERT_TIMEOUT_CALL_MODE = Math.ceil(options.alertTimeoutCallMode) || this.ALERT_TIMEOUT_CALL_MODE;
+            this.LOGOUT_TIMEOUT_CALL_MODE = Math.ceil(options.logoutTimeoutCallMode) || this.LOGOUT_TIMEOUT_CALL_MODE;
+            console.log('timeouts changed', this)
         }
     }
 
