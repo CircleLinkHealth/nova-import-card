@@ -182,6 +182,7 @@ class PatientSummaryEloquentRepository
     public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
+                                    ->where('is_monitored', '=', true)
                                     ->reject(function ($problem) {
                                         return ! validProblemName($problem->name);
                                     })
