@@ -23,7 +23,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'first_name'   => $faker->firstName,
         'last_name'    => $faker->lastName,
         'email'        => $faker->safeEmail,
-        'password'     => bcrypt(str_random(10)),
+        'password'     => bcrypt('secret'),
         'timezone'     => 'America/Chicago',
         'username'     => $faker->userName,
         'address'      => $faker->streetAddress,
