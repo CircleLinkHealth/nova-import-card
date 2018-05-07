@@ -22,7 +22,11 @@
             return {
                 startTime: new Date(),
                 endTime: new Date(),
-                isModalShown: false
+                isModalShown: false,
+                ALERT_TIMEOUT: 120,
+                LOGOUT_TIMEOUT: 600,
+                ALERT_TIMEOUT_CALL_MODE: 900,
+                LOGOUT_TIMEOUT_CALL_MODE: 1200
             };
         },
         components: {
@@ -40,8 +44,8 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = () => !this.callMode ? 120 : 900; // 120-900
-                        const LOGOUT_INTERVAL = () => !this.callMode ? 600 : 1200; // 600-1200
+                        const ALERT_INTERVAL = () => !this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE; // 120-900
+                        const LOGOUT_INTERVAL = () => !this.callMode ? this.LOGOUT_TIMEOUT : this.LOGOUT_TIMEOUT_CALL_MODE; // 600-1200
                         if (this.totalSeconds && !this.isModalShown && ((this.totalSeconds >= ALERT_INTERVAL()) && (this.totalSeconds < LOGOUT_INTERVAL()))) {
                             /**
                              * Stop Tracking Time
@@ -116,7 +120,26 @@
 
             EventBus.$on('modal-inactivity:reset', (preventEmit) => {
                 this.reset()
-                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler 
+            })
+
+            EventBus.$on('modal-inactivity:timeouts:override', (options = {}) => {
+                try {
+                    this.ALERT_TIMEOUT = options.alertTimeout || this.ALERT_TIMEOUT
+                    this.LOGOUT_TIMEOUT = options.logoutTimeout || this.LOGOUT_TIMEOUT
+                    this.ALERT_TIMEOUT_CALL_MODE = options.alertTimeoutCallMode || this.ALERT_TIMEOUT_CALL_MODE
+                    this.LOGOUT_TIMEOUT_CALL_MODE = options.logoutTimeoutCallMode || this.LOGOUT_TIMEOUT_CALL_MODE
+
+                    EventBus.$emit('tracker:timeouts:override', {
+                        alertTimeout: this.ALERT_TIMEOUT,
+                        logoutTimeout: this.LOGOUT_TIMEOUT,
+                        alertTimeoutCallMode: this.ALERT_TIMEOUT_CALL_MODE,
+                        logoutTimeoutCallMode: this.LOGOUT_TIMEOUT_CALL_MODE
+                    })
+                }
+                catch (err) {
+                    console.error(err)
+                }
             })
         }
     }
