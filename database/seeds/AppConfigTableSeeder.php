@@ -12,11 +12,13 @@ class AppConfigTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('app_config')->delete();
         
-        \DB::table('app_config')->insert(array (
+        \DB::table('app_config')->insert($this->problems());
+    }
+
+    public function problems() : array {
+        return array (
             0 => 
             array (
                 'id' => 1,
@@ -49,8 +51,6 @@ class AppConfigTableSeeder extends Seeder
                 'created_at' => '2017-06-09 09:03:20',
                 'updated_at' => '2017-06-09 09:20:20',
             )
-        ));
-        
-        
+        );
     }
 }
