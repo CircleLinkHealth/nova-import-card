@@ -49,6 +49,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SnomedToIcd9MapTableSeeder::class);
         $this->call(AddActiveStatusToPractices::class);
         $this->call(PracticeTableSeeder::class);
+        $this->call(UserTableSeeder::class);
         $this->call(PatientMonthlySummariesSeeder::class);
 
         ini_set('memory_limit', $limit);
