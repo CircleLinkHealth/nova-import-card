@@ -34,7 +34,7 @@ class PatientService
     }
 
     public function getPatientByUserId($userId) {
-        return $this->userRepo->model()->with(['patientInfo'])->find($userId)->patientInfo;
+        return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
     }
 
     public function getCcdAllergies($userId) {
