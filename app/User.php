@@ -2243,7 +2243,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function getPrimaryPracticeNameAttribute()
     {
-        return ucwords($this->primaryPractice->display_name);
+        return ucwords(optional($this->primaryPractice)->display_name);
     }
 
     /**

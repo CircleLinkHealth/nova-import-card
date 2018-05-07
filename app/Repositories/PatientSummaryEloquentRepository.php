@@ -189,6 +189,7 @@ class PatientSummaryEloquentRepository
                                         return ! $problem->icd10Code();
                                     })
                                     ->unique('cpm_problem_id')
+                                    ->sortByDesc('cpm_problem_id')
                                     ->values();
     }
 
