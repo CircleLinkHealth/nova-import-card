@@ -17,25 +17,7 @@ class CpmProblemsTableSeeder extends Seeder
         
         \DB::table('cpm_problems')->insert($this->problems());
 
-        $defaultCarePlan = getDefaultCarePlanTemplate();
-
-        CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
-            if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
-                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
-                    'has_instruction' => true,
-                    'page'            => 1
-                ]);
-            }
-
-            SnomedToCpmIcdMap::updateOrCreate([
-                'icd_10_code' => $cpmProblem->default_icd_10_code,
-            ], [
-                'cpm_problem_id' => $cpmProblem->id,
-                'icd_10_name'    => $cpmProblem->name,
-            ]);
-
-            $this->command->info("$cpmProblem->name has been added");
-        });
+        $this->command->info('cpm problems seeded');
     }
 
     public function problems() : array {

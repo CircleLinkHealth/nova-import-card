@@ -39,11 +39,11 @@ class DatabaseSeeder extends Seeder
 //      $this->call('CcdVendorsTableSeeder');
 //      $this->call('CpmProblemsTableSeeder');
         $this->call(AppConfigTableSeeder::class);
+        $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(RolesPermissionsSeeder::class);
         $this->call(SnomedToIcd9MapTableSeeder::class);
         $this->call(AddActiveStatusToPractices::class);
-        $this->call(CpmProblemsTableSeeder::class);
         $this->call(AppConfigTableSeeder::class);
     }
 }
