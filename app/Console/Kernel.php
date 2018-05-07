@@ -7,7 +7,6 @@ use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
-use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -122,6 +121,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! \Schema::hasTable('practices')) {
+            return;
+        }
+
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }
