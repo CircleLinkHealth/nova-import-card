@@ -33,7 +33,7 @@ class CallsDashboardController extends Controller
             $nurses = User::ofType('care-center')->get();
             return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
-        $message = 'Note does not exist.';
+        $message = 'Note Does Not Exist.';
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
 
 
@@ -49,7 +49,7 @@ class CallsDashboardController extends Controller
 
 
         if ($call->status == $status) {
-            $message = 'Call Status not changed.';
+            $message = 'Call Status Not Changed.';
         } else {
             $initialStatus = $call->status;
             $call->status  = $status;
@@ -90,7 +90,7 @@ class CallsDashboardController extends Controller
         );
 
 
-        $message = 'Call Successfully created!';
+        $message = 'Call Successfully Added to Note!';
 
 
         return redirect()->route('CallsDashboard.index')->with('msg', $message);

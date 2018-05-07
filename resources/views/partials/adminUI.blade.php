@@ -190,7 +190,7 @@
                                 Reports<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="{{ route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                                <li><a href="{{ route('import.ccd.remix', []) }}">CCDs To Import</a></li>
                                 <li><a href="{{ route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
                                     </a></li>
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance

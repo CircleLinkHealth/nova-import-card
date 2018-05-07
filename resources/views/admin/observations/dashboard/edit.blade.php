@@ -19,7 +19,7 @@
                     <input align="left" type="submit" value="Return to list" class="btn btn-info">
                     <br>
                 </form>
-                    <form action="{{route('observations-dashboard.update')}}" method="POST">
+                    <form action="{{route('observations-dashboard.update')}}" onsubmit="return confirmObservationSubmit()" method="POST">
                         {!! method_field('patch') !!}
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -94,6 +94,14 @@
                             </div>
                         </div>
                     </form>
+
+                    @push('scripts')
+                        <script>
+                            function confirmObservationSubmit() {
+                                return confirm('Are you sure you want to change this observation?')
+                            }
+                        </script>
+                    @endpush
             </div>
         </div>
 @endsection

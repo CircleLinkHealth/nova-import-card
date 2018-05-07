@@ -5,7 +5,6 @@ use App\Models\Pdf;
 use App\Services\ReportsService;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
 /**
@@ -68,6 +67,8 @@ class CarePlan extends \App\BaseModel implements PdfReport
         'status',
         'qa_date',
         'provider_date',
+        'first_printed_by',
+        'first_printed',
         'last_printed',
         'created_at',
         'updated_at',
@@ -76,6 +77,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
     protected $dates = [
         'qa_date',
         'provider_date',
+        'first_printed',
     ];
 
     protected $attributes = [

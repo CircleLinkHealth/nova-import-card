@@ -193,6 +193,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
+
+            Route::get('without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as'   => 'patients.without-scheduled-calls',
+            ]);
+
+            Route::get('without-inbound-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'as'   => 'patients.without-inbound-calls',
+            ]);
+
             Route::group([
                 'prefix' => '{userId}'
             ], function () {
@@ -290,6 +301,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('all', 'API\PracticeController@allPracticesWithLocationsAndStaff');
             Route::get('{practiceId}/patients', 'API\PracticeController@getPatients');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses');
+
+            Route::get('{practiceId}/patients/without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as'   => 'practice.patients.without-scheduled-calls',
+            ]);
 
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
@@ -448,10 +464,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('imported-medical-records', [
             'uses' => 'ImporterController@uploadRawFiles',
             'as'   => 'upload.ccda',
-        ]);
-        Route::get('imported-medical-records', [
-            'uses' => 'ImporterController@index',
-            'as'   => 'view.files.ready.to.import',
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');

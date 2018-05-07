@@ -137,7 +137,7 @@
         return {
           pagination: null,
           selected: false,
-          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Time Zone', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Billing Provider', 'DOB', 'Scheduler'],
+          columns: ['selected', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler'],
           tableData: [],
           nurses: [],
           loaders: {
@@ -145,7 +145,10 @@
             calls: false
           },
           currentDate: new Date(),
-          $nextPromise: null
+          $nextPromise: null,
+          requests: {
+            calls: null
+          }
         }
       },
       computed: {
@@ -307,12 +310,14 @@
           this.loaders.nurses = true
           return this.axios.get(rootUrl('api/nurses?compressed')).then(response => {
             const pagination = (response || {}).data
-            this.nurses = ((pagination || {}).data || []).map(nurse => {
+            this.nurses = ((pagination || {}).data || []).filter(nurse => nurse.practices).map(nurse => {
               return {
                 id: nurse.user_id,
                 nurseId: nurse.id,
                 display_name: ((nurse.user || {}).display_name || ''),
-                states: nurse.states
+                states: nurse.states,
+                practiceId: (nurse.user || {}).program_id,
+                practices: (nurse.practices || [])
               }
             })
             console.log('calls:nurses', pagination)
@@ -391,8 +396,12 @@
                     'Call Time Start': call.window_start,
                     'Call Time End': call.window_end,
                     state: call.getPatient().state,
+                    practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(n => !!n.display_name).filter(nurse => nurse.states.indexOf(this.state) >= 0).map(nurse => ({ text: nurse.display_name, value: nurse.id }))
+                      return $vm.nurses.filter(Boolean)
+                                      .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
+                                      .filter(n => !!n.display_name)
+                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
                     },
                     loaders: {
                       nextCall: false,
@@ -411,11 +420,15 @@
         },
         next() {
           const $vm = this
-          if (this.$nextPromise) {
-            this.$nextPromise.abort()
-          }
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl()).then((result) => result).then(result => {
+            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+              before(request) {
+                if (this.requests.calls) {
+                  this.requests.calls.abort()
+                }
+                this.requests.calls = request
+              }
+            }).then((result) => result).then(result => {
               result = result.data;
               this.pagination = {
                             current_page: result.meta.current_page,
@@ -522,5 +535,9 @@
   div.loader.relative {
     position: relative;
     left: 0px;
+  }
+
+  .table-bordered>tbody>tr>td {
+    white-space: nowrap;
   }
 </style>

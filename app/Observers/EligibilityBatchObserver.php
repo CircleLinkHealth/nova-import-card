@@ -18,15 +18,6 @@ class EligibilityBatchObserver
 {
     public function creating(EligibilityBatch $eligibilityBatch)
     {
-        if ( ! $eligibilityBatch->stats) {
-            $eligibilityBatch->stats = [
-                'eligible'   => 0,
-                'ineligible' => 0,
-                'errors'     => 0,
-                'duplicates' => 0,
-            ];
-        }
-
         if (auth()->check()) {
             $eligibilityBatch->initiator_id = auth()->id();
         }

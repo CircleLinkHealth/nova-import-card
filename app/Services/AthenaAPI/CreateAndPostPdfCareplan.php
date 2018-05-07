@@ -13,7 +13,6 @@ use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
-use App\TargetPatient;
 use Carbon\Carbon;
 use Maknz\Slack\Facades\Slack;
 
@@ -137,7 +136,7 @@ class CreateAndPostPdfCareplan
             $ccda->import();
 
             if (app()->environment('worker')) {
-                $link = route('view.files.ready.to.import');
+                $link = route('import.ccd.remix');
 
                 sendSlackMessage(
                     '#ccd-file-status',

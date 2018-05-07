@@ -129,9 +129,7 @@ class Practice extends \App\BaseModel implements HasMedia
 
     public function patients()
     {
-        return $this->users()->whereHas('roles', function ($q) {
-            $q->whereName('participant');
-        });
+        return $this->users()->ofType('participant')->whereHas('patientInfo');
     }
 
     public function providers()
