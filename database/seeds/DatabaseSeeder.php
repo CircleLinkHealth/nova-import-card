@@ -44,6 +44,5 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesPermissionsSeeder::class);
         $this->call(SnomedToIcd9MapTableSeeder::class);
         $this->call(AddActiveStatusToPractices::class);
-        $this->call(AppConfigTableSeeder::class);
     }
 }
