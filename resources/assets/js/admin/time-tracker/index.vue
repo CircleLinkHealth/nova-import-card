@@ -177,6 +177,7 @@
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
+                    TIMEOUTS_OVERRIDE: 'client:timeouts:override',
                     LOGOUT: 'client:logout'
                 }
 
@@ -240,6 +241,12 @@
                 EventBus.$on('tracker:call-mode:exit', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.EXIT_CALL_MODE, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:timeouts:override', (timeouts = {}) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.TIMEOUTS_OVERRIDE, info: this.info, timeouts }))
                     }
                 })
 
