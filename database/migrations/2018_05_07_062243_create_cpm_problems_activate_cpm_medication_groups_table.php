@@ -19,7 +19,7 @@ class CreateCpmProblemsActivateCpmMedicationGroupsTable extends Migration {
 			$table->integer('cpm_problem_id')->unsigned()->index('cpm_problem_problem_activates_med_grp_foreign');
 			$table->integer('cpm_medication_group_id')->unsigned();
 			$table->timestamps();
-			$table->unique(['cpm_medication_group_id','care_plan_template_id','cpm_problem_id'], 'cpt_problem_activates_med_group');
+			$table->unique(['cpm_medication_group_id','care_plan_template_id','cpm_problem_id'], 'cpt_medication_careplan_problem_activates_med_group');
 		});
 	}
 

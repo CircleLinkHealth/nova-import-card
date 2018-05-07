@@ -19,7 +19,7 @@ class CreateCpmProblemsActivateCpmBiometricsTable extends Migration {
 			$table->integer('cpm_problem_id')->unsigned()->index('cpm_problem_problem_activates_biometric_foreign');
 			$table->integer('cpm_biometric_id')->unsigned();
 			$table->timestamps();
-			$table->unique(['cpm_biometric_id','care_plan_template_id','cpm_problem_id'], 'cpt_problem_activates_med_group');
+			$table->unique(['cpm_biometric_id','care_plan_template_id','cpm_problem_id'], 'cpt_biometric_careplan_problem_activates_med_group');
 		});
 	}
 
