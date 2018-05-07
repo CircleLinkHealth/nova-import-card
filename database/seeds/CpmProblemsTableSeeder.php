@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\CPM\CpmProblem;
 
 class CpmProblemsTableSeeder extends Seeder
 {
@@ -12,11 +13,33 @@ class CpmProblemsTableSeeder extends Seeder
      */
     public function run()
     {
-        
-
         \DB::table('cpm_problems')->delete();
         
-        \DB::table('cpm_problems')->insert(array (
+        \DB::table('cpm_problems')->insert($this->problems());
+
+        $defaultCarePlan = getDefaultCarePlanTemplate();
+
+        CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
+            if ( ! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
+                    'has_instruction' => true,
+                    'page'            => 1
+                ]);
+            }
+
+            SnomedToCpmIcdMap::updateOrCreate([
+                'icd_10_code' => $cpmProblem->default_icd_10_code,
+            ], [
+                'cpm_problem_id' => $cpmProblem->id,
+                'icd_10_name'    => $cpmProblem->name,
+            ]);
+
+            $this->command->info("$cpmProblem->name has been added");
+        });
+    }
+
+    public function problems() : array {
+        return array (
             0 => 
             array (
                 'id' => 1,
@@ -451,8 +474,6 @@ class CpmProblemsTableSeeder extends Seeder
                 'created_at' => '2018-02-01 07:32:49',
                 'updated_at' => '2018-02-01 07:32:49',
             ),
-        ));
-        
-        
+        );
     }
 }
