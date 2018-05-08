@@ -15,15 +15,15 @@ class CreateSnomedToCpmIcdMapsTable extends Migration {
 		Schema::create('snomed_to_cpm_icd_maps', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->bigInteger('snomed_code');
-			$table->string('snomed_name');
-			$table->string('icd_10_code');
-			$table->string('icd_10_name');
+            $table->bigInteger('snomed_code')->nullable();
+            $table->string('snomed_name')->nullable();
+            $table->string('icd_10_code')->nullable();
+            $table->string('icd_10_name')->nullable();
 			$table->timestamps();
-			$table->string('icd_9_code');
-			$table->string('icd_9_name');
-			$table->float('icd_9_avg_usage', 10, 0);
-			$table->boolean('icd_9_is_nec');
+            $table->string('icd_9_code')->nullable();
+            $table->string('icd_9_name')->nullable();
+            $table->float('icd_9_avg_usage', 10, 0)->nullable();
+            $table->boolean('icd_9_is_nec')->nullable();
 			$table->integer('cpm_problem_id')->unsigned()->nullable()->index('snomed_to_cpm_icd_maps_cpm_problem_id_foreign');
 		});
 	}
