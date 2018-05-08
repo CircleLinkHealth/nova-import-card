@@ -53,7 +53,7 @@ class ResetPassword extends Notification
                 'greeting'        => 'You are receiving this email because we received a password reset request for your account.',
                 'actionText'      => 'Reset Password',
                 'actionUrl'       => url('auth/password/reset', $this->token),
-                'introLines'      => [],
+                'introLines'      => ['Click on the button below to reset your password. As a security measure, your reset token expires in one hour.'],
                 'outroLines'      => ['If you did not request a password reset, no further action is required.'],
                 'level'           => '',
                 'saasAccountName' => $notifiable->saasAccountName(),
