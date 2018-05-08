@@ -21,7 +21,7 @@ class CreatePracticesTable extends Migration {
 			$table->string('name', 100)->unique('wp_blogs_name_unique');
 			$table->string('display_name')->nullable();
 			$table->boolean('active')->default(0);
-			$table->float('clh_pppm', 10, 0);
+			$table->float('clh_pppm', 10, 0)->nullable();
 			$table->integer('term_days')->default(30);
 			$table->string('federal_tax_id')->nullable();
 			$table->boolean('same_ehr_login')->nullable();
@@ -29,8 +29,8 @@ class CreatePracticesTable extends Migration {
 			$table->boolean('auto_approve_careplans')->default(0);
 			$table->boolean('send_alerts')->default(1);
 			$table->text('weekly_report_recipients')->nullable();
-			$table->text('invoice_recipients', 65535);
-			$table->text('bill_to_name', 65535);
+			$table->text('invoice_recipients', 65535)->nullable();
+			$table->text('bill_to_name', 65535)->nullable();
 			$table->string('external_id')->nullable();
 			$table->string('outgoing_phone_number')->default('+18886958537');
 			$table->timestamps();

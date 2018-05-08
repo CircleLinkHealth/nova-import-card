@@ -29,6 +29,8 @@ trait CreatesApplication
         Artisan::call('db:seed', [
             '--class' => 'TestSuiteSeeder'
         ]);
+
+        \Log::useFiles('php://stderr');
     }
 
     protected function tearDown()
