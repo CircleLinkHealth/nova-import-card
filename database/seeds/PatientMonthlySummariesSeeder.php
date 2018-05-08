@@ -31,8 +31,8 @@ class PatientMonthlySummariesSeeder extends Seeder
             $u->save();
             $patientInfo = new \App\Patient();
             $patientInfo->user_id = $u->id;
+            //patient info is saved
             $patientInfo->ccm_status = \App\Patient::ENROLLED;
-//            $u->patientInfo()->create();
             $u->patientSummaries()->create([
                 'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
                 'ccm_time'   => 1400,
