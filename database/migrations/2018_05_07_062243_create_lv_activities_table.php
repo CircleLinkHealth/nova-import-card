@@ -21,10 +21,10 @@ class CreateLvActivitiesTable extends Migration {
 			$table->integer('patient_id')->unsigned()->index('patient_id');
 			$table->integer('provider_id')->unsigned()->index('provider_id');
 			$table->integer('logger_id')->unsigned();
-			$table->integer('comment_id')->unsigned()->index('comment_id');
+			$table->integer('comment_id')->unsigned()->index('comment_id')->nullable();
 			$table->integer('sequence_id')->unsigned()->nullable();
-			$table->string('obs_message_id', 30)->index('obs_message_id');
-			$table->string('logged_from', 30);
+			$table->string('obs_message_id', 30)->index('obs_message_id')->nullable();
+			$table->string('logged_from', 30)->nullable();
 			$table->dateTime('performed_at')->default('0000-00-00 00:00:00')->index('preformed_at');
 			$table->dateTime('performed_at_gmt')->default('0000-00-00 00:00:00');
 			$table->timestamps();
