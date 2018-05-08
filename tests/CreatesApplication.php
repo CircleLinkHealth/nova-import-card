@@ -26,7 +26,9 @@ trait CreatesApplication
 
         Artisan::call('migrate');
         Artisan::call('db:seed');
-        Artisan::call('db:seed --class=TestSuiteSeeder');
+        Artisan::call('db:seed', [
+            '--class' => 'TestSuiteSeeder',
+        ]);
     }
 
     protected function tearDown()
