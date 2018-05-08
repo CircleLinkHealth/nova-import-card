@@ -134,8 +134,8 @@
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
                                         <v-datepicker name="birth_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
-                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
-                                            value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}" required></v-datepicker>
+                                            placeholder="YYYY-MM-DD"
+                                            value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }} 00:00:00 GMT{{ auth()->user()->timezone_offset_hours }}" required></v-datepicker>
                                         <br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                     </div>

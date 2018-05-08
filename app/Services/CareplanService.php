@@ -66,7 +66,7 @@ class CareplanService
 
     public function careplan($userId) {
         return [
-            'allCpmProblems'    => $this->cpmService->problems()->getCollection(),
+            'allCpmProblems'    => $this->cpmService->all(),
             'cpmProblems'       => $this->cpmUserService->getPatientProblems($userId),
             'ccdProblems'       => $this->ccdUserService->getPatientProblems($userId),
             'medications'       => $this->medicationService->repo()->patientMedication($userId)->getCollection(),

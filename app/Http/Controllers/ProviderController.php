@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\CarePlanWasApproved;
 use App\User;
+use App\CarePlan;
 use App\Services\ProviderInfoService;
 use Illuminate\Http\Request;
 
@@ -33,7 +34,9 @@ class ProviderController extends Controller
         $viewNext = (boolean) $viewNext;
 
         if ($viewNext) {
-            $nextPatient = auth()->user()->patientsPendingApproval()->first();
+            $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
+                return $user->careplanStatus == CarePlan::QA_APPROVED;
+            })->first();
 
             if (!$nextPatient) {
                 return redirect()->to('/');

@@ -40,8 +40,8 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = () => !this.callMode ? 120 : 900;
-                        const LOGOUT_INTERVAL = () => !this.callMode ? 600 : 1200;
+                        const ALERT_INTERVAL = () => !this.callMode ? 120 : 900; // 120-900
+                        const LOGOUT_INTERVAL = () => !this.callMode ? 600 : 1200; // 600-1200
                         if (this.totalSeconds && !this.isModalShown && ((this.totalSeconds >= ALERT_INTERVAL()) && (this.totalSeconds < LOGOUT_INTERVAL()))) {
                             /**
                              * Stop Tracking Time

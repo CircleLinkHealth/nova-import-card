@@ -13,6 +13,9 @@
     <div class="container">
         <h3 align="center">Edit Call Status</h3>
         <hr><br>
+        <form action="{{route('CallsDashboard.index')}}" method="GET">
+            <input align="center" type="submit" value="Edit another Note" class="btn btn-info">
+        </form>
         <div class="text-center">
             <div>
                 <h4 class="ops-dboard-title">Note Info</h4>

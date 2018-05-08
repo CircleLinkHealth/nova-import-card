@@ -33,7 +33,7 @@ class CallsDashboardController extends Controller
             $nurses = User::ofType('care-center')->get();
             return view('admin.CallsDashboard.create-call', compact(['note', 'nurses']));
         }
-        $message = 'Note does not exist.';
+        $message = 'Note Does Not Exist.';
         return redirect()->route('CallsDashboard.index')->with('msg', $message);
 
 
@@ -49,33 +49,12 @@ class CallsDashboardController extends Controller
 
 
         if ($call->status == $status) {
-            $message = 'Call Status not changed.';
+            $message = 'Call Status Not Changed.';
         } else {
             $initialStatus = $call->status;
             $call->status  = $status;
             $call->save();
 
-            $summary = PatientMonthlySummary::firstOrCreate([
-                'patient_id' => $note->patient_id,
-                'month_year' => $date->copy()->startOfMonth()
-            ]);
-
-            if ($initialStatus == 'scheduled') {
-                if ($status == 'reached') {
-                    $summary->no_of_calls            += 1;
-                    $summary->no_of_successful_calls += 1;
-                } else {
-                    $summary->no_of_calls += 1;
-                }
-                $summary->save();
-            } else {
-                if ($status == 'reached') {
-                    $summary->no_of_successful_calls += 1;
-                } else {
-                    $summary->no_of_successful_calls -= 1;
-                }
-                $summary->save();
-            }
             $message = 'Call Status successfully changed!';
         }
 
@@ -110,22 +89,8 @@ class CallsDashboardController extends Controller
             null
         );
 
-        //update monthly summaries
-        $date = Carbon::now();
-        $summary = PatientMonthlySummary::firstOrCreate([
-            'patient_id' => $note->patient_id,
-            'month_year' => $date->copy()->startOfMonth()
-        ]);
 
-        if ($status == 'reached') {
-            $summary->no_of_calls            += 1;
-            $summary->no_of_successful_calls += 1;
-        } else {
-            $summary->no_of_calls += 1;
-        }
-        $summary->save();
-
-        $message = 'Call Successfully created!';
+        $message = 'Call Successfully Added to Note!';
 
 
         return redirect()->route('CallsDashboard.index')->with('msg', $message);

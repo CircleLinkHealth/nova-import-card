@@ -159,6 +159,8 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property-read mixed $timezone_abbr
+ * @property-read mixed $timezone_offset
+ * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -2504,6 +2506,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
+    public function getTimezoneOffsetAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offset
+        : Carbon::now()->setTimezone('America/New_York')->offset;
+    }
+
+    public function getTimezoneOffsetHoursAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offsetHours
+        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
+    }
+
     public function canApproveCarePlans()
     {
         return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
@@ -2771,7 +2787,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'name' => $this->name(),
+            'name' => $this->name() ?? $this->display_name,
             'address' => $this->address,
             'city' => $this->city,
             'state' => $this->state,
@@ -2783,6 +2799,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'patient_info' => optional($this->patientInfo()->first())->safe(),
             'provider_info' => $this->providerInfo()->first(),
             'billing_provider_name' => $this->billing_provider_name,
+            'billing_provider_id' => $this->billing_provider_id,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
             'phone' => $this->phone ?? optional($phone)->number,

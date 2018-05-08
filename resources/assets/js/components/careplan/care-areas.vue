@@ -22,7 +22,9 @@
                 </ul>
             </div>
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                <h2 class="color-blue">Other Conditions</h2>
+                <h2 class="color-blue pointer">Other Conditions
+                     <!-- <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span> -->
+                </h2>
                 
                 <ul class="row">
                     <li class='top-10 col-sm-6' 
@@ -55,7 +57,8 @@
             return {
                 cpmProblems: [],
                 ccdProblems: [],
-                allCpmProblems: []
+                allCpmProblems: [],
+                isOtherConditionsVisible: false
             }
         },
         computed: {
@@ -101,6 +104,9 @@
             ccdProblemName(ccdProblem) {
                 let p = this.allCpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
                 return p ? p.name : ccdProblem.name
+            },
+            toggleOtherConditions () {
+                this.isOtherConditionsVisible = !this.isOtherConditionsVisible
             }
         },
         mounted() {
