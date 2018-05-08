@@ -36,7 +36,7 @@ class CreateUsersTable extends Migration {
 			$table->string('zip');
 			$table->string('timezone')->nullable()->default('America/New_York');
             $table->string('status')->nullable();
-			$table->boolean('access_disabled')->nullable();
+			$table->boolean('access_disabled')->default(false);;
 			$table->boolean('is_auto_generated')->nullable();
 			$table->string('remember_token', 100)->nullable();
 			$table->timestamps();
