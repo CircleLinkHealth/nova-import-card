@@ -70,6 +70,7 @@ class AddNewDefaultCarePlanTemplate extends Seeder
             ], [
                 'cpm_problem_id' => $cpmProblem->id,
                 'icd_10_name'    => $cpmProblem->name,
+                'snomed_code' => 0
             ]);
 
             $this->command->info("$cpmProblem->name has been added");

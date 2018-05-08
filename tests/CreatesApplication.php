@@ -24,10 +24,10 @@ trait CreatesApplication
     {
         parent::setUp();
 
-        Artisan::call('migrate');
+        Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
         Artisan::call('db:seed', [
-            '--class' => 'TestSuiteSeeder',
+            '--class' => 'TestSuiteSeeder'
         ]);
     }
 
