@@ -120,6 +120,14 @@
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan ide-helper:generate",
             "php artisan ide-helper:meta"
+        ],
+        "test": [
+            "phpunit ./tests/Unit --stop-on-failure"
+        ],
+        "clear": [
+            "php artisan clear-compiled",
+            "composer dump-autoload",
+            "php artisan optimize"
         ]
     },
     "config": {
