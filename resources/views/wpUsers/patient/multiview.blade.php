@@ -351,7 +351,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @endif
                         </div>
                         <!-- Do NOT show other conditions in PRINT. See https://github.com/CircleLinkHealth/cpm-web/issues/1871 -->
-                        @if ($ccdProblemsForListing->count() > 0)
+                        @if ($ccdProblemsForListing->count() > 0 && false)
                             <div class="col-xs-12">
                                 <h2 class="color-blue">Other Conditions</h2>
                                 <ul class="row">
