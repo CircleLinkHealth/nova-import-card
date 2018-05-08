@@ -16,13 +16,13 @@ class CreateNurseInfoTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('user_id')->unsigned()->index('nurse_info_user_id_foreign');
-			$table->text('status', 65535);
-			$table->text('license', 65535);
-			$table->integer('hourly_rate');
+			$table->text('status', 65535)->nullable();
+			$table->text('license', 65535)->nullable();
+			$table->integer('hourly_rate')->nullable();
 			$table->string('billing_type')->default('fixed');
 			$table->integer('low_rate')->default(10);
 			$table->integer('high_rate')->default(30);
-			$table->boolean('spanish');
+			$table->boolean('spanish')->nullable();
 			$table->timestamps();
 			$table->boolean('isNLC')->default(0);
 		});
