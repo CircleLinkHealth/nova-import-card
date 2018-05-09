@@ -81,7 +81,8 @@
         "phpunit/phpunit": "~6.0",
         "symfony/css-selector": "3.1.*",
         "symfony/dom-crawler": "3.1.*",
-        "xethron/migrations-generator": "^2.0"
+        "xethron/migrations-generator": "dev-l5",
+        "brianium/paratest": "*"
     },
     "autoload": {
         "classmap": [
@@ -122,7 +123,7 @@
             "php artisan ide-helper:meta"
         ],
         "test": [
-            "phpunit ./tests/Unit --stop-on-failure"
+            "paratest ./tests/Unit --stop-on-failure"
         ],
         "clear": [
             "php artisan clear-compiled",
