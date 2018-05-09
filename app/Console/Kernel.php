@@ -7,7 +7,6 @@ use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
-use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -15,6 +14,7 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
+use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,6 +29,23 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        //Move CCD's out of the DB
+        $schedule->call(function () {
+            Ccda::whereNotNull('xml')->where('xml', '!=', '')->chunk(300, function ($ccdas) {
+                foreach ($ccdas as $c) {
+                    if ( ! $c->xml) {
+                        continue;
+                    }
+
+                    \Storage::disk('storage')->put("ccda-{$c->id}.xml", $c->xml);
+                    $c->addMedia(storage_path("ccda-{$c->id}.xml"))->toMediaCollection('ccd');
+
+                    $c->xml = null;
+                    $c->save();
+                }
+            });
+        })->everyMinute();
+
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyFiveMinutes()->withoutOverlapping(15);
 
@@ -82,8 +99,8 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping();
 
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
-                ->dailyAt('09:00')
-                ->withoutOverlapping();
+                 ->dailyAt('09:00')
+                 ->withoutOverlapping();
 
 
 //        $schedule->command('ccda:determineEligibility')
