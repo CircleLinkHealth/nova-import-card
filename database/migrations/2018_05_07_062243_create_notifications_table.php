@@ -20,7 +20,7 @@ class CreateNotificationsTable extends Migration {
 			$table->string('notifiable_type');
 			$table->integer('attachment_id')->unsigned()->nullable();
 			$table->string('attachment_type')->nullable();
-			$table->text('data', 65535);
+			$table->text('data', 65535)->nullable();
 			$table->dateTime('read_at')->nullable();
 			$table->timestamps();
 			$table->index(['notifiable_id','notifiable_type']);
