@@ -114,25 +114,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         'source',
         'imported',
         'json',
+        'xml',
         'status',
     ];
-
-    public function save(array $options = [])
-    {
-        if ( ! $this->xml) {
-            return parent::save($options);
-        }
-
-        $xml       = $this->xml;
-        $this->xml = null;
-
-        $ccda = parent::save($options);
-
-        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
-        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
-
-        return $ccda;
-    }
 
     public static function create($attributes = [])
     {
@@ -209,7 +193,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 
     public function bluebuttonJson()
     {
-        if ( ! $this->id && ! $this->hasMedia('ccd')) {
+        if ($this->json) {
+            return json_decode($this->json);
+        }
+
+        if ( ! $this->id || ! $this->hasMedia('ccd')) {
             return false;
         }
 
@@ -247,5 +235,17 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         }
 
         return $responseBody;
+    }
+
+    public function storeCcd($xml)
+    {
+        if ( ! $this->id) {
+            throw new \Exception('CCD does not have an id.');
+        }
+
+        \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
+        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
+
+        return $this;
     }
 }
