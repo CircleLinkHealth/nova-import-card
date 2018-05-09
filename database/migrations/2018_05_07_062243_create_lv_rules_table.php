@@ -20,8 +20,8 @@ class CreateLvRulesTable extends Migration {
 			$table->string('active', 1)->default('N');
 			$table->string('type_id', 10)->nullable();
 			$table->integer('sort')->unsigned();
-			$table->dateTime('effective_date')->default('0000-00-00 00:00:00');
-			$table->dateTime('expiration_date')->default('0000-00-00 00:00:00');
+			$table->dateTime('effective_date')->nullable();
+			$table->dateTime('expiration_date')->nullable();
 			$table->text('summary', 65535)->nullable();
 			$table->string('approve', 1)->default('N');
 			$table->string('archive', 1)->default('N');

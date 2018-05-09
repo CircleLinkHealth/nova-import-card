@@ -24,7 +24,7 @@ class CreateLocationsTable extends Migration {
 			$table->string('address_line_1');
 			$table->string('address_line_2')->nullable()->default('');
 			$table->string('city');
-			$table->string('state');
+			$table->string('state')->nullable();
 			$table->text('timezone', 65535)->nullable();
 			$table->string('postal_code');
 			$table->string('ehr_login')->nullable();

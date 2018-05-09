@@ -16,7 +16,7 @@ class CreatePhoneNumbersTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('user_id')->unsigned()->index();
-			$table->integer('location_id')->unsigned();
+			$table->integer('location_id')->unsigned()->nullable();
 			$table->string('number')->nullable();
 			$table->string('extension')->nullable();
 			$table->string('type')->nullable();

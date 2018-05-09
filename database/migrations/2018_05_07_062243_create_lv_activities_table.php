@@ -25,8 +25,8 @@ class CreateLvActivitiesTable extends Migration {
 			$table->integer('sequence_id')->unsigned()->nullable();
 			$table->string('obs_message_id', 30)->index('obs_message_id')->nullable();
 			$table->string('logged_from', 30)->nullable();
-			$table->dateTime('performed_at')->default('0000-00-00 00:00:00')->index('preformed_at');
-			$table->dateTime('performed_at_gmt')->default('0000-00-00 00:00:00');
+			$table->dateTime('performed_at')->nullable()->index('preformed_at');
+			$table->dateTime('performed_at_gmt')->nullable();
 			$table->timestamps();
 			$table->softDeletes();
 			$table->integer('page_timer_id')->unsigned()->nullable();

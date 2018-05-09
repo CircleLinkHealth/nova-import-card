@@ -24,7 +24,6 @@ class SuccessfulCallHandlerTest extends TestCase
         parent::setUp();
 
         $this->practice = factory(Practice::class)->create();
-
         $this->nurse = $this->createUser($this->practice->id, 'care-center');
     }
 

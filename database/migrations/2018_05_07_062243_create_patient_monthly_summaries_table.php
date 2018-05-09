@@ -27,8 +27,8 @@ class CreatePatientMonthlySummariesTable extends Migration {
 			$table->text('billable_problem2', 65535)->nullable();
 			$table->text('billable_problem2_code', 65535)->nullable();
 			$table->boolean('is_ccm_complex')->default(0);
-			$table->boolean('approved')->default(0)->nullable();
-			$table->boolean('rejected')->default(0)->nullable();
+			$table->boolean('approved')->nullable();
+			$table->boolean('rejected')->nullable();
 			$table->boolean('needs_qa')->nullable();
 			$table->integer('actor_id')->unsigned()->nullable()->index('patient_monthly_summaries_actor_id_foreign');
 			$table->timestamps();

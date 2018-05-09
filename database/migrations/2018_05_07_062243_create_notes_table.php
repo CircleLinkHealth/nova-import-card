@@ -22,7 +22,7 @@ class CreateNotesTable extends Migration {
 			$table->boolean('did_medication_recon');
 			$table->timestamps();
 			$table->text('type', 65535);
-			$table->dateTime('performed_at')->default('0000-00-00 00:00:00');
+			$table->dateTime('performed_at')->nullable();
 			$table->integer('logger_id')->unsigned()->nullable()->index('notes_logger_id_foreign');
 		});
 	}

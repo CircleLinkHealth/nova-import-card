@@ -18,6 +18,7 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var
      */
     protected $patient;
+    protected $practice;
 
     /**
      * @var User $provider
@@ -47,7 +48,7 @@ class CarePlanProviderApprovalTest extends TestCase
 
     public function test_medical_assistant_can_approve()
     {
-        $medicalAssistant = $this->createUser(8, 'med_assistant');
+        $medicalAssistant = $this->createUser($this->practice->id, 'med_assistant');
         auth()->login($medicalAssistant);
 
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
@@ -57,15 +58,15 @@ class CarePlanProviderApprovalTest extends TestCase
             'patientId' => $this->patient->id,
             'page'      => 3,
         ]))
-            ->assertDontSee('Approve/Next');
+            ->assertSee('Approve/Next');
     }
 
     public function test_r_n_can_approve()
     {
-        Practice::find(8)->cpmSettings()->update([
+        Practice::find($this->practice->id)->cpmSettings()->update([
             'rn_can_approve_careplans' => true,
         ]);
-        $rn = $this->createUser(8, 'registered-nurse');
+        $rn = $this->createUser($this->practice->id, 'registered-nurse');
         auth()->login($rn);
 
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
@@ -80,7 +81,7 @@ class CarePlanProviderApprovalTest extends TestCase
 
     public function test_care_center_cannot_approve()
     {
-        $careCenter = $this->createUser(8, 'care-center');
+        $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
@@ -95,7 +96,7 @@ class CarePlanProviderApprovalTest extends TestCase
 
     public function test_care_center_can_qa_approve()
     {
-        $careCenter = $this->createUser(8, 'care-center');
+        $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
         $response = $this->get(route('patient.careplan.show', [
@@ -108,8 +109,9 @@ class CarePlanProviderApprovalTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->provider = $this->createUser(8);
+        $this->practice = factory(Practice::class)->create();
+        $this->provider = $this->createUser($this->practice->id);
         auth()->login($this->provider);
-        $this->patient = $this->createUser(8, 'participant');
+        $this->patient = $this->createUser($this->practice->id, 'participant');
     }
 }

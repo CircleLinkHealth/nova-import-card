@@ -24,7 +24,6 @@ trait CreatesApplication
     {
         parent::setUp();
 
-        Artisan::call('migrate:refresh');
         Artisan::call('db:seed');
         Artisan::call('db:seed', [
             '--class' => 'TestSuiteSeeder'
@@ -33,12 +32,5 @@ trait CreatesApplication
 
         \Log::useFiles('php://stderr');
         \Log::useFiles('php://stdout');
-    }
-
-    protected function tearDown()
-    {
-        Artisan::call('migrate:reset');
-
-        parent::tearDown();
     }
 }

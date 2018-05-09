@@ -20,8 +20,8 @@ class CreateLvPageTimerTable extends Migration {
 			$table->string('duration_unit', 30)->nullable();
 			$table->integer('patient_id')->unsigned();
 			$table->integer('provider_id')->unsigned();
-			$table->dateTime('start_time')->default('0000-00-00 00:00:00');
-			$table->dateTime('end_time')->default('0000-00-00 00:00:00');
+			$table->dateTime('start_time')->nullable();
+			$table->dateTime('end_time')->nullable();
 			$table->string('redirect_to')->nullable();
 			$table->string('url_full', 200)->nullable();
 			$table->string('url_short', 200)->nullable();

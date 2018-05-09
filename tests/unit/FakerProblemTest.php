@@ -27,34 +27,34 @@ class FakerProblemTest extends TestCase
     protected $patient;
     protected $practice;
 
-    /**
-     *
-     * @return void
-     */
-    public function test_it_returns_problem()
-    {
-        $problem = $this->faker->problem(false);
-
-        $this->assertInstanceOf(
-            'App\Models\CCD\Problem', $problem
-        );
-
-        $problemWithName = $this->faker->problem(false, 'Hypertension');
-
-        $this->assertInstanceOf(
-            'App\Models\CCD\Problem', $problemWithName
-        );
-
-        $problemWithCodes = $this->faker->problem();
-
-        $problemSet = $this->faker->problemSet();
-
-        $attachProblemSet = $this->faker->attachProblemSet($this->patient);
-
-        $this->assertInstanceOf('App\User', $attachProblemSet);
-
-
-    }
+//    /**
+//     *
+//     * @return void
+//     */
+//    public function test_it_returns_problem()
+//    {
+//        $problem = $this->faker->problem(false);
+//
+//        $this->assertInstanceOf(
+//            'App\Models\CCD\Problem', $problem
+//        );
+//
+//        $problemWithName = $this->faker->problem(false, 'Hypertension');
+//
+//        $this->assertInstanceOf(
+//            'App\Models\CCD\Problem', $problemWithName
+//        );
+//
+//        $problemWithCodes = $this->faker->problem();
+//
+//        $problemSet = $this->faker->problemSet();
+//
+//        $attachProblemSet = $this->faker->attachProblemSet($this->patient);
+//
+//        $this->assertInstanceOf('App\User', $attachProblemSet);
+//
+//
+//    }
 
     /**
      *

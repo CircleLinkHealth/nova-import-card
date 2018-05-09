@@ -22,8 +22,8 @@ class CreateCarePlansTable extends Migration {
 			$table->integer('care_plan_template_id')->unsigned()->index('patient_care_plans_care_plan_template_id_foreign');
 			$table->text('type', 65535)->nullable();
 			$table->text('status', 65535)->nullable();
-			$table->dateTime('qa_date')->default('0000-00-00 00:00:00');
-			$table->dateTime('provider_date')->default('0000-00-00 00:00:00');
+			$table->dateTime('qa_date')->nullable();
+			$table->dateTime('provider_date')->nullable();
 			$table->integer('first_printed_by')->unsigned()->nullable()->index('care_plans_first_printed_by_foreign');
 			$table->dateTime('first_printed')->nullable();
 			$table->string('last_printed')->nullable();

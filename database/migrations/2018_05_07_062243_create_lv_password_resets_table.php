@@ -16,7 +16,7 @@ class CreateLvPasswordResetsTable extends Migration {
 		{
 			$table->string('email')->index('password_resets_email_index');
 			$table->string('token')->index('password_resets_token_index');
-			$table->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$table->dateTime('created_at')->nullable();
 		});
 	}
 
