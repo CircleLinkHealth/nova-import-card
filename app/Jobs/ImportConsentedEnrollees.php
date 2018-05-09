@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\EligibilityBatch;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
+use App\Services\AthenaAPI\Calls;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
