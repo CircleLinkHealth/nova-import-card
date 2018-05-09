@@ -48,11 +48,11 @@ class CreatePatientInfoTable extends Migration {
 			$table->string('hospital_reminder_areas')->nullable();
 			$table->timestamps();
 			$table->softDeletes();
-			$table->text('general_comment', 65535);
+			$table->text('general_comment', 65535)->nullable();
 			$table->integer('preferred_calls_per_month')->default(2);
-			$table->dateTime('last_successful_contact_time');
+			$table->dateTime('last_successful_contact_time')->nullable();
 			$table->integer('no_call_attempts_since_last_success')->nullable();
-			$table->dateTime('last_contact_time');
+			$table->dateTime('last_contact_time')->nullable();
 			$table->time('daily_contact_window_start')->default('09:00:00');
 			$table->time('daily_contact_window_end')->default('18:00:00');
 			$table->integer('next_call_id')->unsigned()->nullable()->index('patient_info_next_call_id_foreign');
