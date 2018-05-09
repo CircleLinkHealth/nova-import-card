@@ -60,8 +60,6 @@ class CarePlanApprovalReminderTest extends TestCase
             CarePlanApprovalReminder::class,
             function ($notification) use ($numberOfCareplans) {
 
-                print('mail: ' . $notification->toMail($recipient)->build());
-
                 $this->checkToMail($notification, $this->provider, $numberOfCareplans);
                 $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 
@@ -74,10 +72,6 @@ class CarePlanApprovalReminderTest extends TestCase
         $mailData = $notification->toMail($recipient)->build();
 
         $expectedTo = [['address' => $recipient->email, 'name' => $recipient->fullName]];
-
-        print('expected-to: ' . $expectedTo);
-
-        print('mail-to: ' . $mailData->to);
 
         $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
         $this->assertEquals($expectedTo, $mailData->to);
