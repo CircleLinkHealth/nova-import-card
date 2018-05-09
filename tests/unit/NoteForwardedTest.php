@@ -9,25 +9,41 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;
 use Tests\TestCase;
+use Tests\Helpers\UserHelpers;
 
 class NoteForwardedTest extends TestCase
 {
     use DatabaseTransactions,
-        WithoutMiddleware;
+        WithoutMiddleware,
+        UserHelpers;
 
+    private $practice;
+    private $admin, $user, $recipient;
+
+    /**
+     * Test that notes created for a patient are forwarded to care_team_members for that patient
+     */
     public function test_it_sends_notifications()
     {
-        $practice                           = Practice::find(8);
+        $practice                           = $this->practice;
         $settings                           = $practice->cpmSettings();
         $settings->email_note_was_forwarded = true;
         $settings->efax_pdf_notes           = true;
         $settings->dm_pdf_notes             = true;
         $settings->save();
 
-        $auth = User::find(357);
+        $auth = $this->admin;
         auth()->login($auth);
 
-        $note = User::findOrFail(874)->notes->first();
+        $this->user->notes()->create([
+            'body' => '...',
+            'author_id' => $this->admin->id,
+            'isTCM' => 0,
+            'did_medication_recon' => 0,
+            'type' => 'general'
+        ]);
+
+        $note = $this->user->notes->first();
 
         Notification::fake();
 
@@ -35,7 +51,10 @@ class NoteForwardedTest extends TestCase
 
         $recipients = collect();
         $recipients = $note->patient->care_team_receives_alerts;
-        $recipients->push(User::find(948));
+
+        $this->assertEquals($note->patient->id, $this->user->id);
+
+        $this->assertTrue($recipients->count() > 0);
 
         $recipients->map(function ($user) {
             Notification::assertSentTo(
@@ -43,5 +62,26 @@ class NoteForwardedTest extends TestCase
                 NoteForwarded::class
             );
         });
+    }
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->practice = factory(Practice::class)->create();
+
+        $this->admin = $this->createUser($this->practice->id, 'administrator');
+
+        $this->user = $this->createUser($this->practice->id, 'participant');
+
+        $this->recipient = $this->createUser($this->practice->id, 'provider');
+
+        $this->user->careTeamMembers()->create([
+            'member_user_id' => $this->recipient->id,
+            'type' => 'billing_provider',
+            'alert' => 1
+        ]);
+
+        $this->user->load('careTeamMembers');
     }
 }
