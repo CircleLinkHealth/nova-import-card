@@ -193,6 +193,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 
     public function bluebuttonJson()
     {
+        if ($this->json) {
+            return json_decode($this->json);
+        }
+
         if ( ! $this->id || ! $this->hasMedia('ccd')) {
             return false;
         }
