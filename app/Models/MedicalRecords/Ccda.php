@@ -6,11 +6,12 @@ use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
-use Cache;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Models\MedicalRecords\Ccda
@@ -71,9 +72,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
  */
-class Ccda extends MedicalRecordEloquent implements Transformable
+class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 {
     use BelongsToPatientUser,
+        HasMediaTrait,
         TransformableTrait,
         SoftDeletes;
 
