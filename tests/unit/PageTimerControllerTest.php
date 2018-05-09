@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -53,6 +54,7 @@ class PageTimerControllerTest extends TestCase
         $this->patient  = factory(User::class)->create();
 
         //add provider role
-        $this->provider->roles()->attach(5);
+        $role = Role::where('name', 'provider')->first();
+        $this->provider->roles()->attach($role->id);
     }
 }

@@ -27,7 +27,7 @@ class CreateLvPageTimerTable extends Migration {
 			$table->string('url_short', 200)->nullable();
 			$table->string('activity_type');
 			$table->string('title');
-			$table->string('query_string');
+			$table->string('query_string')->nullable();
 			$table->integer('program_id')->unsigned();
 			$table->string('ip_addr', 200)->nullable();
 			$table->timestamps();
@@ -35,7 +35,7 @@ class CreateLvPageTimerTable extends Migration {
 			$table->string('rule_params')->nullable();
 			$table->integer('rule_id')->unsigned()->nullable();
 			$table->softDeletes();
-			$table->string('user_agent');
+			$table->string('user_agent')->nullable();
 		});
 	}
 
