@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Practice;
 use App\CarePlan;
-use App\Practice;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Patient;
 use App\User;
