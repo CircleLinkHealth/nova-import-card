@@ -68,7 +68,7 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                                                  ->orderBy('month_year', 'desc')
                                                  ->where('month_year', '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth()->toDateString())
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth())
                                                  ->whereApproved(true)
                                                  ->first();
 

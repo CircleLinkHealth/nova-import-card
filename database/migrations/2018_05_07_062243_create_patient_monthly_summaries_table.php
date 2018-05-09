@@ -16,7 +16,7 @@ class CreatePatientMonthlySummariesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('patient_id')->unsigned();
-			$table->integer('ccm_time')->nullable();
+			$table->integer('ccm_time')->unsigned()->default(0);
 			$table->date('month_year');
 			$table->integer('no_of_calls')->nullable();
 			$table->integer('no_of_successful_calls')->nullable();

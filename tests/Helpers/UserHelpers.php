@@ -59,6 +59,7 @@ trait UserHelpers
 
         //check that the roles were created
         foreach ($roles as $role) {
+            $user->attachPractice($practiceId, false, null, $role);
             $this->assertDatabaseHas('practice_role_user', [
                 'user_id'    => $user->id,
                 'role_id'    => $role,
@@ -70,6 +71,8 @@ trait UserHelpers
             $user->carePlan()->create([
                 'status' => 'draft',
             ]);
+
+            $user->patientInfo()->create();
         }
 
         $user->load('practices');
