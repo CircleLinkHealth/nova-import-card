@@ -3,19 +3,22 @@
 namespace App\Http\Controllers\CcdApi\Athena;
 
 use App\Http\Controllers\Controller;
-use App\Models\MedicalRecords\Ccda;
-use App\Practice;
-use App\Services\AthenaAPI\Calls;
+use App\Services\AthenaAPI\CcdService;
 use App\Services\AthenaAPI\CreateAndPostPdfCareplan;
 use Illuminate\Http\Request;
 
 class AthenaApiController extends Controller
 {
     private $service;
+    /**
+     * @var CcdService
+     */
+    private $athenaCcdService;
 
-    public function __construct(CreateAndPostPdfCareplan $athenaApi)
+    public function __construct(CreateAndPostPdfCareplan $athenaApi, CcdService $athenaCcdService)
     {
-        $this->service = $athenaApi;
+        $this->service          = $athenaApi;
+        $this->athenaCcdService = $athenaCcdService;
     }
 
     public function getTodays()
@@ -40,33 +43,9 @@ class AthenaApiController extends Controller
 
     public function getCcdas(Request $request)
     {
-        $api = new Calls();
+        $ids = array_filter(explode(',', $request->input('ids')), 'trim');
 
-        $imported = [];
-        $practice = Practice::find($request->input('practice_id'));
-
-        $practiceId = $practice->external_id;
-        $departmentId = $practice->locations->first()->external_department_id;
-        $patientIds = array_filter(explode(',', $request->input('ids')), 'trim');
-
-        foreach ($patientIds as $id) {
-            $id = trim($id);
-            $ccdaExternal = $api->getCcd($id, $practiceId, $departmentId);
-
-            if (!isset($ccdaExternal[0])) {
-                continue;
-            }
-
-            $ccda = Ccda::create([
-                'practice_id' => $practice->id,
-                'location_id' => $practice->locations->first()->id,
-                'user_id'     => auth()->user()->id,
-                'vendor_id'   => 1,
-                'xml'         => $ccdaExternal[0]['ccda'],
-            ]);
-
-            $imported[] = $ccda->import();
-        }
+        $imported = $this->athenaCcdService->importCcds($ids, $request->input('practice_id'));
 
         return count($imported) . " CCDs were imported. To finish the importing process go to:  " . link_to_route('import.ccd.remix');
     }

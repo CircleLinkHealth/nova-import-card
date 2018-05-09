@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\EligibilityBatch;
 use App\Enrollee;
+use App\Models\MedicalRecords\Ccda;
 use App\Services\CCD\ProcessEligibilityService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,14 +42,47 @@ class ImportConsentedEnrollees implements ShouldQueue
      *
      * @return void
      */
-    public function handle(ProcessEligibilityService $processEligibilityService)
+    public function handle(ProcessEligibilityService $processEligibilityService, Calls $athenaApi)
     {
         $imported = Enrollee::whereIn('id', $this->enrolleeIds)
+                            ->with('targetPatient')
                             ->get()
-                            ->map(function ($enrollee) use ($processEligibilityService) {
+                            ->map(function ($enrollee) use ($processEligibilityService, $athenaApi) {
                                 $url = route('import.ccd.remix',
                                     'Click here to Create and a CarePlan and review.');
-                                
+
+                                if ($enrollee->targetPatient) {
+                                    $ccdaExternal = $athenaApi->getCcd($enrollee->targetPatient->ehr_patient_id,
+                                        $enrollee->targetPatient->ehr_practice_id,
+                                        $enrollee->targetPatient->ehr_department_id);
+
+                                    if ( ! isset($ccdaExternal[0])) {
+                                        return [
+                                            'patient' => $enrollee->nameAndDob(),
+                                            'message' => 'Could not retrieve CCD from Athena',
+                                            'type'    => 'error',
+                                        ];
+                                    }
+
+                                    $ccda = Ccda::create([
+                                        'practice_id' => $enrollee->practice_id,
+                                        'user_id'     => auth()->user()->id,
+                                        'vendor_id'   => 1,
+                                        'xml'         => $ccdaExternal[0]['ccda'],
+                                    ]);
+
+                                    $enrollee->medical_record_id   = $ccda->id;
+                                    $enrollee->medical_record_type = Ccda::class;
+                                    $imported                      = $ccda->import();
+                                    $enrollee->save();
+
+                                    return [
+                                        'patient' => $enrollee->nameAndDob(),
+                                        'message' => "The CCD was imported. $url",
+                                        'type'    => 'success',
+                                    ];
+                                }
+
                                 if ($enrollee->user_id) {
                                     return [
                                         'patient' => $enrollee->nameAndDob(),
@@ -63,6 +97,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     if ($imr->patient_id) {
                                         $enrollee->user_id = $imr->patient_id;
                                         $enrollee->save();
+
                                         return [
                                             'patient' => $enrollee->nameAndDob(),
                                             'message' => 'This patient has already been imported',
