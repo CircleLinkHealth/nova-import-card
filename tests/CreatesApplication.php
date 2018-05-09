@@ -26,6 +26,9 @@ trait CreatesApplication
 
         Artisan::call('db:seed');
         Artisan::call('db:seed', [
+            '--class' => 'SnomedToIcd9TestMapTableSeeder'
+        ]);
+        Artisan::call('db:seed', [
             '--class' => 'TestSuiteSeeder'
         ]);
         Artisan::call('lada:flush');

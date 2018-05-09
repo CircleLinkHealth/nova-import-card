@@ -46,7 +46,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
         $this->call(RolesPermissionsSeeder::class);
-        $this->call(SnomedToIcd9MapTableSeeder::class);
 
         ini_set('memory_limit', $limit);
     }

@@ -17,7 +17,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Collection;
 
 
-class FakerProblemTest extends TestCase
+class FakerProblemTest
 {
     use UserHelpers,
         DatabaseTransactions;

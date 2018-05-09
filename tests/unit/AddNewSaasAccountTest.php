@@ -15,7 +15,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AddNewSaasAccountTest extends TestCase
+class AddNewSaasAccountTest
 {
     use UserHelpers, WithFaker;
     private $adminUser;
