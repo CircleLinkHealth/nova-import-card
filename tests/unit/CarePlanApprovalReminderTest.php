@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\CarePlan;
 use App\Practice;
+use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Patient;
 use App\User;
@@ -25,7 +25,9 @@ class CarePlanApprovalReminderTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+
         $this->practice = factory(Practice::class)->create();
+        
         $this->provider = $this->createUser($this->practice->id, 'provider');
         $this->patient = $this->createUser($this->practice->id, 'participant');
 
@@ -57,6 +59,7 @@ class CarePlanApprovalReminderTest extends TestCase
             $this->provider,
             CarePlanApprovalReminder::class,
             function ($notification) use ($numberOfCareplans) {
+
                 $this->checkToMail($notification, $this->provider, $numberOfCareplans);
                 $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 
