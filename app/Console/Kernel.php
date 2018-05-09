@@ -14,7 +14,6 @@ use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetCcmTime;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
-use App\Models\MedicalRecords\Ccda;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -30,21 +29,21 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //Move CCD's out of the DB
-        $schedule->call(function () {
-            Ccda::whereNotNull('xml')->where('xml', '!=', '')->chunk(300, function ($ccdas) {
-                foreach ($ccdas as $c) {
-                    if ( ! $c->xml) {
-                        continue;
-                    }
-
-                    \Storage::disk('storage')->put("ccda-{$c->id}.xml", $c->xml);
-                    $c->addMedia(storage_path("ccda-{$c->id}.xml"))->toMediaCollection('ccd');
-
-                    $c->xml = null;
-                    $c->save();
-                }
-            });
-        })->everyMinute();
+//        $schedule->call(function () {
+//            Ccda::whereNotNull('xml')->where('xml', '!=', '')->chunk(100, function ($ccdas) {
+//                foreach ($ccdas as $c) {
+//                    if ( ! $c->xml) {
+//                        continue;
+//                    }
+//
+//                    \Storage::disk('storage')->put("ccda-{$c->id}.xml", $c->xml);
+//                    $c->addMedia(storage_path("ccda-{$c->id}.xml"))->toMediaCollection('ccd');
+//
+//                    $c->xml = null;
+//                    $c->save();
+//                }
+//            });
+//        })->everyMinute();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyFiveMinutes()->withoutOverlapping(15);
