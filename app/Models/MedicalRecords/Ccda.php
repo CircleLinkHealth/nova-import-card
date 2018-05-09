@@ -113,10 +113,43 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         'vendor_id',
         'source',
         'imported',
-        'xml',
         'json',
         'status',
     ];
+
+    public function save(array $options = [])
+    {
+        if ( ! $this->xml) {
+            return parent::save($options);
+        }
+
+        $xml       = $this->xml;
+        $this->xml = null;
+
+        $ccda = parent::save($options);
+
+        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
+        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+
+        return $ccda;
+    }
+
+    public static function create($attributes = [])
+    {
+        if ( ! array_key_exists('xml', $attributes)) {
+            return static::query()->create($attributes);
+        }
+
+        $xml = $attributes['xml'];
+        unset($attributes['xml']);
+
+        $ccda = static::query()->create($attributes);
+
+        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
+        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+
+        return $ccda;
+    }
 
     public function qaSummary()
     {
@@ -176,12 +209,13 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 
     public function bluebuttonJson()
     {
-        if ( ! $this->id && ! $this->xml) {
+        if ( ! $this->id && ! $this->hasMedia('ccd')) {
             return false;
         }
 
         if ( ! $this->json) {
-            $this->json = $this->parseToJson($this->xml);
+            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $this->json = $this->parseToJson($xml);
             $this->save();
         }
 
