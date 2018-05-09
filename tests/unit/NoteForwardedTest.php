@@ -22,6 +22,9 @@ class NoteForwardedTest extends TestCase
     protected $nurse;
     protected $admin;
 
+    /**
+     * Test that notes created for a patient are forwarded to care_team_members for that patient
+     */
     public function test_it_sends_notifications()
     {
         $practice                           = $this->practice;
