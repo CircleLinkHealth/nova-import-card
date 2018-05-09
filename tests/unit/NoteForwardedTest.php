@@ -4,12 +4,12 @@ namespace Tests\Unit;
 
 use App\Notifications\NoteForwarded;
 use App\Practice;
-use App\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Notification;
-use Tests\TestCase;
 use Tests\Helpers\UserHelpers;
+use Tests\TestCase;
 
 class NoteForwardedTest extends TestCase
 {
@@ -17,8 +17,10 @@ class NoteForwardedTest extends TestCase
         WithoutMiddleware,
         UserHelpers;
 
-    private $practice;
-    private $admin, $user, $recipient;
+    protected $practice;
+    protected $patient;
+    protected $nurse;
+    protected $admin;
 
     /**
      * Test that notes created for a patient are forwarded to care_team_members for that patient
@@ -32,18 +34,12 @@ class NoteForwardedTest extends TestCase
         $settings->dm_pdf_notes             = true;
         $settings->save();
 
+        //admin
         $auth = $this->admin;
         auth()->login($auth);
 
-        $this->user->notes()->create([
-            'body' => '...',
-            'author_id' => $this->admin->id,
-            'isTCM' => 0,
-            'did_medication_recon' => 0,
-            'type' => 'general'
-        ]);
-
-        $note = $this->user->notes->first();
+        //participant
+        $note = $this->patient->notes()->first();
 
         Notification::fake();
 
@@ -51,10 +47,8 @@ class NoteForwardedTest extends TestCase
 
         $recipients = collect();
         $recipients = $note->patient->care_team_receives_alerts;
-
-        $this->assertEquals($note->patient->id, $this->user->id);
-
-        $this->assertTrue($recipients->count() > 0);
+        //care center
+        $recipients->push($this->nurse);
 
         $recipients->map(function ($user) {
             Notification::assertSentTo(
@@ -69,19 +63,24 @@ class NoteForwardedTest extends TestCase
         parent::setUp();
 
         $this->practice = factory(Practice::class)->create();
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
+        $this->admin    = $this->createUser($this->practice->id, 'administrator');
 
-        $this->admin = $this->createUser($this->practice->id, 'administrator');
+        $this->nurse = $this->createUser($this->practice->id, 'care-center');
 
-        $this->user = $this->createUser($this->practice->id, 'participant');
+        $carePerson = $this->patient->careTeamMembers()->create([
+            'member_user_id' => $this->nurse->id,
+            'type'           => 'member',
+            'alert'          => 1,
 
-        $this->recipient = $this->createUser($this->practice->id, 'provider');
-
-        $this->user->careTeamMembers()->create([
-            'member_user_id' => $this->recipient->id,
-            'type' => 'billing_provider',
-            'alert' => 1
         ]);
 
-        $this->user->load('careTeamMembers');
+        $this->patient->notes()->create([
+            'author_id'    => $this->nurse->id,
+            'body'         => 'test',
+            'logger_id'    => $this->nurse->id,
+            'performed_at' => Carbon::now(),
+            'type'         => 'Patient Consented',
+        ]);
     }
 }

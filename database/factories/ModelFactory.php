@@ -192,7 +192,7 @@ $factory->define(Practice::class, function (Faker\Generator $faker) {
         'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
         'bill_to_name'             => $name,
         //        'auto_approve_careplans',
-        //        'send_alerts',
+        'send_alerts'              => 1,
         'outgoing_phone_number'    => $faker->phoneNumber,
         'term_days'                => 30,
     ];
