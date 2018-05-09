@@ -31,21 +31,19 @@ class Kernel extends ConsoleKernel
     {
         //Move CCD's out of the DB
         $schedule->call(function () {
-            Ccda::orderBy('id')
-                ->whereNotNull('xml')
-                ->where('xml', '!=', '')
-                ->select(['xml', 'id'])
-                ->limit(50)
-                ->get()
-                ->each(function ($c) {
-                    if ($c->xml) {
-                        \Storage::disk('storage')->put("ccda-{$c->id}.xml", $c->xml);
-                        $c->addMedia(storage_path("ccda-{$c->id}.xml"))->toMediaCollection('ccd');
-
-                        $c->xml = null;
-                        $c->save();
-                    }
-                });
+            Ccda::withTrashed()->whereNotNull('xml')->where('xml', '!=', '')->select([
+                'xml',
+                'id',
+            ])->limit(50)->get()->each(function (
+                $c
+            ) {
+                if ($c->xml) {
+                    \Storage::disk('storage')->put("ccda-{$c->id}.xml", $c->xml);
+                    $c->addMedia(storage_path("ccda-{$c->id}.xml"))->toMediaCollection('ccd');
+                    $c->xml = null;
+                    $c->save();
+                }
+            });
         })->everyMinute();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
