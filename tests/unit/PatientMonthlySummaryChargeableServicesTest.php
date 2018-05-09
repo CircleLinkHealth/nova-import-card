@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 
 
 
-class PatientMonthlySummaryChargeableServices extends TestCase
+class PatientMonthlySummaryChargeableServicesTest extends TestCase
 {
     use DatabaseTransactions,
         UserHelpers,
@@ -38,15 +38,17 @@ class PatientMonthlySummaryChargeableServices extends TestCase
     public function test_it_updates_practice_default_service()
     {
         $practice = $this->practice;
+        $date = Carbon::parse($this->monthYear)->format('M, Y');
 
         $response = $this->json('POST', route('monthly.billing.practice.services'), [
             'month_year'      => $this->monthYear,
             'practice_id'     => $practice->id,
             'default_code_id' => 1,
+            'date'          => $date,
         ],['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'success']);
+
     }
 
     /**
@@ -59,16 +61,18 @@ class PatientMonthlySummaryChargeableServices extends TestCase
         $patient  = $this->patient;
         $services = [1, 2];
 
+
         $response = $this
             ->json('POST', route('monthly.billing.summary.services'), [
                 'month_year'                  => $this->monthYear,
                 'practice_id'                 => $practice->id,
                 'patient_id'                  => $patient->id,
                 'patient_chargeable_services' => $services,
+                'report_id'     => $this->summary->id,
             ], ['X-Requested-With' => 'XMLHttpRequest']);
 
         $response->assertStatus(200);
-        $response->assertJson(['message' => 'success']);
+
 
 
     }
@@ -84,10 +88,10 @@ class PatientMonthlySummaryChargeableServices extends TestCase
      */
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
-        return $patient->patientSummaries()->create([
-            'month_year' => $monthYear->startOfMonth()->toDateString(),
-            'ccm_time'   => $ccmTime,
-        ]);
+        return $patient->patientSummaries()->updateOrCreate([
+            'month_year' => $monthYear->startOfMonth(),
+        ],
+            ['ccm_time'   => $ccmTime,]);
     }
 
     /**
