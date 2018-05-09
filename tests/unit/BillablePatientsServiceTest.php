@@ -105,24 +105,12 @@ class BillablePatientsServiceTest extends TestCase
      */
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
-        $summary = $patient->patientSummaries()
-                        ->where('patient_id', $patient->id)
-                        ->where('month_year', $monthYear->startOfMonth())->first();
-        if (!$summary) {
-            $summary = PatientMonthlySummary::create([
-                'patient_id' => $patient->id,
-                'month_year' => $monthYear->startOfMonth()->toDateString(),
-                'ccm_time'               => $ccmTime,
-                'no_of_successful_calls' => 2
-            ]);
-        }
-        else {
-            $summary->update([
-                'ccm_time'               => $ccmTime,
-                'no_of_successful_calls' => 2
-            ]);
-        }
-        return $summary;
+        return $patient->patientSummaries()->updateOrCreate([
+            'month_year' => $monthYear->startOfMonth(),
+        ], [
+            'ccm_time'               => $ccmTime,
+            'no_of_successful_calls' => 2,
+        ]);
     }
 
     /**

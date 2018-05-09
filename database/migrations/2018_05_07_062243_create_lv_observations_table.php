@@ -15,8 +15,8 @@ class CreateLvObservationsTable extends Migration {
 		Schema::create('lv_observations', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->dateTime('obs_date')->default('0000-00-00 00:00:00');
-			$table->dateTime('obs_date_gmt')->default('0000-00-00 00:00:00');
+			$table->dateTime('obs_date')->nullable();
+			$table->dateTime('obs_date_gmt')->nullable();
 			$table->integer('comment_id')->unsigned();
 			$table->integer('sequence_id')->unsigned();
 			$table->string('obs_message_id', 30);

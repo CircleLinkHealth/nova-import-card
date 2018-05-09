@@ -44,12 +44,7 @@ class ProviderInfo extends \App\BaseModel
     use SoftDeletes;
 
     public $timestamps = false;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
+
     /**
      * The database table used by the model.
      *

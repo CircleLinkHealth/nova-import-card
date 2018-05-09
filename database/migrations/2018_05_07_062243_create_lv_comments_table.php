@@ -20,8 +20,8 @@ class CreateLvCommentsTable extends Migration {
 			$table->string('comment_author_email');
 			$table->string('comment_author_url');
 			$table->string('comment_author_IP');
-			$table->dateTime('comment_date')->default('0000-00-00 00:00:00');
-			$table->dateTime('comment_date_gmt')->default('0000-00-00 00:00:00');
+			$table->dateTime('comment_date')->nullable();
+			$table->dateTime('comment_date_gmt')->nullable();
 			$table->text('comment_content', 16777215);
 			$table->integer('comment_karma')->unsigned();
 			$table->string('comment_approved', 20);

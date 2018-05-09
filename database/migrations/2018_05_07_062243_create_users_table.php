@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration {
 			$table->integer('program_id')->unsigned()->nullable();
 			$table->string('password', 60)->nullable();
 			$table->string('email', 100);
-			$table->dateTime('user_registered')->default('0000-00-00 00:00:00');
+			$table->dateTime('user_registered')->nullable();
 			$table->integer('user_status')->default(0);
             $table->boolean('auto_attach_programs')->default(false)->nullable();
 			$table->string('display_name', 250)->nullable();
