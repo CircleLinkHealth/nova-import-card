@@ -67,7 +67,6 @@ class ImportConsentedEnrollees implements ShouldQueue
 
                                     $ccda = Ccda::create([
                                         'practice_id' => $enrollee->practice_id,
-                                        'user_id'     => auth()->user()->id,
                                         'vendor_id'   => 1,
                                         'xml'         => $ccdaExternal[0]['ccda'],
                                     ]);
