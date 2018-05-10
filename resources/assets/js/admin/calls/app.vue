@@ -423,10 +423,10 @@
           this.loaders.calls = true
             return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
               before(request) {
-                if (this.requests.calls) {
-                  this.requests.calls.abort()
+                if ($vm.requests.calls) {
+                  $vm.requests.calls.abort()
                 }
-                this.requests.calls = request
+                $vm.requests.calls = request
               }
             }).then((result) => result).then(result => {
               result = result.data;
@@ -467,8 +467,11 @@
                           this.tableData[i] = tableCalls[i - from + 1]
                       }
                   }
-                  delete this.$nextPromise;
-                  this.loaders.calls = false
+                  setImmediate(() => {
+                    this.$refs.tblCalls.count = this.pagination.total
+                    delete this.$nextPromise;
+                    this.loaders.calls = false
+                  })
                   return tableCalls;
                 }
               }
