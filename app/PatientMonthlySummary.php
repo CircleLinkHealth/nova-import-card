@@ -206,42 +206,6 @@ class PatientMonthlySummary extends \App\BaseModel
                         });
     }
 
-    public function updateMonthlyReportForPatient(
-        User $patient,
-        $ccm_time
-    ) {
-
-        $day_start = Carbon::parse(Carbon::now()->firstOfMonth()->format('Y-m-d'));
-        $day_end   = Carbon::parse(Carbon::now()->endOfMonth()->format('Y-m-d'));
-
-        $info = $patient->patientInfo;
-
-        $no_of_calls = Call::where('outbound_cpm_id', $patient->id)
-                           ->orWhere('inbound_cpm_id', $patient->id)
-                           ->where('created_at', '<=', $day_start)
-                           ->where('created_at', '>=', $day_end)->count();
-
-        $no_of_successful_calls = Call::where('status', 'reached')->where(function ($q) use (
-            $patient
-        ) {
-            $q->where('outbound_cpm_id', $patient->id)
-              ->orWhere('inbound_cpm_id', $patient->id);
-        })
-                                      ->where('created_at', '<=', $day_start)
-                                      ->where('created_at', '>=', $day_end)->count();
-
-        $report = PatientMonthlySummary::where('patient_id', $patient->id)->where('month_year', $day_start)->first();
-
-        if ($report) {
-            $report->ccm_time               = $ccm_time;
-            $report->no_of_calls            = $no_of_calls;
-            $report->no_of_successful_calls = $no_of_successful_calls;
-            $report->save();
-        } else {
-            //dd('no report');
-        }
-    }
-
     public function billableProblem1()
     {
         return $this->belongsTo(Problem::class, 'problem_1');

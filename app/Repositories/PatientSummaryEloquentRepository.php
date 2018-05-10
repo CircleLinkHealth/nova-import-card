@@ -182,6 +182,7 @@ class PatientSummaryEloquentRepository
     public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
+                                    ->where('is_monitored', '=', true)
                                     ->reject(function ($problem) {
                                         return ! validProblemName($problem->name);
                                     })
@@ -189,6 +190,7 @@ class PatientSummaryEloquentRepository
                                         return ! $problem->icd10Code();
                                     })
                                     ->unique('cpm_problem_id')
+                                    ->sortByDesc('cpm_problem_id')
                                     ->values();
     }
 

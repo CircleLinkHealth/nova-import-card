@@ -55,28 +55,7 @@ class CallsDashboardController extends Controller
             $call->status  = $status;
             $call->save();
 
-            $summary = PatientMonthlySummary::firstOrCreate([
-                'patient_id' => $note->patient_id,
-                'month_year' => $date->copy()->startOfMonth()
-            ]);
-
-            if ($initialStatus == 'scheduled') {
-                if ($status == 'reached') {
-                    $summary->no_of_calls            += 1;
-                    $summary->no_of_successful_calls += 1;
-                } else {
-                    $summary->no_of_calls += 1;
-                }
-                $summary->save();
-            } else {
-                if ($status == 'reached') {
-                    $summary->no_of_successful_calls += 1;
-                } else {
-                    $summary->no_of_successful_calls -= 1;
-                }
-                $summary->save();
-            }
-            $message = 'Call Status Successfully Changed!';
+            $message = 'Call Status successfully changed!';
         }
 
 
@@ -110,20 +89,6 @@ class CallsDashboardController extends Controller
             null
         );
 
-        //update monthly summaries
-        $date = Carbon::now();
-        $summary = PatientMonthlySummary::firstOrCreate([
-            'patient_id' => $note->patient_id,
-            'month_year' => $date->copy()->startOfMonth()
-        ]);
-
-        if ($status == 'reached') {
-            $summary->no_of_calls            += 1;
-            $summary->no_of_successful_calls += 1;
-        } else {
-            $summary->no_of_calls += 1;
-        }
-        $summary->save();
 
         $message = 'Call Successfully Added to Note!';
 
