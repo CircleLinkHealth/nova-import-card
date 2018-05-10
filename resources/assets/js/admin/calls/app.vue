@@ -360,14 +360,18 @@
               time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
             })
           }
-          this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
-            call.Notes = ((pagination || {}).data || []).map(note => ({
-                                created_at: note.created_at,
-                                type: 'out',
-                                category: note.type,
-                                message: note.body
-                              }))
-          })
+          if (patient.id) {
+            console.log('calls:patient', patient)
+            this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
+              call.Notes = ((pagination || {}).data || []).map(note => ({
+                                  created_at: note.created_at,
+                                  type: 'out',
+                                  category: note.type,
+                                  message: note.body
+                                }))
+            })
+          }
+          
           return ({
                     id: call.id,
                     selected: false,
@@ -432,6 +436,7 @@
                 this.requests.calls = request
               }
             }).then((result) => result).then(result => {
+              console.log('calls:response', this.nextPageUrl())
               result = result.data;
               this.pagination = {
                             current_page: result.meta.current_page,

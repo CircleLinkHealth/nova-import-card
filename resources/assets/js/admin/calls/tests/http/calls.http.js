@@ -5,18 +5,32 @@ import { rootUrl } from '../../../../app.config'
 import axios from 'axios'
 import PATIENTS from '../mocks/patients.mock'
 import NURSES from '../mocks/nurses.mock'
+import CALLS from '../mocks/calls.mock'
 
 const mock = new MockAdapter(axios)
 
-mock.onGet('/api/admin/calls', { 
-    params: {
-        page: 1
+const callsResponse = {
+    data: CALLS,
+    links: {
+        first: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=1',
+        last: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=2038',
+        prev: null,
+        next: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=2'
+    },
+    meta: {
+        current_page: 1,
+        from: 1,
+        last_page: 2038,
+        path: 'https:\/\/cpm-web.dev\/api\/admin\/calls',
+        per_page: 15,
+        to: 15,
+        total: 30561
     }
- }).reply(200, {
-    data: {
-        data: []
-    }
-})
+}
+
+mock.onGet('/api/admin/calls?scheduled&rows=undefined').reply(200, callsResponse)
+mock.onGet('/api/admin/calls?scheduled&rows=100').reply(200, callsResponse)
+mock.onGet('/api/admin/calls?page=1').reply(200, callsResponse)
 
 mock.onGet('/api/practices').reply(200, [
     { id:2, display_name:'No Access', locations:0 },
