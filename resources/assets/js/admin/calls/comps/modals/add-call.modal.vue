@@ -45,7 +45,7 @@
                 </div>
                 <div class="col-sm-7">
                   <v-select class="form-control" name="outbound_cpm_id" v-model="selectedNurseData" 
-                    :options="nursesForSelect" required>
+                    :options="nursesForSelect" :on-change="changeNurse" required>
                   </v-select>
                   <loader v-if="loaders.nurses"></loader>
                   <div class="alert alert-danger" v-if="formData.practiceId && (nursesForSelect.length == 0)">No available nurses for selected patient</div>
@@ -228,6 +228,11 @@
               this.getPatients()
               this.getNurses()
               this.selectedNurseData = UNASSIGNED_VALUE
+            }
+          },
+          changeNurse (nurse) {
+            if (nurse) {
+              this.formData.nurseId = nurse.value
             }
           },
           changeUnscheduledPatients (e) {

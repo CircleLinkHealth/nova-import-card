@@ -445,4 +445,9 @@ class Enrollee extends \App\BaseModel
                                     ->whereMedicalRecordType($this->medical_record_id)
                                     ->first();
     }
+
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
+    }
 }

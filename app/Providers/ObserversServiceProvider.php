@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Call;
 use App\CarePlan;
 use App\CarePlanTemplate;
 use App\EligibilityBatch;
 use App\Models\Holiday;
 use App\Models\ProblemCode;
 use App\NurseContactWindow;
+use App\Observers\CallObserver;
 use App\Observers\CarePlanObserver;
 use App\Observers\CarePlanTemplateObserver;
 use App\Observers\EligibilityBatchObserver;
@@ -49,6 +51,7 @@ class ObserversServiceProvider extends ServiceProvider
         ProblemCode::observe(ProblemCodeObserver::class);
         SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
+        Call::observe(CallObserver::class);
     }
 
     /**

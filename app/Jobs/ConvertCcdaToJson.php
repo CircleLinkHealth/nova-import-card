@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\MedicalRecords\Ccda;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,15 +31,7 @@ class ConvertCcdaToJson implements ShouldQueue
     public function handle()
     {
         if (empty($this->ccda->json)) {
-            $json = (new CCDImporterRepository())->toJson($this->ccda->xml);
-
-            if (!$json) {
-                throw new \Exception("Could not convert CCDA {$this->ccda->id} to json.");
-            }
-
-            $this->ccda->update([
-                'json' => $json,
-            ]);
+            $this->ccda->bluebuttonJson();
         }
     }
 }
