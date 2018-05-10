@@ -123,7 +123,7 @@
             "php artisan ide-helper:meta"
         ],
         "test": [
-            "paratest ./tests/Unit --stop-on-failure"
+            "paratest ./tests/Unit --stop-on-failure --colors"
         ],
         "clear": [
             "php artisan clear-compiled",
