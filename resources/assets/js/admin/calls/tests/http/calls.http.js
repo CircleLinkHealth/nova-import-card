@@ -12,16 +12,16 @@ const mock = new MockAdapter(axios)
 const callsResponse = {
     data: CALLS,
     links: {
-        first: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=1',
-        last: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=2038',
+        first: '/api/admin/calls?page=1',
+        last: '/api/admin/calls?page=2038',
         prev: null,
-        next: 'https:\/\/cpm-web.dev\/api\/admin\/calls?page=2'
+        next: '/api/admin/calls?page=2'
     },
     meta: {
         current_page: 1,
         from: 1,
         last_page: 2038,
-        path: 'https:\/\/cpm-web.dev\/api\/admin\/calls',
+        path: '/api/admin/calls',
         per_page: 15,
         to: 15,
         total: 30561
