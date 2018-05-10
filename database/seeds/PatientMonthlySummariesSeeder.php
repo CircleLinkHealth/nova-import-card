@@ -24,12 +24,15 @@ class PatientMonthlySummariesSeeder extends Seeder
         $practiceIds = Practice::activeBillable()->get()->pluck('id');
 
 
-        factory(User::class, 50)->create()->each(function ($u) use ($problemIds, $practiceIds, $months) {
+        factory(User::class, 50)->create([])->each(function ($u) use ($problemIds, $practiceIds, $months) {
             $practiceId = $practiceIds->random();
             $u->attachPractice($practiceId, null, null, 2);
             $u->program_id = $practiceId;
             $u->save();
-            $u->patientInfo()->create();
+            $patientInfo = new \App\Patient();
+            $patientInfo->user_id = $u->id;
+            //patient info is saved
+            $patientInfo->ccm_status = \App\Patient::ENROLLED;
             $u->patientSummaries()->create([
                 'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
                 'ccm_time'   => 1400,

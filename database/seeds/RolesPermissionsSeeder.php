@@ -13,85 +13,95 @@ class RolesPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        foreach ($this->permissions() as $perm) {
-            Permission::updateOrCreate($perm);
-        }
+        \DB::table('lv_roles')->delete();
 
-        foreach ($this->roles() as $attr) {
-            $permissionsArr = $attr['permissions'];
+        $this->call(LvPermissionsTableSeeder::class);
 
-            unset($attr['permissions']);
+        foreach ($this->roles() as $role) {
+            $permissionsArr = $role['permissions'];
 
-            $role = Role::updateOrCreate($attr);
+            unset($role['permissions']);
+
+            $role = Role::updateOrCreate($role);
 
             $permissionIds = Permission::whereIn('name', $permissionsArr)
                 ->pluck('id')->all();
 
             $role->perms()->sync($permissionIds);
+
+            $name = $role['name'];
+            $this->command->info("role $name created");
         }
 
         $this->giveAdminsAllPermissions('administrator');
         $this->giveAdminsAllPermissions('saas-admin');
 
-        $this->command->info('That\'s all folks!');
-    }
-
-    public function deletePermissions() {
-        return [
-            'activities-pagetimer-manage',
-
-        ];
-    }
-
-    public function permissions()
-    {
-        return [
-            [
-                'name'         => 'read-practice-chargeable-service',
-                'display_name' => 'View the ChargeableServices for a Practice.',
-                'description'  => 'Can View the ChargeableServices for a Practice.',
-            ],
-            [
-                'name'         => 'create-practice-chargeable-service',
-                'display_name' => 'Create a ChargeableService for a Practice.',
-                'description'  => 'Can Create ChargeableServices for a Practice.',
-            ],
-            [
-                'name'         => 'delete-practice-chargeable-service',
-                'display_name' => 'Delete a ChargeableService for a Practice.',
-                'description'  => 'Can Delete ChargeableServices for a Practice.',
-            ],
-            [
-                'name'         => 'update-practice-chargeable-service',
-                'display_name' => 'Update a ChargeableService for a Practice.',
-                'description'  => 'Can Update ChargeableServices for a Practice.',
-            ],
-            [
-                'name'         => 'practice-manage',
-                'display_name' => 'Practice Manage',
-                'description'  => 'Can Update or Delete a Practice.',
-            ],
-            [
-                'name'         => 'use-onboarding',
-                'display_name' => 'Use Onboarding without a code',
-                'description'  => 'Can use Onboarding to set up a Practice.',
-            ],
-            [
-                'name'         => 'care-plan-approve',
-                'display_name' => 'Approve Careplans',
-                'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
-            ],
-            [
-                'name'         => 'care-plan-qa-approve',
-                'display_name' => 'CLH Approve Careplan',
-                'description'  => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
-            ],
-        ];
+        $this->command->info('all roles and permissions created');
     }
 
     public function roles()
     {
         return [
+            [
+                'name' => 'administrator',
+                'display_name' => 'Administrator',
+                'description' => 'Administrator',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'participant',
+                'display_name' => 'Participant',
+                'description' => 'Participant',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'api-ccd-vendor',
+                'display_name' => 'API CCD Vendor',
+                'description' => 'Is able to post CCDs to our API',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'api-data-consumer',
+                'display_name' => 'API Data Consumer',
+                'description' => 'Is able to receive PDF Reports and CCM Time from our API',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'viewer',
+                'display_name' => 'Viewer',
+                'description' => '',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'aprima-api-location',
+                'display_name' => 'API Data Consumer and CCD Vendor.',
+                'description' => 'This role is JUST FOR APRIMA! Is able to receive PDF Reports and CCM Time from our API. Is able to post CCDs to our API.',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'no-ccm-care-center',
+                'display_name' => 'Non CCM Care Center',
+                'description' => 'Care Center',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'no-access',
+                'display_name' => 'No Access',
+                'description' => '',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'administrator-view-only',
+                'display_name' => 'Administrator - View Only',
+                'description' => 'A special administrative account where you can view the admin but not perform actions',
+                'permissions' => [ ]
+            ],
+            [
+                'name' => 'no-access',
+                'display_name' => 'No Access',
+                'description' => '',
+                'permissions' => [ ]
+            ],
             [
                 'name'         => 'practice-lead',
                 'display_name' => 'Program Lead',

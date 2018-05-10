@@ -74,6 +74,8 @@ class PageTimerController extends Controller
             $newActivity->save();
 
 
+
+
             $activityId = null;
 
             if ($newActivity->billable_duration > 0) {

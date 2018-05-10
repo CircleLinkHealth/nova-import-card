@@ -35,6 +35,7 @@ class ApprovableBillablePatient extends Resource
                 ? optional($bP->user)->fullName
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
+            'practice_id'            => $this->patient->primaryPractice->id,
             'dob'                    => $this->patient->patientInfo->birth_date,
             'ccm'                    => round($this->ccm_time / 60, 2),
             'problem1'               => $this->billable_problem1,

@@ -38,12 +38,8 @@ class PhoneNumber extends \App\BaseModel
     const WORK = 'work';
 
     public $timestamps = false;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
+
+
     /**
      * The database table used by the model.
      *

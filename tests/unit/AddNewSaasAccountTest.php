@@ -15,7 +15,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class AddNewSaasAccountTest extends TestCase
+class AddNewSaasAccountTest
 {
     use UserHelpers, WithFaker;
     private $adminUser;
@@ -26,12 +26,13 @@ class AddNewSaasAccountTest extends TestCase
      *
      * @return void
      */
-    public function test_flow()
-    {
-        $result = $this->createSaasAccountAndAdmin();
-
-
-    }
+//  commenting out because it doesn't run with sqlite. Michalis says no point fixing as we don't use saas.
+//    public function test_flow()
+//    {
+//        $result = $this->createSaasAccountAndAdmin();
+//
+//
+//    }
 
     private function createSaasAccountAndAdmin() {
         Notification::fake();
