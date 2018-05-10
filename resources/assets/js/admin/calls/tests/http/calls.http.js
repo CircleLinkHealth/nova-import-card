@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { rootUrl } from '../../../../app.config'
 import axios from 'axios'
 import PATIENTS from '../mocks/patients.mock'
+import NURSES from '../mocks/nurses.mock'
 
 const mock = new MockAdapter(axios)
 
@@ -23,11 +24,7 @@ mock.onGet('/api/practices').reply(200, [
     { id:8, display_name:'Demo', locations:2 }
 ])
 
-mock.onGet('/api/patients', {
-    params: {
-        rows: 'all'
-    }
-}).reply(200, {
+mock.onGet('/api/patients?rows=all').reply(200, {
     current_page: 1,
     data: PATIENTS,
     from: 1,
@@ -35,6 +32,20 @@ mock.onGet('/api/patients', {
     path: '/api/patients',
     per_page: 3,
     to: 3
+})
+
+mock.onGet('/api/patients/without-scheduled-calls').reply(200, {
+    current_page: 1,
+    data: PATIENTS,
+    from: 1,
+    last_page: 1,
+    path: '/api/patients/without-scheduled-calls',
+    per_page: 3,
+    to: 3
+})
+
+mock.onGet('/api/nurses?compressed').reply(200, {
+    data: NURSES
 })
 
 Vue.use(VueAxios, axios)
