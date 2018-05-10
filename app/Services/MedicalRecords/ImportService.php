@@ -151,7 +151,7 @@ class ImportService
             $exists->delete();
         }
 
-        if ($this->practice->id == 139) {
+        if ($practice->id == 139) {
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
 
             if ( ! $mrn) {
