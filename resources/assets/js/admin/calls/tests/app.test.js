@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios'
 import { mount } from 'vue-test-utils'
 import CallMgmtApp from '../app.vue'
@@ -7,6 +8,9 @@ import SelectEditable from '../comps/select-editable'
 import TimeEditable from '../comps/time-editable'
 import mock from './http/calls.http'
 import '../../../prototypes/array.prototype'
+import { ClientTable } from 'vue-tables-2'
+
+Vue.use(ClientTable, {}, false)
 
 describe('CallMgmtApp', () => {
     
@@ -18,10 +22,6 @@ describe('CallMgmtApp', () => {
 
     it('is called "CallMgmtApp"', () => {
         expect(CallMgmtApp.name).toEqual('CallMgmtApp')
-    })
-
-    it('contains a TextEditable component', () => {
-        expect(comp.contains(TextEditable)).toBe(true)
     })
 })
 
