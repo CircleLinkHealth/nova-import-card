@@ -5,7 +5,7 @@ import TextEditable from '../comps/text-editable'
 import DateEditable from '../comps/date-editable'
 import SelectEditable from '../comps/select-editable'
 import TimeEditable from '../comps/time-editable'
-import mock from './calls-http.mock'
+import mock from './http/calls.http'
 import '../../../prototypes/array.prototype'
 
 describe('CallMgmtApp', () => {
