@@ -29,11 +29,6 @@ class NumberedAllergyFields
                     ['#n/a', 'no known'])) {
                 $allergies[] = [
                     'Name'        => $patient["allergy_$i"],
-                    'CodeType'    => '',
-                    'Code'        => '',
-                    'AddedDate'   => '',
-                    'ResolveDate' => '',
-                    'Status'      => '',
                 ];
             }
 
