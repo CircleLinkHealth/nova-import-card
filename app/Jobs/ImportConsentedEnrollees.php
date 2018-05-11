@@ -54,10 +54,7 @@ class ImportConsentedEnrollees implements ShouldQueue
                                 $url = route('import.ccd.remix',
                                     'Click here to Create and a CarePlan and review.');
 
-                                if ($enrollee->practice_id == 139) {
-//                                    $importService->
-                                }
-
+                                //verify it wasn't already imported
                                 if ($enrollee->user_id) {
                                     return [
                                         'patient' => $enrollee->nameAndDob(),
@@ -66,17 +63,8 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     ];
                                 }
 
-                                if ($enrollee->targetPatient) {
-                                    return $this->importTargetPatient($enrollee);
-                                }
-
-                                $job = $this->eligibilityJob($enrollee);
-                                if ($job) {
-                                    return $this->importFromEligibilityJob($enrollee, $job);
-                                }
-
+                                //verify it wasn't already imported
                                 $imr = $enrollee->getImportedMedicalRecord();
-
                                 if ($imr) {
                                     if ($imr->patient_id) {
                                         $enrollee->user_id = $imr->patient_id;
@@ -96,6 +84,23 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     ];
                                 }
 
+                                //import PHX
+                                if ($enrollee->practice_id == 139) {
+                                    return $importService->importPHXEnrollee($enrollee);
+                                }
+
+                                //import from AthenaAPI
+                                if ($enrollee->targetPatient) {
+                                    return $this->importTargetPatient($enrollee);
+                                }
+
+                                //import from eligibility jobs
+                                $job = $this->eligibilityJob($enrollee);
+                                if ($job) {
+                                    return $this->importFromEligibilityJob($enrollee, $job);
+                                }
+
+                                //import ccda
                                 if ($importService->isCcda($enrollee->medical_record_type)) {
                                     $response = $importService->importExistingCcda($enrollee->medical_record_id);
 

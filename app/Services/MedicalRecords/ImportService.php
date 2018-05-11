@@ -8,6 +8,7 @@
 
 namespace App\Services\MedicalRecords;
 
+use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
@@ -70,10 +71,10 @@ class ImportService
         $imr = $ccda->import();
 
         $update = Ccda::whereId($ccdaId)
-                      ->update([
-                          'status'   => Ccda::QA,
-                          'imported' => true,
-                      ]);
+            ->update([
+                'status'   => Ccda::QA,
+                'imported' => true,
+            ]);
 
         $response->success = true;
         $response->message = "CCDA successfully imported.";
@@ -188,5 +189,13 @@ class ImportService
         }
 
         return null;
+    }
+
+    public function importPHXEnrollee(Enrollee $enrollee)
+    {
+        $phx     = Practice::whereName('phoenix-heart')->firstOrFail();
+        $patient = $enrollee->toArray();
+
+        $this->createTabularMedicalRecordAndImport($patient, $phx);
     }
 }
