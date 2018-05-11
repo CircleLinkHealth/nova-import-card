@@ -121,6 +121,10 @@ class ImportService
             $row['problems_string'] = $row['problems'];
         }
 
+        if (array_key_exists('referring_provider_name', $row) & ! array_key_exists('provider_name', $row)) {
+            $row['provider_name'] = $row['referring_provider_name'];
+        }
+
         if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
             if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['primary_phone'];
