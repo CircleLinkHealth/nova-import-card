@@ -117,6 +117,10 @@ class ImportService
             $row['address2'] = $row['street_2'];
         }
 
+        if (array_key_exists('problems', $row) & ! array_key_exists('problems_string', $row)) {
+            $row['problems_string'] = $row['problems'];
+        }
+
         if (array_key_exists('primary_phone', $row) && array_key_exists('primary_phone_type', $row)) {
             if (str_contains(strtolower($row['primary_phone_type']), ['cell', 'mobile'])) {
                 $row['cell_phone'] = $row['primary_phone'];
