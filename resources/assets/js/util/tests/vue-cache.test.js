@@ -55,6 +55,20 @@ describe('VueCache', () => {
 
                 expect(response.message).toEqual('hello world')
             })
+
+            it('should return "hello world" even if previous similar request is active', async () => {
+                const delayedMock = new MockAdapter(axios, { delayResponse: 1000 })
+
+                delayedMock.onGet('/api').reply(200, {
+                    message: 'hello world'
+                })
+
+                const firstPromise = $vm.cache().get('/api')
+
+                const secondPromise = $vm.cache().get('/api')
+
+                expect(firstPromise).toEqual(secondPromise)
+            })
         })
     })
 })
