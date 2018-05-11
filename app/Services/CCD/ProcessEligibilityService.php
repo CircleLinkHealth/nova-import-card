@@ -10,6 +10,9 @@ namespace App\Services\CCD;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Importer\Loggers\Allergy\NumberedAllergyFields;
+use App\Importer\Loggers\Medication\NumberedMedicationFields;
+use App\Importer\Loggers\Problem\NumberedProblemFields;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
@@ -396,33 +399,26 @@ class ProcessEligibilityService
     private function transformCsvRow($patient)
     {
         if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
-            //{"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
-            $problems = [];
-            $i        = 1;
+            $problems = (new NumberedProblemFields())->handle($patient);
 
-            do {
-                if ( ! array_key_exists("problem_$i", $patient)) {
-                    break;
-                }
-
-                if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
-                    $problems[] = [
-                        'Name'        => $patient["problem_$i"],
-                        'CodeType'    => '',
-                        'Code'        => '',
-                        'AddedDate'   => '',
-                        'ResolveDate' => '',
-                        'Status'      => '',
-                    ];
-                }
-
-                unset($patient["problem_$i"]);
-
-                $i++;
-            } while (true);
-
-            $patient['problems'] = json_encode([
+            $patient['problems_string'] = json_encode([
                 'Problems' => $problems,
+            ]);
+        }
+
+        if (count(preg_grep('/^medication_[\d]*/', array_keys($patient))) > 0) {
+            $medications = (new NumberedMedicationFields())->handle($patient);
+
+            $patient['medications_string'] = json_encode([
+                'Medications' => $medications,
+            ]);
+        }
+
+        if (count(preg_grep('/^allergy_[\d]*/', array_keys($patient))) > 0) {
+            $allergies = (new NumberedAllergyFields())->handle($patient);
+
+            $patient['allergies_string'] = json_encode([
+                'Allergies' => $allergies,
             ]);
         }
 
