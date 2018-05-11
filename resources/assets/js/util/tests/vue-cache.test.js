@@ -13,10 +13,6 @@ mock.onGet('/api').reply(200, {
 
 Vue.use(VueAxios, axios)
 
-const app = Vue.extend({
-    mixins: [ VueCache ]
-})
-
 describe('VueCache', () => {
     const comp = mount(VueCache)
 

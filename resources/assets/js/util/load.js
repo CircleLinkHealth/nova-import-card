@@ -1,4 +1,5 @@
-export default function (cb) {
+export default function (cb, document) {
+    document = document || window.document
     if (document.readyState !== 'loading') {
         this.$nextTick(() => cb())
     } else {
