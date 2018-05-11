@@ -1,5 +1,5 @@
 <template>
-    <div :class="className" v-if="show">
+    <div :class="className" v-if="visible">
         <transition name="modal">
             <div class="modal-mask">
                 <div class="modal-wrapper" @click="close">
@@ -17,7 +17,7 @@
                             </slot>
                         </div>
             
-                        <div class="modal-footer" v-if="!noFooter">
+                        <div class="modal-footer only" v-if="!noFooter">
                             <div>
                                 <slot name="footer" :info="info">
                                     <div>{{footer}}</div>
@@ -44,32 +44,33 @@
     
     export default {
         name: 'modal',
-        props: [
-            'name', 
-            'no-title', 
-            'no-footer', 
-            'no-cancel',
-            'no-buttons',
-            'info', 
-            'class-name',
-            'cancelText',
-            'okText',
-            'on-cancel',
-            'no-wrapper-close'
-            ],
+        props: {
+            name: String,
+            noTitle: Boolean,
+            noFooter: Boolean,
+            noCancel: Boolean,
+            noButtons: Boolean,
+            info: Object,
+            className: String,
+            cancelText: String,
+            okText: String,
+            onCancel: Function,
+            noWrapperClose: Boolean,
+            isVisible: Boolean
+        },
         data() {
             return {
                 title: '',
                 body: '',
                 footer: '',
-                show: false
+                visible: this.isVisible || false
             }
         },
         methods: {
             close(e) {
                 if (!e || (e.target && (!this.noWrapperClose && e.target.classList.contains('modal-wrapper')))) {
                     console.log(e)
-                    this.show = false;
+                    this.visible = false;
                     Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
                 }
             },
@@ -80,19 +81,21 @@
             ok() {
                 if (this.info && typeof(this.info.okHandler) === 'function') this.info.okHandler();
                 else this.close();
+            },
+            show (opts = {}) {
+                this.title = opts.title || ''
+                this.body = opts.body || ''
+                this.footer = opts.footer || ''
+                this.visible = true
             }
         },
         mounted() {
-            Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (modal) => {
-                modal = modal || {}
-                this.title = modal.title || '';
-                this.body = modal.body;
-                this.footer = modal.footer || '';
-                this.show = true;
+            Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (opts) => {
+                this.show(opts)
             })
 
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
-                this.close();
+                this.close()
             })
         }
     }
