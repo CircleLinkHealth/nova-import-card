@@ -3,10 +3,12 @@
 namespace App\Jobs;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Services\AthenaAPI\Calls;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\MedicalRecords\ImportService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -39,50 +41,20 @@ class ImportConsentedEnrollees implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param ProcessEligibilityService $processEligibilityService
+     * @param ProcessEligibilityService $importService
      *
      * @return void
      */
-    public function handle(ProcessEligibilityService $processEligibilityService, Calls $athenaApi)
+    public function handle(ImportService $importService)
     {
         $imported = Enrollee::whereIn('id', $this->enrolleeIds)
-                            ->with('targetPatient')
+                            ->with(['targetPatient', 'practice'])
                             ->get()
-                            ->map(function ($enrollee) use ($processEligibilityService, $athenaApi) {
+                            ->map(function ($enrollee) use ($importService) {
                                 $url = route('import.ccd.remix',
                                     'Click here to Create and a CarePlan and review.');
 
-                                if ($enrollee->targetPatient) {
-                                    $ccdaExternal = $athenaApi->getCcd($enrollee->targetPatient->ehr_patient_id,
-                                        $enrollee->targetPatient->ehr_practice_id,
-                                        $enrollee->targetPatient->ehr_department_id);
-
-                                    if ( ! isset($ccdaExternal[0])) {
-                                        return [
-                                            'patient' => $enrollee->nameAndDob(),
-                                            'message' => 'Could not retrieve CCD from Athena',
-                                            'type'    => 'error',
-                                        ];
-                                    }
-
-                                    $ccda = Ccda::create([
-                                        'practice_id' => $enrollee->practice_id,
-                                        'vendor_id'   => 1,
-                                        'xml'         => $ccdaExternal[0]['ccda'],
-                                    ]);
-
-                                    $enrollee->medical_record_id   = $ccda->id;
-                                    $enrollee->medical_record_type = Ccda::class;
-                                    $imported                      = $ccda->import();
-                                    $enrollee->save();
-
-                                    return [
-                                        'patient' => $enrollee->nameAndDob(),
-                                        'message' => "The CCD was imported. $url",
-                                        'type'    => 'success',
-                                    ];
-                                }
-
+                                //verify it wasn't already imported
                                 if ($enrollee->user_id) {
                                     return [
                                         'patient' => $enrollee->nameAndDob(),
@@ -91,8 +63,8 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     ];
                                 }
 
+                                //verify it wasn't already imported
                                 $imr = $enrollee->getImportedMedicalRecord();
-
                                 if ($imr) {
                                     if ($imr->patient_id) {
                                         $enrollee->user_id = $imr->patient_id;
@@ -112,8 +84,25 @@ class ImportConsentedEnrollees implements ShouldQueue
                                     ];
                                 }
 
-                                if ($processEligibilityService->isCcda($enrollee->medical_record_type)) {
-                                    $response = $processEligibilityService->importExistingCcda($enrollee->medical_record_id);
+                                //import PHX
+                                if ($enrollee->practice_id == 139) {
+                                    return $importService->importPHXEnrollee($enrollee);
+                                }
+
+                                //import from AthenaAPI
+                                if ($enrollee->targetPatient) {
+                                    return $this->importTargetPatient($enrollee);
+                                }
+
+                                //import from eligibility jobs
+                                $job = $this->eligibilityJob($enrollee);
+                                if ($job) {
+                                    return $this->importFromEligibilityJob($enrollee, $job);
+                                }
+
+                                //import ccda
+                                if ($importService->isCcda($enrollee->medical_record_type)) {
+                                    $response = $importService->importExistingCcda($enrollee->medical_record_id);
 
                                     if ($response->imr) {
                                         return [
@@ -136,5 +125,58 @@ class ImportConsentedEnrollees implements ShouldQueue
 
             \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
         }
+    }
+
+    private function importTargetPatient(Enrollee $enrollee)
+    {
+        $url = route('import.ccd.remix',
+            'Click here to Create and a CarePlan and review.');
+
+        $athenaApi = app(Calls::class);
+
+        $ccdaExternal = $athenaApi->getCcd($enrollee->targetPatient->ehr_patient_id,
+            $enrollee->targetPatient->ehr_practice_id,
+            $enrollee->targetPatient->ehr_department_id);
+
+        if ( ! isset($ccdaExternal[0])) {
+            return [
+                'patient' => $enrollee->nameAndDob(),
+                'message' => 'Could not retrieve CCD from Athena',
+                'type'    => 'error',
+            ];
+        }
+
+        $ccda = Ccda::create([
+            'practice_id' => $enrollee->practice_id,
+            'vendor_id'   => 1,
+            'xml'         => $ccdaExternal[0]['ccda'],
+        ]);
+
+        $enrollee->medical_record_id   = $ccda->id;
+        $enrollee->medical_record_type = Ccda::class;
+        $imported                      = $ccda->import();
+        $enrollee->save();
+
+        return [
+            'patient' => $enrollee->nameAndDob(),
+            'message' => "The CCD was imported. $url",
+            'type'    => 'success',
+        ];
+    }
+
+    private function eligibilityJob(Enrollee $enrollee)
+    {
+        $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
+
+        return EligibilityJob::whereHash($hash)->first();
+    }
+
+    private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
+    {
+        $service = app(ImportService::class);
+
+        $imr = $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
+
+        return $imr;
     }
 }

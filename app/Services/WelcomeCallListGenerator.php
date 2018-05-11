@@ -485,6 +485,10 @@ class WelcomeCallListGenerator
                 unset($args['id']);
             }
 
+            if ($this->eligibilityJob) {
+                $args['eligibility_job_id'] = $this->eligibilityJob->id;
+            }
+
             if (array_key_exists('problems_string', $args)) {
                 $args['problems'] = $args['problems_string'];
             }
