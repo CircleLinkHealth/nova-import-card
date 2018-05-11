@@ -163,7 +163,7 @@ class ImportConsentedEnrollees implements ShouldQueue
     {
         $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
 
-        return EligibilityJob::whereHash($hash)->whereStatus(3)->whereOutcome(EligibilityJob::ELIGIBLE)->first();
+        return EligibilityJob::whereHash($hash)->first();
     }
 
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
