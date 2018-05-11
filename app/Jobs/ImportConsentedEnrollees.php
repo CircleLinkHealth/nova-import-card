@@ -54,6 +54,10 @@ class ImportConsentedEnrollees implements ShouldQueue
                                 $url = route('import.ccd.remix',
                                     'Click here to Create and a CarePlan and review.');
 
+                                if ($enrollee->practice_id == 139) {
+//                                    $importService->
+                                }
+
                                 if ($enrollee->user_id) {
                                     return [
                                         'patient' => $enrollee->nameAndDob(),
@@ -159,7 +163,7 @@ class ImportConsentedEnrollees implements ShouldQueue
     {
         $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
 
-        return EligibilityJob::whereHash($hash)->first();
+        return EligibilityJob::whereHash($hash)->whereStatus(3)->whereOutcome(EligibilityJob::ELIGIBLE)->first();
     }
 
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
@@ -168,8 +172,6 @@ class ImportConsentedEnrollees implements ShouldQueue
 
         $imr = $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
 
-        if ($imr) {
-
-        }
+        return $imr;
     }
 }
