@@ -69,7 +69,6 @@
         methods: {
             close(e) {
                 if (!e || (e.target && (!this.noWrapperClose && e.target.classList.contains('modal-wrapper')))) {
-                    console.log(e)
                     this.visible = false;
                     Event.$emit(`modal${this.name ? '-' + this.name : ''}:close`)
                 }
