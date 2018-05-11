@@ -83,8 +83,8 @@
                         EventBus.$emit('modal-inactivity:timeouts:override', {
                             alertTimeout: 30, 
                             logoutTimeout: 120,
-                            alertTimeoutCallMode: 30, 
-                            logoutTimeoutCallMode: 120
+                            alertTimeoutCallMode: 60, 
+                            logoutTimeoutCallMode: 150
                         })
                     }, 1000)
                 }
