@@ -20,7 +20,7 @@ class CreateCcdasTable extends Migration
             $table->integer('vendor_id')->unsigned()->index('lv_ccdas_vendor_id_foreign');
             $table->string('source');
             $table->boolean('imported');
-            $table->text('xml');
+            $table->text('xml')->nullable();
             $table->text('json');
             $table->timestamps();
             $table->softDeletes();
