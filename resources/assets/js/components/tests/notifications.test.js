@@ -1,6 +1,7 @@
 import Notifications from '../notifications'
 import { mount, shallow } from 'vue-test-utils'
 import { wrap } from 'module';
+import sleep from '../../util/sleep'
 
 describe('Notifications', () => {
     const wrapper = shallow(Notifications, {
@@ -79,9 +80,7 @@ describe('Notifications', () => {
         
                 expect($vm.notes.length).toEqual(1)
 
-                const sleep = (ms) => {
-                    return new Promise(resolve => setTimeout(resolve, ms))
-                }
+                
                 await sleep(200)
 
                 expect(() => {

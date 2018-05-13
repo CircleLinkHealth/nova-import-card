@@ -40,7 +40,8 @@ const DocumentMock = function (opts = {}) {
         }
     }
 
-    setTimeout(function () {
+    setTimeout(() => {
+        this.readyState = 'loaded'
         this.emit('DOMContentLoaded')
     }, opts.loadTimeout || 100)
 }
