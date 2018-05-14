@@ -13,6 +13,7 @@ export const onNextCallUpdate = function (date) {
       console.log('calls:row:update', response.data)
       call['Next Call'] = date
       this.loaders.nextCall = false
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.nextCall = false
@@ -23,7 +24,6 @@ export const onNurseUpdate = function (nurseId) {
     /** update the next call column */
     const call = this
     this.loaders.nurse = true
-    console.log('on-nurse-update', nurseId)
     return axios.post(rootUrl('callupdate'), {
       callId: this.id,
       columnName: 'outbound_cpm_id',
@@ -35,6 +35,7 @@ export const onNurseUpdate = function (nurseId) {
       this.loaders.nurse = false
       if (response) console.log('calls:row:update', nurse)
       Event.$emit('select-nurse:update', { nurseId: call.NurseId, callId: call.id })
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.nurse = false
@@ -53,6 +54,7 @@ export const onCallTimeStartUpdate = function  (time) {
       call['Call Time Start'] = time
       this.loaders.callTimeStart = false
       if (response) console.log('calls:row:update', call)
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.callTimeStart = false
@@ -71,6 +73,7 @@ export const onCallTimeEndUpdate = function (time) {
       call['Call Time End'] = time
       this.loaders.callEndStart = false
       if (response) console.log('calls:row:update', call)
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.callEndStart = false
@@ -89,6 +92,7 @@ export const onGeneralCommentUpdate = function (comment) {
       call.Comment = comment
       this.loaders.generalComment = false
       if (response) console.log('calls:row:update', call)
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.generalComment = false
@@ -107,6 +111,7 @@ export const onAttemptNoteUpdate = function (note) {
       call.AttemptNote = note
       this.loaders.attemptNote = false
       if (response) console.log('calls:row:update', call)
+      return response.data
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.attemptNote = false

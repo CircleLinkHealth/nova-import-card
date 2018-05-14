@@ -62,6 +62,54 @@ mock.onGet('/api/nurses?compressed').reply(200, {
     data: NURSES
 })
 
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'scheduled_date',
+    value: '2018-05-13'
+}).reply(200, {
+    date: '2018-05-13'
+})
+
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'outbound_cpm_id',
+    value: 1920
+}).reply(200, {
+    outbound_cpm_id: 1920
+})
+
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'window_start',
+    value: '12:00'
+}).reply(200, {
+    window_start: '12:00'
+})
+
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'window_end',
+    value: '13:00'
+}).reply(200, {
+    window_end: '13:00'
+})
+
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'general_comment',
+    value: '...'
+}).reply(200, {
+    general_comment: '...'
+})
+
+mock.onPost('/callupdate', {
+    callId: 1,
+    columnName: 'attempt_note',
+    value: '...'
+}).reply(200, {
+    attempt_note: '...'
+})
+
 Vue.use(VueAxios, axios)
 
 export default mock
