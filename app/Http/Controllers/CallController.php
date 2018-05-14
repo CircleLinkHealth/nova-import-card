@@ -66,7 +66,10 @@ class CallController extends Controller
         }
 
         if ($patient->inboundCalls) {
-            $scheduledCall = $patient->inboundCalls()->where('status', '=', 'scheduled')->first();
+            $scheduledCall = $patient->inboundCalls()
+                                ->where('status', '=', 'scheduled')
+                                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+                                ->first();
             if ($scheduledCall) {
                 return response([
                     'errors' => ['patient already has a scheduled call'],
