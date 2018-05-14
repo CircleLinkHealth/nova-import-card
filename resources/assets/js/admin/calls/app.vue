@@ -1,14 +1,18 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-7">
         <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+        <label class="btn btn-gray btn-xs">
+          <input type="checkbox" v-model="showOnlyUnassigned" />
+          Show Unassigned
+        </label>
         <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
-      <div class="col-sm-6 text-right" v-if="itemsAreSelected">
+      <div class="col-sm-5 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Call Times</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
@@ -16,7 +20,7 @@
       </div>
     </div>
     <div>
-      <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
+      <v-client-table ref="tblCalls" :data="filteredTableData" :columns="columns" :options="options">
         <template slot="child_row" scope="props">
           <div class="row row-info">
             <div class="col-sm-12">
@@ -151,10 +155,16 @@
           $nextPromise: null,
           requests: {
             calls: null
-          }
+          },
+          showOnlyUnassigned: false
         }
       },
       computed: {
+        filteredTableData () {
+          return this.tableData.filter((row) => {
+            return this.showOnlyUnassigned ? !row.NurseId : true;
+          })
+        },
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
         },
@@ -406,10 +416,10 @@
                     state: call.getPatient().state,
                     practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(Boolean)
+                      return [ ...$vm.nurses.filter(Boolean)
                                       .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
                                       .filter(n => !!n.display_name)
-                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
+                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse })), { text: 'unassigned', value: null } ]
                     },
                     loaders: {
                       nextCall: false,
