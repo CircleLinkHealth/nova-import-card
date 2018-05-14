@@ -546,6 +546,17 @@ class WelcomeCallListGenerator
                     '=',
                     $args['dob'],
                 ],
+            ])->orWhere([
+                [
+                    'practice_id',
+                    '=',
+                    $args['practice_id'],
+                ],
+                [
+                    'mrn',
+                    '=',
+                    $args['mrn'],
+                ],
             ])->first();
 
             $enrolledPatientExists = User::withTrashed()
