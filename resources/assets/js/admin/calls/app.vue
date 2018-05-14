@@ -64,6 +64,9 @@
         <template slot="h__selected" scope="props">
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
+        <template slot="Patient ID" scope="props">
+          <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
+        </template>
         <template slot="Nurse" scope="props">
           <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
@@ -396,6 +399,7 @@
                     'DOB': call.getPatient().getInfo().birth_date,
                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
                     'Patient ID': call.getPatient().id,
+                    notesLink: rootUrl(`manage-patients/${call.getPatient().id}/notes`),
                     'Next Call': call.scheduled_date,
                     'Call Time Start': call.window_start,
                     'Call Time End': call.window_end,
