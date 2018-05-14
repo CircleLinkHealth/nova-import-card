@@ -276,15 +276,27 @@
 
                                         <span class="help-block">{{ $errors->first('timezone') }}</span>
                                     </div>
+                                    @if(isset($patient->id))
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
                                         <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
                                             placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
-                                            value="{{ Carbon::today()->format('Y-m-d') }}" required></v-datepicker>
+                                            value="{{ $patient->patientInfo->consent_date }}" required></v-datepicker>
                                         <br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>
+                                    @else
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
+                                            <label for="mf-consent_date">Consent Date <span
+                                                        class="attention">*</span>:</label>
+                                            <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd"
+                                                          placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
+                                                          value="{{ Carbon::today()->format('Y-m-d') }}" required></v-datepicker>
+                                            <br/>
+                                            <span class="help-block">{{ $errors->first('consent_date') }}</span>
+                                        </div>
+                                    @endif
 
                                     @if(isset($patient->id) )
                                         @if(($patient->primaryPractice) )
