@@ -450,7 +450,8 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $enrolledPatients)
     {
-        $totActPt = $enrolledPatients->count();
+        $totActPt                = $enrolledPatients->count();
+        $targetMinutesPerPatient = 35;
 
         //date current day or last day completed 11:00 pm?
         $startOfMonth       = $date->copy()->startOfMonth();
@@ -458,7 +459,7 @@ class OpsDashboardService
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
         $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
             $endOfMonth->toDateTimeString());
-        $avgMinT            = $workingDaysElapsed / $workingDaysMonth * 35;
+        $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
@@ -466,7 +467,10 @@ class OpsDashboardService
                            ->where('performed_at', '>', $startOfMonth->toDateString())
                            ->where('performed_at', '<', $date->toDateString())
                            ->sum('duration');
-        $avgMinA = round($sum / 60, 2);
+
+        $avg = $sum / count($allPatients);
+
+        $avgMinA = round($avg / 60, 2);
 
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 
