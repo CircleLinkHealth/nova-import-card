@@ -6,6 +6,10 @@
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+        <label class="btn btn-gray btn-xs">
+          <input type="checkbox" v-model="showOnlyUnassigned" />
+          Show Unassigned
+        </label>
         <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
@@ -16,7 +20,7 @@
       </div>
     </div>
     <div>
-      <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
+      <v-client-table ref="tblCalls" :data="filteredTableData" :columns="columns" :options="options">
         <template slot="child_row" scope="props">
           <div class="row row-info">
             <div class="col-sm-12">
@@ -63,6 +67,9 @@
         </template>
         <template slot="h__selected" scope="props">
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
+        </template>
+        <template slot="Patient ID" scope="props">
+          <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
         </template>
         <template slot="Nurse" scope="props">
           <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
@@ -148,10 +155,16 @@
           $nextPromise: null,
           requests: {
             calls: null
-          }
+          },
+          showOnlyUnassigned: false
         }
       },
       computed: {
+        filteredTableData () {
+          return this.tableData.filter((row) => {
+            return this.showOnlyUnassigned ? !row.NurseId : true;
+          })
+        },
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
         },
@@ -234,6 +247,10 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
+        today() {
+          const d = new Date()
+          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+        },
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
@@ -244,10 +261,10 @@
         },
         nextPageUrl () {
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
         },
         activateFilters () {
@@ -392,16 +409,17 @@
                     'DOB': call.getPatient().getInfo().birth_date,
                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
                     'Patient ID': call.getPatient().id,
+                    notesLink: rootUrl(`manage-patients/${call.getPatient().id}/notes`),
                     'Next Call': call.scheduled_date,
                     'Call Time Start': call.window_start,
                     'Call Time End': call.window_end,
                     state: call.getPatient().state,
                     practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(Boolean)
+                      return [ ...$vm.nurses.filter(Boolean)
                                       .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
                                       .filter(n => !!n.display_name)
-                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
+                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse })), { text: 'unassigned', value: null } ]
                     },
                     loaders: {
                       nextCall: false,
