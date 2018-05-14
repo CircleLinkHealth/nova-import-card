@@ -144,6 +144,14 @@ class PatientFilters extends QueryFilters
         return isset($this->filters()['excel']);
     }
 
+    public function autocomplete() {
+        return $this->builder->select([ 'users.id', 'users.display_name', 'users.program_id' ]);
+    }
+
+    public function isAutocomplete() {
+        return isset($this->filters()['autocomplete']);
+    }
+
     public function globalFilters(): array
     {
         return [];

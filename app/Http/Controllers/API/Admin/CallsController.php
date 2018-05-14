@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
 use App\Filters\CallFilters;
+use App\Filters\PatientFilters;
 use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
@@ -358,17 +359,29 @@ class CallsController extends ApiController
         return $this->json($this->callService->repo()->call($id));
     }
 
-    public function patientsWithoutScheduledCalls($practiceId = null)
+    public function patientsWithoutScheduledCalls(PatientFilters $filters, $practiceId = null)
     {
         $patients = $this->service->getPatientsWithoutScheduledCalls($practiceId, Carbon::now())
-                                  ->get();
+                                  ->filter($filters)->get();
+
+        if ($filters->isAutocomplete()) {
+            return $patients->map(function ($patient) {
+                return $patient->autocomplete();
+            });
+        }
         return UserResource::collection($patients);
     }
 
-    public function patientsWithoutInboundCalls($practiceId = null)
+    public function patientsWithoutInboundCalls(PatientFilters $filters, $practiceId = null)
     {
         $patients = $this->service->getPatientsWithoutAnyInboundCalls($practiceId, Carbon::now())
-                                  ->get();
+                                  ->filter($filters)->get();
+
+        if ($filters->isAutocomplete()) {
+            return $patients->map(function ($patient) {
+                return $patient->autocomplete();
+            });
+        }
         return UserResource::collection($patients);
     }
 

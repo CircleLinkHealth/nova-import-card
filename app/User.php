@@ -2777,6 +2777,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
+    public function autocomplete() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name() ?? $this->display_name,
+            'program_id' => $this->program_id
+        ];
+    }
 
     public function safe()
     {
