@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-sm-7">
+      <div class="col-sm-6">
         <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
@@ -12,7 +12,7 @@
         </label>
         <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
-      <div class="col-sm-5 text-right" v-if="itemsAreSelected">
+      <div class="col-sm-6 text-right" v-if="itemsAreSelected">
         <button class="btn btn-primary btn-xs" @click="assignSelectedToNurse">Assign To Nurse</button>
         <button class="btn btn-success btn-xs" @click="assignTimesForSelected">Assign Call Times</button>
         <button class="btn btn-danger btn-xs" @click="deleteSelected">Delete</button>
