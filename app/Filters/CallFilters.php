@@ -154,6 +154,11 @@ class CallFilters extends QueryFilters
             ->where('scheduled_date', 'LIKE', '%' . $date . '%');
     }
 
+    public function minScheduledDate($date) {
+        return $this->builder
+            ->where('scheduled_date', '>=', $date);
+    }
+
     /**
      * Scope for calls by the date the patient was last called.
      *

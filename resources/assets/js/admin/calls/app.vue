@@ -234,6 +234,10 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
+        today() {
+          const d = new Date()
+          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+        },
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
@@ -244,10 +248,10 @@
         },
         nextPageUrl () {
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
         },
         activateFilters () {
