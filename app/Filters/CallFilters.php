@@ -160,6 +160,13 @@ class CallFilters extends QueryFilters
     }
 
     /**
+     * calls with no nurse assigned
+     */
+    public function unassigned() {
+        return $this->builder->where('outbound_cpm_id', null);
+    }
+
+    /**
      * Scope for calls by the date the patient was last called.
      *
      * @param $date
