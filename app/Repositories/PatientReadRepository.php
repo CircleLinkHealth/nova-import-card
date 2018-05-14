@@ -37,14 +37,24 @@ class PatientReadRepository
             else {
                 $users = $users->paginate($filters->filters()['rows'] ?? 15);
             }
-            $users->getCollection()->transform(function ($user) {
-                $user = optional($user)->safe();
+            $users->getCollection()->transform(function ($user) use ($filters) {
+                if ($filters->isAutocomplete()) {
+                    $user = optional($user)->autocomplete();
+                }
+                else {
+                    $user = optional($user)->safe();
+                }
                 return $user;
             });
         }
         else {
             $users = $users->get()->map(function ($user) {
-                $user = optional($user)->safe();
+                if ($filters->isAutocomplete()) {
+                    $user = optional($user)->autocomplete();
+                }
+                else {
+                    $user = optional($user)->safe();
+                }
                 return $user;
             });
         }
