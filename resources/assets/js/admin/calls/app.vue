@@ -7,7 +7,7 @@
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
         <label class="btn btn-gray btn-xs">
-          <input type="checkbox" v-model="showOnlyUnassigned" />
+          <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned" />
           Show Unassigned
         </label>
         <loader class="absolute" v-if="loaders.calls"></loader>
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div>
-      <v-client-table ref="tblCalls" :data="filteredTableData" :columns="columns" :options="options">
+      <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
         <template slot="child_row" scope="props">
           <div class="row row-info">
             <div class="col-sm-12">
@@ -160,11 +160,6 @@
         }
       },
       computed: {
-        filteredTableData () {
-          return this.tableData.filter((row) => {
-            return this.showOnlyUnassigned ? !row.NurseId : true;
-          })
-        },
         itemsAreSelected() {
           return !!this.tableData.find(row => !!row.selected)
         },
@@ -223,6 +218,9 @@
       },
       methods: {
         rootUrl,
+        changeShowOnlyUnassigned (e) {
+          return this.activateFilters()
+        },
         columnMapping (name) {
           const columns = {
             'Patient ID': 'patientId',
@@ -256,8 +254,9 @@
             const query = $table.$data.query
             const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
             const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+            const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
             console.log('sort:column', sortColumn)
-            return `${filters}${sortColumn}`
+            return `${filters}${sortColumn}${unassigned}`
         },
         nextPageUrl () {
             if (this.pagination) {
@@ -271,7 +270,7 @@
             this.pagination = null
             this.tableData = []
             this.$refs.tblCalls.setPage(1)
-            this.next()
+            return this.next()
         },
         toggleAllSelect(e) {
           const $elem = this.$refs.tblCalls
