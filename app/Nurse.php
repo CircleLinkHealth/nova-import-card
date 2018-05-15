@@ -222,6 +222,6 @@ class Nurse extends \App\BaseModel
 
     public function calls()
     {
-        return $this->user->outboundCalls;
+        return $this->user->outboundCalls();
     }
 }
