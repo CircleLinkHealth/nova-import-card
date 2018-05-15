@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MakeXmlNullable extends Migration
+class DropXml extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class MakeXmlNullable extends Migration
     public function up()
     {
         Schema::table('ccdas', function (Blueprint $table) {
-            $table->longText('xml')->nullable()->change();
+            $table->dropColumn('xml');
         });
     }
 
