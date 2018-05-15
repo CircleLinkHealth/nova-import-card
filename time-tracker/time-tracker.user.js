@@ -88,11 +88,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
-        if (info.totalTime) {
-            user.totalTime = info.totalTime
-        }
+        user.totalTime = Math.max(user.totalTime, info.totalTime)
         user.enter(info, ws)
-        //user.totalTime = Math.max(user.totalTime, info.totalTime)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
         let activity = user.activities.find(item => item.name === info.activity)
