@@ -133,7 +133,7 @@ class CareTeamController extends Controller
                         'first_name'       => $member->user->first_name,
                         'last_name'        => $member->user->last_name,
                         'full_name'        => $member->user->full_name,
-                        'suffix'           => $member->user->providerInfo->is_clinical
+                        'suffix'           => optional($member->user->providerInfo)->is_clinical
                             ? $member->user->suffix
                             : 'non-clinical',
                         'address'          => $member->user->address,
