@@ -65,7 +65,7 @@ use App\Patient;
                 "submitUrl": '{{route("api.pagetracking")}}',
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
                 "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
-                "noCallMode": "{{ !((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')) }}",
+                "noCallMode": 0,
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}"
             }
         </script>
