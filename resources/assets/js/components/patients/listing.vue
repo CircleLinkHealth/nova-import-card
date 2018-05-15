@@ -48,10 +48,11 @@
                             :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" 
+                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
                             value="Export as Excel" @click="exportExcel" >
                 <span class="pad-10"></span>
 
@@ -97,7 +98,9 @@
                 loaders: {
                     next: false,
                     practices: null,
-                    providers: false
+                    providers: false,
+                    excel: false,
+                    pdf: false
                 },
                 requests: {
                     next: null
@@ -330,10 +333,18 @@
                 })
             },
             exportExcel () {
-                const link = document.createElement('a')
-                link.href = rootUrl('api/patients?excel')
-                link.download = `patient-list-${Date.now()}.xlsx`
-                link.click()
+                if (!this.loaders.excel) {
+                    this.loaders.excel = true
+                    const link = document.createElement('a')
+                    link.href = rootUrl('api/patients?excel')
+                    link.download = `patient-list-${Date.now()}.xlsx`
+                    link.click()
+                }
+            },
+            exportPdf () {
+                if (!this.loaders.pdf) {
+                    this.loaders.pdf = true
+                }
             },
             createHumanReadableFilterNames () {
                 /**
