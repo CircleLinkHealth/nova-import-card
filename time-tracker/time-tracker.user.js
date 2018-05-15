@@ -23,6 +23,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         totalTime: info.totalTime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
+        isLoggingOut: null,
         /**
          * @returns {Number} total duration in seconds of activities excluding initial-total-time
          */
@@ -61,13 +62,23 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             })
         },
         inactivityRequiresNoModal () {
-            return this.inactiveSeconds < (!this.callMode ? 120 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode
+            return this.inactiveSeconds < (!this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
         inactivityRequiresModal () {
-            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode
+            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? this.LOGOUT_TIMEOUT : this.LOGOUT_TIMEOUT_CALL_MODE) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
+        },
+        ALERT_TIMEOUT: 120,
+        LOGOUT_TIMEOUT: 600,
+        ALERT_TIMEOUT_CALL_MODE: 900,
+        LOGOUT_TIMEOUT_CALL_MODE: 1200,
+        overrideTimeouts (options = {}) {
+            this.ALERT_TIMEOUT = Math.ceil(options.alertTimeout) || this.ALERT_TIMEOUT;
+            this.LOGOUT_TIMEOUT = Math.ceil(options.logoutTimeout) || this.LOGOUT_TIMEOUT;
+            this.ALERT_TIMEOUT_CALL_MODE = Math.ceil(options.alertTimeoutCallMode) || this.ALERT_TIMEOUT_CALL_MODE;
+            this.LOGOUT_TIMEOUT_CALL_MODE = Math.ceil(options.logoutTimeoutCallMode) || this.LOGOUT_TIMEOUT_CALL_MODE;
         }
     }
 
@@ -77,6 +88,9 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
+        if (info.totalTime) {
+            user.totalTime = info.totalTime
+        }
         user.enter(info, ws)
         //user.totalTime = Math.max(user.totalTime, info.totalTime)
         ws.providerId = info.providerId
@@ -127,17 +141,36 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
-                user.respondToModal()
-                user.allSockets.forEach(socket => {
-                    if (socket.readyState === socket.OPEN) {
-                        socket.send(JSON.stringify({ message: 'server:logout' }))
-                    }
-                })
+                user.respondToModal(false)
+                user.logout()
             }
         }
         ws.active = true
 
         $emitter.emit(`server:enter:${user.providerId}`, user.patientId, user.patientFamilyId)
+    }
+
+    /**
+     * general logout
+     */
+    user.logout = () => {
+        user.isLoggingOut = true
+        user.allSockets.forEach(socket => {
+            if (socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify({ message: 'server:logout' }))
+            }
+        })
+    }
+
+    /**
+     * logout because of mouse and keyboard inactivity while on client page
+     * removes about 90 seconds from the duration
+     */
+    user.clientInactivityLogout = () => {
+        if (!user.isLoggingOut) {
+            user.removeInactiveDuration(info)
+        }
+        user.logout()
     }
 
     user.closeAllModals = () => {
@@ -212,9 +245,16 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
                 activity.duration += elapsedSeconds
             }
             else {
-                activity.duration = Math.max((activity.duration - 90), 0)
+                user.removeInactiveDuration(info)
             }
             activity.inactiveModalShowTime = null
+        }
+    }
+
+    user.removeInactiveDuration = (info) => {
+        let activity = user.activities.find(item => item.name === info.activity)
+        if (activity) {
+            activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 30)
         }
     }
 
@@ -252,6 +292,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.activities.forEach(activity => {
             activity.duration = 0
         })
+        user.isLoggingOut = null
     }
 
     user.report = () => ({

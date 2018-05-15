@@ -153,6 +153,29 @@ module.exports = app => {
                 return;
               }
             }
+            else if (data.message === 'client:timeouts:override') {
+              try {
+                const info = data.info
+                const timeouts = data.timeouts || {}
+                const user = app.getTimeTracker(info).get(info)
+                user.overrideTimeouts(timeouts)
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
+            else if (data.message === 'client:logout') {
+              try {
+                const info = data.info
+                const user = app.getTimeTracker(info).get(info)
+                user.clientInactivityLogout()
+              }
+              catch (ex) {
+                errorThrow(ex, ws)
+                return;
+              }
+            }
             else if (data.message === 'PING') {
 
             }
@@ -198,7 +221,7 @@ module.exports = app => {
           }
 
           axios.post(url, requestData).then((response) => {
-            console.log(response.status, response.data, requestData.activities.map(activity => activity.duration).join(', '))
+            console.log(response.status, response.data, requestData.patientId, requestData.activities.map(activity => activity.duration).join(', '))
           }).catch((err) => {
             console.error(err)
           })

@@ -124,6 +124,25 @@ describe('TimeTrackerFlow', () => {
     
                 assert.equal(JSON.parse(user.allSockets[0].messages.slice(-1)[0]).message, 'server:logout')
             })
+
+            describe('ClientInactivity', () => {
+                it('should not reset inactive duration more than once', () => {
+                    const timeTracker = new TimeTracker()
+                    const user = timeTracker.get(info)
+        
+                    user.start(info, ws)
+    
+                    user.activities[0].duration = 125
+        
+                    user.inactiveSeconds = 601
+        
+                    user.clientInactivityLogout()
+        
+                    user.clientInactivityLogout()
+        
+                    assert.equal(user.totalDuration, 35)
+                })
+            })
         })
         
     })
