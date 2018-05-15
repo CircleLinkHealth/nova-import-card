@@ -149,11 +149,11 @@ class CarePlanHelper
         $workPhone   = null;
 
         //`$this->demographicsImport->primary_phone` may be a phone number or phone type
-        $primaryPhone = $pPhone
+        $primaryPhone = ! empty($pPhone)
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $this->dem->primary_phone;
 
-        $homeNumber = $this->dem->home_phone;
+        $homeNumber = $this->dem->home_phone ?? $primaryPhone;
         if ( ! empty($homeNumber)) {
 
             if ($this->validatePhoneNumber($homeNumber)) {
