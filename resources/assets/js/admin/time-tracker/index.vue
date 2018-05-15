@@ -43,7 +43,7 @@
             'no-live-count': Number,
             'class-name': String,
             'hide-tracker': Boolean,
-            'override-timeout': Number
+            'override-timeout': Boolean
         },
         data() {
             return {
