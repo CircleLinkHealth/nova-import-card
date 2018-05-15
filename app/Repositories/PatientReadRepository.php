@@ -48,7 +48,7 @@ class PatientReadRepository
             });
         }
         else {
-            $users = $users->get()->map(function ($user) {
+            $users = $users->get()->map(function ($user) use ($filters) {
                 if ($filters->isAutocomplete()) {
                     $user = optional($user)->autocomplete();
                 }
