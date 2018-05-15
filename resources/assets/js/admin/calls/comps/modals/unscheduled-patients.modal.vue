@@ -3,10 +3,8 @@
       <template scope="props" slot="title">
         <div class="row">
             <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
-                <select class="form-control" v-model="practiceId" @change="getPatients()">
-                    <option :value="null">Select Practice</option>
-                    <option v-for="(practice, index) in practices" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
-                </select>
+                <v-select class="form-control" v-model="selectedPracticeData" 
+                    :options="practicesForSelect" :on-change="changePractice"></v-select>
                 <loader v-if="loaders.patients"></loader>
             </div>
         </div>
@@ -21,7 +19,7 @@
                     <div class="col-sm-12">
                         <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
                             <template slot="name" scope="props">
-                                <a class="pointer" @click="triggerParentFilter(props.row.name)">{{props.row.name}}</a>
+                                <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
                             </template>
                         </v-client-table>
                     </div>
@@ -35,14 +33,20 @@
 <script>
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
-    import { rootUrl } from '../../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../../app.config'
+    import {Event} from 'vue-tables-2'
+    import VueCache from '../../../../util/vue-cache'
+    import VueSelect from 'vue-select'
+
+    const UNASSIGNED_VALUE = { label: 'Unassigned', value: null }
 
     export default {
         name: 'unscheduled-patients-modal',
+        mixins: [ VueCache ],
         components: {
             'modal': Modal,
-            'loader': LoaderComponent
+            'loader': LoaderComponent,
+            'v-select': VueSelect
         },
         data() {
             return {
@@ -61,13 +65,25 @@
                 practices: [],
                 patients: [],
                 practiceId: null,
-                columns: ['id', 'name', 'city', 'state'],
+                columns: ['id', 'name'],
                 options: {
                     filterable: false
-                }
+                },
+                selectedPracticeData: UNASSIGNED_VALUE
+            }
+        },
+        computed: {
+            practicesForSelect () {
+                return [ UNASSIGNED_VALUE, ...this.practices.map(practice => ({ label: practice.display_name, value: practice.id })) ]
             }
         },
         methods: {
+            changePractice (practice) {
+                if (practice) {
+                    this.practiceId = practice.value
+                    return this.getPatients()
+                }
+            },
             getPractices() {
                 this.loaders.practices = true
                 this.axios.get(rootUrl(`api/practices`)).then(response => {
@@ -81,28 +97,29 @@
                 })
             },
             getPatients() {
-                if (this.practiceId) {
-                    this.loaders.patients = true
-                    this.axios.get(rootUrl(`api/practices/${this.practiceId}/patients/without-scheduled-calls`)).then(response => {
-                        this.loaders.patients = false
-                        this.patients = (response.data.data || []).map(patient => {
-                            patient.name = patient.full_name
-                            return patient;
-                        })
-                        console.log('unscheduled-patients-get-patients', response.data.data)
-                    }).catch(err => {
-                        this.loaders.patients = false
-                        this.errors.patients = err.message
-                        console.error('unscheduled-patients-get-patients', err)
-                    })
-                }
+                const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
+                this.loaders.patients = true
+                this.cache().get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`)).then(patients => {
+                    this.loaders.patients = false
+                    this.patients = (patients || [])
+                    console.log('unscheduled-patients-get-patients', patients)
+                }).catch(err => {
+                    this.loaders.patients = false
+                    this.errors.patients = err.message
+                    console.error('unscheduled-patients-get-patients', err)
+                })
             },
-            triggerParentFilter(value) {
-                Event.$emit('unscheduled-patients-modal:filter', value)
+            triggerParentFilter(id, name) {
+                Event.$emit('unscheduled-patients-modal:filter', {
+                    practiceId: this.practiceId,
+                    patientId: id,
+                    patientName: name
+                })
             }
         },
         mounted() {
             this.getPractices()
+            this.getPatients()
         }
     }
 </script>

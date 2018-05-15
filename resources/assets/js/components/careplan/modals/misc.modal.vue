@@ -1,18 +1,17 @@
 <template>
     <modal name="misc" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-misc">
-        <template scope="props">
+        <template>
             <div class="row">
                 <div class="col-sm-12" v-if="selectedMisc">
                     <div class="row">
                         <form @submit="addInstruction">
                             <div class="col-sm-12">
-                                <textarea class="form-control height-200" v-model="newInstruction" placeholder="Add New Instruction" required></textarea>
+                                <textarea class="form-control height-200" v-model="newInstruction" placeholder="Add New Instruction"></textarea>
                             </div>
                             <div class="col-sm-12 top-20 text-right">
                                 <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                 <input type="submit" class="btn btn-secondary right-0 instruction-add selected margin-0" value="Save" 
-                                    title="add this instruction for this cpm problem" 
-                                    :disabled="!newInstruction || newInstruction.length === 0" />
+                                    title="add this instruction for this cpm problem" />
                             </div>
                         </form>
                     </div>
@@ -134,14 +133,14 @@
                     })
                 }
             },
-            removeInstructionFromProblem(index) {
-                if (this.selectedInstruction && this.selectedMisc && confirm('Are you sure you want to delete this instruction?')) {
+            removeInstructionFromMisc(index) {
+                const selectedInstruction = this.selectedMisc.instructions[index]
+                if (this.selectedMisc && selectedInstruction && confirm('Are you sure you want to delete this instruction?')) {
                     this.loaders.removeInstruction = true
-                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions/${this.selectedInstruction.id}`)).then((response) => {
+                    return this.axios.delete(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions/${selectedInstruction.id}`)).then((response) => {
                         console.log('misc:remove-instruction', response.data)
                         this.loaders.removeInstruction = false
-                        this.selectedMisc.instructions.splice(index, 1)
-                        this.selectedInstruction = null
+                        this.selectedMisc.instructions = []
                         Event.$emit('misc:change', this.selectedMisc)
                     }).catch(err => {
                         console.error('misc:remove-instruction', err)
@@ -151,9 +150,9 @@
             },
             addInstruction(e) {
                 e.preventDefault()
-                if (this.newInstruction && this.newInstruction.length > 0) {
+                if (this.newInstruction) {
                     this.loaders.addInstruction = true
-                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: this.newInstruction }).then(response => {
+                    return this.axios.post(rootUrl(`api/problems/instructions`), { name: (this.newInstruction || ' ') }).then(response => {
                         console.log('misc:add-instruction', response.data)
                         return this.addInstructionToMisc(response.data)
                     }).catch(err => {
@@ -161,11 +160,15 @@
                         this.loaders.addInstruction = false
                     })
                 }
+                else {
+                    return this.removeInstructionFromMisc(0)
+                }
             },
             addInstructionToMisc(instruction) {
                return this.axios.post(rootUrl(`api/patients/${this.patientId}/misc/${this.selectedMisc.id}/instructions`), { instructionId: instruction.id }).then(response => {
                         console.log('misc:add-instruction', response.data)
-                        this.selectedMisc.instructions[0] = instruction
+                        this.selectedMisc.instructions = this.selectedMiscs.instructions || []
+                        this.selectedMisc.instructions.unshift(instruction)
                         this.loaders.addInstruction = false
                         Event.$emit('misc:change', this.selectedMisc)
                     }).catch(err => {

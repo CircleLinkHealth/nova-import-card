@@ -15,11 +15,18 @@
     import InactivityModal from './modals/inactivity-modal'
 
     export default {
+        props: {
+            callMode: Boolean
+        },
         data() {
             return {
                 startTime: new Date(),
                 endTime: new Date(),
-                isModalShown: false
+                isModalShown: false,
+                ALERT_TIMEOUT: 120,
+                LOGOUT_TIMEOUT: 600,
+                ALERT_TIMEOUT_CALL_MODE: 900,
+                LOGOUT_TIMEOUT_CALL_MODE: 1200
             };
         },
         components: {
@@ -37,9 +44,9 @@
                 this.interval = setInterval(
                     function() {
                         this.endTime = new Date();
-                        const ALERT_INTERVAL = 120;
-                        const LOGOUT_INTERVAL = 600;
-                        if (this.totalSeconds && ((this.totalSeconds % ALERT_INTERVAL) === 0)) {
+                        const ALERT_INTERVAL = () => !this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE; // 120-900
+                        const LOGOUT_INTERVAL = () => !this.callMode ? this.LOGOUT_TIMEOUT : this.LOGOUT_TIMEOUT_CALL_MODE; // 600-1200
+                        if (this.totalSeconds && !this.isModalShown && ((this.totalSeconds >= ALERT_INTERVAL()) && (this.totalSeconds < LOGOUT_INTERVAL()))) {
                             /**
                              * Stop Tracking Time
                              * Show Modal asking the user why he/she has been inactive
@@ -52,12 +59,11 @@
                             EventBus.$emit('modal-inactivity:show')
                             this.isModalShown = true
                         }
-                        else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL)) {
+                        else if (this.totalSeconds && (this.totalSeconds >= LOGOUT_INTERVAL())) {
                             /**
                              * Logout the user automatically
                              */
-                            EventBus.$emit("tracker:stop")
-                            location.href = rootUrl('auth/logout')
+                            EventBus.$emit("tracker:logout")
                         }
                     }.bind(this),
                     1000
@@ -114,7 +120,26 @@
 
             EventBus.$on('modal-inactivity:reset', (preventEmit) => {
                 this.reset()
-                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler
+                if (this.windowFocusHandler) window.onfocus = this.windowFocusHandler 
+            })
+
+            EventBus.$on('modal-inactivity:timeouts:override', (options = {}) => {
+                try {
+                    this.ALERT_TIMEOUT = options.alertTimeout || this.ALERT_TIMEOUT
+                    this.LOGOUT_TIMEOUT = options.logoutTimeout || this.LOGOUT_TIMEOUT
+                    this.ALERT_TIMEOUT_CALL_MODE = options.alertTimeoutCallMode || this.ALERT_TIMEOUT_CALL_MODE
+                    this.LOGOUT_TIMEOUT_CALL_MODE = options.logoutTimeoutCallMode || this.LOGOUT_TIMEOUT_CALL_MODE
+
+                    EventBus.$emit('tracker:timeouts:override', {
+                        alertTimeout: this.ALERT_TIMEOUT,
+                        logoutTimeout: this.LOGOUT_TIMEOUT,
+                        alertTimeoutCallMode: this.ALERT_TIMEOUT_CALL_MODE,
+                        logoutTimeoutCallMode: this.LOGOUT_TIMEOUT_CALL_MODE
+                    })
+                }
+                catch (err) {
+                    console.error(err)
+                }
             })
         }
     }

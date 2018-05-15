@@ -3,10 +3,12 @@
 use App\CareItem;
 use App\CarePlanItem;
 use App\CarePlanTemplate;
+use App\Keyword;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmInstructable;
 use App\Contracts\Serviceable;
 use App\Services\CPM\CpmProblemService;
+use App\Importer\Models\ImportedItems\ProblemImport;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -142,6 +144,11 @@ class CpmProblem extends \App\BaseModel implements Serviceable
         return $this->hasOne(CpmInstructable::class, 'instructable_id');
     }
 
+    public function isDuplicateOf($name) {
+        return $this->where('contains', 'LIKE', "%$name%");
+    }
+
+
     /**
      * Get this Model's Service Class
      *
@@ -150,5 +157,9 @@ class CpmProblem extends \App\BaseModel implements Serviceable
     public function service()
     {
         return new CpmProblemService();
+    }
+
+    public function problemImports() {
+        return $this->hasMany(ProblemImport::class);
     }
 }

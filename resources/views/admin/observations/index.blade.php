@@ -22,7 +22,7 @@
                     @if(Cerberus::hasPermission('observations-create'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ route('admin.observations.create', array()) }}" class="btn btn-success" disabled="disabled">Input Observation</a>
+{{--                                <a href="{{ route('observations.create') }}" class="btn btn-success" disabled="disabled">Input Observation</a>--}}
                             </div>
                         </div>
                     @endif

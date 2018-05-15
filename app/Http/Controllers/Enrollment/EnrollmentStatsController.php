@@ -241,9 +241,9 @@ class EnrollmentStatsController extends Controller
 
 
             $data[$practice->id]['total_cost'] = '$' . $data[$practice->id]['total_cost'];
-
-            return $data;
         }
+
+        return $data;
     }
 
     /**

@@ -21,13 +21,14 @@ class CcdaService
         return $this->repo()->ccda($id);
     }
 
-    public function create(Ccda $ccda) {
+    public function create(Ccda $ccda, $xml)
+    {
         $ccda->vendor_id = 1;
         $ccda->source = Ccda::IMPORTER;
         $ccda->save();
-        if ($ccda->json) {
-            $ccda->import();
-        }
+        $ccda = $ccda->storeCcd($xml);
+        $ccda->import();
+
         return $ccda;
     }
 }

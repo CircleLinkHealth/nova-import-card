@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\Filters\Filterable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -117,7 +118,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Patient extends \App\BaseModel
 {
 
-    use SoftDeletes;
+    use Filterable, SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     const PAUSED = 'paused';
@@ -130,7 +131,7 @@ class Patient extends \App\BaseModel
         'paused_letter_printed_at',
     ];
 
-    
+
 
     /**
      * The connection name for the model.
@@ -150,7 +151,52 @@ class Patient extends \App\BaseModel
      * @var string
      */
     protected $primaryKey = 'id';
-    protected $guarded = [];
+    protected $fillable = [
+        'imported_medical_record_id',
+        'user_id',
+        'ccda_id',
+        'care_plan_id',
+        'active_date',
+        'agent_name',
+        'agent_telephone',
+        'agent_email',
+        'agent_relationship',
+        'birth_date',
+        'ccm_status',
+        'paused_letter_printed_at',
+        'consent_date',
+        'cur_month_activity_time',
+        'gender',
+        'date_paused',
+        'date_withdrawn',
+        'mrn_number',
+        'preferred_cc_contact_days',
+        'preferred_contact_language',
+        'preferred_contact_location',
+        'preferred_contact_method',
+        'preferred_contact_time',
+        'preferred_contact_timezone',
+        'registration_date',
+        'daily_reminder_optin',
+        'daily_reminder_time',
+        'daily_reminder_areas',
+        'hospital_reminder_optin',
+        'hospital_reminder_time',
+        'hospital_reminder_areas',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'general_comment',
+        'preferred_calls_per_month',
+        'last_successful_contact_time',
+        'no_call_attempts_since_last_success',
+        'last_contact_time',
+        'daily_contact_window_start',
+        'daily_contact_window_end',
+        'next_call_id',
+        'family_id',
+        'date_welcomed',
+    ];
 
     public static function boot()
     {
@@ -358,7 +404,7 @@ class Patient extends \App\BaseModel
 
     public function getLastCallStatusAttribute()
     {
-        if ( ! $this->no_call_attempts_since_last_success) {
+        if (is_null($this->no_call_attempts_since_last_success)) {
             return 'n/a';
         }
 
@@ -376,6 +422,34 @@ class Patient extends \App\BaseModel
 
         return $query->where('ccm_status', 'enrolled');
     }
+
+    public function scopeByStatus($query, $fromDate, $toDate) {
+
+        return $query->where(function ($query) use ($fromDate, $toDate) {
+            $query->where(function ($subQuery) use ($fromDate, $toDate) {
+                $subQuery->ccmStatus(Patient::PAUSED)
+                         ->where([
+                             ['date_paused', '>=', $fromDate],
+                             ['date_paused', '<=', $toDate],
+                         ]);
+            })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::WITHDRAWN)
+                               ->where([
+                                   ['date_withdrawn', '>=', $fromDate],
+                                   ['date_withdrawn', '<=', $toDate],
+                               ]);
+                  })
+                  ->orWhere(function ($subQuery) use ($fromDate, $toDate) {
+                      $subQuery->ccmStatus(Patient::ENROLLED)
+                               ->where([
+                                   ['registration_date', '>=', $fromDate],
+                                   ['registration_date', '<=', $toDate],
+                               ]);
+                  });
+        });
+    }
+
 
     /**
      * Import Patient's Call Window from the sheet, or save default.
@@ -515,6 +589,7 @@ class Patient extends \App\BaseModel
             'user_id' => $this->user_id,
             'ccm_status' => $this->ccm_status,
             'birth_date' => $this->birth_date,
+            'age' => $this->birth_date ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year): 0,
             'gender' => $this->gender,
             'created_at' => $this->created_at->format('c'),
             'updated_at' => $this->updated_at->format('c'),

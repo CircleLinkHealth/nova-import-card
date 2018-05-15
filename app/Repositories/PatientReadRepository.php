@@ -11,6 +11,7 @@ namespace App\Repositories;
 
 use App\User;
 use App\PatientSearchModel;
+use App\Filters\PatientFilters;
 
 class PatientReadRepository
 {
@@ -27,12 +28,36 @@ class PatientReadRepository
         return $this->user;
     }
 
-    public function patients() {
-        $users = $this->model()->whereHas('patientInfo')->paginate();
-        $users->getCollection()->transform(function ($user) {
-            $user = optional($user)->safe();
-            return $user;
-        });
+    public function patients(PatientFilters $filters) {
+        $users = $this->model()->filter($filters)->ofType('participant')->whereHas('patientInfo');
+        if (!$filters->isExcel()) { //check that an excel file is not requested]
+            if (isset($filters->filters()['rows']) && $filters->filters()['rows'] == 'all') {
+                $users = $users->paginate($users->count());
+            }
+            else {
+                $users = $users->paginate($filters->filters()['rows'] ?? 15);
+            }
+            $users->getCollection()->transform(function ($user) use ($filters) {
+                if ($filters->isAutocomplete()) {
+                    $user = optional($user)->autocomplete();
+                }
+                else {
+                    $user = optional($user)->safe();
+                }
+                return $user;
+            });
+        }
+        else {
+            $users = $users->get()->map(function ($user) {
+                if ($filters->isAutocomplete()) {
+                    $user = optional($user)->autocomplete();
+                }
+                else {
+                    $user = optional($user)->safe();
+                }
+                return $user;
+            });
+        }
         return $users;
     }
 

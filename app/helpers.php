@@ -7,15 +7,16 @@ use App\Constants;
 use App\Jobs\SendSlackMessage;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
-if (!function_exists('parseIds')) {
+if ( ! function_exists('parseIds')) {
     /**
      * Get all of the IDs from the given mixed value.
      *
-     * @param  mixed  $value
+     * @param  mixed $value
+     *
      * @return array
      */
     function parseIds($value)
@@ -33,8 +34,9 @@ if (!function_exists('parseIds')) {
         }
 
         if ($value instanceof Collection) {
-            return $value->map(function($el){
+            return $value->map(function ($el) {
                 $id = parseIds($el);
+
                 return $id[0];
             })->values()->toArray();
         }
@@ -43,11 +45,11 @@ if (!function_exists('parseIds')) {
             return explode(',', $value);
         }
 
-        return array_filter((array) $value);
+        return array_filter((array)$value);
     }
 }
 
-if (!function_exists('str_substr_after')) {
+if ( ! function_exists('str_substr_after')) {
     /**
      * Get the substring after the given character
      *
@@ -60,11 +62,13 @@ if (!function_exists('str_substr_after')) {
     {
         $pos = strrpos($string, $character);
 
-        return $pos === false ? $string : substr($string, $pos + 1);
+        return $pos === false
+            ? $string
+            : substr($string, $pos + 1);
     }
 }
 
-if (!function_exists('activeNurseNames')) {
+if ( ! function_exists('activeNurseNames')) {
     /**
      * Returns an array of nurse names keyed by id.
      *
@@ -73,13 +77,13 @@ if (!function_exists('activeNurseNames')) {
     function activeNurseNames()
     {
         return User::ofType('care-center')
-            ->where('user_status', 1)
-            ->pluck('display_name', 'id');
+                   ->where('user_status', 1)
+                   ->pluck('display_name', 'id');
     }
 }
 
 
-if (!function_exists('sendSlackMessage')) {
+if ( ! function_exists('sendSlackMessage')) {
     /**
      * Sends a message to Slack
      *
@@ -90,17 +94,15 @@ if (!function_exists('sendSlackMessage')) {
      */
     function sendSlackMessage($to, $message)
     {
-        if (!in_array(app()->environment(), ['production', 'worker'])) {
+        if ( ! in_array(app()->environment(), ['production', 'worker'])) {
             return;
         }
 
-        $job = new SendSlackMessage($to, $message);
-
-        dispatch($job);
+        SendSlackMessage::dispatch($to, $message)->onQueue('default');
     }
 }
 
-if (!function_exists('formatPhoneNumber')) {
+if ( ! function_exists('formatPhoneNumber')) {
     /**
      * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
      *
@@ -126,7 +128,7 @@ if (!function_exists('formatPhoneNumber')) {
     }
 }
 
-if (!function_exists('extractNumbers')) {
+if ( ! function_exists('extractNumbers')) {
     /**
      * Returns only numerical values in a string
      *
@@ -142,11 +144,11 @@ if (!function_exists('extractNumbers')) {
     }
 }
 
-if (!function_exists('detectDelimiter')) {
+if ( ! function_exists('detectDelimiter')) {
     function detectDelimiter($fileHandle, $length)
     {
         $delimiters = ["\t", ";", "|", ","];
-        $data_1 = $data_2 = $delimiter = null;
+        $data_1     = $data_2 = $delimiter = null;
 
         foreach ($delimiters as $d) {
             $data_1 = fgetcsv($fileHandle, $length, $d);
@@ -154,7 +156,7 @@ if (!function_exists('detectDelimiter')) {
                 $delimiter = sizeof($data_1) > sizeof($data_2)
                     ? $d
                     : $delimiter;
-                $data_2 = $data_1;
+                $data_2    = $data_1;
             }
             rewind($fileHandle);
         }
@@ -163,7 +165,7 @@ if (!function_exists('detectDelimiter')) {
     }
 }
 
-if (!function_exists('parseCsvToArray')) {
+if ( ! function_exists('parseCsvToArray')) {
     /**
      * Parses a CSV file into an array.
      *
@@ -173,9 +175,9 @@ if (!function_exists('parseCsvToArray')) {
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
     {
-        $csvArray = $fields = [];
-        $i = 0;
-        $handle = @fopen($file, "r");
+        $csvArray  = $fields = [];
+        $i         = 0;
+        $handle    = @fopen($file, "r");
         $delimiter = $delimiter ?? detectDelimiter($handle, $length = 0);
 
         if ($handle) {
@@ -195,7 +197,7 @@ if (!function_exists('parseCsvToArray')) {
                 }
                 $i++;
             }
-            if (!feof($handle)) {
+            if ( ! feof($handle)) {
                 echo "Error: unexpected fgets() fail\n";
             }
             fclose($handle);
@@ -205,17 +207,17 @@ if (!function_exists('parseCsvToArray')) {
     }
 }
 
-if (!function_exists('secondsToHHMM')) {
+if ( ! function_exists('secondsToHHMM')) {
     function secondsToHHMM($seconds)
     {
         $getHours = sprintf('%02d', floor($seconds / 3600));
-        $getMins = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
+        $getMins  = sprintf('%02d', floor(($seconds - ($getHours * 3600)) / 60));
 
         return $getHours . ':' . $getMins;
     }
 }
 
-if (!function_exists('secondsToMMSS')) {
+if ( ! function_exists('secondsToMMSS')) {
     function secondsToMMSS($seconds)
     {
         $minutes = sprintf('%02d', floor($seconds / 60));
@@ -226,7 +228,7 @@ if (!function_exists('secondsToMMSS')) {
 }
 
 
-if (!function_exists('parseDaysStringToNumbers')) {
+if ( ! function_exists('parseDaysStringToNumbers')) {
     /**
      * Parses a String of days into numbers.
      *
@@ -256,7 +258,7 @@ if (!function_exists('parseDaysStringToNumbers')) {
 }
 
 
-if (!function_exists('validateBloodPressureString')) {
+if ( ! function_exists('validateBloodPressureString')) {
     /**
      * Validates blood pressure string that looks like this: xxx/xxx
      *
@@ -276,7 +278,7 @@ if (!function_exists('validateBloodPressureString')) {
         $readings = new Collection(explode($delimiter, $bloodPressureString));
 
         foreach ($readings as $reading) {
-            if (!is_numeric($reading) || $reading > 999 || $reading < 10) {
+            if ( ! is_numeric($reading) || $reading > 999 || $reading < 10) {
                 return false;
             }
         }
@@ -285,7 +287,7 @@ if (!function_exists('validateBloodPressureString')) {
     }
 }
 
-if (!function_exists('carbonGetNext')) {
+if ( ! function_exists('carbonGetNext')) {
     /**
      * Get carbon instance of the next $day
      *
@@ -295,17 +297,17 @@ if (!function_exists('carbonGetNext')) {
      */
     function carbonGetNext($day = 'monday')
     {
-        if (!is_numeric($day)) {
+        if ( ! is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek(dayNameToClhDayOfWeek($day));
-            $dayName = $day;
+            $dayName   = $day;
         }
 
         if (is_numeric($day)) {
             $dayOfWeek = clhToCarbonDayOfWeek($day);
-            $dayName = clhDayOfWeekToDayName($day);
+            $dayName   = clhDayOfWeekToDayName($day);
         }
 
-        if (!isset($dayOfWeek)) {
+        if ( ! isset($dayOfWeek)) {
             return false;
         }
 
@@ -319,7 +321,7 @@ if (!function_exists('carbonGetNext')) {
     }
 }
 
-if (!function_exists('clhToCarbonDayOfWeek')) {
+if ( ! function_exists('clhToCarbonDayOfWeek')) {
     /**
      * Convert CLH DayOfWeek to Carbon DayOfWeek.
      * Carbon does 0-6 for Sun-Sat.
@@ -337,7 +339,7 @@ if (!function_exists('clhToCarbonDayOfWeek')) {
     }
 }
 
-if (!function_exists('carbonToClhDayOfWeek')) {
+if ( ! function_exists('carbonToClhDayOfWeek')) {
     /**
      * Convert Carbon DayOfWeek to CLH DayOfWeek.
      * Carbon does 0-6 for Sun-Sat.
@@ -355,7 +357,7 @@ if (!function_exists('carbonToClhDayOfWeek')) {
     }
 }
 
-if (!function_exists('clhDayOfWeekToDayName')) {
+if ( ! function_exists('clhDayOfWeekToDayName')) {
     /**
      * Convert CLH DayOfWeek to a day such as Monday, Tuesday
      *
@@ -381,7 +383,7 @@ if (!function_exists('clhDayOfWeekToDayName')) {
     }
 }
 
-if (!function_exists('dayNameToClhDayOfWeek')) {
+if ( ! function_exists('dayNameToClhDayOfWeek')) {
     /**
      * Convert a day such as Monday, Tuesday to CLH DayOfWeek (1,2,3,4,5,6,7)
      *
@@ -406,7 +408,7 @@ if (!function_exists('dayNameToClhDayOfWeek')) {
     }
 }
 
-if (!function_exists('weekDays')) {
+if ( ! function_exists('weekDays')) {
     /**
      * Returns the days of the week
      *
@@ -426,7 +428,7 @@ if (!function_exists('weekDays')) {
     }
 }
 
-if (!function_exists('timestampsToWindow')) {
+if ( ! function_exists('timestampsToWindow')) {
     /**
      * Convert timestamps to a Contact Window.
      *
@@ -442,7 +444,7 @@ if (!function_exists('timestampsToWindow')) {
         $timezone = 'America/New_York'
     ) {
         $startDate = Carbon::parse($startTimestamp, $timezone);
-        $endDate = Carbon::parse($endTimestamp, $timezone);
+        $endDate   = Carbon::parse($endTimestamp, $timezone);
 
         return [
             'day'   => carbonToClhDayOfWeek($startDate->dayOfWeek),
@@ -452,7 +454,7 @@ if (!function_exists('timestampsToWindow')) {
     }
 }
 
-if (!function_exists('generateRandomString')) {
+if ( ! function_exists('generateRandomString')) {
     /**
      * uses mt_rand to give a random string.
      *
@@ -471,7 +473,7 @@ if (!function_exists('generateRandomString')) {
 }
 
 
-if (!function_exists('windowToTimestamps')) {
+if ( ! function_exists('windowToTimestamps')) {
     /**
      * Convert timestamps to a Contact Window.
      *
@@ -507,7 +509,7 @@ if (!function_exists('windowToTimestamps')) {
     }
 }
 
-if (!function_exists('dateAndTimeToCarbon')) {
+if ( ! function_exists('dateAndTimeToCarbon')) {
     /**
      * Convert a Date and Time Object to one Carbon Object.
      *
@@ -523,7 +525,7 @@ if (!function_exists('dateAndTimeToCarbon')) {
 
         $carbon_date = Carbon::parse($date);
 
-        $carbon_hour = Carbon::parse($time)->format('H');
+        $carbon_hour    = Carbon::parse($time)->format('H');
         $carbon_minutes = Carbon::parse($time)->format('i');
         $carbon_date->setTime($carbon_hour, $carbon_minutes);
 
@@ -532,7 +534,7 @@ if (!function_exists('dateAndTimeToCarbon')) {
 }
 
 
-if (!function_exists('secondsToHMS')) {
+if ( ! function_exists('secondsToHMS')) {
     /**
      * Converts a string of time in seconds to H:m:s
      *
@@ -555,7 +557,7 @@ if (!function_exists('secondsToHMS')) {
 }
 
 
-if (!function_exists('timezones')) {
+if ( ! function_exists('timezones')) {
     /**
      * Get the timezones we support.
      *
@@ -579,7 +581,7 @@ if (!function_exists('timezones')) {
 }
 
 
-if (!function_exists('defaultCarePlanTemplate')) {
+if ( ! function_exists('defaultCarePlanTemplate')) {
     /**
      * Returns CircleLink's default CarePlanTemplate
      *
@@ -593,7 +595,7 @@ if (!function_exists('defaultCarePlanTemplate')) {
     }
 }
 
-if (!function_exists('getAppConfig')) {
+if ( ! function_exists('getAppConfig')) {
     /**
      * Returns the AppConfig value for the given key.
      *
@@ -611,7 +613,7 @@ if (!function_exists('getAppConfig')) {
     }
 }
 
-if (!function_exists('setAppConfig')) {
+if ( ! function_exists('setAppConfig')) {
     /**
      * Save an AppConfig key, value and then return it.
      *
@@ -634,7 +636,7 @@ if (!function_exists('setAppConfig')) {
 }
 
 
-if (!function_exists('snakeToSentenceCase')) {
+if ( ! function_exists('snakeToSentenceCase')) {
     /**
      * Convert Snake to Sentence Case
      *
@@ -648,7 +650,7 @@ if (!function_exists('snakeToSentenceCase')) {
     }
 }
 
-if (!function_exists('linkToDownloadFile')) {
+if ( ! function_exists('linkToDownloadFile')) {
     /**
      * Generate a file to download a file
      *
@@ -659,7 +661,7 @@ if (!function_exists('linkToDownloadFile')) {
      */
     function linkToDownloadFile($path, $absolute = false)
     {
-        if (!$path) {
+        if ( ! $path) {
             throw new \Exception("File path cannot be empty");
         }
 
@@ -669,7 +671,7 @@ if (!function_exists('linkToDownloadFile')) {
     }
 }
 
-if (!function_exists('linkToCachedView')) {
+if ( ! function_exists('linkToCachedView')) {
     /**
      * Generate a link to a cached view
      *
@@ -681,7 +683,7 @@ if (!function_exists('linkToCachedView')) {
      */
     function linkToCachedView($viewHashKey, $absolute = false)
     {
-        if (!$viewHashKey) {
+        if ( ! $viewHashKey) {
             throw new \Exception("File path cannot be empty");
         }
 
@@ -689,10 +691,10 @@ if (!function_exists('linkToCachedView')) {
     }
 }
 
-if (!function_exists('parseCallDays')) {
+if ( ! function_exists('parseCallDays')) {
     function parseCallDays($preferredCallDays)
     {
-        if (!$preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
+        if ( ! $preferredCallDays || str_contains(strtolower($preferredCallDays), ['any'])) {
             return [1, 2, 3, 4, 5];
         }
 
@@ -706,7 +708,7 @@ if (!function_exists('parseCallDays')) {
             $exploded = explode('-', $preferredCallDays);
 
             $from = array_search($exploded[0], weekDays());
-            $to = array_search($exploded[1], weekDays());
+            $to   = array_search($exploded[1], weekDays());
 
             for ($i = $from; $i <= $to; $i++) {
                 $days[] = $i;
@@ -719,10 +721,10 @@ if (!function_exists('parseCallDays')) {
     }
 }
 
-if (!function_exists('parseCallTimes')) {
+if ( ! function_exists('parseCallTimes')) {
     function parseCallTimes($preferredCallTimes)
     {
-        if (!$preferredCallTimes) {
+        if ( ! $preferredCallTimes) {
             return [
                 'start' => '09:00:00',
                 'end'   => '17:00:00',
@@ -742,7 +744,7 @@ if (!function_exists('parseCallTimes')) {
         if (isset($delimiter)) {
             $preferredTimes = explode($delimiter, $preferredCallTimes);
             $times['start'] = Carbon::parse(trim($preferredTimes[0]))->toTimeString();
-            $times['end'] = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
+            $times['end']   = Carbon::parse(trim($preferredTimes[1]))->toTimeString();
         } else {
             $times = [
                 'start' => '09:00:00',
@@ -755,7 +757,7 @@ if (!function_exists('parseCallTimes')) {
 }
 
 
-if (!function_exists('getProblemCodeSystemName')) {
+if ( ! function_exists('getProblemCodeSystemName')) {
     /**
      * Get a problem code system name from an array of clues
      *
@@ -786,7 +788,7 @@ if (!function_exists('getProblemCodeSystemName')) {
     }
 }
 
-if (!function_exists('getProblemCodeSystemCPMId')) {
+if ( ! function_exists('getProblemCodeSystemCPMId')) {
     /**
      * Get the id of an App\ProblemCodeSystem from an array of clues
      *
@@ -808,7 +810,7 @@ if (!function_exists('getProblemCodeSystemCPMId')) {
     }
 }
 
-if (!function_exists('validProblemName')) {
+if ( ! function_exists('validProblemName')) {
     /**
      * Is the problem name valid
      *
@@ -818,11 +820,36 @@ if (!function_exists('validProblemName')) {
      */
     function validProblemName($name)
     {
-        return !str_contains(strtolower($name), ['screening', 'history', 'scan', 'immunization', 'immunisation', 'injection', 'vaccine', 'vaccination', 'vaccin']);
+        return ! str_contains(strtolower($name), [
+                'screening',
+                'history',
+                'scan',
+                'immunization',
+                'immunisation',
+                'injection',
+                'vaccine',
+                'vaccination',
+                'vaccin',
+                'screen',
+                'follow up',
+                'followup',
+                'labs',
+                'f/u',
+                'mo fu',
+                'fu on',
+                'fu from',
+                'm fu',
+                'counsel',
+                'adverse effect drug',
+                'counseling',
+                'new pt',
+            ]) && ! in_array(strtolower($name), [
+                'fu',
+            ]);
     }
 }
 
-if (!function_exists('showDiabetesBanner')) {
+if ( ! function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
 //        if (!$noShow && $patient
@@ -839,7 +866,7 @@ if (!function_exists('showDiabetesBanner')) {
     }
 }
 
-if (!function_exists('shortenUrl')){
+if ( ! function_exists('shortenUrl')) {
     /**
      * Create a short URL
      *
@@ -848,13 +875,15 @@ if (!function_exists('shortenUrl')){
      * @return string
      * @throws \Waavi\UrlShortener\InvalidResponseException
      */
-    function shortenUrl($url){
+    function shortenUrl($url)
+    {
         $shortUrl = \UrlShortener::driver('bitly-gat')->shorten($url);
+
         return $shortUrl;
     }
 }
 
-if (!function_exists('validateYYYYMMDDDateString')){
+if ( ! function_exists('validateYYYYMMDDDateString')) {
     /**
      * Validate that the given date string has format YYYY-MM-DD
      *
@@ -863,10 +892,11 @@ if (!function_exists('validateYYYYMMDDDateString')){
      * @return bool
      * @throws Exception
      */
-    function validateYYYYMMDDDateString($date, $throwException = true){
-        $isValid = (bool) preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
+    function validateYYYYMMDDDateString($date, $throwException = true)
+    {
+        $isValid = (bool)preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $date);
 
-        if (!$isValid && $throwException) {
+        if ( ! $isValid && $throwException) {
             throw new \Exception("Invalid Date");
         }
 
@@ -874,47 +904,58 @@ if (!function_exists('validateYYYYMMDDDateString')){
     }
 }
 
-if (!function_exists('cast')) {
+if ( ! function_exists('cast')) {
     /**
-    * Cast an object into a different class.
-    *
-    * Currently this only supports casting DOWN the inheritance chain,
-    * that is, an object may only be cast into a class if that class 
-    * is a descendant of the object's current class.
-    *
-    * This is mostly to avoid potentially losing data by casting across
-    * incompatable classes.
-    *
-    * @param object $object The object to cast.
-    * @param string $class The class to cast the object into.
-    * @return object
-    */
-    function cast($object, $class) {
-        if( !is_object($object) ) 
+     * Cast an object into a different class.
+     *
+     * Currently this only supports casting DOWN the inheritance chain,
+     * that is, an object may only be cast into a class if that class
+     * is a descendant of the object's current class.
+     *
+     * This is mostly to avoid potentially losing data by casting across
+     * incompatable classes.
+     *
+     * @param object $object The object to cast.
+     * @param string $class The class to cast the object into.
+     *
+     * @return object
+     */
+    function cast($object, $class)
+    {
+        if ( ! is_object($object)) {
             throw new InvalidArgumentException('$object must be an object.');
-        if( !is_string($class) )
+        }
+        if ( ! is_string($class)) {
             throw new InvalidArgumentException('$class must be a string.');
-        if( !class_exists($class) )
+        }
+        if ( ! class_exists($class)) {
             throw new InvalidArgumentException(sprintf('Unknown class: %s.', $class));
+        }
         $ret = app($class);
         foreach (get_object_vars($object) as $key => $value) {
             $ret[$key] = $value;
         }
+
         return $ret;
     }
 }
 
-if (!function_exists('isJson')) {
+if ( ! function_exists('is_json')) {
     /**
      * Determine whether the given string is json
      *
      * @param $string
      *
-     * @return bool
+     * @return bool|null
+     *
+     * true: the string is valid json
+     * null: the string is an empty string, or not a string at all
+     * false: the string is invalid json
      */
-    function is_json($string) {
-        if ($string === '') {
-            return false;
+    function is_json($string)
+    {
+        if ($string === '' || ! is_string($string)) {
+            return null;
         }
 
         \json_decode($string);

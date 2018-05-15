@@ -1,41 +1,43 @@
 <?php
 
+use App\Media;
+
 return [
 
     /*
      * The filesystems on which to store added files and derived images by default. Choose
      * one or more of the filesystems you've configured in config/filesystems.php.
      */
-    'default_filesystem' => 'media',
+    'default_filesystem'          => 'media',
 
     /*
      * The maximum file size of an item in bytes.
      * Adding a larger file will result in an exception.
      */
-    'max_file_size' => 1024 * 1024 * 10,
+    'max_file_size'               => 1024 * 1024 * 25,
 
     /*
      * This queue will be used to generate derived images.
      * Leave empty to use the default queue.
      */
-    'queue_name' => '',
+    'queue_name'                  => '',
 
     /*
      * The class name of the media model that should be used.
      */
-    'media_model' => Spatie\MediaLibrary\Media::class,
+    'media_model'                 => Media::class,
 
     /*
      * The engine that should perform the image conversions.
      * Should be either `gd` or `imagick`.
      */
-    'image_driver' => 'gd',
+    'image_driver'                => 'gd',
 
     /*
      * When urls to files get generated, this class will be called. Leave empty
      * if your files are stored locally above the site root or on s3.
      */
-    'custom_url_generator_class' => App\MediaLibrary\CPMURLGenerator::class,
+    'custom_url_generator_class'  => App\MediaLibrary\CPMURLGenerator::class,
 
     /*
      * The class that contains the strategy for determining a media file's path.

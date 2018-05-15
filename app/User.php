@@ -2,6 +2,7 @@
 
 use App\Contracts\Serviceable;
 use App\Facades\StringManipulation;
+use App\Filters\Filterable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
@@ -19,6 +20,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
@@ -26,6 +28,7 @@ use App\Repositories\Cache\UserNotificationList;
 use App\Rules\PasswordCharacters;
 use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
+use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
 use Carbon\Carbon;
 use DateTime;
@@ -156,6 +159,8 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property-read mixed $timezone_abbr
+ * @property-read mixed $timezone_offset
+ * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -229,13 +234,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
-    use Authenticatable,
+    use Filterable, Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
         HasApiTokens,
         HasEmrDirectAddress,
         HasMediaTrait,
         Impersonate,
+        MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
         SoftDeletes;
@@ -566,14 +572,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     }
 
     public function inboundScheduledCalls(Carbon $after = null) {
-        if (!$after) {
-            $after = Carbon::now();
-        }
-
         return $this->inboundCalls()
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', $after->toDateString())
-            ->where('called_date', '=', null);
+                    ->where('status', '=', 'scheduled')
+                    ->when($after, function ($query) use ($after) {
+                        return $query->where('scheduled_date', '>=', $after->toDateString());
+                    })
+                    ->where('called_date', '=', null);
     }
 
     public function inboundMessages()
@@ -1455,20 +1459,23 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function setBillingProviderIdAttribute($value)
     {
         if (empty($value)) {
-            $this->careTeamMembers()->where('type', 'billing_provider')->delete();
+            $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->delete();
 
             return true;
         }
-        $careTeamMember = $this->careTeamMembers()->where('type', 'billing_provider')->first();
+        $careTeamMember = $this->careTeamMembers()->where('type', CarePerson::BILLING_PROVIDER)->first();
         if ($careTeamMember) {
             $careTeamMember->member_user_id = $value;
         } else {
             $careTeamMember                 = new CarePerson();
             $careTeamMember->user_id        = $this->id;
             $careTeamMember->member_user_id = $value;
-            $careTeamMember->type           = 'billing_provider';
+            $careTeamMember->type           = CarePerson::BILLING_PROVIDER;
         }
         $careTeamMember->save();
+
+        $this->load('billingProvider');
+        $this->load('careTeamMembers');
 
         return true;
     }
@@ -1788,6 +1795,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->carePlan->status = $value;
         $this->carePlan->save();
 
+        $this->load('carePlan');
+
         return true;
     }
 
@@ -1837,6 +1846,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 $this->dateWithdrawn = date("Y-m-d H:i:s");
             };
         }
+
+        $this->load('patientInfo');
 
         return true;
     }
@@ -2234,7 +2245,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function getPrimaryPracticeNameAttribute()
     {
-        return ucwords($this->primaryPractice->display_name);
+        return ucwords(optional($this->primaryPractice)->display_name);
     }
 
     /**
@@ -2495,6 +2506,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             : Carbon::now()->setTimezone('America/New_York')->format('T');
     }
 
+    public function getTimezoneOffsetAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offset
+        : Carbon::now()->setTimezone('America/New_York')->offset;
+    }
+
+    public function getTimezoneOffsetHoursAttribute()
+    {
+        return $this->timezone
+        ? Carbon::now($this->timezone)->offsetHours
+        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
+    }
+
     public function canApproveCarePlans()
     {
         return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
@@ -2556,7 +2581,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->ofType('participant')
                    ->whereHas('patientInfo')
                    ->whereHas('carePlan', function ($q) {
-                       $q->where('status', '=', CarePlan::QA_APPROVED);
+                       $q->whereIn('status', [CarePlan::QA_APPROVED]);
                    })
                    ->whereHas('careTeamMembers', function ($q) {
                        $q->where([
@@ -2752,6 +2777,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
+    public function autocomplete() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name() ?? $this->display_name,
+            'program_id' => $this->program_id
+        ];
+    }
 
     public function safe()
     {
@@ -2762,7 +2794,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'name' => $this->name(),
+            'name' => $this->name() ?? $this->display_name,
             'address' => $this->address,
             'city' => $this->city,
             'state' => $this->state,
@@ -2774,6 +2806,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'patient_info' => optional($this->patientInfo()->first())->safe(),
             'provider_info' => $this->providerInfo()->first(),
             'billing_provider_name' => $this->billing_provider_name,
+            'billing_provider_id' => $this->billing_provider_id,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
             'phone' => $this->phone ?? optional($phone)->number,
@@ -2809,5 +2842,62 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         return $summary->chargeableServices
             ->implode('code', ', ');
+    }
+
+    /**
+     * Send a CarePlan Approval reminder, if there are CarePlans pending approval
+     *
+     * @param bool $force
+     *
+     * @return bool
+     */
+    public function sendCarePlanApprovalReminderEmail($force = false) {
+        if (!$this->shouldSendCarePlanApprovalReminderEmail() && !$force) {
+            return false;
+        }
+
+        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this);
+
+        if ($numberOfCareplans < 1) {
+            return false;
+        }
+
+        $this->notify(new CarePlanApprovalReminder($numberOfCareplans));
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldSendCarePlanApprovalReminderEmail()
+    {
+        $settings = $this->emailSettings()->firstOrNew([]);
+
+        return $settings->frequency == EmailSettings::DAILY
+            ? true
+            : ($settings->frequency == EmailSettings::WEEKLY) && Carbon::today()->dayOfWeek == 1
+                ? true
+                : ($settings->frequency == EmailSettings::MWF) &&
+                  (Carbon::today()->dayOfWeek == 1
+                   || Carbon::today()->dayOfWeek == 3
+                   || Carbon::today()->dayOfWeek == 5)
+                    ? true
+                    : false;
+    }
+
+    public function pageTimersAsProvider()
+    {
+        return $this->hasMany(PageTimer::class, 'provider_id');
+    }
+
+    public function activitiesAsProvider()
+    {
+        return $this->hasMany(Activity::class, 'provider_id');
+    }
+
+    public function calls()
+    {
+        return $this->outboundCalls();
     }
 }

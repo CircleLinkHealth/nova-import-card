@@ -96,9 +96,15 @@ class Call extends \App\BaseModel
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
+        }
+
         // get record for month
-        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientSummaries->where('month_year', $day_start)->first();
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
         if (!$record) {
             return 0;
         }
@@ -107,10 +113,15 @@ class Call extends \App\BaseModel
 
     public static function numberOfSuccessfulCallsForPatientForMonth(User $user, $date)
     {
+        if ($date) {
+            $d = Carbon::parse($date);
+        } else {
+            $d = Carbon::now();
+        }
 
         // get record for month
-        $day_start = Carbon::parse($date ?? Carbon::now()->firstOfMonth())->format('Y-m-d');
-        $record = $user->patientSummaries->where('month_year', $day_start)->first();
+        $day_start = $d->startOfMonth()->toDateString();
+        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
         if (!$record) {
             return 0;
         }
@@ -145,8 +156,8 @@ class Call extends \App\BaseModel
      */
     public function scopeOfMonth($builder, Carbon $monthYear) {
         $builder->whereBetween('called_date', [
-            $monthYear->startOfMonth()->toDateString(),
-            $monthYear->copy()->endOfMonth()->toDateString(),
+            $monthYear->startOfMonth()->toDateTimeString(),
+            $monthYear->copy()->endOfMonth()->toDateTimeString(),
         ]);
     }
 

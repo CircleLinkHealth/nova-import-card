@@ -6,11 +6,12 @@ use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
-use Cache;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Models\MedicalRecords\Ccda
@@ -35,8 +36,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property string|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\AllergyLog[] $allergies
  * @property-read \App\Entities\CcdaRequest $ccdaRequest
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DemographicsLog[] $demographics
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[] $demographicsImports
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DemographicsLog[]
+ *     $demographics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[]
+ *     $demographicsImports
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DocumentLog[] $document
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\MedicationLog[] $medications
  * @property-read \App\User|null $patient
@@ -57,7 +60,8 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereMrn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda wherePracticeId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereReferringProviderName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda
+ *     whereReferringProviderName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereSource($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\MedicalRecords\Ccda whereUpdatedAt($value)
@@ -68,9 +72,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
  */
-class Ccda extends MedicalRecordEloquent implements Transformable
+class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 {
     use BelongsToPatientUser,
+        HasMediaTrait,
         TransformableTrait,
         SoftDeletes;
 
@@ -96,6 +101,7 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     ];
 
     protected $fillable = [
+        'batch_id',
         'date',
         'mrn',
         'referring_provider_name',
@@ -107,10 +113,27 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'vendor_id',
         'source',
         'imported',
-        'xml',
         'json',
+        'xml',
         'status',
     ];
+
+    public static function create($attributes = [])
+    {
+        if ( ! array_key_exists('xml', $attributes)) {
+            return static::query()->create($attributes);
+        }
+
+        $xml = $attributes['xml'];
+        unset($attributes['xml']);
+
+        $ccda = static::query()->create($attributes);
+
+        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
+        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+
+        return $ccda;
+    }
 
     public function qaSummary()
     {
@@ -125,14 +148,15 @@ class Ccda extends MedicalRecordEloquent implements Transformable
     public function importedMedicalRecord()
     {
         return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
-            ->where('medical_record_id', '=', $this->id)
-            ->first();
+                                    ->where('medical_record_id', '=', $this->id)
+                                    ->first();
     }
 
-    public function scopeExclude($query, $value = array()) 
+    public function scopeExclude($query, $value = [])
     {
         $defaultColumns = ['id', 'created_at', 'updated_at'];
-        return $query->select( array_diff( array_merge($defaultColumns, $this->fillable), (array) $value) );
+
+        return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array)$value));
     }
 
     /**
@@ -169,20 +193,21 @@ class Ccda extends MedicalRecordEloquent implements Transformable
 
     public function bluebuttonJson()
     {
-        if (!$this->id && !$this->xml) {
+        if ($this->json) {
+            return json_decode($this->json);
+        }
+
+        if ( ! $this->id || ! $this->hasMedia('ccd')) {
             return false;
         }
 
-        $key = "ccda:{$this->id}:json";
+        if ( ! $this->json) {
+            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $this->json = $this->parseToJson($xml);
+            $this->save();
+        }
 
-        return Cache::remember($key, 7000, function () {
-            if (!$this->json) {
-                $this->json = $this->parseToJson($this->xml);
-                $this->save();
-            }
-
-            return json_decode($this->json);
-        });
+        return json_decode($this->json);
     }
 
     protected function parseToJson($xml)
@@ -196,13 +221,31 @@ class Ccda extends MedicalRecordEloquent implements Transformable
             'body'    => $xml,
         ]);
 
-        if (!in_array($response->getStatusCode(), [200,201])) {
-            return [
+        $responseBody = (string)$response->getBody();
+
+        if ( ! in_array($response->getStatusCode(), [200, 201])) {
+            $id = $this->id ?? '';
+
+            $data = json_encode([
                 $response->getStatusCode(),
                 $response->getReasonPhrase(),
-            ];
+            ]);
+
+            throw new \Exception("Could not process ccd $id. Data: $data");
         }
 
-        return (string)$response->getBody();
+        return $responseBody;
+    }
+
+    public function storeCcd($xml)
+    {
+        if ( ! $this->id) {
+            throw new \Exception('CCD does not have an id.');
+        }
+
+        \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
+        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
+
+        return $this;
     }
 }

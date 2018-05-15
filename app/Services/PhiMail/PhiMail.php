@@ -1,8 +1,7 @@
 <?php namespace App\Services\PhiMail;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\DirectMail;
-use App\Jobs\TrainCcdaImporter;
+use App\Jobs\ImportCcda;
 use App\Models\MedicalRecords\Ccda;
 use App\User;
 use Carbon\Carbon;
@@ -277,7 +276,7 @@ class PhiMail implements DirectMail
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        dispatch(new TrainCcdaImporter($this->ccda));
+        ImportCcda::dispatch($this->ccda)->onQueue('medical-records');
     }
 
     /**
@@ -292,7 +291,7 @@ class PhiMail implements DirectMail
             return;
         }
 
-        $link = route('view.files.ready.to.import');
+        $link = route('import.ccd.remix');
 
         sendSlackMessage(
             '#ccd-file-status',

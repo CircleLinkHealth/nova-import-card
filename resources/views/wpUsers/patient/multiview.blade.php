@@ -314,30 +314,18 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             return $problem;
                         });
 
-                        $cpmProblemsForListing = $cpmProblems->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
-                        });
-
-                        $problemsWithInstructions = $cpmProblemsForListing->filter(function ($cpm) {
-                            return $cpm['instruction']['name'];
-                        })->concat($ccdProblems->filter(function ($ccd) {
+                        $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
                             return $ccd['instruction']['name'];
-                        }))->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
                         });
 
-                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'];
-                            }) && $problem['is_monitored'];
+                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+                            return $problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
                         
-                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) use ($cpmProblems) {
-                            return !$problem['is_monitored'] && !$cpmProblems->first(function ($cpm) use ($problem) {
-                                return $cpm['name'] == $problem['name'] || $cpm['id'] == $problem['id'];
-                            });
+                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
+                            return !$problem['is_monitored'];
                         })->groupBy('name')->values()->map(function ($problems) {
                             return $problems->first();
                         });
@@ -350,15 +338,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            @if (!$cpmProblemsForListing->count() && !$ccdMonitoredProblems->count()) 
-                                <div class="text-center">No Problems at this time</div>
+                            @if (!$ccdMonitoredProblems->count()) 
+                                <div class="text-center">No Monitored Problems at this time</div>
                             @else
                                 <ul class="row">
-                                    @foreach ($cpmProblemsForListing as $problem)
-                                        <li class='top-10 col-sm-6'>
-                                            {{$problem['name']}}
-                                        </li>
-                                    @endforeach
                                     @foreach ($ccdMonitoredProblems as $problem)
                                         <li class='top-10 col-sm-6'>
                                             {{$problem['name']}}
@@ -367,6 +350,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 </ul>
                             @endif
                         </div>
+                        <!-- Do NOT show other conditions in PRINT. See https://github.com/CircleLinkHealth/cpm-web/issues/1871 -->
                         @if ($ccdProblemsForListing->count() > 0)
                             <div class="col-xs-12">
                                 <h2 class="color-blue">Other Conditions</h2>
@@ -449,7 +433,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                     </div>
                     <div class="row">
-                        @if ($healthNote)
+                        <?php
+                            $noteIsAvailable = $healthNote && ($healthNote['body'] != '');
+                        ?>
+                        @if ($noteIsAvailable)
                             <div class="col-xs-12 top-10">
                                 {{ $healthNote['body'] }}
                                 <br><br><br>
@@ -458,8 +445,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         @if (!$healthGoalsForListing->count()) 
                             <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
                         @else
-                            <br><br>
-                            <ul class="col-sm-12 subareas__list top-20" style="padding-top:70px !important;">
+                            @if ($noteIsAvailable) 
+                                <br><br>
+                            @endif
+                            <ul class="col-sm-12 subareas__list top-20" style="{{ $noteIsAvailable ? 'padding-top:70px !important;' : '' }}">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach($healthGoalsForListing as $goal)
                                         <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
@@ -677,7 +666,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <p style="margin-left: -10px;">
                                                 <strong>
                                                     {{snakeToSentenceCase($carePerson->type)}}:
-                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}}
+                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}} {{ optional($carePerson->user)->suffix }}
                                             </p>
                                         </div>
                                     </li>

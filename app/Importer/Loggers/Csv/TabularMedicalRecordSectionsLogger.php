@@ -10,6 +10,7 @@ use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Practice;
+use App\Services\Eligibility\Entities\Problem as ProblemEntity;
 use App\User;
 
 class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
@@ -63,11 +64,17 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $allergiesToImport = [];
 
+        $allergiesString = $this->medicalRecord->allergies_string;
+
+        if ( ! $allergiesString) {
+            return $this;
+        }
+
         foreach (config('importer.allergy_loggers') as $class) {
             $class = app($class);
 
-            if ($class->shouldHandle($this->medicalRecord)) {
-                $allergiesToImport = $class->handle($this->medicalRecord);
+            if ($class->shouldHandle($allergiesString)) {
+                $allergiesToImport = $class->handle($allergiesString);
                 break;
             }
         }
@@ -170,11 +177,17 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $medicationsToImport = [];
 
+        $medicationsString = $this->medicalRecord->medications_string;
+
+        if ( ! $medicationsString) {
+            return $this;
+        }
+
         foreach (config('importer.medication_loggers') as $class) {
             $class = app($class);
 
-            if ($class->shouldHandle($this->medicalRecord)) {
-                $medicationsToImport = $class->handle($this->medicalRecord);
+            if ($class->shouldHandle($medicationsString)) {
+                $medicationsToImport = $class->handle($medicationsString);
                 break;
             }
         }
@@ -196,16 +209,26 @@ class TabularMedicalRecordSectionsLogger implements MedicalRecordLogger
     {
         $problemsToImport = [];
 
+        $problemsString = $this->medicalRecord->problems_string;
+
+        if ( ! $problemsString) {
+            return $this;
+        }
+
         foreach (config('importer.problem_loggers') as $class) {
             $class = app($class);
 
-            if ($class->shouldHandle($this->medicalRecord)) {
-                $problemsToImport = $class->handle($this->medicalRecord);
+            if ($class->shouldHandle($problemsString)) {
+                $problemsToImport = $class->handle($problemsString);
                 break;
             }
         }
 
         foreach ($problemsToImport as $problem) {
+            if (is_a($problem, ProblemEntity::class)) {
+                $problem = $problem->toArray();
+            }
+
             $problemLog = ProblemLog::create(
                 array_merge([
                     'name'                   => $problem['name'],

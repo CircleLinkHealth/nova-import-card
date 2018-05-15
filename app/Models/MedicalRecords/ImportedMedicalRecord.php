@@ -9,11 +9,11 @@ use App\Importer\Models\ImportedItems\AllergyImport;
 use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
-use App\Importer\Models\ItemLogs\ProviderLog;
 use App\Location;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
+use App\Patient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|null $billing_provider_id
  * @property int|null $location_id
  * @property int|null $practice_id
+ * @property int|null $duplicate_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property string|null $deleted_at
@@ -66,6 +67,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
         'billing_provider_id',
         'location_id',
         'practice_id',
+        'duplicate_id'
     ];
 
     public function allergies()
@@ -108,7 +110,7 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
      */
     public function medicalRecord()
     {
-        return (app($this->medical_record_type))->find($this->medical_record_id);
+        return (app($this->medical_record_type))->withTrashed()->find($this->medical_record_id);
     }
 
     public function getPractice() : Practice
@@ -159,5 +161,40 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
     public function billingProvider()
     {
         return $this->belongsTo(User::class, 'billing_provider_id', 'id');
+    }
+
+    public function checkDuplicity() {
+        $demos = $this->demographics()->first();
+
+        if ($demos) {
+            $practiceId = $this->practice_id;
+
+            $query = User::whereFirstName($demos->first_name)
+                        ->whereLastName($demos->last_name)
+                        ->whereHas('patientInfo', function ($q) use ($demos) {
+                            $q->whereBirthDate($demos->dob);
+                        });
+            if ($practiceId) {
+                $query = $query->where('program_id', $practiceId);
+            }
+
+            $user = $query->first();
+
+            if ($user) {
+                $this->duplicate_id = $user->id;
+
+                return $user->id;
+            }
+
+            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+
+            if ($patient) {
+                $this->duplicate_id = $patient->user_id;
+
+                return $patient->user_id;
+            }
+
+            return null;
+        }
     }
 }

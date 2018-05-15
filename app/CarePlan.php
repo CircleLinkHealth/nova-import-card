@@ -5,7 +5,6 @@ use App\Models\Pdf;
 use App\Services\ReportsService;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
 
 /**
@@ -68,6 +67,8 @@ class CarePlan extends \App\BaseModel implements PdfReport
         'status',
         'qa_date',
         'provider_date',
+        'first_printed_by',
+        'first_printed',
         'last_printed',
         'created_at',
         'updated_at',
@@ -76,6 +77,11 @@ class CarePlan extends \App\BaseModel implements PdfReport
     protected $dates = [
         'qa_date',
         'provider_date',
+        'first_printed',
+    ];
+
+    protected $attributes = [
+        'mode' => self::WEB,
     ];
 
     public static function getNumberOfCareplansPendingApproval(User $user)
@@ -98,10 +104,10 @@ class CarePlan extends \App\BaseModel implements PdfReport
                 $pendingApprovals = User::ofType('participant')
                     ->intersectPracticesWith($user)
                     ->whereHas('carePlan', function ($q) {
-                        $q->whereStatus('qa_approved');
+                        $q->whereStatus(CarePlan::QA_APPROVED);
                     })
                     ->whereHas('patientInfo', function ($q) {
-                        $q->whereCcmStatus('enrolled');
+                        $q->whereCcmStatus(Patient::ENROLLED);
                     })
                     ->whereHas('careTeamMembers', function ($q) use
                         (
@@ -135,15 +141,6 @@ class CarePlan extends \App\BaseModel implements PdfReport
     public function assessment() {
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
-
-//    public function getStatusAttribute() {
-//        $value = $this->attributes['status'];
-//        if ($value && starts_with($value, ['{', '['])) {
-//            $careplan = (array)json_decode($value);
-//            return $careplan['status'];
-//        }
-//        return $value;
-//    }
 
     /**
      * Create a PDF of this resource and return the path to it.

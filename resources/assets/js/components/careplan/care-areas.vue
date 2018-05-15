@@ -9,23 +9,22 @@
         </div>
         <div class="row gutter">
             <div class="col-xs-12">
-                <slot v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">
-                    <div class="text-center">No Problems at this time</div>
-                </slot>
+                <div class="text-center" v-if="cpmProblems.length === 0 && ccdMonitoredProblems.length === 0">No Problems at this time</div>
                 
-                <ul class="subareas__list" v-if="(cpmProblems && cpmProblems.length > 0) || (ccdMonitoredProblems.length > 0)">
-                    <!--<li class='subareas__item inline-block col-sm-6 print-row'-->
-                        <!--v-for="(problem, index) in cpmProblemsForListing" :key="index">-->
-                        <!--{{problem.name}}-->
-                    <!--</li>-->
-                    <li class='subareas__item inline-block col-sm-6 print-row' 
+                <ul class="subareas__list" v-if="(ccdMonitoredProblems.length > 0)">
+                    <li class='subareas__item inline-block col-sm-6 print-row' :class="{ ccd: problem.type === 'ccd' }" 
                         v-for="(problem, index) in ccdMonitoredProblems" :key="index">
-                        {{ccdProblemName(problem)}}
+                        {{problem.type === 'ccd' ? ((problem.related() || {}).name || problem.name) : problem.name}}
+                        <label class="label label-primary label-popover" v-if="problem.type === 'ccd'">
+                            {{ problem.title() }}
+                        </label>
                     </li>
                 </ul>
             </div>
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                <h2 class="color-blue">Other Conditions</h2>
+                <h2 class="color-blue pointer">Other Conditions
+                     <!-- <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span> -->
+                </h2>
                 
                 <ul class="row">
                     <li class='top-10 col-sm-6' 
@@ -58,12 +57,13 @@
             return {
                 cpmProblems: [],
                 ccdProblems: [],
-                allCpmProblems: []
+                allCpmProblems: [],
+                isOtherConditionsVisible: false
             }
         },
         computed: {
             problems() {
-                return [ ...this.cpmProblems, ...this.ccdProblems ]
+                return [ ...this.ccdMonitoredProblems, ...this.ccdProblemsForListing ]
             },
             cpmProblemsForListing() {
                 return this.cpmProblems.distinct(p => p.name)
@@ -72,7 +72,7 @@
                 return this.ccdProblems.filter(problem => problem.is_monitored).distinct(p => p.name)
             },
             ccdProblemsForListing() {
-                return this.ccdProblems.filter(problem => !problem.is_monitored && !this.cpmProblems.find(cpm => (cpm.name == problem.name) || (cpm.id == problem.cpm_id))).distinct(p => p.name)
+                return this.ccdProblems.filter(problem => !problem.is_monitored).distinct(p => p.name)
             }
         },
         methods: {
@@ -86,6 +86,7 @@
                     name: null
                 })
                 problem.type = 'cpm'
+                problem.title = () => `${problem.code} ${problem.name}`
                 return problem
             },
             getCpmProblems() {
@@ -102,10 +103,10 @@
             },
             ccdProblemName(ccdProblem) {
                 let p = this.allCpmProblems.find(problem => problem.id == ccdProblem.cpm_id)
-                if (p) {
-                    return p.name
-                }
-                return ccdProblem.name
+                return p ? p.name : ccdProblem.name
+            },
+            toggleOtherConditions () {
+                this.isOtherConditionsVisible = !this.isOtherConditionsVisible
             }
         },
         mounted() {
@@ -153,5 +154,23 @@
 
     .font-22 {
         font-size: 22px;
+    }
+
+    li.ccd:hover {
+        color: #109ace;
+    }
+
+    label.label.label-popover {
+        background-color: #109ace;
+        color: white;
+        display: none;
+        position: absolute;
+        margin-left: 10px;
+        z-index: 2;
+        top: -5px;
+    }
+
+    li:hover label.label.label-popover {
+        display: inline;
     }
 </style>

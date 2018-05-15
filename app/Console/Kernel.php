@@ -6,6 +6,7 @@ use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -27,6 +28,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command(QueueEligibilityBatchForProcessing::class)
+                 ->everyMinute()->withoutOverlapping(15);
+
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
         $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
@@ -38,7 +42,7 @@ class Kernel extends ConsoleKernel
         $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
-        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyMinute();
+        $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
 //        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
 //                 ->weeklyOn(1, '10:00');
@@ -77,8 +81,8 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping();
 
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
-                ->dailyAt('09:00')
-                ->withoutOverlapping();
+                 ->dailyAt('09:00')
+                 ->withoutOverlapping();
 
 
 //        $schedule->command('ccda:determineEligibility')

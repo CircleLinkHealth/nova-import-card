@@ -1,4 +1,8 @@
 let mix = require('laravel-mix')
+const path = require('path')
+const WorkboxPlugin = require('workbox-webpack-plugin')
+const DIST_DIR = 'public'
+const SRC_DIR = 'resources/assets'
 
 const webpackConfig = {
     devtool: "#cheap-module-source-map",
@@ -10,7 +14,14 @@ const webpackConfig = {
             './cptable': 'var cptable'
         }
     ],
-    plugins: []
+    plugins: [
+        new WorkboxPlugin({
+            globDirectory: DIST_DIR,
+            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css', 'css/wpstyle.css'],
+            swDest: path.join(DIST_DIR, 'sw.js'),
+            swSrc: path.join(SRC_DIR, 'js/sw.js')
+        }),
+    ]
 }
 
 mix.webpackConfig(webpackConfig)
@@ -38,8 +49,6 @@ mix.combine([
     'resources/assets/less/css/animate.min.css'
 ], 'public/compiled/css/stylesheet.css')
 
-mix.sass('resources/assets/sass/fab.scss', 'public/compiled/css')
-
 mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css')
 
 mix.combine([
@@ -66,7 +75,6 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
     'public/js/DateTimePicker.min.js',
-    'public/js/fab.js',
 ], 'public/compiled/js/issue-688.js')
 /** end fixing issue 688 */
 
@@ -85,6 +93,7 @@ mix.combine([
 /** end fixing admin-ui */
 
 //apps
+mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
 mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
 

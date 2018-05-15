@@ -8,7 +8,13 @@
 
 namespace App\Filters;
 
+use App\Patient;
+use App\PatientContactWindow;
+use App\PatientMonthlySummary;
+use App\Practice;
 use App\Repositories\CallRepository;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CallFilters extends QueryFilters
@@ -27,12 +33,12 @@ class CallFilters extends QueryFilters
     {
         return $this->builder->scheduled();
     }
-    
+
     /**
-    * Scope for nurse and patient, who may be any of inbound or outbound callers
-    *
-    * @return \Illuminate\Database\Eloquent\Builder
-    */
+     * Scope for nurse and patient, who may be any of inbound or outbound callers
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function nurse($term)
     {
         return $this->builder->whereHas('outboundUser.nurseInfo', function ($q) use ($term) {
@@ -46,7 +52,8 @@ class CallFilters extends QueryFilters
         });
     }
 
-    public function patient($term) {
+    public function patient($term)
+    {
         return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
             $q->whereHas('user', function ($q) use ($term) {
                 $q->where('display_name', 'like', "%$term%");
@@ -57,8 +64,9 @@ class CallFilters extends QueryFilters
             });
         });
     }
-    
-    public function patientStatus($term) {
+
+    public function patientStatus($term)
+    {
         return $this->builder->whereHas('outboundUser.patientInfo', function ($q) use ($term) {
             $q->where('ccm_status', 'LIKE', "$term%");
         })->orWhereHas('inboundUser.patientInfo', function ($q) use ($term) {
@@ -66,19 +74,22 @@ class CallFilters extends QueryFilters
         });
     }
 
-    public function practice($term) {
+    public function practice($term)
+    {
         return $this->builder->whereHas('inboundUser.primaryPractice', function ($q) use ($term) {
             $q->where('display_name', 'LIKE', "%$term%");
         });
     }
-    
-    public function billingProvider($term) {
+
+    public function billingProvider($term)
+    {
         return $this->builder->whereHas('inboundUser.billingProvider.user', function ($q) use ($term) {
             $q->where('display_name', 'LIKE', "%$term%");
         });
     }
-    
-    public function scheduler($term) {
+
+    public function scheduler($term)
+    {
         return $this->builder->where('scheduler', 'LIKE', "%$term%");
     }
 
@@ -140,7 +151,19 @@ class CallFilters extends QueryFilters
         //validateYYYYMMDDDateString($date);
 
         return $this->builder
-            ->where('scheduled_date', 'LIKE', '%'.$date.'%');
+            ->where('scheduled_date', 'LIKE', '%' . $date . '%');
+    }
+
+    public function minScheduledDate($date) {
+        return $this->builder
+            ->where('scheduled_date', '>=', $date);
+    }
+
+    /**
+     * calls with no nurse assigned
+     */
+    public function unassigned() {
+        return $this->builder->where('outbound_cpm_id', null);
     }
 
     /**
@@ -151,7 +174,8 @@ class CallFilters extends QueryFilters
      * @return \Illuminate\Database\Eloquent\Builder
      * @throws \Exception
      */
-    public function lastCallDate($date) {
+    public function lastCallDate($date)
+    {
         validateYYYYMMDDDateString($date);
 
         return $this->builder
@@ -166,8 +190,9 @@ class CallFilters extends QueryFilters
      * @return \Illuminate\Database\Eloquent\Builder|static
      * @throws \Exception
      */
-    public function attemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess) {
-        if (!is_numeric($noCallAttemptsSinceLastSuccess)) {
+    public function attemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess)
+    {
+        if ( ! is_numeric($noCallAttemptsSinceLastSuccess)) {
             throw new \Exception("noCallAttemptsSinceLastSuccess must be a numeric value.");
         }
 
@@ -176,62 +201,164 @@ class CallFilters extends QueryFilters
                 $q->whereNoCallAttemptsSinceLastSuccess($noCallAttemptsSinceLastSuccess);
             });
     }
-    
-    public function sort_nurse($term = null) {
+
+    public function sort_nurse($term = null)
+    {
         if ($this->builder->has('outboundUser.nurseInfo.user')) {
-            return $this->builder->orderByJoin('outboundUser.display_name', $term);
+            return $this->builder
+                ->select('calls.*')
+                ->join('users', 'users.id', '=', 'calls.outbound_cpm_id')
+                ->orderBy('users.display_name', $term);
         }
-        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+
+        return $this->builder
+            ->select('calls.*')
+            ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
+            ->orderBy('users.display_name', $term);
     }
-    
-    public function sort_patientId($term = null) {
-        return $this->builder->join('users', 'users.id', 'calls.' . ('inbound_cpm_id'))->orderBy('users.id', $term);
+
+    public function sort_patientId($term = null)
+    {
+        return $this->builder
+            ->select('calls.*')
+            ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
+             ->orderBy('users.id', $term);
     }
-    
-    public function sort_patient($term = null) {
-        return $this->builder->orderByJoin('inboundUser.display_name', $term);
+
+    public function sort_patient_contact_windows($term = null)
+    {
+        $aggregate = $term == 'asc'
+            ? 'asc'
+            : 'desc';
+
+        return $this->builder
+            ->select('calls.*',
+                \DB::raw('group_concat(DISTINCT ' . (new PatientContactWindow)->getTable() . ".day_of_week ORDER BY day_of_week $aggregate SEPARATOR ',') as sort_day"))
+            ->with('inboundUser.patientInfo.contactWindows')
+            ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=', (new Patient)->getTable() . '.user_id')
+            ->join((new PatientContactWindow)->getTable(), (new PatientContactWindow)->getTable() . '.patient_info_id',
+                '=', (new Patient)->getTable() . '.id')
+            ->orderBy('sort_day', $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_scheduledDate($term = null) {
+
+    public function sort_no_of_successful_calls($term = null)
+    {
+        return $this->builder
+            ->select('calls.*')
+            ->with('inboundUser.patientSummaries')
+            ->join((new PatientMonthlySummary)->getTable(), 'calls.inbound_cpm_id', '=',
+                (new PatientMonthlySummary)->getTable() . '.patient_id')
+            ->where((new PatientMonthlySummary)->getTable() . '.month_year',
+                Carbon::now()->startOfMonth()->toDateString())
+            ->orderBy((new PatientMonthlySummary)->getTable() . '.no_of_successful_calls', $term)
+            ->groupBy('calls.inbound_cpm_id');
+    }
+
+    public function sort_patient($term = null)
+    {
+        return $this->builder
+            ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
+            ->orderBy('users.display_name', $term);
+    }
+
+    public function sort_scheduledDate($term = null)
+    {
         return $this->builder->orderBy('scheduled_date', $term);
     }
-    
-    public function sort_patientStatus($term = null) {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.ccm_status', $term);
+
+    public function sort_patientStatus($term = null)
+    {
+        $patientInfoTable = (new Patient)->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.ccm_status", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_practice($term = null) {
-        return $this->builder->orderByJoin('inboundUser.primaryPractice.display_name', $term);
+
+    public function sort_practice($term = null)
+    {
+        $practicesTable = (new Practice())->getTable();
+        $usersTable     = (new User())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.primaryPractice')
+            ->join($usersTable, 'calls.inbound_cpm_id', '=', "$usersTable.id")
+            ->join($practicesTable, "$usersTable.program_id", '=', "$practicesTable.id")
+            ->orderBy("$practicesTable.display_name", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_scheduler($term = null) {
+
+    public function sort_scheduler($term = null)
+    {
         return $this->builder->orderBy('scheduler', $term);
     }
-    
-    public function sort_callTimeStart($term = 'asc') {
+
+    public function sort_callTimeStart($term = 'asc')
+    {
         return $this->builder->orderBy('window_start', $term);
     }
-    
-    public function sort_callTimeEnd($term = 'asc') {
+
+    public function sort_callTimeEnd($term = 'asc')
+    {
         return $this->builder->orderBy('window_end', $term);
     }
-    
-    public function sort_lastCall($term = null) {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.last_contact_time', $term);
+
+    public function sort_lastCall($term = null)
+    {
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.last_contact_time", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_lastCallStatus($term = null) {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.last_call_status', $term);
+
+    public function sort_lastCallStatus($term = null)
+    {
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.no_call_attempts_since_last_success", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_ccmTime($term = null) {
-        return $this->builder->orderByJoin('inboundUser.patientInfo.cur_month_activity_time', $term);
+
+    public function sort_ccmTime($term = null)
+    {
+        $patientInfoTable = (new Patient())->getTable();
+
+        return $this->builder
+            ->with('inboundUser.patientInfo')
+            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
+            ->orderBy("$patientInfoTable.cur_month_activity_time", $term)
+            ->groupBy('calls.inbound_cpm_id');
     }
-    
-    public function sort_id($type = null) {
+
+    public function sort_preferredCallDays($term = null)
+    {
+        $aggregate = $term == 'asc' ? 'max' : 'min';
+        return $this->builder->selectRaw('calls.*, ' . " $aggregate(" . (new PatientContactWindow)->getTable() . '.day_of_week) as sort_day')
+                             ->with('inboundUser.patientInfo.contactWindows')
+                             ->join((new Patient)->getTable(), 'calls.inbound_cpm_id', '=',
+                                 (new Patient)->getTable() . '.user_id')
+                             ->join((new PatientContactWindow)->getTable(),
+                                 (new PatientContactWindow)->getTable() . '.patient_info_id', '=',
+                                 (new Patient)->getTable() . '.id')
+                             ->orderBy('sort_day', $term)
+                             ->groupBy('calls.inbound_cpm_id');
+    }
+
+    public function sort_id($type = null)
+    {
         if ($type == 'desc') {
             return $this->builder->orderByDesc('id');
         }
+
         return $this->builder->orderBy('id');
     }
 

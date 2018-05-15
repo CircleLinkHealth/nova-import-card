@@ -47,6 +47,7 @@ class ApprovableBillablePatient extends Resource
             'approve'                => $this->approved,
             'reject'                 => $this->rejected,
             'report_id'              => $this->id,
+            'actor_id'               => $this->actor_id,
             'qa'                     => $this->needs_qa,
 
             'chargeable_services' => ChargeableService::collection($this->whenLoaded('chargeableServices')),

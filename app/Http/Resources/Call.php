@@ -18,11 +18,12 @@ class Call extends Resource
     {
         $schedulerName = $this->scheduler;
         if ((int)($this->scheduler)) {
-            $user =  UserModel::find($this->scheduler);
+            $user = UserModel::find($this->scheduler);
             if ($user) {
                 $schedulerName = $user->display_name;
             }
         }
+
         return [
             'id'                    => $this->id,
             'note_id'               => $this->note_id,
@@ -33,8 +34,12 @@ class Call extends Resource
             'inbound_cpm_id'        => $this->inbound_cpm_id,
             'outbound_cpm_id'       => $this->outbound_cpm_id,
             'call_time'             => $this->call_time,
-            'created_at'            => $this->created_at ? $this->created_at->format('c') : null,
-            'updated_at'            => $this->updated_at ? $this->updated_at->format('c') : null,
+            'created_at'            => $this->created_at
+                ? $this->created_at->format('c')
+                : null,
+            'updated_at'            => $this->updated_at
+                ? $this->updated_at->format('c')
+                : null,
             'is_cpm_outbound'       => $this->is_cpm_outbound,
             'window_start'          => $this->window_start,
             'window_end'            => $this->window_end,
@@ -42,6 +47,7 @@ class Call extends Resource
             'called_date'           => $this->called_date,
             'attempt_note'          => $this->attempt_note,
             'scheduler'             => $schedulerName,
+            'sort_day'              => $this->sort_day ?? null,
 
             'inbound_user'  => User::make($this->whenLoaded('inboundUser')),
             'outbound_user' => User::make($this->whenLoaded('outboundUser')),

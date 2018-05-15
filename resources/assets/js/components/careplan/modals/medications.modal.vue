@@ -8,12 +8,12 @@
                 </div>
                 <div class="col-sm-12 pad-top-10" :class="{ 'medication-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'medication-buttons': isExtendedView }">
-                        <button class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
+                        <div class="btn btn-secondary medication-button" :class="{ selected: selectedMedication && (selectedMedication.id === medication.id) }" 
                                 v-for="(medication, index) in medications" :key="index" @click="select(index)">
                             {{medication.title()}}
                             <span class="delete" title="remove this cpm medication" @click="removeMedication">x</span>
                             <loader class="absolute" v-if="loaders.removeMedication && selectedMedication && (selectedMedication.id === medication.id)"></loader>
-                        </button>
+                        </div>
                         <input type="button" class="btn btn-secondary" :class="{ selected: !selectedMedication || !selectedMedication.id }" value="+" @click="select(-1)" />
                     </div>
                 </div>
@@ -166,7 +166,9 @@
 
 <style>
     .modal-medications .modal-container {
-        width: 700px;
+        width: 900px;
+        max-height: 100%;
+        overflow-y: auto;
     }
 
     .medication-container {
@@ -174,7 +176,14 @@
     }
 
     .medication-buttons {
-        width: 2000px;
+        width: auto;
+    }
+
+    .btn.btn-secondary.medication-button {
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .medication-button span.delete {
@@ -186,8 +195,8 @@
         padding: 1px 5px;
         border-radius: 50%;
         position: absolute;
-        top: -8px;
-        right: -10px;
+        top: 0px;
+        right: 0px;
         cursor: pointer;
         display: none;
     }

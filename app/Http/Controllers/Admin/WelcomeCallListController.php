@@ -3,30 +3,30 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Models\PatientData\Rappa\RappaData;
 use App\Models\PatientData\Rappa\RappaInsAllergy;
 use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
-use App\Practice;
-use App\Services\Eligibility\EligibilityProcessorService;
+use App\Services\CCD\ProcessEligibilityService;
+use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 
 class WelcomeCallListController extends Controller
 {
-    protected $eligibilityService;
+    protected $processEligibilityService;
 
-    public function __construct(EligibilityProcessorService $eligibilityService)
-    {
-        $this->eligibilityService = $eligibilityService;
+    public function __construct(
+        ProcessEligibilityService $processEligibilityService
+    ) {
+        $this->processEligibilityService = $processEligibilityService;
     }
 
     /**
      * @param Request $request
      *
-     * @return string
+     * @return array|string
      * @throws \Exception
      */
     public function makeWelcomeCallList(Request $request)
@@ -40,16 +40,25 @@ class WelcomeCallListController extends Controller
         }
 
         $practiceId = $request->input('practice_id');
-        $file       = $request->file('patient_list');
+        $patients   = parseCsvToArray($request->file('patient_list'));
 
         $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
-        $createEnrollees     = (boolean)$request->input('createEnrollees');
-        $practice            = Practice::find($practiceId);
 
-        return $this->eligibilityService->processEligibility($file, $practice, $filterLastEncounter,
-            $filterInsurance, $filterProblems, $createEnrollees);
+        $csvPatientList = new CsvPatientList(collect($patients));
+        $isValid        = $csvPatientList->guessValidator();
+
+        if ( ! $isValid) {
+            return [
+                'errors' => 'This csv does not match any of the supported templates',
+            ];
+        }
+
+        $batch = $this->processEligibilityService
+            ->createSingleCSVBatch($patients, $practiceId, $filterLastEncounter, $filterInsurance, $filterProblems);
+
+        return redirect()->route('eligibility.batch.show', [$batch->id]);
     }
 
     /**
@@ -142,8 +151,9 @@ class WelcomeCallListController extends Controller
      */
     public function makePhoenixHeartCallList()
     {
-        MakePhoenixHeartWelcomeCallList::dispatch();
+        $batch = $this->processEligibilityService->createPhoenixHeartBatch();
 
-        return "Job dispatched";
+        return link_to_route('eligibility.batch.show',
+            'Job Scheduled. Click here to view progress. Make sure you bookmark the link.', [$batch->id]);
     }
 }

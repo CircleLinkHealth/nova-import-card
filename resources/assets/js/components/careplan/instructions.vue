@@ -8,11 +8,9 @@
                 </h2>
             </div>
         </div>
-        <slot v-if="cpmProblemsWithInstructions.length === 0">
-            <div class="col-xs-12 text-center">
-                No Instructions at this time
-            </div>
-        </slot>
+        <div class="col-xs-12 text-center" v-if="cpmProblemsWithInstructions.length === 0">
+            No Instructions at this time
+        </div>
         <div class="row gutter" v-if="cpmProblemsWithInstructions.length > 0">
             <div class="col-xs-12" v-for="(problem, index) in cpmProblemsWithInstructions" :key="index">
                 <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{problem.name}}:</h3>
@@ -62,7 +60,7 @@
         },
         computed: {
             cpmProblemsWithInstructions() {
-                return this.cpmProblems.filter(problem => problem.instruction.name).concat(this.ccdProblems.filter(problem => problem.instruction.name)).distinct(problem => problem.name)
+                return this.ccdProblems.filter(problem => problem.instruction.name).distinct(problem => problem.name)
             }
         },
         methods: {
@@ -76,6 +74,21 @@
                 problem.type = 'ccd'
                 problem.cpm = (this.cpmProblems.find(p => p.id == problem.cpm_id) || {}).name || 'Select a CPM Problem'
                 problem.icd10 = ((problem.codes.find(c => c.code_system_name == 'ICD-10') || {}).code || null)
+                problem.related = (function () {
+                    return this.allCpmProblems.find(cpm => cpm.id === problem.cpm_id)
+                }).bind(this)
+                problem.title = () => `${(problem.icd10) || (problem.related() || {}).code || ''} ${problem.original_name}`
+                if (!problem.icd10 && (problem.related() || {}).code) {
+                    const icd10Code = {
+                        code: (problem.related() || {}).code,
+                        code_system_name: 'ICD-10',
+                        problem_code_system_id: 2,
+                        problem_id: problem.id
+                    }
+                    if (!problem.codes.find(p => p.problem_code_system_id == icd10Code.problem_code_system_id)) {
+                        problem.codes.push(icd10Code)
+                    }
+                }
                 return problem
             },
             getCcdProblems() {
@@ -132,7 +145,15 @@
             Event.$on('full-conditions:add-code', (code) => {
                 const index = this.ccdProblems.findIndex(p => p.id === code.problem_id);
                 if (index >= 0) {
-                    this.ccdProblems[index].codes.push(code)
+                    if (this.ccdProblems[index].codes.find(c => c.problem_code_system_id === code.problem_code_system_id)) {
+                        this.ccdProblems[index].codes = this.ccdProblems[index].codes.map(c => {
+                            if (c.problem_code_system_id === code.problem_code_system_id) return code
+                            return c
+                        })
+                    }
+                    else {
+                        this.ccdProblems[index].codes.push(code)
+                    }
                     this.ccdProblems[index] = this.setupCcdProblem(this.ccdProblems[index])
                 }
             })

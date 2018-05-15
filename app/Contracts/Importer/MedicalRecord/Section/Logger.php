@@ -11,7 +11,7 @@ namespace App\Contracts\Importer\MedicalRecord\Section;
 
 interface Logger
 {
-    public function handle($medicalRecord) : array;
+    public function handle($problemsString): array;
 
-    public function shouldHandle($medicalRecord) : bool;
+    public function shouldHandle($problemsString);
 }

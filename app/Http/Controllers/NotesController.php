@@ -50,7 +50,7 @@ class NotesController extends Controller
                            'notes.call',
                            'notes.notifications',
                            'patientInfo',
-                       ])->orderByDesc('created_at')
+                       ])->orderByDesc('id')
                        ->firstOrFail();
 
         $messages = \Session::get('messages');

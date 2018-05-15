@@ -26,18 +26,24 @@ export default (App, Event) => {
     Event.$on('vue-tables.filter::DOB', App.activateFilters)
     
     Event.$on('vue-tables.sorted', App.activateFilters)
+    
+    Event.$on('vue-tables.limit', App.activateFilters)
 
-    Event.$on('unscheduled-patients-modal:filter', (value) => {
-        App.$refs.tblCalls.setFilter({ Patient: value })
-        App.activateFilters()
+    Event.$on('unscheduled-patients-modal:filter', (data) => {
         Event.$emit('modal-unscheduled-patients:hide')
+        Event.$emit('modal-add-call:show')
+        setTimeout(() => {
+            Event.$emit('add-call-modals:set', data)
+        }, 200)
     })
 
     Event.$on('select-nurse:update', (data) => {
         const call = App.tableData.find(row => row.id == data.callId)
+        const nurse = App.nurses.find(nurse => nurse.id == data.nurseId)
         if (call) {
-            call.Nurse = data.nurseId
-            console.log('calls:row-update', data)
+            call.NurseId = data.nurseId
+            call.Nurse = nurse.display_name
+            console.log('calls:row-update', data, call.Nurse)
         }
     })
 

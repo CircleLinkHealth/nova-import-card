@@ -1,5 +1,7 @@
 <?php
-$user_info = array();
+    use \Carbon\Carbon;
+
+    $user_info = array();
 ?>
 
 @extends('partials.providerUI')
@@ -8,7 +10,7 @@ $user_info = array();
 @section('activity', 'Edit/Modify Care Plan')
 
 @push('scripts')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+    <!--<script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>-->
 @endpush
 
 @section('content')
@@ -28,7 +30,7 @@ $user_info = array();
             @endif
             --}}
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
-                <div class="row no-overflow">
+                <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )
                         <div class="main-form-title col-lg-12">
                             Edit Patient Profile
@@ -41,7 +43,7 @@ $user_info = array();
                     @endif
                     <div class="">
                         <div class="row">
-                            <div class="col-lg-12 main-form-primary-horizontal">
+                            <div class="col-lg-12 main-form-primary-horizontal" style="border-bottom: 0px">
                                 <div class="row">
                             <div class="main-form-block main-form-primary main-form-primary-vertical col-lg-7">
                                 <h4 class="form-title">Contact Information</h4>
@@ -131,9 +133,10 @@ $user_info = array();
                                     </div>
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('birth_date') ? 'has-error' : '' }}">
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
-                                        <input id="birth_date" name="birth_date" type="date" class="form-control"
-                                               value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
-                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                        <v-datepicker name="birth_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
+                                            placeholder="YYYY-MM-DD"
+                                            value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }} 00:00:00 GMT{{ auth()->user()->timezone_offset_hours }}" required></v-datepicker>
+                                        <br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                     </div>
                                     <div class="form-item col-sm-12">
@@ -236,7 +239,7 @@ $user_info = array();
                                     </div>
                                 </div>
                             </div>
-                            <div class="main-form-block main-form-secondary col-lg-5">
+                            <div class="main-form-block main-form-secondary col-lg-5" style="padding-bottom: 0px">
                                 <h4 class="form-title">Contact Preferences</h4>
                                 <div class="row" style=" padding-right: 15px;">
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('preferred_contact_method') ? 'has-error' : '' }}">
@@ -273,15 +276,27 @@ $user_info = array();
 
                                         <span class="help-block">{{ $errors->first('timezone') }}</span>
                                     </div>
+                                    @if(isset($patient->id))
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
-                                        <input id="consent_date" name="consent_date" class="form-control"
-                                               type="date"
-                                               value="{{ (old('consent_date') ? old('consent_date') : ($patient->consent_date ? $patient->consent_date : '')) }}"
-                                               data-field="date" data-format="yyyy-MM-dd"/><br/>
+                                        <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
+                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
+                                            value="{{ $patient->patientInfo->consent_date }}" required></v-datepicker>
+                                        <br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>
+                                    @else
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
+                                            <label for="mf-consent_date">Consent Date <span
+                                                        class="attention">*</span>:</label>
+                                            <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd"
+                                                          placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
+                                                          value="{{ Carbon::today()->format('Y-m-d') }}" required></v-datepicker>
+                                            <br/>
+                                            <span class="help-block">{{ $errors->first('consent_date') }}</span>
+                                        </div>
+                                    @endif
 
                                     @if(isset($patient->id) )
                                         @if(($patient->primaryPractice) )
@@ -301,24 +316,56 @@ $user_info = array();
                                             {!! Form::label('program_id', 'Program:') !!}
                                             {!! Form::select('program_id', $programs, $patient->program_id, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
                                         </div>
+                                        <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('provider_id') ? 'has-error' : '' }}">
+                                            {!! Form::label('provider_id', 'Billing Provider:') !!}
+                                            {!! Form::select('provider_id', $billingProviders, null, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}
+                                        </div>
+                                        @push('scripts')
+                                            <script>
+                                                (function () {
+                                                    function setBillingProvider(practiceId) {
+                                                        return $.ajax({
+                                                            url: '/api/practices/' + practiceId + '/providers',
+                                                            type: 'GET',
+                                                            success: function (providers) {
+                                                                console.log('practice:providers', providers)
+                                                                $('[name="provider_id"]').html('')
+                                                                providers.forEach(function (provider) {
+                                                                    $('[name="provider_id"]').append($('<option />').val(provider.id).text(provider.name))
+                                                                })
+                                                            }
+                                                        })
+                                                    }
+
+                                                    $('[name="program_id"]').change(function () {
+                                                        setBillingProvider($(this).val())
+                                                    })
+
+                                                    setBillingProvider($('[name="program_id"]').val())
+                                                })();
+                                                
+                                            </script>
+                                        @endpush
                                     @endif
 
                                     <input type=hidden name=status
                                            value="{{ (old('status') ? old('status') : ($patient->status)) }}">
 
-                                    @if(auth()->user()->isAdmin())
+                                    @if(auth()->user()->isAdmin() || auth()->user()->hasRole('provider'))
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
                                                 <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('ccm_status', array('paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn'), $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', [ 'paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                             </div>
                                         </div>
                                     @else
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
-                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{{ ucfirst($patient->ccm_status) }}</div>
-                                                <input type="hidden" value="{{$patient->ccm_status}}" name="ccm_status">
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->ccm_status == '' ? 'paused' : ucfirst($patient->ccm_status))) !!}</div>
+                                                <div class="col-lg-8">
+                                                    <input type="hidden" value="{{ $patient->ccm_status == '' ? 'paused' : $patient->ccm_status }}" name="ccm_status">
+                                                </div>
+                                                
                                             </div>
                                         </div>
                                     @endif
@@ -337,7 +384,9 @@ $user_info = array();
                             </div>
                         </div>
                         </div>
-
+                        <div class="col-lg-12 text-center" style="margin-top: -24px">
+                            <hr style="border-top: 3px solid #50b2e2;">
+                        </div>
                         <div class="main-form-block main-form-secondary col-lg-12 text-center">
                             <button class="btn btn-primary">Save Profile</button>
                             <a href="{{ route('patients.dashboard') }}" omitsubmit="true" class="btn btn-warning">Cancel</a>
