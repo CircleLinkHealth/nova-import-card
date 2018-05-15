@@ -83,22 +83,24 @@ class PatientService
                         continue 1;
                     }
                     $practice = Practice::find($user['program_id']);
-                    $patient = $user['patient_info'];
-                    $careplan = $user['careplan'];
+                    if (isset($user['patient_info'])) {
+                        $patient = $user['patient_info'];
+                        $careplan = $user['careplan'];
 
-                    $sheet->appendRow([
-                        $user['name'],
-                        $user['billing_provider_name'],
-                        $practice ? $practice['display_name'] : null,
-                        $patient ? $patient['ccm_status'] : null,
-                        $careplan ? $careplan['status'] : null,
-                        $patient ? $patient['birth_date'] : null,
-                        $user['phone'],
-                        $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
-                        $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
-                        $patient ? gmdate('H:i:s', $patient['cur_month_activity_time']) : null
-                    ]);
-                    $i++;
+                        $sheet->appendRow([
+                            $user['name'],
+                            $user['billing_provider_name'],
+                            $practice ? $practice['display_name'] : null,
+                            $patient ? $patient['ccm_status'] : null,
+                            $careplan ? $careplan['status'] : null,
+                            $patient ? $patient['birth_date'] : null,
+                            $user['phone'],
+                            $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
+                            $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
+                            $patient ? gmdate('H:i:s', $patient['cur_month_activity_time']) : null
+                        ]);
+                        $i++;
+                    }
                 }
             });
         })->export('xls');
