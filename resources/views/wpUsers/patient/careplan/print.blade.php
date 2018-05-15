@@ -46,7 +46,8 @@ if (isset($patient) && ! empty($patient)) {
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
                                             data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
-                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"></time-tracker>
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
+                                                :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
                                         </span>
                                     </span>
                                 </div>
