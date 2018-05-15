@@ -153,9 +153,10 @@ class CarePlanHelper
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $this->dem->primary_phone;
 
-        $homeNumber = $this->dem->home_phone ?? $primaryPhone;
+        $homeNumber = ! empty($this->dem->home_phone)
+            ? $this->dem->home_phone
+            : $primaryPhone;
         if ( ! empty($homeNumber)) {
-
             if ($this->validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
