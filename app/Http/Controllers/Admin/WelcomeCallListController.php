@@ -9,6 +9,7 @@ use App\Models\PatientData\Rappa\RappaName;
 use App\Models\PatientData\RockyMountain\RockyData;
 use App\Models\PatientData\RockyMountain\RockyName;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class WelcomeCallListController extends Controller
     /**
      * @param Request $request
      *
-     * @return string
+     * @return array|string
      * @throws \Exception
      */
     public function makeWelcomeCallList(Request $request)
@@ -45,17 +46,12 @@ class WelcomeCallListController extends Controller
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
 
-        $columnNames = array_key_exists(0, $patients)
-            ? array_keys($patients[0])
-            : [];
+        $csvPatientList = new CsvPatientList(collect($patients));
+        $isValid        = $csvPatientList->guessValidator();
 
-        $validationErrors = $this->processEligibilityService
-            ->validationErrorsForSingleCsvColumnNames($columnNames);
-
-        if ($validationErrors) {
+        if ( ! $isValid) {
             return [
-                'errors'          => $validationErrors,
-                'required_fields' => $this->processEligibilityService->getSingleCsvRequiredFields(),
+                'errors' => 'This csv does not match any of the supported templates',
             ];
         }
 

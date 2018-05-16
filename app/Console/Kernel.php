@@ -7,7 +7,6 @@ use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
-use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -30,7 +29,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyFiveMinutes()->withoutOverlapping(15);
+                 ->everyMinute()->withoutOverlapping(15);
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
@@ -82,8 +81,8 @@ class Kernel extends ConsoleKernel
                  ->withoutOverlapping();
 
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
-                ->dailyAt('09:00')
-                ->withoutOverlapping();
+                 ->dailyAt('09:00')
+                 ->withoutOverlapping();
 
 
 //        $schedule->command('ccda:determineEligibility')
@@ -122,6 +121,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! \Schema::hasTable('practices')) {
+            return;
+        }
+
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }

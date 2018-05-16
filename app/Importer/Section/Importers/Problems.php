@@ -115,6 +115,8 @@ class Problems extends BaseImporter
                                            return $p['attributes']['name'];
                                        })
                                        ->map($callback);
+
+        return $problemsGroups;
     }
 
     private function getCpmProblemId(ProblemLog $itemLog, $problemName)

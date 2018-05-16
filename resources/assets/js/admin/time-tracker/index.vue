@@ -47,7 +47,8 @@
             },
             'no-live-count': Number,
             'class-name': String,
-            'hide-tracker': Boolean
+            'hide-tracker': Boolean,
+            'override-timeout': Boolean
         },
         data() {
             return {
@@ -85,6 +86,16 @@
                             info: this.info
                         })
                     );
+                    if (this.overrideTimeout) {
+                        setTimeout(() => {
+                            EventBus.$emit('modal-inactivity:timeouts:override', {
+                                alertTimeout: 30, 
+                                logoutTimeout: 120,
+                                alertTimeoutCallMode: 60, 
+                                logoutTimeoutCallMode: 150
+                            })
+                        }, 1000)
+                    }
                 }
             },
             createSocket() {
@@ -184,7 +195,8 @@
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
                     LOGOUT: 'client:logout',
-                    BHI: 'client:bhi'
+                    BHI: 'client:bhi',
+                    TIMEOUTS_OVERRIDE: 'client:timeouts:override'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -247,6 +259,12 @@
                 EventBus.$on('tracker:call-mode:exit', () => {
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.EXIT_CALL_MODE, info: this.info }))
+                    }
+                })
+
+                EventBus.$on('tracker:timeouts:override', (timeouts = {}) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.socket.send(JSON.stringify({ message: STATE.TIMEOUTS_OVERRIDE, info: this.info, timeouts }))
                     }
                 })
 

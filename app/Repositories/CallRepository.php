@@ -15,15 +15,18 @@ use Carbon\Carbon;
 
 class CallRepository
 {
-    public function model() {
+    public function model()
+    {
         return app(Call::class);
     }
-    
-    public function count() {
+
+    public function count()
+    {
         return $this->model()->select('id', DB::raw('count(*) as total'))->count();
     }
-    
-    public function call($id) {
+
+    public function call($id)
+    {
         return $this->model()->findOrFail($id);
     }
 
@@ -42,12 +45,12 @@ class CallRepository
         }
 
         return $this->model()
-            ->where([
-                ['inbound_cpm_id', '=', $patientUserId],
-                ['status', '!=', 'scheduled'],
-            ])
-            ->ofMonth($monthYear)
-            ->count();
+                    ->where([
+                        ['inbound_cpm_id', '=', $patientUserId],
+                        ['status', '!=', 'scheduled'],
+                    ])
+                    ->ofMonth($monthYear)
+                    ->count();
     }
 
     /**
@@ -65,23 +68,42 @@ class CallRepository
         }
 
         return $this->model()
-            ->where([
-                ['inbound_cpm_id', '=', $patientUserId],
-            ])
-            ->ofStatus('reached')
-            ->ofMonth($monthYear)
-            ->count();
+                    ->where([
+                        ['inbound_cpm_id', '=', $patientUserId],
+                    ])
+                    ->ofStatus('reached')
+                    ->ofMonth($monthYear)
+                    ->count();
     }
 
-    public function patientsWithoutScheduledCalls($practiceId, Carbon $start)
+    public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
     {
-        return User::ofType('participant')
-                   ->ofPractice($practiceId)
-                   ->whereDoesntHave('inboundScheduledCalls');
+        $users = User::ofType('participant');
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+
+        return $users->with('carePlan')
+                     ->whereHas('patientInfo', function ($q) {
+                         $q->enrolled();
+                     })
+                     ->whereDoesntHave('inboundScheduledCalls');
     }
 
     public function scheduledCalls()
     {
         return $this->model()->scheduled();
+    }
+
+    public function patientsWithoutAnyInboundCalls($practiceId)
+    {
+        $users = User::ofType('participant')
+                   ->whereHas('patientInfo', function ($q) {
+                       $q->enrolled();
+                   });
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+        return $users->whereDoesntHave('inboundCalls');
     }
 }

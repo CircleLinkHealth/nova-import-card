@@ -2,8 +2,8 @@
 
 use App\Contracts\Serviceable;
 use App\Facades\StringManipulation;
+use App\Filters\Filterable;
 use App\Importer\Models\ImportedItems\DemographicsImport;
-use App\Notifications\CarePlanApprovalReminder;
 use App\Models\CCD\Allergy;
 use App\Models\CCD\CcdInsurancePolicy;
 use App\Models\CCD\Medication;
@@ -20,6 +20,7 @@ use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
 use App\Models\EmailSettings;
 use App\Models\MedicalRecords\Ccda;
+use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\Notifiable;
 use App\Notifications\ResetPassword;
 use App\Repositories\Cache\EmptyUserNotificationList;
@@ -29,7 +30,6 @@ use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
-use App\Filters\Filterable;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -41,7 +41,6 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -573,14 +572,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     }
 
     public function inboundScheduledCalls(Carbon $after = null) {
-        if (!$after) {
-            $after = Carbon::now();
-        }
-
         return $this->inboundCalls()
-            ->where('status', '=', 'scheduled')
-            ->where('scheduled_date', '>=', $after->toDateString())
-            ->where('called_date', '=', null);
+                    ->where('status', '=', 'scheduled')
+                    ->when($after, function ($query) use ($after) {
+                        return $query->where('scheduled_date', '>=', $after->toDateString());
+                    })
+                    ->where('called_date', '=', null);
     }
 
     public function inboundMessages()
@@ -2248,7 +2245,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function getPrimaryPracticeNameAttribute()
     {
-        return ucwords($this->primaryPractice->display_name);
+        return ucwords(optional($this->primaryPractice)->display_name);
     }
 
     /**
@@ -2792,6 +2789,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
+    public function autocomplete() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name() ?? $this->display_name,
+            'program_id' => $this->program_id
+        ];
+    }
 
     public function safe()
     {
@@ -2802,7 +2806,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'name' => $this->name(),
+            'name' => $this->name() ?? $this->display_name,
             'address' => $this->address,
             'city' => $this->city,
             'state' => $this->state,
@@ -2814,6 +2818,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'patient_info' => optional($this->patientInfo()->first())->safe(),
             'provider_info' => $this->providerInfo()->first(),
             'billing_provider_name' => $this->billing_provider_name,
+            'billing_provider_id' => $this->billing_provider_id,
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
             'phone' => $this->phone ?? optional($phone)->number,

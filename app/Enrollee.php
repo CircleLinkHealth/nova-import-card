@@ -147,6 +147,7 @@ class Enrollee extends \App\BaseModel
     protected $fillable = [
         'id',
         'batch_id',
+        'eligibility_job_id',
 
         'medical_record_type',
         'medical_record_id',
@@ -444,5 +445,10 @@ class Enrollee extends \App\BaseModel
         return ImportedMedicalRecord::whereMedicalRecordId($this->medical_record_id)
                                     ->whereMedicalRecordType($this->medical_record_id)
                                     ->first();
+    }
+
+    public function targetPatient()
+    {
+        return $this->hasOne(TargetPatient::class);
     }
 }

@@ -39,8 +39,14 @@ class DatabaseSeeder extends Seeder
 //      $this->call('CcdVendorsTableSeeder');
 //      $this->call('CpmProblemsTableSeeder');
 
+        $limit = ini_get('memory_limit'); // retrieve the set limit
+        ini_set('memory_limit', -1);
 
-        $this->call(SnomedToIcd9MapTableSeeder::class);
-        $this->call(AddActiveStatusToPractices::class);
+        $this->call(AppConfigTableSeeder::class);
+        $this->call(CpmProblemsTableSeeder::class);
+        $this->call(AddNewDefaultCarePlanTemplate::class);
+        $this->call(RolesPermissionsSeeder::class);
+
+        ini_set('memory_limit', $limit);
     }
 }

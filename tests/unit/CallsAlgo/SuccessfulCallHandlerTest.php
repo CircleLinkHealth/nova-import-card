@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\CallsAlgo;
 
+use App\Practice;
 use App\Algorithms\Calls\SuccessfulHandler;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -16,16 +17,18 @@ class SuccessfulCallHandlerTest extends TestCase
         UserHelpers;
 
     private $nurse;
+    private $practice;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->nurse = $this->createUser(8, 'care-center');
+        $this->practice = factory(Practice::class)->create();
+        $this->nurse = $this->createUser($this->practice->id, 'care-center');
     }
 
     public function fakePatient(Carbon $called) {
-        $patient = $this->createUser(8, 'participant');
+        $patient = $this->createUser($this->practice->id, 'participant');
 
         $patient->cur_month_activity_time = 1300;
 

@@ -1,5 +1,5 @@
 <div>
-    <br>Visit <a href="{{ route('view.files.ready.to.import') }}" target="_blank">the Importer's Summary Page</a> to
+    <br>Visit <a href="{{ route('import.ccd.remix') }}" target="_blank">the Importer's Summary Page</a> to
     import these CCDs.
     @if(isset($numberOfCcds))
         <br>Number of CCDs received: {{ $numberOfCcds }}

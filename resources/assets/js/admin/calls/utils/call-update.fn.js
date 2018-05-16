@@ -1,4 +1,5 @@
 import { rootUrl } from '../../../app.config'
+import { Event } from 'vue-tables-2'
 
 export const onNextCallUpdate = function (date) {
     /** update the next call column */
@@ -22,6 +23,7 @@ export const onNurseUpdate = function (nurseId) {
     /** update the next call column */
     const call = this
     this.loaders.nurse = true
+    console.log('on-nurse-update', nurseId)
     return axios.post(rootUrl('callupdate'), {
       callId: this.id,
       columnName: 'outbound_cpm_id',
@@ -32,6 +34,7 @@ export const onNurseUpdate = function (nurseId) {
       call.Nurse = (nurse.text || 'unassigned')
       this.loaders.nurse = false
       if (response) console.log('calls:row:update', nurse)
+      if (nurseId) Event.$emit('select-nurse:update', { nurseId: call.NurseId, callId: call.id })
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.nurse = false

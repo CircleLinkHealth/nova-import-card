@@ -52,95 +52,120 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     public function handle()
     {
-        $singleFileCsvs = EligibilityBatch::where('status', '<', 2)
-                                          ->whereType(EligibilityBatch::TYPE_ONE_CSV)
-                                          ->with('practice')
-                                          ->get()
-                                          ->map(function ($batch) {
-                                              $result = $this->processEligibilityService->processCsvForEligibility($batch);
+        $batch = EligibilityBatch::where('status', '<', 2)
+                                 ->whereType(EligibilityBatch::TYPE_ONE_CSV)
+                                 ->with('practice')
+                                 ->first();
 
-                                              if ($result) {
-                                                  $batch->status = EligibilityBatch::STATUSES['processing'];
-                                                  $batch->save();
+        if ($batch) {
+            $this->queueSingleCsvJobs($batch);
 
-                                                  return $batch;
-                                              }
+            return true;
+        }
 
-                                              $unprocessed = EligibilityJob::whereBatchId($batch->id)
-                                                                           ->where('status', '<=', 2)
-                                                                           ->get();
+        $batch = EligibilityBatch::where('status', '<', 2)
+                                 ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
+                                 ->first();
 
-                                              if ($unprocessed->isEmpty()) {
-                                                  $batch->status = EligibilityBatch::STATUSES['complete'];
-                                                  $batch->save();
+        if ($batch) {
+            $this->queueGoogleDriveJobs($batch);
 
-                                                  return $batch;
-                                              }
+            return true;
+        }
 
-                                              $unprocessed->map(function ($job) use ($batch) {
-                                                  ProcessSinglePatientEligibility::dispatch(
-                                                      collect([$job->data]),
-                                                      $job,
-                                                      $batch,
-                                                      $batch->practice
-                                                  );
-                                              });
+        $batch = EligibilityBatch::where('status', '<', 2)
+                                 ->whereType(EligibilityBatch::TYPE_PHX_DB_TABLES)
+                                 ->first();
 
-                                              $batch->status = EligibilityBatch::STATUSES['processing'];
-                                              $batch->save();
+        if ($batch) {
+            $this->queuePHXJobs($batch);
 
-                                              return $batch;
-                                          });
+            return true;
+        }
+    }
 
-        $googleDriveCcds = EligibilityBatch::where('status', '<', 2)
-                                           ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
-                                           ->get()
-                                           ->map(function ($batch) {
-                                               $result = $this->processEligibilityService->fromGoogleDrive($batch);
+    private function queueSingleCsvJobs(EligibilityBatch $batch)
+    {
+        $result = $this->processEligibilityService->processCsvForEligibility($batch);
 
-                                               if ($result) {
-                                                   $batch->status = EligibilityBatch::STATUSES['processing'];
-                                                   $batch->save();
+        if ($result) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
+            $batch->save();
 
-                                                   return $batch;
-                                               }
+            return $batch;
+        }
 
-                                               $practice = Practice::findOrFail($batch->practice_id);
+        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+                                     ->where('status', '<=', 2)
+                                     ->take(10)
+                                     ->get();
 
-                                               $unprocessed = Ccda::whereBatchId($batch->id)
-                                                                  ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
-                                                                  ->inRandomOrder()
-                                                                  ->take(10)
-                                                                  ->get()
-                                                                  ->map(function ($ccda) use ($batch, $practice) {
-                                                                      ProcessCcda::withChain([
-                                                                          (new CheckCcdaEnrollmentEligibility($ccda->id,
-                                                                              $practice,
-                                                                              $batch))->onQueue('ccda-processor'),
-                                                                      ])->dispatch($ccda->id)
-                                                                                 ->onQueue('ccda-processor');
+        if ($unprocessed->isEmpty()) {
+            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->save();
 
-                                                                      return $ccda;
-                                                                  });
+            return $batch;
+        }
 
-                                               if ($unprocessed->isEmpty()) {
-                                                   $batch->status = EligibilityBatch::STATUSES['complete'];
-                                                   $batch->save();
+        $unprocessed->map(function ($job) use ($batch) {
+            ProcessSinglePatientEligibility::dispatch(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            );
+        });
 
-                                                   return $batch;
-                                               }
+        $batch->status = EligibilityBatch::STATUSES['processing'];
+        $batch->save();
 
-                                               $batch->status = EligibilityBatch::STATUSES['processing'];
-                                               $batch->save();
+        return $batch;
+    }
 
-                                               return $batch;
-                                           });
+    private function queueGoogleDriveJobs(EligibilityBatch $batch)
+    {
+        $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
-        $phx = EligibilityBatch::where('status', '<', 2)
-                               ->whereType(EligibilityBatch::TYPE_PHX_DB_TABLES)
-                               ->get()
-                               ->map(function ($batch) {
-                                   MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
-                               });
+        if ($result) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
+            $batch->save();
+
+            return $batch;
+        }
+
+        $practice = Practice::findOrFail($batch->practice_id);
+
+        $unprocessed = Ccda::whereBatchId($batch->id)
+                           ->whereStatus(Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY)
+                           ->inRandomOrder()
+                           ->take(10)
+                           ->get()
+                           ->map(function ($ccda) use ($batch, $practice) {
+                               ProcessCcda::withChain([
+                                   (new CheckCcdaEnrollmentEligibility($ccda->id,
+                                       $practice,
+                                       $batch))->onQueue('ccda-processor'),
+                               ])->dispatch($ccda->id)
+                                          ->onQueue('ccda-processor');
+
+                               return $ccda;
+                           });
+
+        if ($unprocessed->isEmpty()) {
+            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->save();
+
+            return $batch;
+        }
+
+        $batch->status = EligibilityBatch::STATUSES['processing'];
+        $batch->save();
+
+        return $batch;
+    }
+
+    private function queuePHXJobs($batch)
+    {
+        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
     }
 }

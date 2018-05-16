@@ -66,7 +66,7 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ route('admin.dashboard', array()) }}">
+                    <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
                         <img src="/img/clh_logo_sm.png"
                              alt="Care Plan Manager"
                              style="position:relative;top:-5px"
@@ -83,9 +83,11 @@
                                     Users <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.users.index', array()) }}">All Users</a></li>
-                                    <li><a href="{{ route('admin.users.create', array()) }}">New User</a></li>
-                                    <li><a href="{{ route('admin.observations.index', array()) }}">Observations</a></li>
+                                    <li><a href="{{ route('admin.users.index') }}">All Users</a></li>
+                                    <li><a href="{{ route('admin.users.create') }}">New User</a></li>
+                                    <li><a href="{{ route('admin.observations.index') }}">Observations</a></li>
+                                    <li><a href="{{ route('observations-dashboard.index') }}">Edit/Delete
+                                            Observations</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -98,13 +100,17 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
 
-                                    <li><a href="{{ route('admin.patientCallManagement.index', array()) }}">
-                                            Manage</a>
-                                    <li><a href="{{ route('admin.families.index', array()) }}">Families</a>
-                                    <li><a href="{{ route('algo.mock.create', array()) }}">
+                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">
+                                            Manage (New)</a></li>
+                                    <li><a href="{{ route('admin.patientCallManagement.old') }}">
+                                            Manage (Old)</a></li>
+                                    <li><a href="{{ route('admin.families.index') }}">Families</a></li>
+                                    <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
-                                    <li><a href="{{ route('CallReportController.exportxls', array()) }}">Export
-                                            Calls</a></li> <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
+                                    </li>
+                                    <li><a href="{{ route('CallReportController.exportxls') }}">Export
+                                            Calls</a></li>
+                                    <li><a href="{{ route('CallsDashboard.index') }}">Edit Call Status</a></li>
                                 </ul>
                             </li>
                         @endif
@@ -118,16 +124,16 @@
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
                                     {{--                                    <li><a href="{{ route('stats.nurse.info') }}">Nurse Statistics</a>--}}
-                                    <li><a href="{{ route('admin.reports.nurseTime.index', array()) }}">Nurse
+                                    <li><a href="{{ route('admin.reports.nurseTime.index') }}">Nurse
                                             Time</a>
                                     </li>
-                                    <li><a href="{{ route('admin.reports.nurse.daily', array()) }}">Daily
+                                    <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.monthly-index', array()) }}">Monthly
+                                    <li><a href="{{ route('admin.reports.nurse.monthly-index') }}">Monthly
                                             Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.invoice', array()) }}">
+                                    <li><a href="{{ route('admin.reports.nurse.invoice') }}">
                                             Invoices</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.allocation', array()) }}">
+                                    <li><a href="{{ route('admin.reports.nurse.allocation') }}">
                                             Allocation</a></li>
 
                                 </ul>
@@ -140,14 +146,14 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li role="presentation" class="dropdown">
-                                    <a href="{{ route('patient.enroll.makeReport', array()) }}">Enrollee List</a>
+                                    <a href="{{ route('patient.enroll.makeReport') }}">Enrollee List</a>
                                 </li>
                                 <li role="presentation" class="dropdown">
-                                    <a href="{{ route('enrollment.ambassador.stats', array()) }}">Care Ambassador
+                                    <a href="{{ route('enrollment.ambassador.stats') }}">Care Ambassador
                                         KPIs</a>
                                 </li>
                                 <li role="presentation" class="dropdown">
-                                    <a href="{{ route('enrollment.practice.stats', array()) }}">Practice KPIs</a>
+                                    <a href="{{ route('enrollment.practice.stats') }}">Practice KPIs</a>
                                 </li>
                             </ul>
                         </li>
@@ -159,9 +165,9 @@
                                     Roles<span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('roles.index', array()) }}">Roles</a></li>
+                                    <li><a href="{{ route('roles.index') }}">Roles</a></li>
                                     @if(Cerberus::hasPermission('roles-permissions-view'))
-                                        <li><a href="{{ route('permissions.index', array()) }}">Permissions</a>
+                                        <li><a href="{{ route('permissions.index') }}">Permissions</a>
                                         </li>
                                     @endif
                                 </ul>
@@ -175,9 +181,9 @@
                                     Programs <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.practices.index', array()) }}">Programs</a></li>
+                                    <li><a href="{{ route('admin.practices.index') }}">Programs</a></li>
                                     @if(Cerberus::hasPermission('locations-view'))
-                                        <li><a href="{{ route('locations.index', array()) }}">Locations</a></li>
+                                        <li><a href="{{ route('locations.index') }}">Locations</a></li>
                                     @endif
                                 </ul>
                             </li>
@@ -189,7 +195,7 @@
                                 Reports<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li><a href="{{ route('view.files.ready.to.import', []) }}">CCDs To Import</a></li>
+                                <li><a href="{{ route('import.ccd.remix', []) }}">CCDs To Import</a></li>
                                 <li><a href="{{ route('EthnicityReportController.getReport', []) }}">Ethnicity/Race
                                     </a></li>
                                 <li><a href="{{ route('get.patients.for.insurance.check') }}">Patients For Insurance
@@ -198,11 +204,11 @@
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('PatientConditionsReportController.getReport', array()) }}">Patient
+                                <li><a href="{{ route('PatientConditionsReportController.getReport') }}">Patient
                                         Conditions (export)</a>
                                 </li>
 
-                                <li><a href="{{ route('excel.report.t2', array()) }}">Paused Patients (export)</a>
+                                <li><a href="{{ route('excel.report.t2') }}">Paused Patients (export)</a>
                                 </li>
 
                                 <li>
@@ -225,13 +231,13 @@
                                 Account Data<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                {{--<li><a href="{{ route('reports.sales.location.create', array()) }}">by Location--}}
+                                {{--<li><a href="{{ route('reports.sales.location.create') }}">by Location--}}
                                 {{--</a></li>--}}
 
-                                <li><a href="{{ route('reports.sales.provider.create', array()) }}">by Provider
+                                <li><a href="{{ route('reports.sales.provider.create') }}">by Provider
                                     </a></li>
 
-                                <li><a href="{{ route('reports.sales.practice.create', array()) }}">by Practice
+                                <li><a href="{{ route('reports.sales.practice.create') }}">by Practice
                                     </a></li>
                             </ul>
                         </li>
@@ -260,24 +266,24 @@
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Practices <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                    <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
+                                <li role="presentation" class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                                       aria-expanded="false">
+                                        Practices <span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
+                                        <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
 
-                                    <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                    <li>
-                                        <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                    </li>
-                                    <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
-                                    <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
-                                            Patient Report</a></li>
-                                </ul>
-                            </li>
+                                        <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
+                                        <li>
+                                            <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
+                                        </li>
+                                        <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
+                                        <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
+                                                Patient Report</a></li>
+                                    </ul>
+                                </li>
                                 <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
@@ -298,15 +304,15 @@
                             </li>
                         @endif
 
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Medical Records <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
-                                </ul>
-                            </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
+                               aria-expanded="false">
+                                Medical Records <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
+                            </ul>
+                        </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         @if (Auth::guest())
@@ -325,7 +331,7 @@
                             </li>
 
                             <li class="dropdown">
-                                <a href="{{ route('patients.dashboard', array()) }}"
+                                <a href="{{ route('patients.dashboard') }}"
                                    style=""><i class="glyphicon glyphicon-eye-open"></i> Provider UI</a>
                             </li>
                             <li class="dropdown">
@@ -362,7 +368,7 @@
 
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
-    
+
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
     <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif

@@ -193,6 +193,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'prefix' => 'patients',
                 'middleware' => ['patientProgramSecurity']
             ], function () {
+
+            Route::get('without-scheduled-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
+                'as'   => 'patients.without-scheduled-calls',
+            ]);
+
+            Route::get('without-inbound-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'as'   => 'patients.without-inbound-calls',
+            ]);
+
             Route::group([
                 'prefix' => '{userId}'
             ], function () {
@@ -294,6 +305,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
+            ]);
+
+            Route::get('{practiceId}/patients/without-inbound-calls', [
+                'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
+                'as'   => 'practice.patients.without-inbound-calls',
             ]);
         });
 
@@ -448,10 +464,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('imported-medical-records', [
             'uses' => 'ImporterController@uploadRawFiles',
             'as'   => 'upload.ccda',
-        ]);
-        Route::get('imported-medical-records', [
-            'uses' => 'ImporterController@index',
-            'as'   => 'view.files.ready.to.import',
         ]);
 
         Route::get('uploaded-ccd-items/{importedMedicalRecordId}/edit', 'ImportedMedicalRecordController@edit');
@@ -1616,6 +1628,39 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.observations.index',
             ]);
         });
+
+        //observations dashboard
+
+        Route::group([
+            'prefix' => 'observations-dashboard',
+        ], function () {
+            Route::get('index', [
+                'uses' => 'ObservationController@dashboardIndex',
+                'as'   => 'observations-dashboard.index',
+            ]);
+
+            Route::get('list', [
+                'uses' => 'ObservationController@getObservationsList',
+                'as'   => 'observations-dashboard.list',
+            ]);
+
+            Route::get('edit', [
+                'uses' => 'ObservationController@editObservation',
+                'as'   => 'observations-dashboard.edit',
+            ]);
+
+            Route::patch('update', [
+                'uses' => 'ObservationController@updateObservation',
+                'as'   => 'observations-dashboard.update',
+            ]);
+
+            Route::delete('delete', [
+                'uses' => 'ObservationController@deleteObservation',
+                'as'   => 'observations-dashboard.delete',
+            ]);
+
+        });
+
 
 
         // programs

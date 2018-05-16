@@ -6,11 +6,12 @@ use App\Importer\Loggers\Ccda\CcdaSectionsLogger;
 use App\Importer\MedicalRecordEloquent;
 use App\Traits\Relationships\BelongsToPatientUser;
 use App\User;
-use Cache;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\Models\MedicalRecords\Ccda
@@ -71,9 +72,10 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda withoutTrashed()
  * @mixin \Eloquent
  */
-class Ccda extends MedicalRecordEloquent implements Transformable
+class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
 {
     use BelongsToPatientUser,
+        HasMediaTrait,
         TransformableTrait,
         SoftDeletes;
 
@@ -111,10 +113,27 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         'vendor_id',
         'source',
         'imported',
-        'xml',
         'json',
+        'xml',
         'status',
     ];
+
+    public static function create($attributes = [])
+    {
+        if ( ! array_key_exists('xml', $attributes)) {
+            return static::query()->create($attributes);
+        }
+
+        $xml = $attributes['xml'];
+        unset($attributes['xml']);
+
+        $ccda = static::query()->create($attributes);
+
+        \Storage::disk('storage')->put("ccda-{$ccda->id}.xml", $xml);
+        $ccda->addMedia(storage_path("ccda-{$ccda->id}.xml"))->toMediaCollection('ccd');
+
+        return $ccda;
+    }
 
     public function qaSummary()
     {
@@ -174,12 +193,17 @@ class Ccda extends MedicalRecordEloquent implements Transformable
 
     public function bluebuttonJson()
     {
-        if ( ! $this->id && ! $this->xml) {
+        if ($this->json) {
+            return json_decode($this->json);
+        }
+
+        if ( ! $this->id || ! $this->hasMedia('ccd')) {
             return false;
         }
 
         if ( ! $this->json) {
-            $this->json = $this->parseToJson($this->xml);
+            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $this->json = $this->parseToJson($xml);
             $this->save();
         }
 
@@ -211,5 +235,17 @@ class Ccda extends MedicalRecordEloquent implements Transformable
         }
 
         return $responseBody;
+    }
+
+    public function storeCcd($xml)
+    {
+        if ( ! $this->id) {
+            throw new \Exception('CCD does not have an id.');
+        }
+
+        \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
+        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
+
+        return $this;
     }
 }

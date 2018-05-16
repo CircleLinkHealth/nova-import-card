@@ -55,12 +55,32 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        $skipValidation = false;
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         if ( ! $this->shouldAttachProblems($patient, $summary)) {
             return $this->determineStatusAndSave($summary);
+        }
+
+        if ($this->lacksProblems($summary)) {
+            $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
+                                                 ->orderBy('month_year', 'desc')
+                                                 ->where('month_year', '<=',
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth())
+                                                 ->whereApproved(true)
+                                                 ->first();
+
+            if ($olderSummary) {
+                $summary->problem_1              = $olderSummary->problem_1;
+                $summary->problem_2              = $olderSummary->problem_2;
+                $summary->billable_problem1      = $olderSummary->billable_problem1;
+                $summary->billable_problem1_code = $olderSummary->billable_problem1_code;
+                $summary->billable_problem2      = $olderSummary->billable_problem2;
+                $summary->billable_problem2_code = $olderSummary->billable_problem2_code;
+                $skipValidation                  = true;
+            }
         }
 
         if ($this->lacksProblems($summary)) {
@@ -71,7 +91,7 @@ class PatientSummaryEloquentRepository
             $summary = $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
         }
 
-        if ($this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
+        if ( ! $skipValidation && $this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
             $patient->load(['billableProblems', 'ccdProblems']);
             $summary = $this->attachBillableProblems($patient, $summary);
         }
@@ -162,6 +182,7 @@ class PatientSummaryEloquentRepository
     public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
+                                    ->where('is_monitored', '=', true)
                                     ->reject(function ($problem) {
                                         return ! validProblemName($problem->name);
                                     })
@@ -169,6 +190,7 @@ class PatientSummaryEloquentRepository
                                         return ! $problem->icd10Code();
                                     })
                                     ->unique('cpm_problem_id')
+                                    ->sortByDesc('cpm_problem_id')
                                     ->values();
     }
 
@@ -303,7 +325,7 @@ class PatientSummaryEloquentRepository
                              || $summary->no_of_successful_calls == 0
                              || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
 
-        if (($summary->rejected || $summary->approved) && $summary->actor_id) {
+        if ($summary->rejected || $summary->approved || $summary->actor_id) {
             $summary->needs_qa = false;
         }
 
@@ -316,6 +338,10 @@ class PatientSummaryEloquentRepository
         }
 
         $summary->save();
+
+        if ($summary->approved && $summary->rejected) {
+            $summary->approved = $summary->rejected = false;
+        }
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))

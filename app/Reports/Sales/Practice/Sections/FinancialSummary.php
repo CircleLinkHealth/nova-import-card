@@ -34,10 +34,10 @@ class FinancialSummary extends SalesReportSection
 
         for ($i = 0; $i < 3; $i++) {
             if ($i == 0) {
-                $start = Carbon::parse($this->start)->firstOfMonth();
-                $month = Carbon::parse($this->start)->format('F Y');
+                $start = Carbon::parse($this->end)->firstOfMonth();
+                $month = Carbon::parse($this->end)->format('F Y');
             } else {
-                $iMonthsAgo = Carbon::parse($this->start)->subMonths($i);
+                $iMonthsAgo = Carbon::parse($this->end)->subMonths($i);
 
                 $start = Carbon::parse($iMonthsAgo)->firstOfMonth();
                 $month = Carbon::parse($iMonthsAgo)->format('F Y');

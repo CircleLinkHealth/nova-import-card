@@ -357,8 +357,6 @@
 <style>
     .modal-care-areas .modal-container {
         width: 900px;
-        max-height: 100%;
-        overflow-y: auto;
     }
 
     .modal-care-areas .modal-footer {

@@ -93,6 +93,8 @@ class CpmDefaultInstructionSeeder extends Seeder
         return [
             'Depression' => [
                 'problems' => [
+                    'Adjustment disorder with depressed mood',
+                    'Adjustment disorder with mixed anxiety and depressed mood',
                     'Major depressive disorder, recurrent severe without psychotic features',
                     'Major depressive disorder, recurrent, in full remission',
                     'Major depressive disorder, recurrent, in partial remission',
@@ -107,15 +109,24 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Major depressive disorder, single episode, moderate',
                     'Major depressive disorder, single episode, severe with psychotic features',
                     'Major depressive disorder, single episode, severe without psychotic features',
-                    'Major depressive disorder, single episode, unspecified'
+                    'Major depressive disorder, single episode, unspecified',
+                    'Other depressive episodes',
+                    'Other recurrent depressive disorders',
+                    'Other specified depressive episodes'
                 ],
                 'instruction' => "- Take your medication as prescribed.\n\n- Contact your care team if anything changes.\n\n- Our RN will check in with a couple questions every month.\n\n- Watch for medication side effects like changing thought patterns or upset stomach.\n\n- Some medications have recommended lab tests which your doctor will prescribe; discuss this with our telephone RNs to coordinate if needed.\n\n- Make sure to do things that you enjoy (Gardening, going to a move, taking a walk, etc…)\n\n- Reward yourself for small successes.\n\n- Take care of your body. Eat a healthy diet and establish an exercise plan of at least three times a week. Even moderate exercise will help you feel better.\n\n- Avoid alcohol which can make depression worse.\n\n- For additional information, call the National Depressive Assoc. at (800) 826-3632
                 "
             ],
             'Dementia' => [
-                'problems' => [   
+                'problems' => [
+                    'Amnestic disorder due to known physiological condition',
                     'Dementia in other diseases classified elsewhere with behavioral disturbance',
-                    'Dementia in other diseases classified elsewhere without behavioral disturbance'
+                    'Dementia in other diseases classified elsewhere without behavioral disturbance',
+                    'Dissociative amnesia',
+                    'Unspecified dementia with behavioral disturbance',
+                    'Unspecified dementia without behavioral disturbance',
+                    'Vascular dementia with behavioral disturbance',
+                    'Vascular dementia without behavioral disturbance'
                 ],
                 'instruction' =>    "- Keep a list of important phone numbers next to every phone.\n\n- Have clocks and calendars around the house so you stay aware of the date and time.\n\n- Label important items.\n\n- Develop habits and routines that are easy to follow.\n\n- Plan activities that improve your thinking, such as puzzles, games, baking, or indoor gardening.\n\n- Keep pictures of friends and family around the house.\n\n- Keep good sleep hygiene: Avoid beeping or noises at night time. Avoid fluids before bed time and don’t watch TV in bed.\n\n- Try to keep shades up during the day and down during the night.\n\n- Exercising 30 minutes three times a week, or more, will improve health.\n\n- Have someone nearby for any tasks that may have a risk of injury.\n\n- For additional information, call the Alzheimer’s Foundation of America at (866) 232-8484
                 "
@@ -130,23 +141,36 @@ class CpmDefaultInstructionSeeder extends Seeder
                 "
             ],
             'Anxiety and Stress' => [
-                'problems' => [   
+                'problems' => [
+                    'Acute stress reaction',
+                    'Adjustment disorder with anxiety',
+                    'Agoraphobia with panic disorder',
                     'Anxiety disorder due to known physiological condition',
-                    'Anxiety disorder, unspecified'
+                    'Anxiety disorder, unspecified',
+                    'Generalized anxiety disorder',
+                    'Other mixed anxiety disorders',
+                    'Other phobic anxiety disorders',
+                    'Other specified anxiety disorders',
+                    'Panic Disorder (episodic paroxysmal anxiety)',
+                    'Phobic anxiety disorder, unspecified',
+                    'Separation anxiety disorder of childhood',
+                    'Social phobia, generalized',
+                    'Social phobia, unspecified',
+                    'State of emotional shock and stress, unspecified'
                 ],
-                'instruction' => "- Try to identify the areas of stress in your life: they may not be obvious, like:\n\n
-                    \t- Overload: feeling you have too many responsibilities and cannot take care of everything at once\n
-                    \t- Helplessness: feeling that you cannot solve your problems\n
-                    \t- Daily hassles of life: vehicle trouble, traffic, bills\n
-                    \t- Major life challenges: both good and bad\n\n
-                    - Eating a healthy diet reduces stress: More vegetables and less sugary or fried foods.\n\n
-                    - Exercise at least three times a week. Even moderate exercise will help you feel better. \n\n
-                    - Let us know if you have trouble breathing or chest pain, severe headaches, bad thoughts, or irregular heartbeats.
+                'instruction' => "- Try to identify the areas of stress in your life: they may not be obvious, like:\n\n\t- Overload: feeling you have too many responsibilities and cannot take care of everything at once\n\t- Helplessness: feeling that you cannot solve your problems\n\t- Daily hassles of life: vehicle trouble, traffic, bills\n\t- Major life challenges: both good and bad\n\n- Eating a healthy diet reduces stress: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better. \n\n- Let us know if you have trouble breathing or chest pain, severe headaches, bad thoughts, or irregular heartbeats.
                 "
             ],
             'Psychosis & Schizophrenia' => [
-                'problems' => [   
-                    'Unspecified psychosis not due to a substance or known physiological condition',
+                'problems' => [
+                    'Brief psychotic disorder',
+                    'Catatonic schizophrenia',
+                    'Disorganized schizophrenia',
+                    'Other schizoaffective disorders',
+                    'Other schizophrenia',
+                    'Paranoid schizophrenia',
+                    'Psychotic disorder with delusions due to known physiological condition',
+                    'Psychotic disorder with hallucinations due to known physiological condition',
                     'Residual schizophrenia',
                     'Schizoaffective disorder, bipolar type',
                     'Schizoaffective disorder, depressive type',
@@ -155,24 +179,148 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Schizophrenia, unspecified',
                     'Schizophreniform disorder',
                     'Schizotypal disorder',
-                    'Paranoid schizophrenia',
-                    'Catatonic schizophrenia',
-                    'Disorganized schizophrenia',
-                    'Other schizoaffective disorders',
-                    'Other schizophrenia'
+                    'Shared psychotic disorder',
+                    'Undifferentiated schizophrenia',
+                    'Unspecified psychosis not due to a substance or known physiological condition'
                 ],
-                'instruction' => "- Avoid drugs that are known to cause you trouble.\n\n
-                - Do not stop your medications on your own.\n\n
-                - Avoid narcotics and alcohol.\n\n
-                - Focus on and schedule meaningful activities.\n\n
-                - Spend time and gain support from staff, family and other supportive people\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help.\n\n
-                - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.
+                'instruction' => "- Avoid drugs that are known to cause you trouble.\n\n- Do not stop your medications on your own.\n\n- Avoid narcotics and alcohol.\n\n- Focus on and schedule meaningful activities.\n\n- Spend time and gain support from staff, family and other supportive people\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.
                 "
             ],
             'Substance Abuse' => [
                 'problems' => [
+                    'Cannabis abuse with cannabis-induced anxiety disorder',
+                    'Cannabis abuse with intoxication delirium',
+                    'Cannabis abuse with intoxication with perceptual disturbance',
+                    'Cannabis abuse with other cannabis-induced disorder',
+                    'Cannabis abuse with psychotic disorder with delusions',
+                    'Cannabis abuse with psychotic disorder with hallucinations',
+                    'Cannabis abuse with psychotic disorder, unspecified',
+                    'Cannabis abuse with unspecified cannabis-induced disorder',
+                    'Cannabis dependence with cannabis-induced anxiety disorder',
+                    'Cannabis dependence with intoxication delirium',
+                    'Cannabis dependence with intoxication with perceptual disturbance',
+                    'Cannabis dependence with other cannabis-induced disorder',
+                    'Cannabis dependence with psychotic disorder with delusions',
+                    'Cannabis dependence with psychotic disorder with hallucinations',
+                    'Cannabis dependence with psychotic disorder, unspecified',
+                    'Cannabis dependence with unspecified cannabis-induced disorder',
+                    'Cannabis use, unspecified with anxiety disorder',
+                    'Cannabis use, unspecified with intoxication delirium',
+                    'Cannabis use, unspecified with intoxication with perceptual disturbance',
+                    'Cannabis use, unspecified with other cannabis-induced disorder',
+                    'Cannabis use, unspecified with psychotic disorder with delusions',
+                    'Cannabis use, unspecified with psychotic disorder with hallucinations',
+                    'Cannabis use, unspecified with psychotic disorder, unspecified',
+                    'Cocaine abuse with cocaine-induced anxiety disorder',
+                    'Cocaine abuse with cocaine-induced mood disorder',
+                    'Cocaine abuse with cocaine-induced psychotic disorder with delusions',
+                    'Cocaine abuse with cocaine-induced psychotic disorder with hallucinations',
+                    'Cocaine abuse with cocaine-induced psychotic disorder, unspecified',
+                    'Cocaine abuse with cocaine-induced sexual dysfunction',
+                    'Cocaine abuse with cocaine-induced sleep disorder',
+                    'Cocaine abuse with intoxication with delirium',
+                    'Cocaine abuse with intoxication with perceptual disturbance',
+                    'Cocaine abuse with other cocaine-induced disorder',
+                    'Cocaine abuse with unspecified cocaine-induced disorder',
+                    'Cocaine dependence with cocaine-induced anxiety disorder',
+                    'Cocaine dependence with cocaine-induced mood disorder',
+                    'Cocaine dependence with cocaine-induced psychotic disorder with delusions',
+                    'Cocaine dependence with cocaine-induced psychotic disorder with hallucinations',
+                    'Cocaine dependence with cocaine-induced psychotic disorder, unspecified',
+                    'Cocaine dependence with cocaine-induced sexual dysfunction',
+                    'Cocaine dependence with cocaine-induced sleep disorder',
+                    'Cocaine dependence with intoxication delirium',
+                    'Cocaine dependence with intoxication with perceptual disturbance',
+                    'Cocaine dependence with other cocaine-induced disorder',
+                    'Cocaine dependence with unspecified cocaine-induced disorder',
+                    'Cocaine use, unspecified with cocaine-induced anxiety disorder',
+                    'Cocaine use, unspecified with cocaine-induced mood disorder',
+                    'Cocaine use, unspecified with cocaine-induced psychotic disorder with delusions',
+                    'Cocaine use, unspecified with cocaine-induced psychotic disorder with hallucinations',
+                    'Cocaine use, unspecified with cocaine-induced psychotic disorder, unspecified',
+                    'Cocaine use, unspecified with cocaine-induced sexual dysfunction',
+                    'Cocaine use, unspecified with cocaine-induced sleep disorder',
+                    'Cocaine use, unspecified with intoxication delirium',
+                    'Cocaine use, unspecified with intoxication with perceptual disturbance',
+                    'Cocaine use, unspecified with other cocaine-induced disorder',
+                    'Hallucinogen abuse with hallucinogen persisting perception disorder (flashbacks)',
+                    'Hallucinogen abuse with hallucinogen-induced anxiety disorder',
+                    'Hallucinogen abuse with hallucinogen-induced mood disorder',
+                    'Hallucinogen abuse with hallucinogen-induced psychotic disorder with delusions',
+                    'Hallucinogen abuse with hallucinogen-induced psychotic disorder with hallucinations',
+                    'Hallucinogen abuse with hallucinogen-induced psychotic disorder, unspecified',
+                    'Hallucinogen abuse with intoxication with delirium',
+                    'Hallucinogen abuse with intoxication with perceptual disturbance',
+                    'Hallucinogen abuse with other hallucinogen-induced disorder',
+                    'Hallucinogen abuse with unspecified hallucinogen-induced disorder',
+                    'Hallucinogen dependence with hallucinogen persisting perception disorder (flashbacks)',
+                    'Hallucinogen dependence with hallucinogen-induced anxiety disorder',
+                    'Hallucinogen dependence with hallucinogen-induced mood disorder',
+                    'Hallucinogen dependence with hallucinogen-induced psychotic disorder with delusions',
+                    'Hallucinogen dependence with hallucinogen-induced psychotic disorder with hallucinations',
+                    'Hallucinogen dependence with hallucinogen-induced psychotic disorder, unspecified',
+                    'Hallucinogen dependence with intoxication with delirium',
+                    'Hallucinogen dependence with other hallucinogen-induced disorder',
+                    'Hallucinogen dependence with unspecified hallucinogen-induced disorder',
+                    'Hallucinogen use, unspecified with hallucinogen persisting perception disorder (flashbacks)',
+                    'Hallucinogen use, unspecified with hallucinogen-induced anxiety disorder',
+                    'Hallucinogen use, unspecified with hallucinogen-induced mood disorder',
+                    'Hallucinogen use, unspecified with hallucinogen-induced psychotic disorder with delusions',
+                    'Hallucinogen use, unspecified with hallucinogen-induced psychotic disorder with hallucinations',
+                    'Hallucinogen use, unspecified with hallucinogen-induced psychotic disorder, unspecified',
+                    'Hallucinogen use, unspecified with intoxication with delirium',
+                    'Hallucinogen use, unspecified with other hallucinogen-induced disorder',
+                    'Inhalant abuse with inhalant-induced anxiety disorder',
+                    'Inhalant abuse with inhalant-induced dementia',
+                    'Inhalant abuse with inhalant-induced mood disorder',
+                    'Inhalant abuse with inhalant-induced psychotic disorder with delusions',
+                    'Inhalant abuse with inhalant-induced psychotic disorder with hallucinations',
+                    'Inhalant abuse with inhalant-induced psychotic disorder, unspecified',
+                    'Inhalant abuse with intoxication delirium',
+                    'Inhalant abuse with other inhalant-induced disorder',
+                    'Inhalant abuse with unspecified inhalant-induced disorder',
+                    'Inhalant dependence with inhalant-induced anxiety disorder',
+                    'Inhalant dependence with inhalant-induced dementia',
+                    'Inhalant dependence with inhalant-induced mood disorder',
+                    'Inhalant dependence with inhalant-induced psychotic disorder with delusions',
+                    'Inhalant dependence with inhalant-induced psychotic disorder with hallucinations',
+                    'Inhalant dependence with inhalant-induced psychotic disorder, unspecified',
+                    'Inhalant dependence with intoxication delirium',
+                    'Inhalant use, unspecified with inhalant-induced anxiety disorder',
+                    'Inhalant use, unspecified with inhalant-induced mood disorder',
+                    'Inhalant use, unspecified with inhalant-induced persisting dementia',
+                    'Inhalant use, unspecified with inhalant-induced psychotic disorder with delusions',
+                    'Inhalant use, unspecified with inhalant-induced psychotic disorder with hallucinations',
+                    'Inhalant use, unspecified with inhalant-induced psychotic disorder, unspecified',
+                    'Inhalant use, unspecified with intoxication with delirium',
+                    'Opioid abuse with intoxication delirium',
+                    'Opioid abuse with intoxication with perceptual disturbance',
+                    'Opioid abuse with opioid-induced mood disorder',
+                    'Opioid abuse with opioid-induced psychotic disorder with delusions',
+                    'Opioid abuse with opioid-induced psychotic disorder with hallucinations',
+                    'Opioid abuse with opioid-induced psychotic disorder, unspecified',
+                    'Opioid abuse with opioid-induced sexual dysfunction',
+                    'Opioid abuse with opioid-induced sleep disorder',
+                    'Opioid abuse with other opioid-induced disorder',
+                    'Opioid abuse with unspecified opioid-induced disorder',
+                    'Opioid dependence with intoxication delirium',
+                    'Opioid dependence with opioid-induced mood disorder',
+                    'Opioid dependence with opioid-induced psychotic disorder with delusions',
+                    'Opioid dependence with opioid-induced psychotic disorder with hallucinations',
+                    'Opioid dependence with opioid-induced psychotic disorder, unspecified',
+                    'Opioid dependence with opioid-induced sexual dysfunction',
+                    'Opioid dependence with opioid-induced sleep disorder',
+                    'Opioid dependence with other opioid-induced disorder',
+                    'Opioid dependence with unspecified opioid-induced disorder',
+                    'Opioid use, unspecified with intoxication delirium',
+                    'Opioid use, unspecified with intoxication with perceptual disturbance',
+                    'Opioid use, unspecified with opioid-induced mood disorder',
+                    'Opioid use, unspecified with opioid-induced psychotic disorder with delusions',
+                    'Opioid use, unspecified with opioid-induced psychotic disorder with hallucinations',
+                    'Opioid use, unspecified with opioid-induced psychotic disorder, unspecified',
+                    'Opioid use, unspecified with opioid-induced sexual dysfunction',
+                    'Opioid use, unspecified with opioid-induced sleep disorder',
+                    'Opioid use, unspecified with other opioid-induced disorder',
                     'Other psychoactive substance abuse with intoxication delirium',
                     'Other psychoactive substance abuse with intoxication with perceptual disturbances',
                     'Other psychoactive substance abuse with other psychoactive substance-induced disorder',
@@ -215,13 +363,80 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Other psychoactive substance use, unspecified with psychoactive substanceinduced sexual dysfunction',
                     'Other psychoactive substance use, unspecified with psychoactive substanceinduced sleep disorder',
                     'Other psychoactive substance use, unspecified with withdrawal delirium',
-                    'Other psychoactive substance use, unspecified with withdrawal with perceptual disturbance'
+                    'Other psychoactive substance use, unspecified with withdrawal with perceptual disturbance',
+                    'Other stimulant abuse with intoxication delirium',
+                    'Other stimulant abuse with intoxication with perceptual disturbance',
+                    'Other stimulant abuse with other stimulant-induced disorder',
+                    'Other stimulant abuse with stimulant-induced anxiety disorder',
+                    'Other stimulant abuse with stimulant-induced mood disorder',
+                    'Other stimulant abuse with stimulant-induced psychotic disorder with delusions',
+                    'Other stimulant abuse with stimulant-induced psychotic disorder with hallucinations',
+                    'Other stimulant abuse with stimulant-induced psychotic disorder, unspecified',
+                    'Other stimulant abuse with stimulant-induced sexual dysfunction',
+                    'Other stimulant abuse with stimulant-induced sleep disorder',
+                    'Other stimulant abuse with unspecified stimulant-induced disorder',
+                    'Other stimulant dependence with intoxication delirium',
+                    'Other stimulant dependence with intoxication with perceptual disturbance',
+                    'Other stimulant dependence with other stimulant-induced disorder',
+                    'Other stimulant dependence with stimulant-induced anxiety disorder',
+                    'Other stimulant dependence with stimulant-induced mood disorder',
+                    'Other stimulant dependence with stimulant-induced psychotic disorder with delusions',
+                    'Other stimulant dependence with stimulant-induced psychotic disorder with hallucinations',
+                    'Other stimulant dependence with stimulant-induced psychotic disorder, unspecified',
+                    'Other stimulant dependence with stimulant-induced sexual dysfunction',
+                    'Other stimulant dependence with stimulant-induced sleep disorder',
+                    'Other stimulant dependence with unspecified stimulant-induced disorder',
+                    'Other stimulant use, unspecified with intoxication delirium',
+                    'Other stimulant use, unspecified with intoxication with perceptual disturbance',
+                    'Other stimulant use, unspecified with other stimulant-induced disorder',
+                    'Other stimulant use, unspecified with stimulant-induced anxiety disorder',
+                    'Other stimulant use, unspecified with stimulant-induced mood disorder',
+                    'Other stimulant use, unspecified with stimulant-induced psychotic disorder with delusions',
+                    'Other stimulant use, unspecified with stimulant-induced psychotic disorder with hallucinations',
+                    'Other stimulant use, unspecified with stimulant-induced psychotic disorder,unspecified',
+                    'Other stimulant use, unspecified with stimulant-induced sexual dysfunction',
+                    'Other stimulant use, unspecified with stimulant-induced sleep disorder',
+                    'Panic disorder ºepisodic paroxysmal anxiety» without agoraphobia',
+                    'Sedative, hypnotic or anxiolytic abuse with intoxication delirium',
+                    'Sedative, hypnotic or anxiolytic abuse with other sedative, hypnotic or anxiolytic-induced disorder',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced anxiety disorder',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced mood disorder',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced psychotic disor',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced psychotic disor',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced psychotic disor',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced sexual dysfunct',
+                    'Sedative, hypnotic or anxiolytic abuse with sedative, hypnotic or anxiolytic-induced sleep disorder',
+                    'Sedative, hypnotic or anxiolytic abuse with unspecified sedative, hypnotic or anxiolytic-induced dis',
+                    'Sedative, hypnotic or anxiolytic dependence with intoxication delirium',
+                    'Sedative, hypnotic or anxiolytic dependence with other sedative, hypnotic or anxiolytic-induced diso',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced anxiety di',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced mood disor',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced persisting',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced persisting',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced psychotic',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced psychotic',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced psychotic',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced sexual dys',
+                    'Sedative, hypnotic or anxiolytic dependence with sedative, hypnotic or anxiolytic-induced sleep diso',
+                    'Sedative, hypnotic or anxiolytic dependence with unspecified sedative, hypnotic or anxiolytic-induced',
+                    'Sedative, hypnotic or anxiolytic dependence with withdrawal delirium',
+                    'Sedative, hypnotic or anxiolytic dependence with withdrawal with perceptual disturbance',
+                    'Sedative, hypnotic or anxiolytic dependence with withdrawal, unspecified',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with intoxication delirium',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with other sedative, hypnotic or anxiolytic-induce',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced anxi',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced mood',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced pers',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced pers',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced psyc',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced psyc',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced psyc',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced sexu',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with sedative, hypnotic or anxiolytic-induced slee',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal delirium',
+                    'Sedative, hypnotic or anxiolytic use, unspecified with withdrawal with perceptual disturbances',
                 ],
-                'instruction' => "- Develop alternative behaviours to drug use, such as exercise and scheduling meaningful activities you enjoy.\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
-                - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n
-                - Help is just a phone call away: 1-800-662-HELP
+                'instruction' => "- Develop alternative behaviours to drug use, such as exercise and scheduling meaningful activities you enjoy.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n- Help is just a phone call away: 1-800-662-HELP
                 "
             ],
             'Alcoholism' => [
@@ -263,12 +478,7 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Alcohol use, unspecified with intoxication delirium',
                     'Alcohol use, unspecified with other alcohol-induced disorder'
                 ],
-                'instruction' => "- Sobriety is achievable.\n\n
-                    - Develop alternative behaviours to alcohol use, such as exercise and scheduling meaningful activities you enjoy.\n\n
-                    - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                    - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
-                    - Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n
-                    - Seek immediate medical assistance if you have abdominal pain, fever over 100.5, repeated vomiting or vomiting blood.
+                'instruction' => "- Sobriety is achievable.\n\n- Develop alternative behaviours to alcohol use, such as exercise and scheduling meaningful activities you enjoy.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n- Seek immediate medical assistance if you have abdominal pain, fever over 100.5, repeated vomiting or vomiting blood.
                 "
             ],
             'Bipolar' => [
@@ -300,12 +510,17 @@ class CpmDefaultInstructionSeeder extends Seeder
                     'Bipolar disorder, in partial remission, most recent episode manic',
                     'Bipolar disorder, in partial remission, most recent episode mixed',
                     'Bipolar disorder, unspecified',
+                    'Manic episode in full remission',
+                    'Manic episode in partial remission',
+                    'Manic episode without psychotic symptoms, mild',
+                    'Manic episode without psychotic symptoms, moderate',
+                    'Manic episode without psychotic symptoms, unspecified',
+                    'Manic episode, severe with psychotic symptoms',
+                    'Manic episode, severe, without psychotic symptoms',
+                    'Manic episode, unspecified',
                     'Other bipolar disorder'
                 ],
-                'instruction' => "- Bipolar is one of most treatable conditions.\n\n
-                - Do NOT discontinue medications when you feel better, always consult with your doctor before changing your care plan.\n\n
-                - Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n
-                - Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
+                'instruction' => "- Bipolar is one of most treatable conditions.\n\n- Do NOT discontinue medications when you feel better, always consult with your doctor before changing your care plan.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n
                 "
             ]
         ];

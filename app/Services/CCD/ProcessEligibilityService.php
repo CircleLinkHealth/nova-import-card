@@ -10,16 +10,17 @@ namespace App\Services\CCD;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Importer\Loggers\Allergy\NumberedAllergyFields;
+use App\Importer\Loggers\Medication\NumberedMedicationFields;
+use App\Importer\Loggers\Problem\NumberedProblemFields;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use ZanySoft\Zip\Zip;
 
 
 class ProcessEligibilityService
@@ -50,95 +51,97 @@ class ProcessEligibilityService
                 ->first();
         }
 
-        $zipFiles = $contents
-            ->where('type', '=', 'file')
-            ->where('mimetype', '=', 'application/zip')
-            ->map(function ($file) use (
-                $cloudDisk,
-                $practice,
-                $dir,
-                $filterLastEncounter,
-                $filterInsurance,
-                $filterProblems,
-                $processedDir,
-                $batch
-            ) {
-                $cloudFilePath = $file['path'];
-                $cloudFileName = $file['filename'];
-                $cloudDirName  = $file['dirname'];
-
-                if (str_contains($cloudFileName, ['processed'])) {
-                    $cloudDisk->move($cloudFilePath, "{$processedDir['path']}/{$cloudFileName}");
-
-                    return $file;
-                }
-
-                $localDisk = Storage::disk('local');
-
-                $stream = $cloudDisk->getDriver()
-                                    ->readStream($cloudFilePath);
-
-                $targetFile = "zip/$dir/$cloudFileName";
-
-                $localDisk->put($targetFile, stream_get_contents($stream));
-
-                $isValid = Zip::check($localDisk->path($targetFile));
-
-                if ($isValid) {
-                    $unzipDir = "zip/$dir/unzipped";
-
-                    $localDisk->makeDirectory($unzipDir);
-
-                    $zip = Zip::open($localDisk->path($targetFile));
-                    $zip->extract($localDisk->path($unzipDir));
-                    $zip->close();
-
-                    foreach ($localDisk->allFiles($unzipDir) as $path) {
-                        $now       = Carbon::now()->toAtomString();
-                        $randomStr = str_random();
-                        $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
-                            fopen($localDisk->path($path), 'r+'));
-
-                        $ccda = Ccda::create([
-                            'batch_id'    => $batch->id,
-                            'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
-                            'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
-                            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
-                            'imported'    => false,
-                            'practice_id' => (int)$practice->id,
-                        ]);
-
-                        //for some reason it doesn't save practice_id when using Ccda::create([])
-                        $ccda->practice_id = (int)$practice->id;
-                        $ccda->save();
-
-                        ProcessCcda::withChain([
-                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
-                        ])->dispatch($ccda->id)
-                                   ->onQueue('ccda-processor');
-
-                        $localDisk->delete($path);
-                    }
-
-                    $localDisk->deleteDir("zip/$dir");
-
-                    return $file;
-                }
-
-                return false;
-            })
-            ->filter()
-            ->values();
-
-        if ($zipFiles->isNotEmpty()) {
-            return 'done';
-        }
+        // not supporting zip files for now
+//        $zipFiles = $contents
+//            ->where('type', '=', 'file')
+//            ->where('mimetype', '=', 'application/zip')
+//            ->map(function ($file) use (
+//                $cloudDisk,
+//                $practice,
+//                $dir,
+//                $filterLastEncounter,
+//                $filterInsurance,
+//                $filterProblems,
+//                $processedDir,
+//                $batch
+//            ) {
+//                $cloudFilePath = $file['path'];
+//                $cloudFileName = $file['filename'];
+//                $cloudDirName  = $file['dirname'];
+//
+//                if (str_contains($cloudFileName, ['processed'])) {
+//                    $cloudDisk->move($cloudFilePath, "{$processedDir['path']}/{$cloudFileName}");
+//
+//                    return $file;
+//                }
+//
+//                $localDisk = Storage::disk('local');
+//
+//                $stream = $cloudDisk->getDriver()
+//                                    ->readStream($cloudFilePath);
+//
+//                $targetFile = "zip/$dir/$cloudFileName";
+//
+//                $localDisk->put($targetFile, stream_get_contents($stream));
+//
+//                $isValid = Zip::check($localDisk->path($targetFile));
+//
+//                if ($isValid) {
+//                    $unzipDir = "zip/$dir/unzipped";
+//
+//                    $localDisk->makeDirectory($unzipDir);
+//
+//                    $zip = Zip::open($localDisk->path($targetFile));
+//                    $zip->extract($localDisk->path($unzipDir));
+//                    $zip->close();
+//
+//                    foreach ($localDisk->allFiles($unzipDir) as $path) {
+//                        $now       = Carbon::now()->toAtomString();
+//                        $randomStr = str_random();
+//                        $put       = $cloudDisk->put($cloudDirName . "/$randomStr-$now",
+//                            fopen($localDisk->path($path), 'r+'));
+//
+//                        $ccda = Ccda::create([
+//                            'batch_id'    => $batch->id,
+//                            'source'      => Ccda::GOOGLE_DRIVE . "_$dir",
+//                            'xml'         => stream_get_contents(fopen($localDisk->path($path), 'r+')),
+//                            'status'      => Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY,
+//                            'imported'    => false,
+//                            'practice_id' => (int)$practice->id,
+//                        ]);
+//
+//                        //for some reason it doesn't save practice_id when using Ccda::create([])
+//                        $ccda->practice_id = (int)$practice->id;
+//                        $ccda->save();
+//
+//                        ProcessCcda::withChain([
+//                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
+//                        ])->dispatch($ccda->id)
+//                                   ->onQueue('ccda-processor');
+//
+//                        $localDisk->delete($path);
+//                    }
+//
+//                    $localDisk->deleteDir("zip/$dir");
+//
+//                    return $file;
+//                }
+//
+//                return false;
+//            })
+//            ->filter()
+//            ->values();
+//
+//        if ($zipFiles->isNotEmpty()) {
+//            return 'done';
+//        }
 
         $ccds = $contents->where('type', '=', 'file')
                          ->whereIn('mimetype', [
                              'text/xml',
                              'application/xml',
-                         ]);
+                         ])
+                         ->take(10);
 
         if ($ccds->isEmpty()) {
             return false;
@@ -279,75 +282,6 @@ class ProcessEligibilityService
     }
 
     /**
-     * Import a Patient whose CCDA we have already.
-     *
-     * @param $ccdaId
-     *
-     * @return \stdClass
-     */
-    public function importExistingCcda($ccdaId)
-    {
-        $response = new \stdClass();
-
-        $ccda = Ccda::withTrashed()
-                    ->with('patient.patientInfo')
-                    ->find($ccdaId);
-
-        if ( ! $ccda) {
-            $response->success = false;
-            $response->message = "We could not locate CCDA with id $ccdaId";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->imported) {
-            if ($ccda->patient) {
-
-            }
-            $response->success = false;
-            $response->message = "CCDA with id $ccdaId has already been imported.";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->mrn && $ccda->practice_id) {
-            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
-                $q->where('mrn_number', $ccda->mrn);
-            })->whereProgramId($ccda->practice_id)
-                          ->first();
-
-            if ($exists) {
-                $response->success = false;
-                $response->message = "CCDA with id $ccdaId has already been imported.";
-                $response->imr     = null;
-
-                return $response;
-            }
-        }
-
-        $imr = $ccda->import();
-
-        $update = Ccda::whereId($ccdaId)
-                      ->update([
-                          'status'   => Ccda::QA,
-                          'imported' => true,
-                      ]);
-
-        $response->success = true;
-        $response->message = "CCDA successfully imported.";
-        $response->imr     = $imr;
-
-        return $response;
-    }
-
-    public function isCcda($medicalRecordType)
-    {
-        return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
-    }
-
-    /**
      * @param $dir
      * @param int $practiceId
      * @param $filterLastEncounter
@@ -418,64 +352,6 @@ class ProcessEligibilityService
     }
 
     /**
-     * Validates an array of column names from a CSV that is uploaded to be processed for eligibility.
-     * Returns false if there's no errors, and an array of errors if errors are found.
-     *
-     * @param array $columnNames
-     *
-     * @return array|bool
-     */
-    public function validationErrorsForSingleCsvColumnNames(array $columnNames)
-    {
-        $toValidate = [];
-        $rules      = [];
-
-        foreach ($columnNames as $cn) {
-            $toValidate[$cn] = $cn;
-        }
-
-        foreach ($this->getSingleCsvRequiredFields() as $name) {
-            $rules[$name] = 'required|filled|same:' . $name;
-        }
-
-        $validator = \Validator::make($toValidate, $rules);
-
-        return $validator->passes()
-            ? false
-            : $validator->errors()->all();
-    }
-
-    public function getSingleCsvRequiredFields()
-    {
-        return [
-            'mrn',
-            'last_name',
-            'first_name',
-            'dob',
-            'gender',
-            'lang',
-            'referring_provider_name',
-            'cell_phone',
-            'home_phone',
-            'other_phone',
-            'primary_phone',
-            'email',
-            'street',
-            'street2',
-            'city',
-            'state',
-            'zip',
-            'primary_insurance',
-            'secondary_insurance',
-            'tertiary_insurance',
-            'last_encounter',
-            'problems_string',
-            'allergies_string',
-            'medications_string',
-        ];
-    }
-
-    /**
      * @param EligibilityBatch $batch
      *
      * @throws \Exception
@@ -492,29 +368,72 @@ class ProcessEligibilityService
             return false;
         }
 
-        return $collection
-            ->map(function ($patient) use ($batch) {
-                $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
+        $patientList = [];
 
-                $job = EligibilityJob::whereHash($hash)->first();
+        for ($i = 1; $i <= 10; $i++) {
+            $patient = $collection->shift();
 
-                if ( ! $job) {
-                    $job = EligibilityJob::create([
-                        'batch_id' => $batch->id,
-                        'hash'     => $hash,
-                        'data'     => $patient,
-                    ]);
-                }
+            if ( ! is_array($patient)) {
+                continue;
+            }
 
-                $patient['eligibility_job_id'] = $job->id;
+            $patientList[] = $patient;
 
-                if ($job->status == 0) {
-                    ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            $patient = $this->transformCsvRow($patient);
 
-                    return true;
-                }
+            $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
 
-                return false;
-            })->filter()->values();
+            $job = EligibilityJob::whereHash($hash)->first();
+
+            if ( ! $job) {
+                $job = EligibilityJob::create([
+                    'batch_id' => $batch->id,
+                    'hash'     => $hash,
+                    'data'     => $patient,
+                ]);
+            }
+
+            $patient['eligibility_job_id'] = $job->id;
+
+            if ($job->status == 0) {
+                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            }
+        }
+
+        $options                = $batch->options;
+        $options['patientList'] = $collection->toArray();
+        $batch->options         = $options;
+        $batch->save();
+
+        return $patientList;
+    }
+
+    private function transformCsvRow($patient)
+    {
+        if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
+            $problems = (new NumberedProblemFields())->handle($patient);
+
+            $patient['problems_string'] = json_encode([
+                'Problems' => $problems,
+            ]);
+        }
+
+        if (count(preg_grep('/^medication_[\d]*/', array_keys($patient))) > 0) {
+            $medications = (new NumberedMedicationFields())->handle($patient);
+
+            $patient['medications_string'] = json_encode([
+                'Medications' => $medications,
+            ]);
+        }
+
+        if (count(preg_grep('/^allergy_[\d]*/', array_keys($patient))) > 0) {
+            $allergies = (new NumberedAllergyFields())->handle($patient);
+
+            $patient['allergies_string'] = json_encode([
+                'Allergies' => $allergies,
+            ]);
+        }
+
+        return $patient;
     }
 }
