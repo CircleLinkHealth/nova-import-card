@@ -68,8 +68,8 @@
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <v-datepicker name="date" class="selectpickerX form-control" format="yyyy-MM-dd" 
-                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
-                                            value="{{ Carbon::parse($date)->format('Y-m-d') }}" required></v-datepicker>
+                                            placeholder="YYYY-MM-DD" 
+                                            value="{{ auth()->user()->resolveTimezoneToGMT(Carbon::parse($date)) }}" required></v-datepicker>
                                     </div>
                                 </div>
 
