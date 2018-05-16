@@ -78,13 +78,23 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             })
         },
         inactivityRequiresNoModal () {
-            return this.inactiveSeconds < (!this.callMode ? 120 : 900) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
+            return this.inactiveSeconds < (!this.callMode ? this.ALERT_TIMEOUT : this.ALERT_TIMEOUT_CALL_MODE) // 2 minutes if !call-mode and 15 minutes if in call-mode (120, 900)
         },
         inactivityRequiresModal () {
-            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? 600 : 1200) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
+            return !this.inactivityRequiresNoModal() && this.inactiveSeconds < (!this.callMode ? this.LOGOUT_TIMEOUT : this.LOGOUT_TIMEOUT_CALL_MODE) // 10 minutes if !call-mode and 20 minutes if in call-mode (600, 1200)
         },
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
+        },
+        ALERT_TIMEOUT: 120,
+        LOGOUT_TIMEOUT: 600,
+        ALERT_TIMEOUT_CALL_MODE: 900,
+        LOGOUT_TIMEOUT_CALL_MODE: 1200,
+        overrideTimeouts (options = {}) {
+            this.ALERT_TIMEOUT = Math.ceil(options.alertTimeout) || this.ALERT_TIMEOUT;
+            this.LOGOUT_TIMEOUT = Math.ceil(options.logoutTimeout) || this.LOGOUT_TIMEOUT;
+            this.ALERT_TIMEOUT_CALL_MODE = Math.ceil(options.alertTimeoutCallMode) || this.ALERT_TIMEOUT_CALL_MODE;
+            this.LOGOUT_TIMEOUT_CALL_MODE = Math.ceil(options.logoutTimeoutCallMode) || this.LOGOUT_TIMEOUT_CALL_MODE;
         }
     }
 
@@ -102,8 +112,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
+        user.totalTime = Math.max(user.totalTime, info.totalTime)
         user.enter(info, ws)
-        //user.totalTime = Math.max(user.totalTime, info.totalTime)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
         let activity = user.findActivity(info)
