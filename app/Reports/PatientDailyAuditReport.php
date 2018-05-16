@@ -37,7 +37,13 @@ class PatientDailyAuditReport
 
         $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
 
-        $pdf->save(storage_path("download/$name.pdf"), true);
+        $path = storage_path("download/$name.pdf");
+
+        $pdf->save($path, true);
+
+        $collName = 'audit_report_' . $this->data['month'];
+
+        $this->patient->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
 
         return "/$name.pdf";
     }
