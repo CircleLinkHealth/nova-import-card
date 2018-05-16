@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "98fa3b52e03ea8131c86686ec4e94085",
+    "content-hash": "2168d87f12f6a61eedfb5221085af1b9",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -170,16 +170,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.55.9",
+            "version": "3.56.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ec7b972330ce65fa33875025ffec8e09e0476a8f"
+                "reference": "933bc65b9f8e4d88e0bf4635d9476c2766eee743"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ec7b972330ce65fa33875025ffec8e09e0476a8f",
-                "reference": "ec7b972330ce65fa33875025ffec8e09e0476a8f",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/933bc65b9f8e4d88e0bf4635d9476c2766eee743",
+                "reference": "933bc65b9f8e4d88e0bf4635d9476c2766eee743",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-05-08T16:37:41+00:00"
+            "time": "2018-05-15T18:32:36+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1001,16 +1001,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.9.5",
+            "version": "8.9.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "cf4adb15bc43a2746a322431194ef0ff85766282"
+                "reference": "3fa83ad80f9ac06fa9c105640dc0fffbe1086614"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/cf4adb15bc43a2746a322431194ef0ff85766282",
-                "reference": "cf4adb15bc43a2746a322431194ef0ff85766282",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/3fa83ad80f9ac06fa9c105640dc0fffbe1086614",
+                "reference": "3fa83ad80f9ac06fa9c105640dc0fffbe1086614",
                 "shasum": ""
             },
             "require": {
@@ -1065,7 +1065,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-05-03T11:02:57+00:00"
+            "time": "2018-05-15T11:28:45+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1177,16 +1177,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.58",
+            "version": "v0.59",
             "source": {
                 "type": "git",
                 "url": "https://github.com/google/google-api-php-client-services.git",
-                "reference": "e21760a34daea7bc29e2866b62f8c8db4e91228d"
+                "reference": "1dbfb1e7ff596c9fe17f4ba8e6a74bb073adbe0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/e21760a34daea7bc29e2866b62f8c8db4e91228d",
-                "reference": "e21760a34daea7bc29e2866b62f8c8db4e91228d",
+                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/1dbfb1e7ff596c9fe17f4ba8e6a74bb073adbe0f",
+                "reference": "1dbfb1e7ff596c9fe17f4ba8e6a74bb073adbe0f",
                 "shasum": ""
             },
             "require": {
@@ -1210,7 +1210,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-05-06T00:22:52+00:00"
+            "time": "2018-05-14T00:23:02+00:00"
         },
         {
             "name": "google/auth",
@@ -5084,16 +5084,16 @@
         },
         {
             "name": "spiritix/lada-cache",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spiritix/lada-cache.git",
-                "reference": "07a53f611ea5365fa0bac5b791e82863318e7860"
+                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spiritix/lada-cache/zipball/07a53f611ea5365fa0bac5b791e82863318e7860",
-                "reference": "07a53f611ea5365fa0bac5b791e82863318e7860",
+                "url": "https://api.github.com/repos/spiritix/lada-cache/zipball/189dd9e7f2cf3a437622288f49ab12eb834a69c1",
+                "reference": "189dd9e7f2cf3a437622288f49ab12eb834a69c1",
                 "shasum": ""
             },
             "require": {
@@ -5141,7 +5141,7 @@
                 "php",
                 "redis"
             ],
-            "time": "2018-01-29T09:26:07+00:00"
+            "time": "2018-05-14T12:40:22+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -6754,65 +6754,6 @@
                 "laravel5"
             ],
             "time": "2016-10-13T00:10:14+00:00"
-        },
-        {
-            "name": "zanysoft/laravel-zip",
-            "version": "1.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zanysoft/laravel-zip.git",
-                "reference": "466663746c92154c48a2d490efc6724f9f6e9652"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zanysoft/laravel-zip/zipball/466663746c92154c48a2d490efc6724f9f6e9652",
-                "reference": "466663746c92154c48a2d490efc6724f9f6e9652",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.0|^5.0",
-                "scrutinizer/ocular": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "ZanySoft\\Zip\\ZipServiceProvider"
-                    ],
-                    "aliases": {
-                        "Zip": "ZanySoft\\Zip\\ZipFacade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "ZanySoft\\Zip\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Zany Soft",
-                    "email": "info@zanysoft.co",
-                    "homepage": "http://www.zanysoft.co"
-                }
-            ],
-            "description": "ZipArchive toolbox",
-            "homepage": "http://www.zanysoft.co",
-            "keywords": [
-                "merge",
-                "multiple",
-                "unzip",
-                "zip",
-                "ziparchive"
-            ],
-            "time": "2017-10-10T03:22:41+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -9275,16 +9216,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.14.1",
+            "version": "v3.14.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "11c586309fa6c0e952b7e40ca46350f9af23b6e5"
+                "reference": "9e3a801750cb45edd3fb36c677fb5172e1a0a2a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/11c586309fa6c0e952b7e40ca46350f9af23b6e5",
-                "reference": "11c586309fa6c0e952b7e40ca46350f9af23b6e5",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/9e3a801750cb45edd3fb36c677fb5172e1a0a2a0",
+                "reference": "9e3a801750cb45edd3fb36c677fb5172e1a0a2a0",
                 "shasum": ""
             },
             "type": "library",
@@ -9328,7 +9269,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-05-05T02:25:20+00:00"
+            "time": "2018-05-12T07:05:49+00:00"
         },
         {
             "name": "symfony/class-loader",
