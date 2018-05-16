@@ -276,10 +276,8 @@ class OpsDashboardService
         foreach ($patients as $patient) {
 
             if ($patient->activities) {
-
                 //filtering needed for prior day results
                 $activities = $patient->activities->where('performed_at', '<=', $toDate);
-
 
                 $ccmTime = $activities->sum('duration');
 
@@ -301,6 +299,8 @@ class OpsDashboardService
                 if ($ccmTime > 1200) {
                     $count['20plus'] += 1;
                 }
+            }else{
+                $count['zero'] += 1;
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
