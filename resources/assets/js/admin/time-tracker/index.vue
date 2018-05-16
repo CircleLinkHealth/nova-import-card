@@ -109,7 +109,7 @@
                             if (res.data) {
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'server:sync') {
-                                    self.seconds = data.seconds
+                                    self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false
                                 }
