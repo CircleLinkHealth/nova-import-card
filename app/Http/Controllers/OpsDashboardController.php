@@ -67,7 +67,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $rows = [];
@@ -120,7 +120,7 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $rows = [];
