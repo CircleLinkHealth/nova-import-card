@@ -94,6 +94,8 @@
         color: #50b2e2;
         border: 3px solid #337ab7;
         border-radius: 10px;
+        position: relative;
+        top: 10px;
     }
 
     ul.bhi-nav li {
