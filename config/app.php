@@ -284,7 +284,6 @@ return [
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        'Zip'            => ZanySoft\Zip\ZipFacade::class,
         'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
