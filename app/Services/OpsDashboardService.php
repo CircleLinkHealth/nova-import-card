@@ -214,7 +214,9 @@ class OpsDashboardService
         $gCodeHoldCount = null;
 
         foreach ($patients as $patient) {
-            if ($patient->patientInfo) {
+            if (!$patient->patientInfo){
+                dd($patient);
+            }
                 if ($patient->patientInfo->ccm_status == 'paused') {
                     $paused[] = $patient;
                 }
@@ -229,9 +231,6 @@ class OpsDashboardService
                         $gCodeHold[] = $patient;
                     }
                 }
-
-            }
-
         }
 
         $pausedCount    = count($paused);

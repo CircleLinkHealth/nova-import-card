@@ -49,8 +49,7 @@ class OpsDashboardController extends Controller
         $date = $maxDate->copy()->setTimeFromTimeString('23:00');
 
 
-        $enrolledPatients = User::ofType('participant')
-                                ->with([
+        $enrolledPatients = User::with([
                                     'activities' => function ($activity) use ($date) {
                                         $activity->where('performed_at', '>=',
                                             $date->copy()->startOfMonth()->startOfDay()->toDateTimeString())
@@ -58,7 +57,7 @@ class OpsDashboardController extends Controller
                                     },
                                 ])
                                 ->whereHas('patientInfo', function ($patient) {
-                                    $patient->where('ccm_status', Patient::ENROLLED);
+                                    $patient->enrolled();
                                 })->get();
 
         //used by query to get Patients by status

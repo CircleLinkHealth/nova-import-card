@@ -25,7 +25,12 @@ class OpsDashboardTest extends TestCase
     private $service;
     private $repo;
     private $date;
+    private $data;
 
+
+    public function test_ops_Dashboard_ccm_time_patients(){
+
+    }
 
     public function test_billing_churn(){
 
@@ -63,8 +68,9 @@ class OpsDashboardTest extends TestCase
         $this->controller = app(OpsDashboardController::class);
         $this->service = app(OpsDashboardService::class);
         $this->repo = new OpsDashboardPatientEloquentRepository();
-
         $this->date = Carbon::today();
+
+        $this->data = $this->createTestCustomerData(100);
 
     }
 }
