@@ -100,10 +100,17 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
 
     /**
      * 
-     * @param {{ activity: '', isBehavioral: false }} info 
+     * @param {{ activity: '', isManualBehavioral: false }} info 
      */
     user.findActivity = (info) => {
-        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isBehavioral))
+        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral))
+    }
+
+    user.closeOtherBehavioralActivity = (info, ws) => {
+        const activity = user.activities.find(item => (item.name == info.activity) && (item.isBehavioral !== info.isManualBehavioral))
+        if (activity) {
+            activity.sockets.splice(activity.sockets.indexOf(ws), 1)
+        }
     }
 
     user.start = (info, ws) => {

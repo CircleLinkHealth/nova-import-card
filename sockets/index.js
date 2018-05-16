@@ -88,6 +88,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
+                user.closeOtherBehavioralActivity(info, ws)
                 user.enter(info, ws)
                 user.sync()
               }

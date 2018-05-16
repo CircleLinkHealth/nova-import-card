@@ -365,8 +365,8 @@ describe('TimeTrackerFlow', () => {
 
         const timeTracker = new TimeTracker()
 
-        const info1 = { ...info, ...{ patientId: 1, isBehavioral: true } }
-        const info2 = { ...info, ...{ patientId: 1, isBehavioral: false } }
+        const info1 = { ...info, ...{ patientId: 1, isManualBehavioral: true } }
+        const info2 = { ...info, ...{ patientId: 1, isManualBehavioral: false } }
 
         const user = timeTracker.get(info1)
 
