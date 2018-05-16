@@ -211,13 +211,14 @@ module.exports = app => {
             providerId: user.providerId,
             ipAddr: user.ipAddr,
             programId: user.programId,
-            activities: user.activities.map(activity => ({
+            activities: user.activities.filter(activity => activity.duration > 0).map(activity => ({
               name: activity.name,
               title: activity.title,
               duration: activity.duration,
               url: activity.url,
               url_short: activity.url_short,
-              start_time: activity.start_time
+              start_time: activity.start_time,
+              is_behavioral: activity.isBehavioral
             }))
           }
 
