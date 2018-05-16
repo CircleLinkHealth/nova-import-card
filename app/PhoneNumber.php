@@ -1,7 +1,6 @@
 <?php namespace App;
 
 use App\CLH\Helpers\StringManipulation;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\PhoneNumber
@@ -31,31 +30,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PhoneNumber extends \App\BaseModel
 {
-
     //types
     const HOME = 'home';
     const MOBILE = 'mobile';
     const WORK = 'work';
 
-    public $timestamps = false;
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'phone_numbers';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
