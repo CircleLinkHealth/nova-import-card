@@ -92,10 +92,17 @@
     ul.bhi-nav {
         display: inline-block;
         color: #50b2e2;
+        border: 3px solid #337ab7;
+        border-radius: 10px;
     }
 
     ul.bhi-nav li {
         cursor: pointer;
+        padding: 0px
+    }
+
+    ul.bhi-nav li a:hover {
+        background-color: transparent;
     }
 
     .modal-bhi .modal-container {

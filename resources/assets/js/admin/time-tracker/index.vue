@@ -8,12 +8,13 @@
         </div>
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" v-if="info.isBehavioral && info.isCcm"></bhi-switch>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
                     :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <br><br>
-            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" v-if="info.isBehavioral && info.isCcm"></bhi-switch>
+            
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
         </span>
