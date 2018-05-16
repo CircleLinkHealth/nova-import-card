@@ -13,7 +13,7 @@
                     :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
             <br><br>
-            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm"></bhi-switch>
+            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" v-if="info.isBehavioral && info.isCcm"></bhi-switch>
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
         </span>
