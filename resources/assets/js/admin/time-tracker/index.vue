@@ -87,14 +87,14 @@
                         })
                     );
                     if (this.overrideTimeout) {
-                        setTimeout(() => {
-                            EventBus.$emit('modal-inactivity:timeouts:override', {
-                                alertTimeout: 30, 
-                                logoutTimeout: 120,
-                                alertTimeoutCallMode: 60, 
-                                logoutTimeoutCallMode: 150
-                            })
-                        }, 1000)
+                        // setTimeout(() => {
+                        //     EventBus.$emit('modal-inactivity:timeouts:override', {
+                        //         alertTimeout: 30, 
+                        //         logoutTimeout: 120,
+                        //         alertTimeoutCallMode: 60, 
+                        //         logoutTimeoutCallMode: 150
+                        //     })
+                        // }, 1000)
                     }
                 }
             },
@@ -173,6 +173,7 @@
         mounted() {
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
+            this.info.isManualBehavioral = false
 
             if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
@@ -275,22 +276,16 @@
                 })
 
                 EventBus.$on('tracker:bhi:switch', (mode = false) => {
-                    if (this.info.isBehavioral != mode) {
-                        this.info.isBehavioral = mode
-                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-                            this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
-                        }
-                        console.log('tracker:bhi', mode)
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.info.isManualBehavioral = mode
+                        this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
                     }
+                    console.log('tracker:bhi', mode)
                 })
 
                 Event.$on('careplan:bhi', ({ isCcm, isBehavioral }) => {
                     this.info.isBehavioral = isBehavioral
                     this.info.isCcm = isCcm
-                    
-                    if (isBehavioral && !isCcm) {
-                        EventBus.$emit('tracker:bhi:switch', true)
-                    }
                 })
 
                 this.createSocket()

@@ -1,10 +1,10 @@
 <template>
     <span>
-        <ul class="nav nav-pills bhi-nav" v-if="(isBhi && isCcm) || isManualOveride">
-            <li class="nav-item" :class="{ active: !isBhi }">
+        <ul class="nav nav-pills bhi-nav" v-if="(isBhi && isCcm)">
+            <li class="nav-item" :class="{ active: !isManualBehavioral }">
                 <a class="nav-link" data-toggle="tab" role="tab" title="switch to CCM mode" @click="setBhi(false)">CCM</a>
             </li>
-            <li class="nav-item" :class="{ active: isBhi }">
+            <li class="nav-item" :class="{ active: isManualBehavioral }">
                 <a class="nav-link" data-toggle="tab" role="tab" title="switch to BHI mode" @click="setBhi(true)">BHI</a>
             </li>
         </ul>
@@ -18,7 +18,10 @@
 
     export default {
         props: {
-            isBhi: Boolean,
+            isBhi: {
+                type: Boolean,
+                default: false
+            },
             isCcm: Boolean
         },
         computed: {
@@ -26,7 +29,7 @@
         },
         data () {
             return {
-                isManualOveride: false
+                isManualBehavioral: false
             }
         },
         components: {
@@ -35,6 +38,7 @@
         methods: {
             setBhi (mode) {
                 EventBus.$emit('tracker:bhi:switch', mode)
+                this.isManualBehavioral = mode
             }
         },
         mounted () {
