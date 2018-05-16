@@ -51,9 +51,8 @@ class OpsDashboardController extends Controller
 
         $enrolledPatients = User::with([
                                     'activities' => function ($activity) use ($date) {
-                                        $activity->where('performed_at', '>=',
-                                            $date->copy()->startOfMonth()->startOfDay()->toDateTimeString())
-                                                 ->where('performed_at', '<=', $date->toDateTimeString());
+                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
+                                                 ->where('performed_at', '<=', $date);
                                     },
                                 ])
                                 ->whereHas('patientInfo', function ($patient) {
@@ -75,8 +74,7 @@ class OpsDashboardController extends Controller
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
-                $statusPatientsByPractice);
+            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -129,7 +127,7 @@ class OpsDashboardController extends Controller
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
+            $row                      = $this->service->dailyReportRow($date, $patientsByPractice,
                 $statusPatientsByPractice);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;

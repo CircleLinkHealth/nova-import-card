@@ -26,9 +26,12 @@ class OpsDashboardTest extends TestCase
     private $repo;
     private $date;
     private $data;
-
+    private $practice;
+    private $patients;
 
     public function test_ops_Dashboard_ccm_time_patients(){
+
+
 
     }
 
@@ -71,6 +74,8 @@ class OpsDashboardTest extends TestCase
         $this->date = Carbon::today();
 
         $this->data = $this->createTestCustomerData(100);
+        $this->patients = $this->data['patients'];
+        $this->practice = $this->practice;
 
     }
 }

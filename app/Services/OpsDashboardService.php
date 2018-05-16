@@ -316,22 +316,18 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($practice, $date, $enrolledPatients, $patientsByStatus)
+    public function dailyReportRow(Carbon $date, $enrolledPatients, $patientsByStatus)
     {
-        $date = new Carbon($date);
+
 
         $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
-        //total for day before
-        $priorDay = $date->copy()->subDay(1)->toDateTimeString();
-
-
-        $priorDayCcmCounts = $this->countPatientsByCcmTime($enrolledPatients, $priorDay);
-
-        $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
-        $ccmTotal                    = collect($ccmCounts);
 
 
         $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
+
+
+        $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
+        $ccmTotal                    = collect($ccmCounts);
 
         if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
             $countsByStatus['enrolled'] == 0 &&
@@ -340,6 +336,8 @@ class OpsDashboardService
             $countsByStatus['gCodeHold'] == 0) {
             return null;
         }
+
+
 
 
         return collect([

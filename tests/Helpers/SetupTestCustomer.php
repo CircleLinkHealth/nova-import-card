@@ -105,7 +105,7 @@ trait SetupTestCustomer
 
         //attach problems, summaries, chargeable services
         $problemIds = CpmProblem::get()->pluck('id');
-        $months     = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $months     = collect([1, 2, 3, 4, 5, 6]);
 
         $patient->patientSummaries()->create([
             'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
