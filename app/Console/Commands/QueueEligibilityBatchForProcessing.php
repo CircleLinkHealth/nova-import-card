@@ -97,6 +97,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<=', 2)
+                                     ->take(10)
                                      ->get();
 
         if ($unprocessed->isEmpty()) {

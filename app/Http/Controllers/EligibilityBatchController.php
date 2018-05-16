@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
@@ -49,6 +50,12 @@ class EligibilityBatchController extends Controller
                 null)->count();
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
+        } elseif ($batch->type == EligibilityBatch::TYPE_ONE_CSV) {
+            $jobs = EligibilityJob::whereBatchId($batch->id)->get();
+
+            $unprocessed = $jobs->where('status', '<', 2)->count();
+            $ineligible  = $jobs->where('status', 3)->where('outcome', EligibilityJob::INELIGIBLE)->count();
+            $duplicates  = $jobs->where('status', 3)->where('outcome', EligibilityJob::DUPLICATE)->count();
         }
 
         $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();

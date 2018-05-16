@@ -154,6 +154,18 @@ class CallFilters extends QueryFilters
             ->where('scheduled_date', 'LIKE', '%' . $date . '%');
     }
 
+    public function minScheduledDate($date) {
+        return $this->builder
+            ->where('scheduled_date', '>=', $date);
+    }
+
+    /**
+     * calls with no nurse assigned
+     */
+    public function unassigned() {
+        return $this->builder->where('outbound_cpm_id', null);
+    }
+
     /**
      * Scope for calls by the date the patient was last called.
      *

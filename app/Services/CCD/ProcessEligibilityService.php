@@ -10,13 +10,15 @@ namespace App\Services\CCD;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Importer\Loggers\Allergy\NumberedAllergyFields;
+use App\Importer\Loggers\Medication\NumberedMedicationFields;
+use App\Importer\Loggers\Problem\NumberedProblemFields;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
@@ -280,75 +282,6 @@ class ProcessEligibilityService
     }
 
     /**
-     * Import a Patient whose CCDA we have already.
-     *
-     * @param $ccdaId
-     *
-     * @return \stdClass
-     */
-    public function importExistingCcda($ccdaId)
-    {
-        $response = new \stdClass();
-
-        $ccda = Ccda::withTrashed()
-                    ->with('patient.patientInfo')
-                    ->find($ccdaId);
-
-        if ( ! $ccda) {
-            $response->success = false;
-            $response->message = "We could not locate CCDA with id $ccdaId";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->imported) {
-            if ($ccda->patient) {
-
-            }
-            $response->success = false;
-            $response->message = "CCDA with id $ccdaId has already been imported.";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->mrn && $ccda->practice_id) {
-            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
-                $q->where('mrn_number', $ccda->mrn);
-            })->whereProgramId($ccda->practice_id)
-                          ->first();
-
-            if ($exists) {
-                $response->success = false;
-                $response->message = "CCDA with id $ccdaId has already been imported.";
-                $response->imr     = null;
-
-                return $response;
-            }
-        }
-
-        $imr = $ccda->import();
-
-        $update = Ccda::whereId($ccdaId)
-                      ->update([
-                          'status'   => Ccda::QA,
-                          'imported' => true,
-                      ]);
-
-        $response->success = true;
-        $response->message = "CCDA successfully imported.";
-        $response->imr     = $imr;
-
-        return $response;
-    }
-
-    public function isCcda($medicalRecordType)
-    {
-        return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
-    }
-
-    /**
      * @param $dir
      * @param int $practiceId
      * @param $filterLastEncounter
@@ -435,64 +368,69 @@ class ProcessEligibilityService
             return false;
         }
 
-        return $collection
-            ->map(function ($patient) use ($batch) {
-                $patient = $this->transformCsvRow($patient);
+        $patientList = [];
 
-                $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
+        for ($i = 1; $i <= 10; $i++) {
+            $patient = $collection->shift();
 
-                $job = EligibilityJob::whereHash($hash)->first();
+            if ( ! is_array($patient)) {
+                continue;
+            }
 
-                if ( ! $job) {
-                    $job = EligibilityJob::create([
-                        'batch_id' => $batch->id,
-                        'hash'     => $hash,
-                        'data'     => $patient,
-                    ]);
-                }
+            $patientList[] = $patient;
 
-                $patient['eligibility_job_id'] = $job->id;
+            $patient = $this->transformCsvRow($patient);
 
-                if ($job->status == 0) {
-                    ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
 
-                    return true;
-                }
+            $job = EligibilityJob::whereHash($hash)->first();
 
-                return false;
-            })->filter()->values();
+            if ( ! $job) {
+                $job = EligibilityJob::create([
+                    'batch_id' => $batch->id,
+                    'hash'     => $hash,
+                    'data'     => $patient,
+                ]);
+            }
+
+            $patient['eligibility_job_id'] = $job->id;
+
+            if ($job->status == 0) {
+                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            }
+        }
+
+        $options                = $batch->options;
+        $options['patientList'] = $collection->toArray();
+        $batch->options         = $options;
+        $batch->save();
+
+        return $patientList;
     }
 
     private function transformCsvRow($patient)
     {
         if (count(preg_grep('/^problem_[\d]*/', array_keys($patient))) > 0) {
-            //{"Problems":[{"Name":"", "CodeType":"" , "Code":"" , "AddedDate":"" , "ResolveDate":"" , "Status":""}]}
-            $problems = [];
-            $i        = 1;
+            $problems = (new NumberedProblemFields())->handle($patient);
 
-            do {
-                if ( ! array_key_exists("problem_$i", $patient)) {
-                    break;
-                }
-
-                if ( ! empty($patient["problem_$i"]) && $patient["problem_$i"] != '#N/A') {
-                    $problems[] = [
-                        'Name'        => $patient["problem_$i"],
-                        'CodeType'    => '',
-                        'Code'        => '',
-                        'AddedDate'   => '',
-                        'ResolveDate' => '',
-                        'Status'      => '',
-                    ];
-                }
-
-                unset($patient["problem_$i"]);
-
-                $i++;
-            } while (true);
-
-            $patient['problems'] = json_encode([
+            $patient['problems_string'] = json_encode([
                 'Problems' => $problems,
+            ]);
+        }
+
+        if (count(preg_grep('/^medication_[\d]*/', array_keys($patient))) > 0) {
+            $medications = (new NumberedMedicationFields())->handle($patient);
+
+            $patient['medications_string'] = json_encode([
+                'Medications' => $medications,
+            ]);
+        }
+
+        if (count(preg_grep('/^allergy_[\d]*/', array_keys($patient))) > 0) {
+            $allergies = (new NumberedAllergyFields())->handle($patient);
+
+            $patient['allergies_string'] = json_encode([
+                'Allergies' => $allergies,
             ]);
         }
 

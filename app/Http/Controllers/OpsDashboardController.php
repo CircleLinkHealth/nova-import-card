@@ -100,7 +100,7 @@ class OpsDashboardController extends Controller
         $today       = Carbon::today();
         $maxDate     = $today->copy()->subDay(1);
         $requestDate = new Carbon($request['date']);
-        $date        = $requestDate->copy()->setTimeFromTimeString('23:00');
+        $date        = $requestDate->copy()->setTime('23', '0', '0');
 
         $enrolledPatients = User::ofType('participant')
                                 ->with([

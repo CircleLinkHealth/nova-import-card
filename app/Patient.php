@@ -1,7 +1,7 @@
 <?php namespace App;
 
-use Carbon\Carbon;
 use App\Filters\Filterable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -397,7 +397,7 @@ class Patient extends \App\BaseModel
 
     public function getLastCallStatusAttribute()
     {
-        if ( ! $this->no_call_attempts_since_last_success) {
+        if (is_null($this->no_call_attempts_since_last_success)) {
             return 'n/a';
         }
 
