@@ -24,17 +24,33 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
         isLoggingOut: null,
+        get ccmDuration() {
+            return this.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
+        },
+
+        get bhiDuration() {
+            return this.activities.filter(activity => !!activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
+        },
+
+        get totalCcmSeconds() {
+            return this.ccmDuration + this.totalTime
+        },
+
+        get totalBhiSeconds() {
+            return this.bhiDuration + this.totalTime
+        },
+
         /**
          * @returns {Number} total duration in seconds of activities excluding initial-total-time
          */
         get totalDuration() {
-            return this.activities.reduce((a, b) => a + b.duration, 0)
+            return this.ccmDuration + this.bhiDuration
         },
         /**
          * @returns {Number} total duration in seconds of activities plus initial-total-time
          */
         get totalSeconds() {
-            return this.totalDuration + this.totalTime
+            return this.ccmDuration + this.bhiDuration + this.totalTime
         },
         /**
          * @returns {Array} list of all sockets in all activities belongs to this user
@@ -82,6 +98,21 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
     }
 
+    /**
+     * 
+     * @param {{ activity: '', isManualBehavioral: false }} info 
+     */
+    user.findActivity = (info) => {
+        return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral))
+    }
+
+    user.closeOtherBehavioralActivity = (info, ws) => {
+        const activity = user.activities.find(item => (item.name == info.activity) && (item.isBehavioral !== info.isManualBehavioral))
+        if (activity) {
+            activity.sockets.splice(activity.sockets.indexOf(ws), 1)
+        }
+    }
+
     user.start = (info, ws) => {
         /**
          * to be executed when a page is opened
@@ -92,7 +123,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.enter(info, ws)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (!!Number(info.initSeconds) && user.allSockets.length <= 1 && activity) {
             /**
              * make sure the page load time is taken into account
@@ -113,7 +144,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
-        let activity = user.activities.find(item => item.name == info.activity)
+        let activity = user.findActivity(info)
         if (!activity) {
             activity = createActivity(info)
             activity.sockets.push(ws)
@@ -205,7 +236,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         user.allSockets.forEach(ws => {
             const shouldSend = socket ? (socket !== ws) : true // if socket arg is specified, don't send to that socket
             if (ws.readyState === ws.OPEN && shouldSend) {
-                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds }))
+                ws.send(JSON.stringify({ message: 'server:sync', seconds: user.totalSeconds, ccmSeconds: user.totalCcmSeconds, bhiSeconds: user.totalBhiSeconds }))
             }
         })
     }
@@ -215,18 +246,20 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      * @param {boolean} response yes/no on whether the practitioner was busy on a patient during calculated inactive-time
      */
     user.respondToModal = (response) => {
-        let activity = user.activities.find(item => item.name == info.activity)
-        if (response) {
-            activity.duration += user.inactiveSeconds
-        }
-        else {
-            activity.duration += 30
+        let activity = user.findActivity(info)
+        if (activity) {
+            if (response) {
+                activity.duration += user.inactiveSeconds
+            }
+            else {
+                activity.duration += 30
+            }
         }
         user.inactiveSeconds = 0
     }
     
     user.showInactiveModal = (info, now = () => (new Date())) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity) {
             activity.isInActiveModalShown = true
             activity.inactiveModalShowTime = now()
@@ -234,7 +267,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     } 
     
     user.closeInactiveModal = (info, response, now = () => (new Date())) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity && activity.inactiveModalShowTime) {
             activity.isInActiveModalShown = false
             const elapsedSeconds = (new Date(now() - activity.inactiveModalShowTime)).getSeconds()
@@ -249,7 +282,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     user.removeInactiveDuration = (info) => {
-        let activity = user.activities.find(item => item.name === info.activity)
+        let activity = user.findActivity(info)
         if (activity) {
             activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 30)
         }
@@ -262,8 +295,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     }
 
     user.enterCallMode = (info) => {
-        let activity = user.activities.find(item => item.name === info.activity)
-        activity.callMode = true
+        let activity = user.findActivity(info)
+        
+        if (activity) {
+            activity.callMode = true
+        }
+        
 
         user.broadcast({ message: 'server:call-mode:enter' })
 

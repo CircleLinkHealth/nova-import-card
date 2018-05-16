@@ -360,4 +360,34 @@ describe('TimeTrackerFlow', () => {
 
         })
     })
+
+    describe('BHI', () => {
+
+        const timeTracker = new TimeTracker()
+
+        const info1 = { ...info, ...{ patientId: 1, isManualBehavioral: true } }
+        const info2 = { ...info, ...{ patientId: 1, isManualBehavioral: false } }
+
+        const user = timeTracker.get(info1)
+
+        it('should have different durations', () => {
+            user.start(info1, ws)
+
+            let activity1 = user.findActivity(info1)
+
+            activity1.duration += 30
+
+            user.enter(info2, ws)
+
+            let activity2 = user.findActivity(info2)
+
+            assert.notEqual(activity1, activity2)
+
+            assert.equal(user.totalBhiSeconds, 30)
+
+            assert.equal(user.totalCcmSeconds, 0)
+
+            assert.equal(user.totalSeconds, 30)
+        })
+    })
 })
