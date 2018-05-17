@@ -442,6 +442,10 @@
     padding: 10px;
 }
 
+.table-bordered>tbody>tr>td {
+    white-space: nowrap;
+}
+
 </style>
 
 <style scoped>
