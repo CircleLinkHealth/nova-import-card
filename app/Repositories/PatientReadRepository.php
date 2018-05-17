@@ -29,7 +29,10 @@ class PatientReadRepository
     }
 
     public function patients(PatientFilters $filters) {
-        $users = $this->model()->filter($filters)->ofType('participant')->whereHas('patientInfo');
+        $users = $this->model()
+                    ->whereHas('patientInfo')
+                    ->intersectPracticesWith(auth()->user())
+                    ->filter($filters);
         if (!$filters->isExcel()) { //check that an excel file is not requested]
             if (isset($filters->filters()['rows']) && $filters->filters()['rows'] == 'all') {
                 $users = $users->paginate($users->count());
