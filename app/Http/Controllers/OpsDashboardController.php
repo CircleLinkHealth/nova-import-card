@@ -49,16 +49,14 @@ class OpsDashboardController extends Controller
         $date = $maxDate->copy()->setTimeFromTimeString('23:00');
 
 
-        $enrolledPatients = User::ofType('participant')
-                                ->with([
+        $enrolledPatients = User::with([
                                     'activities' => function ($activity) use ($date) {
-                                        $activity->where('performed_at', '>=',
-                                            $date->copy()->startOfMonth()->startOfDay()->toDateTimeString())
-                                                 ->where('performed_at', '<=', $date->toDateTimeString());
+                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
+                                                 ->where('performed_at', '<=', $date);
                                     },
                                 ])
                                 ->whereHas('patientInfo', function ($patient) {
-                                    $patient->where('ccm_status', Patient::ENROLLED);
+                                    $patient->enrolled();
                                 })->get();
 
         //used by query to get Patients by status
@@ -69,15 +67,14 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $rows = [];
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
-                $statusPatientsByPractice);
+            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -123,14 +120,14 @@ class OpsDashboardController extends Controller
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $rows = [];
         foreach ($allPractices as $practice) {
             $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
             $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($practice, $date, $patientsByPractice,
+            $row                      = $this->service->dailyReportRow($date, $patientsByPractice,
                 $statusPatientsByPractice);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
@@ -165,7 +162,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         foreach ($allPractices as $practice) {
@@ -204,7 +201,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         foreach ($allPractices as $practice) {
@@ -241,7 +238,7 @@ class OpsDashboardController extends Controller
         $practiceId = 'all';
 
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
@@ -278,7 +275,7 @@ class OpsDashboardController extends Controller
         $practiceId = $request['practice_id'];
 
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
@@ -620,11 +617,6 @@ class OpsDashboardController extends Controller
 
     public function calculateLostAddedRow($rows)
     {
-        $total['enrolled']          = [];
-        $total['pausedPatients']    = [];
-        $total['withdrawnPatients'] = [];
-        $total['delta']             = [];
-
         foreach ($rows as $key => $value) {
             $total['enrolled'][]          = $value['enrolled'];
             $total['pausedPatients'][]    = $value['pausedPatients'];
@@ -643,21 +635,6 @@ class OpsDashboardController extends Controller
 
     public function calculateDailyTotalRow($rows)
     {
-
-        $totalCounts['ccmCounts']['zero']                   = [];
-        $totalCounts['ccmCounts']['0to5']                   = [];
-        $totalCounts['ccmCounts']['5to10']                  = [];
-        $totalCounts['ccmCounts']['10to15']                 = [];
-        $totalCounts['ccmCounts']['15to20']                 = [];
-        $totalCounts['ccmCounts']['20plus']                 = [];
-        $totalCounts['ccmCounts']['total']                  = [];
-        $totalCounts['ccmCounts']['priorDayTotals']         = [];
-        $totalCounts['countsByStatus']['enrolled']          = [];
-        $totalCounts['countsByStatus']['pausedPatients']    = [];
-        $totalCounts['countsByStatus']['withdrawnPatients'] = [];
-        $totalCounts['countsByStatus']['delta']             = [];
-        $totalCounts['countsByStatus']['gCodeHold']         = [];
-
 
         foreach ($rows as $key => $value) {
 
