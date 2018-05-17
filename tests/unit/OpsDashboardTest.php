@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Http\Controllers\OpsDashboardController;
 use App\Models\CPM\CpmProblem;
+use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
@@ -28,9 +29,20 @@ class OpsDashboardTest extends TestCase
     private $data;
     private $practice;
     private $patients;
+    private $admin;
 
     public function test_ops_Dashboard_ccm_time_patients(){
 
+
+        $response = $this->actingAs($this->admin)
+                         ->get('/admin/reports/ops-dashboard/index');
+
+        $total = User::whereHas('patientInfo', function ($patient) {
+                                    $patient->where('ccm_status', Patient::ENROLLED);
+                                })->count();
+
+
+        $response->assertStatus(200);
 
 
     }
@@ -75,7 +87,8 @@ class OpsDashboardTest extends TestCase
 
         $this->data = $this->createTestCustomerData(100);
         $this->patients = $this->data['patients'];
-        $this->practice = $this->practice;
+        $this->practice = $this->data['practice'];
+        $this->admin = $this->data['admin'];
 
     }
 }
