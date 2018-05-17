@@ -105,7 +105,7 @@ trait SetupTestCustomer
 
         //attach problems, summaries, chargeable services
         $problemIds = CpmProblem::get()->pluck('id');
-        $months     = collect([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        $months     = collect([1, 2, 3, 4, 5, 6]);
 
         $patient->patientSummaries()->create([
             'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
@@ -179,6 +179,25 @@ trait SetupTestCustomer
         return $provider;
     }
 
+
+    /**
+     * @param Practice $practice
+     *
+     * @return \App\User
+     */
+    public function createAdmin(Practice $practice)
+    {
+        $roles = [
+            Role::whereName('administrator')->first()->id,
+        ];
+
+        $admin = $this->setupUser($practice->id, $roles);
+
+        return $admin;
+    }
+
+
+
     /**
      * @param int $patientCount
      *
@@ -190,6 +209,7 @@ trait SetupTestCustomer
         $practice = $this->createPractice();
         $location = $this->createLocation($practice);
         $provider = $this->createProvider($practice);
+        $admin    = $this->createAdmin($practice);
         $patients = [];
 
 
@@ -203,6 +223,7 @@ trait SetupTestCustomer
         $data['location'] = $location;
         $data['patients'] = $patients;
         $data['provider'] = $provider;
+        $data['admin']    = $admin;
 
         return $data;
 
