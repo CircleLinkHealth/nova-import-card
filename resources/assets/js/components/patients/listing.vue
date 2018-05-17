@@ -66,6 +66,7 @@
 <script>
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
+    import { CancelToken } from 'axios'
     import moment from 'moment'
     import loader from '../loader'
 
@@ -102,7 +103,7 @@
                     excel: false,
                     pdf: false
                 },
-                requests: {
+                tokens: {
                     next: null
                 }
             }
@@ -228,12 +229,12 @@
                 const self = this
                 this.loaders.next = true
                 return this.requests.next = this.axios.get(this.nextPageUrl(), {
-                    before(request) {
-                        if (this.requests.next) {
-                            this.requests.next.abort()
+                    cancelToken: new CancelToken((c) => {
+                        if (this.tokens.next) {
+                            this.tokens.next()
                         }
-                        this.requests.next = request
-                    }
+                        this.tokens.next = c
+                    })
                 }).then(response => {
                     console.log('patient-list', response.data)
                     const pagination = response.data
@@ -439,6 +440,10 @@
 <style>
 .pad-10 {
     padding: 10px;
+}
+
+.table-bordered>tbody>tr>td {
+    white-space: nowrap;
 }
 
 </style>

@@ -109,6 +109,7 @@
 <script>
   import { rootUrl } from '../../app.config.js'
   import { Event } from 'vue-tables-2'
+  import { CancelToken } from 'axios'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
@@ -153,7 +154,7 @@
           },
           currentDate: new Date(),
           $nextPromise: null,
-          requests: {
+          tokens: {
             calls: null
           },
           showOnlyUnassigned: false
@@ -270,6 +271,7 @@
             this.pagination = null
             this.tableData = []
             this.$refs.tblCalls.setPage(1)
+            this.clearSelected()
             return this.next()
         },
         toggleAllSelect(e) {
@@ -438,64 +440,64 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
-              before(request) {
-                if ($vm.requests.calls) {
-                  $vm.requests.calls.abort()
-                }
-                $vm.requests.calls = request
+          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+            cancelToken: new CancelToken((c) => {
+              if (this.tokens.calls) {
+                this.tokens.calls()
               }
-            }).then((result) => result).then(result => {
-              result = result.data;
-              this.pagination = {
-                            current_page: result.meta.current_page,
-                            from: result.meta.from,
-                            last_page: result.meta.last_page,
-                            last_page_url: result.links.last,
-                            next_page_url: result.links.next,
-                            path: result.meta.path,
-                            per_page: result.meta.per_page,
-                            to: result.meta.to,
-                            total: result.meta.total
-                        }
-              if (result) {
-                const calls = result.data || [];
-                if (calls && Array.isArray(calls)) {
-                  const tableCalls = calls.map(this.setupCall)
-                  if (!this.tableData.length) {
-                      const arr = this.tableData.concat(tableCalls)
-                      const total = ((this.pagination || {}).total || 0)
-                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
-                                                                                                                    id: arr.length + index + 1, 
-                                                                                                                    nurses () { return ([]) },
-                                                                                                                    onNurseUpdate() {},
-                                                                                                                    onAttemptNoteUpdate() {},
-                                                                                                                    onGeneralCommentUpdate() {},
-                                                                                                                    onCallTimeStartUpdate() {},
-                                                                                                                    onCallTimeEndUpdate() {},
-                                                                                                                    onNextCallUpdate() {},
-                                                                                                                    loaders: {}
-                                                                                                                  })) ]
-                  }
-                  else {
-                      const from = ((this.pagination || {}).from || 0)
-                      const to = ((this.pagination || {}).to || 0)
-                      for (let i = from - 1; i < to; i++) {
-                          this.tableData[i] = tableCalls[i - from + 1]
-                      }
-                  }
-                  setImmediate(() => {
-                    this.$refs.tblCalls.count = this.pagination.total
-                    delete this.$nextPromise;
-                    this.loaders.calls = false
-                  })
-                  return tableCalls;
-                }
-              }
-            }).catch(function (err) {
-              console.error('calls:response', err)
-              this.loaders.calls = false
+              this.tokens.calls = c
             })
+          }).then((result) => result).then(result => {
+            result = result.data;
+            this.pagination = {
+                          current_page: result.meta.current_page,
+                          from: result.meta.from,
+                          last_page: result.meta.last_page,
+                          last_page_url: result.links.last,
+                          next_page_url: result.links.next,
+                          path: result.meta.path,
+                          per_page: result.meta.per_page,
+                          to: result.meta.to,
+                          total: result.meta.total
+                      }
+            if (result) {
+              const calls = result.data || [];
+              if (calls && Array.isArray(calls)) {
+                const tableCalls = calls.map(this.setupCall)
+                if (!this.tableData.length) {
+                    const arr = this.tableData.concat(tableCalls)
+                    const total = ((this.pagination || {}).total || 0)
+                    this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                  id: arr.length + index + 1, 
+                                                                                                                  nurses () { return ([]) },
+                                                                                                                  onNurseUpdate() {},
+                                                                                                                  onAttemptNoteUpdate() {},
+                                                                                                                  onGeneralCommentUpdate() {},
+                                                                                                                  onCallTimeStartUpdate() {},
+                                                                                                                  onCallTimeEndUpdate() {},
+                                                                                                                  onNextCallUpdate() {},
+                                                                                                                  loaders: {}
+                                                                                                                })) ]
+                }
+                else {
+                    const from = ((this.pagination || {}).from || 0)
+                    const to = ((this.pagination || {}).to || 0)
+                    for (let i = from - 1; i < to; i++) {
+                        this.tableData[i] = tableCalls[i - from + 1]
+                    }
+                }
+                setTimeout(() => {
+                  this.$refs.tblCalls.count = this.pagination.total
+                  delete this.$nextPromise;
+                  this.loaders.calls = false
+                }, 1000)
+                return tableCalls;
+              }
+            }
+          }).catch(function (err) {
+            console.error('calls:response', err)
+            this.loaders.calls = false
+          })
         }
       },
       mounted() {
