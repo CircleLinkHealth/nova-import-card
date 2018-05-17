@@ -248,7 +248,6 @@
         },
         today() {
           const d = new Date()
-          return '2017-01-01'
           return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
         },
         urlFilterSuffix() {
