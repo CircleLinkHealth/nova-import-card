@@ -8,9 +8,13 @@
         </div>
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
+            <bhi-switch ref="bhiSwitch" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" v-if="info.isBehavioral && info.isCcm"></bhi-switch>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
-                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
+                <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
+                    :redirect-url="'manage-patients/' + info.patientId + '/activities'" />
             </span>
+            <br><br>
+            
             <inactivity-tracker :call-mode="callMode" ref="inactivityTracker" />
             <away ref="away" />
         </span>
@@ -23,8 +27,10 @@
     import InactivityTracker from './comps/inactivity-tracker'
     import TimeDisplay from './comps/time-display'
     import EventBus from './comps/event-bus'
+    import { Event } from 'vue-tables-2'
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
+    import BhiComponent from './comps/bhi-switch'
     
     export default {
         name: 'time-tracker',
@@ -60,7 +66,8 @@
             'inactivity-tracker': InactivityTracker,
             'time-display': TimeDisplay,
             'loader': LoaderComponent,
-            'away': AwayComponent
+            'away': AwayComponent,
+            'bhi-switch': BhiComponent
         },
         computed: {
             totalTime() {
@@ -81,14 +88,14 @@
                         })
                     );
                     if (this.overrideTimeout) {
-                        setTimeout(() => {
-                            EventBus.$emit('modal-inactivity:timeouts:override', {
-                                alertTimeout: 30, 
-                                logoutTimeout: 120,
-                                alertTimeoutCallMode: 60, 
-                                logoutTimeoutCallMode: 150
-                            })
-                        }, 1000)
+                        // setTimeout(() => {
+                        //     EventBus.$emit('modal-inactivity:timeouts:override', {
+                        //         alertTimeout: 30, 
+                        //         logoutTimeout: 120,
+                        //         alertTimeoutCallMode: 60, 
+                        //         logoutTimeoutCallMode: 150
+                        //     })
+                        // }, 1000)
                     }
                 }
             },
@@ -103,7 +110,7 @@
                             if (res.data) {
                                 const data = JSON.parse(res.data)
                                 if (data.message === 'server:sync') {
-                                    self.seconds = data.seconds
+                                    self.seconds = self.info.isManualBehavioral ? data.bhiSeconds : data.ccmSeconds
                                     self.visible = true //display the component when the previousSeconds value has been received from the server to keep the display up-to-date
                                     self.showLoader = false
                                 }
@@ -167,6 +174,7 @@
         mounted() {
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
+            this.info.isManualBehavioral = false
 
             if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
@@ -188,8 +196,9 @@
                     CLOSE_INACTIVE_MODAL: 'client:inactive-modal:close',
                     ENTER_CALL_MODE: 'client:call-mode:enter',
                     EXIT_CALL_MODE: 'client:call-mode:exit',
-                    TIMEOUTS_OVERRIDE: 'client:timeouts:override',
-                    LOGOUT: 'client:logout'
+                    LOGOUT: 'client:logout',
+                    BHI: 'client:bhi',
+                    TIMEOUTS_OVERRIDE: 'client:timeouts:override'
                 }
 
                 EventBus.$on('tracker:start', () => {
@@ -265,6 +274,19 @@
                     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                         this.socket.send(JSON.stringify({ message: STATE.LOGOUT, info: this.info }))
                     }
+                })
+
+                EventBus.$on('tracker:bhi:switch', (mode = false) => {
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                        this.info.isManualBehavioral = mode
+                        this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                    }
+                    console.log('tracker:bhi', mode)
+                })
+
+                Event.$on('careplan:bhi', ({ isCcm, isBehavioral }) => {
+                    this.info.isBehavioral = isBehavioral
+                    this.info.isCcm = isCcm
                 })
 
                 this.createSocket()

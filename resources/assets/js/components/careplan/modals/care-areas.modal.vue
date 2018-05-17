@@ -233,6 +233,7 @@
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         this.selectedProblem = null
+                        setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
                         console.error('care-areas:remove-problems', err)
                         this.loaders.removeProblem = false
@@ -258,6 +259,7 @@
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
+                    setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false
@@ -322,6 +324,27 @@
             },
             getProblemAutoCompleteTemplate(item) {
                 return (item || {}).name
+            },
+            /**
+             * is patient BHI, CCM or BOTH?
+             */
+            checkPatientBehavioralStatus() {
+                const ccmCount = this.problems.filter(problem => {
+                    if (problem.is_monitored) {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? !cpmProblem.is_behavioral: false
+                    }
+                    return false
+                }).length
+                const bhiCount = this.problems.filter(problem => {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? cpmProblem.is_behavioral: false
+                    }).length
+                console.log('ccm', ccmCount, 'bhi', bhiCount)
+                Event.$emit('careplan:bhi', { 
+                    isCcm: ccmCount > 0,
+                    isBehavioral: bhiCount > 0
+                })
             }
         },
         mounted() {
