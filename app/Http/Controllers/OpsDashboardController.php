@@ -162,7 +162,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         foreach ($allPractices as $practice) {
@@ -201,7 +201,7 @@ class OpsDashboardController extends Controller
         $rows = [];
 
 
-        $allPractices = Practice::activeBillable()->get()->sortBy('name');
+        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         foreach ($allPractices as $practice) {
@@ -238,7 +238,7 @@ class OpsDashboardController extends Controller
         $practiceId = 'all';
 
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $toDate->toDateTimeString());
@@ -275,7 +275,7 @@ class OpsDashboardController extends Controller
         $practiceId = $request['practice_id'];
 
 
-        $practices = Practice::activeBillable()->get();
+        $practices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $patients = $this->repo->getPatientsByStatus($fromDate->startOfDay()->toDateTimeString(),
@@ -617,11 +617,6 @@ class OpsDashboardController extends Controller
 
     public function calculateLostAddedRow($rows)
     {
-        $total['enrolled']          = [];
-        $total['pausedPatients']    = [];
-        $total['withdrawnPatients'] = [];
-        $total['delta']             = [];
-
         foreach ($rows as $key => $value) {
             $total['enrolled'][]          = $value['enrolled'];
             $total['pausedPatients'][]    = $value['pausedPatients'];
@@ -640,21 +635,6 @@ class OpsDashboardController extends Controller
 
     public function calculateDailyTotalRow($rows)
     {
-
-        $totalCounts['ccmCounts']['zero']                   = [];
-        $totalCounts['ccmCounts']['0to5']                   = [];
-        $totalCounts['ccmCounts']['5to10']                  = [];
-        $totalCounts['ccmCounts']['10to15']                 = [];
-        $totalCounts['ccmCounts']['15to20']                 = [];
-        $totalCounts['ccmCounts']['20plus']                 = [];
-        $totalCounts['ccmCounts']['total']                  = [];
-        $totalCounts['ccmCounts']['priorDayTotals']         = [];
-        $totalCounts['countsByStatus']['enrolled']          = [];
-        $totalCounts['countsByStatus']['pausedPatients']    = [];
-        $totalCounts['countsByStatus']['withdrawnPatients'] = [];
-        $totalCounts['countsByStatus']['delta']             = [];
-        $totalCounts['countsByStatus']['gCodeHold']         = [];
-
 
         foreach ($rows as $key => $value) {
 
