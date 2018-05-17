@@ -1,6 +1,7 @@
 <div>
     <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is {{auth()->user()->fullName}} calling on behalf of
-        <b>Dr. @{{provider_name}}</b> at <b>{{$enrollee->practiceName}}</b>. I’m calling for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
+        <b>Dr. @{{provider_name}}</b> at <b>{{$enrollee->practiceName}}</b>. I’m calling
+        for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
         this {{$enrollee->first_name}} {{$enrollee->last_name}}?</p>
 
     <p>How are you doing today?</p>
@@ -58,8 +59,19 @@
         <b>[at end of all info collected for “yes”]:</b>
         <br>
         “That’s all I need for now, just wanted to let you know that you can cancel at anytime, and that a
-        registered nurse will be reaching out to you soon. They’ll be calling from the same number I called you from today.”
+        registered nurse will be reaching out to you soon. They’ll be calling from the same number I called you from
+        today.”
     </p>
 
     <p>“Have a great day! Thanks!”</p>
+
+
+    <p>
+        <b>[If Caller Reaches Machine, Leave Voice Message:</b>​ Hi this is [caller name] calling on behalf of [Dr.
+        name]
+        at [Dr. Office]. The doctor[s] have invited you to their new personalized care management program.
+        Please give us a call at [number Ambassador calling from on page 2] to learn more. Please note there is
+        nothing to worry about, this program just lets the Dr. take better care of you between visits. Again the
+        number is [number Ambassador calling from]
+    </p>
 </div>
