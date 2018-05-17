@@ -252,7 +252,7 @@
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
             const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
             const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
             console.log('sort:column', sortColumn)
