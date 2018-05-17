@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\CarePlan;
+use App\Contracts\Efax;
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
@@ -11,13 +12,18 @@ use App\User;
 class UpdateCarePlanStatus
 {
     /**
+     * @var Efax
+     */
+    private $efax;
+
+    /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Efax $efax)
     {
-        //
+        $this->efax = $efax;
     }
 
     /**
@@ -36,10 +42,16 @@ class UpdateCarePlanStatus
             return false;
         }
 
+        $practiceSettings = $user->carePlan->patient->primaryPractice->cpmSettings();
+
         if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
             $user->carePlanStatus = CarePlan::PROVIDER_APPROVED; // careplan_status
             $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+
+            if ((boolean)$practiceSettings->efax_pdf_careplan) {
+                $this->efax->send($user->locations->first()->fax, $user->carePlan->toPdf());
+            }
 
             event(new PdfableCreated($user->carePlan));
         } elseif ($user->carePlanStatus == CarePlan::DRAFT && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
@@ -47,7 +59,7 @@ class UpdateCarePlanStatus
             $user->carePlan->qa_approver_id = auth()->id(); // careplan_qa_approver
             $user->carePlan->save();
 
-            if ((boolean) $user->carePlan->patient->primaryPractice->cpmSettings()->auto_approve_careplans) {
+            if ((boolean)$practiceSettings->auto_approve_careplans) {
                 $user->carePlan->status = CarePlan::PROVIDER_APPROVED;
                 $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
                 $user->carePlan->save();
