@@ -1,13 +1,11 @@
 <?php namespace App\Services;
 
 use App\CarePlan;
-use App\Location;
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmMisc;
+use App\Services\CPM\CpmProblemService;
 use App\User;
-use App\UserMeta;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exception;
 
@@ -491,11 +489,11 @@ class ReportsService
             if (!is_object($user)) {
                 $user = User::find($user);
             }
-            $careplanReport[$user->id]['symptoms'] = $user->cpmSymptoms()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problem'] = $user->cpmProblems()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['problems'] = (new \App\Services\CPM\CpmProblemService())->getProblemsWithInstructionsForUser($user);
-            $careplanReport[$user->id]['lifestyle'] = $user->cpmLifestyles()->get()->pluck('name')->all();
-            $careplanReport[$user->id]['biometrics'] = $user->cpmBiometrics()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problem']     = $user->cpmProblems()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['problems']    = app(CpmProblemService::class)->getProblemsWithInstructionsForUser($user);
+            $careplanReport[$user->id]['lifestyle']   = $user->cpmLifestyles()->get()->pluck('name')->all();
+            $careplanReport[$user->id]['biometrics']  = $user->cpmBiometrics()->get()->pluck('name')->all();
             $careplanReport[$user->id]['medications'] = $user->cpmMedicationGroups()->get()->pluck('name')->all();
         }
 
