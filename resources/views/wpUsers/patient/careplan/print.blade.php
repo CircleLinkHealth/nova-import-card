@@ -27,8 +27,9 @@ if (isset($patient) && ! empty($patient)) {
     @push('styles')
         <style>
             [v-cloak] > * {
-                display:none
+                display: none
             }
+
             [v-cloak]::before {
                 content: "loading…"
             }
@@ -45,9 +46,10 @@ if (isset($patient) && ! empty($patient)) {
                                 <div>
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
-                                            data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
-                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
-                                                :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                              data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
+                                            <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
+                                                          :hide-tracker="true"
+                                                          :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
                                         </span>
                                     </span>
                                 </div>
@@ -72,8 +74,9 @@ if (isset($patient) && ! empty($patient)) {
                                     @if ($recentSubmission || $skippedAssessment)
                                         <div class="text-right">
                                             <a class="btn btn-success btn-lg inline-block" aria-label="..."
-                                            role="button" target="_blank" onclick="finalStepClick()"
-                                            href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}&final=true">FINAL STEP:
+                                               role="button" target="_blank" onclick="finalStepClick()"
+                                               href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}&final=true">FINAL
+                                                STEP:
                                                 Print for Patient</a>
                                         </div>
                                         @push ('scripts')
@@ -88,15 +91,21 @@ if (isset($patient) && ! empty($patient)) {
                                     @else
                                         <pdf-careplans v-cloak>
                                             <template slot="buttons">
-                                                <?php
-                                                    $patientCarePlan = isset($patient) ? $patient->carePlan : null;
-                                                    $patientCarePlanPdfs = isset($patientCarePlan) ? $patientCarePlan->pdfs : null;
-                                                    $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs) ? $patientCarePlanPdfs->count() > 0 : false;
-                                                ?>
-                                                @if ($patientCarePlanPdfsHasItems)
+                                            <?php
+                                            $patientCarePlan = isset($patient)
+                                                ? $patient->carePlan
+                                                : null;
+                                            $patientCarePlanPdfs = isset($patientCarePlan)
+                                                ? $patientCarePlan->pdfs
+                                                : null;
+                                            $patientCarePlanPdfsHasItems = isset($patientCarePlanPdfs)
+                                                ? $patientCarePlanPdfs->count() > 0
+                                                : false;
+                                            ?>
+                                            @if ($patientCarePlanPdfsHasItems)
                                                 <!--href="{{route('patient.pdf.careplan.print', ['patientId' => $patient->id])}}"-->
                                                     <a href="{{route('switch.to.pdf.careplan', ['carePlanId' => optional($patientCarePlan)->id])}}"
-                                                    class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
+                                                       class="btn btn-info btn-sm inline-block">PDF CarePlans</a>
                                                 @endif
                                             </template>
 
@@ -207,25 +216,25 @@ if (isset($patient) && ! empty($patient)) {
                         </ul>
                     @endif
                 </health-goals>
-            <!-- /BIOMETRICS -->
+                <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
                 <medications ref="medicationsComponent" patient-id="{{$patient->id}}">
 
                     <div class="col-xs-10">
-                            @if(!empty($taking_medications))
-                                @if(is_array($taking_medications))
-                                    <ul>
-                                        @foreach($taking_medications as $medi)
-                                            <li class='top-10'>
-                                                <h4>{!! $medi !!}</h4>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    {{$taking_medications}}
-                                @endif
+                        @if(!empty($taking_medications))
+                            @if(is_array($taking_medications))
+                                <ul>
+                                    @foreach($taking_medications as $medi)
+                                        <li class='top-10'>
+                                            <h4>{!! $medi !!}</h4>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                {{$taking_medications}}
                             @endif
+                        @endif
                     </div>
                 </medications>
                 <!-- /MEDICATIONS -->
@@ -255,32 +264,30 @@ if (isset($patient) && ! empty($patient)) {
                 <!-- /LIFESTYLES -->
 
 
+                <div class="patient-info__subareas pb-before">
+                    <div class="row">
+                        <div class="col-xs-12 print-only">
+                            <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
+                                Plan
+                                Part 2</h1>
+                        </div>
 
+                        <div class="col-xs-12">
+                            <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
+                                Plan</h2>
+                        </div>
 
-            <div class="patient-info__subareas pb-before">
-                <div class="row">
-                    <div class="col-xs-12 print-only">
-                        <h1 class="patient-summary__title patient-summary__title_9 patient-summary--careplan">Care
-                            Plan
-                            Part 2</h1>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <h2 class="patient-summary__subtitles patient-summary--careplan-background">Check In
-                            Plan</h2>
-                    </div>
-
-                    <div class="col-xs-12">
-                        <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                        <div class="col-xs-12">
+                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- INSTRUCTIONS -->
-            <instructions ref="instructionsComponent" patient-id="{{$patient->id}}"></instructions>
-            <!-- /INSTRUCTIONS -->
+                <!-- INSTRUCTIONS -->
+                <instructions ref="instructionsComponent" patient-id="{{$patient->id}}"></instructions>
+                <!-- /INSTRUCTIONS -->
 
-            <!-- OTHER INFORMATION -->
+                <!-- OTHER INFORMATION -->
                 <div class="row pb-before">
                     <div class="col-xs-12 print-only">
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
@@ -366,7 +373,7 @@ if (isset($patient) && ! empty($patient)) {
                         </ul>
                     @endif
                 </appointments>
-            <!-- /Appointments -->
+                <!-- /Appointments -->
 
                 <!-- OTHER NOTES -->
                 <others ref="othersComponent" patient-id="{{$patient->id}}">
@@ -382,13 +389,15 @@ if (isset($patient) && ! empty($patient)) {
         </div>
         @include('partials.confirm-modal')
 
-        @push('styles')
-            <script>
-                var careplan = (<?php
-                echo json_encode($careplan)
-            ?>) || {}
-            </script>
-        @endpush
+        @if(!isset($isPdf))
+            @push('styles')
+                <script>
+                    var careplan = (<?php
+                        echo json_encode($careplan)
+                        ?>) || {}
+                </script>
+            @endpush
+        @endif
 
         @if ($recentSubmission)
             @push('scripts')
