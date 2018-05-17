@@ -8,6 +8,7 @@
 
 namespace App\Services\CCD;
 
+use App\Models\CPM\CpmProblem;
 use App\User;
 use App\Models\ProblemCode;
 use App\Repositories\UserRepositoryEloquent;
@@ -67,8 +68,11 @@ class CcdProblemService
 
     public function getPatientProblems($userId) {
         $user = $this->userRepo->model()->findOrFail($userId);
+
+        //exclude generic diabetes type
+        $diabetes = CpmProblem::where('name', 'Diabetes')->first();
         
-        return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
+        return $user->ccdProblems()->where('cpm_problem_id', '!=', $diabetes->id)->get()->map([$this, 'setupProblem']);
     }
     
     public function addPatientCcdProblem($ccdProblem) {

@@ -214,7 +214,9 @@ class OpsDashboardService
         $gCodeHoldCount = null;
 
         foreach ($patients as $patient) {
-            if ($patient->patientInfo) {
+            if (!$patient->patientInfo){
+                dd($patient);
+            }
                 if ($patient->patientInfo->ccm_status == 'paused') {
                     $paused[] = $patient;
                 }
@@ -229,9 +231,6 @@ class OpsDashboardService
                         $gCodeHold[] = $patient;
                     }
                 }
-
-            }
-
         }
 
         $pausedCount    = count($paused);
@@ -276,10 +275,8 @@ class OpsDashboardService
         foreach ($patients as $patient) {
 
             if ($patient->activities) {
-
                 //filtering needed for prior day results
                 $activities = $patient->activities->where('performed_at', '<=', $toDate);
-
 
                 $ccmTime = $activities->sum('duration');
 
@@ -301,6 +298,8 @@ class OpsDashboardService
                 if ($ccmTime > 1200) {
                     $count['20plus'] += 1;
                 }
+            }else{
+                $count['zero'] += 1;
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
@@ -317,22 +316,18 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($practice, $date, $enrolledPatients, $patientsByStatus)
+    public function dailyReportRow(Carbon $date, $enrolledPatients, $patientsByStatus)
     {
-        $date = new Carbon($date);
+
 
         $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
-        //total for day before
-        $priorDay = $date->copy()->subDay(1)->toDateTimeString();
-
-
-        $priorDayCcmCounts = $this->countPatientsByCcmTime($enrolledPatients, $priorDay);
-
-        $ccmCounts['priorDayTotals'] = $priorDayCcmCounts['total'];
-        $ccmTotal                    = collect($ccmCounts);
 
 
         $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
+
+
+        $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
+        $ccmTotal                    = collect($ccmCounts);
 
         if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
             $countsByStatus['enrolled'] == 0 &&
@@ -341,6 +336,8 @@ class OpsDashboardService
             $countsByStatus['gCodeHold'] == 0) {
             return null;
         }
+
+
 
 
         return collect([
