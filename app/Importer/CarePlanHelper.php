@@ -149,13 +149,15 @@ class CarePlanHelper
         $workPhone   = null;
 
         //`$this->demographicsImport->primary_phone` may be a phone number or phone type
-        $primaryPhone = $pPhone
+        $primaryPhone = ! empty($pPhone)
             ? $this->str->formatPhoneNumberE164($pPhone)
             : $this->dem->primary_phone;
 
-        $homeNumber = $this->dem->home_phone;
-        if ( ! empty($homeNumber)) {
+        $homeNumber = $this->dem->home_phone
+            ? $this->dem->home_phone
+            : $primaryPhone;
 
+        if ( ! empty($homeNumber)) {
             if ($this->validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
@@ -172,7 +174,6 @@ class CarePlanHelper
 
         $mobileNumber = $this->dem->cell_phone;
         if ( ! empty($mobileNumber)) {
-
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
 
@@ -225,6 +226,27 @@ class CarePlanHelper
                     'type'       => PhoneNumber::HOME,
                     'is_primary' => true,
                 ]);
+            }
+        } else {
+            if ($this->validatePhoneNumber($primaryPhone)) {
+                $number = $this->str->formatPhoneNumberE164($primaryPhone);
+
+                foreach ([PhoneNumber::HOME   => $homePhone,
+                          PhoneNumber::MOBILE => $mobilePhone,
+                          PhoneNumber::WORK   => $workPhone,
+                ] as $type => $phone
+                ) {
+                    if ( ! $phone) {
+                        PhoneNumber::create([
+                            'user_id'    => $this->user->id,
+                            'number'     => $number,
+                            'type'       => $type,
+                            'is_primary' => true,
+                        ]);
+
+                        break;
+                    }
+                }
             }
         }
 

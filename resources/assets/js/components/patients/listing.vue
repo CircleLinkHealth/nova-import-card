@@ -66,6 +66,7 @@
 <script>
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
+    import { CancelToken } from 'axios'
     import moment from 'moment'
     import loader from '../loader'
 
@@ -102,7 +103,7 @@
                     excel: false,
                     pdf: false
                 },
-                requests: {
+                tokens: {
                     next: null
                 }
             }
@@ -164,7 +165,7 @@
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
                 
-                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
@@ -228,12 +229,12 @@
                 const self = this
                 this.loaders.next = true
                 return this.requests.next = this.axios.get(this.nextPageUrl(), {
-                    before(request) {
-                        if (this.requests.next) {
-                            this.requests.next.abort()
+                    cancelToken: new CancelToken((c) => {
+                        if (this.tokens.next) {
+                            this.tokens.next()
                         }
-                        this.requests.next = request
-                    }
+                        this.tokens.next = c
+                    })
                 }).then(response => {
                     console.log('patient-list', response.data)
                     const pagination = response.data
@@ -439,6 +440,10 @@
 <style>
 .pad-10 {
     padding: 10px;
+}
+
+.table-bordered>tbody>tr>td {
+    white-space: nowrap;
 }
 
 </style>

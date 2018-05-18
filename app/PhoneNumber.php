@@ -1,7 +1,6 @@
 <?php namespace App;
 
 use App\CLH\Helpers\StringManipulation;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\PhoneNumber
@@ -31,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PhoneNumber extends \App\BaseModel
 {
-
     //types
     const HOME = 'home';
     const MOBILE = 'mobile';

@@ -109,6 +109,7 @@
 <script>
   import { rootUrl } from '../../app.config.js'
   import { Event } from 'vue-tables-2'
+  import { CancelToken } from 'axios'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
@@ -154,7 +155,7 @@
           },
           currentDate: new Date(),
           $nextPromise: null,
-          requests: {
+          tokens: {
             calls: null
           },
           showOnlyUnassigned: false
@@ -251,7 +252,7 @@
             const $table = this.$refs.tblCalls
             if ($table && $table.$data) {
               const query = $table.$data.query
-              const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+              const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
               const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
               const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
               console.log('sort:column', sortColumn)
@@ -271,6 +272,7 @@
             this.pagination = null
             this.tableData = []
             this.$refs.tblCalls.setPage(1)
+            this.clearSelected()
             return this.next()
         },
         toggleAllSelect(e) {
@@ -443,13 +445,13 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
-              before(request) {
-                if ($vm.requests.calls) {
-                  $vm.requests.calls.abort()
+          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+            cancelToken: new CancelToken((c) => {
+                if ($vm.tokens.calls) {
+                  $vm.tokens.calls()
                 }
-                $vm.requests.calls = request
-              }
+                $vm.tokens.calls = c
+              })
             }).then((result) => result).then(result => {
               console.log('calls:response', this.nextPageUrl())
               result = result.data;
@@ -490,18 +492,18 @@
                           this.tableData[i] = tableCalls[i - from + 1]
                       }
                   }
-                  setImmediate(() => {
-                    this.$refs.tblCalls.count = this.pagination.total
-                    delete this.$nextPromise;
-                    this.loaders.calls = false
-                  })
+                  setTimeout(() => {
+                    $vm.$refs.tblCalls.count = $vm.pagination.total
+                    delete $vm.$nextPromise;
+                    $vm.loaders.calls = false
+                  }, 1000)
                   return tableCalls;
                 }
               }
-            }).catch(function (err) {
-              console.error('calls:response', err)
-              this.loaders.calls = false
-            })
+          }).catch((err) => {
+            console.error('calls:response', err)
+            $vm.loaders.calls = false
+          })
         }
       },
       mounted() {
