@@ -39,6 +39,8 @@ mock.onGet('/api/practices').reply(200, [
     { id:8, display_name:'Demo', locations:2 }
 ])
 
+/** patient data */
+
 const patientUrls = [
     '/api/patients?rows=all',
     '/api/patients/without-scheduled-calls'
@@ -56,6 +58,10 @@ patientUrls.map((url) => {
     })
 })
 
+/** end patient data */
+
+/** patient autocomplete */
+
 const autocompletePatientUrls = [
     '/api/patients?rows=all&autocomplete',
     '/api/patients/without-scheduled-calls?autocomplete'
@@ -69,6 +75,7 @@ autocompletePatientUrls.map((url) => {
     return mock.onGet(url).reply(200, AUTOCOMPLETE_PATIENTS)
 })
 
+/** end patient autocomplete */
 
 mock.onGet('/api/nurses?compressed').reply(200, {
     data: NURSES
