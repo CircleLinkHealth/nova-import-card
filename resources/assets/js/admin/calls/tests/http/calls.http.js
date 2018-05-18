@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueAxios from 'vue-axios'
 import MockAdapter from 'axios-mock-adapter'
 import { rootUrl } from '../../../../app.config'
+import { today } from '../../../../util/today'
 import axios from 'axios'
 import PATIENTS from '../mocks/patients.mock'
 import NURSES from '../mocks/nurses.mock'
@@ -29,7 +30,7 @@ const callsResponse = {
 }
 
 mock.onGet('/api/admin/calls?scheduled&rows=undefined').reply(200, callsResponse)
-mock.onGet('/api/admin/calls?scheduled&rows=100').reply(200, callsResponse)
+mock.onGet(`/api/admin/calls?scheduled&rows=100&minScheduledDate=${today()}`).reply(200, callsResponse)
 mock.onGet('/api/admin/calls?page=1').reply(200, callsResponse)
 
 mock.onGet('/api/practices').reply(200, [
@@ -38,25 +39,36 @@ mock.onGet('/api/practices').reply(200, [
     { id:8, display_name:'Demo', locations:2 }
 ])
 
-mock.onGet('/api/patients?rows=all').reply(200, {
-    current_page: 1,
-    data: PATIENTS,
-    from: 1,
-    last_page: 1,
-    path: '/api/patients',
-    per_page: 3,
-    to: 3
+const patientUrls = [
+    '/api/patients?rows=all',
+    '/api/patients/without-scheduled-calls'
+]
+
+patientUrls.map((url) => {
+    return mock.onGet(url).reply(200, {
+        current_page: 1,
+        data: PATIENTS,
+        from: 1,
+        last_page: 1,
+        path: url.split('?')[0],
+        per_page: 3,
+        to: 3
+    })
 })
 
-mock.onGet('/api/patients/without-scheduled-calls').reply(200, {
-    current_page: 1,
-    data: PATIENTS,
-    from: 1,
-    last_page: 1,
-    path: '/api/patients/without-scheduled-calls',
-    per_page: 3,
-    to: 3
+const autocompletePatientUrls = [
+    '/api/patients?rows=all&autocomplete',
+    '/api/patients/without-scheduled-calls?autocomplete'
+]
+
+const AUTOCOMPLETE_PATIENTS = PATIENTS.map(patient => ({ id: patient.id, 
+                                                        name: patient.name, 
+                                                        program_id: patient.program_id }))
+
+autocompletePatientUrls.map((url) => {
+    return mock.onGet(url).reply(200, AUTOCOMPLETE_PATIENTS)
 })
+
 
 mock.onGet('/api/nurses?compressed').reply(200, {
     data: NURSES

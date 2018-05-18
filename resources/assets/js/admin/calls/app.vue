@@ -122,6 +122,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
+  import { today } from '../../util/today'
   import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
   import timeDisplay from '../../util/time-display'
 
@@ -245,10 +246,7 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
-        today() {
-          const d = new Date()
-          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-        },
+        today,
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             if ($table && $table.$data) {

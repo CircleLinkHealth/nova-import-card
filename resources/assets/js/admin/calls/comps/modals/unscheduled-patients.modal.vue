@@ -75,6 +75,10 @@
         computed: {
             practicesForSelect () {
                 return [ UNASSIGNED_VALUE, ...this.practices.map(practice => ({ label: practice.display_name, value: practice.id })) ]
+            },
+            patientUrl () {
+                const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
+                return rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`);
             }
         },
         methods: {
@@ -97,9 +101,8 @@
                 })
             },
             getPatients() {
-                const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
                 this.loaders.patients = true
-                this.cache().get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`)).then(patients => {
+                this.cache().get(this.patientUrl).then(patients => {
                     this.loaders.patients = false
                     this.patients = (patients || [])
                     console.log('unscheduled-patients-get-patients', patients)
