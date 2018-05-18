@@ -6,6 +6,10 @@
         <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
         <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients</button>
         <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
+        <label class="btn btn-gray btn-xs">
+          <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned" />
+          Show Unassigned
+        </label>
         <loader class="absolute" v-if="loaders.calls"></loader>
       </div>
       <div class="col-sm-6 text-right" v-if="itemsAreSelected">
@@ -64,6 +68,9 @@
         <template slot="h__selected" scope="props">
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
+        <template slot="Patient ID" scope="props">
+          <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
+        </template>
         <template slot="Nurse" scope="props">
           <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
@@ -102,6 +109,7 @@
 <script>
   import { rootUrl } from '../../app.config.js'
   import { Event } from 'vue-tables-2'
+  import { CancelToken } from 'axios'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
@@ -146,9 +154,10 @@
           },
           currentDate: new Date(),
           $nextPromise: null,
-          requests: {
+          tokens: {
             calls: null
-          }
+          },
+          showOnlyUnassigned: false
         }
       },
       computed: {
@@ -210,6 +219,9 @@
       },
       methods: {
         rootUrl,
+        changeShowOnlyUnassigned (e) {
+          return this.activateFilters()
+        },
         columnMapping (name) {
           const columns = {
             'Patient ID': 'patientId',
@@ -234,27 +246,33 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
+        today() {
+          const d = new Date()
+          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
+        },
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
             const query = $table.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
             const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+            const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
             console.log('sort:column', sortColumn)
-            return `${filters}${sortColumn}`
+            return `${filters}${sortColumn}${unassigned}`
         },
         nextPageUrl () {
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}`)
+                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
         },
         activateFilters () {
             this.pagination = null
             this.tableData = []
             this.$refs.tblCalls.setPage(1)
-            this.next()
+            this.clearSelected()
+            return this.next()
         },
         toggleAllSelect(e) {
           const $elem = this.$refs.tblCalls
@@ -392,16 +410,17 @@
                     'DOB': call.getPatient().getInfo().birth_date,
                     'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
                     'Patient ID': call.getPatient().id,
+                    notesLink: rootUrl(`manage-patients/${call.getPatient().id}/notes`),
                     'Next Call': call.scheduled_date,
                     'Call Time Start': call.window_start,
                     'Call Time End': call.window_end,
                     state: call.getPatient().state,
                     practiceId: (call.getPatient() || {}).getPractice().id,
                     nurses () {
-                      return $vm.nurses.filter(Boolean)
+                      return [ ...$vm.nurses.filter(Boolean)
                                       .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
                                       .filter(n => !!n.display_name)
-                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse }))
+                                      .map(nurse => ({ text: nurse.display_name, value: nurse.id, nurse })), { text: 'unassigned', value: null } ]
                     },
                     loaders: {
                       nextCall: false,
@@ -421,64 +440,64 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
-              before(request) {
-                if ($vm.requests.calls) {
-                  $vm.requests.calls.abort()
-                }
-                $vm.requests.calls = request
+          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+            cancelToken: new CancelToken((c) => {
+              if (this.tokens.calls) {
+                this.tokens.calls()
               }
-            }).then((result) => result).then(result => {
-              result = result.data;
-              this.pagination = {
-                            current_page: result.meta.current_page,
-                            from: result.meta.from,
-                            last_page: result.meta.last_page,
-                            last_page_url: result.links.last,
-                            next_page_url: result.links.next,
-                            path: result.meta.path,
-                            per_page: result.meta.per_page,
-                            to: result.meta.to,
-                            total: result.meta.total
-                        }
-              if (result) {
-                const calls = result.data || [];
-                if (calls && Array.isArray(calls)) {
-                  const tableCalls = calls.map(this.setupCall)
-                  if (!this.tableData.length) {
-                      const arr = this.tableData.concat(tableCalls)
-                      const total = ((this.pagination || {}).total || 0)
-                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
-                                                                                                                    id: arr.length + index + 1, 
-                                                                                                                    nurses () { return ([]) },
-                                                                                                                    onNurseUpdate() {},
-                                                                                                                    onAttemptNoteUpdate() {},
-                                                                                                                    onGeneralCommentUpdate() {},
-                                                                                                                    onCallTimeStartUpdate() {},
-                                                                                                                    onCallTimeEndUpdate() {},
-                                                                                                                    onNextCallUpdate() {},
-                                                                                                                    loaders: {}
-                                                                                                                  })) ]
-                  }
-                  else {
-                      const from = ((this.pagination || {}).from || 0)
-                      const to = ((this.pagination || {}).to || 0)
-                      for (let i = from - 1; i < to; i++) {
-                          this.tableData[i] = tableCalls[i - from + 1]
-                      }
-                  }
-                  setImmediate(() => {
-                    this.$refs.tblCalls.count = this.pagination.total
-                    delete this.$nextPromise;
-                    this.loaders.calls = false
-                  })
-                  return tableCalls;
-                }
-              }
-            }).catch(function (err) {
-              console.error('calls:response', err)
-              this.loaders.calls = false
+              this.tokens.calls = c
             })
+          }).then((result) => result).then(result => {
+            result = result.data;
+            this.pagination = {
+                          current_page: result.meta.current_page,
+                          from: result.meta.from,
+                          last_page: result.meta.last_page,
+                          last_page_url: result.links.last,
+                          next_page_url: result.links.next,
+                          path: result.meta.path,
+                          per_page: result.meta.per_page,
+                          to: result.meta.to,
+                          total: result.meta.total
+                      }
+            if (result) {
+              const calls = result.data || [];
+              if (calls && Array.isArray(calls)) {
+                const tableCalls = calls.map(this.setupCall)
+                if (!this.tableData.length) {
+                    const arr = this.tableData.concat(tableCalls)
+                    const total = ((this.pagination || {}).total || 0)
+                    this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                  id: arr.length + index + 1, 
+                                                                                                                  nurses () { return ([]) },
+                                                                                                                  onNurseUpdate() {},
+                                                                                                                  onAttemptNoteUpdate() {},
+                                                                                                                  onGeneralCommentUpdate() {},
+                                                                                                                  onCallTimeStartUpdate() {},
+                                                                                                                  onCallTimeEndUpdate() {},
+                                                                                                                  onNextCallUpdate() {},
+                                                                                                                  loaders: {}
+                                                                                                                })) ]
+                }
+                else {
+                    const from = ((this.pagination || {}).from || 0)
+                    const to = ((this.pagination || {}).to || 0)
+                    for (let i = from - 1; i < to; i++) {
+                        this.tableData[i] = tableCalls[i - from + 1]
+                    }
+                }
+                setTimeout(() => {
+                  this.$refs.tblCalls.count = this.pagination.total
+                  delete this.$nextPromise;
+                  this.loaders.calls = false
+                }, 1000)
+                return tableCalls;
+              }
+            }
+          }).catch(function (err) {
+            console.error('calls:response', err)
+            this.loaders.calls = false
+          })
         }
       },
       mounted() {

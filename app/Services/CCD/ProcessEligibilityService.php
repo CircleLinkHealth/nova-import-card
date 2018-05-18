@@ -368,32 +368,44 @@ class ProcessEligibilityService
             return false;
         }
 
-        return $collection
-            ->map(function ($patient) use ($batch) {
-                $patient = $this->transformCsvRow($patient);
+        $patientList = [];
 
-                $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
+        for ($i = 1; $i <= 10; $i++) {
+            $patient = $collection->shift();
 
-                $job = EligibilityJob::whereHash($hash)->first();
+            if ( ! is_array($patient)) {
+                continue;
+            }
 
-                if ( ! $job) {
-                    $job = EligibilityJob::create([
-                        'batch_id' => $batch->id,
-                        'hash'     => $hash,
-                        'data'     => $patient,
-                    ]);
-                }
+            $patientList[] = $patient;
 
-                $patient['eligibility_job_id'] = $job->id;
+            $patient = $this->transformCsvRow($patient);
 
-                if ($job->status == 0) {
-                    ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
 
-                    return true;
-                }
+            $job = EligibilityJob::whereHash($hash)->first();
 
-                return false;
-            })->filter()->values();
+            if ( ! $job) {
+                $job = EligibilityJob::create([
+                    'batch_id' => $batch->id,
+                    'hash'     => $hash,
+                    'data'     => $patient,
+                ]);
+            }
+
+            $patient['eligibility_job_id'] = $job->id;
+
+            if ($job->status == 0) {
+                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
+            }
+        }
+
+        $options                = $batch->options;
+        $options['patientList'] = $collection->toArray();
+        $batch->options         = $options;
+        $batch->save();
+
+        return $patientList;
     }
 
     private function transformCsvRow($patient)

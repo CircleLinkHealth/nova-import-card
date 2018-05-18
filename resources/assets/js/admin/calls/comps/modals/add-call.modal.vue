@@ -298,7 +298,7 @@
           },
           getAllPatients() {
             this.loaders.patients = true
-            this.cache().get(rootUrl(`api/patients?rows=all`)).then(response => {
+            this.cache().get(rootUrl(`api/patients?rows=all&autocomplete`)).then(response => {
                 this.loaders.patients = false
                 this.patients = (response.data || []).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
                 console.log('add-call-get-patients', response.data)

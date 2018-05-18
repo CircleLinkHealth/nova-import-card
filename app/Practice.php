@@ -182,6 +182,11 @@ class Practice extends \App\BaseModel implements HasMedia
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
     }
 
+    public function careAmbassadorLogs()
+    {
+        return $this->belongsToMany(CareAmbassadorLog::class);
+    }
+
     public function getPrimaryLocationIdAttribute()
     {
         $loc = $this->locations->where('is_primary', '=', true)->first();

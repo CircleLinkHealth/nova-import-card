@@ -48,10 +48,11 @@
                             :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" 
+                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
                             value="Export as Excel" @click="exportExcel" >
                 <span class="pad-10"></span>
 
@@ -65,6 +66,7 @@
 <script>
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
+    import { CancelToken } from 'axios'
     import moment from 'moment'
     import loader from '../loader'
 
@@ -97,9 +99,11 @@
                 loaders: {
                     next: false,
                     practices: null,
-                    providers: false
+                    providers: false,
+                    excel: false,
+                    pdf: false
                 },
-                requests: {
+                tokens: {
                     next: null
                 }
             }
@@ -161,7 +165,7 @@
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
                 
-                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
@@ -225,12 +229,12 @@
                 const self = this
                 this.loaders.next = true
                 return this.requests.next = this.axios.get(this.nextPageUrl(), {
-                    before(request) {
-                        if (this.requests.next) {
-                            this.requests.next.abort()
+                    cancelToken: new CancelToken((c) => {
+                        if (this.tokens.next) {
+                            this.tokens.next()
                         }
-                        this.requests.next = request
-                    }
+                        this.tokens.next = c
+                    })
                 }).then(response => {
                     console.log('patient-list', response.data)
                     const pagination = response.data
@@ -330,10 +334,18 @@
                 })
             },
             exportExcel () {
-                const link = document.createElement('a')
-                link.href = rootUrl('api/patients?excel')
-                link.download = `patient-list-${Date.now()}.xlsx`
-                link.click()
+                if (!this.loaders.excel) {
+                    this.loaders.excel = true
+                    const link = document.createElement('a')
+                    link.href = rootUrl('api/patients?excel')
+                    link.download = `patient-list-${Date.now()}.xlsx`
+                    link.click()
+                }
+            },
+            exportPdf () {
+                if (!this.loaders.pdf) {
+                    this.loaders.pdf = true
+                }
             },
             createHumanReadableFilterNames () {
                 /**
@@ -428,6 +440,10 @@
 <style>
 .pad-10 {
     padding: 10px;
+}
+
+.table-bordered>tbody>tr>td {
+    white-space: nowrap;
 }
 
 </style>

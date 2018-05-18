@@ -99,13 +99,10 @@
             getPatients() {
                 const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
                 this.loaders.patients = true
-                this.cache().get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+                this.cache().get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`)).then(patients => {
                     this.loaders.patients = false
-                    this.patients = (response.data || []).map(patient => {
-                        patient.name = patient.full_name
-                        return patient;
-                    })
-                    console.log('unscheduled-patients-get-patients', response.data)
+                    this.patients = (patients || [])
+                    console.log('unscheduled-patients-get-patients', patients)
                 }).catch(err => {
                     this.loaders.patients = false
                     this.errors.patients = err.message

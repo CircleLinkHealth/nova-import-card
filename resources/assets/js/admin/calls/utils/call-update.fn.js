@@ -34,7 +34,7 @@ export const onNurseUpdate = function (nurseId) {
       call.Nurse = (nurse.text || 'unassigned')
       this.loaders.nurse = false
       if (response) console.log('calls:row:update', nurse)
-      Event.$emit('select-nurse:update', { nurseId: call.NurseId, callId: call.id })
+      if (nurseId) Event.$emit('select-nurse:update', { nurseId: call.NurseId, callId: call.id })
     }).catch(err => {
       console.error('calls:row:update', err)
       this.loaders.nurse = false

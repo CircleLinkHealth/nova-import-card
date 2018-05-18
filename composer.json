@@ -26,6 +26,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
+        "appstract/laravel-opcache": "^2.0",
         "arcturial/clickatell": "*",
         "barryvdh/laravel-debugbar": "*",
         "barryvdh/laravel-snappy": "*",
@@ -64,8 +65,7 @@
         "tymon/jwt-auth": "0.5.*",
         "venturecraft/revisionable": "1.*",
         "waavi/url-shortener": "dev-master",
-        "yajra/laravel-datatables-oracle": "~6.0",
-        "zanysoft/laravel-zip": "^1.0"
+        "yajra/laravel-datatables-oracle": "~6.0"
     },
     "require-dev": {
         "Xethron/Laravel-4-Generators": "*",

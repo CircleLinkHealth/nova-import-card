@@ -30,6 +30,7 @@ use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
+use App\Traits\TimezoneTrait;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -158,9 +159,6 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $registration_date
  * @property mixed $send_alert_to
  * @property mixed $specialty
- * @property-read mixed $timezone_abbr
- * @property-read mixed $timezone_offset
- * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -244,7 +242,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
-        SoftDeletes;
+        SoftDeletes,
+        TimezoneTrait;
 
 
 
@@ -2499,26 +2498,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $careplanMode;
     }
 
-    public function getTimezoneAbbrAttribute()
-    {
-        return $this->timezone
-            ? Carbon::now($this->timezone)->format('T')
-            : Carbon::now()->setTimezone('America/New_York')->format('T');
-    }
-
-    public function getTimezoneOffsetAttribute()
-    {
-        return $this->timezone
-        ? Carbon::now($this->timezone)->offset
-        : Carbon::now()->setTimezone('America/New_York')->offset;
-    }
-
-    public function getTimezoneOffsetHoursAttribute()
-    {
-        return $this->timezone
-        ? Carbon::now($this->timezone)->offsetHours
-        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
-    }
+    
 
     public function canApproveCarePlans()
     {
@@ -2777,6 +2757,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->observations()->orderBy('id', 'desc');
     }
 
+    public function autocomplete() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name() ?? $this->display_name,
+            'program_id' => $this->program_id
+        ];
+    }
 
     public function safe()
     {
