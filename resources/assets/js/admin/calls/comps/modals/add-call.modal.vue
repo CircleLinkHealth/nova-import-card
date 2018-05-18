@@ -34,7 +34,9 @@
                     <input type="checkbox" v-model="filters.showUnscheduledPatients" @change="changeUnscheduledPatients"> <small>Show Only Unscheduled Patients</small>
                   </label>
                   <loader v-if="loaders.patients"></loader>
-                  <div class="alert alert-warning" v-if="selectedPatientIsInDraftMode">Patient is in draft mode</div>
+                  <div class="alert alert-warning" v-if="selectedPatientIsInDraftMode">
+                    Call not allowed: Care plan is in draft mode. QA the care plan first.
+                  </div>
                 </div>
               </div>
               <div class="row form-group">

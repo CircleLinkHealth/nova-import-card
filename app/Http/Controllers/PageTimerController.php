@@ -64,6 +64,7 @@ class PageTimerController extends Controller
             $newActivity->provider_id       = $providerId;
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
+            $newActivity->is_behavioral     = isset($activity['is_behavioral']) ? $activity['is_behavioral'] : false;
             $newActivity->url_full          = $activity['url'];
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];
@@ -72,6 +73,8 @@ class PageTimerController extends Controller
             $newActivity->title             = $activity['title'];
             $newActivity->user_agent        = $request->userAgent();
             $newActivity->save();
+
+
 
 
             $activityId = null;

@@ -121,6 +121,10 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
+        if ( ! \Schema::hasTable('practices')) {
+            return;
+        }
+
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }

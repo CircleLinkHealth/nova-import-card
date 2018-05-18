@@ -88,7 +88,7 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
      */
     public function cpmProblem()
     {
-        return $this->belongsTo(CpmProblem::class);
+        return $this->belongsTo(CpmProblem::class, 'cpm_problem_id', 'id');
     }
     
     public function cpmInstruction()

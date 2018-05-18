@@ -17,7 +17,7 @@ class BillablePatientsEloquentRepository
 {
     public function billablePatients($practiceId, Carbon $date)
     {
-        $month = $date->startOfMonth()->toDateString();
+        $month = $date->startOfMonth();
 
         $result = User::with([
             'ccdProblems'      => function ($query) {
@@ -48,7 +48,7 @@ class BillablePatientsEloquentRepository
 
     public function billablePatientSummaries($practiceId, Carbon $date)
     {
-        $month = $date->startOfMonth()->toDateString();
+        $month = $date->startOfMonth();
 
         $result = PatientMonthlySummary::orderBy('needs_qa', 'desc')
                                        ->where('month_year', $month)
@@ -69,7 +69,7 @@ class BillablePatientsEloquentRepository
                                            },
                                            'chargeableServices'
                                        ])
-                                       ->has('patient.patientInfo')
+                                       // ->has('patient.patientInfo')
                                        ->whereHas('patient.practices', function ($q) use ($practiceId) {
                                            $q->where('id', '=', $practiceId);
                                        });
@@ -79,15 +79,9 @@ class BillablePatientsEloquentRepository
 
     public function patientsWithSummaries($practiceId, Carbon $date)
     {
-        $month = $date->firstOfMonth()->toDateString();
+        $month = $date->startOfMonth();
 
-        return User::with([
-            'patientSummaries' => function ($query) use ($month) {
-                $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200);
-            },
-        ])
-                   ->whereHas('patientSummaries', function ($query) use ($month) {
+        return User::whereHas('patientSummaries', function ($query) use ($month) {
                        $query->where('month_year', $month)
                              ->where('ccm_time', '>=', 1200);
                    })

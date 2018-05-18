@@ -123,6 +123,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
+  import { today } from '../../util/today'
   import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
   import timeDisplay from '../../util/time-display'
 
@@ -246,18 +247,18 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
-        today() {
-          const d = new Date()
-          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-        },
+        today,
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
-            const query = $table.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
-            const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-            const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
-            console.log('sort:column', sortColumn)
-            return `${filters}${sortColumn}${unassigned}`
+            if ($table && $table.$data) {
+              const query = $table.$data.query
+              const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+              const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+              const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
+              console.log('sort:column', sortColumn)
+              return `${filters}${sortColumn}${unassigned}`
+            }
+            return ''
         },
         nextPageUrl () {
             if (this.pagination) {
@@ -375,14 +376,18 @@
               time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
             })
           }
-          this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
-            call.Notes = ((pagination || {}).data || []).map(note => ({
-                                created_at: note.created_at,
-                                type: 'out',
-                                category: note.type,
-                                message: note.body
-                              }))
-          })
+          if (patient.id) {
+            console.log('calls:patient', patient)
+            this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
+              call.Notes = ((pagination || {}).data || []).map(note => ({
+                                  created_at: note.created_at,
+                                  type: 'out',
+                                  category: note.type,
+                                  message: note.body
+                                }))
+            })
+          }
+          
           return ({
                     id: call.id,
                     selected: false,
@@ -442,61 +447,62 @@
           this.loaders.calls = true
           return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
             cancelToken: new CancelToken((c) => {
-              if (this.tokens.calls) {
-                this.tokens.calls()
-              }
-              this.tokens.calls = c
-            })
-          }).then((result) => result).then(result => {
-            result = result.data;
-            this.pagination = {
-                          current_page: result.meta.current_page,
-                          from: result.meta.from,
-                          last_page: result.meta.last_page,
-                          last_page_url: result.links.last,
-                          next_page_url: result.links.next,
-                          path: result.meta.path,
-                          per_page: result.meta.per_page,
-                          to: result.meta.to,
-                          total: result.meta.total
+                if ($vm.tokens.calls) {
+                  $vm.tokens.calls()
+                }
+                $vm.tokens.calls = c
+              })
+            }).then((result) => result).then(result => {
+              console.log('calls:response', this.nextPageUrl())
+              result = result.data;
+              this.pagination = {
+                            current_page: result.meta.current_page,
+                            from: result.meta.from,
+                            last_page: result.meta.last_page,
+                            last_page_url: result.links.last,
+                            next_page_url: result.links.next,
+                            path: result.meta.path,
+                            per_page: result.meta.per_page,
+                            to: result.meta.to,
+                            total: result.meta.total
+                        }
+              if (result) {
+                const calls = result.data || [];
+                if (calls && Array.isArray(calls)) {
+                  const tableCalls = calls.map(this.setupCall)
+                  if (!this.tableData.length) {
+                      const arr = this.tableData.concat(tableCalls)
+                      const total = ((this.pagination || {}).total || 0)
+                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                    id: arr.length + index + 1, 
+                                                                                                                    nurses () { return ([]) },
+                                                                                                                    onNurseUpdate() {},
+                                                                                                                    onAttemptNoteUpdate() {},
+                                                                                                                    onGeneralCommentUpdate() {},
+                                                                                                                    onCallTimeStartUpdate() {},
+                                                                                                                    onCallTimeEndUpdate() {},
+                                                                                                                    onNextCallUpdate() {},
+                                                                                                                    loaders: {}
+                                                                                                                  })) ]
+                  }
+                  else {
+                      const from = ((this.pagination || {}).from || 0)
+                      const to = ((this.pagination || {}).to || 0)
+                      for (let i = from - 1; i < to; i++) {
+                          this.tableData[i] = tableCalls[i - from + 1]
                       }
-            if (result) {
-              const calls = result.data || [];
-              if (calls && Array.isArray(calls)) {
-                const tableCalls = calls.map(this.setupCall)
-                if (!this.tableData.length) {
-                    const arr = this.tableData.concat(tableCalls)
-                    const total = ((this.pagination || {}).total || 0)
-                    this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
-                                                                                                                  id: arr.length + index + 1, 
-                                                                                                                  nurses () { return ([]) },
-                                                                                                                  onNurseUpdate() {},
-                                                                                                                  onAttemptNoteUpdate() {},
-                                                                                                                  onGeneralCommentUpdate() {},
-                                                                                                                  onCallTimeStartUpdate() {},
-                                                                                                                  onCallTimeEndUpdate() {},
-                                                                                                                  onNextCallUpdate() {},
-                                                                                                                  loaders: {}
-                                                                                                                })) ]
+                  }
+                  setTimeout(() => {
+                    $vm.$refs.tblCalls.count = $vm.pagination.total
+                    delete $vm.$nextPromise;
+                    $vm.loaders.calls = false
+                  }, 1000)
+                  return tableCalls;
                 }
-                else {
-                    const from = ((this.pagination || {}).from || 0)
-                    const to = ((this.pagination || {}).to || 0)
-                    for (let i = from - 1; i < to; i++) {
-                        this.tableData[i] = tableCalls[i - from + 1]
-                    }
-                }
-                setTimeout(() => {
-                  this.$refs.tblCalls.count = this.pagination.total
-                  delete this.$nextPromise;
-                  this.loaders.calls = false
-                }, 1000)
-                return tableCalls;
               }
-            }
-          }).catch(function (err) {
+          }).catch((err) => {
             console.error('calls:response', err)
-            this.loaders.calls = false
+            $vm.loaders.calls = false
           })
         }
       },

@@ -106,7 +106,7 @@ class BillablePatientsServiceTest extends TestCase
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
         return $patient->patientSummaries()->updateOrCreate([
-            'month_year' => $monthYear->startOfMonth()->toDateString(),
+            'month_year' => $monthYear->startOfMonth(),
         ], [
             'ccm_time'               => $ccmTime,
             'no_of_successful_calls' => 2,
@@ -131,11 +131,14 @@ class BillablePatientsServiceTest extends TestCase
         $problem1 = $problem1->fresh();
         $problem2 = $problem2->fresh();
 
+        $this->assertEquals($list->count(), 1);
+
         $this->assertTrue($list->count() == 1);
 
         $row = (new ApprovableBillablePatient($list->first()))->resolve();
 
         $this->assertEquals($row['report_id'], $summary->id);
+        $this->assertEquals($row['practice_id'], $this->practice->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);
         $this->assertEquals($row['ccm'], round($summary->ccm_time / 60, 2));
         $this->assertEquals($row['problem1'], $problem1->name);

@@ -134,12 +134,16 @@ trait SetupTestCustomer
         ]);
         $patient->activities()->createMany([
             [
+                'provider_id'   => $providerId,
+                'logger_id'   => 0,
                 'type'          => $activityType->random(),
                 'duration'      => $activityDuration->random(),
                 'duration_unit' => 'seconds',
                 'performed_at'  => $date->copy()->subDay(5)->toDateTimeString(),
             ],
             [
+                'provider_id'   => $providerId,
+                'logger_id'   => 0,
                 'type'          => $activityType->random(),
                 'duration'      => $activityDuration->random(),
                 'duration_unit' => 'seconds',
