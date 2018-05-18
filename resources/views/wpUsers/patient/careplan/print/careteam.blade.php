@@ -5,7 +5,7 @@
 
 <meta name="provider-update-route" content="{{ route('user.care-team.update', ['userId' => $patient->id,'id'=>'']) }}">
 <meta name="providers-search" content="{{ route('providers.search') }}">
-<meta name="created_by" content="{{auth()->user()->id}}">
+<meta name="created_by" content="{{auth()->id()}}">
 <meta name="patient_id" content="{{$patient->id}}">
 
 <div class="v-pdf-careplans">
