@@ -94,29 +94,28 @@ class CarePlan extends \App\BaseModel implements PdfReport
         ])
         ) {
             $pendingApprovals = User::ofType('participant')
-                ->intersectPracticesWith($user)
-                ->whereHas('carePlan', function ($q) {
-                    $q->whereStatus('draft');
-                })
-                ->count();
+                                    ->intersectPracticesWith($user)
+                                    ->whereHas('carePlan', function ($q) {
+                                        $q->whereStatus('draft');
+                                    })
+                                    ->count();
         } else {
             if ($user->hasRole(['provider'])) {
                 $pendingApprovals = User::ofType('participant')
-                    ->intersectPracticesWith($user)
-                    ->whereHas('carePlan', function ($q) {
-                        $q->whereStatus(CarePlan::QA_APPROVED);
-                    })
-                    ->whereHas('patientInfo', function ($q) {
-                        $q->whereCcmStatus(Patient::ENROLLED);
-                    })
-                    ->whereHas('careTeamMembers', function ($q) use
-                        (
-                        $user
-                    ) {
-                        $q->where('member_user_id', '=', $user->id)
-                            ->where('type', '=', CarePerson::BILLING_PROVIDER);
-                    })
-                    ->count();
+                                        ->intersectPracticesWith($user)
+                                        ->whereHas('carePlan', function ($q) {
+                                            $q->whereStatus(CarePlan::QA_APPROVED);
+                                        })
+                                        ->whereHas('patientInfo', function ($q) {
+                                            $q->whereCcmStatus(Patient::ENROLLED);
+                                        })
+                                        ->whereHas('careTeamMembers', function ($q) use (
+                                            $user
+                                        ) {
+                                            $q->where('member_user_id', '=', $user->id)
+                                              ->where('type', '=', CarePerson::BILLING_PROVIDER);
+                                        })
+                                        ->count();
             }
         }
 
@@ -138,7 +137,8 @@ class CarePlan extends \App\BaseModel implements PdfReport
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
     }
 
-    public function assessment() {
+    public function assessment()
+    {
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
@@ -147,7 +147,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
      *
      * @return string
      */
-    public function toPdf() : string
+    public function toPdf(): string
     {
         $user = $this->patient;
 
@@ -168,6 +168,7 @@ class CarePlan extends \App\BaseModel implements PdfReport
             'appointments'        => $careplan[$user->id]['appointments'],
             'other'               => $careplan[$user->id]['other'],
             'isPdf'               => true,
+            'recentSubmission'    => false,
         ]);
 
         $file_name = base_path('storage/pdfs/careplans/' . Carbon::now()->toDateString() . '-' . $user->fullName . '.pdf');
@@ -194,7 +195,8 @@ class CarePlan extends \App\BaseModel implements PdfReport
      *
      * @return string
      */
-    public function getProviderApproverNameAttribute() {
+    public function getProviderApproverNameAttribute()
+    {
         $approver = $this->providerApproverUser;
 
         return $approver
@@ -202,13 +204,14 @@ class CarePlan extends \App\BaseModel implements PdfReport
             : '';
     }
 
-    public function safe() {
+    public function safe()
+    {
         return [
-            'id' => $this->id,
+            'id'      => $this->id,
             'user_id' => $this->user_id,
-            'status' => $this->status,
-            'mode' => $this->mode,
-            'type' => $this->type
+            'status'  => $this->status,
+            'mode'    => $this->mode,
+            'type'    => $this->type,
         ];
     }
 }
