@@ -29,19 +29,6 @@ class UserCsvResource extends Resource
                 $this->phone . ',' .
                 ($patient->birth_date ? Carbon::parse($patient->birth_date)->age : 0) . ',' .
                 $this->created_at . ',' .
-                ($patient->cur_month_activity_time ? gmdate('H:i:s', $patient->cur_month_activity_time) : null);
-
-        return [
-            'name'                  => $this->display_name ?? $this->name(),
-            'provider'              => $this->billing_provider_name,
-            'program'               => $practice->display_name,
-            'ccmStatus'             => $patient->ccm_status,
-            'careplanStatus'        => $careplan->status,
-            'dob'                   => $patient->birth_date,
-            'phone'                 => $this->phone,
-            'age'                   => $patient->birth_date ? Carbon::parse($patient->birth_date)->age : 0,
-            'registeredOn'          => $this->created_at,
-            'ccm'                   => $patient->cur_month_activity_time ? gmdate('H:i:s', $patient->cur_month_activity_time) : null
-        ];
+                ($patient->cur_month_activity_time ? gmdate('H:i:s', $patient->cur_month_activity_time) : '');
     }
 }
