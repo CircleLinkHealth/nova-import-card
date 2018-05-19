@@ -1,6 +1,9 @@
 <?php namespace App\Services;
 
 use App\Filters\PatientFilters;
+use App\Http\Resources\UserCsvResource;
+use App\Http\Resources\UserAutocompleteResource;
+use App\Http\Resources\UserSafeResource;
 use App\Patient;
 use App\Practice;
 use App\Repositories\PatientReadRepository;
@@ -47,10 +50,19 @@ class PatientService
     public function patients(PatientFilters $filters) {
         $users = $this->readRepo()->patients($filters);
 
+        if ($filters->isAutocomplete()) {
+            return UserAutocompleteResource::collection($users);
+        }
+
+        if ($filters->isCsv()) {
+            return UserCsvResource::collection($users);
+        }
+
         if ($filters->isExcel()) {
             return $this->excelReport($users);
         }
-        return $users;
+
+        return UserSafeResource::collection($users);
     }
 
     public function excelReport($users) {
