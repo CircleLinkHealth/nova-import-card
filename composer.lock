@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2168d87f12f6a61eedfb5221085af1b9",
+    "content-hash": "ba7b99bec5cba43b71ac7458fb0bc59d",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -170,16 +170,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.56.1",
+            "version": "3.56.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "933bc65b9f8e4d88e0bf4635d9476c2766eee743"
+                "reference": "03273bb5c1d8098ff6c23b3fa9ee444c4cc1dcee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/933bc65b9f8e4d88e0bf4635d9476c2766eee743",
-                "reference": "933bc65b9f8e4d88e0bf4635d9476c2766eee743",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/03273bb5c1d8098ff6c23b3fa9ee444c4cc1dcee",
+                "reference": "03273bb5c1d8098ff6c23b3fa9ee444c4cc1dcee",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-05-15T18:32:36+00:00"
+            "time": "2018-05-18T19:53:15+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -439,54 +439,6 @@
                 "symmetric key cryptography"
             ],
             "time": "2018-04-23T19:33:40+00:00"
-        },
-        {
-            "name": "dionera/laravel-beanstalkd-ui",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dionera/laravel-beanstalkd-admin-ui.git",
-                "reference": "a826814f481f9cdc1218a152523c90315af7a432"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dionera/laravel-beanstalkd-admin-ui/zipball/a826814f481f9cdc1218a152523c90315af7a432",
-                "reference": "a826814f481f9cdc1218a152523c90315af7a432",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "~5.5",
-                "pda/pheanstalk": "~3.0",
-                "php": "^7.0"
-            },
-            "require-dev": {
-                "phpspec/phpspec": "^3.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Dionera\\BeanstalkdUI\\BeanstalkdUIServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dionera\\BeanstalkdUI\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kai Sassnowski",
-                    "email": "ksassnowski@gmail.com"
-                }
-            ],
-            "description": "An Admin UI for Beanstalkd and Laravel",
-            "time": "2018-02-12T09:49:55+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2372,16 +2324,16 @@
         },
         {
             "name": "laravel/tinker",
-            "version": "v1.0.6",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/tinker.git",
-                "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b"
+                "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/tinker/zipball/b22fe905fcefdffae76b011e27c7ac09e07e052b",
-                "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b",
+                "url": "https://api.github.com/repos/laravel/tinker/zipball/e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
+                "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
                 "shasum": ""
             },
             "require": {
@@ -2431,7 +2383,7 @@
                 "laravel",
                 "psysh"
             ],
-            "time": "2018-04-16T12:10:37+00:00"
+            "time": "2018-05-17T13:42:07+00:00"
         },
         {
             "name": "laravelcollective/html",
@@ -3586,16 +3538,16 @@
         },
         {
             "name": "nao-pon/flysystem-google-drive",
-            "version": "1.1.8",
+            "version": "1.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nao-pon/flysystem-google-drive.git",
-                "reference": "734a5f3c0cfe1ac5007203dc22c1d0b7574ab192"
+                "reference": "54e77353d9553568fc9f19602d3baae3cc60d6e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/734a5f3c0cfe1ac5007203dc22c1d0b7574ab192",
-                "reference": "734a5f3c0cfe1ac5007203dc22c1d0b7574ab192",
+                "url": "https://api.github.com/repos/nao-pon/flysystem-google-drive/zipball/54e77353d9553568fc9f19602d3baae3cc60d6e3",
+                "reference": "54e77353d9553568fc9f19602d3baae3cc60d6e3",
                 "shasum": ""
             },
             "require": {
@@ -3631,7 +3583,7 @@
                 }
             ],
             "description": "Flysystem adapter for Google Drive",
-            "time": "2018-04-24T12:09:49+00:00"
+            "time": "2018-05-17T12:54:46+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -7396,33 +7348,38 @@
         },
         {
             "name": "facebook/webdriver",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facebook/php-webdriver.git",
-                "reference": "86b5ca2f67173c9d34340845dd690149c886a605"
+                "reference": "bd8c740097eb9f2fc3735250fc1912bc811a954e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/86b5ca2f67173c9d34340845dd690149c886a605",
-                "reference": "86b5ca2f67173c9d34340845dd690149c886a605",
+                "url": "https://api.github.com/repos/facebook/php-webdriver/zipball/bd8c740097eb9f2fc3735250fc1912bc811a954e",
+                "reference": "bd8c740097eb9f2fc3735250fc1912bc811a954e",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
                 "ext-zip": "*",
                 "php": "^5.6 || ~7.0",
                 "symfony/process": "^2.8 || ^3.1 || ^4.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^2.0",
-                "guzzle/guzzle": "^3.4.1",
-                "php-coveralls/php-coveralls": "^1.0.2",
+                "jakub-onderka/php-parallel-lint": "^0.9.2",
+                "php-coveralls/php-coveralls": "^2.0",
                 "php-mock/php-mock-phpunit": "^1.1",
                 "phpunit/phpunit": "^5.7",
                 "sebastian/environment": "^1.3.4 || ^2.0 || ^3.0",
                 "squizlabs/php_codesniffer": "^2.6",
                 "symfony/var-dumper": "^3.3 || ^4.0"
+            },
+            "suggest": {
+                "ext-SimpleXML": "For Firefox profile creation"
             },
             "type": "library",
             "extra": {
@@ -7447,7 +7404,7 @@
                 "selenium",
                 "webdriver"
             ],
-            "time": "2017-11-15T11:08:09+00:00"
+            "time": "2018-05-16T17:37:13+00:00"
         },
         {
             "name": "filp/whoops",
@@ -9216,16 +9173,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.14.2",
+            "version": "v3.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "9e3a801750cb45edd3fb36c677fb5172e1a0a2a0"
+                "reference": "aa22756641f03cad421b806c3b64c9f33f6578b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/9e3a801750cb45edd3fb36c677fb5172e1a0a2a0",
-                "reference": "9e3a801750cb45edd3fb36c677fb5172e1a0a2a0",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/aa22756641f03cad421b806c3b64c9f33f6578b6",
+                "reference": "aa22756641f03cad421b806c3b64c9f33f6578b6",
                 "shasum": ""
             },
             "type": "library",
@@ -9269,7 +9226,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-05-12T07:05:49+00:00"
+            "time": "2018-05-19T07:38:16+00:00"
         },
         {
             "name": "symfony/class-loader",
