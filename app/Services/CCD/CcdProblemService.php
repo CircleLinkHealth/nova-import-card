@@ -9,13 +9,11 @@
 namespace App\Services\CCD;
 
 use App\Models\CPM\CpmProblem;
-use App\User;
 use App\Models\ProblemCode;
-use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
+use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
-use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
 {
@@ -77,7 +75,7 @@ class CcdProblemService
     
     public function addPatientCcdProblem($ccdProblem) {
         if ($ccdProblem) {
-            if ($ccdProblem['userId'] && $ccdProblem['name']) {
+            if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
 
                 $problem = $this->setupProblem($this->repo()->addPatientCcdProblem($ccdProblem));
 
