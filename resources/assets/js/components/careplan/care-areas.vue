@@ -88,6 +88,7 @@
                 })
                 problem.type = 'cpm'
                 problem.title = () => `${problem.code} ${problem.name}`
+                problem.count = () => this.cpmProblems.filter(p => p.name == problem.name).length
                 return problem
             },
             getCpmProblems() {

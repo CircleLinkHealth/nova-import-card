@@ -58,7 +58,7 @@
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
-                                            Full Name: {{ selectedProblem.original_name }}
+                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() > 1) ? ` (+${selectedProblem.count() - 1})` : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
