@@ -84,41 +84,53 @@ class DetermineTargetPatientEligibility extends Command
 
                                      $insurances = $patientInfo->getInsurances();
 
-                                     $enrollee = Enrollee::create([
-                                         //required
-                                         'first_name' => $demos['firstname'],
-                                         'last_name' => $demos['lastname'],
-                                         'home_phone' => $demos['homephone'],
-                                         'cell_phone' => $demos['mobilephone'] ?? null,
-                                         'practice_id' => $practice->id,
+                                     try {
+                                         $enrollee = Enrollee::create([
+                                             //required
+                                             'first_name'  => $demos['firstname'],
+                                             'last_name'   => $demos['lastname'],
+                                             'home_phone'  => $demos['homephone'],
+                                             'cell_phone'  => $demos['mobilephone'] ?? null,
+                                             'practice_id' => $practice->id,
 
-                                         //notRequired
-                                         'address' => $demos['address1'] ?? null,
-                                         'address_2' => $demos['address2'] ?? null,
-                                         'dob' => $demos['dob'],
-                                         'state' => $demos['state'],
-                                         'city' => $demos['city'] ?? null,
-                                         'zip' => $demos['zip'] ?? null,
+                                             //notRequired
+                                             'address'     => $demos['address1'] ?? null,
+                                             'address_2'   => $demos['address2'] ?? null,
+                                             'dob'         => $demos['dob'],
+                                             'state'       => $demos['state'],
+                                             'city'        => $demos['city'] ?? null,
+                                             'zip'         => $demos['zip'] ?? null,
 
-                                         'primary_insurance'   => array_key_exists(0, $insurances)
-                                             ? $insurances[0]['insurancetype'] ?? $insurances[0]['insuranceplanname']
-                                             : '',
-                                         'secondary_insurance' => array_key_exists(1, $insurances)
-                                             ? $insurances[1]['insurancetype'] ?? $insurances[1]['insuranceplanname']
-                                             : '',
-                                         'tertiary_insurance'  => array_key_exists(2, $insurances)
-                                             ? $insurances[2]['insurancetype'] ?? $insurances[2]['insuranceplanname']
-                                             : '',
+                                             'primary_insurance'   => array_key_exists(0, $insurances)
+                                                 ? $insurances[0]['insurancetype'] ?? $insurances[0]['insuranceplanname']
+                                                 : '',
+                                             'secondary_insurance' => array_key_exists(1, $insurances)
+                                                 ? $insurances[1]['insurancetype'] ?? $insurances[1]['insuranceplanname']
+                                                 : '',
+                                             'tertiary_insurance'  => array_key_exists(2, $insurances)
+                                                 ? $insurances[2]['insurancetype'] ?? $insurances[2]['insuranceplanname']
+                                                 : '',
 
-                                         'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
-                                         'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
-                                     ]);
+                                             'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
+                                             'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
+                                         ]);
 
-                                     $patient->enrollee_id = $enrollee->id;
+                                         $patient->enrollee_id = $enrollee->id;
+                                     } catch (\Exception $e) {
+                                         //check if this is a mysql exception for unique key constraint
+                                         if ($e instanceof \Illuminate\Database\QueryException) {
+                                             $errorCode = $e->errorInfo[1];
+                                             if ($errorCode == 1062) {
+                                                 //do nothing
+                                                 //we don't actually want to terminate the program if we detect duplicates
+                                                 //we just don't wanna add the row again
+                                             }
+                                         }
+                                     }
 
                                      $patient->save();
 
-                                     return $enrollee;
+                                     return $enrollee ?? null;
                                  });
     }
 }

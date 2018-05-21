@@ -211,7 +211,6 @@ return [
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
-        Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,

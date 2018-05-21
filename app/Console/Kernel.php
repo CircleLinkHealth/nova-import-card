@@ -1,5 +1,6 @@
 <?php namespace App\Console;
 
+use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
@@ -28,6 +29,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command(DetermineTargetPatientEligibility::class)
+                 ->everyTenMinutes();
+
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyMinute()->withoutOverlapping(15);
 
@@ -48,41 +52,41 @@ class Kernel extends ConsoleKernel
 //                 ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
-                 ->weekdays()
-                 ->dailyAt('08:00');
+            ->weekdays()
+            ->dailyAt('08:00');
 
         //commenting out due to isues with google calendar
 //        $schedule->command('nurseSchedule:export')
 //                 ->hourly();
 
         $schedule->command(GetAppointments::class)
-                 ->dailyAt('23:00');
+            ->dailyAt('23:00');
 
         $schedule->command(GetCcds::class)
-                 ->everyThirtyMinutes();
+            ->everyThirtyMinutes();
 
         $schedule->command(EmailRNDailyReport::class)
-                 ->weekdays()
-                 ->at('21:00');
+            ->weekdays()
+            ->at('21:00');
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetCcmTime::class)
-                 ->cron('1 0 1 * *');
+            ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
         $schedule->command(AttachBillableProblemsToLastMonthSummary::class)
-                 ->cron('30 0 1 * *');
+            ->cron('30 0 1 * *');
 
 //        $schedule->command('lgh:importInsurance')
 //            ->dailyAt('05:00');
 
         $schedule->command(QueueGenerateNurseInvoices::class)
-                 ->dailyAt('04:00')
-                 ->withoutOverlapping();
+            ->dailyAt('04:00')
+            ->withoutOverlapping();
 
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
-                 ->dailyAt('09:00')
-                 ->withoutOverlapping();
+            ->dailyAt('09:00')
+            ->withoutOverlapping();
 
 
 //        $schedule->command('ccda:determineEligibility')
@@ -103,15 +107,15 @@ class Kernel extends ConsoleKernel
 //            ->cron('0 */2 * * *');
 
         $schedule->command(QueueSendAuditReports::class)
-                 ->monthlyOn(1, '02:00');
+            ->monthlyOn(1, '02:00');
 
         $schedule->command(CheckEmrDirectInbox::class)
-                 ->everyFiveMinutes()
-                 ->withoutOverlapping();
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
 
         $schedule->command(DeleteProcessedFiles::class)
-                 ->everyThirtyMinutes()
-                 ->withoutOverlapping();
+            ->everyThirtyMinutes()
+            ->withoutOverlapping();
     }
 
     /**
