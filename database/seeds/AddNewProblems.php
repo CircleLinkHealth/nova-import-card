@@ -17,6 +17,32 @@ class AddNewProblems extends Seeder
         $this->removeProblems();
 
         $this->addProblems();
+
+        $this->updateProblemsToBHI();
+    }
+
+    public function updateProblemsToBHI() {
+        $problems = [
+            'Depression',
+            'Dementia',
+            'Smoking',
+            'Drug Use Disorder'
+        ];
+
+        foreach ($problems as $name) {
+            $problem = CpmProblem::where([
+                'name' => $name
+            ])->first();
+            if ($problem) {
+                $problem->is_behavioral = true;
+                $problem->save();
+
+                $this->command->info("- $name has been updated as BHI");
+            }
+            else {
+                $this->command->warn("- $name not found");
+            }
+        }
     }
 
     public function addProblems() {
