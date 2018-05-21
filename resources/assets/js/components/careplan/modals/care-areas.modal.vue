@@ -10,7 +10,7 @@
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
-                            {{problem.name}}
+                            {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </div>
@@ -79,7 +79,7 @@
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                                    title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
                                             </div>
                                         </div>
                                         
