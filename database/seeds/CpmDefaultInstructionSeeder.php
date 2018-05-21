@@ -188,6 +188,7 @@ class CpmDefaultInstructionSeeder extends Seeder
             ],
             'Substance Abuse' => [
                 'problems' => [
+                    'Drug Use Disorder',
                     'Cannabis abuse with cannabis-induced anxiety disorder',
                     'Cannabis abuse with intoxication delirium',
                     'Cannabis abuse with intoxication with perceptual disturbance',
