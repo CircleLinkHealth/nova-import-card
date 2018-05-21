@@ -114,6 +114,8 @@ class DetermineTargetPatientEligibility extends Command
                                              'cpm_problem_1' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_1'),
                                              'cpm_problem_2' => $adapter->getEligiblePatientList()->first()->get('cpm_problem_2'),
                                          ]);
+
+                                         $patient->enrollee_id = $enrollee->id;
                                      } catch (\Exception $e) {
                                          //check if this is a mysql exception for unique key constraint
                                          if ($e instanceof \Illuminate\Database\QueryException) {
@@ -126,11 +128,9 @@ class DetermineTargetPatientEligibility extends Command
                                          }
                                      }
 
-                                     $patient->enrollee_id = $enrollee->id;
-
                                      $patient->save();
 
-                                     return $enrollee;
+                                     return $enrollee ?? null;
                                  });
     }
 }
