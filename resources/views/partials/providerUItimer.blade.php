@@ -46,6 +46,10 @@ use App\Patient;
                 $patientIsBehavioral = $patient->isBehavioral();
             }
         }
+        else {
+            $patientIsCcm = false;
+            $patientIsBehavioral = false;
+        }
         $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
         ?>
         <script>
