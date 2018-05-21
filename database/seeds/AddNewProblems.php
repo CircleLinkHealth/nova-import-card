@@ -25,7 +25,6 @@ class AddNewProblems extends Seeder
         $problems = [
             'Depression',
             'Dementia',
-            'Smoking',
             'Drug Use Disorder'
         ];
 
