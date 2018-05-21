@@ -10,7 +10,7 @@
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
-                            {{problem.name}}
+                            {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </div>
@@ -58,7 +58,7 @@
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
-                                            Full Name: {{ selectedProblem.original_name }}
+                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() > 1) ? ` (+${selectedProblem.count() - 1})` : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
@@ -79,7 +79,7 @@
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                                    title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
                                             </div>
                                         </div>
                                         
