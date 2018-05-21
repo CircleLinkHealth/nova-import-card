@@ -91,9 +91,9 @@ class CcdProblemService
                 else return $problem;
 
             }
-            throw new Exception('$ccdProblem needs "userId" and "name" parameters');
+            throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
         }
-        throw new Exception('$ccdProblem should not be null');
+        throw new \Exception('$ccdProblem should not be null');
     }
 
     public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null, $icd10 = null, $instruction = null) {
