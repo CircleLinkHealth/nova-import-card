@@ -1,7 +1,17 @@
 <template>
     <span class="call-mode" v-if="!noDisplay">
-        <input class="btn btn-primary" type="button" value="Start Call Mode" @click="enterCallMode" v-if="Number(patientId) && (callMode === false)" />
-        <input class="btn btn-danger" type="button" value="End Call Mode" @click="exitCallMode" v-if="Number(patientId) && (callMode === true)" />
+        <button class="btn btn-primary" type="button" 
+            @click="enterCallMode" v-if="Number(patientId) && (callMode === false)">
+            <span class="glyphicon glyphicon-earphone"></span>
+            <span class="hidden-sm hidden-md">Start</span>
+            <span class="hidden-sm hidden-lg">Start Call Mode</span>
+        </button>
+        <button class="btn btn-danger" type="button" 
+            @click="exitCallMode" v-if="Number(patientId) && (callMode === true)">
+            <span class="glyphicon glyphicon-earphone"></span>
+            <span class="hidden-sm hidden-md">End</span>
+            <span class="hidden-sm hidden-lg">End Call Mode</span>
+        </button>
         <loader v-if="(callMode === null) || loaders.callMode"></loader>
     </span>
 </template>
@@ -30,11 +40,17 @@
             'loader': LoaderComponent
         },
         methods: {
-            enterCallMode () {
+            enterCallMode (e) {
+                if (e) {
+                    e.preventDefault()
+                }
                 this.loaders.callMode = true
                 EventBus.$emit('tracker:call-mode:enter')
             },
-            exitCallMode () {
+            exitCallMode (e) {
+                if (e) {
+                    e.preventDefault()
+                }
                 this.loaders.callMode = true
                 EventBus.$emit('tracker:call-mode:exit')
             }
@@ -49,7 +65,7 @@
 </script>
 
 <style>
-    span.call-mode input[type='button'] {
-        margin-top: 8px;
+    span.call-mode button {
+        margin-top: 10px;
     }
 </style>
