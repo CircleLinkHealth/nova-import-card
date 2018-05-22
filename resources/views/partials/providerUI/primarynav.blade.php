@@ -9,10 +9,22 @@ if (isset($patient)) {
     $monthlyTime = "";
 }
 ?>
-<nav class="navbar primary-navbar">
-    <div class="container-fluid col-md-12" style="width: 100%;">
+@push('styles')
+    <style>
+        .full-width {
+            width: 100%;
+        }
 
-        <div class="navbar-header" style="width: 6%;">
+        .margin-0 {
+            margin-right: 0px;
+            margin-left: 0px;
+        }
+    </style>
+@endpush
+<nav class="navbar primary-navbar">
+    <div class="row container-fluid full-width margin-0">
+
+        <div class="navbar-header col-lg-1 col-sm-2">
             <a href="{{ url('/') }}" style="border: none" class="navbar-brand"><img
                         src="/img/ui/clh_logo_lt.png"
                         alt="Care Plan Manager"
@@ -23,12 +35,12 @@ if (isset($patient)) {
 
         </div>
 
-        <div class="col-md-5" id="search-bar-container">
+        <div class="col-lg-5 col-sm-10" id="search-bar-container">
             @include('partials.search')
         </div>
 
-        <div class="navbar-right hidden-xs" style="">
-            <ul class="nav navbar-nav">
+        <div class="hidden-xs col-lg-6 col-sm-12">
+            <ul class="nav navbar-nav navbar-right">
                 @if (auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
                         <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
