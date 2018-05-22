@@ -19,7 +19,7 @@
             <template slot-scope="props">
                 <div class="text-center">
                     <p>
-                        Please use the select at the top of the page to indicate if you are doing Chronic Care or Behavioral Health Management.
+                        Please use the selector at the top of the page to indicate if you are doing Chronic Care or Behavioral Health Management.
                     </p>
                 </div>
             </template>
@@ -62,8 +62,8 @@
                     okHandler () {
                         if ($vm.dontShowModalAgain) {
                             stor.add('bhi-modal:do-not-show', 'true')
-                            Event.$emit('modal-bhi:hide')
                         }
+                        Event.$emit('modal-bhi:hide')
                     }
                 }
             }
