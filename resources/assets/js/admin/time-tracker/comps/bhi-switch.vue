@@ -95,6 +95,7 @@
         border: 3px solid #50b2e2;
         position: relative;
         top: 10px;
+        right: -7px;
     }
 
     ul.bhi-nav li {
