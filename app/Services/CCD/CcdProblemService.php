@@ -68,7 +68,7 @@ class CcdProblemService
         $user = $this->userRepo->model()->findOrFail($userId);
 
         //exclude generic diabetes type
-        $diabetes = optional(CpmProblem::where('name', 'Diabetes')->first());
+        $diabetes = CpmProblem::where('name', 'Diabetes')->first();
         
         return $user->ccdProblems()->get()->filter(function ($problem) use ($diabetes) {
             return $problem->id != $diabetes->id;
