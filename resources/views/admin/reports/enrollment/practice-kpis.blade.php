@@ -16,8 +16,9 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading">Practice Enrollment KPIs <span class="pull-right">
-                                    <a href="{{ route('enrollment.practice.stats.excel') }}">Export Excel</a>
+                            <div class="panel-heading">Practice Enrollment KPIs 
+                                <span class="pull-right">
+                                    <a class="excel-export" data-href="{{ route('enrollment.practice.stats.excel') }}">Export Excel</a>
                                 </span></div>
                             <div class="panel-body">
 
@@ -85,13 +86,23 @@
 
                 $(function () {
 
-                    $("#start_date").change(function () {
+                    function setExcelExportHref (startDate, endDate) {
+                        var href = $('.excel-export').attr('data-href') + '?start_date=' + startDate + '&end_date=' + endDate
+                        $('.excel-export').attr('href', href)
+                        return href
+                    }
+
+                    $("#start_date").change(function (date) {
                         // whatever you need to be done on change of the input field
+                        setExcelExportHref($("#start_date").val(), $("#end_date").val())
                     });
 
-                    $("#end_date").change(function () {
+                    $("#end_date").change(function (date) {
                         // whatever you need to be done on change of the input field
+                        setExcelExportHref($("#start_date").val(), $("#end_date").val())
                     });
+
+                    setExcelExportHref($("#start_date").val(), $("#end_date").val())
 
                     $('#practice_kpis').DataTable({
                         processing: true,
@@ -122,7 +133,12 @@
                         "aaSorting": [2, 'desc'],
                         "iDisplayLength": 15,
                     });
-
+                    
+                    $('#practice_kpis')
+                    .on('error.dt', function (e, settings, techNote, message) {
+                        console.log('An error has been reported by DataTables: ', message);
+                    })
+                    .DataTable();
                 });
 
                 $('#start_date').on('change', function () {
@@ -134,13 +150,6 @@
                     console.log($('#end_date').val());
                     $('#practice_kpis').DataTable().ajax.reload();
                 });
-
-                $('#practice_kpis')
-                    .on('error.dt', function (e, settings, techNote, message) {
-                        console.log('An error has been reported by DataTables: ', message);
-                    })
-                    .DataTable();
-
             </script>
             <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
         @endpush
