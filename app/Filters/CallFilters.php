@@ -259,7 +259,8 @@ class CallFilters extends QueryFilters
     {
         return $this->builder
             ->join('users', 'users.id', '=', 'calls.inbound_cpm_id')
-            ->orderBy('users.display_name', $term);
+            ->orderBy('users.display_name', $term)
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_scheduledDate($term = null)
@@ -275,7 +276,8 @@ class CallFilters extends QueryFilters
             ->with('inboundUser.patientInfo')
             ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
             ->orderBy("$patientInfoTable.ccm_status", $term)
-            ->groupBy('calls.inbound_cpm_id');
+            ->groupBy('calls.inbound_cpm_id')
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_practice($term = null)
@@ -288,7 +290,8 @@ class CallFilters extends QueryFilters
             ->join($usersTable, 'calls.inbound_cpm_id', '=', "$usersTable.id")
             ->join($practicesTable, "$usersTable.program_id", '=', "$practicesTable.id")
             ->orderBy("$practicesTable.display_name", $term)
-            ->groupBy('calls.inbound_cpm_id');
+            ->groupBy('calls.inbound_cpm_id')
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_scheduler($term = null)
@@ -314,7 +317,8 @@ class CallFilters extends QueryFilters
             ->with('inboundUser.patientInfo')
             ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
             ->orderBy("$patientInfoTable.last_contact_time", $term)
-            ->groupBy('calls.inbound_cpm_id');
+            ->groupBy('calls.inbound_cpm_id')
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_lastCallStatus($term = null)
@@ -325,7 +329,8 @@ class CallFilters extends QueryFilters
             ->with('inboundUser.patientInfo')
             ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
             ->orderBy("$patientInfoTable.no_call_attempts_since_last_success", $term)
-            ->groupBy('calls.inbound_cpm_id');
+            ->groupBy('calls.inbound_cpm_id')
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_ccmTime($term = null)
@@ -336,7 +341,8 @@ class CallFilters extends QueryFilters
             ->with('inboundUser.patientInfo')
             ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
             ->orderBy("$patientInfoTable.cur_month_activity_time", $term)
-            ->groupBy('calls.inbound_cpm_id');
+            ->groupBy('calls.inbound_cpm_id')
+            ->select([ 'calls.*' ]);
     }
 
     public function sort_preferredCallDays($term = null)
