@@ -60,53 +60,33 @@ class OpsDashboardController extends Controller
                                  },
                                      'patientInfo']);
                              }])
+                             ->whereHas('patients', function($p){
+                                 $p->whereHas('patientInfo', function($p){
+                                     $p->where('ccm_status', Patient::ENROLLED)
+                                       ->orWhere('ccm_status', Patient::PAUSED)
+                                       ->orWhere('ccm_status', Patient::WITHDRAWN);
+                                 });})
                              ->get()
                              ->sortBy('display_name');
 
-//        $enrolledPatients = User::with([
-//                                    'activities' => function ($activity) use ($date) {
-//                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
-//                                                 ->where('performed_at', '<=', $date);
-//                                    },
-//                                ])
-//                                ->whereHas('patientInfo', function ($patient) {
-//                                    $patient->enrolled();
-//                                })->get();
-
-        //used by query to get Patients by status
         $fromDate         = $date->copy()->subDay();
 
-//        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $date->toDateTimeString());
-//
 
 //        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
         $hoursBehind = 10;
 
 
-//        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
-
-
         $rows = [];
         foreach ($practices as $practice) {
 
-            $patients = $practice->patients->map(function ($item) use ($fromDate, $date) {
-                if ($item->patientInfo->ccm_status == Patient::ENROLLED || $item->patientInfo->ccm_status == Patient::PAUSED || $item->patientInfo->ccm_status == Patient::WITHDRAWN  ){
-                    return $item;
-                }
-            })->filter();
-            $ccmCounts = $this->service->countPatientsByCcmTime($patients, $date);
-            $countsByStatus = $this->service->countPatientsByStatus($patients, $fromDate, $date);
+            $ccmCounts = $this->service->countPatientsByCcmTime($practice->patients, $date);
+            $countsByStatus = $this->service->countPatientsByStatus($practice->patients, $fromDate, $date);
             $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
             $ccmTotal                    = collect($ccmCounts);
             $row = collect([
                 'ccmCounts'      => $ccmTotal,
                 'countsByStatus' => $countsByStatus,
             ]);
-
-//            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-//            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-//            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
-
 
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
