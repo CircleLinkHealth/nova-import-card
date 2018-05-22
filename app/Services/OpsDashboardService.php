@@ -201,36 +201,31 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function countPatientsByStatus($patients)
+    public function countPatientsByStatus($patients, $fromDate, $toDate)
     {
         $paused    = [];
         $withdrawn = [];
         $enrolled  = [];
         $gCodeHold = [];
 
-        $pausedCount    = null;
-        $withdrawnCount = null;
-        $enrolledCount  = null;
-        $gCodeHoldCount = null;
-
         foreach ($patients as $patient) {
             if (!$patient->patientInfo){
                 dd($patient);
             }
-                if ($patient->patientInfo->ccm_status == 'paused') {
-                    $paused[] = $patient;
+                if ($patient->patientInfo->ccm_status == 'paused' && $patient->patientInfo->date_paused >= $fromDate && $patient->patientInfo->date_paused <= $toDate) {
+                        $paused[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'withdrawn') {
+                if ($patient->patientInfo->ccm_status == 'withdrawn' && $patient->patientInfo->date_withdrawn >= $fromDate && $patient->patientInfo->date_withdrawn <= $toDate) {
                     $withdrawn[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'enrolled') {
+                if ($patient->patientInfo->ccm_status == 'enrolled' && $patient->patientInfo->registration_date >= $fromDate && $patient->patientInfo->registration_date <= $toDate) {
                     $enrolled[] = $patient;
                 }
-                if ($patient->carePlan) {
-                    if ($patient->carePlan->status == 'to_enroll') {
-                        $gCodeHold[] = $patient;
-                    }
-                }
+//                if ($patient->carePlan) {
+//                    if ($patient->carePlan->status == 'to_enroll') {
+//                        $gCodeHold[] = $patient;
+//                    }
+//                }
         }
 
         $pausedCount    = count($paused);
@@ -299,7 +294,9 @@ class OpsDashboardService
                     $count['20plus'] += 1;
                 }
             }else{
-                $count['zero'] += 1;
+                if ($patient->patientInfo->ccm_status == Patient::ENROLLED){
+                    $count['zero'] += 1;
+                }
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];

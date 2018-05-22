@@ -40,41 +40,74 @@ class OpsDashboardController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
-        //used by query to get patients with CCM time
-        $date = $maxDate->copy()->setTimeFromTimeString('23:00');
+        if ($request->has('date')){
+            $requestDate = new Carbon($request['date']);
+            $date        = $requestDate->copy()->setTime('23', '0', '0');
+        }else{
+            $date = $maxDate->copy()->setTimeFromTimeString('23:00');
+        }
 
+        $practices = Practice::activeBillable()
+                             ->with(['patients' => function($p) use ($date){
+                                 $p->with(['activities' => function($a) use ($date){
+                                     $a->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
+                                       ->where('performed_at', '<=', $date);
+                                 },
+                                     'patientInfo']);
+                             }])
+                             ->get()
+                             ->sortBy('display_name');
 
-        $enrolledPatients = User::with([
-                                    'activities' => function ($activity) use ($date) {
-                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
-                                                 ->where('performed_at', '<=', $date);
-                                    },
-                                ])
-                                ->whereHas('patientInfo', function ($patient) {
-                                    $patient->enrolled();
-                                })->get();
+//        $enrolledPatients = User::with([
+//                                    'activities' => function ($activity) use ($date) {
+//                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
+//                                                 ->where('performed_at', '<=', $date);
+//                                    },
+//                                ])
+//                                ->whereHas('patientInfo', function ($patient) {
+//                                    $patient->enrolled();
+//                                })->get();
 
         //used by query to get Patients by status
         $fromDate         = $date->copy()->subDay();
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $date->toDateTimeString());
+
+//        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $date->toDateTimeString());
+//
+
+//        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
+        $hoursBehind = 10;
 
 
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
-
-
-        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
+//        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
 
 
         $rows = [];
-        foreach ($allPractices as $practice) {
-            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
+        foreach ($practices as $practice) {
+
+            $patients = $practice->patients->map(function ($item) use ($fromDate, $date) {
+                if ($item->patientInfo->ccm_status == Patient::ENROLLED || $item->patientInfo->ccm_status == Patient::PAUSED || $item->patientInfo->ccm_status == Patient::WITHDRAWN  ){
+                    return $item;
+                }
+            })->filter();
+            $ccmCounts = $this->service->countPatientsByCcmTime($patients, $date);
+            $countsByStatus = $this->service->countPatientsByStatus($patients, $fromDate, $date);
+            $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
+            $ccmTotal                    = collect($ccmCounts);
+            $row = collect([
+                'ccmCounts'      => $ccmTotal,
+                'countsByStatus' => $countsByStatus,
+            ]);
+
+//            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
+//            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
+//            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
+
+
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -92,6 +125,13 @@ class OpsDashboardController extends Controller
 
     }
 
+    /**
+     * To be removed.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getDailyReport(Request $request)
     {
         $today       = Carbon::today();
