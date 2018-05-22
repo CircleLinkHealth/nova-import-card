@@ -96,6 +96,7 @@
         border-radius: 10px;
         position: relative;
         top: 10px;
+        right: -7px;
     }
 
     ul.bhi-nav li {
