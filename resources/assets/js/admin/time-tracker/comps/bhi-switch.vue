@@ -26,7 +26,7 @@
             <template slot="footer" slot-scope="props">
                 <div class="text-center">
                     <label>
-                        <input type="checkbox" v-model="dontShowModalAgain" /> Don't show this message again
+                        <input type="checkbox" style="display: inline-block" v-model="dontShowModalAgain" /> Don't show this message again
                     </label>
                 </div>
             </template>
@@ -124,10 +124,6 @@
     .modal-bhi .modal-body {
         font-size: 20px;
         line-height: 30px;
-    }
-
-    input[type="checkbox"] {
-        display: inline-block !important;
     }
     
     .modal-button {
