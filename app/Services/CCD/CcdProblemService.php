@@ -70,7 +70,9 @@ class CcdProblemService
         //exclude generic diabetes type
         $diabetes = CpmProblem::where('name', 'Diabetes')->first();
         
-        return $user->ccdProblems()->where('cpm_problem_id', '!=', $diabetes->id)->get()->map([$this, 'setupProblem']);
+        return $user->ccdProblems()->get()->filter(function ($problem) use ($diabetes) {
+            return $problem->id != $diabetes->id;
+        })->map([$this, 'setupProblem']);
     }
     
     public function addPatientCcdProblem($ccdProblem) {
