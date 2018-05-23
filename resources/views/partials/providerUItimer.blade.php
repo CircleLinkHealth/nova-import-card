@@ -57,6 +57,8 @@ use App\Patient;
             var timeTrackerInfo = {
                 "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',
                 "providerId": '{{Auth::user()->id}}',
+                "totalCCMTime": "{{ $ccm_time }}",
+                "totalBHITime": "{{ $bhi_time }}",
                 "totalTime": (function (monthlyTime) {
                                 if (monthlyTime) {
                                     var split = monthlyTime.split(':');

@@ -19,6 +19,9 @@ class ProviderUITimerComposer extends ServiceProvider
     public function boot()
     {
         View::composer(['partials.providerUItimer'], function ($view) {
+            $ccm_time = 0;
+            $bhi_time = 0;
+
             if ( ! isset($activity)) {
                 $activity = 'Undefined';
             }
@@ -44,14 +47,19 @@ class ProviderUITimerComposer extends ServiceProvider
                 $enableTimeTracking = false;
             }
 
+            $patient = $view->patient;
             $patientId        = '';
             $patientProgramId = '';
             if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
                 $patientId        = $patient->id;
                 $patientProgramId = $patient->program_id;
+                $ccm_time = $patient->ccm_time;
+                $bhi_time = $patient->bhi_time;
             } elseif (isset($patient) && ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId        = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
+                $ccm_time = $patient->user->ccm_time;
+                $bhi_time = $patient->user->bhi_time;
             }
 
             $view->with(compact([
@@ -61,6 +69,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 'urlShort',
                 'ipAddr',
                 'title',
+                'ccm_time',
+                'bhi_time'
             ]));
         });
 
@@ -70,6 +80,7 @@ class ProviderUITimerComposer extends ServiceProvider
             $patient = $view->patient;
 
             if ($patient) {
+                
                 $seconds = optional($patient->patientInfo)
                                ->cur_month_activity_time ?? 0;
 
@@ -105,7 +116,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'ccm_complex',
                 'location',
                 'monthlyTime',
-                'provider',
+                'provider'
             ]));
         });
     }
