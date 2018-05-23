@@ -109,6 +109,7 @@
 <script>
   import { rootUrl } from '../../app.config.js'
   import { Event } from 'vue-tables-2'
+  import { CancelToken } from 'axios'
   import TextEditable from './comps/text-editable'
   import DateEditable from './comps/date-editable'
   import SelectEditable from './comps/select-editable'
@@ -122,6 +123,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
+  import { today } from '../../util/today'
   import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
   import timeDisplay from '../../util/time-display'
 
@@ -153,7 +155,7 @@
           },
           currentDate: new Date(),
           $nextPromise: null,
-          requests: {
+          tokens: {
             calls: null
           },
           showOnlyUnassigned: false
@@ -245,18 +247,18 @@
           console.log('calls:excel', url)
           document.location.href = url
         },
-        today() {
-          const d = new Date()
-          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-        },
+        today,
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
-            const query = $table.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
-            const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-            const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
-            console.log('sort:column', sortColumn)
-            return `${filters}${sortColumn}${unassigned}`
+            if ($table && $table.$data) {
+              const query = $table.$data.query
+              const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+              const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+              const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
+              console.log('sort:column', sortColumn)
+              return `${filters}${sortColumn}${unassigned}`
+            }
+            return ''
         },
         nextPageUrl () {
             if (this.pagination) {
@@ -270,6 +272,7 @@
             this.pagination = null
             this.tableData = []
             this.$refs.tblCalls.setPage(1)
+            this.clearSelected()
             return this.next()
         },
         toggleAllSelect(e) {
@@ -373,14 +376,18 @@
               time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
             })
           }
-          this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
-            call.Notes = ((pagination || {}).data || []).map(note => ({
-                                created_at: note.created_at,
-                                type: 'out',
-                                category: note.type,
-                                message: note.body
-                              }))
-          })
+          if (patient.id) {
+            console.log('calls:patient', patient)
+            this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
+              call.Notes = ((pagination || {}).data || []).map(note => ({
+                                  created_at: note.created_at,
+                                  type: 'out',
+                                  category: note.type,
+                                  message: note.body
+                                }))
+            })
+          }
+          
           return ({
                     id: call.id,
                     selected: false,
@@ -438,14 +445,15 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-            return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
-              before(request) {
-                if ($vm.requests.calls) {
-                  $vm.requests.calls.abort()
+          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+            cancelToken: new CancelToken((c) => {
+                if ($vm.tokens.calls) {
+                  $vm.tokens.calls()
                 }
-                $vm.requests.calls = request
-              }
+                $vm.tokens.calls = c
+              })
             }).then((result) => result).then(result => {
+              console.log('calls:response', this.nextPageUrl())
               result = result.data;
               this.pagination = {
                             current_page: result.meta.current_page,
@@ -484,18 +492,18 @@
                           this.tableData[i] = tableCalls[i - from + 1]
                       }
                   }
-                  setImmediate(() => {
-                    this.$refs.tblCalls.count = this.pagination.total
-                    delete this.$nextPromise;
-                    this.loaders.calls = false
-                  })
+                  setTimeout(() => {
+                    $vm.$refs.tblCalls.count = $vm.pagination.total
+                    delete $vm.$nextPromise;
+                    $vm.loaders.calls = false
+                  }, 1000)
                   return tableCalls;
                 }
               }
-            }).catch(function (err) {
-              console.error('calls:response', err)
-              this.loaders.calls = false
-            })
+          }).catch((err) => {
+            console.error('calls:response', err)
+            $vm.loaders.calls = false
+          })
         }
       },
       mounted() {

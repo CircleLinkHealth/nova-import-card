@@ -16,6 +16,7 @@ class PracticeStatsHelperTest extends TestCase
     protected $service;
     protected $start;
     protected $end;
+    protected $nurse;
 
     use UserHelpers;
 
@@ -23,10 +24,13 @@ class PracticeStatsHelperTest extends TestCase
     {
         parent::setUp();
 
+        $this->practice = factory(Practice::class, 1)->create()->first();
+        
+        $this->nurse = $this->createUser($this->practice->id, 'care-center');
+
         $this->end = Carbon::now();
         $this->start = $this->end->copy()->subWeek(1);
 
-        $this->practice = factory(Practice::class, 1)->create()->first();
         $this->service = new StatsHelper(new PracticeReportable($this->practice));
 
         for ($i = 0; $i < 10; $i++) {
@@ -113,6 +117,7 @@ class PracticeStatsHelperTest extends TestCase
                 'duration'     => 3600,
                 'patient_id'   => $this->patients[$i]->id,
                 'performed_at' => $this->start,
+                'provider_id' => $this->nurse->id
             ]);
         }
 
@@ -121,6 +126,7 @@ class PracticeStatsHelperTest extends TestCase
                 'duration'     => 1800,
                 'patient_id'   => $this->patients[$i]->id,
                 'performed_at' => $this->end->copy()->subDay(),
+                'provider_id' => $this->nurse->id
             ]);
         }
 

@@ -370,7 +370,7 @@ class ProcessEligibilityService
 
         $patientList = [];
 
-        for ($i = 1; $i <= 2000; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $patient = $collection->shift();
 
             if ( ! is_array($patient)) {

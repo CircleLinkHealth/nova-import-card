@@ -50,6 +50,11 @@ class CareAmbassadorLog extends \App\BaseModel
         return $this->belongsTo(CareAmbassador::class, 'enroller_id');
     }
 
+    public function practice(){
+
+        return $this->hasOne(Practice::class, 'practice_id');
+    }
+
 //    public function totalUniquePatientsCalled(){
 //
 //        return Enrollee::where('care_ambassador_id', $this->care_ambassador_id)->count();

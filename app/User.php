@@ -30,6 +30,7 @@ use App\Services\UserService;
 use App\Traits\HasEmrDirectAddress;
 use App\Traits\MakesOrReceivesCalls;
 use App\Traits\SaasAccountable;
+use App\Traits\TimezoneTrait;
 use Carbon\Carbon;
 use DateTime;
 use Faker\Factory;
@@ -125,6 +126,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property-read mixed $careplan_mode
  * @property mixed $ccm_status
  * @property-read mixed $ccm_time
+ * @property-read mixed $bhi_time
  * @property mixed $consent_date
  * @property mixed $cur_month_activity_time
  * @property mixed $daily_reminder_areas
@@ -158,9 +160,6 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $registration_date
  * @property mixed $send_alert_to
  * @property mixed $specialty
- * @property-read mixed $timezone_abbr
- * @property-read mixed $timezone_offset
- * @property-read mixed $timezone_offset_hours
  * @property mixed $work_phone_number
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
@@ -244,7 +243,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         MakesOrReceivesCalls,
         Notifiable,
         SaasAccountable,
-        SoftDeletes;
+        SoftDeletes,
+        TimezoneTrait;
 
 
 
@@ -2350,7 +2350,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function getCcmTimeAttribute()
     {
-        return $this->patientInfo()->firstOrNew([])->cur_month_activity_time;
+        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->ccm_time;
+    }
+
+    public function getBhiTimeAttribute()
+    {
+        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->bhi_time;
     }
 
     public function patientInfo()
@@ -2499,26 +2504,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $careplanMode;
     }
 
-    public function getTimezoneAbbrAttribute()
-    {
-        return $this->timezone
-            ? Carbon::now($this->timezone)->format('T')
-            : Carbon::now()->setTimezone('America/New_York')->format('T');
-    }
-
-    public function getTimezoneOffsetAttribute()
-    {
-        return $this->timezone
-        ? Carbon::now($this->timezone)->offset
-        : Carbon::now()->setTimezone('America/New_York')->offset;
-    }
-
-    public function getTimezoneOffsetHoursAttribute()
-    {
-        return $this->timezone
-        ? Carbon::now($this->timezone)->offsetHours
-        : Carbon::now()->setTimezone('America/New_York')->offsetHours;
-    }
+    
 
     public function canApproveCarePlans()
     {
@@ -2631,6 +2617,18 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                             });
 
         return $billableProblems;
+    }
+
+    public function isCcm() {
+        return ($this->ccdProblems()->where('is_monitored', 1)->whereHas('cpmProblem', function ($cpm) {
+            return $cpm->where('is_behavioral', 0);
+        })->count() > 0);
+    }
+
+    public function isBehavioral() {
+        return $this->ccdProblems()->whereHas('cpmProblem', function ($cpm) {
+            return $cpm->where('is_behavioral', 1);
+        })->count() > 0;
     }
 
     /**

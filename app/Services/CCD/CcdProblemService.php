@@ -8,13 +8,12 @@
 
 namespace App\Services\CCD;
 
-use App\User;
+use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
-use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdProblemRepository;
 use App\Repositories\ProblemCodeRepository;
+use App\Repositories\UserRepositoryEloquent;
 use App\Services\CPM\CpmInstructionService;
-use App\Repositories\Criteria\CriteriaFactory;
 
 class CcdProblemService
 {
@@ -67,13 +66,18 @@ class CcdProblemService
 
     public function getPatientProblems($userId) {
         $user = $this->userRepo->model()->findOrFail($userId);
+
+        //exclude generic diabetes type
+        $diabetes = CpmProblem::where('name', 'Diabetes')->first();
         
-        return $user->ccdProblems()->get()->map([$this, 'setupProblem']);
+        return $user->ccdProblems()->get()->filter(function ($problem) use ($diabetes) {
+            return $problem->id != $diabetes->id;
+        })->map([$this, 'setupProblem']);
     }
     
     public function addPatientCcdProblem($ccdProblem) {
         if ($ccdProblem) {
-            if ($ccdProblem['userId'] && $ccdProblem['name']) {
+            if ($ccdProblem['userId'] && $ccdProblem['name'] && strlen($ccdProblem['name']) > 0) {
 
                 $problem = $this->setupProblem($this->repo()->addPatientCcdProblem($ccdProblem));
 
@@ -89,9 +93,9 @@ class CcdProblemService
                 else return $problem;
 
             }
-            throw new Exception('$ccdProblem needs "userId" and "name" parameters');
+            throw new \Exception('$ccdProblem needs "userId" and "name" parameters');
         }
-        throw new Exception('$ccdProblem should not be null');
+        throw new \Exception('$ccdProblem should not be null');
     }
 
     public function editPatientCcdProblem($userId, $ccdId, $name, $problemCode = null, $is_monitored = null, $icd10 = null, $instruction = null) {

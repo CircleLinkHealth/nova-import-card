@@ -29,13 +29,26 @@ use App\Patient;
 
             $patientFamilyId = null;
 
+            $patientIsCcm = false;
+            $patientIsBehavioral = false;
+
             if (is_a($patient, Patient::class)) {
-                $patientId = optional($patient->user()->first())->id;
+                $user = optional($patient->user()->first());
+                $patientId = $user->id;
                 $patientFamilyId = $patient->family_id;
+
+                $patientIsCcm = $user->isCcm();
+                $patientIsBehavioral = $user->isBehavioral();
             }
             else {
                 $patientFamilyId = optional($patient->patientInfo()->first())->family_id;
+                $patientIsCcm = $patient->isCcm();
+                $patientIsBehavioral = $patient->isBehavioral();
             }
+        }
+        else {
+            $patientIsCcm = false;
+            $patientIsBehavioral = false;
         }
         $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
         ?>
@@ -44,6 +57,8 @@ use App\Patient;
             var timeTrackerInfo = {
                 "patientId": '{{$patientId}}' === '' ? '0' : '{{$patientId}}',
                 "providerId": '{{Auth::user()->id}}',
+                "totalCCMTime": "{{ $ccm_time }}",
+                "totalBHITime": "{{ $bhi_time }}",
                 "totalTime": (function (monthlyTime) {
                                 if (monthlyTime) {
                                     var split = monthlyTime.split(':');
@@ -66,7 +81,9 @@ use App\Patient;
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
                 "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
                 "noCallMode": "{{ !((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')) }}",
-                "patientFamilyId": "{{ $patientFamilyId ?? 0 }}"
+                "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
+                "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
+                "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false
             }
         </script>
         @endpush

@@ -48,11 +48,12 @@
                             :value="'Show by ' + (nameDisplayType ? 'First' : 'Last') + ' Name'" @click="changeNameDisplayType" >
                 <span class="pad-10"></span>
 
-                <a class="btn btn-success" :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
+                <a class="btn btn-success" :class="{ disabled: loaders.pdf }" @click="exportPdf"
+                    :href="rootUrl('manage-patients/listing/pdf')" download="patient-list.pdf">Export as PDF</a>
                 <span class="pad-10"></span>
 
-                <input type="button" class="btn btn-success" 
-                            value="Export as Excel" @click="exportExcel" >
+                <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
+                            :value="exportCSVText" @click="exportCSV" >
                 <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-success" 
@@ -65,6 +66,7 @@
 <script>
     import { rootUrl } from '../../app.config.js'
     import { Event } from 'vue-tables-2'
+    import { CancelToken } from 'axios'
     import moment from 'moment'
     import loader from '../loader'
 
@@ -97,11 +99,14 @@
                 loaders: {
                     next: false,
                     practices: null,
-                    providers: false
+                    providers: false,
+                    excel: false,
+                    pdf: false
                 },
-                requests: {
+                tokens: {
                     next: null
-                }
+                },
+                exportCSVText: 'Export as CSV'
             }
         },
         computed: {
@@ -161,7 +166,7 @@
                 const $table = this.$refs.tblPatientList
                 const query = $table.$data.query
                 
-                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${item.value}`).join('')
+                const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
                     return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
@@ -224,27 +229,27 @@
             getPatients () {
                 const self = this
                 this.loaders.next = true
-                return this.requests.next = this.axios.get(this.nextPageUrl(), {
-                    before(request) {
-                        if (this.requests.next) {
-                            this.requests.next.abort()
+                return this.axios.get(this.nextPageUrl(), {
+                    cancelToken: new CancelToken((c) => {
+                        if (this.tokens.next) {
+                            this.tokens.next()
                         }
-                        this.requests.next = request
-                    }
+                        this.tokens.next = c
+                    })
                 }).then(response => {
                     console.log('patient-list', response.data)
                     const pagination = response.data
                     const ids = this.tableData.map(patient => patient.id)
                     this.pagination = {
-                        current_page: pagination.current_page,
-                        from: pagination.from,
-                        last_page: pagination.last_page,
-                        last_page_url: pagination.last_page_url,
-                        next_page_url: pagination.next_page_url,
-                        path: pagination.path,
-                        per_page: pagination.per_page,
-                        to: pagination.to,
-                        total: pagination.total
+                        current_page: pagination.meta.current_page,
+                        from: pagination.meta.from,
+                        last_page: pagination.meta.last_page,
+                        last_page_url: pagination.links.last,
+                        next_page_url: pagination.links.next,
+                        path: pagination.meta.path,
+                        per_page: pagination.meta.per_page,
+                        to: pagination.meta.to,
+                        total: pagination.meta.total
                     }
                     const patients = (pagination.data || []).map(patient => {
                         if (((patient.careplan || {}).status || '').startsWith('{')) {
@@ -322,18 +327,40 @@
                     }
                     
                     this.loaders.next = false
-                    this.requests.next = null
                 }).catch(err => {
                     console.error('patient-list', err)
                     this.loaders.next = false
-                    this.requests.next = null
                 })
             },
-            exportExcel () {
-                const link = document.createElement('a')
-                link.href = rootUrl('api/patients?excel')
-                link.download = `patient-list-${Date.now()}.xlsx`
-                link.click()
+            exportCSV () {
+                let patients = []
+                this.loaders.excel = true
+                const download = (page = 1) => {
+                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv`)).then(response => {
+                        const pagination = response.data
+                        patients = patients.concat(pagination.data)
+                        this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('patients:csv:export', err)
+                    })
+                }
+                return download().then(res => {
+                    const link = document.createElement('a')
+                    link.href = 'data:attachment/text,' + 
+                    encodeURI('name,provider,program,ccm status,careplan status,dob,phone,age,registered on,ccm\n'
+                                + patients.join('\n'))
+                    link.download = `patient-list-${Date.now()}.csv`
+                    link.click()
+                    this.exportCSVText = 'Export as CSV'
+                    this.loaders.excel = false
+                })
+            },
+            exportPdf () {
+                if (!this.loaders.pdf) {
+                    this.loaders.pdf = true
+                }
             },
             createHumanReadableFilterNames () {
                 /**
@@ -428,6 +455,10 @@
 <style>
 .pad-10 {
     padding: 10px;
+}
+
+.table-bordered>tbody>tr>td {
+    white-space: nowrap;
 }
 
 </style>

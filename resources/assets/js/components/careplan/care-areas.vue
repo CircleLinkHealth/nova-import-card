@@ -22,11 +22,12 @@
                 </ul>
             </div>
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                <h2 class="color-blue pointer">Other Conditions
-                     <!-- <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span> -->
+                <h2 class="color-blue pointer" @click="toggleOtherConditions">
+                    <span v-if="!isOtherConditionsVisible">See </span>Other Conditions
+                    <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span>
                 </h2>
                 
-                <ul class="row">
+                <ul class="row" v-if="isOtherConditionsVisible">
                     <li class='top-10 col-sm-6' 
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
@@ -87,6 +88,7 @@
                 })
                 problem.type = 'cpm'
                 problem.title = () => `${problem.code} ${problem.name}`
+                problem.count = () => this.cpmProblems.filter(p => p.name == problem.name).length
                 return problem
             },
             getCpmProblems() {

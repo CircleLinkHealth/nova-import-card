@@ -10,7 +10,7 @@
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
-                            {{problem.name}}
+                            {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </div>
@@ -58,7 +58,7 @@
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
-                                            Full Name: {{ selectedProblem.original_name }}
+                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() > 1) ? ` (+${selectedProblem.count() - 1})` : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
@@ -79,7 +79,7 @@
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                                    title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
                                             </div>
                                         </div>
                                         
@@ -233,6 +233,7 @@
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         this.selectedProblem = null
+                        setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
                         console.error('care-areas:remove-problems', err)
                         this.loaders.removeProblem = false
@@ -258,6 +259,7 @@
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
+                    setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false
@@ -322,6 +324,27 @@
             },
             getProblemAutoCompleteTemplate(item) {
                 return (item || {}).name
+            },
+            /**
+             * is patient BHI, CCM or BOTH?
+             */
+            checkPatientBehavioralStatus() {
+                const ccmCount = this.problems.filter(problem => {
+                    if (problem.is_monitored) {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? !cpmProblem.is_behavioral: false
+                    }
+                    return false
+                }).length
+                const bhiCount = this.problems.filter(problem => {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? cpmProblem.is_behavioral: false
+                    }).length
+                console.log('ccm', ccmCount, 'bhi', bhiCount)
+                Event.$emit('careplan:bhi', { 
+                    isCcm: ccmCount > 0,
+                    isBehavioral: bhiCount > 0
+                })
             }
         },
         mounted() {

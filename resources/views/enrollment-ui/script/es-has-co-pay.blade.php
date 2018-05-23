@@ -8,6 +8,14 @@
         inscribiera.
         Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse saludable.</p>
 
+    <p>
+        <b>
+            [patients interested usually discuss their conditions here.. be sure to listen​] [if patient asks where
+            calling
+            from, use the practice name in google sheet, e.g., CCN or Ferguson]
+        </b>
+    </p>
+
     <p>Este es un nuevo programa de atención preventiva de Medicare para ayudarlo a usted y a su médico a cuidar mejor
         de su
         salud. Medicare ha decidido que su enfoque de la medicina necesitaba mejoras. Antes, Medicare era reactivo, a
@@ -46,6 +54,21 @@
 
     <p>¿Puede informarle a su doctor que usted aceptó inscribirse en este programa? (Recuerde que siempre
         puede retirarse si no le gusta) </p>
+
+    <p>
+        <b>[Si el paciente acepta]</b>
+        ¡Estupendo!
+        1-¿Quiere quele llamemos directamente o hay alguien más con el cual quiere que nos pongamos
+        en contacto?
+        2- [Confirme el mejor N° de contacto del paciente, los tiempos preferidos para llamarlo]
+        3-Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
+        [number of practice]. Por favor, guárdelo para que acepte la llamada cuando suene el teléfono.
+        ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
+    </p>
+
+    <p><b>[Si el paciente no acepta, tenga en cuenta esto]:</b> Gracias por su tiempo y le informaremos a su
+        médico</p>
+
     <p><i>[Ambassador: Please click the appropriate button based on patient’s
             answer and follow instructions in subsequent popup forms. Thank you!]</i></p>
 </div>

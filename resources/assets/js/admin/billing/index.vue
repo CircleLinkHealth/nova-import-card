@@ -163,6 +163,7 @@
     import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
     import Loader from '../../components/loader'
+    import timeDisplay from '../../util/time-display'
 
     export default {
         name: 'billing-report',
@@ -209,6 +210,7 @@
                     'DOB',
                     'Status',
                     'CCM Mins',
+                    'BHI Mins',
                     'Problem 1',
                     'Problem 1 Code',
                     'Problem 2',
@@ -365,7 +367,8 @@
                             Practice: patient.practice,
                             DOB: patient.dob,
                             Status: patient.status,
-                            'CCM Mins': patient.ccm,
+                            'CCM Mins': timeDisplay(patient.ccm_time),
+                            'BHI Mins': timeDisplay(patient.bhi_time),
                             'Problem 1': patient.problem1,
                             'Problem 2': patient.problem2,
                             'Problem 1 Code': patient.problem1_code,

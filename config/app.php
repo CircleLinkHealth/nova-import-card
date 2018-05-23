@@ -211,7 +211,6 @@ return [
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Tylercd100\LERN\LERNServiceProvider::class,
-        Dionera\BeanstalkdUI\BeanstalkdUIServiceProvider::class,
         ViewComposerServiceProvider::class,
         ProviderUITimerComposer::class,
         jeremykenedy\Slack\Laravel\ServiceProvider::class,
@@ -284,7 +283,6 @@ return [
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        'Zip'            => ZanySoft\Zip\ZipFacade::class,
         'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 

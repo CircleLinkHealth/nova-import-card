@@ -144,6 +144,14 @@ class PatientFilters extends QueryFilters
         return isset($this->filters()['excel']);
     }
 
+    public function csv() {
+        return true;
+    }
+
+    public function isCsv() {
+        return isset($this->filters()['csv']);
+    }
+
     public function autocomplete() {
         return $this->builder->select([ 'users.id', 'users.display_name', 'users.program_id' ]);
     }

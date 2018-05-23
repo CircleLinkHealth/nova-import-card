@@ -40,26 +40,28 @@ class QueueSendAuditReports extends Command
      */
     public function handle()
     {
+        $date = Carbon::now()->subMonth()->firstOfMonth();
+
         $patients = User::ofType('participant')
-            ->with('patientInfo')
-            ->with('patientSummaries')
-            ->with('primaryPractice')
-            ->with('primaryPractice.settings')
-            ->whereHas('primaryPractice', function ($query) {
+                        ->with('patientInfo')
+                        ->with('patientSummaries')
+                        ->with('primaryPractice')
+                        ->with('primaryPractice.settings')
+                        ->whereHas('primaryPractice', function ($query) {
                 $query->where('active', '=', true)
                     ->whereHas('settings', function ($query) {
                         $query->where('dm_audit_reports', '=', true)
                             ->orWhere('efax_audit_reports', '=', true);
                     });
             })
-            ->whereHas('patientSummaries', function ($query) {
-                $query->where('ccm_time', '>', 0)
-                    ->where('month_year', Carbon::now()->subMonth()->firstOfMonth()->toDateString());
+                        ->whereHas('patientSummaries', function ($query) use ($date) {
+                            $query->where('ccm_time', '>=', 1200)
+                                  ->where('month_year', $date->toDateString());
             })
-            ->get();
+                        ->get();
 
         foreach ($patients as $patient) {
-            $job = (new MakeAndDispatchAuditReports($patient))
+            $job = (new MakeAndDispatchAuditReports($patient, $date))
                 ->onQueue('reports');
 
             dispatch($job);

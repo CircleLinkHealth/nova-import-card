@@ -131,20 +131,13 @@ class Patient extends \App\BaseModel
         'paused_letter_printed_at',
     ];
 
-
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'patient_info';
+
     /**
      * The primary key for the model.
      *
