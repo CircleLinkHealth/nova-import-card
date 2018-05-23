@@ -216,9 +216,8 @@
           changePatient (patient) {
             if (patient) {
               this.formData.patientId = patient.value
-              this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
-              
               this.setPractice(this.selectedPatient().program_id)
+              this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
             }
           },
           changePractice(practice) {
