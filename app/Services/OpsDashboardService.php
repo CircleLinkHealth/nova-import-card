@@ -313,18 +313,16 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow(Carbon $date, $enrolledPatients, $patientsByStatus)
+    public function dailyReportRow($patients,  $enrolledPatients, Carbon $date)
     {
+        $fromDate         = $date->copy()->subDay();
 
 
-        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
-
-
-        $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
-
-
+        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date);
+        $countsByStatus = $this->countPatientsByStatus($patients, $fromDate, $date);
         $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
         $ccmTotal                    = collect($ccmCounts);
+
 
         if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
             $countsByStatus['enrolled'] == 0 &&
@@ -334,10 +332,7 @@ class OpsDashboardService
             return null;
         }
 
-
-
-
-        return collect([
+        return $row = collect([
             'ccmCounts'      => $ccmTotal,
             'countsByStatus' => $countsByStatus,
         ]);
@@ -444,22 +439,21 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $enrolledPatients)
     {
+
         $totActPt                = $enrolledPatients->count();
         $targetMinutesPerPatient = 35;
 
-        //date current day or last day completed 11:00 pm?
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
-            $endOfMonth->toDateTimeString());
+        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $endOfMonth->toDateTimeString());
         $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
         $sum     = Activity::whereIn('patient_id', $allPatients)
-                           ->where('performed_at', '>', $startOfMonth->toDateString())
-                           ->where('performed_at', '<', $date->toDateString())
+                           ->where('performed_at', '>=', $startOfMonth)
+                           ->where('performed_at', '<=', $date)
                            ->sum('duration');
 
         $avg = $sum / count($allPatients);

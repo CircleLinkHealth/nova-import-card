@@ -44,50 +44,48 @@ class OpsDashboardController extends Controller
     {
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
-
-        if ($request->has('date')){
+        if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy()->setTime('23', '0', '0');
-        }else{
+        } else {
             $date = $maxDate->copy()->setTimeFromTimeString('23:00');
         }
 
         $practices = Practice::activeBillable()
-                             ->with(['patients' => function($p) use ($date){
-                                 $p->with(['activities' => function($a) use ($date){
-                                     $a->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
-                                       ->where('performed_at', '<=', $date);
+                             ->with([
+                                 'patients' => function ($p) use ($date) {
+                                     $p->with([
+                                         'activities' => function ($a) use ($date) {
+                                             $a->where('performed_at', '>=',
+                                                 $date->copy()->startOfMonth()->startOfDay())
+                                               ->where('performed_at', '<=', $date);
+                                         },
+                                         'patientInfo',
+                                     ]);
                                  },
-                                     'patientInfo']);
-                             }])
-                             ->whereHas('patients', function($p){
-                                 $p->whereHas('patientInfo', function($p){
+                             ])
+                             ->whereHas('patients', function ($p) {
+                                 $p->whereHas('patientInfo', function ($p) {
                                      $p->where('ccm_status', Patient::ENROLLED)
                                        ->orWhere('ccm_status', Patient::PAUSED)
                                        ->orWhere('ccm_status', Patient::WITHDRAWN);
-                                 });})
+                                 });
+                             })
                              ->get()
                              ->sortBy('display_name');
 
-        $fromDate         = $date->copy()->subDay();
+        $enrolledPatients = $practices->map(function ($practice) {
+            return $practice->patients->map(function ($user) {
+                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
+                    return $user;
+                }
+            })->filter();
+        })->flatten();
 
+        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-//        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
-        $hoursBehind = 10;
-
-
-        $rows = [];
         foreach ($practices as $practice) {
-
-            $ccmCounts = $this->service->countPatientsByCcmTime($practice->patients, $date);
-            $countsByStatus = $this->service->countPatientsByStatus($practice->patients, $fromDate, $date);
-            $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
-            $ccmTotal                    = collect($ccmCounts);
-            $row = collect([
-                'ccmCounts'      => $ccmTotal,
-                'countsByStatus' => $countsByStatus,
-            ]);
-
+            $row      = $this->service->dailyReportRow($practice->patients, $enrolledPatients->where('program_id', $practice->id), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -348,14 +346,13 @@ class OpsDashboardController extends Controller
         $practices = Practice::activeBillable()->get()->sortBy('name');
 
 
-
         $rows = [];
         foreach ($practices as $practice) {
             $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
             $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
         }
         $total = $this->calculateBillingChurnTotalRow($rows, $months);
-        $rows                     = collect($rows);
+        $rows  = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
             'date',
@@ -392,21 +389,20 @@ class OpsDashboardController extends Controller
         $practices = Practice::activeBillable()->get()->sortBy('name');
 
 
-
         $rows = [];
         foreach ($practices as $practice) {
             $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
             $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
         }
         $total = $this->calculateBillingChurnTotalRow($rows, $months);
-        $rows                     = collect($rows);
+        $rows  = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
             'date',
             'fromDate',
             'rows',
             'months',
-            'total'
+            'total',
         ]));
     }
 
@@ -714,10 +710,10 @@ class OpsDashboardController extends Controller
             }
         }
 
-        foreach ($months as $month){
-            $totalRow['Billed'][$month->format('m, Y')]       = array_sum($total['Billed'][$month->format('m, Y')]);
+        foreach ($months as $month) {
+            $totalRow['Billed'][$month->format('m, Y')]            = array_sum($total['Billed'][$month->format('m, Y')]);
             $totalRow['Added to Billing'][$month->format('m, Y')]  = array_sum($total['Added to Billing'][$month->format('m, Y')]);
-            $totalRow['Lost from Billing'][$month->format('m, Y')]  = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
+            $totalRow['Lost from Billing'][$month->format('m, Y')] = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
         }
 
         return collect($totalRow);
