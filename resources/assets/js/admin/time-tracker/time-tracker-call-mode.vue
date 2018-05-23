@@ -2,15 +2,11 @@
     <span class="call-mode" v-if="!noDisplay">
         <button class="btn btn-primary" type="button" 
             @click="enterCallMode" v-if="Number(patientId) && (callMode === false)">
-            <span class="glyphicon glyphicon-earphone"></span>
-            <span class="hidden-sm hidden-md">Start</span>
-            <span class="hidden-sm hidden-lg">Start Call Mode</span>
+            <span>Start Call Mode</span>
         </button>
         <button class="btn btn-danger" type="button" 
             @click="exitCallMode" v-if="Number(patientId) && (callMode === true)">
-            <span class="glyphicon glyphicon-earphone"></span>
-            <span class="hidden-sm hidden-md">End</span>
-            <span class="hidden-sm hidden-lg">End Call Mode</span>
+            <span>End Call Mode</span>
         </button>
         <loader v-if="(callMode === null) || loaders.callMode"></loader>
     </span>

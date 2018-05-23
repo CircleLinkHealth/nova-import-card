@@ -24,7 +24,7 @@ if (isset($patient)) {
 <nav class="navbar primary-navbar">
     <div class="row container-fluid full-width margin-0">
 
-        <div class="navbar-header col-lg-1 col-sm-2">
+        <div class="navbar-header col-lg-1 col-sm-2 col-xs-2">
             <a href="{{ url('/') }}" style="border: none" class="navbar-brand"><img
                         src="/img/ui/clh_logo_lt.png"
                         alt="Care Plan Manager"
@@ -35,7 +35,7 @@ if (isset($patient)) {
 
         </div>
 
-        <div class="col-lg-5 col-sm-10" id="search-bar-container">
+        <div class="col-lg-5 col-sm-10 col-xs-10" id="search-bar-container">
             @include('partials.search')
         </div>
 
