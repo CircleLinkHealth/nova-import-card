@@ -44,6 +44,7 @@
 
     export default {
         props: {
+            userId: String,
             isBhi: {
                 type: Boolean,
                 default: false
@@ -51,7 +52,9 @@
             isCcm: Boolean
         },
         computed: {
-            
+            storeKey () {
+                return `bhi-modal:${this.userId}:do-not-show`
+            }
         },
         data () {
             const $vm = this
@@ -61,7 +64,7 @@
                 bhiModalInfo: {
                     okHandler () {
                         if ($vm.dontShowModalAgain) {
-                            stor.add('bhi-modal:do-not-show', 'true')
+                            stor.add($vm.storeKey, 'true')
                         }
                         Event.$emit('modal-bhi:hide')
                     }
@@ -81,7 +84,7 @@
             console.log('isBhi', this.isBhi)
             console.log('isCcm', this.isCcm)
 
-            if (!stor.contains('bhi-modal:do-not-show')) {
+            if (!stor.contains(this.storeKey)) {
                 Event.$emit('modal-bhi:show')
             }
         }
