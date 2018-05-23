@@ -52,7 +52,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          * @returns {Number} total duration in seconds of activities plus initial-total-time
          */
         get totalSeconds() {
-            return this.ccmDuration + this.bhiDuration + this.totalTime
+            return this.totalBhiSeconds + this.totalCcmSeconds
         },
         /**
          * @returns {Array} list of all sockets in all activities belongs to this user
