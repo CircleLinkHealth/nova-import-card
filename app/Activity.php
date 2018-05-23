@@ -1,5 +1,6 @@
 <?php namespace App;
 
+use App\PageTimer;
 use App\Scopes\Universal\DateScopesTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -230,7 +231,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     public function pageTime()
     {
-        return $this->belongsTo('App\PageTimer');
+        return $this->belongsTo(PageTimer::class, 'page_timer_id');
     }
 
     public function ccmApiTimeSentLog()

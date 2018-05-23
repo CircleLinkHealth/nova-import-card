@@ -11,6 +11,7 @@ use Carbon\Carbon;
  * @property int $id
  * @property int $patient_id
  * @property int $ccm_time
+ * @property int $bhi_time
  * @property \Carbon\Carbon $month_year
  * @property int $no_of_calls
  * @property int $no_of_successful_calls
@@ -55,6 +56,7 @@ class PatientMonthlySummary extends \App\BaseModel
     protected $fillable = [
         'month_year',
         'ccm_time',
+        'bhi_time',
         'no_of_calls',
         'no_of_successful_calls',
         'patient_id',
