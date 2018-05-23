@@ -21,6 +21,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         programId: info.programId,
         ipAddr: info.ipAddr,
         totalTime: info.totalTime,
+        totalCCMTime: info.totalCCMTime,
+        totalBHITime: info.totalBHITime,
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
         isLoggingOut: null,
@@ -33,11 +35,11 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         },
 
         get totalCcmSeconds() {
-            return this.ccmDuration + this.totalTime
+            return this.ccmDuration + this.totalCCMTime
         },
 
         get totalBhiSeconds() {
-            return this.bhiDuration + this.totalTime
+            return this.bhiDuration + this.totalBHITime
         },
 
         /**
@@ -120,6 +122,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         validateInfo(info)
         validateWebSocket(ws)
         user.totalTime = Math.max(user.totalTime, info.totalTime)
+        user.totalCCMTime = Math.max(user.totalCCMTime, info.totalCCMTime)
+        user.totalBHITime = Math.max(user.totalBHITime, info.totalBHITime)
         user.enter(info, ws)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
