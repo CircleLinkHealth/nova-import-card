@@ -148,22 +148,26 @@ class CallFilters extends QueryFilters
      */
     public function scheduledDate($date)
     {
-        //validateYYYYMMDDDateString($date);
-
         return $this->builder
             ->where('scheduled_date', 'LIKE', '%' . $date . '%');
     }
 
     public function minScheduledDate($date) {
-        return $this->builder
+        if (!isset($this->filters()['unassigned'])) {
+            return $this->builder
             ->where('scheduled_date', '>=', $date);
+        }
+        else {
+            return $this->builder
+            ->whereNull('scheduled_date')->orWhere('scheduled_date', '>=', $date);
+        }
     }
 
     /**
      * calls with no nurse assigned
      */
     public function unassigned() {
-        return $this->builder->where('outbound_cpm_id', null);
+        return $this->builder->whereNull('outbound_cpm_id');
     }
 
     /**
