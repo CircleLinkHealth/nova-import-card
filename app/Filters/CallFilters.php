@@ -81,6 +81,13 @@ class CallFilters extends QueryFilters
         });
     }
 
+    public function ofActivePractices()
+    {
+        return $this->builder->whereHas('inboundUser.primaryPractice', function ($q) {
+            $q->where('active', true);
+        });
+    }
+
     public function billingProvider($term)
     {
         return $this->builder->whereHas('inboundUser.billingProvider.user', function ($q) use ($term) {
@@ -167,7 +174,11 @@ class CallFilters extends QueryFilters
      * calls with no nurse assigned
      */
     public function unassigned() {
-        return $this->builder->whereNull('outbound_cpm_id');
+        return $this->builder
+            ->whereHas('inboundUser.patientInfo', function ($q) {
+                $q->where('ccm_status', Patient::ENROLLED);
+            })
+            ->whereNull('outbound_cpm_id');
     }
 
     /**
@@ -374,6 +385,8 @@ class CallFilters extends QueryFilters
 
     public function globalFilters(): array
     {
-        return [];
+        return [
+            'ofActivePractices' => '',
+        ];
     }
 }

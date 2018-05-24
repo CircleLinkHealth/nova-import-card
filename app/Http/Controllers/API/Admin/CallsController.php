@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\Admin;
 use App\Call;
 use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
-use App\Filters\ScheduledCallFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
@@ -348,14 +347,15 @@ class CallsController extends ApiController
      */
     public function index(Request $request, CallFilters $filters)
     {
-        $rows = $request->input('rows');
+        $rows  = $request->input('rows');
         $calls = Call::filter($filters)
                      ->paginate($rows ?? 15);
 
         return CallResource::collection($calls);
     }
 
-    public function show ($id) {
+    public function show($id)
+    {
         return $this->json($this->callService->repo()->call($id));
     }
 
@@ -369,6 +369,7 @@ class CallsController extends ApiController
                 return $patient->autocomplete();
             });
         }
+
         return UserResource::collection($patients);
     }
 
@@ -382,6 +383,7 @@ class CallsController extends ApiController
                 return $patient->autocomplete();
             });
         }
+
         return UserResource::collection($patients);
     }
 
@@ -404,7 +406,7 @@ class CallsController extends ApiController
         }
 
         $this->callService->repo()->model()->whereIn('id', $ids)
-            ->delete();
+                          ->delete();
 
         return response()->json($ids);
     }
