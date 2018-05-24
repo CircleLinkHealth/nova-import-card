@@ -352,34 +352,16 @@ class OpsDashboardController extends Controller
                                          },
                                      ]);
                                  },
-                             ])->get();
-
-//        $summaries = PatientMonthlySummary::with('patient')
-//                                          ->whereHas('patient')
-//                                          ->where('actor_id', '!=', null)
-//                                          ->where('approved', 1)
-//                                          ->where('month_year', '>=', $fromDate->toDateString())
-//                                          ->get();
-//
-//        $practices = Practice::activeBillable()->get()->sortBy('name');
-
+                             ])->get()
+            ->sortBy('display_name');
 
 
         foreach ($practices as $practice) {
-
-//            $enrolledPatients = $practices->map(function ($practice) {
-//                return $practice->patients->map(function ($user) {
-//                    if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
-//                        return $user;
-//                    }
-//                })->filter();
-//            })->flatten();
 
 
             $summaries = $practice->patients->map(function ($p){
                 return $p->patientSummaries;
             })->filter()->flatten();
-//            $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
             $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);
         }
         $total = $this->calculateBillingChurnTotalRow($rows, $months);
