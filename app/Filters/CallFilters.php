@@ -179,11 +179,13 @@ class CallFilters extends QueryFilters
     public function unassigned()
     {
         return $this->builder
-            ->where('status', 'scheduled')
-            ->whereNull('outbound_cpm_id')
+            ->scheduled()
             ->where(function ($q) {
-                $q->whereNull('scheduled_date')
-                  ->orWhere('scheduled_date', '>=', Carbon::now()->startOfDay()->toDateString());
+                $q->where('outbound_cpm_id', '=', null)
+                  ->where(function ($q) {
+                      $q->whereNull('scheduled_date')
+                        ->orWhere('scheduled_date', '>=', Carbon::now()->startOfDay()->toDateString());
+                  });
             });
     }
 
