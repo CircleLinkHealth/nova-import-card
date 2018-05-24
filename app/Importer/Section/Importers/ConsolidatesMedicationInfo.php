@@ -45,6 +45,70 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
         $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
 
+        $consolidatedMedication = $this->determineNameSigValidity($consolidatedMedication);
+
+        return $consolidatedMedication;
+    }
+
+    private function determineNameSigValidity($consolidatedMedication){
+
+        $keywords = [
+            'daily',
+            'spoon',
+            'once',
+            'twice',
+            'thrice',
+            'four',
+            'time',
+            'times',
+            'day',
+            'days',
+            'after',
+            'food',
+            'pill',
+            'apply',
+            'nostril',
+            'doses',
+            'puffs',
+            'every',
+            'sleep',
+            'skin',
+            'bedtime',
+            'needed',
+            'food',
+            'use',
+            'mouth',
+            'rinse',
+            'each',
+            'eye',
+            'apply',
+            'directed',
+            //initials
+            'qd',
+            'po',
+            'sq',
+            'qhs',
+            'qh',
+            'q3-4h',
+            'bid',
+            'qid',
+            'hs',
+            'prn',
+            'inh',
+
+        ];
+
+        $name = $consolidatedMedication->cons_name;
+        $sig  = $consolidatedMedication->cons_text;
+
+        //if both fields have the same value it stays the same
+        if (str_contains(strtolower($name), $keywords)){
+            $consolidatedMedication->cons_text = $name;
+            if (!str_contains(strtolower($sig), $keywords)){
+                $consolidatedMedication->cons_name = $sig;
+            }
+        }
+
         return $consolidatedMedication;
     }
 
