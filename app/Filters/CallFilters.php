@@ -31,11 +31,7 @@ class CallFilters extends QueryFilters
      */
     public function scheduled()
     {
-        if ( ! array_key_exists('unassigned', $this->filters())) {
-            return $this->builder->scheduled();
-        }
-
-        return $this->builder;
+        return $this->builder->scheduled();
     }
 
     /**
@@ -181,7 +177,6 @@ class CallFilters extends QueryFilters
     public function unassigned()
     {
         return $this->builder
-            ->scheduled()
             ->where(function ($q) {
                 $q->where('outbound_cpm_id', '=', null)
                   ->where(function ($q) {

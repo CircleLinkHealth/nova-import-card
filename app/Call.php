@@ -190,20 +190,21 @@ class Call extends \App\BaseModel
      */
     public function scopeScheduled($builder)
     {
-        $builder->where('calls.status', '=', 'scheduled')
-                ->whereHas('inboundUser')
-                ->with([
-                    'inboundUser.billingProvider.user',
-                    'inboundUser.notes'            => function ($q) {
-                        $q->latest();
-                    },
-                    'inboundUser.patientInfo.contactWindows',
-                    'inboundUser.patientSummaries' => function ($q) {
-                        $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
-                    },
-                    'inboundUser.primaryPractice',
-                    'outboundUser.nurseInfo',
-                    'note',
-                ]);
+        $builder->where(function ($q) {
+            $q->where('calls.status', '=', 'scheduled')
+              ->whereHas('inboundUser');
+        })->with([
+            'inboundUser.billingProvider.user',
+            'inboundUser.notes'            => function ($q) {
+                $q->latest();
+            },
+            'inboundUser.patientInfo.contactWindows',
+            'inboundUser.patientSummaries' => function ($q) {
+                $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
+            },
+            'inboundUser.primaryPractice',
+            'outboundUser.nurseInfo',
+            'note',
+        ]);
     }
 }
