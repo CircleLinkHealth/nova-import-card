@@ -61,17 +61,16 @@ class CpmProblemUserService
     public function removeProblemFromPatient($patientId, $cpmProblemId) {
         return $this->repo()->remove($patientId, $cpmProblemId);
     }
-    
+
     public function getPatientProblems($userId) {
         $user = $this->userRepo->model()->find($userId);
 
-        return $user->cpmProblems()->where('name', '!=','Diabetes')->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
+        return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
 
             $instructions = $p->user->where('patient_id', $user->id)->values()->map(function ($u) {
                 return $u->instruction()->orderBy('id', 'desc')->first();
             });
             if ($instructions->count() == 0) $instructions->push($p->instruction());
-
             return [
                 'id'   => $p->id,
                 'name' => $p->name,
