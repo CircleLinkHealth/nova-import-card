@@ -38,6 +38,8 @@ class ApprovableBillablePatient extends Resource
             'practice_id'            => $this->patient->primaryPractice->id,
             'dob'                    => $this->patient->patientInfo->birth_date,
             'ccm'                    => round($this->ccm_time / 60, 2),
+            'bhi_time'               => $this->bhi_time,
+            'ccm_time'               => $this->ccm_time,
             'problem1'               => $this->billable_problem1,
             'problem1_code'          => $this->billable_problem1_code,
             'problem2'               => $this->billable_problem2,

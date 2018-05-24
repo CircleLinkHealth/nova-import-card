@@ -126,6 +126,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property-read mixed $careplan_mode
  * @property mixed $ccm_status
  * @property-read mixed $ccm_time
+ * @property-read mixed $bhi_time
  * @property mixed $consent_date
  * @property mixed $cur_month_activity_time
  * @property mixed $daily_reminder_areas
@@ -2349,7 +2350,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function getCcmTimeAttribute()
     {
-        return $this->patientInfo()->firstOrNew([])->cur_month_activity_time;
+        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->ccm_time;
+    }
+
+    public function getBhiTimeAttribute()
+    {
+        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->bhi_time;
     }
 
     public function patientInfo()

@@ -75,8 +75,6 @@ class PageTimerController extends Controller
             $newActivity->save();
 
 
-
-
             $activityId = null;
 
             if ($newActivity->billable_duration > 0) {
@@ -99,7 +97,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if ( ! (bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
+        if ( (! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
             return false;
         }
 

@@ -19,14 +19,14 @@
             <template slot-scope="props">
                 <div class="text-center">
                     <p>
-                        Please use the select at the top of the page to indicate if you are doing Chronic Care or Behavioral Health Management.
+                        Please use the selector at the top of the page to indicate if you are doing Chronic Care or Behavioral Health Management.
                     </p>
                 </div>
             </template>
             <template slot="footer" slot-scope="props">
                 <div class="text-center">
                     <label>
-                        <input type="checkbox" v-model="dontShowModalAgain" /> Don't show this message again
+                        <input type="checkbox" style="display: inline-block" v-model="dontShowModalAgain" /> Don't show this message again
                     </label>
                 </div>
             </template>
@@ -44,6 +44,7 @@
 
     export default {
         props: {
+            userId: String,
             isBhi: {
                 type: Boolean,
                 default: false
@@ -51,7 +52,9 @@
             isCcm: Boolean
         },
         computed: {
-            
+            storeKey () {
+                return `bhi-modal:${this.userId}:do-not-show`
+            }
         },
         data () {
             const $vm = this
@@ -61,9 +64,9 @@
                 bhiModalInfo: {
                     okHandler () {
                         if ($vm.dontShowModalAgain) {
-                            stor.add('bhi-modal:do-not-show', 'true')
-                            Event.$emit('modal-bhi:hide')
+                            stor.add($vm.storeKey, 'true')
                         }
+                        Event.$emit('modal-bhi:hide')
                     }
                 }
             }
@@ -81,7 +84,7 @@
             console.log('isBhi', this.isBhi)
             console.log('isCcm', this.isCcm)
 
-            if (!stor.contains('bhi-modal:do-not-show')) {
+            if (!stor.contains(this.storeKey)) {
                 Event.$emit('modal-bhi:show')
             }
         }
@@ -92,10 +95,10 @@
     ul.bhi-nav {
         display: inline-block;
         color: #50b2e2;
-        border: 3px solid #337ab7;
-        border-radius: 10px;
+        border: 3px solid #50b2e2;
         position: relative;
         top: 10px;
+        right: -7px;
     }
 
     ul.bhi-nav li {
@@ -105,6 +108,10 @@
 
     ul.bhi-nav li a:hover {
         background-color: transparent;
+    }
+
+    ul.bhi-nav li.nav-item.active, ul.bhi-nav li.nav-item.active a {
+        background-color: #50b2e2;
     }
 
     .modal-bhi .modal-container {
@@ -120,10 +127,6 @@
     .modal-bhi .modal-body {
         font-size: 20px;
         line-height: 30px;
-    }
-
-    input[type="checkbox"] {
-        display: inline-block !important;
     }
     
     .modal-button {
