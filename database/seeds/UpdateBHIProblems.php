@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 
 class UpdateBHIProblems extends Seeder
 {
+    private $validBHIProblemIds = [];
+
     /**
      * Run the database seeds.
      *
@@ -29,6 +31,8 @@ class UpdateBHIProblems extends Seeder
 
             $bhiProblem->is_behavioral = true;
             $bhiProblem->save();
+
+            $this->validBHIProblemIds[] = $bhiProblem->id;
 
             if ( ! in_array($bhiProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
                 $defaultCarePlan->cpmProblems()->attach($bhiProblem, [
@@ -77,10 +81,39 @@ class UpdateBHIProblems extends Seeder
             $this->command->info("$name has been added");
         }
 
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         CpmProblem::where('id', '>', 33)
-                  ->update([
-                      'is_behavioral' => 1,
-                  ]);
+                  ->whereNotIn('id', $this->validBHIProblemIds)
+                  ->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        $tables = [
+            'cpm_problems_users',
+            'snomed_to_cpm_icd_maps',
+        ];
+
+        foreach ($tables as $table) {
+            DB::table($table)
+              ->where('cpm_problem_id', '>', 33)
+              ->whereNotIn('cpm_problem_id', $this->validBHIProblemIds)
+              ->delete();
+        }
+
+        $tables = [
+            'ccd_problems',
+            'ccd_problem_logs',
+            'problem_imports',
+        ];
+
+        foreach ($tables as $table) {
+            DB::table($table)
+              ->where('cpm_problem_id', '>', 33)
+              ->whereNotIn('cpm_problem_id', $this->validBHIProblemIds)
+              ->update([
+                  'cpm_problem_id' => null,
+              ]);
+        }
     }
 
 
@@ -100,7 +133,6 @@ class UpdateBHIProblems extends Seeder
             'Bipolar',
             'Psychosis & Schizophrenia',
             'Post-traumatic stress',
-            'Drug Use Disorder',
         ];
     }
 
