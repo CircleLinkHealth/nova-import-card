@@ -8,6 +8,7 @@ use App\Filters\PatientFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
 use App\Http\Resources\User as UserResource;
+use App\Patient;
 use App\Services\Calls\ManagementService;
 use App\Services\CallService;
 use App\Services\NoteService;
@@ -348,7 +349,14 @@ class CallsController extends ApiController
     public function index(Request $request, CallFilters $filters)
     {
         $rows  = $request->input('rows');
-        $calls = Call::filter($filters)
+        $calls = Call::whereHas('inboundUser', function ($q) {
+            $q->whereHas('primaryPractice', function ($q) {
+                $q->where('active', 1);
+            })->whereHas('patientInfo', function ($q) {
+                $q->where('ccm_status', Patient::ENROLLED);
+            });
+        })
+                     ->filter($filters)
                      ->paginate($rows ?? 15);
 
         return CallResource::collection($calls);
