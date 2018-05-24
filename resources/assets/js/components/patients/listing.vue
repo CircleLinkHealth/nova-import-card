@@ -17,7 +17,7 @@
             </template>
             <template slot="careplanStatus" scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft', patient_rejected: 'Patient Declined' })[props.row.careplanStatus] || props.row.careplanStatus) }}
                 </a>
             </template>
             <template slot="filter__ccm">
@@ -126,6 +126,7 @@
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
+                                            { id: 'patient_rejected', text: 'patient_rejected' }, 
                                             { id: 'to_enroll', text: 'to_enroll' },
                                             { id: 'draft', text: 'draft' }
                                         ],
@@ -380,6 +381,7 @@
                         provider_approved: 'Provider Approved',
                         none: 'None',
                         draft: 'Draft',
+                        patient_rejected: 'Patient Declined',
                         'Select careplanStatus': 'Select Careplan Status'
                     })[option.innerText] || option.innerText
                 })
