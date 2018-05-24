@@ -1140,10 +1140,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
-                Route::get('/daily-report', [
-                    'uses' => 'OpsDashboardController@getDailyReport',
-                    'as'   => 'OpsDashboard.dailyReport'
-                ]);
+
                 Route::get('/lost-added-index', [
                     'uses' => 'OpsDashboardController@getLostAddedIndex',
                     'as'   => 'OpsDashboard.lostAddedIndex'
