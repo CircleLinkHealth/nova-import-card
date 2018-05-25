@@ -119,8 +119,8 @@ class PracticeInvoiceController extends Controller
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
 
         $summaries->getCollection()->transform(function ($summary) {
-            $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
             $summary = $this->patientSummaryDBRepository->attachChargeableServices($summary->patient, $summary);
+            $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
 
             return ApprovableBillablePatient::make($summary);
         });

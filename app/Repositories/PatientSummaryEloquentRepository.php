@@ -56,6 +56,10 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        if ($summary->actor_id) {
+            return $summary;
+        }
+
         $skipValidation = false;
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
@@ -451,6 +455,10 @@ class PatientSummaryEloquentRepository
 
     public function attachChargeableServices(User $patient, PatientMonthlySummary $summary)
     {
+        if ($summary->actor_id) {
+            return $summary;
+        }
+
         $chargeableServices       = null;
         $attachChargeableServices = false;
 
@@ -459,7 +467,7 @@ class PatientSummaryEloquentRepository
             $attachChargeableServices = true;
         }
 
-        if ( ! $summary->actor_id && $attachChargeableServices) {
+        if ($attachChargeableServices) {
             $totalTime = $summary->bhi_time + $summary->ccm_time;
 
             if ($summary->ccm_time > 1199 && $summary->bhi_time > 1199) {
