@@ -55,6 +55,7 @@ class PatientMonthlySummary extends \App\BaseModel
 
     protected $fillable = [
         'month_year',
+        'total_time',
         'ccm_time',
         'bhi_time',
         'no_of_calls',

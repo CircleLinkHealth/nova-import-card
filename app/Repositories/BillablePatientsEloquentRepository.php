@@ -25,7 +25,7 @@ class BillablePatientsEloquentRepository
             },
             'patientSummaries' => function ($query) use ($month) {
                 $query->where('month_year', $month)
-                      ->where('ccm_time', '>=', 1200)
+                      ->where('total_time', '>=', 1200)
                       ->with('chargeableServices');
             },
             'cpmProblems',
@@ -38,7 +38,7 @@ class BillablePatientsEloquentRepository
                       ->has('patientInfo')
                       ->whereHas('patientSummaries', function ($query) use ($month) {
                           $query->where('month_year', $month)
-                                ->where('ccm_time', '>=', 1200);
+                                ->where('total_time', '>=', 1200);
                       })
                       ->ofType('participant')
                       ->where('program_id', '=', $practiceId);
@@ -52,7 +52,7 @@ class BillablePatientsEloquentRepository
 
         $result = PatientMonthlySummary::orderBy('needs_qa', 'desc')
                                        ->where('month_year', $month)
-                                       ->where('ccm_time', '>=', 1200)
+                                       ->where('total_time', '>=', 1200)
                                        ->with([
                                            'patient' => function ($q) use ($month, $practiceId) {
                                                $q->with([
@@ -67,11 +67,12 @@ class BillablePatientsEloquentRepository
                                                    },
                                                ]);
                                            },
-                                           'chargeableServices'
+                                           'chargeableServices',
                                        ])
-                                       // ->has('patient.patientInfo')
-                                       ->whereHas('patient.practices', function ($q) use ($practiceId) {
-                                           $q->where('id', '=', $practiceId);
+                                       ->whereHas('patient', function ($q) use ($practiceId) {
+                                           $q->whereHas('practices', function ($q) use ($practiceId) {
+                                               $q->where('id', '=', $practiceId);
+                                           });
                                        });
 
         return $result;
@@ -82,9 +83,9 @@ class BillablePatientsEloquentRepository
         $month = $date->startOfMonth();
 
         return User::whereHas('patientSummaries', function ($query) use ($month) {
-                       $query->where('month_year', $month)
-                             ->where('ccm_time', '>=', 1200);
-                   })
+            $query->where('month_year', $month)
+                  ->where('total_time', '>=', 1200);
+        })
                    ->ofType('participant')
                    ->where('program_id', '=', $practiceId);
     }
