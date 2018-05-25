@@ -116,14 +116,25 @@ class PracticeInvoiceController extends Controller
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
+        $practice = Practice::findOrFail($practice_id);
+
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
 
-        $summaries->getCollection()->transform(function ($summary) {
+        $chargeableServices       = null;
+        $attachChargeableServices = false;
+        if ($practice->chargeableServices()->whereCode('CPT 99484')->exists()) {
+            $chargeableServices       = ChargeableService::get()->keyBy('code');
+            $attachChargeableServices = true;
+        }
+
+        $summaries->getCollection()->transform(function ($summary) use (
+            $practice,
+            $chargeableServices,
+            $attachChargeableServices
+        ) {
             $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
 
-            if ( ! $summary->actor_id) {
-                $chargeableServices = ChargeableService::get()->keyBy('code');
-
+            if ( ! $summary->actor_id && $attachChargeableServices) {
                 $totalTime = $summary->bhi_time + $summary->ccm_time;
 
                 if ($summary->ccm_time > 1199 && $summary->bhi_time > 1199) {
