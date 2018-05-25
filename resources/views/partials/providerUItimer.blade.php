@@ -83,7 +83,8 @@ use App\Patient;
                 "noCallMode": "{{ !((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')) }}",
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                 "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
-                "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false
+                "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false,
+                "noBhiSwitch": ('{{ auth()->user()->hasRole("care-center") }}' == '1') ? false : true
             }
         </script>
         @endpush
