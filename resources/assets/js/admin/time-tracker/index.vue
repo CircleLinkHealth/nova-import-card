@@ -8,7 +8,9 @@
         </div>
         <span v-if="visible" class="time-tracker">
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
-            <bhi-switch ref="bhiSwitch" :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" v-if="info.isBehavioral && info.isCcm"></bhi-switch>
+            <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral" 
+                :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" 
+                v-if="info.isBehavioral && info.isCcm"></bhi-switch>
             <br><br>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
@@ -131,6 +133,11 @@
                                 }
                                 else if (data.message === 'server:inactive-modal:close') {
                                     EventBus.$emit('modal-inactivity:reset', true)
+                                }
+                                else if (data.message === 'server:bhi:switch') {
+                                    EventBus.$emit('tracker:bhi:switch', data.mode)
+                                    self.info.isCcm = data.hasOwnProperty('isCcm') ? data.isCcm : self.info.isCcm
+                                    self.info.isBehavioral = data.hasOwnProperty('isBehavioral') ? data.isBehavioral : self.info.isBehavioral
                                 }
                                 console.log(data);
                             }
@@ -277,16 +284,32 @@
                 })
 
                 EventBus.$on('tracker:bhi:switch', (mode = false) => {
-                    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                    let shouldUpdateNetwork = false
+                    if (this.info.isBehavioral && this.info.isCcm) {
+                        shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
                         this.info.isManualBehavioral = mode
+                    }
+                    else {
+                        shouldUpdateNetwork = (this.info.isManualBehavioral !== false)
+                        this.info.isManualBehavioral = false
+                    }
+                    if (this.socket && this.socket.readyState === WebSocket.OPEN && shouldUpdateNetwork) {
                         this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
                     }
-                    console.log('tracker:bhi', mode)
+                    console.log('tracker:bhi:switch', mode)
                 })
 
-                Event.$on('careplan:bhi', ({ isCcm, isBehavioral }) => {
-                    this.info.isBehavioral = isBehavioral
-                    this.info.isCcm = isCcm
+                Event.$on('careplan:bhi', ({ hasCcm, hasBehavioral }) => {
+                    const shouldUpdateNetwork = (this.info.isBehavioral && this.info.isCcm) !== (hasCcm && hasBehavioral)
+                    this.info.isBehavioral = hasBehavioral
+                    this.info.isCcm = hasCcm
+                    if (shouldUpdateNetwork) {
+                        this.info.isManualBehavioral = false
+                        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+                            this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
+                        }
+                    }
+                    console.log('careplan:bhi:network-update', shouldUpdateNetwork, hasCcm, hasBehavioral)
                 })
 
                 this.createSocket()
