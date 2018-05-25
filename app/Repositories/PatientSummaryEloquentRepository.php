@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 
+use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
@@ -66,11 +67,11 @@ class PatientSummaryEloquentRepository
 
         if ($this->lacksProblems($summary)) {
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
-                                                 ->orderBy('month_year', 'desc')
-                                                 ->where('month_year', '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth())
-                                                 ->whereApproved(true)
-                                                 ->first();
+                ->orderBy('month_year', 'desc')
+                ->where('month_year', '<=',
+                    $summary->month_year->copy()->subMonth()->startOfMonth())
+                ->whereApproved(true)
+                ->first();
 
             if ($olderSummary) {
                 $summary->problem_1              = $olderSummary->problem_1;
@@ -182,16 +183,16 @@ class PatientSummaryEloquentRepository
     public function getValidCcdProblems(User $patient)
     {
         return $patient->ccdProblems->where('cpm_problem_id', '!=', 1)
-                                    ->where('is_monitored', '=', true)
-                                    ->reject(function ($problem) {
-                                        return ! validProblemName($problem->name);
-                                    })
-                                    ->reject(function ($problem) {
-                                        return ! $problem->icd10Code();
-                                    })
-                                    ->unique('cpm_problem_id')
-                                    ->sortByDesc('cpm_problem_id')
-                                    ->values();
+            ->where('is_monitored', '=', true)
+            ->reject(function ($problem) {
+                return ! validProblemName($problem->name);
+            })
+            ->reject(function ($problem) {
+                return ! $problem->icd10Code();
+            })
+            ->unique('cpm_problem_id')
+            ->sortByDesc('cpm_problem_id')
+            ->values();
     }
 
     /**
@@ -232,8 +233,8 @@ class PatientSummaryEloquentRepository
         $validate = (collect([$summary->problem_1, $summary->problem_2]))
             ->map(function ($problemId, $i) use ($user) {
                 $problem = $this->getValidCcdProblems($user)
-                                ->where('id', '=', $problemId)
-                                ->first();
+                    ->where('id', '=', $problemId)
+                    ->first();
 
                 if ( ! $problem) {
                     return false;
@@ -259,9 +260,9 @@ class PatientSummaryEloquentRepository
 
             if ( ! $isValid) {
                 Problem::where('id', $summary->{"problem_$problemNo"})
-                       ->update([
-                           'billable' => false,
-                       ]);
+                    ->update([
+                        'billable' => false,
+                    ]);
                 $summary->{"problem_$problemNo"} = null;
             }
         }
@@ -303,9 +304,9 @@ class PatientSummaryEloquentRepository
                 }
 
                 Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                       ->update([
-                           'billable' => true,
-                       ]);
+                    ->update([
+                        'billable' => true,
+                    ]);
             }
         }
 
@@ -345,9 +346,9 @@ class PatientSummaryEloquentRepository
 
         if ($summary->approved && ($summary->problem_1 || $summary->problem_2)) {
             Problem::whereIn('id', array_filter([$summary->problem_1, $summary->problem_2]))
-                   ->update([
-                       'billable' => true,
-                   ]);
+                ->update([
+                    'billable' => true,
+                ]);
 
             Problem::whereNotIn('id',
                 array_filter([$summary->problem_1, $summary->problem_2]))
@@ -381,7 +382,7 @@ class PatientSummaryEloquentRepository
         }
 
         $sync = $summary->chargeableServices()
-                        ->sync($chargeableServiceId, $detach);
+            ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
             $summary->load('chargeableServices');
@@ -393,7 +394,7 @@ class PatientSummaryEloquentRepository
     public function detachDefaultChargeableService($summary, $defaultCodeId)
     {
         $detached = $summary->chargeableServices()
-                            ->detach($defaultCodeId);
+            ->detach($defaultCodeId);
 
         $summary->load('chargeableServices');
 
@@ -444,6 +445,32 @@ class PatientSummaryEloquentRepository
 
         $summary->{"billable_problem$problemNumber"}        = optional($problem)->name;
         $summary->{"billable_problem{$problemNumber}_code"} = optional($problem)->icd10Code();
+
+        return $summary;
+    }
+
+    public function attachChargeableServices(User $patient, PatientMonthlySummary $summary)
+    {
+        $chargeableServices       = null;
+        $attachChargeableServices = false;
+
+        if ($patient->primaryPractice->hasServiceCode('CPT 99484')) {
+            $chargeableServices       = ChargeableService::get()->keyBy('code');
+            $attachChargeableServices = true;
+        }
+
+        if ( ! $summary->actor_id && $attachChargeableServices) {
+            $totalTime = $summary->bhi_time + $summary->ccm_time;
+
+            if ($summary->ccm_time > 1199 && $summary->bhi_time > 1199) {
+                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
+                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490']);
+            } elseif ($totalTime > 1199 && $summary->bhi_time < 1200) {
+                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490'], true);
+            } elseif ($totalTime < 2399 && $summary->bhi_time > 1199) {
+                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
+            }
+        }
 
         return $summary;
     }

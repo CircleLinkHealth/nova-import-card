@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\CCD\Problem;
+use App\Traits\HasChargeableServices;
 use Carbon\Carbon;
 
 /**
@@ -49,6 +50,8 @@ use Carbon\Carbon;
  */
 class PatientMonthlySummary extends \App\BaseModel
 {
+    use HasChargeableServices;
+
     protected $dates = [
         'month_year',
     ];
@@ -100,13 +103,6 @@ class PatientMonthlySummary extends \App\BaseModel
     public function actor()
     {
         return $this->hasOne(User::class, 'actor_id');
-    }
-
-    public function chargeableServices()
-    {
-        return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
     }
 
     public function scopeGetCurrent($q)
