@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Athena;
 
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
-use App\TargetPatient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Psr\Log\InvalidArgumentException;
@@ -17,7 +16,8 @@ class GetPatientIdFromLastYearAppointments extends Command
      */
     protected $signature = 'athena:getPatientIdFromLastYearAppointments {athenaPracticeId : The Athena EHR practice id. `external_id` on table `practices`}
                                                                         {from? : From date yyyy-mm-dd}
-                                                                        {to? : To date yyyy-mm-dd}';
+                                                                        {to? : To date yyyy-mm-dd}
+                                                                        {offset? : Offset results from athena api using number of target patients in the table}';
 
     /**
      * The console command description.
@@ -56,6 +56,11 @@ class GetPatientIdFromLastYearAppointments extends Command
 
         $endDate   = Carbon::today();
         $startDate = $endDate->copy()->subYear();
+        $offset    = false;
+
+        if ($this->argument('offset')) {
+            $offset = (boolean)$this->argument('offset');
+        }
 
         if ($this->argument('from')) {
             $startDate = Carbon::parse($this->argument('from'));
@@ -74,6 +79,6 @@ class GetPatientIdFromLastYearAppointments extends Command
                 "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n");
         }
 
-        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, true);
+        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset);
     }
 }
