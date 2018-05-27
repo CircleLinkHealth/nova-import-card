@@ -67,6 +67,12 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
             return this.activities.reduce((a, b) => (a || b.callMode), false)
         },
         /**
+         * @returns {Boolean} whether this user has a BHI activity
+         */
+        get isBehavioral() {
+            return this.activities.reduce((a, b) => (a || (b.isBehavioral && b.hasSockets)), false)
+        },
+        /**
          * 
          * @param {any} data JSON or string you want to send via web sockets
          * @param {*} socket WebSocket instance you want to exclude from broadcast
@@ -139,6 +145,9 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         }
         else {
             ws.send(JSON.stringify({ message: 'server:call-mode:exit' }))
+        }
+        if (user.isBehavioral) {
+            ws.send(JSON.stringify({ message: 'server:bhi:switch', mode: true }))
         }
     }
 

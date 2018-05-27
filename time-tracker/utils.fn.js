@@ -17,6 +17,9 @@ const createActivity = (info) => {
         isBehavioral: info.isManualBehavioral || false,
         get isActive() {
             return this.sockets.some(socket => socket.active)
+        },
+        get hasSockets() {
+            return this.sockets.length > 0
         }
     }
 }
