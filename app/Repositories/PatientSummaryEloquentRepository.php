@@ -470,12 +470,12 @@ class PatientSummaryEloquentRepository
         if ($attachChargeableServices) {
             $totalTime = $summary->bhi_time + $summary->ccm_time;
 
-            if ($summary->ccm_time > 1199 && $summary->bhi_time > 1199) {
+            if ($summary->ccm_time >= 1200 && $summary->bhi_time >= 1200) {
                 $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
                 $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490']);
-            } elseif ($totalTime > 1199 && $summary->bhi_time < 1200) {
+            } elseif ($summary->ccm_time >= 1200 && $summary->bhi_time < 1200) {
                 $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490'], true);
-            } elseif ($totalTime < 2399 && $summary->bhi_time > 1199) {
+            } elseif ($summary->ccm_time < 1200 && $summary->bhi_time >= 1200) {
                 $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
             }
         }
