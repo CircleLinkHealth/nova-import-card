@@ -47,6 +47,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 $enableTimeTracking = false;
             }
 
+            $noBhiSwitch = auth()->user()->hasRole("care-center");
+
             $patient = $view->patient;
             $patientId        = '';
             $patientProgramId = '';
@@ -55,11 +57,13 @@ class ProviderUITimerComposer extends ServiceProvider
                 $patientProgramId = $patient->program_id;
                 $ccm_time = $patient->ccm_time;
                 $bhi_time = $patient->bhi_time;
+                $noBhiSwitch = $noBhiSwitch && optional($patient->primaryPractice()->first())->hasServiceCode("CPT 99484");
             } elseif (isset($patient) && ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId        = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
                 $ccm_time = $patient->user->ccm_time;
                 $bhi_time = $patient->user->bhi_time;
+                $noBhiSwitch = $noBhiSwitch && optional($patient->user->primaryPractice()->first())->hasServiceCode("CPT 99484");
             }
 
             $view->with(compact([
@@ -70,7 +74,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 'ipAddr',
                 'title',
                 'ccm_time',
-                'bhi_time'
+                'bhi_time',
+                'noBhiSwitch'
             ]));
         });
 

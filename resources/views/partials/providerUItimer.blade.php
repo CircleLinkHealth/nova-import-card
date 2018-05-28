@@ -84,7 +84,7 @@ use App\Patient;
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                 "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
                 "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false,
-                "noBhiSwitch": ('{{ auth()->user()->hasRole("care-center") }}' == '1') ? false : true
+                "noBhiSwitch": ('{{ $noBhiSwitch }}' == '1') ? false : true
             }
         </script>
         @endpush
