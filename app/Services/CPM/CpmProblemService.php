@@ -56,7 +56,9 @@ class CpmProblemService implements CpmModel
             'name' => $p->name,
             'code' => $p->default_icd_10_code,
             'is_behavioral' => $p->is_behavioral,
-            'instruction' => $p->instruction()
+            'instruction' => $p->instruction(),
+            'snomeds' => $p->snomedMaps()->where('icd_10_name', '!=', '')->groupBy('icd_10_name')
+                ->select(['icd_10_code', 'icd_10_name'])->get()
         ];
     }
 
