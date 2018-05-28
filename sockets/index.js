@@ -255,7 +255,8 @@ module.exports = app => {
         console.log(
           'key:', user.key,
           'activities:', user.activities.filter(activity => activity.isActive).length, 
-          'total-seconds:', user.totalSeconds,
+          'ccm:', user.totalCcmSeconds,
+          'bhi:', user.totalBhiSeconds,
           'inactive-seconds:', user.inactiveSeconds,
           'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
           'sockets:', user.allSockets.length,

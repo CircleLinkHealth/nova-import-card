@@ -20,9 +20,9 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         url: info.submitUrl,
         programId: info.programId,
         ipAddr: info.ipAddr,
-        totalTime: info.totalTime,
-        totalCCMTime: info.totalCCMTime,
-        totalBHITime: info.totalBHITime,
+        totalTime: (Number(info.totalTime) || 0),
+        totalCCMTime: (Number(info.totalCCMTime) || 0),
+        totalBHITime: (Number(info.totalBHITime) || 0),
         noLiveCount: info.noLiveCount,
         patientFamilyId: info.patientFamilyId,
         isLoggingOut: null,
@@ -135,9 +135,9 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         validateInfo(info)
         validateWebSocket(ws)
-        user.totalTime = Math.max(user.totalTime, info.totalTime)
-        user.totalCCMTime = Math.max(user.totalCCMTime, info.totalCCMTime)
-        user.totalBHITime = Math.max(user.totalBHITime, info.totalBHITime)
+        user.totalTime = Math.max(user.totalTime, Number(info.totalTime))
+        user.totalCCMTime = Math.max(user.totalCCMTime, Number(info.totalCCMTime))
+        user.totalBHITime = Math.max(user.totalBHITime, Number(info.totalBHITime))
         user.enter(info, ws)
         ws.providerId = info.providerId
         ws.patientId = info.patientId
@@ -184,13 +184,13 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         if (user.inactiveSeconds) {
             if (user.inactivityRequiresNoModal()) {
-                user.respondToModal(true)
+                user.handleNoModal(info)
             }
             else if (user.inactivityRequiresModal()) {
                 if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ message: 'server:modal' }))
             }
             else {
-                user.respondToModal(false)
+                user.respondToModal(false, info)
                 user.logout()
             }
         }
@@ -262,11 +262,19 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         })
     }
 
+    user.handleNoModal = (info) => {
+        let activity = user.findActivity(info)
+        if (activity) {
+            activity.duration += user.inactiveSeconds
+        }
+        user.inactiveSeconds = 0
+    }
+
     /**
      * 
      * @param {boolean} response yes/no on whether the practitioner was busy on a patient during calculated inactive-time
      */
-    user.respondToModal = (response) => {
+    user.respondToModal = (response, info) => {
         let activity = user.findActivity(info)
         if (activity) {
             if (response) {

@@ -28,7 +28,7 @@ describe('TimeTrackerFlow', () => {
 
             describe('User chose NO', () => {
                 user.enter(info, ws)
-                user.respondToModal(false)
+                user.respondToModal(false, info)
 
                 it('should have totalSeconds as 30', () => {
                     assert.equal(user.totalSeconds, 30)
@@ -41,7 +41,7 @@ describe('TimeTrackerFlow', () => {
 
                 user.enter(info, ws)
                 user.inactiveSeconds = 20
-                user.respondToModal(true)
+                user.respondToModal(true, info)
 
                 it('should have totalSeconds as 20', () => {
                     assert.equal(user.totalSeconds, 20)
