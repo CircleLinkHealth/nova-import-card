@@ -352,6 +352,8 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
          */
         user.inactiveSeconds = 0
         user.totalTime += user.activities.reduce((a, b) => a + b.duration, 0)
+        user.totalCCMTime += user.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
+        user.totalBHITime += user.activities.filter(activity => activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
         user.activities.forEach(activity => {
             activity.duration = 0
         })
