@@ -761,34 +761,6 @@ class UpdateBHIProblems extends Seeder
                     'simple_name'         => 'Bipolar',
                     'default_icd_10_code' => 'F31.70',
                 ],
-            89  =>
-                [
-                    'id'                  => 123,
-                    'name'                => 'Bipolar disorder, in full remission, most recent episode depressed',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.76',
-                ],
-            90  =>
-                [
-                    'id'                  => 124,
-                    'name'                => 'Bipolar disorder, in full remission, most recent episode hypomanic',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.72',
-                ],
-            91  =>
-                [
-                    'id'                  => 125,
-                    'name'                => 'Bipolar disorder, in full remission, most recent episode manic',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.74',
-                ],
-            92  =>
-                [
-                    'id'                  => 126,
-                    'name'                => 'Bipolar disorder, in full remission, most recent episode mixed',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.78',
-                ],
             93  =>
                 [
                     'id'                  => 127,
@@ -2056,13 +2028,6 @@ class UpdateBHIProblems extends Seeder
                     'simple_name'         => 'Depression',
                     'default_icd_10_code' => 'F33.2',
                 ],
-            274 =>
-                [
-                    'id'                  => 308,
-                    'name'                => 'Major depressive disorder, recurrent, in full remission',
-                    'simple_name'         => 'Depression',
-                    'default_icd_10_code' => 'F33.42',
-                ],
             275 =>
                 [
                     'id'                  => 309,
@@ -2104,13 +2069,6 @@ class UpdateBHIProblems extends Seeder
                     'name'                => 'Major depressive disorder, recurrent, unspecified',
                     'simple_name'         => 'Depression',
                     'default_icd_10_code' => 'F33.9',
-                ],
-            281 =>
-                [
-                    'id'                  => 315,
-                    'name'                => 'Major depressive disorder, single episode, in full remission',
-                    'simple_name'         => 'Depression',
-                    'default_icd_10_code' => 'F32.5',
                 ],
             282 =>
                 [
@@ -2167,13 +2125,6 @@ class UpdateBHIProblems extends Seeder
                     'name'                => 'Male orgasmic disorder',
                     'simple_name'         => null,
                     'default_icd_10_code' => 'F52.32',
-                ],
-            290 =>
-                [
-                    'id'                  => 324,
-                    'name'                => 'Manic episode in full remission',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F30.4',
                 ],
             291 =>
                 [
