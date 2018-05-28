@@ -120,9 +120,9 @@ class CpmDefaultInstructionSeeder extends Seeder
                 'instruction' => "- Avoid drugs that are known to cause you trouble.\n\n- Do not stop your medications on your own.\n\n- Avoid narcotics and alcohol.\n\n- Focus on and schedule meaningful activities.\n\n- Spend time and gain support from staff, family and other supportive people\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.
                 "
             ],
-            'Substance Abuse' => [
+            'Substance Abuse (ex-Alcoholism)' => [
                 'problems' => [
-                    'Substance Abuse',
+                    'Substance Abuse (ex-Alcoholism)',
                 ],
                 'instruction' => "- Develop alternative behaviours to drug use, such as exercise and scheduling meaningful activities you enjoy.\n\n- Eating a healthy diet helps: More vegetables and less sugary or fried foods.\n\n- Exercise at least three times a week. Even moderate exercise will help you feel better.\n\n- Join a Peer Support / Self-Help group. They are helpful. To find a group, visit https://www.nami.org/Find-Your-Local-NAMI, and select your state on the right side.\n\n- Help is just a phone call away: 1-800-662-HELP
                 "
