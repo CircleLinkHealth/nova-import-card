@@ -24,7 +24,8 @@
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
                 <h2 class="color-blue pointer" @click="toggleOtherConditions">
                     <span v-if="!isOtherConditionsVisible">See </span>Other Conditions
-                    <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span>
+                    <span v-if="!isOtherConditionsVisible" class="font-22">({{ ccdProblemsForListing.length }})</span>
+                    <span v-if="isOtherConditionsVisible" class="font-22">(Click to Minimize)</span>
                 </h2>
                 
                 <ul class="row" v-if="isOtherConditionsVisible">
@@ -152,6 +153,10 @@
 <style>
     .color-blue {
         color: #109ace;
+    }
+
+    .font-18 {
+        font-size: 18px;
     }
 
     .font-22 {

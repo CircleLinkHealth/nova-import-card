@@ -57,10 +57,10 @@ class CarePlanObserver
 
     public function saved(CarePlan $carePlan)
     {
-//        if ($carePlan->isDirty('first_printed')) {
-//            $carePlan->load('patient');
-//            $this->sendCarePlanPrintedNote($carePlan);
-//        }
+        if ($carePlan->isDirty('first_printed')) {
+            $carePlan->load('patient');
+            $this->sendCarePlanPrintedNote($carePlan);
+        }
     }
 
     public function sendCarePlanPrintedNote(CarePlan $carePlan)

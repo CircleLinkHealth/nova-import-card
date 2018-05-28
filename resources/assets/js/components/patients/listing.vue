@@ -15,6 +15,9 @@
             <template slot="provider" scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
+            <template slot="program" scope="props">
+                <div>{{ props.row.program_name }}</div>
+            </template>
             <template slot="careplanStatus" scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
                     {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft', patient_rejected: 'Patient Declined' })[props.row.careplanStatus] || props.row.careplanStatus) }}
@@ -130,7 +133,7 @@
                                             { id: 'to_enroll', text: 'to_enroll' },
                                             { id: 'draft', text: 'draft' }
                                         ],
-                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                        program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -276,7 +279,8 @@
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
                         patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                        patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.program = patient.program_id
+                        patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
                         patient.sort_registeredOn = new Date(patient.created_at)
@@ -296,7 +300,7 @@
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
                         loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
                         loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                        loadColumnList(this.options.listColumns.program, patient.program)
+                        // loadColumnList(this.options.listColumns.program, patient.program)
                         return patient
                     })
 

@@ -49,7 +49,11 @@
                 type: Boolean,
                 default: false
             },
-            isCcm: Boolean
+            isCcm: Boolean,
+            isManualBehavioral: {
+                type: Boolean,
+                default: false
+            }
         },
         computed: {
             storeKey () {
@@ -59,7 +63,6 @@
         data () {
             const $vm = this
             return {
-                isManualBehavioral: false,
                 dontShowModalAgain: false,
                 bhiModalInfo: {
                     okHandler () {
@@ -77,7 +80,6 @@
         methods: {
             setBhi (mode) {
                 EventBus.$emit('tracker:bhi:switch', mode)
-                this.isManualBehavioral = mode
             }
         },
         mounted () {

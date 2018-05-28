@@ -278,6 +278,7 @@
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('full-conditions:edit', response.data)
+                    setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:edit', err)
                     this.loaders.editProblem = false
@@ -342,8 +343,8 @@
                     }).length
                 console.log('ccm', ccmCount, 'bhi', bhiCount)
                 Event.$emit('careplan:bhi', { 
-                    isCcm: ccmCount > 0,
-                    isBehavioral: bhiCount > 0
+                    hasCcm: ccmCount > 0,
+                    hasBehavioral: bhiCount > 0
                 })
             }
         },

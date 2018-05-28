@@ -1164,11 +1164,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ]);
 
                 //billing churn
-                Route::get('/billing-churn-index', [
-                    'uses' => 'OpsDashboardController@getBillingChurnIndex',
-                    'as'   => 'OpsDashboard.billingChurnIndex'
-                ]);
-
                 Route::get('/billing-churn', [
                     'uses' => 'OpsDashboardController@getBillingChurn',
                     'as'   => 'OpsDashboard.billingChurn'

@@ -151,7 +151,7 @@ class ProviderReportable implements Reportable
                   ->whereMemberUserId($this->provider->id);
             });
         })
-                                  ->where('ccm_time', '>', 1199);
+                                  ->where('total_time', '>', 1199);
 
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());
