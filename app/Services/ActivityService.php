@@ -88,6 +88,9 @@ class ActivityService
                 'cur_month_activity_time' => (int) $total_time,
             ]);
         }
+
+        $summary->total_time = (int)$total_time;
+        $summary->save();
     }
 
     /**

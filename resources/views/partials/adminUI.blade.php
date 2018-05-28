@@ -219,7 +219,7 @@
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('OpsDashboard.billingChurnIndex')}}">Billing Churn</a>
+                                    <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
                                 </li>
 
                             </ul>

@@ -32,7 +32,7 @@ class PatientObserver
             'body'         => "Patient consented on $patient->consent_date",
             'type'         => 'Patient Consented',
             'performed_at' => Carbon::now()->toDateTimeString(),
-        ])->forward(true, false);
+        ]);
     }
 
     public function attachTargetPatient(Patient $patient)

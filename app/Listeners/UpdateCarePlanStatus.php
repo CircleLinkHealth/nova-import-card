@@ -50,7 +50,10 @@ class UpdateCarePlanStatus
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
 
             if ((boolean)$practiceSettings->efax_pdf_careplan) {
-                $this->efax->send($user->locations->first()->fax, $user->carePlan->toPdf());
+                $location = $user->locations()->first();
+                if ($location && $location->fax) {
+                    $this->efax->send($location->fax, $user->carePlan->toPdf());
+                }
             }
 
             event(new PdfableCreated($user->carePlan));
