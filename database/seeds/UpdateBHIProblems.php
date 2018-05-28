@@ -69,10 +69,10 @@ class UpdateBHIProblems extends Seeder
 
                      if ($p['default_icd_10_code']) {
                          SnomedToCpmIcdMap::updateOrCreate([
-                             'icd_10_code'    => $p['default_icd_10_code'],
-                             'icd_10_name'    => $p['name']
+                             'icd_10_code' => $p['default_icd_10_code'],
                          ], [
-                            'cpm_problem_id' => $bhiProblem->id
+                             'icd_10_name'    => $p['name'],
+                             'cpm_problem_id' => $bhiProblem->id,
                          ]);
                      }
                  });
