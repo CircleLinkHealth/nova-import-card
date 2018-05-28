@@ -69,9 +69,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         /**
          * @returns {Boolean} whether this user has a BHI activity
          */
-        get isBehavioral() {
-            return this.activities.reduce((a, b) => (a || (b.isBehavioral && b.hasSockets)), false)
-        },
+        isBehavioral: false,
         /**
          * 
          * @param {any} data JSON or string you want to send via web sockets
@@ -112,6 +110,16 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      */
     user.findActivity = (info) => {
         return user.activities.find(item => (item.name == info.activity) && (item.isBehavioral == info.isManualBehavioral))
+    }
+
+    user.switchBhi = (info) => {
+        user.broadcast({
+            message: 'server:bhi:switch', 
+            mode: info.isManualBehavioral, 
+            isCcm: info.isCcm,
+            isBehavioral: info.isBehavioral
+        })
+        user.isBehavioral = info.isManualBehavioral
     }
 
     user.closeOtherBehavioralActivity = (info, ws) => {

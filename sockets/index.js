@@ -92,12 +92,7 @@ module.exports = app => {
                 user.enter(info, ws)
                 user.sync()
                 if (data.message === 'client:bhi') {
-                  user.broadcast({ 
-                    message: 'server:bhi:switch', 
-                    mode: info.isManualBehavioral, 
-                    isCcm: info.isCcm,
-                    isBehavioral: info.isBehavioral
-                  })
+                  user.switchBhi(info)
                 }
               }
               catch (ex) {
