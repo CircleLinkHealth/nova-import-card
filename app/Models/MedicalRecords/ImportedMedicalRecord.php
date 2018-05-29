@@ -10,11 +10,10 @@ use App\Importer\Models\ImportedItems\DemographicsImport;
 use App\Importer\Models\ImportedItems\MedicationImport;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Location;
+use App\Patient;
 use App\Practice;
 use App\Scopes\Universal\MedicalRecordIdAndTypeTrait;
 use App\User;
-use App\Patient;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -186,7 +185,9 @@ class ImportedMedicalRecord extends \App\BaseModel implements ImportedMedicalRec
                 return $user->id;
             }
 
-            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+            $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
+                $q->where('program_id', $practiceId);
+            })->whereMrnNumber($demos->mrn_number)->first();
 
             if ($patient) {
                 $this->duplicate_id = $patient->user_id;
