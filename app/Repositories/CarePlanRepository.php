@@ -8,7 +8,6 @@ use App\Patient;
 
 class CareplanRepository
 {
-    private $TO_ENROLL = 'to_enroll';
     private $PROVIDER_APPROVED = 'provider_approved';
     private $PATIENT_REJECTED = 'patient_rejected';
 

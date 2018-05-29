@@ -221,11 +221,6 @@ class OpsDashboardService
                 if ($patient->patientInfo->ccm_status == 'enrolled' && $patient->patientInfo->registration_date >= $fromDate && $patient->patientInfo->registration_date <= $toDate) {
                     $enrolled[] = $patient;
                 }
-//                if ($patient->carePlan) {
-//                    if ($patient->carePlan->status == 'to_enroll') {
-//                        $gCodeHold[] = $patient;
-//                    }
-//                }
         }
 
         $pausedCount    = count($paused);

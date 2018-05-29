@@ -29,11 +29,10 @@ class PatientEnrollmentSeeeder extends Seeder
         })->map(function ($patient) {
             if ($patient) {
                 Careplan::where([ 'user_id' => $patient->user_id ])->update([
-                    'provider_approver_id' => null,
-                    'status' => $this->TO_ENROLL
+                    'provider_approver_id' => null
                 ]);
                 Patient::where([ 'user_id' => $patient->user_id ])->update([
-                    'ccm_status' => 'paused'
+                    'ccm_status' => $this->TO_ENROLL
                 ]);
                 CareplanAssessment::where([ 'careplan_id' => $patient->user_id ])->delete();
                 Note::where([ 'patient_id' => $patient->user_id, 'type' => 'Enrollment' ])

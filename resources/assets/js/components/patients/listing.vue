@@ -123,14 +123,14 @@
                         ccmStatus: [ 
                                         { id: 'enrolled', text: 'enrolled' }, 
                                         { id: 'paused', text: 'paused' }, 
-                                        { id: 'withdrawn', text: 'withdrawn' } 
+                                        { id: 'withdrawn', text: 'withdrawn' },
+                                        { id: 'to_enroll', text: 'to_enroll'}
                                     ],
                         careplanStatus: [
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
-                                            { id: 'patient_rejected', text: 'patient_rejected' }, 
-                                            { id: 'to_enroll', text: 'to_enroll' },
+                                            { id: 'patient_rejected', text: 'patient_rejected' },
                                             { id: 'draft', text: 'draft' }
                                         ],
                         program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
