@@ -21,7 +21,6 @@ use App\Patient;
 use App\Practice;
 use App\Traits\Relationships\MedicalRecordItemLoggerRelationships;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRecord
 {
@@ -51,33 +50,34 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
     public function import()
     {
         $this->createLogs()
-            ->predictPractice()
-            ->predictLocation()
-            ->predictBillingProvider()
-            ->createImportedMedicalRecord()
-            ->importAllergies()
-            ->importDemographics()
-            ->importDocument()
-            ->importInsurance()
-            ->importMedications()
-            ->importProblems()
-            ->importProviders()
-            ->raiseConcerns();
+             ->predictPractice()
+             ->predictLocation()
+             ->predictBillingProvider()
+             ->createImportedMedicalRecord()
+             ->importAllergies()
+             ->importDemographics()
+             ->importDocument()
+             ->importInsurance()
+             ->importMedications()
+             ->importProblems()
+             ->importProviders()
+             ->raiseConcerns();
 
         return $this->importedMedicalRecord;
     }
 
-    public function raiseConcerns() {
+    public function raiseConcerns()
+    {
         $demos = $this->demographics()->first();
 
         if ($demos) {
             $practiceId = optional($demos->ccda)->practice_id;
 
             $query = User::whereFirstName($demos->first_name)
-                        ->whereLastName($demos->last_name)
-                        ->whereHas('patientInfo', function ($q) use ($demos) {
-                            $q->whereBirthDate($demos->dob);
-                        });
+                         ->whereLastName($demos->last_name)
+                         ->whereHas('patientInfo', function ($q) use ($demos) {
+                             $q->whereBirthDate($demos->dob);
+                         });
             if ($practiceId) {
                 $query = $query->where('program_id', $practiceId);
             }
@@ -91,7 +91,9 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
                 return true;
             }
 
-            $patient = Patient::whereMrnNumber($demos->mrn_number)->first();
+            $patient = Patient::whereHas('user', function ($q) use ($practiceId) {
+                $q->where('program_id', $practiceId);
+            })->whereMrnNumber($demos->mrn_number)->first();
 
             if ($patient) {
                 $this->importedMedicalRecord->duplicate_id = $patient->user_id;
@@ -293,7 +295,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         }
 
         //historic lookup
-        $historicPredictor = new HistoricPracticePredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPredictor  = new HistoricPracticePredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
@@ -319,7 +321,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
 
 
         //historic lookup
-        $historicPredictor = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPredictor  = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
         if ($this->getPracticeIdPrediction()) {
@@ -329,8 +331,8 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         }
 
         if ($historicPrediction) {
-            if (isset($practice) && !$practice->locations->pluck('id')->contains($historicPrediction)) {
-                !$practice->primary_location_id
+            if (isset($practice) && ! $practice->locations->pluck('id')->contains($historicPrediction)) {
+                ! $practice->primary_location_id
                     ?: $this->setLocationIdPrediction($practice->primary_location_id);
 
                 return $this;
@@ -361,7 +363,7 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
         }
 
         //historic lookup
-        $historicPredictor = new HistoricBillingProviderPredictor($this->getDocumentCustodian(), $this->providers);
+        $historicPredictor  = new HistoricBillingProviderPredictor($this->getDocumentCustodian(), $this->providers);
         $historicPrediction = $historicPredictor->predict();
 
         if ($historicPrediction) {
