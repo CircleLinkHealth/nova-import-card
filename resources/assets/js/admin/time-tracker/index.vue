@@ -181,7 +181,7 @@
         mounted() {
             this.previousSeconds = this.info.totalTime || 0;
             this.info.initSeconds = 0
-            this.info.isManualBehavioral = false
+            this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
 
             if (this.info.disabled || !this.info.wsUrl) {
                 this.visible = false;
