@@ -10,7 +10,6 @@ use App\Contracts\Serviceable;
 use App\Services\CPM\CpmProblemService;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\User;
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -147,10 +146,6 @@ class CpmProblem extends \App\BaseModel implements Serviceable
 
     public function isDuplicateOf($name) {
         return $this->where('contains', 'LIKE', "%$name%");
-    }
-
-    public function snomedMaps() {
-        return $this->hasMany(SnomedToCpmIcdMap::class);
     }
 
 

@@ -175,11 +175,9 @@
         margin-left: 10px;
         z-index: 2;
         top: -5px;
-        max-width: 300px;
-        white-space: normal;
     }
 
     li:hover label.label.label-popover {
-        display: inline-block;
+        display: inline;
     }
 </style>
