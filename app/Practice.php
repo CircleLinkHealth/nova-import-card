@@ -126,7 +126,8 @@ class Practice extends \App\BaseModel implements HasMedia
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+                    ->withTimestamps();
     }
 
     public function patients()
