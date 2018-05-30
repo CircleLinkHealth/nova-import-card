@@ -290,8 +290,8 @@
                         this.info.isManualBehavioral = mode
                     }
                     else {
-                        shouldUpdateNetwork = (this.info.isManualBehavioral !== false)
-                        this.info.isManualBehavioral = false
+                        shouldUpdateNetwork = (this.info.isManualBehavioral !== mode)
+                        this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                     }
                     if (this.socket && this.socket.readyState === WebSocket.OPEN && shouldUpdateNetwork) {
                         this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
@@ -304,7 +304,7 @@
                     this.info.isBehavioral = hasBehavioral
                     this.info.isCcm = hasCcm
                     if (shouldUpdateNetwork) {
-                        this.info.isManualBehavioral = false
+                        this.info.isManualBehavioral = (this.info.isBehavioral && !this.info.isCcm) || false
                         if (this.socket && this.socket.readyState === WebSocket.OPEN) {
                             this.socket.send(JSON.stringify({ message: STATE.BHI, info: this.info }))
                         }
