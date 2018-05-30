@@ -125,6 +125,7 @@ class Patient extends \App\BaseModel
     const ENROLLED = 'enrolled';
     const WITHDRAWN = 'withdrawn';
     const TO_ENROLL = 'to_enroll';
+    const PATIENT_REJECTED = 'patient_rejected';
 
     protected $dates = [
         'date_withdrawn',

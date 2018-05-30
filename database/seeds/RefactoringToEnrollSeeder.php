@@ -12,13 +12,14 @@ class RefactoringToEnrollSeeder extends Seeder
      */
     public function run()
     {
-        $carePlans = CarePlan::with('patient')->whereStatus('to_enroll')->get();
+        $carePlans = CarePlan::with('patient')->whereIn('status', ['to_enroll', 'patient_rejected'])->get();
 
         foreach ($carePlans as $carePlan){
             $patient = $carePlan->patient;
+            $status  = $carePlan->status;
 
             if ($patient){
-                $patient->ccm_status = 'to_enroll';
+                $patient->ccm_status = $status;
                 $patient->save();
             }
 
