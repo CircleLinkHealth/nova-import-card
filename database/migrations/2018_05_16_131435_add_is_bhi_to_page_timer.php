@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddIsBhiToPageTimer extends Migration
 {
@@ -13,10 +13,11 @@ class AddIsBhiToPageTimer extends Migration
      */
     public function up()
     {
-        Schema::table('lv_page_timer', function(Blueprint $table)
-		{
-			$table->boolean('is_behavioral')->after('provider_id')->nullable();
-		});
+        if ( ! Schema::hasColumn('lv_page_timer', 'is_behavioral')) {
+            Schema::table('lv_page_timer', function (Blueprint $table) {
+                $table->boolean('is_behavioral')->after('provider_id')->nullable();
+            });
+        }
     }
 
     /**
@@ -26,9 +27,8 @@ class AddIsBhiToPageTimer extends Migration
      */
     public function down()
     {
-        Schema::table('lv_page_timer', function(Blueprint $table)
-		{
-			$table->dropColumn('is_behavioral');
-		});
+        Schema::table('lv_page_timer', function (Blueprint $table) {
+            $table->dropColumn('is_behavioral');
+        });
     }
 }

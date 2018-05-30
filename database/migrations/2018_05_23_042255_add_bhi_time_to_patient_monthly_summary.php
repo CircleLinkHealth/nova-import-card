@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddBhiTimeToPatientMonthlySummary extends Migration
 {
@@ -13,10 +13,11 @@ class AddBhiTimeToPatientMonthlySummary extends Migration
      */
     public function up()
     {
-        Schema::table('patient_monthly_summaries', function(Blueprint $table)
-		{
-			$table->integer('bhi_time')->after('ccm_time')->default(0)->nullable();
-		});
+        if ( ! Schema::hasColumn('patient_monthly_summaries', 'bhi_time')) {
+            Schema::table('patient_monthly_summaries', function (Blueprint $table) {
+                $table->integer('bhi_time')->after('ccm_time')->default(0)->nullable();
+            });
+        }
     }
 
     /**
@@ -26,9 +27,8 @@ class AddBhiTimeToPatientMonthlySummary extends Migration
      */
     public function down()
     {
-        Schema::table('patient_monthly_summaries', function(Blueprint $table)
-		{
-			$table->dropColumn('bhi_time');
-		});
+        Schema::table('patient_monthly_summaries', function (Blueprint $table) {
+            $table->dropColumn('bhi_time');
+        });
     }
 }

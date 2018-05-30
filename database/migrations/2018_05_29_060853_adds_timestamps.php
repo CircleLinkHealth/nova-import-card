@@ -13,9 +13,12 @@ class AddsTimestamps extends Migration
      */
     public function up()
     {
-        Schema::table('practice_role_user', function (Blueprint $table) {
-            $table->timestamps();
-        });
+        if ( ! Schema::hasColumn('practice_role_user', 'created_at')) {
+            Schema::table('practice_role_user', function (Blueprint $table) {
+                $table->timestamps();
+            });
+        }
+
     }
 
     /**
@@ -26,7 +29,7 @@ class AddsTimestamps extends Migration
     public function down()
     {
         Schema::table('practice_role_user', function (Blueprint $table) {
-            $table->timestamps();
+            $table->dropTimestamps();
         });
     }
 }
