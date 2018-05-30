@@ -66,6 +66,9 @@ class ActivityService
                     'cur_month_activity_time' => (int)$total_time,
                 ]);
             }
+
+            $summary->total_time = (int)$total_time;
+            $summary->save();
         }
 
         $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
@@ -95,11 +98,12 @@ class ActivityService
                     'cur_month_activity_time' => (int)$total_time,
                 ]);
             }
+
+            $summary->total_time = (int)$total_time;
+            $summary->save();
         }
 
 
-        $summary->total_time = (int)$total_time;
-        $summary->save();
     }
 
     /**
