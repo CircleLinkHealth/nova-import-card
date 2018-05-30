@@ -46,8 +46,9 @@ class ProviderUITimerComposer extends ServiceProvider
             if (strpos($requestUri, 'login') !== false) {
                 $enableTimeTracking = false;
             }
-
-            $noBhiSwitch = auth()->user()->hasRole("care-center");
+            
+            // do NOT show BHI switch if user does not have care-center role
+            $noBhiSwitch = !auth()->user()->hasRole("care-center");
 
             $patient = $view->patient;
             $patientId        = '';
@@ -57,13 +58,15 @@ class ProviderUITimerComposer extends ServiceProvider
                 $patientProgramId = $patient->program_id;
                 $ccm_time = $patient->ccm_time;
                 $bhi_time = $patient->bhi_time;
-                $noBhiSwitch = $noBhiSwitch && optional($patient->primaryPractice()->first())->hasServiceCode("CPT 99484");
+                //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
+                $noBhiSwitch = $noBhiSwitch || !optional($patient->primaryPractice()->first())->hasServiceCode("CPT 99484");
             } elseif (isset($patient) && ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId        = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
                 $ccm_time = $patient->user->ccm_time;
                 $bhi_time = $patient->user->bhi_time;
-                $noBhiSwitch = $noBhiSwitch && optional($patient->user->primaryPractice()->first())->hasServiceCode("CPT 99484");
+                //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
+                $noBhiSwitch = $noBhiSwitch || !optional($patient->user->primaryPractice()->first())->hasServiceCode("CPT 99484");
             }
 
             $view->with(compact([
