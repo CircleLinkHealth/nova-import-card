@@ -605,9 +605,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function viewableProgramIds(): array
     {
-        return $this->hasRole('administrator')
-            ? Practice::active()->get()->pluck('id')->all()
-            : $this->practices
+        return $this->practices
                 ->pluck('id')
                 ->all();
     }
@@ -2090,9 +2088,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $query,
         $user
     ) {
-        $viewablePractices = $user->hasRole('administrator')
-            ? Practice::active()->get()->pluck('id')->all()
-            : $user->viewableProgramIds();
+        $viewablePractices = $user->viewableProgramIds();
 
         return $query->whereHas('practices', function ($q) use (
             $viewablePractices
