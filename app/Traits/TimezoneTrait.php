@@ -38,8 +38,11 @@ trait TimezoneTrait
         return $date->timezone($this->timezone ?? 'America/New_York');
     }
 
-    public function resolveTimezoneToGMT(\Carbon\Carbon $date) {
+    public function resolveTimezoneToGMT($date) {
+        if (is_string($date)) {
+            $date = \Carbon\Carbon::parse($date);
+        }
         $date = $date->timezone($this->timezone ?? 'America/New_York');
-        return $date->format('Y-m-d') . ' 00:00:00 GMT' . $this->timezone_offset_hours;
+        return $date->format('Y-m-d H:i:s') . ' GMT' . $this->timezone_offset_hours;
     }
 }
