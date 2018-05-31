@@ -172,10 +172,10 @@
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
             toggleProgramColumn () {
@@ -329,8 +329,10 @@
                             }
                         })
                     }
-                    
-                    this.loaders.next = false
+                    setTimeout(() => {
+                        this.$refs.tblPatientList.count = this.pagination.total
+                        this.loaders.next = false
+                    }, 1000)
                 }).catch(err => {
                     console.error('patient-list', err)
                     this.loaders.next = false
