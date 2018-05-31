@@ -45,6 +45,8 @@ class ApprovableBillablePatient extends Resource
             'problem1_code'          => $this->billable_problem1_code,
             'problem2'               => $this->billable_problem2,
             'problem2_code'          => $this->billable_problem2_code,
+            'bhi_problem'            => 'test filler text',
+            'bhi_problem_code'       => 'test filler text',
             'problems'               => $this->allCcdProblems($this->patient),
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $this->patient->patientInfo->ccm_status,

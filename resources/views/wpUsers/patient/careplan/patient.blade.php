@@ -1,7 +1,6 @@
 <?php
-    use \Carbon\Carbon;
 
-    $user_info = array();
+$user_info = array();
 ?>
 
 @extends('partials.providerUI')
@@ -280,9 +279,10 @@
                                     <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('consent_date') ? 'has-error' : '' }}">
                                         <label for="mf-consent_date">Consent Date <span
                                                     class="attention">*</span>:</label>
-                                        <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
-                                            placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}" 
-                                            value="{{ $patient->patientInfo->consent_date }}" required></v-datepicker>
+                                        <v-datepicker name="consent_date" class="selectpickerX form-control" format="yyyy-MM-dd"
+                                                      placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
+                                                      value="{{ $patient->resolveTimezoneToGMT($patient->patientInfo->consent_date) }}"
+                                                      required></v-datepicker>
                                         <br/>
                                         <span class="help-block">{{ $errors->first('consent_date') }}</span>
                                     </div>

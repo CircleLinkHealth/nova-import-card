@@ -136,7 +136,7 @@ class Observation extends \App\BaseModel
             return '';
         }
 
-        return $name;
+        return $name ?? null;
     }
 
     public function meta()
