@@ -215,6 +215,8 @@
                     'Problem 1 Code',
                     'Problem 2',
                     'Problem 2 Code',
+                    'BHI Problem',
+                    'BHI Problem Code',
                     '#Successful Calls',
                     'approved',
                     'rejected',
@@ -373,6 +375,8 @@
                             'Problem 2': patient.problem2,
                             'Problem 1 Code': patient.problem1_code,
                             'Problem 2 Code': patient.problem2_code,
+                            'BHI Problem': patient.bhi_problem,
+                            'BHI Problem Code': patient.bhi_problem_code,
                             '#Successful Calls': patient.no_of_successful_calls,
                             chargeable_services: (patient.chargeable_services || []).map(item => item.id),
                             promises: {
