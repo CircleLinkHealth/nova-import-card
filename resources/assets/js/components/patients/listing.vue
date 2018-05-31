@@ -18,30 +18,49 @@
             <template slot="program" scope="props">
                 <div>{{ props.row.program_name }}</div>
             </template>
+            <template slot="ccmStatus" scope="props">
+                <div>
+                    {{ 
+                        (({ 
+                            to_enroll: 'to enroll', 
+                            patient_rejected: 'patient declined'
+                        })[props.row.ccmStatus] || props.row.ccmStatus) 
+                    }}
+                </div>
+            </template>
             <template slot="careplanStatus" scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft', patient_rejected: 'Patient Declined' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                    {{ 
+                        (({ 
+                            qa_approved: 'Approve Now', 
+                            to_enroll: 'To Enroll', 
+                            provider_approved: 'Provider Approved', 
+                            none: 'None', 
+                            draft: 'Draft', 
+                            g0506: 'G0506' 
+                        })[props.row.careplanStatus] || props.row.careplanStatus) 
+                    }}
                 </a>
             </template>
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
-            <template slot="h__ccmStatus" slot-scope="props">
+            <template slot="h__ccmStatus" scope="props">
                 CCM Status
             </template>
-            <template slot="h__careplanStatus" slot-scope="props">
+            <template slot="h__careplanStatus" scope="props">
                 Careplan Status
             </template>
-            <template slot="h__dob" slot-scope="props">
+            <template slot="h__dob" scope="props">
                 Date of Birth
             </template>
-            <template slot="h__registeredOn" slot-scope="props">
+            <template slot="h__registeredOn" scope="props">
                 Registered On
             </template>
-            <template slot="h__lastReading" slot-scope="props">
+            <template slot="h__lastReading" scope="props">
                 Last Reading
             </template>
-            <template slot="h__ccm" slot-scope="props">
+            <template slot="h__ccm" scope="props">
                 CCM
             </template>
         </v-client-table>
@@ -123,14 +142,15 @@
                         ccmStatus: [ 
                                         { id: 'enrolled', text: 'enrolled' }, 
                                         { id: 'paused', text: 'paused' }, 
-                                        { id: 'withdrawn', text: 'withdrawn' } 
+                                        { id: 'withdrawn', text: 'withdrawn' },
+                                        { id: 'to_enroll', text: 'to_enroll'},
+                                        { id: 'patient_rejected', text: 'patient_rejected'}
                                     ],
                         careplanStatus: [
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
-                                            { id: 'patient_rejected', text: 'patient_rejected' }, 
-                                            { id: 'to_enroll', text: 'to_enroll' },
+                                            { id: 'g0506', text: 'g0506' },
                                             { id: 'draft', text: 'draft' }
                                         ],
                         program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
@@ -298,8 +318,8 @@
                             }
                         }
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
-                        loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
-                        loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
+                        //loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
+                        //loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
                         // loadColumnList(this.options.listColumns.program, patient.program)
                         return patient
                     })
@@ -378,6 +398,15 @@
                 const ccmStatusSelect = patientListElem.querySelector('select[name="vf__ccmStatus"]')
                 ccmStatusSelect.querySelector('option').innerText = 'Select CCM Status'
 
+                window.ccmStatusSelect = ccmStatusSelect;
+
+                ([ ...(ccmStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
+                    option.innerText = ({
+                        to_enroll: 'to enroll',
+                        patient_rejected: 'patient declined',
+                    })[option.innerText] || option.innerText
+                });
+
                 const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]');
 
                 ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
@@ -388,6 +417,7 @@
                         none: 'None',
                         draft: 'Draft',
                         patient_rejected: 'Patient Declined',
+                        g0506: 'G0506',
                         'Select careplanStatus': 'Select Careplan Status'
                     })[option.innerText] || option.innerText
                 })

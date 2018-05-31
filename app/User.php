@@ -2685,7 +2685,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function isCcmEligible()
     {
-        return $this->care_plan_status == 'to_enroll';
+        return $this->ccm_status == 'to_enroll';
     }
 
     /**

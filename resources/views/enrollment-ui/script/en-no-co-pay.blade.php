@@ -9,19 +9,20 @@
     <p>
         The reason I’m calling is @{{provider_name}} is starting to work with a new personalized care program.
 
-        @{{provider_name}} just wanted me to offer it to his or her patients in case it might be helpful.
+        @{{provider_name}} thinks it might be helpful for you and wants you to enroll.
     </p>
 
     <p>
-        And so what the program is: there would be a registered nurse (RN), we call them “Care Coaches”, who
-        would call you twice a month to check on how you’re doing, or to see if you’re having any new
-        problems. And then the nurse would report back to [Doctor Name] so that s/he would have that
-        information in his/her records. This helps the doctor keep up with how you’re doing in between visits.
+        And so what the program is: there would be a registered nurse (RN), who can call you once or twice a month,
+        whichever you prefer  to check on how you’re doing, or to see if you’re having any new problems. And then the
+        nurse would report back to @{{provider_name}} so that s/he would have that information in his/her records.
+        This helps the doctor keep up a little better with how you’re doing in between visits and keeps them updated on your
+        medications and vitals (such as blood pressures and blood sugars).
     </p>
 
     <p>
-        The program is offered through Medicare and it should be no cost to you since you also have supplemental
-        insurance. So I was just calling today to check if you would be interested in trying this?
+        he program is offered through Medicare and  it’s no cost if you have supplemental insurance to cover a small ~$8 copay.
+        So I was just calling today to check if you would be interested in trying this?
         <br><b>[patients then usually have questions...caller may have to reassure patient that they will still see the
             doctor regularly, RN calls are only a supplement to regular care - not a replacement. ]</b>
     </p>
@@ -29,26 +30,34 @@
 
     <p>
         <b>[Note: if the patient is hesitant, then stress:]</b>
-        <br>“there’s no obligation, it’s just a program from the doctor and you can always try it for a month or two.
-        If you don’t like it, just call us and you can be taken off the program.”
+        <br>“It is easy to cancel if you just want to try it for a month or two and see how it goes. All you would have to do is
+        just let the nurse know that you don’t want to continue and we will take your name back off of the list.”
     </p>
 
     <p>
         <b>[if no, “not for me”]:</b>
 
+
         <br>
-        That’s perfectly fine, if you don’t need that you must be doing really well. No pressure. It’s just a
-        program to help the doctor keep up with you between visits.
+        That’s perfectly fine, there’s no pressure to sign up.
+        This is just a program to help the doctor keep up with you between visits.
         <b>[if the patient then becomes curious]</b>
-        You’re welcome to give it a try and you can cancel at any time. Is this something you’d like to speak to
-        your doctor about at your next visit?
+        You’re welcome to give it a try and you can cancel at any time. Would you like to try it out for a month and see how it goes?
+        This program is available long term, if you think you’d be interested at a later date - would you like us to call back and check in with you then?”
+        <br>
+        <b>[also - provide patient with phone number to call back if they’d like to enroll later]
+            [mark patient “soft decline” if the patient might want to enroll in the future]
+            [mark patient “hard decline” if the patient isn’t interested now nor will they be interested in the future]
+        </b>
     </p>
 
     <p>
         <b>[if patient says yes:]</b>
         <br>
         The only thing is you can only be a part of one doctor’s care management program at a time. I just want
-        to check and make sure that you’re not already signed up for this. If not, then we can enroll you.
+        to check and make sure that you’re not already signed up for this. If not, then we can go ahead and enroll you.
+        Did you prefer that the nurse call you once or twice a month? Are you currently on dialysis? Are you receiving hospice services?
+
         <br>[then collect the rest of the information]:
 
         <br>[Enroller/Ambassador should fill out patient information in enrollment sheet / Confirm patient’s best
@@ -58,20 +67,19 @@
     <p>
         <b>[at end of all info collected for “yes”]:</b>
         <br>
-        “That’s all I need for now, just wanted to let you know that you can cancel at anytime, and that a
-        registered nurse will be reaching out to you soon. They’ll be calling from the same number I called you from
-        today.”
+        “That’s all I need for now, The nurse will give you a call for the first time within the next week and she will
+        introduce herself to you and give you the number where you can reach her anytime you need to. They’ll be
+        calling from the same number I called you from today.”
     </p>
 
     <p>“Have a great day! Thanks!”</p>
 
 
     <p>
-        <b>[If Caller Reaches Machine, Leave Voice Message:</b>​ Hi this is [caller name] calling on behalf of [Dr.
-        name]
-        at [Dr. Office]. The doctor[s] have invited you to their new personalized care management program.
+        <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is {{auth()->user()->fullName}} calling on behalf of <b>Dr. @{{provider_name}}</b>
+        at <b>{{$enrollee->practiceName}}</b>. The doctor[s] have invited you to their new personalized care management program.
         Please give us a call at [number Ambassador calling from on page 2] to learn more. Please note there is
         nothing to worry about, this program just lets the Dr. take better care of you between visits. Again the
-        number is [number Ambassador calling from]
+        number is [number Ambassador calling from]</p>
     </p>
 </div>

@@ -43,9 +43,6 @@ class OpsDashboardPatientEloquentRepository
                 'patientInfo' => function ($patient) {
                     $patient->whereIn('ccm_status', [Patient::PAUSED, Patient::WITHDRAWN, Patient::ENROLLED]);
                 },
-                'carePlan'    => function ($c) {
-                    $c->where('status', CarePlan::TO_ENROLL);
-                },
             ])
                             ->whereHas('patientInfo', function ($patient) {
                                 $patient->whereIn('ccm_status',
