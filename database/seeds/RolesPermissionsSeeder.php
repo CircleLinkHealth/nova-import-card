@@ -13,8 +13,6 @@ class RolesPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('lv_roles')->delete();
-
         $this->call(LvPermissionsTableSeeder::class);
 
         foreach ($this->roles() as $role) {
@@ -22,10 +20,10 @@ class RolesPermissionsSeeder extends Seeder
 
             unset($role['permissions']);
 
-            $role = Role::updateOrCreate($role);
+            $role = Role::updateOrCreate(['name' => $role['name']], $role);
 
             $permissionIds = Permission::whereIn('name', $permissionsArr)
-                ->pluck('id')->all();
+                                       ->pluck('id')->all();
 
             $role->perms()->sync($permissionIds);
 
@@ -43,64 +41,133 @@ class RolesPermissionsSeeder extends Seeder
     {
         return [
             [
-                'name' => 'administrator',
+                'name'         => 'administrator',
                 'display_name' => 'Administrator',
-                'description' => 'Administrator',
-                'permissions' => [ ]
+                'description'  => 'Administrator',
+                'permissions'  => [],
             ],
             [
-                'name' => 'participant',
+                'name'         => 'participant',
                 'display_name' => 'Participant',
-                'description' => 'Participant',
-                'permissions' => [ ]
+                'description'  => 'Participant',
+                'permissions'  => [
+                    'users-view-self',
+                    'observations-create',
+                    'observations-view',
+                ],
             ],
             [
-                'name' => 'api-ccd-vendor',
+                'name'         => 'api-ccd-vendor',
                 'display_name' => 'API CCD Vendor',
-                'description' => 'Is able to post CCDs to our API',
-                'permissions' => [ ]
+                'description'  => 'Is able to post CCDs to our API',
+                'permissions'  => [
+                    'post-ccd-to-api',
+                ],
             ],
             [
-                'name' => 'api-data-consumer',
+                'name'         => 'api-data-consumer',
                 'display_name' => 'API Data Consumer',
-                'description' => 'Is able to receive PDF Reports and CCM Time from our API',
-                'permissions' => [ ]
+                'description'  => 'Is able to receive PDF Reports and CCM Time from our API',
+                'permissions'  => [
+                    'query-api-for-patient-data',
+                ],
             ],
             [
-                'name' => 'viewer',
+                'name'         => 'viewer',
                 'display_name' => 'Viewer',
-                'description' => '',
-                'permissions' => [ ]
+                'description'  => '',
+                'permissions'  => [
+                    'users-view-all',
+                    'users-view-self',
+                ],
             ],
             [
-                'name' => 'aprima-api-location',
+                'name'         => 'office_admin',
+                'display_name' => 'Office Admin',
+                'description'  => 'Not CCM countable.',
+                'permissions'  => [
+                    'users-view-all',
+                    'users-view-self',
+                ],
+            ],
+            [
+                'name'         => 'aprima-api-location',
                 'display_name' => 'API Data Consumer and CCD Vendor.',
-                'description' => 'This role is JUST FOR APRIMA! Is able to receive PDF Reports and CCM Time from our API. Is able to post CCDs to our API.',
-                'permissions' => [ ]
+                'description'  => 'This role is JUST FOR APRIMA! Is able to receive PDF Reports and CCM Time from our API. Is able to post CCDs to our API.',
+                'permissions'  => [
+                    'post-ccd-to-api',
+                    'query-api-for-patient-data',
+                ],
             ],
             [
-                'name' => 'no-ccm-care-center',
+                'name'         => 'no-ccm-care-center',
                 'display_name' => 'Non CCM Care Center',
-                'description' => 'Care Center',
-                'permissions' => [ ]
+                'description'  => 'Care Center',
+                'permissions'  => [
+                    'activities-manage',
+                    'activities-pagetimer-manage',
+                    'activities-pagetimer-view',
+                    'activities-view',
+                    'apikeys-manage',
+                    'apikeys-view',
+                    'app-config-manage',
+                    'app-config-view',
+                    'ccd-import',
+                    'locations-manage',
+                    'locations-view',
+                    'observations-create',
+                    'observations-destroy',
+                    'observations-edit',
+                    'observations-view',
+                    'post-ccd-to-api',
+                    'programs-manage',
+                    'programs-view',
+                    'query-api-for-patient-data',
+                    'roles-manage',
+                    'roles-permissions-manage',
+                    'roles-permissions-view',
+                    'roles-view',
+                    'rules-engine-manage',
+                    'rules-engine-view',
+                    'users-create',
+                    'users-edit-all',
+                    'users-edit-self',
+                    'users-view-all',
+                    'users-view-self',
+                ],
             ],
             [
-                'name' => 'no-access',
+                'name'         => 'no-access',
                 'display_name' => 'No Access',
-                'description' => '',
-                'permissions' => [ ]
+                'description'  => '',
+                'permissions'  => [],
             ],
             [
-                'name' => 'administrator-view-only',
+                'name'         => 'administrator-view-only',
                 'display_name' => 'Administrator - View Only',
-                'description' => 'A special administrative account where you can view the admin but not perform actions',
-                'permissions' => [ ]
+                'description'  => 'A special administrative account where you can view the admin but not perform actions',
+                'permissions'  => [
+                    'activities-pagetimer-view',
+                    'activities-view',
+                    'admin-access',
+                    'apikeys-view',
+                    'app-config-view',
+                    'locations-view',
+                    'observations-view',
+                    'programs-view',
+                    'roles-permissions-view',
+                    'roles-view',
+                    'rules-engine-view',
+                    'users-edit-self',
+                    'users-view-all',
+                    'users-view-self',
+                ],
             ],
             [
-                'name' => 'no-access',
+                'name'         => 'no-access',
                 'display_name' => 'No Access',
-                'description' => '',
-                'permissions' => [ ]
+                'description'  => '',
+                'permissions'  => [],
             ],
             [
                 'name'         => 'practice-lead',
@@ -214,7 +281,7 @@ class RolesPermissionsSeeder extends Seeder
         $adminRole = Role::whereName($roleName)->first();
 
         $permissions = Permission::where('name', '!=', 'care-plan-approve')
-            ->get();
+                                 ->get();
 
         $adminRole->perms()->sync($permissions->pluck('id')->all());
     }

@@ -14,17 +14,21 @@ class AddTotalTime extends Migration
      */
     public function up()
     {
-        Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-            $table->integer('total_time')->after('patient_id');
-        });
 
-        PatientMonthlySummary::orderBy('id')
-                             ->chunk(200, function ($summaries) {
-                                 foreach ($summaries as $p) {
-                                     $p->total_time = $p->ccm_time + $p->bhi_time;
-                                     $p->save();
-                                 }
-                             });
+        if ( ! Schema::hasColumn('patient_monthly_summaries', 'total_time')) {
+            Schema::table('patient_monthly_summaries', function (Blueprint $table) {
+                $table->integer('total_time')->after('patient_id');
+            });
+
+            PatientMonthlySummary::orderBy('id')
+                                 ->chunk(200, function ($summaries) {
+                                     foreach ($summaries as $p) {
+                                         $p->total_time = $p->ccm_time + $p->bhi_time;
+                                         $p->save();
+                                     }
+                                 });
+        }
+
     }
 
     /**

@@ -135,7 +135,7 @@
                                         <label for="birth_date">Date Of Birth<span class="attention">*</span>:</label>
                                         <v-datepicker name="birth_date" class="selectpickerX form-control" format="yyyy-MM-dd" 
                                             placeholder="YYYY-MM-DD"
-                                            value="{{ (old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }} 00:00:00 GMT{{ auth()->user()->timezone_offset_hours }}" required></v-datepicker>
+                                            value="{{ $patient->resolveTimezoneToGMT(old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}" required></v-datepicker>
                                         <br/>
                                         <span class="help-block">{{ $errors->first('birth_date') }}</span>
                                     </div>

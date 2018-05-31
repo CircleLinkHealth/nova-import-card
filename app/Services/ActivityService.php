@@ -58,11 +58,22 @@ class ActivityService
             }
 
             $total_time += $ccmTime;
+
+            if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
+                $info = Patient::updateOrCreate([
+                    'user_id' => $id,
+                ], [
+                    'cur_month_activity_time' => (int)$total_time,
+                ]);
+            }
+
+            $summary->total_time = (int)$total_time;
+            $summary->save();
         }
 
         $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
-                           ->get()
-                           ->pluck('total_time', 'patient_id');
+                               ->get()
+                               ->pluck('total_time', 'patient_id');
 
         foreach ($bhi_acts as $id => $bhiTime) {
             $summary = PatientMonthlySummary::updateOrCreate([
@@ -79,18 +90,20 @@ class ActivityService
             }
 
             $total_time += $bhiTime;
+
+            if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
+                $info = Patient::updateOrCreate([
+                    'user_id' => $id,
+                ], [
+                    'cur_month_activity_time' => (int)$total_time,
+                ]);
+            }
+
+            $summary->total_time = (int)$total_time;
+            $summary->save();
         }
 
-        if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
-            $info = Patient::updateOrCreate([
-                'user_id' => $id,
-            ], [
-                'cur_month_activity_time' => (int) $total_time,
-            ]);
-        }
 
-        $summary->total_time = (int)$total_time;
-        $summary->save();
     }
 
     /**

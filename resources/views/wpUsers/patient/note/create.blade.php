@@ -310,6 +310,30 @@
                     checked: $('#phone').is(':checked')
                 }
             })
+
+            function tcmChange(e) {
+                if (e) {
+                    if (e.currentTarget.checked) {
+                        $('#notify-careteam').prop("checked", true);
+                        $('#notify-careteam').prop("disabled", true);
+                    }
+                    else {
+                        $('#notify-careteam').prop("checked", false);
+                        $('#notify-careteam').prop("disabled", false);
+                    }
+                }
+                else {
+
+                }
+            }
+
+            $('#tcm').change(tcmChange);
+
+            tcmChange({
+                currentTarget: {
+                    checked: $('#tcm').is(':checked')
+                }
+            })
         });
 
         $('#newNote').submit(function (e) {

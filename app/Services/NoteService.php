@@ -5,19 +5,19 @@ namespace App\Services;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
 use App\CarePerson;
+use App\CareplanAssessment;
+use App\CLH\Repositories\UserRepository;
+use App\Filters\NoteFilters;
 use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
-use App\User;
-use App\CareplanAssessment;
-use App\Filters\NoteFilters;
-use App\Repositories\NoteRepository;
 use App\Repositories\CareplanAssessmentRepository;
-use App\CLH\Repositories\UserRepository;
+use App\Repositories\NoteRepository;
+use App\User;
 use App\View\MetaTag;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\URL;
 use Exception;
+use Illuminate\Support\Facades\URL;
 
 class NoteService
 {
@@ -116,8 +116,12 @@ class NoteService
     {
         $note = Note::create($input);
 
+        $notifyCareTeam = $input['notify_careteam'] ?? false;
+        $notifyCLH      = $input['notify_circlelink_support'] ?? false;
+
         if ($input['tcm'] == 'true') {
-            $note->isTCM = true;
+            $note->isTCM    = true;
+            $notifyCareTeam = true;
         } else {
             $note->isTCM = false;
         }
@@ -130,7 +134,7 @@ class NoteService
 
         $note->save();
 
-        $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
+        $note->forward($notifyCareTeam, $notifyCLH);
 
         return $note;
     }

@@ -141,8 +141,8 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
     import VueComplete from 'v-complete'
@@ -167,14 +167,20 @@
                 return this.problems.distinct((p) => p.name)
             },
             patientHasSelectedProblem() {
-                if (!this.selectedProblem) return this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
-                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
+                if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
+                else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
+                    return pA.concat(pB.snomeds.map(snomed => ({
+                        name: snomed.icd_10_name,
+                        id: pB.id,
+                        code: snomed.icd_10_code
+                    })))
+                }, []).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -221,8 +227,9 @@
                 this.newProblem.icd10 = null
             },
             resolveIcd10Code() {
-                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
-                this.newProblem.cpm_problem_id = (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).id
+                const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
+                this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
+                this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
             },
             removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {

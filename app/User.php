@@ -247,7 +247,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         TimezoneTrait;
 
 
-
     use \Venturecraft\Revisionable\RevisionableTrait;
 
     public $rules = [];
@@ -257,9 +256,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         parent::__construct($attributes);
 
         $this->rules = [
-            'username'         => 'required',
-            'email'            => 'required|email|unique:users,email',
-            'password'         => ['required', 'filled', 'min:8', new PasswordCharacters],
+            'username'              => 'required',
+            'email'                 => 'required|email|unique:users,email',
+            'password'              => ['required', 'filled', 'min:8', new PasswordCharacters],
             'password_confirmation' => 'required|same:password',
         ];
     }
@@ -571,7 +570,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
     }
 
-    public function inboundScheduledCalls(Carbon $after = null) {
+    public function inboundScheduledCalls(Carbon $after = null)
+    {
         return $this->inboundCalls()
                     ->where('status', '=', 'scheduled')
                     ->when($after, function ($query) use ($after) {
@@ -605,9 +605,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function viewableProgramIds(): array
     {
-        return $this->hasRole('administrator')
-            ? Practice::active()->get()->pluck('id')->all()
-            : $this->practices
+        return $this->practices
                 ->pluck('id')
                 ->all();
     }
@@ -1950,7 +1948,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function ehrInfo(){
+    public function ehrInfo()
+    {
 
         return $this->hasOne(TargetPatient::class);
     }
@@ -2089,9 +2088,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $query,
         $user
     ) {
-        $viewablePractices = $user->hasRole('administrator')
-            ? Practice::active()->get()->pluck('id')->all()
-            : $user->viewableProgramIds();
+        $viewablePractices = $user->viewableProgramIds();
 
         return $query->whereHas('practices', function ($q) use (
             $viewablePractices
@@ -2192,7 +2189,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function practices()
     {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
-                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+                    ->withTimestamps();
     }
 
     /**
@@ -2270,8 +2268,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function billingProviderUser(): User
     {
         return ($this->billingProvider->isEmpty()
-            ? new User()
-            : $this->billingProvider->first()->user) ?? new User();
+                ? new User()
+                : $this->billingProvider->first()->user) ?? new User();
     }
 
     /**
@@ -2363,8 +2361,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 
-    public function chargeableServices(){
-        return $this->morphToMany(  ChargeableService::class, 'chargeable')
+    public function chargeableServices()
+    {
+        return $this->morphToMany(ChargeableService::class, 'chargeable')
                     ->withPivot(['amount'])
                     ->withTimestamps();
     }
@@ -2504,7 +2503,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $careplanMode;
     }
 
-    
 
     public function canApproveCarePlans()
     {
@@ -2619,16 +2617,18 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $billableProblems;
     }
 
-    public function isCcm() {
+    public function isCcm()
+    {
         return ($this->ccdProblems()->where('is_monitored', 1)->whereHas('cpmProblem', function ($cpm) {
-            return $cpm->where('is_behavioral', 0);
-        })->count() > 0);
+                return $cpm->where('is_behavioral', 0);
+            })->count() > 0);
     }
 
-    public function isBehavioral() {
+    public function isBehavioral()
+    {
         return $this->ccdProblems()->whereHas('cpmProblem', function ($cpm) {
-            return $cpm->where('is_behavioral', 1);
-        })->count() > 0;
+                return $cpm->where('is_behavioral', 1);
+            })->count() > 0;
     }
 
     /**
@@ -2710,8 +2710,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
     }
 
-    public function scopeOfPractice($query, $practiceId) {
-        if (!is_array($practiceId)) {
+    public function scopeOfPractice($query, $practiceId)
+    {
+        if ( ! is_array($practiceId)) {
             $practiceId = [$practiceId];
         }
 
@@ -2733,19 +2734,23 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      *
      * @return bool
      */
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->hasRole('administrator');
     }
 
-    public function isInternalUser() {
+    public function isInternalUser()
+    {
         return $this->hasRole(Constants::CLH_INTERNAL_USER_ROLE_NAMES);
     }
 
-    public function isPracticeStaff() {
+    public function isPracticeStaff()
+    {
         return $this->hasRole(Constants::PRACTICE_STAFF_ROLE_NAMES);
     }
 
-    public function linkToViewResource() {
+    public function linkToViewResource()
+    {
         if ($this->isInternalUser()) {
             return route('admin.users.edit', ['id' => $this->id]);
         }
@@ -2767,19 +2772,22 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->isAdmin();
     }
 
-    public function name() {
+    public function name()
+    {
         return $this->display_name ?? ($this->first_name . $this->last_name);
     }
 
-    public function lastObservation() {
+    public function lastObservation()
+    {
         return $this->observations()->orderBy('id', 'desc');
     }
 
-    public function autocomplete() {
+    public function autocomplete()
+    {
         return [
-            'id' => $this->id,
-            'name' => $this->name() ?? $this->display_name,
-            'program_id' => $this->program_id
+            'id'         => $this->id,
+            'name'       => $this->name() ?? $this->display_name,
+            'program_id' => $this->program_id,
         ];
     }
 
@@ -2790,53 +2798,62 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $phone       = $this->phoneNumbers()->first();
 
         return [
-            'id' => $this->id,
-            'username' => $this->username,
-            'name' => $this->name() ?? $this->display_name,
-            'address' => $this->address,
-            'city' => $this->city,
-            'state' => $this->state,
-            'specialty' => $this->specialty,
-            'program_id' => $this->program_id,
-            'status' => $this->status,
-            'user_status' => $this->user_status,
-            'is_online' => $this->is_online,
-            'patient_info' => optional($this->patientInfo()->first())->safe(),
-            'provider_info' => $this->providerInfo()->first(),
+            'id'                    => $this->id,
+            'username'              => $this->username,
+            'name'                  => $this->name() ?? $this->display_name,
+            'address'               => $this->address,
+            'city'                  => $this->city,
+            'state'                 => $this->state,
+            'specialty'             => $this->specialty,
+            'program_id'            => $this->program_id,
+            'status'                => $this->status,
+            'user_status'           => $this->user_status,
+            'is_online'             => $this->is_online,
+            'patient_info'          => optional($this->patientInfo()->first())->safe(),
+            'provider_info'         => $this->providerInfo()->first(),
             'billing_provider_name' => $this->billing_provider_name,
-            'billing_provider_id' => $this->billing_provider_id,
-            'careplan' => optional($careplan)->safe(),
-            'last_read' => optional($observation)->obs_date,
-            'phone' => $this->phone ?? optional($phone)->number,
-            'created_at' => optional($this->created_at)->format('c') ?? null,
-            'updated_at' => optional($this->updated_at)->format('c') ?? null
+            'billing_provider_id'   => $this->billing_provider_id,
+            'careplan'              => optional($careplan)->safe(),
+            'last_read'             => optional($observation)->obs_date,
+            'phone'                 => $this->phone ?? optional($phone)->number,
+            'created_at'            => optional($this->created_at)->format('c') ?? null,
+            'updated_at'            => optional($this->updated_at)->format('c') ?? null,
         ];
     }
 
     public function saasAccountName()
     {
         $saasAccount = $this->saasAccount;
-        if ($saasAccount) return $saasAccount->name;
+        if ($saasAccount) {
+            return $saasAccount->name;
+        }
         $saasAccount = $this->primaryPractice->saasAccount;
-        if (!$saasAccount) {
-            if (auth()->check()) $saasAccount = auth()->user()->saasAccount;
+        if ( ! $saasAccount) {
+            if (auth()->check()) {
+                $saasAccount = auth()->user()->saasAccount;
+            }
         }
         if ($saasAccount) {
             $this->saasAccount()
                  ->associate($saasAccount);
+
             return $saasAccount->name;
         }
+
         return 'CircleLink Health';
     }
 
-    public function billingCodes(Carbon $monthYear) {
+    public function billingCodes(Carbon $monthYear)
+    {
         $summary = $this->patientSummaries()
-            ->where('month_year', $monthYear->toDateString())
-            ->with('chargeableServices')
-            ->has('chargeableServices')
-            ->first();
+                        ->where('month_year', $monthYear->toDateString())
+                        ->with('chargeableServices')
+                        ->has('chargeableServices')
+                        ->first();
 
-        if (!$summary) return '';
+        if ( ! $summary) {
+            return '';
+        }
 
         return $summary->chargeableServices
             ->implode('code', ', ');
@@ -2849,8 +2866,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      *
      * @return bool
      */
-    public function sendCarePlanApprovalReminderEmail($force = false) {
-        if (!$this->shouldSendCarePlanApprovalReminderEmail() && !$force) {
+    public function sendCarePlanApprovalReminderEmail($force = false)
+    {
+        if ( ! $this->shouldSendCarePlanApprovalReminderEmail() && ! $force) {
             return false;
         }
 

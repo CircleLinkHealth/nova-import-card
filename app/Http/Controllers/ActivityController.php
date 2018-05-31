@@ -8,11 +8,11 @@ use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use App\User;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use GuzzleHttp\Client;
-use \Log;
+use Log;
 
 /**
  * Class ActivityController
@@ -287,7 +287,6 @@ class ActivityController extends Controller
         if (array_key_exists('meta', $input)) {
             $meta = $input['meta'];
             unset($input['meta']);
-            $activity  = Activity::find($actId);
             $metaArray = [];
             $i         = 0;
             foreach ($meta as $actMeta) {
@@ -304,8 +303,6 @@ class ActivityController extends Controller
         $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
 
         if ($nurse) {
-            $activity = Activity::find($actId);
-
             $computer = new AlternativeCareTimePayableCalculator($nurse);
             $computer->adjustCCMPaybleForActivity($activity);
         }

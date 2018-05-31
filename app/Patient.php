@@ -191,11 +191,6 @@ class Patient extends \App\BaseModel
         'date_welcomed',
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-    }
-
     // START RELATIONSHIPS
 
     public static function numberToTextDaySwitcher($string)
