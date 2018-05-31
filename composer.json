@@ -69,7 +69,7 @@
         "Xethron/Laravel-4-Generators": "*",
         "barryvdh/laravel-ide-helper": "^2.4",
         "darkaonline/l5-swagger": "^5.5",
-        "doctrine/dbal": "~2.3",
+        "doctrine/dbal": "^2.5",
         "filp/whoops": "~2.0",
         "fzaninotto/faker": "~1.4",
         "laravel/dusk": "^2.0",

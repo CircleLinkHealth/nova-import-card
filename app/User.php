@@ -2260,6 +2260,43 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             : '';
     }
 
+    public function getNotifiesTextAttribute()
+    {
+        $careTema = $this->care_team_receives_alerts;
+        $i        = 1;
+        $last     = count($careTeam);
+        $output   = '';
+
+        foreach ($careTeam as $carePerson) {
+            $output .= ($i == 1
+                    ? ''
+                    : ', ') . ($i == $last && $i > 1
+                    ? 'and '
+                    : '') . $carePerson->fullName;
+        }
+
+        return $output;
+    }
+
+
+    public function getNotesChannelTextAttribute()
+    {
+        $channels = $this->primaryPractice->cpmSettings()->notesChannels();
+        $i        = 1;
+        $last     = count($channels);
+        $output   = '';
+
+        foreach ($channels as $channel) {
+            $output .= ($i == 1
+                    ? ''
+                    : ', ') . ($i == $last && $i > 1
+                    ? 'and '
+                    : '') . $channel;
+        }
+
+        return $output;
+    }
+
     /**
      * Get billing provider User.
      *

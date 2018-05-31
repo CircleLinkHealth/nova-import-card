@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "42ba1f8de9d77745adaef3d615d22733",
+    "content-hash": "d937ad6a17a27c8e867aa2b0b1b38b2f",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -170,16 +170,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.58.0",
+            "version": "3.59.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ab1cf3e90aa5ad04946e9de3978a339d64528bb1"
+                "reference": "91149ea885f951eac91563a56263cfa4a8f48f6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ab1cf3e90aa5ad04946e9de3978a339d64528bb1",
-                "reference": "ab1cf3e90aa5ad04946e9de3978a339d64528bb1",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/91149ea885f951eac91563a56263cfa4a8f48f6c",
+                "reference": "91149ea885f951eac91563a56263cfa4a8f48f6c",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-05-29T19:59:40+00:00"
+            "time": "2018-05-31T01:08:17+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
