@@ -1,10 +1,10 @@
 <template>
     <span>
         <ul class="nav nav-pills bhi-nav">
-            <li class="nav-item" :class="{ active: !isManualBehavioral }">
+            <li class="nav-item" :class="{ active: !isManualBehavioral }" v-if="isCcm">
                 <a class="nav-link" data-toggle="tab" role="tab" title="switch to CCM mode" @click="setBhi(false)">CCM</a>
             </li>
-            <li class="nav-item" :class="{ active: isManualBehavioral }">
+            <li class="nav-item" :class="{ active: isManualBehavioral }" v-if="isBhi">
                 <a class="nav-link" data-toggle="tab" role="tab" title="switch to BHI mode" @click="setBhi(true)">BHI</a>
             </li>
         </ul>
