@@ -34,6 +34,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
+    import stor from '../../stor'
     
     export default {
         name: 'time-tracker',
@@ -311,6 +312,7 @@
                         }
                     }
                     console.log('careplan:bhi:network-update', shouldUpdateNetwork, hasCcm, hasBehavioral)
+                    
                 })
 
                 this.createSocket()
