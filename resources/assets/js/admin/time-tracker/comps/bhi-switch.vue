@@ -80,15 +80,20 @@
         methods: {
             setBhi (mode) {
                 EventBus.$emit('tracker:bhi:switch', mode)
+            },
+            showModal () {
+                if (this.isCcm && this.isBhi && !stor.contains(this.storeKey)) {
+                    Event.$emit('modal-bhi:show')
+                }
             }
         },
         mounted () {
             console.log('isBhi', this.isBhi)
             console.log('isCcm', this.isCcm)
 
-            if (this.isCcm && this.isBhi && !stor.contains(this.storeKey)) {
-                Event.$emit('modal-bhi:show')
-            }
+            this.showModal()
+
+            Event.$on('bhi-switch:modal-bhi:show', this.showModal)
         }
     }
 </script>
