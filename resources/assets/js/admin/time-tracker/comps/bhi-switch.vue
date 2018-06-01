@@ -86,7 +86,7 @@
             console.log('isBhi', this.isBhi)
             console.log('isCcm', this.isCcm)
 
-            if (!stor.contains(this.storeKey)) {
+            if (this.isCcm && this.isBhi && !stor.contains(this.storeKey)) {
                 Event.$emit('modal-bhi:show')
             }
         }
