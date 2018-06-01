@@ -22,8 +22,11 @@
                 <div>
                     {{ 
                         (({ 
-                            to_enroll: 'to enroll', 
-                            patient_rejected: 'patient declined'
+                            enrolled: 'Enrolled',
+                            to_enroll: 'To Enroll',
+                            patient_rejected: 'Patient Declined',
+                            withdrawn: 'Withdrawn',
+                            paused: 'Paused'
                         })[props.row.ccmStatus] || props.row.ccmStatus) 
                     }}
                 </div>
@@ -402,8 +405,11 @@
 
                 ([ ...(ccmStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
                     option.innerText = ({
-                        to_enroll: 'to enroll',
-                        patient_rejected: 'patient declined',
+                        enrolled: 'Enrolled',
+                        to_enroll: 'To Enroll',
+                        patient_rejected: 'Patient Declined',
+                        withdrawn: 'Withdrawn',
+                        paused: 'Paused'
                     })[option.innerText] || option.innerText
                 });
 
