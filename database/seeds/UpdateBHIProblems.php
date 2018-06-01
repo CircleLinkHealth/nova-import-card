@@ -754,13 +754,6 @@ class UpdateBHIProblems extends Seeder
                     'simple_name'         => 'Bipolar',
                     'default_icd_10_code' => 'F31.60',
                 ],
-            88  =>
-                [
-                    'id'                  => 122,
-                    'name'                => 'Bipolar disorder, currently in remission, most recent episode unspecified',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.70',
-                ],
             93  =>
                 [
                     'id'                  => 127,
@@ -2034,13 +2027,6 @@ class UpdateBHIProblems extends Seeder
                     'name'                => 'Major depressive disorder, recurrent, in partial remission',
                     'simple_name'         => 'Depression',
                     'default_icd_10_code' => 'F33.41',
-                ],
-            276 =>
-                [
-                    'id'                  => 310,
-                    'name'                => 'Major depressive disorder, recurrent, in remission, unspecified',
-                    'simple_name'         => 'Depression',
-                    'default_icd_10_code' => 'F33.40',
                 ],
             277 =>
                 [
