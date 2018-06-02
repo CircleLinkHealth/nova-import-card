@@ -110,7 +110,6 @@ class AutoPullEnrolleesFromAthena extends Command
                     "Eligibility Batch created.");
             }
 
-            $x = 1;
         }
     }
 }
