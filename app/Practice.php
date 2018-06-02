@@ -103,6 +103,7 @@ class Practice extends \App\BaseModel implements HasMedia
         'send_alerts',
         'outgoing_phone_number',
         'term_days',
+        'auto_pull'
     ];
 
     public static function getProviders($practiceId)

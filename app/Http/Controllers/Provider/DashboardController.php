@@ -207,6 +207,9 @@ class DashboardController extends Controller
                 $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
             }
         }
+        if (!isset($settingsInput['auto_pull'])) {
+            $settingsInput['auto_pull'] = 0;
+        }
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
@@ -216,6 +219,7 @@ class DashboardController extends Controller
         $this->primaryPractice->update([
             'invoice_recipients'       => $invoiceRecipients,
             'weekly_report_recipients' => $weeklyReportRecipients,
+            'auto_pull'                => $settingsInput['auto_pull'],
         ]);
 
         return redirect()->back()->withErrors($errors);

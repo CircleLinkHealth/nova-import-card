@@ -34,6 +34,14 @@
                     <label for="rn_can_approve_careplans">RNs Can Approve Care Plans</label>
                 </div>
 
+                @if($practice->external_id !== null)
+                <div class="input-field col s12">
+                    <input name="settings[auto_pull]" type="checkbox" id="auto_pull"
+                           value="1" @if($practice->auto_pull == 1){{'checked'}}@endif>
+                    <label for="auto_pull">Auto Pull Enrolees From Athena</label>
+                </div>
+                @endif
+
                 <div class="input-field col s4" style="margin-top: 3rem;">
                     {{ Form::select('settings[careplan_mode]', ['web'=>'Web','pdf'=>'PDF'], $practiceSettings->careplan_mode) }}
                     <label>Starting CarePlan Mode</label>
