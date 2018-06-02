@@ -87,6 +87,14 @@ class AutoPullEnrolleesFromAthena extends Command
                                  ->get();
         }
 
+        if ($practices->count() == 0){
+            if (app()->environment('worker')) {
+                sendSlackMessage(' #parse_enroll_import',
+                    "No Practices with positive 'auto-pull' setting were found for the weekly Athena Data Pull.");
+            }else{
+                return null;
+            }
+        }
         foreach ($practices as $practice) {
 
             Artisan::call('athena:getPatientIdFromLastYearAppointments', [
@@ -98,16 +106,11 @@ class AutoPullEnrolleesFromAthena extends Command
 
             Artisan::call('athena:DetermineTargetPatientEligibility');
 
-            $enrollees = Enrollee::where('status', Enrollee::ELIGIBLE)
-                                        ->get();
-
-            $options = ["filterProblems" => true, "filterInsurance" => true, "filterLastEncounter" => true];
-
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
 
             if (app()->environment('worker')) {
                 sendSlackMessage(' #parse_enroll_import',
-                    "Eligibility Batch created.");
+                    "Eligibility Batch created for practice: $practice->display_name.");
             }
 
         }
