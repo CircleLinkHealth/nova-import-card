@@ -854,6 +854,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.athena.ccdas',
         ]);
 
+        Route::post('athena-pull', [
+            'uses' => 'Admin\DashboardController@pullAthenaEnrollees',
+            'as'   => 'pull.athena.enrollees',
+        ]);
+
         Route::get('patients/letters/paused', [
             'uses' => 'ReportsController@pausedPatientsLetterPrintList',
             'as'   => 'get.print.paused.letters'
@@ -937,6 +942,8 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ]);
+
+
 
         Route::post('make-welcome-call-list', [
             'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
