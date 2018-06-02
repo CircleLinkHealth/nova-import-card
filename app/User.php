@@ -2262,9 +2262,9 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function getNotifiesTextAttribute()
     {
-        $careTema = $this->care_team_receives_alerts;
+        $careTeam = $this->care_team_receives_alerts;
         $i        = 1;
-        $last     = count($careTeam);
+        $last     = $careTeam->count();
         $output   = '';
 
         foreach ($careTeam as $carePerson) {
