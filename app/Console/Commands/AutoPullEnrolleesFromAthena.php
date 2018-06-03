@@ -77,7 +77,6 @@ class AutoPullEnrolleesFromAthena extends Command
                                     $ehr->where('name', 'Athena');
                                     })
                                  ->where('external_id', $this->argument('athenaPracticeId'))
-                                 ->where('auto_pull', 1)
                                  ->get();
         }else{
             $practices = Practice::whereHas('ehr', function ($ehr) {
