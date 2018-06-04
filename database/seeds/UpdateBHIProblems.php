@@ -23,10 +23,11 @@ class UpdateBHIProblems extends Seeder
     {
         $defaultCarePlan = getDefaultCarePlanTemplate();
 
-        foreach ($this->problems() as $name) {
+        foreach ($this->problems() as $name => $defaultIcd10Code) {
             //Does a CPMProblem exist?
             $bhiProblem = CpmProblem::firstOrNew([
-                'name' => $name,
+                'name'                => $name,
+                'default_icd_10_code' => $defaultIcd10Code,
             ]);
 
             $bhiProblem->is_behavioral = true;
@@ -124,14 +125,14 @@ class UpdateBHIProblems extends Seeder
     public function problems(): array
     {
         return [
-            'Substance Abuse (ex-Alcoholism)',
-            'Anxiety and Stress',
-            'Depression',
-            'Alcoholism',
-            'Dementia',
-            'Bipolar',
-            'Psychosis & Schizophrenia',
-            'Post-traumatic stress',
+            'Substance Abuse (ex-Alcoholism)' => '',
+            'Anxiety and Stress'              => 'F41.1',
+            'Depression'                      => 'F33.9',
+            'Alcoholism'                      => 'F10.20',
+            'Dementia'                        => 'F03',
+            'Bipolar'                         => 'F31.9',
+            'Psychosis & Schizophrenia'       => '',
+            'Post-traumatic stress'           => 'F43.10',
         ];
     }
 
@@ -753,13 +754,6 @@ class UpdateBHIProblems extends Seeder
                     'name'                => 'Bipolar disorder, current episode mixed, unspecified',
                     'simple_name'         => 'Bipolar',
                     'default_icd_10_code' => 'F31.60',
-                ],
-            88  =>
-                [
-                    'id'                  => 122,
-                    'name'                => 'Bipolar disorder, currently in remission, most recent episode unspecified',
-                    'simple_name'         => 'Bipolar',
-                    'default_icd_10_code' => 'F31.70',
                 ],
             93  =>
                 [
@@ -2034,13 +2028,6 @@ class UpdateBHIProblems extends Seeder
                     'name'                => 'Major depressive disorder, recurrent, in partial remission',
                     'simple_name'         => 'Depression',
                     'default_icd_10_code' => 'F33.41',
-                ],
-            276 =>
-                [
-                    'id'                  => 310,
-                    'name'                => 'Major depressive disorder, recurrent, in remission, unspecified',
-                    'simple_name'         => 'Depression',
-                    'default_icd_10_code' => 'F33.40',
                 ],
             277 =>
                 [

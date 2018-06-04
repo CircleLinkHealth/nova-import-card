@@ -10,7 +10,8 @@
             <div v-if="noLiveCount" :class="{ hidden: showLoader }">{{info.monthlyTime}}</div>
             <bhi-switch ref="bhiSwitch" :is-manual-behavioral="info.isManualBehavioral" 
                 :user-id="info.providerId" :is-bhi="info.isBehavioral" :is-ccm="info.isCcm" 
-                v-if="!info.noBhiSwitch && (info.isBehavioral && info.isCcm)"></bhi-switch>
+                v-if="!info.noBhiSwitch && (info.isCcm || info.isBehavioral)"></bhi-switch>
+
             <br><br>
             <span :class="{ hidden: showLoader, 'hide-tracker': hideTracker }">
                 <time-display v-if="!noLiveCount" ref="timeDisplay" :seconds="totalTime" :no-live-count="!!noLiveCount" 
@@ -33,6 +34,7 @@
     import LoaderComponent from '../../components/loader'
     import AwayComponent from './comps/away'
     import BhiComponent from './comps/bhi-switch'
+    import stor from '../../stor'
     
     export default {
         name: 'time-tracker',
@@ -310,6 +312,7 @@
                         }
                     }
                     console.log('careplan:bhi:network-update', shouldUpdateNetwork, hasCcm, hasBehavioral)
+                    
                 })
 
                 this.createSocket()

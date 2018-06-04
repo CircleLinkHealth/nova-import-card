@@ -26,7 +26,30 @@ class ApprovableBillablePatient extends Resource
             'patient' => $this->patient->id,
         ]);
 
-        return [
+        $problems = [
+            'bhi_problem'      => 'N/A',
+            'bhi_problem_code' => 'N/A',
+            'problem1'         => 'N/A',
+            'problem1_code'    => 'N/A',
+            'problem2'         => 'N/A',
+            'problem2_code'    => 'N/A',
+        ];
+
+        if ($this->hasServiceCode('CPT 99484')) {
+            $bhiProblem = $this->billableBhiProblems()->first();
+
+            $problems['bhi_problem']      = $bhiProblem->pivot->name ?? null;
+            $problems['bhi_problem_code'] = $bhiProblem->pivot->icd_10_code ?? null;
+        }
+
+        if ($this->hasServiceCode('CPT 99490')) {
+            $problems['problem1']      = $this->billable_problem1;
+            $problems['problem1_code'] = $this->billable_problem1_code;
+            $problems['problem2']      = $this->billable_problem2;
+            $problems['problem2_code'] = $this->billable_problem2_code;
+        }
+
+        return array_merge([
             'id'                     => $this->patient->id,
             'mrn'                    => $this->patient->patientInfo->mrn_number,
             'name'                   => $name,
@@ -41,12 +64,6 @@ class ApprovableBillablePatient extends Resource
             'total_time'             => $this->total_time,
             'bhi_time'               => $this->bhi_time,
             'ccm_time'               => $this->ccm_time,
-            'problem1'               => $this->billable_problem1,
-            'problem1_code'          => $this->billable_problem1_code,
-            'problem2'               => $this->billable_problem2,
-            'problem2_code'          => $this->billable_problem2_code,
-            'bhi_problem'            => 'test filler text',
-            'bhi_problem_code'       => 'test filler text',
             'problems'               => $this->allCcdProblems($this->patient),
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $this->patient->patientInfo->ccm_status,
@@ -58,7 +75,7 @@ class ApprovableBillablePatient extends Resource
 
             'chargeable_services' => ChargeableService::collection($this->whenLoaded('chargeableServices')),
 
-        ];
+        ], $problems);
     }
 
     public function allCcdProblems(User $patient)

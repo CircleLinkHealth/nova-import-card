@@ -22,8 +22,11 @@
                 <div>
                     {{ 
                         (({ 
-                            to_enroll: 'to enroll', 
-                            patient_rejected: 'patient declined'
+                            enrolled: 'Enrolled',
+                            to_enroll: 'To Enroll',
+                            patient_rejected: 'Patient Declined',
+                            withdrawn: 'Withdrawn',
+                            paused: 'Paused'
                         })[props.row.ccmStatus] || props.row.ccmStatus) 
                     }}
                 </div>
@@ -199,6 +202,16 @@
                     return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
             },
+            filterData () {
+                const $table = this.$refs.tblPatientList
+                const query = $table.$data.query
+                const activeFilters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value)
+
+                return activeFilters.reduce((a, filter) => {
+                    a[filter.key] = filter.value
+                    return a
+                }, {})
+            },
             toggleProgramColumn () {
                 if (this.columns.indexOf('program') >= 0) {
                     this.columns.splice(this.columns.indexOf('program'), 1)
@@ -324,10 +337,12 @@
                         return patient
                     })
 
+                    const filterData = this.filterData()
+
                     if (!this.tableData.length) {
                         const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
                         const total = ((this.pagination || {}).total || 0)
-                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ i: arr.length + index + 1, id: arr.length + index })) ]
+                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => Object.assign({ i: arr.length + index + 1, id: arr.length + index }, filterData)) ]
                     }
                     else {
                         const from = ((this.pagination || {}).from || 0)
@@ -343,10 +358,10 @@
                                     counterIndex += 1
                                     return patient
                                 }
-                                else return row
+                                else return Object.assign({}, filterData, row)
                             }
                             else {
-                                return row
+                                return Object.assign({}, filterData, row)
                             }
                         })
                     }
@@ -402,8 +417,11 @@
 
                 ([ ...(ccmStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
                     option.innerText = ({
-                        to_enroll: 'to enroll',
-                        patient_rejected: 'patient declined',
+                        enrolled: 'Enrolled',
+                        to_enroll: 'To Enroll',
+                        patient_rejected: 'Patient Declined',
+                        withdrawn: 'Withdrawn',
+                        paused: 'Paused'
                     })[option.innerText] || option.innerText
                 });
 

@@ -69,12 +69,12 @@ class PatientMonthlySummary extends \App\BaseModel
         'rejected',
         'needs_qa',
         'actor_id',
-        'problem_1',
-        'problem_2',
-        'billable_problem1',
-        'billable_problem1_code',
-        'billable_problem2',
-        'billable_problem2_code',
+        'problem_1', //@todo: Deprecate in favor of billableProblems()
+        'problem_2', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem1', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem1_code', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem2', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem2_code', //@todo: Deprecate in favor of billableProblems()
     ];
 
     //updates Call info for patient
@@ -205,13 +205,57 @@ class PatientMonthlySummary extends \App\BaseModel
                         });
     }
 
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function billableProblem1()
     {
         return $this->belongsTo(Problem::class, 'problem_1');
     }
 
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function billableProblem2()
     {
         return $this->belongsTo(Problem::class, 'problem_2');
+    }
+
+    public function billableProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
+                    ->withPivot('name', 'icd_10_code', 'type')
+                    ->withTimestamps();
+    }
+
+    public function billableBhiProblems()
+    {
+        return $this->billableProblems()->where('type', '=', 'bhi');
+    }
+
+    public function hasAtLeastOneBhiProblem()
+    {
+        return $this->billableProblems()
+                    ->where('type', '=', 'bhi')
+                    ->exists();
+    }
+
+    public function hasAtLeastTwoCcmProblems()
+    {
+        return $this->billableProblems()
+                    ->where('type', '=', 'ccm')
+                    ->count() >= 2;
+    }
+
+    public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
+    {
+        return $this->billableProblems()
+                    ->attach($problemId, [
+                        'type'        => $type,
+                        'name'        => $name,
+                        'icd_10_code' => $icd10Code,
+                    ]);
     }
 }

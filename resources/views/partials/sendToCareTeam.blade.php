@@ -8,10 +8,10 @@
             Support</label>
     </div>
     <div class="col-sm-12">
-        @empty($patient->primaryPractice->cpmSettings()->notesChannels())
+        @empty($note_channels_text)
             <b>This Practice has <em>Forwarded Note Notifications</em> turned off. Please notify CirleLink support.</b>
         @else
-            @empty($patient->care_team_receives_alerts)
+            @empty($notifies_text)
                 <p style="color: red;">
                     No provider selected to receive email alerts. Use the add ("+" sign) or edit (pencil) icons in
                     the
@@ -23,13 +23,14 @@
                 </p>
             @else
                 <input type="checkbox" id="notify-careteam" name="notify_careteam"
-                       @empty($patient->primaryPractice->cpmSettings()->notesChannels()) disabled="disabled"
+                       @empty($note_channels_text) disabled="disabled"
                        @endempty value="1">
-                <label for="notify-careteam"><span> </span>Provider/CareTeam
+                <label for="notify-careteam" style="display: inline-block;"><span> </span>Provider/CareTeam
                     (
                     <b>Notifies:</b>
-                    <span id="who-is-notified">{{ $notifies_text }}</span>
-                    <b><u>via</u></b>{{ $note_channels_text }}
+                    <div id="who-is-notified" style="display: inline-block; text-indent: 0;">{{ $notifies_text }}</div>
+                    <b><u>via</u></b>
+                    <div style="display: inline-block; text-indent: 3px;">{{ $note_channels_text }}</div>
                     )
                 </label>
             @endempty

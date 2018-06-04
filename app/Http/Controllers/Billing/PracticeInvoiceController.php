@@ -53,6 +53,7 @@ class PracticeInvoiceController extends Controller
     public function make()
     {
         $practices = Practice::orderBy('display_name')
+                             ->select(['name', 'id', 'display_name'])
                              ->authUserCanAccess()
                              ->active()
                              ->get();
@@ -119,8 +120,10 @@ class PracticeInvoiceController extends Controller
         $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
 
         $summaries->getCollection()->transform(function ($summary) {
-            $summary = $this->patientSummaryDBRepository->attachChargeableServices($summary->patient, $summary);
-            $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
+            if ( ! $summary->actor_id) {
+                $summary = $this->patientSummaryDBRepository->attachChargeableServices($summary->patient, $summary);
+                $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
+            }
 
             return ApprovableBillablePatient::make($summary);
         });
