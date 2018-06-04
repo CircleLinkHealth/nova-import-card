@@ -231,7 +231,7 @@ class Note extends \App\BaseModel implements PdfReport
         if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
             $recipients = $this->patient->care_team_receives_alerts;
 
-            if ($recipients->isEmpty() && $force) {
+            if ($force) {
                 $recipients->push($this->patient->billingProviderUser());
             }
         }
@@ -240,9 +240,11 @@ class Note extends \App\BaseModel implements PdfReport
             $recipients->push(User::find(948));
         }
 
-        $recipients->map(function ($carePersonUser) {
-            optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
-        });
+        $recipients->unique()
+                   ->values()
+                   ->map(function ($carePersonUser) {
+                       optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
+                   });
 
         $channels = [];
 
