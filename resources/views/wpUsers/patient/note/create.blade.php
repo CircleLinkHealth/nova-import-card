@@ -319,12 +319,14 @@
                             $('#notify-careteam').prop("disabled", true);
 
                             @empty($notifies_text)
-                            $('#who-is-notified').text({{$patient->billingProviderUser()->fullName}});
+                            $('#who-is-notified').text("{{$patient->billingProviderUser()->fullName}}");
                             @endempty
                         }
                         else {
                             $('#notify-careteam').prop("checked", false);
                             $('#notify-careteam').prop("disabled", false);
+
+                            $('#who-is-notified').text("{{$notifies_text}}");
                         }
                     }
                     else {

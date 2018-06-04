@@ -2279,7 +2279,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     }
 
 
-    public function getNotesChannelTextAttribute()
+    public function getNoteChannelsTextAttribute()
     {
         $channels = $this->primaryPractice->cpmSettings()->notesChannels();
         $i        = 1;
@@ -2289,7 +2289,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         foreach ($channels as $channel) {
             $output .= ($i == 1
                     ? ''
-                    : ', ') . ($i == $last && $i > 1
+                    : ', ')
+                       . ($i == $last && $i > 1
                     ? 'and '
                     : '') . $channel;
         }

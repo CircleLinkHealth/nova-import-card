@@ -232,7 +232,7 @@ class Note extends \App\BaseModel implements PdfReport
             $recipients = $this->patient->care_team_receives_alerts;
 
             if ($recipients->isEmpty() && $force) {
-                $recipients = collect($this->patient->billingProviderUser());
+                $recipients->push($this->patient->billingProviderUser());
             }
         }
 
