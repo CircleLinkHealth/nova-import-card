@@ -207,6 +207,9 @@ class DashboardController extends Controller
                 $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
             }
         }
+        if (!isset($settingsInput['api_auto_pull'])) {
+            $settingsInput['api_auto_pull'] = 0;
+        }
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));
 
