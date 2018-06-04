@@ -26,6 +26,8 @@ class ApprovableBillablePatient extends Resource
             'patient' => $this->patient->id,
         ]);
 
+        $bhiProblem = $this->billableBhiProblems()->first();
+
         return [
             'id'                     => $this->patient->id,
             'mrn'                    => $this->patient->patientInfo->mrn_number,
@@ -45,8 +47,8 @@ class ApprovableBillablePatient extends Resource
             'problem1_code'          => $this->billable_problem1_code,
             'problem2'               => $this->billable_problem2,
             'problem2_code'          => $this->billable_problem2_code,
-            'bhi_problem'            => 'test filler text',
-            'bhi_problem_code'       => 'test filler text',
+            'bhi_problem'            => $bhiProblem->pivot->name ?? null,
+            'bhi_problem_code'       => $bhiProblem->pivot->icd_10_code ?? null,
             'problems'               => $this->allCcdProblems($this->patient),
             'no_of_successful_calls' => $this->no_of_successful_calls,
             'status'                 => $this->patient->patientInfo->ccm_status,
