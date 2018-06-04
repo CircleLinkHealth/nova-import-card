@@ -179,11 +179,11 @@
                         name: pB.name,
                         id: pB.id,
                         code: pB.code
-                    }, ...pB.snomeds.map(snomed => ({
+                    }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
                         name: snomed.icd_10_name,
                         id: pB.id,
                         code: snomed.icd_10_code
-                    }))])
+                    })) : [])])
                 }, []).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
