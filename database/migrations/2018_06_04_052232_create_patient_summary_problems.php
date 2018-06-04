@@ -31,6 +31,8 @@ class CreatePatientSummaryProblems extends Migration
                   ->references('id')
                   ->on('ccd_problems')
                   ->onUpdate('cascade');
+
+            $table->unique(['patient_summary_id', 'problem_id', 'type'], 'summary_id_patient_id_type_unique');
         });
     }
 

@@ -90,13 +90,14 @@
                                     div.innerHTML = html
                                     return div.innerText
                                 }
-                                var practices = JSON.parse("{{json_encode($practices)}}".replace(/\&quot;/g, '"'))
-                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\&quot;/g, '"')).map(function (problem) {
+
+                                var practices = JSON.parse("{{json_encode($practices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'))
+                                var cpmProblems = JSON.parse("{{json_encode($cpmProblems)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"')).map(function (problem) {
                                     problem.name = decodeHTML(problem.name)
                                     return problem
                                 })
-                                var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\&quot;/g, '"'))
-                                var dates = JSON.parse("{{json_encode($dates)}}".replace(/\&quot;/g, '"'))
+                                var chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'))
+                                var dates = JSON.parse("{{json_encode($dates)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'))
                             </script>
                         @endpush
                         <billing-report ref="billingReport"></billing-report>
