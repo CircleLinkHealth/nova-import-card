@@ -16,7 +16,7 @@ class DetermineTargetPatientEligibility extends Command
      *
      * @var string
      */
-    protected $signature = 'athena:DetermineTargetPatientEligibility';
+    protected $signature = 'athena:DetermineTargetPatientEligibility {batchId? : The Eligibility Batch Id}';
 
     /**
      * The console command description.
@@ -92,6 +92,7 @@ class DetermineTargetPatientEligibility extends Command
                                              'home_phone'  => $demos['homephone'],
                                              'cell_phone'  => $demos['mobilephone'] ?? null,
                                              'practice_id' => $practice->id,
+                                             'batch_id'    => $this->argument('batchId') ?? null ,
 
                                              //notRequired
                                              'address'     => $demos['address1'] ?? null,

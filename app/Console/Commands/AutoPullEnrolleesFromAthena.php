@@ -108,27 +108,10 @@ class AutoPullEnrolleesFromAthena extends Command
                 'from'             => $from,
                 'to'               => $to,
                 'offset'           => $offset,
+                'batchId'          => $batch->id,
             ]);
 
-
-            Artisan::call('athena:DetermineTargetPatientEligibility');
-
-            $patients = TargetPatient::where('status', 'eligible')
-                                     ->where('ehr_practice_id', $practice->external_id)
-                                     ->get()
-                                     ->map(function ($p) use ($batch) {
-                                         $p->batch_id = $batch->id;
-                                         $p->save();
-                                     });
-
-            $enrollees = Enrollee::whereStatus(Enrollee::ELIGIBLE)
-                                 ->where('practice_id', $practice->id)
-                                 ->get()
-                                 ->map(function ($e) use ($batch) {
-                                     $e->batch_id = $batch->id;
-                                     $e->save();
-                                 });
-
+            Artisan::call('athena:DetermineTargetPatientEligibility', ['batchId' => $batch->id,]);
 
             if (app()->environment('worker')) {
                 sendSlackMessage(' #parse_enroll_import',

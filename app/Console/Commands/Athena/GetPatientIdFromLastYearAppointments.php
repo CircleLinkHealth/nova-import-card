@@ -17,7 +17,8 @@ class GetPatientIdFromLastYearAppointments extends Command
     protected $signature = 'athena:getPatientIdFromLastYearAppointments {athenaPracticeId : The Athena EHR practice id. `external_id` on table `practices`}
                                                                         {from? : From date yyyy-mm-dd}
                                                                         {to? : To date yyyy-mm-dd}
-                                                                        {offset? : Offset results from athena api using number of target patients in the table}';
+                                                                        {offset? : Offset results from athena api using number of target patients in the table}
+                                                                        {batchId? : The Eligibility Batch Id}';
 
     /**
      * The console command description.
@@ -57,6 +58,11 @@ class GetPatientIdFromLastYearAppointments extends Command
         $endDate   = Carbon::today();
         $startDate = $endDate->copy()->subYear();
         $offset    = false;
+        $batchId   = null;
+
+        if ($this->argument('batchId')) {
+            $batchId = $this->argument('batchId');
+        }
 
         if ($this->argument('offset')) {
             $offset = (boolean)$this->argument('offset');
@@ -79,6 +85,6 @@ class GetPatientIdFromLastYearAppointments extends Command
                 "Getting patient ids from the appointments from Athena, for practice_athena_id: $athenaPracticeId. \n");
         }
 
-        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset);
+        $this->service->getPatientIdFromAppointments($athenaPracticeId, $startDate, $endDate, $offset, $batchId);
     }
 }
