@@ -6,6 +6,7 @@ use App\EligibilityBatch;
 use App\Enrollee;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
+use App\TargetPatient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -43,9 +44,11 @@ class AutoPullEnrolleesFromAthena extends Command
 
         $this->service = $service;
 
-        $this->options = ['filterProblems' => true,
-                          "filterInsurance" => true,
-                          "filterLastEncounter" => true];
+        $this->options = [
+            'filterProblems'      => true,
+            "filterInsurance"     => true,
+            "filterLastEncounter" => true,
+        ];
 
     }
 
@@ -74,38 +77,58 @@ class AutoPullEnrolleesFromAthena extends Command
 
         if ($this->argument('athenaPracticeId')) {
             $practices = Practice::whereHas('ehr', function ($ehr) {
-                                    $ehr->where('name', 'Athena');
-                                    })
+                $ehr->where('name', 'Athena');
+            })
                                  ->where('external_id', $this->argument('athenaPracticeId'))
                                  ->get();
-        }else{
+        } else {
             $practices = Practice::whereHas('ehr', function ($ehr) {
                 $ehr->where('name', 'Athena');
             })
-                                 ->where('auto_pull', 1)
+                                 ->whereHas('settings', function ($settings){
+                                     $settings->where('api_auto_pull', 1);
+                                 })
                                  ->get();
         }
 
-        if ($practices->count() == 0){
+        if ($practices->count() == 0) {
             if (app()->environment('worker')) {
                 sendSlackMessage(' #parse_enroll_import',
                     "No Practices with positive 'auto-pull' setting were found for the weekly Athena Data Pull.");
-            }else{
+            } else {
                 return null;
             }
         }
         foreach ($practices as $practice) {
 
+            $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
+
             Artisan::call('athena:getPatientIdFromLastYearAppointments', [
                 'athenaPracticeId' => $practice->external_id,
-                'from'            => $from,
-                'to'              => $to,
-                'offset'          => $offset,
+                'from'             => $from,
+                'to'               => $to,
+                'offset'           => $offset,
             ]);
+
 
             Artisan::call('athena:DetermineTargetPatientEligibility');
 
-            $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
+            $patients = TargetPatient::where('status', 'eligible')
+                                     ->where('ehr_practice_id', $practice->external_id)
+                                     ->get()
+                                     ->map(function ($p) use ($batch) {
+                                         $p->batch_id = $batch->id;
+                                         $p->save();
+                                     });
+
+            $enrollees = Enrollee::whereStatus(Enrollee::ELIGIBLE)
+                                 ->where('practice_id', $practice->id)
+                                 ->get()
+                                 ->map(function ($e) use ($batch) {
+                                     $e->batch_id = $batch->id;
+                                     $e->save();
+                                 });
+
 
             if (app()->environment('worker')) {
                 sendSlackMessage(' #parse_enroll_import',

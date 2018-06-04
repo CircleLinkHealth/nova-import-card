@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnAutoPullToPracticesTable extends Migration
+class AddColumnApiAutoPullToCpmSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddColumnAutoPullToPracticesTable extends Migration
      */
     public function up()
     {
-        Schema::table('practices', function (Blueprint $table) {
-            $table->boolean('auto_pull')->default(0)->after('external_id');
+        Schema::table('cpm_settings', function (Blueprint $table) {
+            $table->boolean('api_auto_pull')->default(0)->after('bill_to');
         });
     }
 
@@ -25,8 +25,8 @@ class AddColumnAutoPullToPracticesTable extends Migration
      */
     public function down()
     {
-        Schema::table('practices', function (Blueprint $table) {
-            $table->dropColumn('auto_pull');
+        Schema::table('cpm_settings', function (Blueprint $table) {
+            $table->dropColumn('api_auto_pull');
         });
     }
 }

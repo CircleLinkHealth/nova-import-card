@@ -36,9 +36,9 @@
 
                 @if($practice->external_id !== null)
                 <div class="input-field col s12">
-                    <input name="settings[auto_pull]" type="checkbox" id="auto_pull"
-                           value="1" @if($practice->auto_pull == 1){{'checked'}}@endif>
-                    <label for="auto_pull">Auto Pull Enrolees From Athena</label>
+                    <input name="settings[api_auto_pull]" type="checkbox" id="api_auto_pull"
+                           value="1" @if($practiceSettings->api_auto_pull == 1){{'checked'}}@endif>
+                    <label for="api_auto_pull">Auto Pull Eligible Patients from Athena</label>
                 </div>
                 @endif
 
