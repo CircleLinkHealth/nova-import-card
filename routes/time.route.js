@@ -59,11 +59,19 @@ router.put('/:providerId/:patientId', userExistsValidator, function (req, res, n
 
   if (user) {
     const {
-      startTime
+      startTime,
+      ccmTime,
+      bhiTime
     } = req.body
   
     if (Number(startTime)) {
       user.totalTime += Number(startTime)
+    }
+    if (Number(ccmTime)) {
+      user.totalCCMTime += Number(ccmTime)
+    }
+    if (Number(bhiTime)) {
+      user.totalBHITime += Number(bhiTime)
     }
     res.send(user.report())
   }
