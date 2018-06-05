@@ -73,6 +73,7 @@ router.put('/:providerId/:patientId', userExistsValidator, function (req, res, n
     if (Number(bhiTime)) {
       user.totalBHITime += Number(bhiTime)
     }
+    user.sync()
     res.send(user.report())
   }
   else res.status(404).send({
