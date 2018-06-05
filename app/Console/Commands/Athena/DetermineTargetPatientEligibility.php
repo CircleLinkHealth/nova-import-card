@@ -3,6 +3,8 @@
 namespace App\Console\Commands\Athena;
 
 use App\Adapters\EligibilityCheck\AthenaAPIAdapter;
+use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Enrollee;
 use App\Practice;
 use App\Services\AthenaAPI\DetermineEnrollmentEligibility;
@@ -51,11 +53,15 @@ class DetermineTargetPatientEligibility extends Command
                                  ->map(function ($patient){
                                      $patientInfo = $this->service->getPatientProblemsAndInsurances($patient->ehr_patient_id, $patient->ehr_practice_id, $patient->ehr_department_id);
 
-                                     $adapter = new AthenaAPIAdapter($patientInfo);
+                                     $batch = EligibilityBatch::find($this->argument('batchId'));
+                                     $adapter = new AthenaAPIAdapter($patientInfo, new EligibilityJob(['batch_id' => $batch->id]), $batch);
                                      $isEligible = $adapter->isEligible();
 
-
                                      if (! $isEligible){
+
+                                         $job = $adapter->getEligibilityJob();
+                                         $patient->eligibility_info = implode(" ", $job->messages);
+
                                          $patient->status = 'ineligible';
                                          $patient->save();
                                          return false;
