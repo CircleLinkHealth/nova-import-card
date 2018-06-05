@@ -111,12 +111,12 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label>
-                                        <input type="radio" name="is_bhi" style="display:inline" value="false" checked /> CCM Time 
+                                        <input type="radio" name="is_behavioral" style="display:inline" value="false" checked /> CCM Time 
                                     </label>
                                 </div>
                                 <div class="col-sm-6">
                                     <label>
-                                        <input type="radio" name="is_bhi" style="display:inline" value="true" /> BHI Time 
+                                        <input type="radio" name="is_behavioral" style="display:inline" value="true" /> BHI Time 
                                     </label>
                                 </div>
                             </div>
