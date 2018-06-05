@@ -64,7 +64,7 @@ class PageTimerController extends Controller
             $newActivity->provider_id       = $providerId;
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
-            $newActivity->is_behavioral     = isset($activity['is_behavioral']) ? $activity['is_behavioral'] : false;
+            $is_behavioral   = isset($activity['is_behavioral']) ? $activity['is_behavioral'] : false;
             $newActivity->url_full          = $activity['url'];
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];
@@ -78,7 +78,7 @@ class PageTimerController extends Controller
             $activityId = null;
 
             if ($newActivity->billable_duration > 0) {
-                $activityId = $this->addPageTimerActivities($newActivity);
+                $activityId = $this->addPageTimerActivities($newActivity, $is_behavioral);
             }
 
             if ($activityId) {
@@ -89,7 +89,7 @@ class PageTimerController extends Controller
         return response("PageTimer activities logged.", 201);
     }
 
-    public function addPageTimerActivities(PageTimer $pageTimer)
+    public function addPageTimerActivities(PageTimer $pageTimer, $is_behavioral = false)
     {
         // check params to see if rule exists
         $params = [];
@@ -115,6 +115,7 @@ class PageTimerController extends Controller
             $activityParams                  = [];
             $activityParams['type']          = $params['activity'];
             $activityParams['provider_id']   = $pageTimer->provider_id;
+            $activityParams['is_behavioral'] = $is_behavioral;
             $activityParams['performed_at']  = $pageTimer->start_time;
             $activityParams['duration']      = $pageTimer->billable_duration;
             $activityParams['duration_unit'] = 'seconds';

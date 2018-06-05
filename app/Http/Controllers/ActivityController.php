@@ -246,15 +246,35 @@ class ActivityController extends Controller
             $patientId = $input['patient_id'];
             $duration = (int)$input['duration'];
 
+            $patient = User::find($patientId);
+
+            if ($patient) {
+                $isCcm = $patient->isCcm();
+                $isBehavioral = $patient->isBehavioral();
+                if ($isCcm && $isBehavioral) {
+                    $is_bhi = isset($input['is_behavioral']) ? ($input['is_behavioral'] != 'true' ? false : true) : false;
+                    $input['is_behavioral'] = $is_bhi;
+                }
+                else {
+                    $input['is_behavioral'] = $isBehavioral;
+                }
+            }
+            else {
+                throw new \Exception('patient_id ' . $patientId . ' does not correspond to any patient');
+            }
+            
+
             /**
             * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
             */
             if ($nurseId && $patientId && $duration) {
                 $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
                 try {
+                    $timeParam = $is_bhi ? 'bhiTime' : 'ccmTime';
                     $res = $client->put($url, [
                         'form_params' => [
-                            'startTime' => $duration
+                            'startTime' => $duration,
+                            $timeParam => $duration
                         ]
                     ]);
                     $status = $res->getStatusCode();
