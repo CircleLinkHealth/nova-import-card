@@ -129,7 +129,7 @@
                                     </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.monthly-index') }}">Monthly
+                                    <li><a href="{{ route('admin.reports.nurse.monthly') }}">Monthly
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.invoice') }}">
                                             Invoices</a></li>
