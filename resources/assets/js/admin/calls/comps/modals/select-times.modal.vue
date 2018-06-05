@@ -76,13 +76,17 @@
     import Datepicker from 'vuejs-datepicker'
     import moment from 'moment'
 
+    const CALL_TIME_START = '09:00'
+    const CALL_TIME_END = '10:00'
+
     export default {
         name: 'select-times-modal',
         props: {
-            'selectedPatients': {
+            selectedPatients: {
                 type: Array,
                 required: true
-            }
+            },
+            onChange: Function
         },
         components: {
             'modal': Modal,
@@ -99,12 +103,17 @@
                     callTimeStart: '09:00',
                     callTimeEnd: '10:00',
                     okHandler () {
-                        Event.$emit('select-times-modal:change', { 
-                                callIDs: $vm.selectedPatients.map(call => call.callId), 
-                                nextCall: moment(this.nextCall).format('YYYY-MM-DD'), 
-                                callTimeStart: this.callTimeStart, 
-                                callTimeEnd: this.callTimeEnd 
-                            })
+                        const data = { 
+                            callIDs: $vm.selectedPatients.map(call => call.callId), 
+                            nextCall: moment(this.nextCall).format('YYYY-MM-DD'), 
+                            callTimeStart: this.callTimeStart, 
+                            callTimeEnd: this.callTimeEnd 
+                        }
+                        if (typeof($vm.onChange) == 'function') {
+                            $vm.onChange.call($vm, data)
+                        }
+                        Event.$emit('select-times-modal:change', data)
+                        return data
                     }
                 }
             }
