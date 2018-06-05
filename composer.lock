@@ -4,7 +4,7 @@
       "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-  "content-hash": "58225b45c2db83af20346065be68530d",
+  "content-hash": "051439dcfbc271b271258392f74760a1",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -69,16 +69,16 @@
         },
         {
             "name": "appstract/lush-http",
-            "version": "0.5.3",
+          "version": "0.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/appstract/lush-http.git",
-                "reference": "bb7d674b1577f57e82ff0ff5d5de82ed4fd47455"
+              "reference": "771c501e1ea6a16b6c33917f595a04e5e37ad9b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/appstract/lush-http/zipball/bb7d674b1577f57e82ff0ff5d5de82ed4fd47455",
-                "reference": "bb7d674b1577f57e82ff0ff5d5de82ed4fd47455",
+              "url": "https://api.github.com/repos/appstract/lush-http/zipball/771c501e1ea6a16b6c33917f595a04e5e37ad9b7",
+              "reference": "771c501e1ea6a16b6c33917f595a04e5e37ad9b7",
                 "shasum": ""
             },
             "require": {
@@ -124,7 +124,7 @@
                 "lush-http",
                 "php"
             ],
-            "time": "2018-03-09T10:49:10+00:00"
+          "time": "2018-05-28T08:35:31+00:00"
         },
         {
             "name": "arcturial/clickatell",
@@ -170,16 +170,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-          "version": "3.60.0",
+          "version": "3.61.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-              "reference": "172ed6346ab4d1df075f5106098ed5b6e653c934"
+              "reference": "5dabf378a52afd357fedd290f6b1837aec15eab8"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/172ed6346ab4d1df075f5106098ed5b6e653c934",
-              "reference": "172ed6346ab4d1df075f5106098ed5b6e653c934",
+              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5dabf378a52afd357fedd290f6b1837aec15eab8",
+              "reference": "5dabf378a52afd357fedd290f6b1837aec15eab8",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 "s3",
                 "sdk"
             ],
-          "time": "2018-06-01T20:17:58+00:00"
+          "time": "2018-06-04T21:48:21+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -4821,16 +4821,16 @@
         },
         {
             "name": "spatie/image-optimizer",
-            "version": "1.0.14",
+          "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image-optimizer.git",
-                "reference": "91603599eb29024cc9849a4a511a629ebce97850"
+              "reference": "1530d6cf72070068eecab150ffb73466c3806bdd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/91603599eb29024cc9849a4a511a629ebce97850",
-                "reference": "91603599eb29024cc9849a4a511a629ebce97850",
+              "url": "https://api.github.com/repos/spatie/image-optimizer/zipball/1530d6cf72070068eecab150ffb73466c3806bdd",
+              "reference": "1530d6cf72070068eecab150ffb73466c3806bdd",
                 "shasum": ""
             },
             "require": {
@@ -4866,7 +4866,7 @@
                 "image-optimizer",
                 "spatie"
             ],
-            "time": "2018-03-07T13:42:33+00:00"
+          "time": "2018-06-05T07:36:17+00:00"
         },
         {
             "name": "spatie/laravel-google-calendar",
