@@ -7,6 +7,7 @@ class EligibilityBatch extends BaseModel
     const TYPE_GOOGLE_DRIVE_CCDS = 'google_drive_ccds';
     const TYPE_PHX_DB_TABLES = 'phoenix_heart_db_tables';
     const TYPE_ONE_CSV = 'one_csv';
+    const ATHENA_API = 'athena_csv';
 
     const STATUSES = [
         'not_started' => 0,
