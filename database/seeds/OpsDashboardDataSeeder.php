@@ -18,7 +18,7 @@ class OpsDashboardDataSeeder extends Seeder
     public function run()
     {
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->pluck('id');
+        $nurses = User::ofType('care-center')->pluck('id');
         $practiceIds = Practice::active()->get()->pluck('id');
         $date = Carbon::now();
         $activityDuration = collect([150, 275, 348, 567, 764, 895, 988, 1010, 1111, 1235, 1300]);
@@ -43,14 +43,14 @@ class OpsDashboardDataSeeder extends Seeder
                         'type' => $activityType->random(),
                         'duration' => $activityDuration->random(),
                         'duration_unit' => 'seconds',
-                        'performed_at' => $date->copy()->subDay(5)->toDateTimeString(),
+                        'performed_at' => $date->copy()->subDay(1)->toDateTimeString(),
                         'provider_id' => $nurses->random(),
                         ],
                     [
                         'type' => $activityType->random(),
                         'duration' => $activityDuration->random(),
                         'duration_unit' => 'seconds',
-                        'performed_at' => $date->copy()->subDay(5)->toDateTimeString(),
+                        'performed_at' => $date->copy()->subDay(2)->toDateTimeString(),
                         'provider_id' => $nurses->random(),
                     ]]);
             }else{
