@@ -20,6 +20,7 @@ use SoftDeletingTrait;
  * @property int $provider_id
  * @property int $logger_id
  * @property int $comment_id
+ * @property boolean $is_behavioral
  * @property int|null $sequence_id
  * @property string $obs_message_id
  * @property string $logged_from
@@ -91,6 +92,8 @@ class Activity extends \App\BaseModel implements Transformable
         'patient_id',
         'provider_id',
         'logger_id',
+        'comment_id',
+        'is_behavioral',
         'logged_from',
         'performed_at',
         'performed_at_gmt',

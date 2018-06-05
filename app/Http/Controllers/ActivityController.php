@@ -245,6 +245,7 @@ class ActivityController extends Controller
             $nurseId = $input['provider_id'];
             $patientId = $input['patient_id'];
             $duration = (int)$input['duration'];
+            $is_bhi = isset($input['type']) ? ($input['type'] != 'true' ? false : true) : false;
 
             /**
             * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
@@ -252,9 +253,11 @@ class ActivityController extends Controller
             if ($nurseId && $patientId && $duration) {
                 $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
                 try {
+                    $timeParam = $is_bhi ? 'bhiTime' : 'ccmTime';
                     $res = $client->put($url, [
                         'form_params' => [
-                            'startTime' => $duration
+                            'startTime' => $duration,
+                            $timeParam => $duration
                         ]
                     ]);
                     $status = $res->getStatusCode();
