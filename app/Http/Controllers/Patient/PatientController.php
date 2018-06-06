@@ -5,12 +5,11 @@ use App\Contracts\ReportFormatter;
 use App\Http\Controllers\Controller;
 use App\Practice;
 use App\Services\CarePlanViewService;
-use App\User;
 use App\Services\PdfService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use URL;
 
 class PatientController extends Controller
 {
@@ -291,11 +290,10 @@ class PatientController extends Controller
         $fileName = $storageDirectory . $datetimePrefix . '-patient-list.pdf';
         $file = $this->pdfService->createPdfFromView('wpUsers.patient.listing-pdf', [
             'patients' => $this->formatter->patients(),
-            'pdfOptions' => [
-                'orientation' => 'Landscape',
-                'margin-left' => '3',
-                'margin-right' => '3'
-            ]
+        ], [
+            'orientation'  => 'Landscape',
+            'margin-left'  => '3',
+            'margin-right' => '3',
         ]);
         return response()->file($file);
     }
