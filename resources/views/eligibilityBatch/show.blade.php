@@ -28,6 +28,13 @@
                     </div>
 
                     <div class="panel-body">
+                        @if($batch->type == App\EligibilityBatch::TYPE_ONE_CSV)
+                            <div class="pull-right" style="padding-left: 2%;">
+                                <a href="{{route('eligibility.download.logs.csv', [$batch->id])}}"
+                                   class="btn btn-warning">Download Batch Processing Logs</a>
+                            </div>
+                        @endif
+
                         @if($eligible > 0)
                             <div class="pull-right" style="padding-left: 2%;">
                                 <a href="{{route('admin.enrollees.show.batch', [$batch->id])}}"

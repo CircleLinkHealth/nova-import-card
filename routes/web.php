@@ -811,6 +811,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'EligibilityBatchController@getLastImportLog',
                     'as'   => 'eligibility.download.last.import.logs',
                 ]);
+
+                Route::get('/batch-logs-scv', [
+                    'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
+                    'as'   => 'eligibility.download.logs.csv',
+                ]);
             });
         });
 
