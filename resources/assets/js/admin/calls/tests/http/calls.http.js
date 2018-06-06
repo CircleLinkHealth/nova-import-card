@@ -63,7 +63,6 @@ patientUrls.map((url) => {
 /** patient autocomplete */
 
 const autocompletePatientUrls = [
-    '/api/patients?rows=all&autocomplete',
     '/api/patients/without-scheduled-calls?autocomplete'
 ]
 
@@ -73,6 +72,16 @@ const AUTOCOMPLETE_PATIENTS = PATIENTS.map(patient => ({ id: patient.id,
 
 autocompletePatientUrls.map((url) => {
     return mock.onGet(url).reply(200, AUTOCOMPLETE_PATIENTS)
+})
+
+mock.onGet('/api/patients?rows=all&autocomplete').reply(200, {
+    current_page: 1,
+    data: AUTOCOMPLETE_PATIENTS,
+    from: 1,
+    last_page: 1,
+    path: '/api/patients',
+    per_page: 3,
+    to: 3
 })
 
 /** end patient autocomplete */

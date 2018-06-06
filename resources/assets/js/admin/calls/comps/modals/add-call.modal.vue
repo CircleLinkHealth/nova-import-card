@@ -390,7 +390,7 @@
           }
         },
         async created() {
-          await Promise.all([this.getPractices(), this.getPatients()])
+          return await Promise.all([this.getPractices(), this.getPatients()])
         },
         mounted() {
           
