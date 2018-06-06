@@ -104,7 +104,7 @@
     import Modal from '../../../common/modal'
     import LoaderComponent from '../../../../components/loader'
     import {rootUrl} from '../../../../app.config'
-    import moment from 'moment'
+    import { today } from '../../../../util/today'
     import notifications from '../../../../components/notifications'
     import VueSelect from 'vue-select'
     import VueCache from '../../../../util/vue-cache'
@@ -115,7 +115,7 @@
                               practiceId: null,
                               patientId: null,
                               nurseId: null,
-                              date: moment(new Date()).format('YYYY-MM-DD'),
+                              date: today(),
                               startTime: '09:00',
                               endTime: '17:00',
                               text: null
@@ -241,18 +241,18 @@
           },
           getPractices() {
               this.loaders.practices = true
-              this.axios.get(rootUrl(`api/practices`)).then(response => {
+              return this.cache().get(rootUrl(`api/practices`)).then(response => {
                   this.loaders.practices = false
-                  this.practices = (response.data || []).sort((a, b) => {
+                  console.log('add-call:practices', response)
+                  return this.practices = (response || []).sort((a, b) => {
                     if (a.display_name < b.display_name) return -1;
                     else if (a.display_name > b.display_name) return 1
                     else return 0
                   }).distinct(patient => patient.id)
-                  console.log('add-call-get-practices', response.data)
               }).catch(err => {
                   this.loaders.practices = false
                   this.errors.practices = err.message
-                  console.error('add-call-get-practices', err)
+                  console.error('add-call:practices', err)
               })
           },
           getPatients() {
@@ -266,47 +266,57 @@
           getUnscheduledPatients() {
               this.loaders.patients = true
               const practice_addendum = this.formData.practiceId ? `practices/${this.formData.practiceId}/` : '';
-              this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
+              return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
                   this.loaders.patients = false
                   const pagination = response.data
-                  this.patients = ((pagination || {}).data || []).map(patient => {
-                      patient.name = patient.full_name
-                      return patient;
-                  }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                  console.log('add-call-get-patients', pagination)
+                  console.log('add-call:patients:unscheduled', pagination)
+                  return pagination
+              }).then((pagination) => {
+                return this.patients = ((pagination || {}).data || []).map(patient => {
+                    patient.name = patient.full_name
+                    return patient;
+                }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
               }).catch(err => {
                   this.loaders.patients = false
                   this.errors.patients = err.message
-                  console.error('add-call-get-patients', err)
+                  console.error('add-call:patients:unscheduled', err)
               })
           },
           getPracticePatients() {
               if (this.formData.practiceId) {
                   this.loaders.patients = true
-                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
+                  return this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/patients`)).then(response => {
                       this.loaders.patients = false
-                      this.patients = (response.data || []).map(patient => {
-                          patient.name = patient.full_name
-                          return patient;
-                      }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                      console.log('add-call-get-patients', response.data)
+                      console.log('add-call:patients:practice', response.data)
+                      return response.data
+                  }).then(patients => {
+                    return this.patients = (patients || []).map(patient => {
+                        patient.name = patient.full_name
+                        return patient;
+                    }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
                   }).catch(err => {
                       this.loaders.patients = false
                       this.errors.patients = err.message
-                      console.error('add-call-get-patients', err)
+                      console.error('add-call:patients:practice', err)
                   })
               }
+              return Promise.resolve([])
           },
           getAllPatients() {
             this.loaders.patients = true
-            this.cache().get(rootUrl(`api/patients?rows=all&autocomplete`)).then(response => {
+            return this.cache().get(rootUrl(`api/patients?rows=all&autocomplete`)).then(response => {
                 this.loaders.patients = false
-                this.patients = (response.data || []).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
-                console.log('add-call-get-patients', response.data)
+                console.log('add-call:patients:all', response.data)
+                return response.data;
+            })
+            .then((patients = []) => {
+              return this.patients = patients.sort((a, b) => {
+                return a.name > b.name ? 1 : -1;
+              }).distinct(patient => patient.id)
             }).catch(err => {
                 this.loaders.patients = false
                 this.errors.patients = err.message
-                console.error('add-call-get-patients', err)
+                console.error('add-call:patients:all', err)
             })
           },
           getNurses() {
@@ -379,9 +389,8 @@
             Event.$emit('modal-unscheduled-patients:show')
           }
         },
-        created() {
-          this.getPractices()
-          this.getPatients()
+        async created() {
+          await Promise.all([this.getPractices(), this.getPatients()])
         },
         mounted() {
           
