@@ -811,6 +811,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'EligibilityBatchController@getLastImportLog',
                     'as'   => 'eligibility.download.last.import.logs',
                 ]);
+
+                Route::get('/batch-logs-scv', [
+                    'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
+                    'as'   => 'eligibility.download.logs.csv',
+                ]);
             });
         });
 
@@ -1510,10 +1515,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.reports.nurseTime.exportxls',
         ]);
 
-        Route::get('reports/nurse/monthly-index', [
-            'uses' => 'NurseController@monthlyReportIndex',
-            'as'   => 'admin.reports.nurse.monthly-index',
-        ]);
 
         Route::get('reports/nurse/monthly', [
             'uses' => 'NurseController@monthlyReport',
