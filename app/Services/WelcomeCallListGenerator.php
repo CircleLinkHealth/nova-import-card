@@ -180,6 +180,15 @@ class WelcomeCallListGenerator
 
             $problems = $row['problems'] ?? $row['problems_string'];
 
+            if (empty($problems)) {
+                $this->ineligiblePatients->push($row);
+
+                $this->setEligibilityJobStatus(3, ['problems' => 'Patient has 0 conditions.'],
+                    EligibilityJob::INELIGIBLE);
+
+                return false;
+            }
+
             foreach (config('importer.problem_loggers') as $class) {
                 $class = app($class);
 
