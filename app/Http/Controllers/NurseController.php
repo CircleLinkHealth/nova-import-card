@@ -8,10 +8,10 @@ use App\Notifications\NurseInvoiceCreated;
 use App\Reports\NurseDailyReport;
 use App\User;
 use Carbon\Carbon;
+use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Yajra\Datatables\Facades\Datatables;
-use Excel;
 
 class NurseController extends Controller
 {
@@ -51,7 +51,8 @@ class NurseController extends Controller
             $startDate = Carbon::parse($request->input('start_date'));
             $endDate   = Carbon::parse($request->input('end_date'));
 
-            GenerateNurseInvoice::dispatch($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay,$addTime, $addNotes)->onQueue('reports');
+            GenerateNurseInvoice::dispatch($nurseIds, $startDate, $endDate, auth()->user()->id, $variablePay, $addTime,
+                $addNotes)->onQueue('reports');
         }
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
@@ -154,7 +155,7 @@ class NurseController extends Controller
     public function monthlyReport(Request $request)
     {
         $date = Carbon::now();
-        if ($request['date']){
+        if ($request['date']) {
             $date = new Carbon($request['date']);
         }
 
@@ -162,74 +163,78 @@ class NurseController extends Controller
 
         if ($request->has('json')) {
             return response()->json($rows);
-        }
-        else if ($request->has('excel')) {
+        } elseif ($request->has('excel')) {
             return Excel::create('CLH-Nurse-Monthly-Report-' . $date, function ($excel) use ($date, $rows) {
 
                 // Set the title
                 $excel->setTitle('CLH Nurse Monthly Report - ' . $date);
-    
+
                 // Chain the setters
                 $excel->setCreator('CLH System')
-                    ->setCompany('CircleLink Health');
-    
+                      ->setCompany('CircleLink Health');
+
                 // Call them separately
                 $excel->setDescription('CLH Call Report - ' . $date);
-    
+
                 // Our first sheet
                 $excel->sheet('Sheet 1', function ($sheet) use ($rows) {
                     $i = 0;
                     // header
                     $userColumns = [
                         'Nurse',
-                        'CCM Time (HH:MM:SS)'
+                        'CCM Time (HH:MM:SS)',
                     ];
                     $sheet->appendRow($userColumns);
-    
+
                     foreach ($rows as $name => $time) {
                         $columns = [$name, $time];
                         $sheet->appendRow($columns);
                     }
                 });
-            })->export('xls'); 
+            })->export('xls');
         }
-        else{
-            $currentPage              = LengthAwarePaginator::resolveCurrentPage();
-            $perPage                  = 10;
-            $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
-            $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
 
-            $rows = $rows->withPath("admin/reports/nurse/monthly");
-            return view('admin.nurse.monthly-report', compact(['date', 'rows']));
-        }
+        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+        $perPage                  = 100;
+        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
+        $rows                     = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
+
+        $rows = $rows->withPath("admin/reports/nurse/monthly");
+
+        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
     }
 
-    public function getMonthlyReportRows($date) {
+    private function getMonthlyReportRows($date)
+    {
 
         $fromDate = $date->copy()->startOfMonth()->startOfDay();
         $toDate   = $date->copy()->endOfMonth()->endOfDay();
 
-        $nurses = User::ofType('care-center')
-                      ->with(['activitiesAsProvider' => function ($a) use ($fromDate, $toDate){
-                          $a->where('performed_at', '>=', $fromDate)
-                            ->where('performed_at', '<=', $toDate);
-                      }])
-                      ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate){
+        $rows = [];
+
+        $nurses = User::orderBy('id')
+                      ->ofType('care-center')
+                      ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate) {
                           $a->where('performed_at', '>=', $fromDate)
                             ->where('performed_at', '<=', $toDate);
                       })
-                      ->get();
+                      ->chunk(50, function ($nurses) use (&$rows, $fromDate, $toDate) {
+                          foreach ($nurses as $nurse) {
 
-        $rows = [];
+                              $seconds = Activity::where('provider_id', $nurse->id)
+                                                 ->where(function ($q) use ($fromDate, $toDate) {
+                                                     $q->where('performed_at', '>=', $fromDate)
+                                                       ->where('performed_at', '<=', $toDate);
+                                                 })
+                                                 ->sum('duration');
 
-        foreach ($nurses as $nurse) {
+                              if ($seconds == 0) {
+                                  continue;
+                              }
 
-            $seconds = $nurse->activitiesAsProvider->sum('duration');
-            if ($seconds == 0){
-                continue;
-            }
-            $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
-        }
+                              $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
+                          }
+                      });
 
         return collect($rows);
     }
