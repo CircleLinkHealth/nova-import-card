@@ -137,7 +137,10 @@ class Problem implements Arrayable
      */
     public function getCode()
     {
-        return $this->code;
+        //return name if code is empty, just in case code was put into name field
+        return empty($this->code)
+            ? $this->name
+            : $this->code;
     }
 
     /**
