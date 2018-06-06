@@ -29,7 +29,7 @@ class NumberedProblemFields
                 $problems[] = [
                     'Name'        => $patient["problem_$i"],
                     'CodeType'    => '',
-                    'Code'        => '',
+                    'Code'        => $patient["problem_$i"],
                     'AddedDate'   => '',
                     'ResolveDate' => '',
                     'Status'      => '',
