@@ -60,7 +60,7 @@ class DetermineTargetPatientEligibility extends Command
                                      if (! $isEligible){
 
                                          $job = $adapter->getEligibilityJob();
-                                         $patient->eligibility_info = implode(" ", $job->messages);
+                                         $patient->eligibility_job_id = $job->id;
 
                                          $patient->status = 'ineligible';
                                          $patient->save();

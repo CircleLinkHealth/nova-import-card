@@ -14,7 +14,7 @@ class AddEligibilityInfoColumnToTargetPatientsTable extends Migration
     public function up()
     {
         Schema::table('target_patients', function (Blueprint $table) {
-            $table->text('eligibility_info')->nullable()->after('status');
+            $table->text('eligibility_job_id')->nullable()->after('batch_id');
         });
     }
 
@@ -25,8 +25,8 @@ class AddEligibilityInfoColumnToTargetPatientsTable extends Migration
      */
     public function down()
     {
-        Schema::table('cpm_settings', function (Blueprint $table) {
-            $table->dropColumn('eligibility_info');
+        Schema::table('target_patients', function (Blueprint $table) {
+            $table->dropColumn('eligibility_job_id');
         });
     }
 }
