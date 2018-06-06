@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00024a5541be491695dc37e21cf41880",
+    "content-hash": "8741ae32933fdbd221166f02802dbbcd",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -2931,6 +2931,51 @@
                 "server"
             ],
             "time": "2017-12-23T23:33:42+00:00"
+        },
+        {
+            "name": "lynx39/lara-pdf-merger",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deltaaskii/lara-pdf-merger.git",
+                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/deltaaskii/lara-pdf-merger/zipball/fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "reference": "fcff464d5fc0a0c3a42c552654959680c911e4fc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "LynX39\\LaraPdfMerger": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Musso",
+                    "email": "lynx@deltaaskii.com",
+                    "homepage": "https://github.com/LynX39"
+                }
+            ],
+            "homepage": "https://github.com/LynX39/lara-pdf-merger",
+            "keywords": [
+                "laravel",
+                "manage",
+                "merge",
+                "merger",
+                "paginate",
+                "pdf"
+            ],
+            "time": "2017-11-17T14:13:58+00:00"
         },
         {
             "name": "maatwebsite/excel",
