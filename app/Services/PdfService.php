@@ -30,6 +30,7 @@ class PdfService
      * @param null $outputFullPath
      *
      * @return null|string
+     * @throws \Exception
      */
     public function mergeFiles(
         array $filesWithFullPath,
