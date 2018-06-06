@@ -277,7 +277,10 @@ class WelcomeCallListGenerator
                                         $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
                                                                  ->whereCpmProblemId($problem->id)
                                                                  ->first();
-                                        $code = "ICD10: $code->icd_10_code";
+
+                                        if ($code) {
+                                            $code = "ICD10: $code->icd_10_code";
+                                        }
                                     }
 
                                     $qualifyingProblems[]           = "{$problem->name}, $code";
