@@ -220,13 +220,12 @@
               this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
             }
           },
-          changePractice(practice) {
+          async changePractice(practice) {
             if (practice) {
               if (this.formData.practiceId != practice.value) this.selectedPatientData = UNASSIGNED_VALUE
               this.formData.practiceId = practice.value
-              this.getPatients()
-              this.getNurses()
               this.selectedNurseData = UNASSIGNED_VALUE
+              await Promise.all([ this.getNurses() ])
             }
           },
           changeNurse (nurse) {
@@ -289,9 +288,9 @@
                       this.loaders.patients = false
                       console.log('add-call:patients:practice', response.data)
                       return response.data
-                  }).then(patients => {
-                    return this.patients = (patients || []).map(patient => {
-                        patient.name = patient.full_name
+                  }).then((patients = []) => {
+                    return this.patients = patients.map(patient => {
+                        patient.name = patient.full_name;
                         return patient;
                     }).sort((a, b) => a.name > b.name ? 1 : -1).distinct(patient => patient.id)
                   }).catch(err => {
@@ -322,19 +321,21 @@
           getNurses() {
               if (this.formData.practiceId) {
                   this.loaders.nurses = true
-                  this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/nurses`)).then(response => {
+                  return this.axios.get(rootUrl(`api/practices/${this.formData.practiceId}/nurses`)).then(response => {
                       this.loaders.nurses = false
                       this.nurses = (response.data || []).map(nurse => {
                           nurse.name = nurse.full_name
                           return nurse;
                       }).filter(nurse => nurse.name && nurse.name.trim() != '')
                       console.log('add-call-get-nurses', this.nurses)
+                      return this.nurses
                   }).catch(err => {
+                      console.error('add-call-get-nurses', err)
                       this.loaders.nurses = false
                       this.errors.nurses = err.message
-                      console.error('add-call-get-nurses', err)
                   })
               }
+              return Promise.resolve([])
           },
           submitForm(e) {
             e.preventDefault();
@@ -393,8 +394,6 @@
           return await Promise.all([this.getPractices(), this.getPatients()])
         },
         mounted() {
-          
-
           Event.$on('add-call-modals:set', (data) => {
             if (data) {
               if (data.practiceId) {

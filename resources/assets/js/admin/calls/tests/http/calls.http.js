@@ -7,6 +7,7 @@ import axios from 'axios'
 import PATIENTS from '../mocks/patients.mock'
 import NURSES from '../mocks/nurses.mock'
 import CALLS from '../mocks/calls.mock'
+import PRACTICES from '../mocks/practices.mock';
 
 const mock = new MockAdapter(axios)
 
@@ -33,11 +34,7 @@ mock.onGet('/api/admin/calls?scheduled&rows=undefined').reply(200, callsResponse
 mock.onGet(`/api/admin/calls?scheduled&rows=100&minScheduledDate=${today()}`).reply(200, callsResponse)
 mock.onGet('/api/admin/calls?page=1').reply(200, callsResponse)
 
-mock.onGet('/api/practices').reply(200, [
-    { id:2, display_name:'No Access', locations:0 },
-    { id:7, display_name:'Crisfield', locations:0 },
-    { id:8, display_name:'Demo', locations:2 }
-])
+mock.onGet('/api/practices').reply(200, PRACTICES)
 
 /** patient data */
 
@@ -57,6 +54,8 @@ patientUrls.map((url) => {
         to: 3
     })
 })
+
+mock.onGet('/api/practices/8/patients').reply(200, PATIENTS)
 
 /** end patient data */
 
@@ -86,9 +85,19 @@ mock.onGet('/api/patients?rows=all&autocomplete').reply(200, {
 
 /** end patient autocomplete */
 
-mock.onGet('/api/nurses?compressed').reply(200, {
+/** begin nurses */
+
+const nurseUrls = [
+    '/api/nurses?compressed'
+]
+
+nurseUrls.map((url) => mock.onGet(url).reply(200, {
     data: NURSES
-})
+}))
+
+mock.onGet('/api/practices/8/nurses').reply(200, NURSES)
+
+/** end nurses */
 
 mock.onPost('/callupdate', {
     callId: 1,
