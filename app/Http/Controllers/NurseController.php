@@ -151,48 +151,13 @@ class NurseController extends Controller
         ]);
     }
 
-    public function monthlyReportIndex()
-    {
-
-        $date = Carbon::now();
-
-
-        $fromDate = $date->copy()->startOfMonth()->startOfDay();
-        $toDate   = $date->copy()->endOfMonth()->endOfDay();
-
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
-
-        $rows = [];
-
-        foreach ($nurses as $nurse) {
-
-            $seconds = Activity::where('provider_id', $nurse->id)
-                               ->where(function ($q) use ($fromDate, $toDate) {
-                                   $q->where('performed_at', '>=', $fromDate)
-                                     ->where('performed_at', '<=', $toDate);
-                               })
-                               ->sum('duration');
-            if ($seconds == 0){
-                continue;
-            }
-            $rows[$nurse->display_name] = round($seconds / 60, 2);
-        }
-
-        $rows = collect($rows);
-        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
-        $perPage                  = 10;
-        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
-
-        $rows = $rows->withPath("admin/reports/nurse/monthly-index");
-
-        return view('admin.nurse.monthly-report', compact(['date', 'rows']));
-
-
-    }
     public function monthlyReport(Request $request)
     {
-        $date = new Carbon($request['date']);
+        $date = Carbon::now();
+        if ($request['date']){
+            $date = new Carbon($request['date']);
+        }
+
         $rows = $this->getMonthlyReportRows($date);
 
         if ($request->has('json')) {
@@ -228,43 +193,45 @@ class NurseController extends Controller
                 });
             })->export('xls'); 
         }
-        else return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+        else{
+            $currentPage              = LengthAwarePaginator::resolveCurrentPage();
+            $perPage                  = 10;
+            $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
+            $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
+
+            $rows = $rows->withPath("admin/reports/nurse/monthly");
+            return view('admin.nurse.monthly-report', compact(['date', 'rows']));
+        }
     }
 
     public function getMonthlyReportRows($date) {
 
-
-
         $fromDate = $date->copy()->startOfMonth()->startOfDay();
         $toDate   = $date->copy()->endOfMonth()->endOfDay();
 
-        $nurses = User::ofType('care-center')->where('access_disabled', 0)->get();
+        $nurses = User::ofType('care-center')
+                      ->with(['activitiesAsProvider' => function ($a) use ($fromDate, $toDate){
+                          $a->where('performed_at', '>=', $fromDate)
+                            ->where('performed_at', '<=', $toDate);
+                      }])
+                      ->whereHas('activitiesAsProvider', function ($a) use ($fromDate, $toDate){
+                          $a->where('performed_at', '>=', $fromDate)
+                            ->where('performed_at', '<=', $toDate);
+                      })
+                      ->get();
 
         $rows = [];
 
         foreach ($nurses as $nurse) {
 
-            $seconds = Activity::where('provider_id', $nurse->id)
-                               ->where(function ($q) use ($fromDate, $toDate) {
-                                   $q->where('performed_at', '>=', $fromDate)
-                                     ->where('performed_at', '<=', $toDate);
-                               })
-                               ->sum('duration');
+            $seconds = $nurse->activitiesAsProvider->sum('duration');
             if ($seconds == 0){
                 continue;
             }
             $rows[$nurse->display_name] = gmdate('H:i:s', $seconds);
         }
 
-        $rows = collect($rows);
-        $currentPage              = LengthAwarePaginator::resolveCurrentPage();
-        $perPage                  = 10;
-        $currentPageSearchResults = $rows->slice(($currentPage - 1) * $perPage, $perPage)->all();
-        $rows                 = new LengthAwarePaginator($currentPageSearchResults, count($rows), $perPage);
-
-        $rows = $rows->withPath("admin/reports/nurse/monthly");
-
-        return $rows;
+        return collect($rows);
     }
 
 }

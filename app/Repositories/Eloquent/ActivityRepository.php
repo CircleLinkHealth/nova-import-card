@@ -33,9 +33,7 @@ class ActivityRepository
     public function totalCCMTime(array $userIds, Carbon $monthYear)
     {
         return Activity::selectRaw('sum(duration) as total_time, patient_id')
-                       ->whereDoesntHave('pageTime', function ($q) {
-                           return $q->where('is_behavioral', 1);
-                       })
+                       ->where('is_behavioral', 0)
                        ->whereIn('patient_id', $userIds)
                        ->where('performed_at', '>=', $monthYear->startOfMonth())
                        ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
@@ -53,9 +51,7 @@ class ActivityRepository
     public function totalBHITime(array $userIds, Carbon $monthYear)
     {
         return Activity::selectRaw('sum(duration) as total_time, patient_id')
-                       ->whereHas('pageTime', function ($q) {
-                           return $q->where('is_behavioral', 1);
-                       })
+                       ->where('is_behavioral', 1)
                        ->whereIn('patient_id', $userIds)
                        ->where('performed_at', '>=', $monthYear->startOfMonth())
                        ->where('performed_at', '<=', $monthYear->copy()->endOfMonth())
