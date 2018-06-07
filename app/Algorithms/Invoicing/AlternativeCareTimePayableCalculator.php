@@ -4,8 +4,7 @@ use App\Activity;
 use App\Nurse;
 use App\NurseCareRateLog;
 use App\NurseMonthlySummary;
-use App\Patient;
-use App\User;
+use App\PatientMonthlySummary;
 use Carbon\Carbon;
 
 /**
@@ -80,15 +79,23 @@ class AlternativeCareTimePayableCalculator
         return $this->nurseReport;
     }
 
-    public function adjustCCMPaybleForActivity(Activity $activity)
+    public function adjustNursePayForActivity(Activity $activity)
     {
 
         $toAddToAccuredTowardsCCM = 0;
-        $toAddToAccuredAfterCCM = 0;
-        $user = $activity->patient;
+        $toAddToAccuredAfterCCM   = 0;
+        $user                     = $activity->patient;
+        $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth()->toDateString();
+
+        $summary = PatientMonthlySummary::whereMonthYear($monthYear)->first();
+
         $patient = $user->patientInfo;
 
-        $ccm_after_activity = intval($patient->cur_month_activity_time);
+        $totalTime = $activity->is_behavioral
+            ? $summary->bhi_time
+            : $summary->ccm_time;
+
+        $ccm_after_activity = intval($totalTime);
         $isComplex = $user->isCCMComplex();
 
         $ccm_before_activity = $ccm_after_activity - $activity->duration;
