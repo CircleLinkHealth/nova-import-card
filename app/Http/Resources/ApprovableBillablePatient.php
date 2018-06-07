@@ -38,8 +38,10 @@ class ApprovableBillablePatient extends Resource
         if ($this->hasServiceCode('CPT 99484')) {
             $bhiProblem = $this->billableBhiProblems()->first();
 
-            $problems['bhi_problem']      = $bhiProblem->pivot->name ?? null;
-            $problems['bhi_problem_code'] = $bhiProblem->pivot->icd_10_code ?? null;
+            if ($bhiProblem) {
+                $problems['bhi_problem']      = $bhiProblem->pivot->name ?? null;
+                $problems['bhi_problem_code'] = $bhiProblem->pivot->icd_10_code ?? null;
+            }
         }
 
         if ($this->hasServiceCode('CPT 99490')) {
