@@ -425,7 +425,7 @@ class PracticeInvoiceController extends Controller
                 if ($summary->hasServiceCode('CPT 99484')) {
                     $summaryProblem = $summary->billableProblems()->wherePivot('type', 'bhi')->first();
                     if ($summaryProblem) {
-                        $summary->billableProblems()->updateExistingPivot($problemId, [
+                        $summary->billableProblems()->updateExistingPivot($summaryProblem->id, [
                             'name' => $request['name'],
                             'icd_10_code' => $request['code']
                         ]);
