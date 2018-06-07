@@ -67,21 +67,22 @@ describe('App Events', () => {
                 resolve ({})
             })
         }
-        createAppEvents({
-            activateFilters: () => ({}),
-            next: () => ({}),
-            $refs: {
-                tblCalls: {}
-            },
-            tableData: [
-                {
-                    id: 1,
-                    updateMultiValues
-                }
-            ]
-        },
-        Event)
         it('should hide Modal', () => {
+            Event.$off('select-times-modal:change')
+            createAppEvents({
+                activateFilters: () => ({}),
+                next: () => ({}),
+                $refs: {
+                    tblCalls: {}
+                },
+                tableData: [
+                    {
+                        id: 1,
+                        updateMultiValues
+                    }
+                ]
+            },
+            Event)
             let modalVisible = true
             Event.$on('modal-select-times:hide', () => {
                 modalVisible = false
