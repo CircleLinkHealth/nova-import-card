@@ -111,7 +111,7 @@
 
     const UNASSIGNED_VALUE = { label: 'Unassigned', value: null }
 
-    const defaultFormData = {
+    export const defaultFormData = {
                               practiceId: null,
                               patientId: null,
                               nurseId: null,
@@ -220,13 +220,14 @@
               this.selectedPatientIsInDraftMode = (this.selectedPatient().status == 'draft')
             }
           },
-          async changePractice(practice) {
+          changePractice(practice) {
             if (practice) {
               if (this.formData.practiceId != practice.value) this.selectedPatientData = UNASSIGNED_VALUE
               this.formData.practiceId = practice.value
               this.selectedNurseData = UNASSIGNED_VALUE
-              await Promise.all([ this.getPatients(), this.getNurses() ])
+              return Promise.all([ this.getPatients(), this.getNurses() ])
             }
+            return Promise.resolve([])
           },
           changeNurse (nurse) {
             if (nurse) {
@@ -237,6 +238,7 @@
             if (e && e.target) {
               return e.target.checked ? this.getUnscheduledPatients() : this.getPatients()
             }
+            return Promise.resolve([])
           },
           getPractices() {
               this.loaders.practices = true
@@ -357,19 +359,21 @@
               }
               else {
                 this.loaders.submit = true
-                this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
+                return this.axios.post(rootUrl('callcreate'), formData).then((response, status) => {
                   if (response) {
                     this.loaders.submit = false
                     this.formData = Object.assign({}, defaultFormData)
                     const call = response.data
                     Event.$emit("modal-add-call:hide")
                     Event.$emit('calls:add', call)
-                    console.log('calls:add', response.data)
+                    console.log('calls:add', call)
                     Event.$emit('notifications-add-call-modal:create', { text: 'Call created successfully' })
+                    return call
                   }
                   else {
                     throw new Error('Could not create call. Patient already has a scheduled call')
                   }
+                  return null
                 }).catch(err => {
                   this.errors.submit = err.message
                   this.loaders.submit = false
@@ -384,14 +388,15 @@
                 type: 'warning'
               })
             }
+            return Promise.resolve(null)
           },
           showUnscheduledPatients () {
             Event.$emit('modal-add-call:hide')
             Event.$emit('modal-unscheduled-patients:show')
           }
         },
-        async created() {
-          return await Promise.all([this.getPractices(), this.getPatients()])
+        created() {
+          return Promise.all([this.getPractices(), this.getPatients()])
         },
         mounted() {
           Event.$on('add-call-modals:set', (data) => {

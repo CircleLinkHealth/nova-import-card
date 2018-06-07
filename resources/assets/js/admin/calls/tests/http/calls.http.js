@@ -40,7 +40,8 @@ mock.onGet('/api/practices').reply(200, PRACTICES)
 
 const patientUrls = [
     '/api/patients?rows=all',
-    '/api/patients/without-scheduled-calls'
+    '/api/patients/without-scheduled-calls',
+    '/api/practices/8/patients/without-scheduled-calls'
 ]
 
 patientUrls.map((url) => {
@@ -146,6 +147,39 @@ mock.onPost('/callupdate', {
 }).reply(200, {
     attempt_note: '...'
 })
+
+/** begin callcreate */
+
+mock.onPost('/callcreate', {
+    inbound_cpm_id: 334,
+    outbound_cpm_id: 1920,
+    scheduled_date: today(),
+    window_start: '09:00',
+    window_end: '17:00',
+    attempt_note: '...'
+}).reply(201, {
+    id: 34404,
+    note_id: null,
+    service: 'phone',
+    status: 'scheduled',
+    inbound_phone_number: null,
+    outbound_phone_number: null,
+    inbound_cpm_id: 334,
+    outbound_cpm_id: 1920,
+    call_time: null,
+    created_at: `${today()}T05:26:29-04:00`,
+    updated_at: `${today()}T05:26:29-04:00`,
+    is_cpm_outbound: 1,
+    window_start: '09:00',
+    window_end: '17:00',
+    scheduled_date: today(),
+    called_date: null,
+    attempt_note: '...',
+    scheduler: 'CLH',
+    sort_day: null
+})
+
+/** end callcreate */
 
 Vue.use(VueAxios, axios)
 
