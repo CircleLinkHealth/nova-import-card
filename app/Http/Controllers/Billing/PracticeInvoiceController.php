@@ -68,8 +68,6 @@ class PracticeInvoiceController extends Controller
                                      ];
                                  });
 
-        $chargeableServices = ChargeableService::all();
-
         $currentMonth = Carbon::now()->startOfMonth();
 
         $dates = [];
@@ -87,10 +85,18 @@ class PracticeInvoiceController extends Controller
             ];
         }
 
+        $chargeableServicesPerPractice = [];
+        foreach ($practices as $pr) {
+            $chargeableServicesPerPractice["$pr->id"] = $pr->chargeableServices;
+        }
+
+        $chargeableServices = ChargeableService::all();
+
         return view('admin.reports.billing', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',
+            'chargeableServicesPerPractice',
             'dates',
         ]));
     }
@@ -420,12 +426,10 @@ class PracticeInvoiceController extends Controller
 
             if ($key == 'problem_1' || $key == 'problem_2') {
                 $summary->$key = $problemId;
-            }
-            else if ($key == 'bhi_problem') {
+            } else if ($key == 'bhi_problem') {
                 if ($summary->hasServiceCode('CPT 99484')) {
                     $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
-                }
-                else {
+                } else {
                     throw new \Exception('cannot set bhi_problem because practice is not chargeable for CPT 99484');
                 }
             }
@@ -456,7 +460,7 @@ class PracticeInvoiceController extends Controller
             return response()->json([
                 'message'    => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-                'code' => $e->getCode()
+                'code'       => $e->getCode(),
             ], 500);
         }
     }
