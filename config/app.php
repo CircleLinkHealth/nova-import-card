@@ -220,6 +220,7 @@ return [
         Waavi\UrlShortener\UrlShortenerServiceProvider::class,
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
+        LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
     ],
 
     /*
@@ -235,7 +236,7 @@ return [
 
     'aliases' => [
 
-        'App'          => Illuminate\Support\Facades\App::class,
+        'App'            => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
@@ -280,10 +281,11 @@ return [
         'JWTFactory'     => \Tymon\JWTAuth\Facades\JWTFactory::class,
         'LERN'           => Tylercd100\LERN\Facades\LERN::class,
         'PDF'            => \Barryvdh\Snappy\Facades\SnappyPdf::class,
+        'PdfMerger'      => LynX39\LaraPdfMerger\Facades\PdfMerger::class,
         'Slack'          => jeremykenedy\Slack\Laravel\Facade::class,
         'GoogleCalendar' => Spatie\GoogleCalendar\GoogleCalendarFacade::class,
         'Swagger'        => L5Swagger\L5SwaggerServiceProvider::class,
-        'UrlShortener' => Waavi\UrlShortener\Facades\UrlShortener::class,
+        'UrlShortener'   => Waavi\UrlShortener\Facades\UrlShortener::class,
     ],
 
 ];

@@ -11,6 +11,7 @@ namespace App\Services;
 
 use App\Contracts\HtmlToPdfService;
 use Carbon\Carbon;
+use LynX39\LaraPdfMerger\PdfManage;
 
 class PdfService
 {
@@ -29,6 +30,7 @@ class PdfService
      * @param null $outputFullPath
      *
      * @return null|string
+     * @throws \Exception
      */
     public function mergeFiles(
         array $filesWithFullPath,
@@ -44,13 +46,13 @@ class PdfService
             $outputFullPath = $this->randomFileFullPath();
         }
 
-        $cmd = "gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=\"$outputFullPath\" ";
+        $pdf = new PdfManage();
 
-        //Add each pdf file to the end of the command
         foreach ($filesWithFullPath as $file) {
-            $cmd .= '"' . $file . '" ';
+            $pdf->addPDF($file, 'all');
         }
-        $result = shell_exec($cmd);
+
+        $pdf->merge('file', $outputFullPath, 'P');
 
         return $outputFullPath;
     }
@@ -62,7 +64,7 @@ class PdfService
      */
     private function randomFileFullPath()
     {
-        $name = str_random() . Carbon::now()->toAtomString();
+        $name = Carbon::now()->toAtomString() . str_random(20);
 
         return storage_path("pdfs/$name.pdf") ;
     }
@@ -89,9 +91,11 @@ class PdfService
      * @param array $args
      * @param null $outputFullPath
      *
+     * @param array $options
+     *
      * @return null|string
      */
-    public function createPdfFromView($view, array $args, $outputFullPath = null)
+    public function createPdfFromView($view, array $args, array $options = [], $outputFullPath = null)
     {
         if ( ! $outputFullPath) {
             $outputFullPath = $this->randomFileFullPath();
@@ -113,8 +117,8 @@ class PdfService
             ->setOption('margin-bottom', '15')
             ->setOption('margin-right', '0.75');
 
-        if (isset($args['pdfOptions'])) {
-            foreach ($args['pdfOptions'] as $key => $value) {
+        if ( ! empty($options)) {
+            foreach ($options as $key => $value) {
                 $pdf = $pdf->setOption($key, $value);
             }
         }

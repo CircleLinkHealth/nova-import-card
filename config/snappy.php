@@ -17,7 +17,7 @@ return [
             'margin-top'    => '1cm',
             'page-size'     => 'letter',
             'page-width'    => '5mm',
-            'zoom'          => 0.9,
+            'zoom'          => 0.8,
         ],
         'env'     => [],
     ],

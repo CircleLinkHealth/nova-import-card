@@ -180,6 +180,15 @@ class WelcomeCallListGenerator
 
             $problems = $row['problems'] ?? $row['problems_string'];
 
+            if (empty($problems)) {
+                $this->ineligiblePatients->push($row);
+
+                $this->setEligibilityJobStatus(3, ['problems' => 'Patient has 0 conditions.'],
+                    EligibilityJob::INELIGIBLE);
+
+                return false;
+            }
+
             foreach (config('importer.problem_loggers') as $class) {
                 $class = app($class);
 
@@ -277,7 +286,10 @@ class WelcomeCallListGenerator
                                         $code = SnomedToCpmIcdMap::where('icd_10_code', '!=', '')
                                                                  ->whereCpmProblemId($problem->id)
                                                                  ->first();
-                                        $code = "ICD10: $code->icd_10_code";
+
+                                        if ($code) {
+                                            $code = "ICD10: $code->icd_10_code";
+                                        }
                                     }
 
                                     $qualifyingProblems[]           = "{$problem->name}, $code";
@@ -768,6 +780,10 @@ class WelcomeCallListGenerator
         return $this->patientList;
     }
 
+    public function getEligibilityJob(){
+        return $this->eligibilityJob;
+    }
+
     private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null)
     {
         if ( ! $this->eligibilityJob) {
@@ -778,4 +794,6 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
     }
+
+
 }
