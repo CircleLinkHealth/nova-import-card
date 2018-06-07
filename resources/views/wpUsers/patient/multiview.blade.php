@@ -249,7 +249,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        Linda Warshavsky
+                                        Chelsea Pruett
                                     </div>
                                     <div class="row gutter">
                                     </div>
