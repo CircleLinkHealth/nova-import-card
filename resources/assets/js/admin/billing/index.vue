@@ -129,6 +129,13 @@
                         <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
+                <template slot="BHI Problem" scope="props">
+                    <div>
+                        <span class="blue pointer"
+                          @click="showProblemsModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
+                        <loader v-if="props.row.promises['bhi_problem']"></loader>
+                    </div>
+                </template>
                 <template slot="chargeable_services" scope="props">
                     <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
@@ -148,6 +155,7 @@
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
             <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
+            <notifications ref="notifications" name="billing"></notifications>
         </div>
     </div>
 </template>
@@ -164,6 +172,7 @@
     import Select2Component from '../../components/src/select2'
     import Loader from '../../components/loader'
     import timeDisplay from '../../util/time-display'
+    import NotificationsComponent from '../../components/notifications'
 
     export default {
         name: 'billing-report',
@@ -174,7 +183,8 @@
             'error-modal': ErrorModal,
             'select2': Select2Component,
             'chargeable-services-modal': ChargeableServicesModal,
-            'loader': Loader
+            'loader': Loader,
+            'notifications': NotificationsComponent
         },
         data() {
             return {
@@ -382,6 +392,7 @@
                             promises: {
                                 problem_1: false,
                                 problem_2: false,
+                                bhi_problem: false,
                                 approve_reject: false,
                                 update_chargeables: false
                             },
@@ -439,25 +450,41 @@
                             tablePatient['Problem 1 Code'] = modified.code
                             tablePatient['Problem 1'] = modified.name
                         }
-                        else {
+                        else if (type == 2) {
                             tablePatient['Problem 2 Code'] = modified.code
                             tablePatient['Problem 2'] = modified.name
                         }
-                        const problemKey = (type === 1) ? 'problem_1' : 'problem_2'
+                        else if (type == 3) {
+                            tablePatient['BHI Problem Code'] = modified.code
+                            tablePatient['BHI Problem'] = modified.name
+                        }
+                        const problemKey = (type === 1) ? 'problem_1' : (type === 2 ? 'problem_2' : 'bhi_problem')
                         tablePatient.promises[problemKey] = true
-                        self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
+                        return self.axios.post(rootUrl('admin/reports/monthly-billing/v2/storeProblem'), {
                             code: modified.code,
                             id: modified.id,
                             name: modified.name,
                             problem_no: problemKey,
                             report_id: tablePatient.reportId,
                             cpm_problem_id: modified.cpm_id
-                        }).then(response => {
+                        }).then((response) => {
                             tablePatient.promises[problemKey] = false
                             console.log('billing-change-problem', response)
+                            if (problemKey == 'bhi_problem' && !response) {
+                                Event.$emit('notifications-billing:create', {
+                                    text: 'Could not set bhi_problem. Check that the practice is chargeable for CPT 99484',
+                                    type: 'error',
+                                    interval: 3000
+                                })
+                            }
                         }).catch(err => {
                             tablePatient.promises[problemKey] = false
                             console.error('billing-change-problem', err)
+                            Event.$emit('notifications-billing:create', {
+                                text: err.message,
+                                type: 'error',
+                                interval: 3000
+                            })
                         })
                         console.log('table-patient-promises', tablePatient.promises)
                     }
@@ -663,5 +690,16 @@
 <style>
     .select2-container {
         width: 100% !important;
+    }
+
+    div.notifications-billing {
+        position: fixed;
+        right: 0px;
+        top: 150px;
+        max-width: 400px;
+    }
+
+    div.notifications-billing div.alert {
+        margin-right: 30px;
     }
 </style>

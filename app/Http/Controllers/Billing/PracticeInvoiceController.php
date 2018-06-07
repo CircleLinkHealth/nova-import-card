@@ -418,7 +418,17 @@ class PracticeInvoiceController extends Controller
                 }
             }
 
-            $summary->$key = $problemId;
+            if ($key == 'problem_1' || $key == 'problem_2') {
+                $summary->$key = $problemId;
+            }
+            else if ($key == 'bhi_problem') {
+                if ($summary->hasServiceCode('CPT 99484')) {
+                    $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
+                }
+                else {
+                    throw new \Exception('cannot set bhi_problem because practice is not chargeable for CPT 99484');
+                }
+            }
 
             if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
@@ -446,7 +456,8 @@ class PracticeInvoiceController extends Controller
             return response()->json([
                 'message'    => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-            ], $e->getCode());
+                'code' => $e->getCode()
+            ], 500);
         }
     }
 
