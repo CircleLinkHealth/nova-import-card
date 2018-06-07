@@ -225,7 +225,7 @@
               if (this.formData.practiceId != practice.value) this.selectedPatientData = UNASSIGNED_VALUE
               this.formData.practiceId = practice.value
               this.selectedNurseData = UNASSIGNED_VALUE
-              await Promise.all([ this.getNurses() ])
+              await Promise.all([ this.getPatients(), this.getNurses() ])
             }
           },
           changeNurse (nurse) {
