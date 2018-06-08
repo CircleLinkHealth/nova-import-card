@@ -31,6 +31,7 @@ class DBScrambler extends Seeder
         $limit = ini_get('memory_limit'); // retrieve the set limit
         ini_set('memory_limit', -1); // remove memory limit
 
+        config(['mail.driver' => 'log']);
         $this->scrambleDB();
 
         ini_set('memory_limit', $limit);
