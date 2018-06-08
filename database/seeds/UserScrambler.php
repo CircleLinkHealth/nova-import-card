@@ -34,7 +34,10 @@ class UserScrambler extends Seeder
         User::orderBy('id')
             ->withTrashed()
             ->with(['practices'])
-            ->chunk(50, function ($users) {
+            ->whereDoesntHave('practices', function ($q) {
+                $q->where('id', 8);
+            })
+            ->chunk(500, function ($users) {
                 foreach ($users as $user) {
                     $user->scramble();
                 }

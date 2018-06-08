@@ -63,6 +63,7 @@ class DBScrambler extends Seeder
     {
         //scramble practices
         Practice::orderBy('id')
+                ->where('id', '!=', 8)
                 ->withTrashed()
                 ->chunk(100, function ($practices) {
                     foreach ($practices as $practice) {
