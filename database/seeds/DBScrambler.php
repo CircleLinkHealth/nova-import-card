@@ -156,8 +156,8 @@ class DBScrambler extends Seeder
                 'body' => $this->faker->text(),
             ]);
 
-        Notification::where('id', '>', 0)
-                    ->update([
+        DB::table('notifications')
+          ->update([
                         'data' => '{}',
                     ]);
 
