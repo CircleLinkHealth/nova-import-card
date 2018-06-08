@@ -1,7 +1,7 @@
 <template>
     <modal name="patient-problem" :info="patientProblemModalInfo" :no-footer="true" class-name="modal-patient-problem">
-      <template slot="title" scope="props"><div>Select Eligible Problem for {{props.Patient}}</div></template>
-      <template scope="props">
+      <template slot="title" slot-scope="props"><div>Select Eligible Problem for {{props.Patient}}</div></template>
+      <template slot-scope="props">
         <div class="row">
           <div class="col-sm-12">
             <div class="row form-group">
