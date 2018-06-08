@@ -1903,20 +1903,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         $faker = Factory::create();
 
-        $user                    = $this;
-        $user->first_name        = $faker->firstName;
-        $user->last_name         = $faker->lastName;
-        $user->display_name      = "$user->first_name $faker->lastName";
-        $user->username          = $faker->userName;
-        $user->password          = $faker->password;
-        $user->email             = $faker->freeEmail;
-        $user->MRN               = rand();
-        $user->gender            = $faker->randomElement(['M', 'F']);
-        $user->address           = $faker->address;
-        $user->address2          = $faker->secondaryAddress;
-        $user->city              = $faker->city;
-        $user->state             = $faker->stateAbbr;
-        $user->zip               = $faker->postcode;
+        $user               = $this;
+        $user->first_name   = $faker->firstName;
+        $user->last_name    = $faker->lastName;
+        $user->display_name = "$user->first_name $user->lastName";
+        $user->username     = $faker->userName;
+        $user->password     = $faker->password;
+        $user->email        = $faker->freeEmail;
+        $user->MRN          = rand();
+        $user->gender       = $faker->randomElement(['M', 'F']);
+        $user->address      = $faker->address;
+        $user->address2     = $faker->secondaryAddress;
+        $user->city         = $faker->city;
+        $user->state        = $faker->stateAbbr;
+        $user->zip          = $faker->postcode;
         $user->phone             = formatPhoneNumber($faker->phoneNumber);
         $user->workPhoneNumber   = formatPhoneNumber($faker->phoneNumber);
         $user->mobilePhoneNumber = formatPhoneNumber($faker->phoneNumber);
