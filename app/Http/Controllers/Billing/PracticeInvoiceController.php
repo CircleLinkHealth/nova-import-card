@@ -420,23 +420,27 @@ class PracticeInvoiceController extends Controller
 
             if ($key == 'problem_1' || $key == 'problem_2') {
                 $summary->$key = $problemId;
-            }
-            else if ($key == 'bhi_problem') {
-                if ($summary->hasServiceCode('CPT 99484')) {
-                    $summaryProblem = $summary->billableProblems()->wherePivot('type', 'bhi')->first();
-                    if ($summaryProblem) {
-                        $summary->billableProblems()->updateExistingPivot($summaryProblem->id, [
-                            'name' => $request['name'],
-                            'icd_10_code' => $request['code']
-                        ]);
-                    }
-                    else {
-                        $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
-                    }
+            } else if ($key == 'bhi_problem' && $summary->hasServiceCode('CPT 99484')) {
+
+                // Uncomment this when bug with FE always posting cpm_problem_id 7 is fixed
+//                if ($request['cpm_problem_id']) {
+//                    $cpmProblem = CpmProblem::find($request['cpm_problem_id']);
+//
+//                    if (! $cpmProblem->is_behavioral) {
+//                        throw new \Exception('Please select a BHI problem.');
+//                    }
+//                }
+
+                if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
+                    $summary->billableProblems()->updateExistingPivot($problemId, [
+                        'name'        => $request['name'],
+                        'icd_10_code' => $request['code'],
+                    ]);
+                } else {
+                    $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
                 }
-                else {
-                    throw new \Exception('cannot set bhi_problem because practice is not chargeable for CPT 99484');
-                }
+            } else {
+                throw new \Exception('Cannot add BHI problem because practice does not have service CPT 99484 activated.');
             }
 
             if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
@@ -465,7 +469,7 @@ class PracticeInvoiceController extends Controller
             return response()->json([
                 'message'    => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-                'code' => $e->getCode()
+                'code'       => $e->getCode(),
             ], 500);
         }
     }
