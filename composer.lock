@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-  "content-hash": "c18f5c6416c810dde757670943a0b929",
+    "content-hash": "c18f5c6416c810dde757670943a0b929",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -170,16 +170,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.61.1",
+            "version": "3.61.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "527d7d10b30a2294686d146b0a12b587f28057b0"
+                "reference": "a6825e5d290b3dd95b5dee4c9456e64a60f6a38b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/527d7d10b30a2294686d146b0a12b587f28057b0",
-                "reference": "527d7d10b30a2294686d146b0a12b587f28057b0",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a6825e5d290b3dd95b5dee4c9456e64a60f6a38b",
+                "reference": "a6825e5d290b3dd95b5dee4c9456e64a60f6a38b",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-06-05T22:44:12+00:00"
+            "time": "2018-06-07T22:10:20+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -3730,23 +3730,24 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.14",
+            "version": "v2.99.99",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5"
+                "reference": "35469243ebbb9be5086cff57538cac6da2c36852"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5",
-                "reference": "f6ce7dd93628088e1017fb5dd73b0b9fec7df9e5",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/35469243ebbb9be5086cff57538cac6da2c36852",
+                "reference": "35469243ebbb9be5086cff57538cac6da2c36852",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.0"
+                "php": "^7"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.*|5.*"
+                "phpunit/phpunit": "4.*|5.*",
+                "vimeo/psalm": "^1"
             },
             "suggest": {
                 "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
@@ -3775,7 +3776,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2018-06-06T17:40:22+00:00"
+            "time": "2018-06-06T05:12:00+00:00"
         },
         {
             "name": "phaxio/phaxio",
@@ -6937,171 +6938,171 @@
             "time": "2016-06-13T19:28:20+00:00"
         },
         {
-          "name": "brianium/habitat",
-          "version": "v1.0.0",
-          "source": {
-            "type": "git",
-            "url": "https://github.com/brianium/habitat.git",
-            "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96"
-          },
-          "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/brianium/habitat/zipball/d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
-            "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
-            "shasum": ""
-          },
-          "require-dev": {
-            "monolog/monolog": ">=1.5.0",
-            "phpunit/phpunit": ">=3.7.21"
-          },
-          "type": "library",
-          "autoload": {
-            "psr-0": {
-              "Habitat": [
-                "src/"
-              ]
-            }
-          },
-          "notification-url": "https://packagist.org/downloads/",
-          "license": [
-            "MIT"
-          ],
-          "authors": [
-            {
-              "name": "Brian",
-              "email": "scaturrob@gmail.com",
-              "homepage": "http://brianscaturro.com",
-              "role": "Lead"
-            }
-          ],
-          "description": "A dependable php environment",
-          "time": "2013-06-08T04:42:29+00:00"
+            "name": "brianium/habitat",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/brianium/habitat.git",
+                "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/brianium/habitat/zipball/d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
+                "reference": "d0979e3bb379cbc78ecb42b3ac171bc2b7e06d96",
+                "shasum": ""
+            },
+            "require-dev": {
+                "monolog/monolog": ">=1.5.0",
+                "phpunit/phpunit": ">=3.7.21"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Habitat": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian",
+                    "email": "scaturrob@gmail.com",
+                    "homepage": "http://brianscaturro.com",
+                    "role": "Lead"
+                }
+            ],
+            "description": "A dependable php environment",
+            "time": "2013-06-08T04:42:29+00:00"
         },
-      {
-        "name": "brianium/paratest",
-        "version": "1.1.0",
-        "source": {
-          "type": "git",
-          "url": "https://github.com/paratestphp/paratest.git",
-          "reference": "30f01dff874f9a5dd0b0651bca6384888030d47b"
+        {
+            "name": "brianium/paratest",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/paratestphp/paratest.git",
+                "reference": "30f01dff874f9a5dd0b0651bca6384888030d47b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/30f01dff874f9a5dd0b0651bca6384888030d47b",
+                "reference": "30f01dff874f9a5dd0b0651bca6384888030d47b",
+                "shasum": ""
+            },
+            "require": {
+                "brianium/habitat": "1.0.0",
+                "composer/semver": "~1.2",
+                "ext-pcre": "*",
+                "ext-reflection": "*",
+                "ext-simplexml": "*",
+                "php": ">=7.0",
+                "phpunit/php-timer": "^1.0.4",
+                "phpunit/phpunit": "^6.0.13",
+                "symfony/console": "^3.4|^4.0",
+                "symfony/process": "^3.4|^4.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.3.2"
+            },
+            "bin": [
+                "bin/paratest"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ParaTest\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Scaturro",
+                    "email": "scaturrob@gmail.com",
+                    "homepage": "http://brianscaturro.com",
+                    "role": "Lead"
+                }
+            ],
+            "description": "Parallel testing for PHP",
+            "homepage": "https://github.com/brianium/paratest",
+            "keywords": [
+                "concurrent",
+                "parallel",
+                "phpunit",
+                "testing"
+            ],
+            "time": "2018-01-18T12:09:16+00:00"
         },
-        "dist": {
-          "type": "zip",
-          "url": "https://api.github.com/repos/paratestphp/paratest/zipball/30f01dff874f9a5dd0b0651bca6384888030d47b",
-          "reference": "30f01dff874f9a5dd0b0651bca6384888030d47b",
-          "shasum": ""
+        {
+            "name": "composer/semver",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/semver.git",
+                "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/semver/zipball/c7cb9a2095a074d131b65a8a0cd294479d785573",
+                "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.2 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.5 || ^5.0.5",
+                "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Semver\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nils Adermann",
+                    "email": "naderman@naderman.de",
+                    "homepage": "http://www.naderman.de"
+                },
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                },
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com",
+                    "homepage": "http://robbast.nl"
+                }
+            ],
+            "description": "Semver library that offers utilities, version constraint parsing and validation.",
+            "keywords": [
+                "semantic",
+                "semver",
+                "validation",
+                "versioning"
+            ],
+            "time": "2016-08-30T16:08:34+00:00"
         },
-        "require": {
-          "brianium/habitat": "1.0.0",
-          "composer/semver": "~1.2",
-          "ext-pcre": "*",
-          "ext-reflection": "*",
-          "ext-simplexml": "*",
-          "php": ">=7.0",
-          "phpunit/php-timer": "^1.0.4",
-          "phpunit/phpunit": "^6.0.13",
-          "symfony/console": "^3.4|^4.0",
-          "symfony/process": "^3.4|^4.0"
-        },
-        "require-dev": {
-          "friendsofphp/php-cs-fixer": "^2.3.2"
-        },
-        "bin": [
-          "bin/paratest"
-        ],
-        "type": "library",
-        "autoload": {
-          "psr-4": {
-            "ParaTest\\": [
-              "src/"
-            ]
-          }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-          "MIT"
-        ],
-        "authors": [
-          {
-            "name": "Brian Scaturro",
-            "email": "scaturrob@gmail.com",
-            "homepage": "http://brianscaturro.com",
-            "role": "Lead"
-          }
-        ],
-        "description": "Parallel testing for PHP",
-        "homepage": "https://github.com/brianium/paratest",
-        "keywords": [
-          "concurrent",
-          "parallel",
-          "phpunit",
-          "testing"
-        ],
-        "time": "2018-01-18T12:09:16+00:00"
-      },
-      {
-        "name": "composer/semver",
-        "version": "1.4.2",
-        "source": {
-          "type": "git",
-          "url": "https://github.com/composer/semver.git",
-          "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573"
-        },
-        "dist": {
-          "type": "zip",
-          "url": "https://api.github.com/repos/composer/semver/zipball/c7cb9a2095a074d131b65a8a0cd294479d785573",
-          "reference": "c7cb9a2095a074d131b65a8a0cd294479d785573",
-          "shasum": ""
-        },
-        "require": {
-          "php": "^5.3.2 || ^7.0"
-        },
-        "require-dev": {
-          "phpunit/phpunit": "^4.5 || ^5.0.5",
-          "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
-        },
-        "type": "library",
-        "extra": {
-          "branch-alias": {
-            "dev-master": "1.x-dev"
-          }
-        },
-        "autoload": {
-          "psr-4": {
-            "Composer\\Semver\\": "src"
-          }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-          "MIT"
-        ],
-        "authors": [
-          {
-            "name": "Nils Adermann",
-            "email": "naderman@naderman.de",
-            "homepage": "http://www.naderman.de"
-          },
-          {
-            "name": "Jordi Boggiano",
-            "email": "j.boggiano@seld.be",
-            "homepage": "http://seld.be"
-          },
-          {
-            "name": "Rob Bast",
-            "email": "rob.bast@gmail.com",
-            "homepage": "http://robbast.nl"
-          }
-        ],
-        "description": "Semver library that offers utilities, version constraint parsing and validation.",
-        "keywords": [
-          "semantic",
-          "semver",
-          "validation",
-          "versioning"
-        ],
-        "time": "2016-08-30T16:08:34+00:00"
-      },
-      {
+        {
             "name": "darkaonline/l5-swagger",
             "version": "5.5.8",
             "source": {
@@ -8302,8 +8303,7 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
+                    "homepage": "http://github.com/chrisboulton"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
