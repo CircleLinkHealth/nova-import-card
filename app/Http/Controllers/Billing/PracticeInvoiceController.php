@@ -54,6 +54,7 @@ class PracticeInvoiceController extends Controller
     {
         $practices = Practice::orderBy('display_name')
                              ->select(['name', 'id', 'display_name'])
+                             ->with('chargeableServices')
                              ->authUserCanAccess()
                              ->active()
                              ->get();
