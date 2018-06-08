@@ -1,43 +1,65 @@
 <?php
 
 use App\User;
+use Faker\Factory;
 use Illuminate\Database\Seeder;
 
 class UserScrambler extends Seeder
 {
+    private $faker;
 
+    public function __construct()
+    {
+        $this->faker = Factory::create();
+    }
+
+    /**
+     * @throws Exception
+     */
     public function run()
     {
-        $allUsers = User::all();
+        $this->throwExceptionIfProduction();
 
-        if (!empty($allUsers)) {
-            $u = 0;
-            foreach ($allUsers as $user) {
-                $role = $user->roles()->first();
-                if ($role && strtolower($role->name) == 'participant') {
-                    echo PHP_EOL . PHP_EOL;
-                    echo PHP_EOL . $role->name;
-                    echo PHP_EOL . $user->id . '-' . $user->email;
+        $limit = ini_get('memory_limit'); // retrieve the set limit
+        ini_set('memory_limit', -1); // remove memory limit
+
+        $this->scrambleDB();
+
+        ini_set('memory_limit', $limit);
+    }
+
+    public function scrambleDB()
+    {
+        //scramble users
+        User::withTrashed()
+            ->with(['practices'])
+            ->chunk(50, function ($users) {
+                foreach ($users as $user) {
                     $user->scramble();
-                    echo PHP_EOL . $user->id . '-' . $user->email;
-                    $u++;
                 }
-            }
+            });
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function throwExceptionIfProduction()
+    {
+        if (in_array(app()->environment(), [
+            'production',
+            'worker',
+        ])) {
+            $env = app()->environment();
+
+            throw new \Exception("Not a good idea to run this on environment $env");
         }
 
-        echo PHP_EOL . 'Truncating ccdas table..';
-        DB::table('ccdas')->delete();
-        echo PHP_EOL . 'Truncated';
+        if (in_array(env('DB_DATABASE'), [
+            'cpm_production',
+        ])) {
+            $db = env('DB_DATABASE');
 
-        DB::table('ccd_allergy_logs')->delete();
-        DB::table('ccd_demographics_logs')->delete();
-        DB::table('ccd_document_logs')->delete();
-        DB::table('ccd_medication_logs')->delete();
-        DB::table('ccd_problem_logs')->delete();
-        DB::table('ccd_provider_logs')->delete();
-
-        Artisan::call('db:seed', [
-            '--class' => CreateTesterUsersSeeder::class,
-        ]);
+            throw new \Exception("Not a good idea to run this on DB $db");
+        }
     }
 }

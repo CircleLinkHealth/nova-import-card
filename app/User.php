@@ -606,8 +606,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function viewableProgramIds(): array
     {
         return $this->practices
-                ->pluck('id')
-                ->all();
+            ->pluck('id')
+            ->all();
     }
 
     public function viewableProviderIds()
@@ -1897,34 +1897,35 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function scramble()
     {
-        $faker = Factory::create();
-        if ( ! $faker) {
+        if ($this->hasRole('administrator')) {
             return false;
         }
 
-        //dd($randomUserInfo);
-        // set random data
+        $faker = Factory::create();
+
         $user                    = $this;
         $user->first_name        = $faker->firstName;
-        $user->last_name         = 'Z-' . $faker->lastName;
+        $user->last_name         = $faker->lastName;
+        $user->display_name      = "$user->first_name $faker->lastName";
         $user->username          = $faker->userName;
         $user->password          = $faker->password;
         $user->email             = $faker->freeEmail;
         $user->MRN               = rand();
-        $user->gender            = 'M';
+        $user->gender            = $faker->randomElement(['M', 'F']);
         $user->address           = $faker->address;
         $user->address2          = $faker->secondaryAddress;
         $user->city              = $faker->city;
         $user->state             = $faker->stateAbbr;
         $user->zip               = $faker->postcode;
-        $user->phone             = '111-234-5678';
-        $user->workPhoneNumber   = '222-234-5678';
-        $user->mobilePhoneNumber = '333-234-5678';
+        $user->phone             = formatPhoneNumber($faker->phoneNumber);
+        $user->workPhoneNumber   = formatPhoneNumber($faker->phoneNumber);
+        $user->mobilePhoneNumber = formatPhoneNumber($faker->phoneNumber);
         $user->birthDate         = $faker->dateTimeThisCentury->format('Y-m-d');
         $user->agentName         = 'Secret Agent';
-        $user->agentPhone        = '111-234-5678';
-        $user->agentEmail        = 'secret@agent.net';
+        $user->agentPhone        = formatPhoneNumber($faker->phoneNumber);
+        $user->agentEmail        = $faker->email;
         $user->agentRelationship = 'SA';
+
         $user->save();
     }
 

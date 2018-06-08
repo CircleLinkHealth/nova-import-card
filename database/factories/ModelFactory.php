@@ -179,7 +179,7 @@ $factory->define(Practice::class, function (Faker\Generator $faker) {
     $name = $faker->company;
 
     return [
-        'name'                     => $name,
+        'name'                     => str_slug($name),
         'display_name'             => $name,
         'active'                   => true,
         'federal_tax_id'           => $faker->randomNumber(5),
@@ -188,12 +188,13 @@ $factory->define(Practice::class, function (Faker\Generator $faker) {
         'clh_pppm'                 => 0,
         //        'same_ehr_login',
         //        'sms_marketing_number',
-        'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com',
-        'invoice_recipients'       => 'mantoniou@circlelinkhealth.com',
+        'weekly_report_recipients' => 'mantoniou@circlelinkhealth.com, raph@circlelinkhealth.com',
+        'invoice_recipients'       => 'mantoniou@circlelinkhealth.com, raph@circlelinkhealth.com',
         'bill_to_name'             => $name,
         //        'auto_approve_careplans',
         'send_alerts'              => 1,
         'outgoing_phone_number'    => $faker->phoneNumber,
+        'sms_marketing_number'     => $faker->phoneNumber,
         'term_days'                => 30,
     ];
 });
