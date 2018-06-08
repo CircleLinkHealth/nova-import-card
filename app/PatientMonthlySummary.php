@@ -226,7 +226,7 @@ class PatientMonthlySummary extends \App\BaseModel
     public function billableProblems()
     {
         return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
-                    ->withPivot('name', 'icd_10_code', 'type')
+                    ->withPivot('id', 'name', 'icd_10_code', 'type')
                     ->withTimestamps();
     }
 

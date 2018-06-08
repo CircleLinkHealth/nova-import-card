@@ -423,7 +423,16 @@ class PracticeInvoiceController extends Controller
             }
             else if ($key == 'bhi_problem') {
                 if ($summary->hasServiceCode('CPT 99484')) {
-                    $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
+                    $summaryProblem = $summary->billableProblems()->wherePivot('type', 'bhi')->first();
+                    if ($summaryProblem) {
+                        $summary->billableProblems()->updateExistingPivot($summaryProblem->id, [
+                            'name' => $request['name'],
+                            'icd_10_code' => $request['code']
+                        ]);
+                    }
+                    else {
+                        $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
+                    }
                 }
                 else {
                     throw new \Exception('cannot set bhi_problem because practice is not chargeable for CPT 99484');
