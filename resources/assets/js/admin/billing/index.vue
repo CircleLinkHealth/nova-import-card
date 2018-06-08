@@ -446,7 +446,7 @@
                 }
                 else {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit BHI Problems for this Patient. Check that the practice is chargeable for CPT 99484',
+                        text: 'Cannot edit BHI Problems for this Patient Summary. Check that the practice is chargeable for CPT 99484',
                         type: 'warning',
                         interval: 3000
                     })
@@ -489,7 +489,7 @@
                             console.log('billing-change-problem', response)
                             if (problemKey == 'bhi_problem' && !response) {
                                 Event.$emit('notifications-billing:create', {
-                                    text: 'Could not set bhi_problem. Check that the practice is chargeable for CPT 99484',
+                                    text: 'An error occurred when performing this action',
                                     type: 'error',
                                     interval: 3000
                                 })
