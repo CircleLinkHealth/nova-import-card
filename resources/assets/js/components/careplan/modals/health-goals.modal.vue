@@ -1,6 +1,6 @@
 <template>
     <modal name="health-goals" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-health-goals">
-        <template slot-scope="props">
+        <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="btn-group" role="group">

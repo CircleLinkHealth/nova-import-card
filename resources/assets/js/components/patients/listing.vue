@@ -9,16 +9,16 @@
             <loader v-if="loaders.next || loaders.practices || loaders.providers"></loader>
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
-            <template slot="name" slot-scope="props">
+            <template slot="name" scope="props">
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
             </template>
-            <template slot="provider" slot-scope="props">
+            <template slot="provider" scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
-            <template slot="program" slot-scope="props">
+            <template slot="program" scope="props">
                 <div>{{ props.row.program_name }}</div>
             </template>
-            <template slot="ccmStatus" slot-scope="props">
+            <template slot="ccmStatus" scope="props">
                 <div>
                     {{ 
                         (({ 
@@ -31,7 +31,7 @@
                     }}
                 </div>
             </template>
-            <template slot="careplanStatus" slot-scope="props">
+            <template slot="careplanStatus" scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
                     {{ 
                         (({ 
@@ -48,22 +48,22 @@
             <template slot="filter__ccm">
                 <div>(HH:MM:SS)</div>
             </template>
-            <template slot="h__ccmStatus" slot-scope="props">
+            <template slot="h__ccmStatus" scope="props">
                 CCM Status
             </template>
-            <template slot="h__careplanStatus" slot-scope="props">
+            <template slot="h__careplanStatus" scope="props">
                 Careplan Status
             </template>
-            <template slot="h__dob" slot-scope="props">
+            <template slot="h__dob" scope="props">
                 Date of Birth
             </template>
-            <template slot="h__registeredOn" slot-scope="props">
+            <template slot="h__registeredOn" scope="props">
                 Registered On
             </template>
-            <template slot="h__lastReading" slot-scope="props">
+            <template slot="h__lastReading" scope="props">
                 Last Reading
             </template>
-            <template slot="h__ccm" slot-scope="props">
+            <template slot="h__ccm" scope="props">
                 CCM
             </template>
         </v-client-table>

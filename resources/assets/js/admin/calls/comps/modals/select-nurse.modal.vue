@@ -1,6 +1,6 @@
 <template>
     <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
-      <template slot-scope="props">
+      <template scope="props">
         <div class="row">
             <div class="col-sm-12 text-right" v-if="filterPatients.length">
                 <label>
@@ -20,7 +20,7 @@
                     <div class="col-sm-6">
                         <select class="form-control" name="nurse_id" v-if="patient.nurses" @change="props.info.onChange($event, patient)" required>
                             <option :value="patient.nurse.id" :disabled="patient.nurse.disabled" selected>{{patient.nurse.name}}</option>
-                            <option v-for="nurse in patient.nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}}</option>
+                            <option v-for="(nurse, index) in patient.nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}}</option>
                         </select>
                         <span class="is-valid" :class="{ valid: patient.isValidSelection(), invalid: !patient.isValidSelection() }"><span></span></span>
                         <loader v-if="!patient.nurses || patient.loaders.update"></loader>

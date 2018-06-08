@@ -1,6 +1,6 @@
 <template>
     <modal name="full-conditions" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-full-conditions">
-        <template slot-scope="props">
+        <template scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">

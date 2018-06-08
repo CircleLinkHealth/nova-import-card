@@ -1,9 +1,9 @@
 <template>
     <modal name="appointments" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-appointments">
-        <template slot-scope="props" slot="title">
+        <template scope="props" slot="title">
             <h3>Appointments</h3>
         </template>
-        <template slot-scope="props">
+        <template scope="props">
             <div class="row">
                 <div class="col-sm-12" v-if="!pagination.index">
                     <form @submit="addAppointment">
