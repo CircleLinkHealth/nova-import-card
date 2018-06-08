@@ -1,6 +1,6 @@
 <template>
     <modal name="chargeable-services" ref="modal" :info="info" :no-footer="true" class-name="modal-patient-problem">
-      <template scope="props">
+      <template slot-scope="props">
         <div class="row">
           <div class="col-sm-12">
             <div class="row form-group">
