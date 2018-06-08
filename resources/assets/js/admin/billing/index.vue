@@ -21,20 +21,26 @@
                                         <label>Select Practice</label>
                                     </div>
                                     <select2 class="form-control" v-model="selectedPractice">
-                                        <option v-for="(practice, index) in practices" :key="index" :value="practice.id">{{practice.display_name}}</option>
+                                        <option v-for="(practice, index) in practices" :key="index"
+                                                :value="practice.id">{{practice.display_name}}
+                                        </option>
                                     </select2>
                                 </div>
                                 <div class="col-sm-4">
                                     <div>
                                         <label>Select Month</label>
                                     </div>
-                                    <select2 class="form-control" v-model="selectedMonth" :value="months[0].label">
-                                        <option v-for="(month, index) in months" :key="index" :value="month.label">{{month.label}}</option>
+                                    <select2 v-if="months && months.length" class="form-control" v-model="selectedMonth" :value="months[0].label">
+                                        <option v-for="(month, index) in months" :key="index" :value="month.label">
+                                            {{month.label}}
+                                        </option>
                                     </select2>
                                 </div>
                                 <div class="col-sm-4">
                                     <div>&nbsp;</div>
-                                    <button class="btn btn-info" @click="changePractice" :disabled="loaders.billables">Load</button>
+                                    <button class="btn btn-info" @click="changePractice" :disabled="loaders.billables">
+                                        Load
+                                    </button>
                                     <loader class="inline-block absolute" v-if="loaders.billables"></loader>
                                 </div>
                             </div>
@@ -44,20 +50,28 @@
                                 <div class="row">
                                     <div class="col-sm-8">
                                         <div>
-                                            <label>Set Chargeable Service</label>
+                                            <label>
+                                                Set <a target="_blank" :href="`/practices/${practice.name}/chargeable-services`">Chargeable Services</a>
+                                            </label>
                                         </div>
                                         <select2 class="form-control" v-model="selectedService" :disabled="isClosed">
                                             <option :value="null">Set Default Code</option>
-                                            <option v-for="(service, index) in chargeableServices" :key="index" :value="service.id">{{service.code}}
+                                            <option v-for="(service, index) in selectedPracticeChargeableServices" :key="index"
+                                                    :value="service.id">{{service.code}}
                                             </option>
                                         </select2>
                                     </div>
                                     <div class="col-sm-4">
                                         <div>&nbsp;</div>
                                         <div>
-                                            <button class="btn btn-info" @click="attachChargeableService" :disabled="loaders.chargeableServices || isClosed">Attach</button>
-                                            <button class="btn btn-danger" @click="detachChargeableService" :disabled="loaders.chargeableServices || isClosed">Detach</button>
-                                            <loader class="inline-block absolute" v-if="loaders.chargeableServices"></loader>
+                                            <button class="btn btn-info" @click="attachChargeableService"
+                                                    :disabled="loaders.chargeableServices || isClosed">Attach
+                                            </button>
+                                            <button class="btn btn-danger" @click="detachChargeableService"
+                                                    :disabled="loaders.chargeableServices || isClosed">Detach
+                                            </button>
+                                            <loader class="inline-block absolute"
+                                                    v-if="loaders.chargeableServices"></loader>
                                         </div>
                                     </div>
                                 </div>
@@ -67,9 +81,9 @@
                 </div>
             </div>
             <div class="col-sm-12 text-right" v-if="tableData.length > 0">
-               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
                 <loader v-if="loaders.closeMonth"></loader>
-               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
             <div class="col-sm-12 text-center line-50 row">
@@ -118,14 +132,14 @@
                 <template slot="Problem 1" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                          @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
+                              @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
                 <template slot="Problem 2" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                          @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
+                              @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
@@ -139,7 +153,8 @@
                 <template slot="chargeable_services" slot-scope="props">
                     <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
-                            <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
+                            <label class="label label-info margin-5 inline-block"
+                                   v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
                         </div>
                         <div v-if="!props.row.chargeable_services.length">&lt;Edit&gt;</div>
                         <loader v-if="props.row.promises['update_chargeables']"></loader>
@@ -147,13 +162,14 @@
                 </template>
             </v-client-table>
             <div class="col-sm-12 text-right" v-if="tableData.length > 0">
-               <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
+                <button class="btn btn-danger" v-if="!isClosed" @click="closeMonth">Save and Lock Month</button>
                 <loader v-if="loaders.closeMonth"></loader>
-               <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
+                <button class="btn btn-success" v-if="isClosed" @click="openMonth">Unlock / Edit Month</button>
                 <loader v-if="loaders.openMonth"></loader>
             </div>
             <patient-problem-modal ref="patientProblemModal" :cpm-problems="cpmProblems"></patient-problem-modal>
-            <chargeable-services-modal ref="chargeableServicesModal" :services="chargeableServices"></chargeable-services-modal>
+            <chargeable-services-modal ref="chargeableServicesModal"
+                                       :services="selectedPracticeChargeableServices"></chargeable-services-modal>
             <error-modal ref="errorModal"></error-modal>
             <notifications ref="notifications" name="billing"></notifications>
         </div>
@@ -187,7 +203,13 @@
             'notifications': NotificationsComponent
         },
         data() {
+
+            //not a good place to initialise data from window object here
+            //window object is not safe to access until window.onload is called
+            //so, it is safer to set your data in mounted.
+
             return {
+                months: [],
                 selectedMonth: null,
                 selectedPractice: 0,
                 selectedService: null,
@@ -199,16 +221,17 @@
                     openMonth: false,
                     closeMonth: false
                 },
-                practices: window.practices || [],
-                cpmProblems: window.cpmProblems || [],
+                practices: [],
+                cpmProblems: [],
                 chargeableServices: [],
+                chargeableServicesOfPractice: [],
                 practiceId: 0,
                 url: null,
                 counts: {
                     approved: 0,
                     rejected: 0,
                     flagged: 0,
-                    total () {
+                    total() {
                         return this.approved + this.rejected + this.flagged
                     }
                 },
@@ -221,10 +244,10 @@
                     'Status',
                     'CCM Mins',
                     'BHI Mins',
-                    'Problem 1',
-                    'Problem 1 Code',
-                    'Problem 2',
-                    'Problem 2 Code',
+                    'CCM Problem 1',
+                    'CCM Problem 1 Code',
+                    'CCM Problem 2',
+                    'CCM Problem 2 Code',
                     'BHI Problem',
                     'BHI Problem Code',
                     '#Successful Calls',
@@ -276,7 +299,7 @@
                         console.error('billing-approve-reject', err)
                         tablePatient.errors[errorKey] = err.message
                     })
-                } 
+                }
             },
             changePractice() {
                 this.tableData = []
@@ -329,6 +352,9 @@
                     this.loaders.chargeableServices = false
                 })
             },
+
+            /*
+            //todo - these are supplied from the view it-self. stop sending them from the view and use this.
             getChargeableServices() {
                 this.loaders.chargeableServices = true
                 return this.axios.get(rootUrl('admin/reports/monthly-billing/v2/services')).then(response => {
@@ -343,6 +369,7 @@
                     this.loaders.chargeableServices = false
                 })
             },
+            */
             getCounts() {
                 return this.axios.get(rootUrl(`admin/reports/monthly-billing/v2/counts?practice_id=${this.selectedPractice}&date=${this.selectedMonth}`)).then(response => {
                     console.log('billing:counts', response.data)
@@ -511,7 +538,7 @@
             showErrorModal(id, name) {
                 const errors = (this.tableData.find(row => row.id === id) || {}).errors
                 console.log(errors)
-                Event.$emit('modal-error:show', { body: errors[name] }, () => {
+                Event.$emit('modal-error:show', {body: errors[name]}, () => {
                     errors[name] = null
                     console.log(errors)
                 })
@@ -532,8 +559,8 @@
                             return a
                         }, {}),
                         data: this.tableData.map(row => (Object.assign({}, row, {
-                                chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
-                            })))
+                            chargeable_services: row.chargeable_services.map(id => (this.chargeableServices.find(service => service.id == id) || {}).code)
+                        })))
                     }
                 ])
 
@@ -573,14 +600,17 @@
             }
         },
         computed: {
-            months() {
-                return window.dates
-            },
+//            months() {
+//                return dates;//window.dates
+//            },
             practice() {
-                return this.practices.find(p => p.id == this.selectedPractice)
+                return this.practices.find(p => p.id == this.selectedPractice);
+            },
+            selectedPracticeChargeableServices() {
+                return this.chargeableServicesPerPractice[this.selectedPractice] || [];
             },
             options() {
-                const $vm = this
+                const $vm = this;
                 return {
                     rowClassCallback(row) {
                         if ($vm.isClosed) return 'bg-closed'
@@ -600,17 +630,28 @@
             }
         },
         mounted() {
-            this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa)
-            this.selectedMonth = (this.months[0] || {}).label
-            this.selectedPractice = this.practices[0].id
-            this.retrieve()
-            this.getChargeableServices()
-            this.getCounts()
+
+            this.chargeableServicesPerPractice = chargeableServicesPerPractice;
+            this.chargeableServices = chargeableServices;
+            this.cpmProblems = cpmProblems;
+            this.practices = practices;
+            this.months = dates;
+
+            this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa);
+            this.selectedMonth = (this.months[0] || {}).label;
+            this.selectedPractice = this.practices[0].id;
+
+            this.retrieve();
+
+            //todo
+            //this.getChargeableServices();
+
+            this.getCounts();
 
             Event.$on('vue-tables.pagination', (page) => {
-                const $table = this.$refs.tblBillingReport
+                const $table = this.$refs.tblBillingReport;
                 if (page === $table.totalPages) {
-                    console.log('next page clicked')
+                    console.log('next page clicked');
                     this.retrieve();
                 }
             })

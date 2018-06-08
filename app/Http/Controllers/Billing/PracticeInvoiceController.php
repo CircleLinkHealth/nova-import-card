@@ -69,8 +69,6 @@ class PracticeInvoiceController extends Controller
                                      ];
                                  });
 
-        $chargeableServices = ChargeableService::all();
-
         $currentMonth = Carbon::now()->startOfMonth();
 
         $dates = [];
@@ -88,10 +86,18 @@ class PracticeInvoiceController extends Controller
             ];
         }
 
+        $chargeableServicesPerPractice = [];
+        foreach ($practices as $pr) {
+            $chargeableServicesPerPractice["$pr->id"] = $pr->chargeableServices;
+        }
+
+        $chargeableServices = ChargeableService::all();
+
         return view('admin.reports.billing', compact([
             'cpmProblems',
             'practices',
             'chargeableServices',
+            'chargeableServicesPerPractice',
             'dates',
         ]));
     }
