@@ -31,7 +31,8 @@ class UserScrambler extends Seeder
     public function scrambleDB()
     {
         //scramble users
-        User::withTrashed()
+        User::orderBy('id')
+            ->withTrashed()
             ->with(['practices'])
             ->chunk(50, function ($users) {
                 foreach ($users as $user) {

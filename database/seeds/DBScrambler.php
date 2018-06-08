@@ -62,8 +62,8 @@ class DBScrambler extends Seeder
     public function scrambleDB()
     {
         //scramble practices
-        Practice::withTrashed()
-                ->get()
+        Practice::orderBy('id')
+                ->withTrashed()
                 ->chunk(100, function ($practices) {
                     foreach ($practices as $practice) {
                         $fakePractice = \factory(Practice::class)->make();
@@ -82,7 +82,6 @@ class DBScrambler extends Seeder
                 });
 
         Location::withTrashed()
-                ->get()
                 ->chunk(100, function ($locations) {
                     foreach ($locations as $location) {
                         $location->name           = $this->faker->company;
@@ -100,7 +99,7 @@ class DBScrambler extends Seeder
                     }
                 });
 
-        PhoneNumber::get()
+        PhoneNumber::orderBy('id')
                    ->chunk(100, function ($phones) {
                        foreach ($phones as $phone) {
                            $phone->number = formatPhoneNumber($this->faker->phoneNumber);
@@ -117,8 +116,8 @@ class DBScrambler extends Seeder
             ]);
 
 
-        CcdInsurancePolicy::withTrashed()
-                          ->get()
+        CcdInsurancePolicy::orderBy('id')
+                          ->withTrashed()
                           ->chunk(1000, function ($policies) {
                               foreach ($policies as $policy) {
                                   $fakeInsurance = \factory(Practice::class)->make();
