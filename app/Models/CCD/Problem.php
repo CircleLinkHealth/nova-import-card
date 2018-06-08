@@ -135,6 +135,6 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
     }
 
     public function isBehavioral() : bool {
-        return !!$this->cpmProblem()->where('is_behavioral', 1)->first();
+        return !!$this->cpmProblem()->where('is_behavioral', 1)->exists();
     }
 }
