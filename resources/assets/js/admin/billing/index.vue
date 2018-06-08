@@ -224,7 +224,6 @@
                 practices: [],
                 cpmProblems: [],
                 chargeableServices: [],
-                chargeableServicesOfPractice: [],
                 practiceId: 0,
                 url: null,
                 counts: {
@@ -600,14 +599,11 @@
             }
         },
         computed: {
-//            months() {
-//                return dates;//window.dates
-//            },
             practice() {
                 return this.practices.find(p => p.id == this.selectedPractice);
             },
             selectedPracticeChargeableServices() {
-                return this.chargeableServicesPerPractice[this.selectedPractice] || [];
+                return this.practice['chargeable_services'] || [];
             },
             options() {
                 const $vm = this;
@@ -631,7 +627,6 @@
         },
         mounted() {
 
-            this.chargeableServicesPerPractice = chargeableServicesPerPractice;
             this.chargeableServices = chargeableServices;
             this.cpmProblems = cpmProblems;
             this.practices = practices;
