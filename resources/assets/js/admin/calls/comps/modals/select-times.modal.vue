@@ -1,6 +1,6 @@
 <template>
     <modal name="select-times" :no-title="true" :no-footer="true" :info="selectTimesModalInfo">
-      <template scope="props">
+      <template slot-scope="props">
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center" v-if="!selectedPatients.length">

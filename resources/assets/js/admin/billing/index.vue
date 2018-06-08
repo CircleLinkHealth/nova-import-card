@@ -96,7 +96,7 @@
                 </div>
             </div>
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
-                <template slot="approved" scope="props">
+                <template slot="approved" slot-scope="props">
                     <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
@@ -104,7 +104,7 @@
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
-                <template slot="rejected" scope="props">
+                <template slot="rejected" slot-scope="props">
                     <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
                         type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
                     <span class="error-btn" v-if="props.row.errors.approve_reject" 
@@ -112,31 +112,31 @@
                         @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
-                <template slot="Patient" scope="props">
+                <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="Problem 1" scope="props">
+                <template slot="Problem 1" slot-scope="props">
                     <div>
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
-                <template slot="Problem 2" scope="props">
+                <template slot="Problem 2" slot-scope="props">
                     <div>
                         <span class="blue pointer"
                           @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
-                <template slot="BHI Problem" scope="props">
+                <template slot="BHI Problem" slot-scope="props">
                     <div>
                         <span class="blue pointer"
                           @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['bhi_problem']"></loader>
                     </div>
                 </template>
-                <template slot="chargeable_services" scope="props">
+                <template slot="chargeable_services" slot-scope="props">
                     <div class="blue pointer" @click="showChargeableServicesModal(props.row)">
                         <div v-if="props.row.chargeable_services.length">
                             <label class="label label-info margin-5 inline-block" v-for="service in props.row.chargeables()" :key="service.id">{{service.code}}</label>
