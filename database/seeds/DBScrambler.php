@@ -118,19 +118,13 @@ class DBScrambler extends Seeder
 
         CcdInsurancePolicy::orderBy('id')
                           ->withTrashed()
-                          ->chunk(1000, function ($policies) {
-                              foreach ($policies as $policy) {
-                                  $fakeInsurance = \factory(Practice::class)->make();
-
-                                  $policy->name       = $fakeInsurance->name;
-                                  $policy->type       = $fakeInsurance->type;
-                                  $policy->policy_id  = $fakeInsurance->policy_id;
-                                  $policy->relation   = $fakeInsurance->relation;
-                                  $policy->subscriber = $fakeInsurance->subscriber;
-
-                                  $saved = $policy->save();
-                              }
-                          });
+                          ->update([
+                              'name'       => 'scrambled data',
+                              'type'       => 'scrambled data',
+                              'policy_id'  => 'scrambled data',
+                              'relation'   => 'scrambled data',
+                              'subscriber' => 'scrambled data',
+                          ]);
 
         Addendum::where('id', '>', 0)
                 ->update([
@@ -159,6 +153,11 @@ class DBScrambler extends Seeder
             ->update([
                 'body' => $this->faker->text(),
             ]);
+
+        Notification::where('id', '>', 0)
+                    ->update([
+                        'data' => '{}',
+                    ]);
 
         $this->truncateTables();
 
@@ -198,6 +197,7 @@ class DBScrambler extends Seeder
             'lgh_providers',
             'lgh_valid_patients',
             'lv_password_resets',
+            'media',
             'patient_reports',
             'patient_signups',
             'pdfs',
