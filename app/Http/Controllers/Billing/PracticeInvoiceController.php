@@ -65,6 +65,7 @@ class PracticeInvoiceController extends Controller
                                          'id'   => $p->id,
                                          'name' => $p->name,
                                          'code' => $p->default_icd_10_code,
+                                         'is_behavioral' => $p->is_behavioral
                                      ];
                                  });
 

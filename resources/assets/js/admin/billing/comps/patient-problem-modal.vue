@@ -22,7 +22,7 @@
               </div>
               <div class="col-sm-12">
                 <select class="form-control" v-model="props.info.cpm_id" @change="props.info.changeCpmProblemName">
-                  <option v-for="(problem, index) in props.info.cpmProblems" :key="index" :value="problem.id">{{problem.name}}</option>
+                  <option v-for="(problem, index) in props.info.cpmProblemsForSelect()" :key="index" :value="problem.id">{{problem.name}}</option>
                 </select>
               </div>
             </div>
@@ -100,6 +100,12 @@
                   cpm_id: null,
                   problems: [],
                   type: 1,
+                  cpmProblemsForSelect () {
+                    if (this.type == PROBLEM_TYPES.BHI) {
+                      return this.cpmProblems.filter(problem => problem.name && problem.is_behavioral)
+                    }
+                    return this.cpmProblems.filter(problem => problem.name && !problem.is_behavioral)
+                  },
                   problemsForSelect () {
                     if (this.type == PROBLEM_TYPES.BHI) {
                       return this.problems.filter(problem => problem.name && problem.is_behavioral)

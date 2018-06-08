@@ -132,7 +132,7 @@
                 <template slot="BHI Problem" scope="props">
                     <div>
                         <span class="blue pointer"
-                          @click="showProblemsModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
+                          @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['bhi_problem']"></loader>
                     </div>
                 </template>
@@ -173,6 +173,7 @@
     import Loader from '../../components/loader'
     import timeDisplay from '../../util/time-display'
     import NotificationsComponent from '../../components/notifications'
+    import SERVICES from '../../constants/services.types'
 
     export default {
         name: 'billing-report',
@@ -416,6 +417,9 @@
                                     console.error('billing:chargeable-services:update', err)
                                     item.promises.update_chargeables = false
                                 })
+                            },
+                            isBhiEligible () {
+                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484)
                             }
                         }
                         return item
@@ -434,6 +438,19 @@
                     title: 'Select Chargeable Services for ' + row.Patient,
                     row
                 })
+            },
+
+            showBhiModal(patient, type) {
+                if (patient.isBhiEligible()) {
+                    this.showProblemsModal(patient, type)
+                }
+                else {
+                    Event.$emit('notifications-billing:create', {
+                        text: 'Cannot edit BHI Problems for this Patient. Check that the practice is chargeable for CPT 99484',
+                        type: 'warning',
+                        interval: 3000
+                    })
+                }
             },
 
             showProblemsModal(patient, type) {
