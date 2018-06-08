@@ -38,7 +38,7 @@ class UserScrambler extends Seeder
             ->whereDoesntHave('practices', function ($q) {
                 $q->where('id', 8);
             })
-            ->chunk(500, function ($users) {
+            ->chunk(200, function ($users) {
                 foreach ($users as $user) {
                     $user->scramble();
                 }

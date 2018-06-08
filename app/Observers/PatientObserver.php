@@ -23,7 +23,7 @@ class PatientObserver
 
     public function sendPatientConsentedNote(Patient $patient)
     {
-        if ( ! optional($patient->user->careplan)->isProviderApproved() || !auth()->check()) {
+        if ( ! optional($patient->user->careplan)->isProviderApproved() || ! auth()->check()) {
             return;
         }
 
@@ -38,6 +38,10 @@ class PatientObserver
     public function attachTargetPatient(Patient $patient)
     {
         $user = $patient->user;
+
+        if ( ! $user) {
+            return;
+        }
 
         $enrollee = Enrollee::where([
             ['mrn', '=', $patient->mrn_number],
