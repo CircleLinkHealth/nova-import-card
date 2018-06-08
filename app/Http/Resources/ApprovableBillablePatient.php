@@ -87,6 +87,7 @@ class ApprovableBillablePatient extends Resource
                 'id'   => $prob->id,
                 'name' => $prob->name,
                 'code' => $prob->icd10Code(),
+                'is_behavioral' => $prob->isBehavioral()
             ];
         });
     }
