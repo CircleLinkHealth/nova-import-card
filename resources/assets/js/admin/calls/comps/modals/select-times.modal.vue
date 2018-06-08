@@ -1,6 +1,6 @@
 <template>
     <modal name="select-times" :no-title="true" :no-footer="true" :info="selectTimesModalInfo">
-      <template scope="props">
+        <template slot-scope="props">
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center" v-if="!selectedPatients.length">
@@ -69,8 +69,7 @@
 
 <script>
     import Modal from '../../../common/modal'
-    import { Event } from 'vue-tables-2'
-    import { rootUrl } from '../../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Notifications from '../../../../components/notifications'
     import Loader from '../../../../components/loader'
     import Datepicker from 'vuejs-datepicker'

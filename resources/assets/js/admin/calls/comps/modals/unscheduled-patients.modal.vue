@@ -1,6 +1,6 @@
 <template>
     <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo">
-      <template scope="props" slot="title">
+        <template slot-scope="props" slot="title">
         <div class="row">
             <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
                 <v-select class="form-control" v-model="selectedPracticeData" 
@@ -9,7 +9,7 @@
             </div>
         </div>
       </template>
-      <template scope="props">
+        <template slot-scope="props">
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center" v-if="!patients.length">
@@ -18,7 +18,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
-                            <template slot="name" scope="props">
+                            <template slot="name" slot-scope="props">
                                 <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
                             </template>
                         </v-client-table>

@@ -1,6 +1,6 @@
 <template>
     <modal name="full-conditions" :no-title="true" :no-cancel="true" :no-buttons="true" class-name="modal-full-conditions">
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="text-right">
@@ -108,8 +108,8 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
 

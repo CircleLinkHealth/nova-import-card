@@ -5,7 +5,7 @@
             <template slot="title">
                 You have gone idle ...
             </template>
-            <template scope="props">
+            <template slot-scope="props">
                 <div class="row">
                     <div class="col-sm-12">
                         We haven’t heard from you in a while 😢. Were you working on a specific patient while we were idle?
@@ -18,8 +18,7 @@
 
 <script>
     import EventBus from './event-bus'
-    import { Event } from 'vue-tables-2'
-    import { rootUrl } from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../common/modal'
 
     export default {

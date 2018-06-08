@@ -10,7 +10,7 @@
           </div>
         </div>
       </template>
-      <template scope="props">
+        <template slot-scope="props">
         <form action="/callcreate" @submit="submitForm">
           <div class="row">
             <div class="col-sm-12">

@@ -1,7 +1,7 @@
 <template>
     <div>
         <notifications>
-            <template scope="props">
+            <template slot-scope="props">
                <a :href="props.note.href" target="_blank" v-if="props.note.href">{{props.note.message}}</a>
                <span v-if="!props.note.href">
                    {{props.note.message}}
@@ -18,19 +18,19 @@
         </div>
 
         <v-client-table ref="ccdRecords" :data="tableData" :columns="columns" :options="options">
-            <template slot="selected" scope="props">
+            <template slot="selected" slot-scope="props">
                 <input class="row-select" v-model="props.row.selected" @change="select($event, props.row.id)" type="checkbox" />
             </template>
             <template slot="h__selected">
                 <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
             </template>
-            <template slot="Practice" scope="props">
+            <template slot="Practice" slot-scope="props">
                 <select class="form-control" v-model="props.row.Practice" @change="props.row.changePractice(props.row.Practice)">
                     <option value="">Select Practice</option>
                     <option v-for="practice in props.row.practices()" :key="practice.id" :value="practice.id">{{practice.display_name}}</option>
                 </select>
             </template>
-            <template slot="Location" scope="props">
+            <template slot="Location" slot-scope="props">
                 <select class="form-control" v-model="props.row.Location" @change="props.row.changeLocation(props.row.Location)">
                     <option :value="null">Select Location</option>
                     <option v-for="location in props.row.locations" :key="location.id" :value="location.id">{{location.name}}</option>
@@ -39,7 +39,7 @@
                     <loader></loader>
                 </div>
             </template>
-            <template slot="Billing Provider" scope="props">
+            <template slot="Billing Provider" slot-scope="props">
                 <select class="form-control" v-model="props.row['Billing Provider']" @change="props.row.changeProvider(props.row['Billing Provider'])">
                     <option :value="null">Select Billing Provider</option>
                     <option v-for="provider in props.row.providers" :key="provider.id" :value="provider.id">{{provider.display_name}}</option>
@@ -48,22 +48,22 @@
                     <loader></loader>
                 </div>
             </template>
-            <template slot="2+ Cond" scope="props">
+            <template slot="2+ Cond" slot-scope="props">
                 <input class="row-select" v-model="props.row['2+ Cond']" type="checkbox" />
             </template>
-            <template slot="Medicare" scope="props">
+            <template slot="Medicare" slot-scope="props">
                 <input class="row-select" v-model="props.row.Medicare" type="checkbox" />
             </template>
-            <template slot="Supplemental Ins" scope="props">
+            <template slot="Supplemental Ins" slot-scope="props">
                 <input class="row-select" v-model="props.row['Supplemental Ins']" type="checkbox" />
             </template>
-            <template slot="duplicate" scope="props">
+            <template slot="duplicate" slot-scope="props">
                 <a :href="rootUrl(`manage-patients/${props.row.duplicate_id}/view-careplan`)" target="_blank" v-if="props.row.duplicate_id">View</a>
             </template>
             <template slot="h__Remove">
                 <input class="btn btn-danger btn-round" v-if="multipleSelected" @click="deleteMultiple" type="button" value="x" />
             </template>
-            <template slot="Remove" scope="props">
+            <template slot="Remove" slot-scope="props">
                 <input class="btn btn-danger btn-round" :class="{ 'btn-gray': multipleSelected }" type="button" @click="deleteOne(props.row.id)" value="x" />
                 <div v-if="props.row.loaders.delete">
                     <loader></loader>
@@ -72,7 +72,7 @@
             <template slot="h__Submit">
                 <input class="btn btn-success btn-round" type="button" v-if="multipleSelected" @click="submitMultiple" value="✔" />
             </template>
-            <template slot="Submit" scope="props">
+            <template slot="Submit" slot-scope="props">
                 <input class="btn btn-success btn-round" v-if="!props.row.loaders.confirm" :class="{ 'btn-gray': multipleSelected }" type="button" @click="submitOne(props.row.id)" value="✔" :disabled="!props.row.validate()" />
                 <div v-if="props.row.loaders.confirm">
                     <loader></loader>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../app.config'
+    import {rootUrl} from '../../app.config'
     import TextEditable from '../../admin/calls/comps/text-editable'
     import EventBus from '../../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../loader'

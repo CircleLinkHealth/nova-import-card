@@ -21,7 +21,7 @@
     </div>
     <div>
       <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
-        <template slot="child_row" scope="props">
+          <template slot="child_row" slot-scope="props">
           <div class="row row-info">
             <div class="col-sm-12">
               <div class="row">
@@ -62,31 +62,31 @@
             </div>
           </div>
         </template>
-        <template slot="selected" scope="props">
+          <template slot="selected" slot-scope="props">
           <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
         </template>
-        <template slot="h__selected" scope="props">
+          <template slot="h__selected" slot-scope="props">
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
-        <template slot="Patient ID" scope="props">
+          <template slot="Patient ID" slot-scope="props">
           <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
         </template>
-        <template slot="Nurse" scope="props">
+          <template slot="Nurse" slot-scope="props">
           <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
-        <template slot="Next Call" scope="props">
+          <template slot="Next Call" slot-scope="props">
           <div>
             <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onNextCallUpdate.bind(props.row)"></date-editable>
             <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
           </div>
         </template>
-        <template slot="Call Time Start" scope="props">
+          <template slot="Call Time Start" slot-scope="props">
           <div>
             <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"></time-editable>
             <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
           </div>
         </template>
-        <template slot="Call Time End" scope="props">
+          <template slot="Call Time End" slot-scope="props">
           <div>
             <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"></time-editable>
             <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
@@ -107,27 +107,35 @@
 </template>
 
 <script>
-  import { rootUrl } from '../../app.config.js'
-  import { Event } from 'vue-tables-2'
-  import { CancelToken } from 'axios'
-  import TextEditable from './comps/text-editable'
-  import DateEditable from './comps/date-editable'
-  import SelectEditable from './comps/select-editable'
-  import TimeEditable from './comps/time-editable'
-  import Modal from '../common/modal'
-  import AddCallModal from './comps/modals/add-call.modal'
-  import SelectNurseModal from './comps/modals/select-nurse.modal'
-  import SelectTimesModel from './comps/modals/select-times.modal'
-  import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
-  import BindAppEvents from './app.events'
-  import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
-  import Loader from '../../components/loader'
-  import VueCache from '../../util/vue-cache'
-  import { today } from '../../util/today'
-  import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
-  import timeDisplay from '../../util/time-display'
+    import {rootUrl} from '../../app.config.js'
+    import {Event} from 'vue-tables-2'
+    import {CancelToken} from 'axios'
+    import TextEditable from './comps/text-editable'
+    import DateEditable from './comps/date-editable'
+    import SelectEditable from './comps/select-editable'
+    import TimeEditable from './comps/time-editable'
+    import Modal from '../common/modal'
+    import AddCallModal from './comps/modals/add-call.modal'
+    import SelectNurseModal from './comps/modals/select-nurse.modal'
+    import SelectTimesModel from './comps/modals/select-times.modal'
+    import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
+    import BindAppEvents from './app.events'
+    import {DayOfWeek, ShortDayOfWeek} from '../helpers/day-of-week'
+    import Loader from '../../components/loader'
+    import VueCache from '../../util/vue-cache'
+    import {today} from '../../util/today'
+    import {
+        onAttemptNoteUpdate,
+        onCallTimeEndUpdate,
+        onCallTimeStartUpdate,
+        onGeneralCommentUpdate,
+        onNextCallUpdate,
+        onNurseUpdate,
+        updateMultiValues
+    } from './utils/call-update.fn'
+    import timeDisplay from '../../util/time-display'
 
-  export default {
+    export default {
       name: 'CallMgmtApp',
       mixins: [ VueCache ],
       components: {

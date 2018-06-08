@@ -1,9 +1,9 @@
 <template>
     <modal name="appointments" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-appointments">
-        <template scope="props" slot="title">
+        <template slot-scope="props" slot="title">
             <h3>Appointments</h3>
         </template>
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12" v-if="!pagination.index">
                     <form @submit="addAppointment">
@@ -79,8 +79,8 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import moment from 'moment'
     import VueSelect from 'vue-select'

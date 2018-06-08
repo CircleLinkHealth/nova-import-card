@@ -1,6 +1,6 @@
 <template>
     <modal name="lifestyles" :no-title="true" :no-footer="true" :no-cancel="true" :no-buttons="true" class-name="modal-care-areas">
-        <template scope="props">
+        <template slot-scope="props">
             <div class="row">
                 <div class="col-sm-12 pad-top-10" :class="{ 'lifestyle-container': isExtendedView }">
                     <div class="btn-group" role="group" :class="{ 'lifestyle-buttons': isExtendedView }">
@@ -19,8 +19,7 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
 
     export default {
