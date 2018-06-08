@@ -167,7 +167,6 @@
     import PatientProblemModal from './comps/patient-problem-modal'
     import ChargeableServicesModal from './comps/chargeable-services-modal'
     import ErrorModal from './comps/error-modal'
-    import moment from 'moment'
     import buildReport, {styles} from '../../excel'
     import Select2Component from '../../components/src/select2'
     import Loader from '../../components/loader'
@@ -446,9 +445,9 @@
                 }
                 else {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit BHI Problems for this Patient Summary. Check that the practice is chargeable for CPT 99484',
+                        text: 'Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for CPT 99484.',
                         type: 'warning',
-                        interval: 3000
+                        interval: 5000
                     })
                 }
             },
