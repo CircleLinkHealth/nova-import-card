@@ -447,6 +447,9 @@
                             },
                             isBhiEligible() {
                                 return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484)
+                            },
+                            hasOver20MinutesBhiTime() {
+                                return patient.bhi_time >= 1200
                             }
                         }
                         return item
@@ -468,8 +471,15 @@
             },
 
             showBhiModal(patient, type) {
-                if (patient.isBhiEligible()) {
+                if (patient.isBhiEligible() && patient.hasOver20MinutesBhiTime()) {
                     this.showProblemsModal(patient, type)
+                }
+                else if (!patient.hasOver20MinutesBhiTime()) {
+                    Event.$emit('notifications-billing:create', {
+                        text: 'Cannot edit BHI Problem. The Patient has less than 20 minutes BHI time.',
+                        type: 'warning',
+                        interval: 5000
+                    })
                 }
                 else {
                     Event.$emit('notifications-billing:create', {
