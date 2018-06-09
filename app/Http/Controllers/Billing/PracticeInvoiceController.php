@@ -63,10 +63,10 @@ class PracticeInvoiceController extends Controller
                                  ->get()
                                  ->map(function ($p) {
                                      return [
-                                         'id'   => $p->id,
-                                         'name' => $p->name,
-                                         'code' => $p->default_icd_10_code,
-                                         'is_behavioral' => $p->is_behavioral
+                                         'id'            => $p->id,
+                                         'name'          => $p->name,
+                                         'code'          => $p->default_icd_10_code,
+                                         'is_behavioral' => $p->is_behavioral,
                                      ];
                                  });
 
@@ -374,7 +374,7 @@ class PracticeInvoiceController extends Controller
             $problemId = $request['id'];
 
             if (in_array(strtolower($problemId), ['other', 'new'])) {
-                $problemId = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
+                $newProblem = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
                     'name'             => $request['name'],
                     'cpm_problem_id'   => $request['cpm_problem_id'],
                     'billable'         => true,
@@ -382,7 +382,9 @@ class PracticeInvoiceController extends Controller
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
                     'is_monitored'     => true,
-                ])->id;
+                ]);
+
+                $problemId = optional($newProblem)->id;
             }
 
             if ($problemId) {
@@ -423,15 +425,14 @@ class PracticeInvoiceController extends Controller
             if ($key == 'problem_1' || $key == 'problem_2') {
                 $summary->$key = $problemId;
             } else if ($key == 'bhi_problem' && $summary->hasServiceCode('CPT 99484')) {
+                if ($request['cpm_problem_id']) {
+                    $cpmProblem = CpmProblem::where('id', $request['cpm_problem_id'])->where('is_behavioral',
+                        1)->exists();
 
-                // Uncomment this when bug with FE always posting cpm_problem_id 7 is fixed
-//                if ($request['cpm_problem_id']) {
-//                    $cpmProblem = CpmProblem::find($request['cpm_problem_id']);
-//
-//                    if (! $cpmProblem->is_behavioral) {
-//                        throw new \Exception('Please select a BHI problem.');
-//                    }
-//                }
+                    if ( ! $cpmProblem) {
+                        throw new \Exception('Please select a BHI problem.');
+                    }
+                }
 
                 if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
                     $summary->billableProblems()->updateExistingPivot($problemId, [
