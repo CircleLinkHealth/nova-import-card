@@ -134,17 +134,17 @@
                 <template slot="Patient" slot-scope="props">
                     <a :href="props.row.patientUrl" target="_blank" class="blue">{{props.row.Patient}}</a>
                 </template>
-                <template slot="Problem 1" slot-scope="props">
+                <template slot="CCM Problem 1" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showProblemsModal(props.row, 1)">{{props.row['Problem 1'] || '&lt;Edit&gt;'}}</span>
+                              @click="showProblemsModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
-                <template slot="Problem 2" slot-scope="props">
+                <template slot="CCM Problem 2" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showProblemsModal(props.row, 2)">{{props.row['Problem 2'] || '&lt;Edit&gt;'}}</span>
+                              @click="showProblemsModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
@@ -491,12 +491,12 @@
                             modified.name = (this.cpmProblems.find(problem => problem.id == modified.cpm_id) || {}).name || modified.name
                         }
                         if (type === 1) {
-                            tablePatient['Problem 1 Code'] = modified.code
-                            tablePatient['Problem 1'] = modified.name
+                            tablePatient['CCM Problem 1 Code'] = modified.code
+                            tablePatient['CCM Problem 1'] = modified.name
                         }
                         else if (type == 2) {
-                            tablePatient['Problem 2 Code'] = modified.code
-                            tablePatient['Problem 2'] = modified.name
+                            tablePatient['CCM Problem 2 Code'] = modified.code
+                            tablePatient['CCM Problem 2'] = modified.name
                         }
                         else if (type == 3) {
                             tablePatient['BHI Problem Code'] = modified.code
