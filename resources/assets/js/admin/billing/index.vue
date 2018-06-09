@@ -30,7 +30,8 @@
                                     <div>
                                         <label>Select Month</label>
                                     </div>
-                                    <select2 v-if="months && months.length" class="form-control" v-model="selectedMonth" :value="months[0].label">
+                                    <select2 v-if="months && months.length" class="form-control" v-model="selectedMonth"
+                                             :value="months[0].label">
                                         <option v-for="(month, index) in months" :key="index" :value="month.label">
                                             {{month.label}}
                                         </option>
@@ -50,13 +51,15 @@
                                 <div class="row">
                                     <div class="col-sm-8">
                                         <div>
-                                            <label>
-                                                Set <a target="_blank" :href="`/practices/${practice.name}/chargeable-services`">Chargeable Services</a>
+                                            <label v-if="typeof practice !== 'undefined'">
+                                                Set <a target="_blank"
+                                                       :href="`/practices/${practice.name}/chargeable-services`">Chargeable Services</a>
                                             </label>
                                         </div>
                                         <select2 class="form-control" v-model="selectedService" :disabled="isClosed">
                                             <option :value="null">Set Default Code</option>
-                                            <option v-for="(service, index) in selectedPracticeChargeableServices" :key="index"
+                                            <option v-for="(service, index) in selectedPracticeChargeableServices"
+                                                    :key="index"
                                                     :value="service.id">{{service.code}}
                                             </option>
                                         </select2>
@@ -111,19 +114,21 @@
             </div>
             <v-client-table ref="tblBillingReport" :data="tableData" :columns="columns" :options="options">
                 <template slot="approved" slot-scope="props">
-                    <input class="row-select" v-model="props.row.approved" @change="approveOrReject($event, props.row, 'approve')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
-                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
-                        title="view error message"
-                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
+                    <input class="row-select" v-model="props.row.approved"
+                           @change="approveOrReject($event, props.row, 'approve')"
+                           type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
+                    <span class="error-btn" v-if="props.row.errors.approve_reject"
+                          title="view error message"
+                          @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
                 <template slot="rejected" slot-scope="props">
-                    <input class="row-select" v-model="props.row.rejected" @change="approveOrReject($event, props.row, 'reject')" 
-                        type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
-                    <span class="error-btn" v-if="props.row.errors.approve_reject" 
-                        title="view error message"
-                        @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
+                    <input class="row-select" v-model="props.row.rejected"
+                           @change="approveOrReject($event, props.row, 'reject')"
+                           type="checkbox" :readonly="!!props.row.promises['approve_reject']" style="display:block;"/>
+                    <span class="error-btn" v-if="props.row.errors.approve_reject"
+                          title="view error message"
+                          @click="showErrorModal(props.row.id, 'approve_reject')">x</span>
                     <loader v-if="props.row.promises['approve_reject']"></loader>
                 </template>
                 <template slot="Patient" slot-scope="props">
@@ -146,7 +151,7 @@
                 <template slot="BHI Problem" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                          @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
+                              @click="showBhiModal(props.row, 3)">{{props.row['BHI Problem'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['bhi_problem']"></loader>
                     </div>
                 </template>
@@ -203,13 +208,14 @@
             'notifications': NotificationsComponent
         },
         data() {
-
-            //not a good place to initialise data from window object here
-            //window object is not safe to access until window.onload is called
-            //so, it is safer to set your data in mounted.
-
             return {
-                months: [],
+                //from server side
+                months: dates,
+                practices: practices,
+                chargeableServicesPerPractice: practices.reduce((map, x) => {map[x.id] = x['chargeable_services']; return map;}, {}),
+                cpmProblems: cpmProblems,
+                chargeableServices: chargeableServices,
+                //
                 selectedMonth: null,
                 selectedPractice: 0,
                 selectedService: null,
@@ -221,10 +227,6 @@
                     openMonth: false,
                     closeMonth: false
                 },
-                practices: [],
-                cpmProblems: [],
-                chargeableServices: [],
-                practiceId: 0,
                 url: null,
                 counts: {
                     approved: 0,
@@ -443,7 +445,7 @@
                                     item.promises.update_chargeables = false
                                 })
                             },
-                            isBhiEligible () {
+                            isBhiEligible() {
                                 return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484)
                             }
                         }
@@ -600,10 +602,10 @@
         },
         computed: {
             practice() {
-                return this.practices.find(p => p.id == this.selectedPractice);
+                return this.practices.find(p => +p.id === +this.selectedPractice);
             },
             selectedPracticeChargeableServices() {
-                return this.practice['chargeable_services'] || [];
+                return this.chargeableServicesPerPractice[this.selectedPractice] || [];
             },
             options() {
                 const $vm = this;
@@ -626,11 +628,6 @@
             }
         },
         mounted() {
-
-            this.chargeableServices = chargeableServices;
-            this.cpmProblems = cpmProblems;
-            this.practices = practices;
-            this.months = dates;
 
             this.tableData = this.tableData.sort((pA, pB) => pB.qa - pA.qa);
             this.selectedMonth = (this.months[0] || {}).label;

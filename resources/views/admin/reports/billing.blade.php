@@ -98,6 +98,7 @@
                                 });
 
                                 const chargeableServices = JSON.parse("{{json_encode($chargeableServices)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
+
                                 const dates = JSON.parse("{{json_encode($dates)}}".replace(/\r\n/g, '').replace(/\&quot;/g, '"'));
                             </script>
                         @endpush
