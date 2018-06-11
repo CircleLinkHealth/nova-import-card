@@ -137,14 +137,14 @@
                 <template slot="CCM Problem 1" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showProblemsModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row, 1)">{{props.row['CCM Problem 1'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_1']"></loader>
                     </div>
                 </template>
                 <template slot="CCM Problem 2" slot-scope="props">
                     <div>
                         <span class="blue pointer"
-                              @click="showProblemsModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
+                              @click="showCcmModal(props.row, 2)">{{props.row['CCM Problem 2'] || '&lt;Edit&gt;'}}</span>
                         <loader v-if="props.row.promises['problem_2']"></loader>
                     </div>
                 </template>
@@ -212,7 +212,10 @@
                 //from server side
                 months: dates,
                 practices: practices,
-                chargeableServicesPerPractice: practices.reduce((map, x) => {map[x.id] = x['chargeable_services']; return map;}, {}),
+                chargeableServicesPerPractice: practices.reduce((map, x) => {
+                    map[x.id] = x['chargeable_services'];
+                    return map;
+                }, {}),
                 cpmProblems: cpmProblems,
                 chargeableServices: chargeableServices,
                 //
@@ -428,7 +431,9 @@
                                 approve_reject: null
                             },
                             chargeables: () => {
-                                return item.chargeable_services.map(id => this.chargeableServices.find(service => service.id == id)).filter(Boolean)
+                                //we need the chargeableService for the practice (not all chargeableServices)
+                                const practiceChargeableServices = this.selectedPracticeChargeableServices;
+                                return item.chargeable_services.map(id => practiceChargeableServices.find(service => service.id == id)).filter(Boolean)
                             },
                             onChargeableServicesUpdate: (serviceIDs) => {
                                 item.chargeable_services = serviceIDs
@@ -446,11 +451,17 @@
                                 })
                             },
                             isBhiEligible() {
-                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484)
+                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99484);
+                            },
+                            isCcmEligible() {
+                                return !!this.chargeables().find(service => service.code === SERVICES.CPT_99490);
                             },
                             hasOver20MinutesBhiTime() {
-                                return patient.bhi_time >= 1200
-                            }
+                                return patient.bhi_time >= 1200;
+                            },
+                            hasOver20MinutesCCMTime() {
+                                return patient.ccm_time >= 1200;
+                            },
                         }
                         return item
                     }).sort((pA, pB) => pB.qa - pA.qa))
@@ -471,27 +482,51 @@
             },
 
             showBhiModal(patient, type) {
-                if (patient.isBhiEligible() && patient.hasOver20MinutesBhiTime()) {
-                    this.showProblemsModal(patient, type)
+                if (!patient.isBhiEligible()) {
+                    Event.$emit('notifications-billing:create', {
+                        text: `Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99484}.`,
+                        type: 'warning',
+                        interval: 5000
+                    });
+                    return;
                 }
-                else if (!patient.hasOver20MinutesBhiTime()) {
+
+                if (!patient.hasOver20MinutesBhiTime()) {
                     Event.$emit('notifications-billing:create', {
                         text: 'Cannot edit BHI Problem. The Patient has less than 20 minutes BHI time.',
                         type: 'warning',
                         interval: 5000
-                    })
+                    });
+                    return;
                 }
-                else {
+
+                this.showProblemsModal(patient, type);
+            },
+
+            showCcmModal(patient, type) {
+                if (!patient.isCcmEligible()) {
                     Event.$emit('notifications-billing:create', {
-                        text: 'Cannot edit BHI Problem. Check that both Practice and Patient are chargeable for CPT 99484.',
+                        text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
                         type: 'warning',
                         interval: 5000
-                    })
+                    });
+                    return;
                 }
+
+                if (!patient.hasOver20MinutesCCMTime()) {
+                    Event.$emit('notifications-billing:create', {
+                        text: 'Cannot edit CCM Problem. The Patient has less than 20 minutes CCM time.',
+                        type: 'warning',
+                        interval: 5000
+                    });
+                    return;
+                }
+
+                this.showProblemsModal(patient, type);
             },
 
             showProblemsModal(patient, type) {
-                const self = this
+                const self = this;
                 Event.$emit('modal-patient-problem:show', patient, type, function (modified) {
                     /** callback done function */
                     const tablePatient = self.tableData.find(pt => pt.id === patient.id)
