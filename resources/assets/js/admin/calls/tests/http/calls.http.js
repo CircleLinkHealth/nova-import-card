@@ -15,24 +15,29 @@ const callsResponse = {
     data: CALLS,
     links: {
         first: '/api/admin/calls?page=1',
-        last: '/api/admin/calls?page=2038',
+        last: '/api/admin/calls?page=34',
         prev: null,
         next: '/api/admin/calls?page=2'
     },
     meta: {
         current_page: 1,
         from: 1,
-        last_page: 2038,
+        last_page: 34,
         path: '/api/admin/calls',
         per_page: 15,
         to: 15,
-        total: 30561
+        total: 500
     }
 }
 
 mock.onGet('/api/admin/calls?scheduled&rows=undefined').reply(200, callsResponse)
 mock.onGet(`/api/admin/calls?scheduled&rows=100&minScheduledDate=${today()}`).reply(200, callsResponse)
+mock.onGet(`/api/admin/calls?scheduled&minScheduledDate=${today()}`).reply(200, callsResponse)
 mock.onGet('/api/admin/calls?page=1').reply(200, callsResponse)
+
+mock.onDelete('/api/admin/calls/2,3').reply(200, [2, 3])
+
+/** end patient calls */
 
 mock.onGet('/api/practices').reply(200, PRACTICES)
 

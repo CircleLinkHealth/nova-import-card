@@ -26,7 +26,8 @@
     },
     "setupFiles": [
       "<rootDir>/resources/assets/js/tests/index.js"
-    ]
+    ],
+    "mapCoverage": true
   },
   "babel": {
     "presets": [
