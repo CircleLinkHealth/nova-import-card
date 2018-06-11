@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# copy git hooks to ./.git/hooks/ folder
+yes | cp -Rf ./scripts/git/ ./.git/hooks/

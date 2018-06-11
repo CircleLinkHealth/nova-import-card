@@ -1,0 +1,5 @@
+#!/bin/bash
+
+composer run test
+
+npm test -- --silent
