@@ -5,10 +5,10 @@ namespace App\Jobs;
 use App\PatientMonthlySummary;
 use App\Repositories\PatientSummaryEloquentRepository;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class AttachBillableProblemsToSummary implements ShouldQueue
 {
@@ -37,7 +37,7 @@ class AttachBillableProblemsToSummary implements ShouldQueue
         $summary = $repo->attachBillableProblems($this->summary->patient, $this->summary);
 
 //        commented out on purpose. https://github.com/CircleLinkHealth/cpm-web/issues/1573
-//        $summary = $repo->attachDefaultChargeableService($summary, null, false);
+//        $summary = $repo->attachChargeableService($summary, null, false);
 
         if (is_a($summary, PatientMonthlySummary::class)) {
             $summary->save();

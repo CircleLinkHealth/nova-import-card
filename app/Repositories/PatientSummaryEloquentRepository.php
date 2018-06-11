@@ -7,7 +7,9 @@ use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
+use App\Practice;
 use App\User;
+use Cache;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
@@ -377,12 +379,12 @@ class PatientSummaryEloquentRepository
      * Attach the practice's default chargeable service to the given patient summary.
      *
      * @param $summary
-     * @param null $chargeableServiceId | The Chargeable Service Code to attach
+     * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
      * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
-    public function attachDefaultChargeableService($summary, $chargeableServiceId = null, $detach = false)
+    public function attachChargeableService($summary, $chargeableServiceId = null, $detach = false)
     {
         if ( ! $chargeableServiceId) {
             return $summary;
@@ -394,20 +396,30 @@ class PatientSummaryEloquentRepository
 //                ->updateSummaryChargeableServices;
         }
 
+        if (is_a($chargeableServiceId, ChargeableService::class)) {
+            $chargeableServiceId = $chargeableServiceId->id;
+        }
+
+        if ( ! is_array($chargeableServiceId)) {
+            $chargeableServiceId = [$chargeableServiceId];
+        }
+
         $sync = $summary->chargeableServices()
                         ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
+            $class = PatientMonthlySummary::class;
+            Cache::forget("$class:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 
         return $summary;
     }
 
-    public function detachDefaultChargeableService($summary, $defaultCodeId)
+    public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-                            ->detach($defaultCodeId);
+                            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -468,28 +480,24 @@ class PatientSummaryEloquentRepository
             return $summary;
         }
 
-        $chargeableServices       = null;
-        $attachChargeableServices = false;
+        $class = Practice::class;
 
-        if ($patient->primaryPractice->hasServiceCode('CPT 99484')) {
-            $chargeableServices       = ChargeableService::get()->keyBy('code');
-            $attachChargeableServices = true;
+        $chargeableServices = Cache::remember("$class:{$patient->primaryPractice->id}:chargeableServices", 2,
+            function () use ($patient) {
+                return $patient->primaryPractice->chargeableServices->keyBy('code');
+            });
+
+        $attach = [];
+
+        if ($chargeableServices->has('CPT 99484') && $summary->bhi_time >= 1200) {
+            $attach[] = $chargeableServices['CPT 99484']->id;
         }
 
-        if ($attachChargeableServices) {
-            $totalTime = $summary->bhi_time + $summary->ccm_time;
-
-            if ($summary->ccm_time >= 1200 && $summary->bhi_time >= 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490']);
-            } elseif ($summary->ccm_time >= 1200 && $summary->bhi_time < 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490'], true);
-            } elseif ($summary->ccm_time < 1200 && $summary->bhi_time >= 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
-            }
+        if ($chargeableServices->has('CPT 99490') && $summary->ccm_time >= 1200) {
+            $attach[] = $chargeableServices['CPT 99490']->id;
         }
 
-        return $summary;
+        return $this->attachChargeableService($summary, $attach);
     }
 
     private function attachBhiProblem($summary)
