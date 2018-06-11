@@ -154,7 +154,6 @@
             calls: false
           },
           currentDate: new Date(),
-          $nextPromise: null,
           tokens: {
             calls: null
           },
@@ -242,6 +241,9 @@
           this.$refs.tblCalls.setOrder()
           this.activateFilters()
         },
+        getFilters() {
+          return this.$refs.tblCalls.query || {}
+        },
         exportExcel() {
           const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
           console.log('calls:excel', url)
@@ -261,23 +263,24 @@
             return ''
         },
         nextPageUrl () {
+            const rowsFilterSuffix = this.$refs.tblCalls.limit ? `&rows=${this.$refs.tblCalls.limit}` : ''
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                return rootUrl(`api/admin/calls?scheduled${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
         },
         activateFilters () {
             this.pagination = null
-            this.tableData = []
-            this.$refs.tblCalls.setPage(1)
+            this.tableData = [];
+            (this.$refs.tblCalls.setPage || (() => ({})))(1)
             this.clearSelected()
             return this.next()
         },
         toggleAllSelect(e) {
           const $elem = this.$refs.tblCalls
-          const filteredData = $elem.filteredData
+          const filteredData = ($elem.filteredData || [])
           const fiteredDataIDs = filteredData.map(row => row.id)
           this.tableData = this.tableData.map(row => {
             if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
@@ -290,24 +293,25 @@
             row.selected = !row.selected
           }
         },
-        deleteSelected() {
-          if (window) {
-            const count = this.tableData.filter(row => !!row.selected).length;
-            if (count) {
-              if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
-                //perform delete action
-                this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
-                  console.log('calls:delete', response.data)
-                  response.data.forEach(id => {
-                    this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
-                  })
-                  this.activateFilters()
-                }).catch(err => {
-                  console.error('calls:delete', err)
+        deleteSelected(e, overrideConfirmation = false) {
+          const count = this.tableData.filter(row => !!row.selected).length;
+          if (count) {
+            if (overrideConfirmation || confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
+              //perform delete action
+              return this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
+                console.log('calls:delete', response.data)
+                response.data.forEach(id => {
+                  this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
                 })
-              }
+                this.activateFilters()
+                return response.data
+              }).catch(err => {
+                console.error('calls:delete', err)
+              })
             }
+            else return Promise.reject('no confirmation')
           }
+          else return Promise.reject('no selected items')
         },
         clearSelected() {
           this.selected = false
@@ -341,6 +345,7 @@
             })
             console.log('calls:nurses', pagination)
             this.loaders.nurses = false
+            return this.nurses
           }).catch(err => {
             console.error('calls:nurses', err)
             this.loaders.nurses = false
@@ -445,7 +450,7 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+          return this.axios.get(this.nextPageUrl(), {
             cancelToken: new CancelToken((c) => {
                 if ($vm.tokens.calls) {
                   $vm.tokens.calls()
@@ -494,7 +499,6 @@
                   }
                   setTimeout(() => {
                     $vm.$refs.tblCalls.count = $vm.pagination.total
-                    delete $vm.$nextPromise;
                     $vm.loaders.calls = false
                   }, 1000)
                   return tableCalls;
@@ -508,8 +512,8 @@
       },
       mounted() {
         BindAppEvents(this, Event);
-        this.next();
-        this.getNurses();
+
+        return Promise.all([this.next(), this.getNurses()])
       }
   }
 </script>

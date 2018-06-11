@@ -2,6 +2,7 @@ export default [
     {
         "id": 1,
         "user_id": 1920,
+        "full_name": "Patricia Koeppel RN",
         "status": "active",
         "user": {
           "id": 1920,
@@ -26,6 +27,7 @@ export default [
       {
         "id": 2,
         "user_id": 2159,
+        "full_name": "Kathryn Alchalabi RN",
         "status": "active",
         "user": {
           "id": 2159,
@@ -51,6 +53,7 @@ export default [
       {
         "id": 3,
         "user_id": 1755,
+        "full_name": "Lydia Kennedy RN",
         "status": "active",
         "user": {
           "id": 1755,

@@ -1,9 +1,11 @@
 export default (App, Event) => {
     const $table = App.$refs.tblCalls;
 
-    Event.$on('vue-tables.pagination', (page) => {
+    const nextPageHandler = (page) => {
         App.next();
-    })
+    }
+
+    Event.$on('vue-tables.pagination', nextPageHandler)
 
     Event.$on('vue-tables.filter::Nurse', App.activateFilters)
     
@@ -29,23 +31,30 @@ export default (App, Event) => {
     
     Event.$on('vue-tables.limit', App.activateFilters)
 
-    Event.$on('unscheduled-patients-modal:filter', (data) => {
+    function unscheduledPatientsModalFilterHandler (data) {
         Event.$emit('modal-unscheduled-patients:hide')
         Event.$emit('modal-add-call:show')
-        setTimeout(() => {
-            Event.$emit('add-call-modals:set', data)
-        }, 200)
-    })
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                Event.$emit('add-call-modals:set', data)
+                resolve(data)
+            }, 200)
+        })
+    }
 
-    Event.$on('select-nurse:update', (data) => {
-        const call = App.tableData.find(row => row.id == data.callId)
-        const nurse = App.nurses.find(nurse => nurse.id == data.nurseId)
+    Event.$on('unscheduled-patients-modal:filter', unscheduledPatientsModalFilterHandler)
+
+    function selectNurseUpdateHandler ({ callId, nurseId }) {
+        const call = App.tableData.find(row => row.id == callId)
+        const nurse = App.nurses.find(nurse => nurse.id == nurseId)
         if (call) {
-            call.NurseId = data.nurseId
-            call.Nurse = nurse.display_name
-            console.log('calls:row-update', data, call.Nurse)
+            call.NurseId = nurseId
+            call.Nurse = (nurse || {}).display_name
+            console.log('calls:row-update', { callId, nurseId }, call.Nurse)
         }
-    })
+    }
+
+    Event.$on('select-nurse:update', selectNurseUpdateHandler)
 
     function selectTimesChangeHandler ({ callIDs, nextCall, callTimeStart, callTimeEnd }) {
         console.log('select-times-change-handler', ...arguments)
@@ -63,8 +72,17 @@ export default (App, Event) => {
                 Event.$emit('modal-select-times:hide')
             }
         }
+        return new Promise((resolve, reject) => resolve(null))
     }
+
     Event.$on('select-times-modal:change', selectTimesChangeHandler)
 
     Event.$on('calls:add', App.activateFilters)
+
+    return {
+        nextPageHandler,
+        unscheduledPatientsModalFilterHandler,
+        selectNurseUpdateHandler,
+        selectTimesChangeHandler
+    }
 }

@@ -1,9 +1,13 @@
 /**
  * 
- * @param {*} opts 
+ * @param {string} opts.readyState
+ * @param {object} opts.querySelectorMap
+ * @param {array} opts.elements
  */
 const DocumentMock = function (opts = {}) {
     this.readyState = opts.readyState || 'loading'
+    this.querySelectorMap = opts.querySelectorMap || ({})
+    this.elements = opts.elements || ([])
 
     this.events = {}
 
@@ -38,6 +42,16 @@ const DocumentMock = function (opts = {}) {
                 listeners[i].apply(self, args)
             }
         }
+    }
+
+    this.querySelector = function (selector) {
+        return this.querySelectorMap[selector]
+    }
+
+    this.getElementsByTagName = function (name) {
+        return this.elements.filter((element) => {
+            return element.tagName == name
+        })
     }
 
     setTimeout(() => {
