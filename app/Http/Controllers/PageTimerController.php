@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Nurse;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
@@ -64,7 +65,9 @@ class PageTimerController extends Controller
             $newActivity->provider_id       = $providerId;
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
-            $is_behavioral   = isset($activity['is_behavioral']) ? $activity['is_behavioral'] : false;
+            $is_behavioral = isset($activity['is_behavioral'])
+                ? $activity['is_behavioral']
+                : false;
             $newActivity->url_full          = $activity['url'];
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];
@@ -97,7 +100,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if ( (! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
+        if (( ! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
             return false;
         }
 
@@ -146,19 +149,22 @@ class PageTimerController extends Controller
 
     public function handleNurseLogs($activityId)
     {
-
-        $activity = Activity::find($activityId);
+        $activity = Activity::with('patient.patientInfo')
+                            ->find($activityId);
 
         if ($activity) {
-            $nurse = User::find($activity->provider_id)->nurseInfo;
-            if ($nurse) {
-                $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
-
-                $alternativePayComputer->adjustCCMPaybleForActivity($activity);
-            }
+            return;
         }
 
-        return false;
+        $nurse = Nurse::whereUserId($activity->provider_id)
+                      ->first();
+
+        if ( ! $nurse) {
+            return;
+        }
+
+        $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
+        $alternativePayComputer->adjustNursePayForActivity($activity);
     }
 
     /**

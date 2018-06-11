@@ -109,7 +109,7 @@
     @endif
 
     <open-modal></open-modal>
-    <notifications></notifications>
+    <notifications ref="globalNotification"></notifications>
 
 </div> <!-- end #app -->
 

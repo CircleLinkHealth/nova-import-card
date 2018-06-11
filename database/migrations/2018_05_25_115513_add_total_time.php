@@ -17,7 +17,10 @@ class AddTotalTime extends Migration
 
         if ( ! Schema::hasColumn('patient_monthly_summaries', 'total_time')) {
             Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-                $table->integer('total_time')->after('patient_id');
+                $table->integer('total_time')
+                      ->nullable()
+                      ->default(0)
+                      ->after('patient_id');
             });
 
             PatientMonthlySummary::orderBy('id')

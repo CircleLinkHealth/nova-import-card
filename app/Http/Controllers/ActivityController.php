@@ -324,7 +324,7 @@ class ActivityController extends Controller
 
         if ($nurse) {
             $computer = new AlternativeCareTimePayableCalculator($nurse);
-            $computer->adjustCCMPaybleForActivity($activity);
+            $computer->adjustNursePayForActivity($activity);
         }
 
         return redirect()->route('patient.activity.view', [

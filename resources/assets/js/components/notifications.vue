@@ -102,5 +102,7 @@
     div.alert .close {
         cursor: pointer;
         margin-top: -2px;
+        margin-left: 12px;
+        font-size: 17px;
     }
 </style>

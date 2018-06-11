@@ -185,9 +185,6 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            // add p to datetime prefix
-            $datetimePrefix = date('Y-m-d-' . $user_id . '-H-i-s');
-            $prefix         = $datetimePrefix . '-' . $p;
             $user           = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
 
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
@@ -196,40 +193,37 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $fileNameWithPath = base_path($storageDirectory . $prefix . '-PDF_' . str_random(40) . '.pdf');
             $pageCount        = 0;
-            try {
-                //HTML render to help us with debugging
-                if ($request->filled('render') && $request->input('render') == 'html') {
-                    return view('wpUsers.patient.multiview', [
-                        'careplans'    => [$user_id => $careplan],
-                        'isPdf'        => true,
-                        'letter'       => $letter,
-                        'problemNames' => $careplan['problem'],
-                        'careTeam'     => $user->careTeamMembers,
-                        'data'         => $careplanService->careplan($user_id),
-                    ]);
-                }
 
-                $fileNameWithPath = $this->pdfService->createPdfFromView('wpUsers.patient.multiview', [
+            if ($request->filled('render') && $request->input('render') == 'html') {
+                return view('wpUsers.patient.multiview', [
                     'careplans'    => [$user_id => $careplan],
                     'isPdf'        => true,
                     'letter'       => $letter,
                     'problemNames' => $careplan['problem'],
                     'careTeam'     => $user->careTeamMembers,
                     'data'         => $careplanService->careplan($user_id),
-                ], $fileNameWithPath);
-
-                $pageCount = $this->pdfService->countPages($fileNameWithPath);
-            } catch (\Exception $e) {
-                \Log::critical($e);
+                ]);
             }
+
+            $fileNameWithPath = $this->pdfService->createPdfFromView('wpUsers.patient.multiview', [
+                'careplans'    => [$user_id => $careplan],
+                'isPdf'        => true,
+                'letter'       => $letter,
+                'problemNames' => $careplan['problem'],
+                'careTeam'     => $user->careTeamMembers,
+                'data'         => $careplanService->careplan($user_id),
+            ], [
+                'disable-javascript' => true,
+            ]);
+
+            $pageCount = $this->pdfService->countPages($fileNameWithPath);
             // append blank page if needed
             if ((count($users) > 1) && $pageCount % 2 != 0) {
                 $fileNameWithPath = $this->pdfService->mergeFiles([
                     $fileNameWithPath,
                     $fileNameWithPathBlankPage,
-                ], base_path($storageDirectory . $prefix . "-merged.pdf"));
+                ], $fileNameWithPath);
             }
 
             // add to array
@@ -247,7 +241,7 @@ class PatientCareplanController extends Controller
         }
 
         // merge to final file
-        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames, $fileNameWithPath);
+        $mergedFileNameWithPath = $this->pdfService->mergeFiles($pageFileNames);
 
         return response()->file($mergedFileNameWithPath);
     }

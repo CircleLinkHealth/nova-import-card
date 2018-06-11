@@ -15,7 +15,10 @@ class AddBhiTimeToPatientMonthlySummary extends Migration
     {
         if ( ! Schema::hasColumn('patient_monthly_summaries', 'bhi_time')) {
             Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-                $table->integer('bhi_time')->after('ccm_time')->default(0)->nullable();
+                $table->integer('bhi_time')
+                      ->after('ccm_time')
+                      ->default(0)
+                      ->nullable();
             });
         }
     }

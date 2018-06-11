@@ -133,4 +133,8 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
                     ->withPivot('name', 'icd_10_code')
                     ->withTimestamps();
     }
+
+    public function isBehavioral() : bool {
+        return ! ! $this->cpmProblem()->where('is_behavioral', 1)->exists();
+    }
 }

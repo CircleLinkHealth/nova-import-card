@@ -4,6 +4,7 @@ use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\AutoPullEnrolleesFromAthena;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
@@ -34,6 +35,11 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyMinute()->withoutOverlapping(15);
+
+        $schedule->command(AutoPullEnrolleesFromAthena::class)
+            ->weekly()
+            ->sundays()
+            ->at('14:30');
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 

@@ -22,7 +22,7 @@ return [
     | Do not change this value in production, it will cause unexpected behavior.
     |
     */
-    'prefix' => 'lada:',
+    'prefix'          => 'lada:',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | be a good idea to set this value to something like 604800 (7 days).
     |
     */
-    'expiration-time' => null,
+    'expiration-time' => 604800,
 
     /*
     |--------------------------------------------------------------------------

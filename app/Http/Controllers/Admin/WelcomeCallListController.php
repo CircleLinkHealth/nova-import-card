@@ -51,7 +51,7 @@ class WelcomeCallListController extends Controller
 
         if ( ! $isValid) {
             return [
-                'errors' => 'This csv does not match any of the supported templates',
+                'errors' => 'This csv does not match any of the supported templates. you can see supported templates here https://drive.google.com/drive/folders/1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB',
             ];
         }
 

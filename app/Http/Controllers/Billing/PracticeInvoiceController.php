@@ -54,6 +54,7 @@ class PracticeInvoiceController extends Controller
     {
         $practices = Practice::orderBy('display_name')
                              ->select(['name', 'id', 'display_name'])
+                             ->with('chargeableServices')
                              ->authUserCanAccess()
                              ->active()
                              ->get();
@@ -62,13 +63,12 @@ class PracticeInvoiceController extends Controller
                                  ->get()
                                  ->map(function ($p) {
                                      return [
-                                         'id'   => $p->id,
-                                         'name' => $p->name,
-                                         'code' => $p->default_icd_10_code,
+                                         'id'            => $p->id,
+                                         'name'          => $p->name,
+                                         'code'          => $p->default_icd_10_code,
+                                         'is_behavioral' => $p->is_behavioral,
                                      ];
                                  });
-
-        $chargeableServices = ChargeableService::all();
 
         $currentMonth = Carbon::now()->startOfMonth();
 
@@ -86,6 +86,8 @@ class PracticeInvoiceController extends Controller
                 'value' => $date->toDateString(),
             ];
         }
+
+        $chargeableServices = ChargeableService::all();
 
         return view('admin.reports.billing', compact([
             'cpmProblems',
@@ -372,7 +374,7 @@ class PracticeInvoiceController extends Controller
             $problemId = $request['id'];
 
             if (in_array(strtolower($problemId), ['other', 'new'])) {
-                $problemId = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
+                $newProblem = $this->patientSummaryDBRepository->storeCcdProblem($summary->patient, [
                     'name'             => $request['name'],
                     'cpm_problem_id'   => $request['cpm_problem_id'],
                     'billable'         => true,
@@ -380,7 +382,9 @@ class PracticeInvoiceController extends Controller
                     'code_system_name' => 'ICD-10',
                     'code_system_oid'  => '2.16.840.1.113883.6.3',
                     'is_monitored'     => true,
-                ])->id;
+                ]);
+
+                $problemId = optional($newProblem)->id;
             }
 
             if ($problemId) {
@@ -418,7 +422,29 @@ class PracticeInvoiceController extends Controller
                 }
             }
 
-            $summary->$key = $problemId;
+            if ($key == 'problem_1' || $key == 'problem_2') {
+                $summary->$key = $problemId;
+            } else if ($key == 'bhi_problem' && $summary->hasServiceCode('CPT 99484')) {
+                if ($request['cpm_problem_id']) {
+                    $cpmProblem = CpmProblem::where('id', $request['cpm_problem_id'])->where('is_behavioral',
+                        1)->exists();
+
+                    if ( ! $cpmProblem) {
+                        throw new \Exception('Please select a BHI problem.');
+                    }
+                }
+
+                if ($summary->billableProblems()->where((new Problem())->getTable() . '.id', $problemId)->exists()) {
+                    $summary->billableProblems()->updateExistingPivot($problemId, [
+                        'name'        => $request['name'],
+                        'icd_10_code' => $request['code'],
+                    ]);
+                } else {
+                    $summary->attachBillableProblem($problemId, $request['name'], $request['code'], 'bhi');
+                }
+            } else {
+                throw new \Exception('Cannot add BHI problem because practice does not have service CPT 99484 activated.');
+            }
 
             if ( ! $this->patientSummaryDBRepository->lacksProblems($summary)) {
                 $summary->approved = true;
@@ -446,7 +472,8 @@ class PracticeInvoiceController extends Controller
             return response()->json([
                 'message'    => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-            ], $e->getCode());
+                'code'       => $e->getCode(),
+            ], 500);
         }
     }
 
