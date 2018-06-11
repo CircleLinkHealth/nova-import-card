@@ -6,7 +6,8 @@
             <div class="row form-group">
               <div class="col-sm-12 form-control margin-5" v-for="service in patientServices" :key="service.id">
                 <label>
-                    <input type="checkbox" v-model="service.selected" :value="service.id"> {{service.code}}
+                    <input :disabled="!isServiceChargeableForPatient(service.code)" type="checkbox" v-model="service.selected" :value="service.id">
+                    <span>{{service.code}}</span>
                 </label>
               </div>
             </div>
@@ -21,6 +22,8 @@
 
 <script>
     import { Event } from 'vue-tables-2'
+
+    import SERVICES from '../../../constants/services.types';
     import Modal from '../../common/modal'
     import Loader from '../../../components/loader'
 
@@ -54,6 +57,25 @@
                 }
             }
         },
+        methods: {
+            /**
+             * Returns true if a patient can be charged for a
+             * service. We assume that the services in question here
+             * are chargeable for the patient's practice.
+             * @param serviceCode
+             * @returns {boolean}
+             */
+            isServiceChargeableForPatient: function (serviceCode) {
+                switch (serviceCode) {
+                    case SERVICES.CPT_99490:
+                        return this.row.hasOver20MinutesCCMTime();
+                    case SERVICES.CPT_99484:
+                        return this.row.hasOver20MinutesBhiTime();
+                    default:
+                        return true;
+                }
+            }
+        },
         mounted () {
             Event.$on('modal-chargeable-services:show', (modal) => {
                 this.row = (modal || {}).row
@@ -70,6 +92,10 @@
 <style>
     input[type='checkbox'] {
         display: inline !important;
+    }
+
+    input[type='checkbox'][disabled] + span {
+        color: #9e9e9e;
     }
 
     .margin-5 {
