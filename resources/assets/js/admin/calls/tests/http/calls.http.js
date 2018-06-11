@@ -89,7 +89,8 @@ mock.onGet('/api/patients?rows=all&autocomplete').reply(200, {
 /** begin nurses */
 
 const nurseUrls = [
-    '/api/nurses?compressed'
+    '/api/nurses?compressed',
+    '/api/nurses?canCallPatient=1'
 ]
 
 nurseUrls.map((url) => mock.onGet(url).reply(200, {
