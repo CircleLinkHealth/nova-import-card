@@ -163,12 +163,6 @@
                                         </div>
                                     </div>
 
-
-                                    @push('scripts')
-                                        <script>
-                
-                                        </script>
-                                    @endpush
                                     {!! Form::close() !!}
                                 </div>
                             </div>

@@ -3,7 +3,6 @@
 use App\Activity;
 use App\ActivityMeta;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Practice;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use App\User;
@@ -151,54 +150,35 @@ class ActivityController extends Controller
             return abort(404);
         }
 
-        $user = User::find($patientId);
-        if ( ! $user) {
+        $patient = User::find($patientId);
+
+        if ( ! $patient) {
             return response("User not found", 401);
         }
 
-        $patient_name = $user->getFullNameAttribute();
+        $patient_name = $patient->full_name;
 
-        //Gather details to generate form
+        $userTimeZone = $patient->timeZone;
 
-        //timezone
-
-        if ($user->timeZone == '') {
+        if (empty($userTimeZone)) {
             $userTimeZone = 'America/New_York';
-        } else {
-            $userTimeZone = $user->timeZone;
         }
 
-        //careteam
-        $careteam_info = [];
-
-        //providers
-        $providers     = Practice::getProviders($user->program_id);
-        $provider_info = [];
-
-        $nurses = User::ofType('care-center')
-                      ->get();
-
-        foreach ($nurses as $nurse) {
-            $viewable_patients = $nurse->viewablePatientIds();
-
-            if (in_array($patientId, $viewable_patients)) {
-                $provider_info[$nurse->id] = $nurse->fullName;
-            }
-        }
-
-        foreach ($providers as $provider) {
-            $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
-        }
-
-        asort($provider_info);
+        $provider_info = User::ofType(['care-center', 'provider'])
+                             ->intersectPracticesWith($patient)
+                             ->orderBy('first_name')
+                             ->get()
+                             ->mapWithKeys(function ($user) {
+                                 return [$user->id => $user->full_name];
+                             })
+                             ->all();
 
         $view_data = [
-            'program_id'     => $user->program_id,
-            'patient'        => $user,
+            'program_id'     => $patient->program_id,
+            'patient'        => $patient,
             'patient_name'   => $patient_name,
             'activity_types' => Activity::input_activity_types(),
             'provider_info'  => $provider_info,
-            'careteam_info'  => $careteam_info,
             'userTimeZone'   => $userTimeZone,
         ];
 
