@@ -7,13 +7,13 @@
 
     <title>CCD Importer</title>
 
-    <link rel="stylesheet" href="{{ asset('/compiled/css/stylesheet.css') }}"/>
+    <link rel="stylesheet" href="{{ mix('/compiled/css/stylesheet.css') }}"/>
     <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.blue-green.min.css" />
     <!-- Material Design icon font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
-    <link href="/img/favicon.png" rel="icon">
+    <link href="{{mix('/img/favicon.png')}}" rel="icon">
 
     <!-- Scripts -->
     <script src="//code.jquery.com/jquery-1.10.2.js"></script>
@@ -35,8 +35,8 @@
 
 @include('partials.footer')
 
-{{--<script src="{{ asset('/compiled/js/scripts.js') }}"></script>--}}
-<script src="/js/uploader.js"></script>
+{{--<script src="{{ mix('/compiled/js/scripts.js') }}"></script>--}}
+<script src="{{mix('/js/uploader.js')}}"></script>
 </body>
 
 

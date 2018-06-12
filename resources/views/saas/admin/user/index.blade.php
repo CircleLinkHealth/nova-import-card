@@ -4,7 +4,7 @@
 
 @section('content')
     @push('scripts')
-    <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('/js/wpUsers/wpUsers.js') }}"></script>
     @endpush
 
     <div class="container-fluid">
