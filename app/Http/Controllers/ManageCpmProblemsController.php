@@ -16,10 +16,7 @@ class ManageCpmProblemsController extends Controller
     {
         $problems = CpmProblem::get()->sortBy('name');
 
-        $problem = null;
-
-
-        return view('admin.problemKeywords.index', compact(['problems', 'problem',]));
+        return view('admin.problemKeywords.index', compact(['problems']));
     }
 
     /**
@@ -69,9 +66,6 @@ class ManageCpmProblemsController extends Controller
 
         $problem = CpmProblem::where('id', $request['problem_id'])->first();
 
-        $message = null;
-
-
         return view('admin.problemKeywords.edit', compact(['problem']));
 
     }
@@ -86,23 +80,25 @@ class ManageCpmProblemsController extends Controller
      */
     public function update(Request $request)
     {
-        if ($request['problem_id'] == null) {
-            return back();
-        }
         $problem = CpmProblem::find($request['problem_id']);
-        $data    = [
+
+        if ($problem->contains == $request['contains'] &&
+            $problem->default_icd_10_code == $request['default_icd_10_code'] &&
+            $problem->is_behavioral == $request['is_behavioral'] &&
+            $problem->weight == $request['weight']) {
+            return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with('msg',
+                'No changes have been made.');
+        }
+        $data = [
             'contains'            => $request['contains'],
             'default_icd_10_code' => $request['default_icd_10_code'],
             'is_behavioral'       => $request['is_behavioral'],
             'weight'              => $request['weight'],
         ];
-
         $problem->update($data);
 
         return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with('msg',
             'Changes Successfully Applied.');
-
-
     }
 
     /**

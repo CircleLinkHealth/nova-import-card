@@ -13,39 +13,17 @@
     <div class="container">
         <h3 align="center">Manage CPM Problems</h3>
     </div>
-    {{--<div class="container">--}}
-        {{--<div class="col-md-6">--}}
-            {{--<div class="input-group">--}}
-                {{--<div>--}}
-                    {{--<form action="{{route('observations-dashboard.list')}}" method="GET">--}}
-                        {{--<div class="form-group">--}}
-                            {{--<p>Search by Name:</p>--}}
-                            {{--<input type="text" name="keyword" required>--}}
-                        {{--</div>--}}
-                        {{--<div>--}}
-                            {{--<input align="center" type="submit" value="Submit" class="btn btn-info">--}}
-                        {{--</div>--}}
-                        {{--@if (session('msg'))--}}
-                            {{--<div class="alert alert-success">--}}
-                                {{--{{ session('msg') }}--}}
-                            {{--</div>--}}
-                        {{--@endif--}}
-                    {{--</form>--}}
-                {{--</div>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-    {{--</div>--}}
         <div class="container">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     Problems List
                 </div>
                 <div class="panel-body">
-                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Filter by name.." title="Type in a name">
+                    {{--<input type="text" id="myInput" onkeyup="filterByName()" placeholder="Filter by name.." title="Type in a name">--}}
                     <table id="myTable" class="table table-striped table-bordered table-curved table-condensed table-hover">
                         <tr>
-                            <th>Problem Name</th>
-                            <th>Keywords</th>
+                            <th>Problem Name <br> <input type="text" id="nameInput" onkeyup="filterByName()" placeholder="Search.."></th>
+                            <th>Keywords <br> <input type="text" id="keywordInput" onkeyup="filterByKeywords()" placeholder="Search.."></th>
                             <th>Default ICD10 Code</th>
                             <th>Is Behavioural</th>
                             <th>Weight</th>
@@ -71,13 +49,9 @@
                     </table>
                     @push('scripts')
                         <script>
-                            function confirmObservationDelete(e) {
-                                return confirm('Are you sure you want to delete this observation?')
-                            }
-
-                            function myFunction() {
+                            function filterByName() {
                                 let input, filter, table, tr, td, i;
-                                input = document.getElementById("myInput");
+                                input = document.getElementById("nameInput");
                                 filter = input.value.toUpperCase();
                                 table = document.getElementById("myTable");
                                 tr = table.getElementsByTagName("tr");
@@ -92,9 +66,25 @@
                                     }
                                 }
                             }
+                            function filterByKeywords() {
+                                let input, filter, table, tr, td, i;
+                                input = document.getElementById("keywordInput");
+                                filter = input.value.toUpperCase();
+                                table = document.getElementById("myTable");
+                                tr = table.getElementsByTagName("tr");
+                                for (i = 0; i < tr.length; i++) {
+                                    td = tr[i].getElementsByTagName("td")[1];
+                                    if (td) {
+                                        if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                            tr[i].style.display = "";
+                                        } else {
+                                            tr[i].style.display = "none";
+                                        }
+                                    }
+                                }
+                            }
                         </script>
                     @endpush
-                    {{--{!! $problems->appends(Input::except('page'))->links() !!}--}}
                 </div>
             </div>
         </div>
