@@ -1206,21 +1206,21 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix' => 'settings',
         ], function () {
             Route::group([
-                'prefix' => 'problem-keywords',
+                'prefix' => 'manage-cpm-problems',
             ], function () {
                 Route::get('/index', [
-                    'uses' => 'ProblemKeywordsController@index',
-                    'as'   => 'problem-keywords.index',
+                    'uses' => 'ManageCpmProblemsController@index',
+                    'as'   => 'manage-cpm-problems.index',
                 ]);
 
                 Route::get('/edit', [
-                    'uses' => 'ProblemKeywordsController@edit',
-                    'as'   => 'problem-keywords.edit',
+                    'uses' => 'ManageCpmProblemsController@edit',
+                    'as'   => 'manage-cpm-problems.edit',
                 ]);
 
                 Route::patch('/update', [
-                    'uses' => 'ProblemKeywordsController@update',
-                    'as'   => 'problem-keywords.update',
+                    'uses' => 'ManageCpmProblemsController@update',
+                    'as'   => 'manage-cpm-problems.update',
                 ]);
             });
 

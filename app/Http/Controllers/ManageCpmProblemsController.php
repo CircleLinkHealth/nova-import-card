@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Http\Request;
 
-class ProblemKeywordsController extends Controller
+class ManageCpmProblemsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,7 @@ class ProblemKeywordsController extends Controller
      */
     public function index()
     {
-        $problems = CpmProblem::get();
+        $problems = CpmProblem::get()->sortBy('name');
 
         $problem = null;
 
@@ -35,7 +35,8 @@ class ProblemKeywordsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -46,7 +47,8 @@ class ProblemKeywordsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -57,51 +59,48 @@ class ProblemKeywordsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request)
     {
-        $problems = CpmProblem::get();
 
-        $problem = $problems->where('id', $request['problem_id'])->first();
+
+        $problem = CpmProblem::where('id', $request['problem_id'])->first();
 
         $message = null;
 
 
-        return view('admin.problemKeywords.index', compact(['problems', 'problem',]));
+        return view('admin.problemKeywords.edit', compact(['problem']));
 
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
-        if ($request['problemId'] == null){
+        if ($request['problem_id'] == null) {
             return back();
         }
-        $problems = CpmProblem::get();
-        $problem = CpmProblem::find($request['problemId']);
-        $contains = $request['contains'];
+        $problem = CpmProblem::find($request['problem_id']);
+        $data    = [
+            'contains'            => $request['contains'],
+            'default_icd_10_code' => $request['default_icd_10_code'],
+            'is_behavioral'       => $request['is_behavioral'],
+            'weight'              => $request['weight'],
+        ];
 
-        $message = 'You need to make some changes to the keywords';
+        $problem->update($data);
 
-        if ($problem->contains != $contains){
-            $problem->contains = $contains;
-            $problem->save();
-            $message = 'Keywords successfully edited!';
-        }
-
-
-
-
-
-        return view('admin.problemKeywords.index', compact(['problems', 'problem', 'message']));
+        return redirect()->route('manage-cpm-problems.edit', ['problem_id' => $problem->id])->with('msg',
+            'Changes Successfully Applied.');
 
 
     }
@@ -109,7 +108,8 @@ class ProblemKeywordsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

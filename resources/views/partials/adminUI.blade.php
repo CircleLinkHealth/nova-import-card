@@ -290,7 +290,7 @@
                                                 Patient Report</a></li>
                                     </ul>
                                 </li>
-                                <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
+                                <li><a href="{{route('manage-cpm-problems.index')}}">Manage CPM Problems
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
                                     </a></li>
