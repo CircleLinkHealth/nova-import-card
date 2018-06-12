@@ -76,7 +76,7 @@ class PracticeController extends Controller
             ]);
 
         return redirect()->route('provider.dashboard.manage.locations', ['practiceSlug' => $practice->name])
-                         ->with('messages', ['successfully created new program'])->send();
+                         ->with('messages', ['successfully created new program']);
     }
 
     /**

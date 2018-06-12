@@ -57,7 +57,9 @@ class CPRQuestionController extends Controller
         $question->icon = $params['icon'];
         $question->category = $params['category'];
         $question->save();
-        return redirect()->route('admin.questions.edit', [$question->qid])->with('messages', ['successfully added new question - ' . $params['msg_id']])->send();
+
+        return redirect()->route('admin.questions.edit', [$question->qid])->with('messages',
+            ['successfully added new question - ' . $params['msg_id']]);
     }
 
     /**
@@ -119,7 +121,8 @@ class CPRQuestionController extends Controller
         $question->icon = $params['icon'];
         $question->category = $params['category'];
         $question->save();
-        return redirect()->back()->with('messages', ['successfully updated question'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated question']);
     }
 
     /**
@@ -134,6 +137,7 @@ class CPRQuestionController extends Controller
             abort(403);
         }
         CPRulesQuestions::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed question'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed question']);
     }
 }

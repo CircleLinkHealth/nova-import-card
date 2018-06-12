@@ -1,12 +1,9 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\Comment;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Auth;
+use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
@@ -59,7 +56,9 @@ class CommentController extends Controller
         $comment->icon = $params['icon'];
         $comment->category = $params['category'];
         $comment->save();
-        return redirect()->route('admin.comments.edit', [$comment->qid])->with('messages', ['successfully added new comment - '.$params['msg_id']])->send();
+
+        return redirect()->route('admin.comments.edit', [$comment->qid])->with('messages',
+            ['successfully added new comment - ' . $params['msg_id']]);
     }
 
     /**
@@ -113,7 +112,8 @@ class CommentController extends Controller
         $comment->icon = $params['icon'];
         $comment->category = $params['category'];
         $comment->save();
-        return redirect()->back()->with('messages', ['successfully updated comment'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated comment']);
     }
 
     /**
@@ -128,6 +128,7 @@ class CommentController extends Controller
             abort(403);
         }
         Comment::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed comment'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed comment']);
     }
 }
