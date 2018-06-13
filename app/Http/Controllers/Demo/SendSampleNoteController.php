@@ -27,7 +27,7 @@ class SendSampleNoteController extends Controller
         $sampleNote       = factory(Note::class)->make();
         $sampleNote->body = $request->input('note_body');
 
-        $pdf = $sampleNote->toPdf();
+        $pdf = $sampleNote->toPdf($request->input('scale', null));
 
         $practices = Practice::active()
                              ->orderBy('display_name')
