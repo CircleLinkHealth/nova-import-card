@@ -84,7 +84,7 @@ class AlternativeCareTimePayableCalculator
         $toAddToAccuredTowardsCCM = 0;
         $toAddToAccuredAfterCCM   = 0;
         $user                     = $activity->patient;
-        $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth()->toDateString();
+        $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth();
 
         $summary = $user->patientSummaries()
                         ->whereMonthYear($monthYear)
