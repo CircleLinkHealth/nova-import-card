@@ -69,10 +69,10 @@ class CarePlanObserver
         $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');
 
         $note = $carePlan->patient->notes()->create([
-            'author_id'    => auth()->id(),
+            'author_id'    => 948,
             'body'         => "Care plan printed for mailing on $date at $time",
             'type'         => 'CarePlan Printed',
             'performed_at' => Carbon::now()->toDateTimeString(),
-        ])->forward(true, false);
+        ]);
     }
 }
