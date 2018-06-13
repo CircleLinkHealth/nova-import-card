@@ -4,7 +4,6 @@ use App\Activity;
 use App\Nurse;
 use App\NurseCareRateLog;
 use App\NurseMonthlySummary;
-use App\PatientMonthlySummary;
 use Carbon\Carbon;
 
 /**
@@ -87,7 +86,9 @@ class AlternativeCareTimePayableCalculator
         $user                     = $activity->patient;
         $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth()->toDateString();
 
-        $summary = PatientMonthlySummary::whereMonthYear($monthYear)->first();
+        $summary = $user->patientSummaries()
+                        ->whereMonthYear($monthYear)
+                        ->first();
 
         $patient = $user->patientInfo;
 
