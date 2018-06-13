@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Contracts\PdfReport;
+use App\Filters\Filterable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
@@ -10,7 +11,6 @@ use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use App\Filters\Filterable;
 
 /**
  * App\Note
@@ -103,9 +103,11 @@ class Note extends \App\BaseModel implements PdfReport
     /**
      * Create a PDF of this resource and return the path to it.
      *
+     * @param null $scale
+     *
      * @return string
      */
-    public function toPdf(): string
+    public function toPdf($scale = null): string
     {
         $problems = $this->patient
             ->cpmProblems
@@ -120,6 +122,10 @@ class Note extends \App\BaseModel implements PdfReport
             'note'     => $this,
             'provider' => $this->patient->billingProviderUser(),
         ]);
+
+        if ( ! empty($scale)) {
+            $pdf->setOption('zoom', $scale);
+        }
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
         $filePath       = base_path('storage/pdfs/notes/' . $this->fileName);

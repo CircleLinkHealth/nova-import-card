@@ -75,6 +75,11 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'download',
     ]);
 
+    Route::get('download', [
+        'uses' => 'DownloadController@postDownloadfile',
+        'as'   => 'post.file.download',
+    ]);
+
     /**
      * API
      */
@@ -774,6 +779,20 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'demo'], function () {
+            Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
+
+            Route::post('make-pdf', [
+                'as'   => 'demo.note.make.pdf',
+                'uses' => 'Demo\SendSampleNoteController@makePdf',
+            ]);
+
+            Route::post('send-efax', [
+                'as'   => 'demo.note.efax',
+                'uses' => 'Demo\SendSampleNoteController@sendNoteViaEFax',
+            ]);
+        });
+
         Route::group(['prefix' => 'eligibility-batches'], function() {
 
             Route::get('', [
