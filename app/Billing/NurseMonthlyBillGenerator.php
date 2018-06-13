@@ -3,14 +3,12 @@
 namespace App\Billing;
 
 use App\Activity;
-use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Billing\NurseInvoices\VariablePay;
 use App\Call;
 use App\Nurse;
 use App\PageTimer;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 
 //READ ME
 /*
@@ -79,10 +77,6 @@ class NurseMonthlyBillGenerator
 
         $this->getSystemTimeForNurse();
 
-        $this->getItemizedActivities();
-
-        $this->formatItemizedActivities();
-
         return $this->generatePdf();
     }
 
@@ -139,20 +133,22 @@ class NurseMonthlyBillGenerator
         $data = [];
 
         $pageTimers = PageTimer::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
+                               ->select(['id', 'duration', 'created_at'])
+                               ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate)
                     ->where('created_at', '<=', $this->endDate);
             })
-            ->get();
+                               ->get();
 
 
         $offlineActivities = Activity::where('provider_id', $this->nurse->user_id)
-            ->where(function ($q) {
+                                     ->select(['id', 'duration', 'created_at'])
+                                     ->where(function ($q) {
                 $q->where('created_at', '>=', $this->startDate)
                     ->where('created_at', '<=', $this->endDate);
             })
-            ->where('logged_from', 'manual_input')
-            ->get();
+                                     ->where('logged_from', 'manual_input')
+                                     ->get();
 
 
         $pageTimers = $pageTimers->groupBy(function ($q) {
@@ -192,8 +188,9 @@ class NurseMonthlyBillGenerator
         $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
         if ($this->withVariablePaymentSystem) {
-            $variable = ( new VariablePay($this->nurse, $this->startDate, $this->endDate))->getItemizedActivities();
-            $this->total['after'] = $variable['total']['after'];
+            $variable               = (new VariablePay($this->nurse, $this->startDate,
+                $this->endDate))->getItemizedActivities();
+            $this->total['after']   = $variable['total']['after'];
             $this->total['towards'] = $variable['total']['towards'];
 
             $payableVariable = $variable['payable'];
