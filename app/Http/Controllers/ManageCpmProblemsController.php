@@ -62,12 +62,9 @@ class ManageCpmProblemsController extends Controller
      */
     public function edit(Request $request)
     {
-
-
         $problem = CpmProblem::where('id', $request['problem_id'])->first();
 
         return view('admin.problemKeywords.edit', compact(['problem']));
-
     }
 
     /**

@@ -19,7 +19,6 @@
                     Problems List
                 </div>
                 <div class="panel-body">
-                    {{--<input type="text" id="myInput" onkeyup="filterByName()" placeholder="Filter by name.." title="Type in a name">--}}
                     <table id="myTable" class="table table-striped table-bordered table-curved table-condensed table-hover">
                         <tr>
                             <th>Problem Name <br> <input type="text" id="nameInput" onkeyup="filterByName()" placeholder="Search.."></th>
