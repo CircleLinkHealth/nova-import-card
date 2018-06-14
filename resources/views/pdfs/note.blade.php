@@ -52,7 +52,7 @@
 
         <h4>
             Note:
-            <em>{{ $note->body }}</em>
+            {{ $note->body }}
         </h4>
 
         <br>
