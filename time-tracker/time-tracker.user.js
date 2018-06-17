@@ -1,11 +1,12 @@
 const { EventEmitter } = require('events')
-const { validateInfo, createActivity } = require('./utils.fn')
+const { validateInfo, createActivity } = require('./utils.fn');
 
 function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     
     validateInfo(info)
 
-    const key = `${info.providerId}-${info.patientId}`
+    const key = `${info.providerId}-${info.patientId}`;
+
     
     const validateWebSocket = (ws) => {
         if (!ws) throw new Error('[ws] must be a valid WebSocket instance')
@@ -92,6 +93,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
         inactivityRequiresLogout () {
             return !this.inactivityRequiresModal() && !this.inactivityRequiresNoModal()
         },
+        MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS: 30,
         ALERT_TIMEOUT: 120,
         LOGOUT_TIMEOUT: 600,
         ALERT_TIMEOUT_CALL_MODE: 900,
@@ -215,7 +217,7 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
      * logout because of mouse and keyboard inactivity while on client page
      * removes about 90 seconds from the duration
      */
-    user.clientInactivityLogout = () => {
+    user.clientInactivityLogout = (info) => {
         if (!user.isLoggingOut) {
             user.removeInactiveDuration(info)
         }
@@ -313,7 +315,14 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     user.removeInactiveDuration = (info) => {
         let activity = user.findActivity(info)
         if (activity) {
-            activity.duration = Math.max((activity.duration - ((!user.callMode ? 120 : 900) - 30)), 30)
+            //the user has been inactive,
+            //therefore remove a default of seconds (depending whether call mode or not)
+            //or assign 30 seconds. whichever is max.
+            //so minimum is 30 seconds.
+            const alertTimeout = user.callMode ? user.ALERT_TIMEOUT_CALL_MODE : user.ALERT_TIMEOUT;
+            const removedAlertTimeout = activity.duration - (alertTimeout - user.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS);
+            activity.duration = Math.max(removedAlertTimeout, user.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS);
+            //activity.duration = Math.max((activity.duration - ((!user.callMode ? user.ALERT_TIMEOUT : user.ALERT_TIMEOUT_CALL_MODE) - user.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)), user.MINIMUM_DURATION_AFTER_INACTIVITY_SECONDS)
         }
     }
 

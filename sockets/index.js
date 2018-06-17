@@ -173,7 +173,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.clientInactivityLogout()
+                user.clientInactivityLogout(info)
               }
               catch (ex) {
                 errorThrow(ex, ws)
