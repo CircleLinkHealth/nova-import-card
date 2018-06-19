@@ -136,9 +136,9 @@ describe('TimeTrackerFlow', () => {
         
                     user.inactiveSeconds = 601
         
-                    user.clientInactivityLogout()
+                    user.clientInactivityLogout(info)
         
-                    user.clientInactivityLogout()
+                    user.clientInactivityLogout(info)
         
                     assert.equal(user.totalDuration, 35)
                 })
