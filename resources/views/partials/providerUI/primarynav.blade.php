@@ -104,7 +104,7 @@ if (isset($patient)) {
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                         <i class="glyphicon glyphicon glyphicon-cog"></i>
-                        {{auth()->user()->fullName}}
+                        {{auth()->user()->full_name}}
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
@@ -123,7 +123,7 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        @if ( !Auth::guest() && Auth::user()->hasRole(['administrator']) && auth()->user()->isNotSaas())
+                        @if ( ! auth()->guest() && auth()->user()->hasRole(['administrator']) && auth()->user()->isNotSaas())
                             <li><a style="color: #47beab"
                                    href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel

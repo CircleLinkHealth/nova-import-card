@@ -91,12 +91,11 @@
         * other times, it is an instance of Patient::class
         * We have to make sure that $user is always an instance of User::class by deriving it from $patient
         */
-        use App\User;
-        use App\Patient;
-        $user = null;
+    use App\Patient;
+    $user = null;
         if (isset($patient)) {
             if (is_a($patient, Patient::class)) {
-                $user = $patient->user()->first();
+                $user = $patient->user;
             }
             else {
                 $user = $patient;

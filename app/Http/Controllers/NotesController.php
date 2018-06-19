@@ -36,8 +36,7 @@ class NotesController extends Controller
         $patientId
     ) {
 
-        $patient = User::where('id', $patientId)
-                       ->with([
+        $patient = User::with([
                            'activities' => function ($q) {
                                return $q->where('logged_from', '=', 'manual_input')
                                         ->with('meta')
@@ -50,8 +49,8 @@ class NotesController extends Controller
                            'notes.call',
                            'notes.notifications',
                            'patientInfo',
-                       ])->orderByDesc('id')
-                       ->firstOrFail();
+        ])
+                       ->findOrFail($patientId);
 
         $messages = \Session::get('messages');
 

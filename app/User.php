@@ -718,7 +718,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function primaryProgramName()
     {
-        return Practice::find($this->primaryProgramId())->display_name;
+        return $this->primaryPractice->display_name;
     }
 
     public function setFirstNameAttribute($value)
