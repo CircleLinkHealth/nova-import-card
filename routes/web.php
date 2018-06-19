@@ -1281,11 +1281,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-        // impersonation
-        Route::post('impersonate', [
-            'uses' => 'ImpersonationController@postImpersonate',
-            'as'   => 'post.impersonate',
-        ]);
+        Route::impersonate();
 
         // appConfig
         Route::group([
@@ -2007,8 +2003,6 @@ Route::group([
 
     Route::get('/call', 'TwilioController@makeCall');
 });
-
-Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',
