@@ -35,6 +35,21 @@ class PhoneNumber extends \App\BaseModel
     const MOBILE = 'mobile';
     const WORK = 'work';
 
+    public $timestamps = false;
+
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'phone_numbers';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *

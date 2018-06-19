@@ -8,13 +8,11 @@
 
 namespace App\Services\CPM;
 
-use App\CarePlanTemplate;
 use App\Contracts\Services\CpmModel;
-use App\User;
 use App\Models\CCD\Problem;
-use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CpmProblemRepository;
-use App\Repositories\Criteria\CriteriaFactory;
+use App\Repositories\UserRepositoryEloquent;
+use App\User;
 
 class CpmProblemService implements CpmModel
 {
@@ -52,11 +50,13 @@ class CpmProblemService implements CpmModel
 
     public function setupProblem($p) {
         return [
-            'id'   => $p->id,
-            'name' => $p->name,
-            'code' => $p->default_icd_10_code,
+            'id'            => $p->id,
+            'name'          => $p->name,
+            'code'          => $p->default_icd_10_code,
             'is_behavioral' => $p->is_behavioral,
-            'instruction' => $p->instruction()
+            'instruction'   => $p->instruction(),
+            'snomeds'       => $p->snomedMaps()->where('icd_10_name', '!=', '')->groupBy('icd_10_name')
+                                 ->select(['icd_10_code', 'icd_10_name'])->get(),
         ];
     }
 

@@ -201,35 +201,25 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function countPatientsByStatus($patients)
+    public function countPatientsByStatus($patients, $fromDate, $toDate)
     {
         $paused    = [];
         $withdrawn = [];
         $enrolled  = [];
         $gCodeHold = [];
 
-        $pausedCount    = null;
-        $withdrawnCount = null;
-        $enrolledCount  = null;
-        $gCodeHoldCount = null;
-
         foreach ($patients as $patient) {
             if (!$patient->patientInfo){
                 dd($patient);
             }
-                if ($patient->patientInfo->ccm_status == 'paused') {
-                    $paused[] = $patient;
+                if ($patient->patientInfo->ccm_status == 'paused' && $patient->patientInfo->date_paused >= $fromDate && $patient->patientInfo->date_paused <= $toDate) {
+                        $paused[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'withdrawn') {
+                if ($patient->patientInfo->ccm_status == 'withdrawn' && $patient->patientInfo->date_withdrawn >= $fromDate && $patient->patientInfo->date_withdrawn <= $toDate) {
                     $withdrawn[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'enrolled') {
+                if ($patient->patientInfo->ccm_status == 'enrolled' && $patient->patientInfo->registration_date >= $fromDate && $patient->patientInfo->registration_date <= $toDate) {
                     $enrolled[] = $patient;
-                }
-                if ($patient->carePlan) {
-                    if ($patient->carePlan->status == 'to_enroll') {
-                        $gCodeHold[] = $patient;
-                    }
                 }
         }
 
@@ -299,7 +289,9 @@ class OpsDashboardService
                     $count['20plus'] += 1;
                 }
             }else{
-                $count['zero'] += 1;
+                if ($patient->patientInfo->ccm_status == Patient::ENROLLED){
+                    $count['zero'] += 1;
+                }
             }
         }
         $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
@@ -316,18 +308,16 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow(Carbon $date, $enrolledPatients, $patientsByStatus)
+    public function dailyReportRow($patients,  $enrolledPatients, Carbon $date)
     {
+        $fromDate         = $date->copy()->subDay();
 
 
-        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date->toDateTimeString());
-
-
-        $countsByStatus = $this->countPatientsByStatus($patientsByStatus);
-
-
+        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date);
+        $countsByStatus = $this->countPatientsByStatus($patients, $fromDate, $date);
         $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
         $ccmTotal                    = collect($ccmCounts);
+
 
         if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
             $countsByStatus['enrolled'] == 0 &&
@@ -337,10 +327,7 @@ class OpsDashboardService
             return null;
         }
 
-
-
-
-        return collect([
+        return $row = collect([
             'ccmCounts'      => $ccmTotal,
             'countsByStatus' => $countsByStatus,
         ]);
@@ -447,22 +434,21 @@ class OpsDashboardService
      */
     public function calculateHoursBehind(Carbon $date, $enrolledPatients)
     {
+
         $totActPt                = $enrolledPatients->count();
         $targetMinutesPerPatient = 35;
 
-        //date current day or last day completed 11:00 pm?
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
-            $endOfMonth->toDateTimeString());
+        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $endOfMonth->toDateTimeString());
         $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
         $sum     = Activity::whereIn('patient_id', $allPatients)
-                           ->where('performed_at', '>', $startOfMonth->toDateString())
-                           ->where('performed_at', '<', $date->toDateString())
+                           ->where('performed_at', '>=', $startOfMonth)
+                           ->where('performed_at', '<=', $date)
                            ->sum('duration');
 
         $avg = $sum / count($allPatients);

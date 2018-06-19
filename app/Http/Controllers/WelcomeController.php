@@ -28,42 +28,34 @@ class WelcomeController extends Controller
      * Show the application welcome screen to the user.
      *
      * @return Response
+     * @throws \Exception
      */
     public function index()
     {
-        if (auth()->user()) {
-            if (auth()->user()->roles->isEmpty()) {
-                auth()->logout();
+        $user = auth()->user();
 
-                return view('errors.403', [
-                    'hideLinks' => true,
-                    'message'   => 'Unauthorized login request. This User has no assigned Roles.',
-                ]);
-            }
-
-            if (auth()->user()->hasRole('administrator')) {
-                return redirect()->route('admin.dashboard', [])->send();
-            }
-
-            if (auth()->user()->hasRole('saas-admin')) {
-                return redirect()->route('saas-admin.home', [])->send();
-            }
-
-            if (auth()->user()->hasRole('provider')) {
-                return redirect()->route('patients.dashboard', [])->send();
-            }
-
-            if (auth()->user()->hasRole('care-center')) {
-                return redirect()->route('patients.dashboard', [])->send();
-            }
-
-            if (auth()->user()->hasRole('care-ambassador')) {
-                return redirect()->route('enrollment-center.dashboard', [])->send();
-            }
-
-            return redirect()->route('patients.dashboard', [])->send();
+        if ( ! $user) {
+            return redirect()->route('login', []);
         }
 
-        return redirect()->route('login', [])->send();
+        if ($user->roles->isEmpty()) {
+            auth()->logout();
+
+            throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
+        }
+
+        if ($user->hasRole('administrator')) {
+            return redirect()->route('admin.dashboard', []);
+        }
+
+        if ($user->hasRole('saas-admin')) {
+            return redirect()->route('saas-admin.home', []);
+        }
+
+        if ($user->hasRole('care-ambassador')) {
+            return redirect()->route('enrollment-center.dashboard', []);
+        }
+
+        return redirect()->route('patients.dashboard', []);
     }
 }

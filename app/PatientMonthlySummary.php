@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\CCD\Problem;
+use App\Traits\HasChargeableServices;
 use Carbon\Carbon;
 
 /**
@@ -11,6 +12,7 @@ use Carbon\Carbon;
  * @property int $id
  * @property int $patient_id
  * @property int $ccm_time
+ * @property int $bhi_time
  * @property \Carbon\Carbon $month_year
  * @property int $no_of_calls
  * @property int $no_of_successful_calls
@@ -48,13 +50,17 @@ use Carbon\Carbon;
  */
 class PatientMonthlySummary extends \App\BaseModel
 {
+    use HasChargeableServices;
+
     protected $dates = [
         'month_year',
     ];
 
     protected $fillable = [
         'month_year',
+        'total_time',
         'ccm_time',
+        'bhi_time',
         'no_of_calls',
         'no_of_successful_calls',
         'patient_id',
@@ -63,12 +69,12 @@ class PatientMonthlySummary extends \App\BaseModel
         'rejected',
         'needs_qa',
         'actor_id',
-        'problem_1',
-        'problem_2',
-        'billable_problem1',
-        'billable_problem1_code',
-        'billable_problem2',
-        'billable_problem2_code',
+        'problem_1', //@todo: Deprecate in favor of billableProblems()
+        'problem_2', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem1', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem1_code', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem2', //@todo: Deprecate in favor of billableProblems()
+        'billable_problem2_code', //@todo: Deprecate in favor of billableProblems()
     ];
 
     //updates Call info for patient
@@ -97,13 +103,6 @@ class PatientMonthlySummary extends \App\BaseModel
     public function actor()
     {
         return $this->hasOne(User::class, 'actor_id');
-    }
-
-    public function chargeableServices()
-    {
-        return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
     }
 
     public function scopeGetCurrent($q)
@@ -206,13 +205,57 @@ class PatientMonthlySummary extends \App\BaseModel
                         });
     }
 
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function billableProblem1()
     {
         return $this->belongsTo(Problem::class, 'problem_1');
     }
 
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function billableProblem2()
     {
         return $this->belongsTo(Problem::class, 'problem_2');
+    }
+
+    public function billableProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
+                    ->withPivot('name', 'icd_10_code', 'type')
+                    ->withTimestamps();
+    }
+
+    public function billableBhiProblems()
+    {
+        return $this->billableProblems()->where('type', '=', 'bhi');
+    }
+
+    public function hasAtLeastOneBhiProblem()
+    {
+        return $this->billableProblems()
+                    ->where('type', '=', 'bhi')
+                    ->exists();
+    }
+
+    public function hasAtLeastTwoCcmProblems()
+    {
+        return $this->billableProblems()
+                    ->where('type', '=', 'ccm')
+                    ->count() >= 2;
+    }
+
+    public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
+    {
+        return $this->billableProblems()
+                    ->attach($problemId, [
+                        'type'        => $type,
+                        'name'        => $name,
+                        'icd_10_code' => $icd10Code,
+                    ]);
     }
 }

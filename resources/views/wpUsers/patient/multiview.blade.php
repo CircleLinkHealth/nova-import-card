@@ -6,7 +6,7 @@
 * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
 */
 
-use \Illuminate\Support\Collection;
+use Illuminate\Support\Collection;
 
 if (!function_exists('checkIfExists')) {
     //check if exists
@@ -249,7 +249,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter">
-                                        Linda Warshavsky
+                                        Chelsea Pruett
                                     </div>
                                     <div class="row gutter">
                                     </div>
@@ -351,7 +351,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @endif
                         </div>
                         <!-- Do NOT show other conditions in PRINT. See https://github.com/CircleLinkHealth/cpm-web/issues/1871 -->
-                        @if ($ccdProblemsForListing->count() > 0)
+                        @if ($ccdProblemsForListing->count() > 0 && false)
                             <div class="col-xs-12">
                                 <h2 class="color-blue">Other Conditions</h2>
                                 <ul class="row">
@@ -439,7 +439,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         @if ($noteIsAvailable)
                             <div class="col-xs-12 top-10">
                                 {{ $healthNote['body'] }}
-                                <br><br><br>
                             </div>
                         @endif
                         @if (!$healthGoalsForListing->count()) 
@@ -448,7 +447,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                             @if ($noteIsAvailable) 
                                 <br><br>
                             @endif
-                            <ul class="col-sm-12 subareas__list top-20" style="{{ $noteIsAvailable ? 'padding-top:70px !important;' : '' }}">
+                                <ul class="col-sm-12 subareas__list top-20"
+                                    style="{{ $noteIsAvailable ? 'padding-top:10px !important;' : '' }}">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach($healthGoalsForListing as $goal)
                                         <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>

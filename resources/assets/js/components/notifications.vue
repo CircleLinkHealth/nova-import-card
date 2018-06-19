@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="row" :class="componentName">
         <div class="col-sm-12" v-for="(note, index) in notes" :key="index">
             <div class="alert" :class="{ 
                                     'alert-success': types.success.includes(note.type), 
@@ -24,7 +24,10 @@
     export default {
         props: {
             name: String,
-            reverse: Boolean
+            reverse: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -76,7 +79,15 @@
                     
                     if (!this.reverse) this.notes.push(newNote)
                     else this.notes.unshift(newNote)
-                    console.log(`${this.componentName}:create`, newNote)
+
+                    return newNote
+                }
+                throw new Error('no note provided')
+            },
+            remove (id) {
+                const note = this.notes.find(n => n.id === id)
+                if (note) {
+                    note.close()
                 }
             }
         },
@@ -91,5 +102,7 @@
     div.alert .close {
         cursor: pointer;
         margin-top: -2px;
+        margin-left: 12px;
+        font-size: 17px;
     }
 </style>

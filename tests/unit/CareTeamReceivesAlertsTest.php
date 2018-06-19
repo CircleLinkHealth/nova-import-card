@@ -2,17 +2,19 @@
 
 namespace Tests\unit;
 
+use App\Practice;
 use Tests\TestCase;
 use App\CarePerson;
 use App\User;
 use Faker\Factory;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
+use Tests\Helpers\SetupTestCustomer;
 
 class CareTeamReceivesAlertsTest extends TestCase
 {
     use CarePlanHelpers,
-        UserHelpers;
+        SetupTestCustomer;
     /**
      * @var Faker\Factory $faker
      */
@@ -22,6 +24,8 @@ class CareTeamReceivesAlertsTest extends TestCase
      * @var
      */
     protected $patient;
+
+    protected $practice;
 
     /**
      * @var User $provider
@@ -62,7 +66,7 @@ class CareTeamReceivesAlertsTest extends TestCase
         ]);
 
         //add second care person
-        $cp2 = $this->createUser(9);
+        $cp2 = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -71,7 +75,7 @@ class CareTeamReceivesAlertsTest extends TestCase
         ]);
 
         //add third care person
-        $cp3 = $this->createUser(9);
+        $cp3 = $this->createUser($this->practice->id);
 
         $cp2->forwardAlertsTo()->attach($cp3->id, [
             'name' => User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
@@ -92,7 +96,7 @@ class CareTeamReceivesAlertsTest extends TestCase
         ]);
 
         //add second care person
-        $cp2 = $this->createUser(9);
+        $cp2 = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -101,7 +105,7 @@ class CareTeamReceivesAlertsTest extends TestCase
         ]);
 
         //add third care person
-        $cp3 = $this->createUser(9);
+        $cp3 = $this->createUser($this->practice->id);
 
         //set up forwarding
         $cp2->forwardAlertsTo()->attach($cp3->id, [
@@ -119,7 +123,7 @@ class CareTeamReceivesAlertsTest extends TestCase
 
     public function test_it_returns_location_contacts_person_in_addition_to_bp()
     {
-        $cp2 = $this->createUser(9);
+        $cp2 = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -136,7 +140,7 @@ class CareTeamReceivesAlertsTest extends TestCase
 
     public function test_it_returns_only_location_contacts_person_instead_of_bp()
     {
-        $cp2 = $this->createUser(9);
+        $cp2 = $this->createUser($this->practice->id);
         $carePerson = CarePerson::create([
             'alert'          => true,
             'type'           => 'member',
@@ -154,10 +158,17 @@ class CareTeamReceivesAlertsTest extends TestCase
     protected function setUp()
     {
         parent::setUp();
+
+        $data = $this->createTestCustomerData(1);
+        $this->practice = $data['practice'];
+
+
         $this->faker = Factory::create();
-        $this->provider = $this->createUser(9);
+
+        $this->provider = $this->createUser($this->practice->id, 'provider');
+
         auth()->login($this->provider);
-        $this->patient = $this->createUser(9, 'participant');
+        $this->patient = $this->createUser($this->practice->id, 'participant');
 
         foreach ($this->provider->locations as $location) {
             $location->clinicalEmergencyContact()->sync([]);

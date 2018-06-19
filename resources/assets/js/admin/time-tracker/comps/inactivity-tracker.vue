@@ -75,6 +75,8 @@
             reset(e) {
                 if (!this.isModalShown) this.startTime = this.endTime;
                 else console.warn('attempt to reset inactivity-tracker rebuffed', this.time)
+
+                this.startTime = this.endTime = new Date()
             }
         },
         computed: {

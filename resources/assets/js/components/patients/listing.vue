@@ -9,15 +9,40 @@
             <loader v-if="loaders.next || loaders.practices || loaders.providers"></loader>
         </div>
         <v-client-table ref="tblPatientList" :data="tableData" :columns="columns" :options="options" id="patient-list-table">
-            <template slot="name" scope="props">
+            <template slot="name" slot-scope="props">
                 <div><a :href="rootUrl('manage-patients/' + props.row.id + '/view-careplan')">{{props.row.name}}</a></div>
             </template>
-            <template slot="provider" scope="props">
+            <template slot="provider" slot-scope="props">
                 <div>{{ props.row.provider_name }}</div>
             </template>
-            <template slot="careplanStatus" scope="props">
+            <template slot="program" slot-scope="props">
+                <div>{{ props.row.program_name }}</div>
+            </template>
+            <template slot="ccmStatus" slot-scope="props">
+                <div>
+                    {{ 
+                        (({ 
+                            enrolled: 'Enrolled',
+                            to_enroll: 'To Enroll',
+                            patient_rejected: 'Patient Declined',
+                            withdrawn: 'Withdrawn',
+                            paused: 'Paused'
+                        })[props.row.ccmStatus] || props.row.ccmStatus) 
+                    }}
+                </div>
+            </template>
+            <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
-                    {{ (({ qa_approved: 'Approve Now', to_enroll: 'To Enroll', provider_approved: 'Provider Approved', none: 'None', draft: 'Draft' })[props.row.careplanStatus] || props.row.careplanStatus) }}
+                    {{ 
+                        (({ 
+                            qa_approved: 'Approve Now', 
+                            to_enroll: 'To Enroll', 
+                            provider_approved: 'Provider Approved', 
+                            none: 'None', 
+                            draft: 'Draft', 
+                            g0506: 'G0506' 
+                        })[props.row.careplanStatus] || props.row.careplanStatus) 
+                    }}
                 </a>
             </template>
             <template slot="filter__ccm">
@@ -53,7 +78,7 @@
                 <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-success" :class="{ disabled: loaders.excel }"
-                            value="Export as Excel" @click="exportExcel" >
+                            :value="exportCSVText" @click="exportCSV" >
                 <span class="pad-10"></span>
 
                 <input type="button" class="btn btn-success" 
@@ -105,7 +130,8 @@
                 },
                 tokens: {
                     next: null
-                }
+                },
+                exportCSVText: 'Export as CSV'
             }
         },
         computed: {
@@ -119,16 +145,18 @@
                         ccmStatus: [ 
                                         { id: 'enrolled', text: 'enrolled' }, 
                                         { id: 'paused', text: 'paused' }, 
-                                        { id: 'withdrawn', text: 'withdrawn' } 
+                                        { id: 'withdrawn', text: 'withdrawn' },
+                                        { id: 'to_enroll', text: 'to_enroll'},
+                                        { id: 'patient_rejected', text: 'patient_rejected'}
                                     ],
                         careplanStatus: [
                                             { id: '', text: 'none' },
                                             { id: 'qa_approved', text: 'qa_approved' }, 
                                             { id: 'provider_approved', text: 'provider_approved' }, 
-                                            { id: 'to_enroll', text: 'to_enroll' },
+                                            { id: 'g0506', text: 'g0506' },
                                             { id: 'draft', text: 'draft' }
                                         ],
-                        program: this.practices.map(practice => ({ id: practice.display_name, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
+                        program: this.practices.map(practice => ({ id: practice.id, text: practice.display_name })).sort((p1, p2) => p1.id > p2.id ? 1 : -1).distinct(practice => practice.id)
                     },
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -168,11 +196,21 @@
                 const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
                 const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?page=${this.$refs.tblPatientList.page}&rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
                 else {
-                    return rootUrl(`api/patients?rows=${this.isFilterActive() ? 'all' : this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
+                    return rootUrl(`api/patients?rows=${this.$refs.tblPatientList.limit}${filters}${sortColumn}`)
                 }
+            },
+            filterData () {
+                const $table = this.$refs.tblPatientList
+                const query = $table.$data.query
+                const activeFilters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value)
+
+                return activeFilters.reduce((a, filter) => {
+                    a[filter.key] = filter.value
+                    return a
+                }, {})
             },
             toggleProgramColumn () {
                 if (this.columns.indexOf('program') >= 0) {
@@ -228,7 +266,7 @@
             getPatients () {
                 const self = this
                 this.loaders.next = true
-                return this.requests.next = this.axios.get(this.nextPageUrl(), {
+                return this.axios.get(this.nextPageUrl(), {
                     cancelToken: new CancelToken((c) => {
                         if (this.tokens.next) {
                             this.tokens.next()
@@ -240,15 +278,15 @@
                     const pagination = response.data
                     const ids = this.tableData.map(patient => patient.id)
                     this.pagination = {
-                        current_page: pagination.current_page,
-                        from: pagination.from,
-                        last_page: pagination.last_page,
-                        last_page_url: pagination.last_page_url,
-                        next_page_url: pagination.next_page_url,
-                        path: pagination.path,
-                        per_page: pagination.per_page,
-                        to: pagination.to,
-                        total: pagination.total
+                        current_page: pagination.meta.current_page,
+                        from: pagination.meta.from,
+                        last_page: pagination.meta.last_page,
+                        last_page_url: pagination.links.last,
+                        next_page_url: pagination.links.next,
+                        path: pagination.meta.path,
+                        per_page: pagination.meta.per_page,
+                        to: pagination.meta.to,
+                        total: pagination.meta.total
                     }
                     const patients = (pagination.data || []).map(patient => {
                         if (((patient.careplan || {}).status || '').startsWith('{')) {
@@ -274,7 +312,8 @@
                         patient.careplanStatus = (patient.careplan || {}).status || 'none'
                         patient.dob = (patient.patient_info || {}).birth_date || ''
                         patient.sort_dob = new Date((patient.patient_info || {}).birth_date || '')
-                        patient.program = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
+                        patient.program = patient.program_id
+                        patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
                         patient.sort_registeredOn = new Date(patient.created_at)
@@ -292,16 +331,18 @@
                             }
                         }
                         // loadColumnList(this.options.listColumns.provider, patient.provider)
-                        loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
-                        loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
-                        loadColumnList(this.options.listColumns.program, patient.program)
+                        //loadColumnList(this.options.listColumns.ccmStatus, patient.ccmStatus)
+                        //loadColumnList(this.options.listColumns.careplanStatus, patient.careplanStatus)
+                        // loadColumnList(this.options.listColumns.program, patient.program)
                         return patient
                     })
+
+                    const filterData = this.filterData()
 
                     if (!this.tableData.length) {
                         const arr = patients.map((patient, i) => Object.assign({}, patient, { i: (i + 1) }))
                         const total = ((this.pagination || {}).total || 0)
-                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ i: arr.length + index + 1, id: arr.length + index })) ]
+                        this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => Object.assign({ i: arr.length + index + 1, id: arr.length + index }, filterData)) ]
                     }
                     else {
                         const from = ((this.pagination || {}).from || 0)
@@ -317,30 +358,46 @@
                                     counterIndex += 1
                                     return patient
                                 }
-                                else return row
+                                else return Object.assign({}, filterData, row)
                             }
                             else {
-                                return row
+                                return Object.assign({}, filterData, row)
                             }
                         })
                     }
-                    
-                    this.loaders.next = false
-                    this.requests.next = null
+                    setTimeout(() => {
+                        this.$refs.tblPatientList.count = this.pagination.total
+                        this.loaders.next = false
+                    }, 1000)
                 }).catch(err => {
                     console.error('patient-list', err)
                     this.loaders.next = false
-                    this.requests.next = null
                 })
             },
-            exportExcel () {
-                if (!this.loaders.excel) {
-                    this.loaders.excel = true
-                    const link = document.createElement('a')
-                    link.href = rootUrl('api/patients?excel')
-                    link.download = `patient-list-${Date.now()}.xlsx`
-                    link.click()
+            exportCSV () {
+                let patients = []
+                this.loaders.excel = true
+                const download = (page = 1) => {
+                    return this.axios.get(rootUrl(`api/patients?rows=50&page=${page}&csv`)).then(response => {
+                        const pagination = response.data
+                        patients = patients.concat(pagination.data)
+                        this.exportCSVText = `Export as CSV (${Math.ceil(pagination.meta.to / pagination.meta.total * 100)}%)`
+                        if (pagination.meta.to < pagination.meta.total) return download(page + 1)
+                        return pagination
+                    }).catch(err => {
+                        console.log('patients:csv:export', err)
+                    })
                 }
+                return download().then(res => {
+                    const link = document.createElement('a')
+                    link.href = 'data:attachment/text,' + 
+                    encodeURI('name,provider,program,ccm status,careplan status,dob,phone,age,registered on,ccm\n'
+                                + patients.join('\n'))
+                    link.download = `patient-list-${Date.now()}.csv`
+                    link.click()
+                    this.exportCSVText = 'Export as CSV'
+                    this.loaders.excel = false
+                })
             },
             exportPdf () {
                 if (!this.loaders.pdf) {
@@ -356,6 +413,18 @@
                 const ccmStatusSelect = patientListElem.querySelector('select[name="vf__ccmStatus"]')
                 ccmStatusSelect.querySelector('option').innerText = 'Select CCM Status'
 
+                window.ccmStatusSelect = ccmStatusSelect;
+
+                ([ ...(ccmStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
+                    option.innerText = ({
+                        enrolled: 'Enrolled',
+                        to_enroll: 'To Enroll',
+                        patient_rejected: 'Patient Declined',
+                        withdrawn: 'Withdrawn',
+                        paused: 'Paused'
+                    })[option.innerText] || option.innerText
+                });
+
                 const careplanStatusSelect = patientListElem.querySelector('select[name="vf__careplanStatus"]');
 
                 ([ ...(careplanStatusSelect.querySelectorAll('option') || []) ]).forEach(option => {
@@ -365,6 +434,8 @@
                         provider_approved: 'Provider Approved',
                         none: 'None',
                         draft: 'Draft',
+                        patient_rejected: 'Patient Declined',
+                        g0506: 'G0506',
                         'Select careplanStatus': 'Select Careplan Status'
                     })[option.innerText] || option.innerText
                 })

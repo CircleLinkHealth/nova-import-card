@@ -5,19 +5,19 @@ namespace App\Services;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
 use App\Call;
 use App\CarePerson;
+use App\CareplanAssessment;
+use App\CLH\Repositories\UserRepository;
+use App\Filters\NoteFilters;
 use App\Note;
 use App\Patient;
 use App\PatientMonthlySummary;
-use App\User;
-use App\CareplanAssessment;
-use App\Filters\NoteFilters;
-use App\Repositories\NoteRepository;
 use App\Repositories\CareplanAssessmentRepository;
-use App\CLH\Repositories\UserRepository;
+use App\Repositories\NoteRepository;
+use App\User;
 use App\View\MetaTag;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\URL;
 use Exception;
+use Illuminate\Support\Facades\URL;
 
 class NoteService
 {
@@ -25,89 +25,105 @@ class NoteService
     private $userRepo;
     private $assessmentRepo;
 
-    public function __construct(NoteRepository $noteRepo, UserRepository $userRepo, CareplanAssessmentRepository $assessmentRepo) {
-        $this->noteRepo = $noteRepo;
-        $this->userRepo = $userRepo;
+    public function __construct(
+        NoteRepository $noteRepo,
+        UserRepository $userRepo,
+        CareplanAssessmentRepository $assessmentRepo
+    ) {
+        $this->noteRepo       = $noteRepo;
+        $this->userRepo       = $userRepo;
         $this->assessmentRepo = $assessmentRepo;
     }
 
-    public function repo() {
+    public function repo()
+    {
         return $this->noteRepo;
     }
 
-    public function patientNotes($userId, NoteFilters $filters) {
+    public function patientNotes($userId, NoteFilters $filters)
+    {
         return $this->repo()->patientNotes($userId, $filters);
     }
 
-    public function patientBiometricNotes($userId) {
+    public function patientBiometricNotes($userId)
+    {
         $assessments = $this->assessmentRepo->assessments($userId)->where('key_treatment', '!=', 'null');
+
         return $assessments->map([$this, 'createNoteFromAssessment']);
     }
 
-    function createNoteFromAssessment($assessment) {
+    function createNoteFromAssessment($assessment)
+    {
         if ($assessment) {
-            $note = new Note();
-            $note->body = $assessment->key_treatment;
-            $note->author_id = $assessment->provider_approver_id;
-            $note->patient_id = $assessment->careplan_id;
-            $note->created_at = $assessment->created_at;
-            $note->updated_at = $assessment->updated_at;
-            $note->isTCM = 0;
+            $note                       = new Note();
+            $note->body                 = $assessment->key_treatment;
+            $note->author_id            = $assessment->provider_approver_id;
+            $note->patient_id           = $assessment->careplan_id;
+            $note->created_at           = $assessment->created_at;
+            $note->updated_at           = $assessment->updated_at;
+            $note->isTCM                = 0;
             $note->did_medication_recon = 0;
-            $note->type = 'Biometrics';
-            $note->id = 0;
+            $note->type                 = 'Biometrics';
+            $note->id                   = 0;
+
             return $note;
+        } else {
+            return null;
         }
-        else return null;
     }
 
-    public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon) {
+    public function add($userId, $authorId, $body, $type, $isTCM, $did_medication_recon)
+    {
         if ($userId && $authorId && ($body || $type == 'Biometrics')) {
-            if (!$this->userRepo->exists($userId)) {
+            if ( ! $this->userRepo->exists($userId)) {
                 throw new Exception('user with id "' . $userId . '" does not exist');
-            }
-            else if ($type != 'Biometrics' && !$this->userRepo->exists($authorId)) {
+            } else if ($type != 'Biometrics' && ! $this->userRepo->exists($authorId)) {
                 throw new Exception('user with id "' . $authorId . '" does not exist');
-            }
-            else {
+            } else {
                 if ($type != 'Biometrics') {
-                    $note = new Note();
-                    $note->patient_id = $userId;
-                    $note->author_id = $authorId;
-                    $note->body = $body;
-                    $note->type = $type;
-                    $note->isTCM = $isTCM;
+                    $note                       = new Note();
+                    $note->patient_id           = $userId;
+                    $note->author_id            = $authorId;
+                    $note->body                 = $body;
+                    $note->type                 = $type;
+                    $note->isTCM                = $isTCM;
                     $note->did_medication_recon = $did_medication_recon;
+
                     return $this->repo()->add($note);
-                }
-                else {
-                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
+                } else {
+                    return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId,
+                        $body));
                 }
             }
+        } else {
+            throw new Exception('invalid parameters');
         }
-        else throw new Exception('invalid parameters');
     }
 
-    public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null) {
-        if (!$type) {
-            if (!$id) throw new Exception('$id is required');
-            else {
+    public function editPatientNote($id, $userId, $authorId, $body, $isTCM, $did_medication_recon, $type = null)
+    {
+        if ( ! $type) {
+            if ( ! $id) {
+                throw new Exception('$id is required');
+            } else {
                 $note = $this->repo()->model()->find($id);
-                if ($note->patient_id != $userId) throw new Exception('Note with id "' . $id . '" does not belong to patient with id "' . $userId . '"');
-                else if ($note->author_id != $authorId) throw new Exception('Attempt to edit note blocked because note does not belong to author');
-                else {
-                    $note = new Note();
-                    $note->id = $id;
-                    $note->patient_id = $userId;
-                    $note->author_id = $authorId;
-                    $note->body = $body;
-                    $note->isTCM = $isTCM;
+                if ($note->patient_id != $userId) {
+                    throw new Exception('Note with id "' . $id . '" does not belong to patient with id "' . $userId . '"');
+                } else if ($note->author_id != $authorId) {
+                    throw new Exception('Attempt to edit note blocked because note does not belong to author');
+                } else {
+                    $note                       = new Note();
+                    $note->id                   = $id;
+                    $note->patient_id           = $userId;
+                    $note->author_id            = $authorId;
+                    $note->body                 = $body;
+                    $note->isTCM                = $isTCM;
                     $note->did_medication_recon = $did_medication_recon;
+
                     return $this->repo()->edit($note);
                 }
             }
-        }
-        else {
+        } else {
             return $this->createNoteFromAssessment($this->assessmentRepo->editKeyTreatment($userId, $authorId, $body));
         }
     }
@@ -116,8 +132,12 @@ class NoteService
     {
         $note = Note::create($input);
 
+        $notifyCareTeam = $input['notify_careteam'] ?? false;
+        $notifyCLH      = $input['notify_circlelink_support'] ?? false;
+        $forceNotify    = false;
+
         if ($input['tcm'] == 'true') {
-            $note->isTCM = true;
+            $notifyCareTeam = $forceNotify = $note->isTCM = true;
         } else {
             $note->isTCM = false;
         }
@@ -130,24 +150,26 @@ class NoteService
 
         $note->save();
 
-        $note->forward($input['notify_careteam'] ?? false, $input['notify_circlelink_support'] ?? false);
+        $note->forward($notifyCareTeam, $notifyCLH, $forceNotify);
 
         return $note;
     }
 
-    public function createAssessmentNote(CareplanAssessment $assessment) {
-        $note = new Note();
+    public function createAssessmentNote(CareplanAssessment $assessment)
+    {
+        $note             = new Note();
         $note->patient_id = $assessment->careplan_id;
-        $note->author_id = $assessment->provider_approver_id;
+        $note->author_id  = $assessment->provider_approver_id;
 
         $patient = User::find($note->patient_id);
 
-        $note->body = 'Created/Edited Assessment for ' . $patient->name() . ' (' . $assessment->careplan_id . ') ... See ' . 
-                        URL::to('/manage-patients/' . $assessment->careplan_id . '/view-careplan/assessment');
-        $note->type = 'Edit Assessment';
+        $note->body         = 'Created/Edited Assessment for ' . $patient->name() . ' (' . $assessment->careplan_id . ') ... See ' .
+                              URL::to('/manage-patients/' . $assessment->careplan_id . '/view-careplan/assessment');
+        $note->type         = 'Edit Assessment';
         $note->performed_at = Carbon::now();
         $note->save();
         $note->forward(true, true);
+
         return $note;
     }
 
@@ -296,8 +318,8 @@ class NoteService
         $date_index = Carbon::now()->firstOfMonth()->toDateString();
 
         $patientRecord = PatientMonthlySummary::where('patient_id', $patient->user_id)
-            ->where('month_year', $date_index)
-            ->first();
+                                              ->where('month_year', $date_index)
+                                              ->first();
 
         if (empty($patientRecord)) {
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
@@ -442,7 +464,9 @@ class NoteService
                     ->with('notifiable')
                     ->get()
                     ->mapWithKeys(function ($notification) {
-                        if (!$notification->notifiable) return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                        if ( ! $notification->notifiable) {
+                            return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
+                        }
 
                         return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
                     });

@@ -42,7 +42,7 @@
             @include('admin.opsDashboard.panel')
         </div>
         <div class="input-group input-group-sm">
-            <form action="{{route('OpsDashboard.dailyReport')}}" method="GET">
+            <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
                     <article>Active Patients as of 11pm ET on:</article>
                     <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">

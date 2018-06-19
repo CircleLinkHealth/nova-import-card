@@ -250,7 +250,8 @@ class NotesController extends Controller
                 'window_flag'        => $patient_contact_window_exists,
                 'contact_days_array' => $contact_days_array,
                 'ccm_complex'        => $ccm_complex,
-
+                'notifies_text'      => $patient->notifies_text,
+                'note_channels_text' => $patient->note_channels_text,
             ];
 
             return view('wpUsers.patient.note.create', $view_data);

@@ -4,7 +4,6 @@ namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Call
@@ -91,7 +90,7 @@ class Call extends \App\BaseModel
         'window_start',
         'window_end',
 
-        'is_cpm_outbound'
+        'is_cpm_outbound',
     ];
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
@@ -104,10 +103,11 @@ class Call extends \App\BaseModel
 
         // get record for month
         $day_start = $d->startOfMonth()->toDateString();
-        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
-        if (!$record) {
+        $record    = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
+        if ( ! $record) {
             return 0;
         }
+
         return $record->no_of_calls;
     }
 
@@ -119,13 +119,15 @@ class Call extends \App\BaseModel
             $d = Carbon::now();
         }
 
-        // get record for month
-        $day_start = $d->startOfMonth()->toDateString();
-        $record = PatientMonthlySummary::where('month_year', $day_start)->where('patient_id', $user->id)->first();
-        if (!$record) {
-            return 0;
-        }
-        return $record->no_of_successful_calls;
+        $calls = Call::where(function ($q) use ($user, $d) {
+            $q->where('outbound_cpm_id', $user->id)
+              ->orWhere('inbound_cpm_id', $user->id);
+        })
+                     ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
+                     ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
+                     ->where('status', 'reached');
+
+        return $calls->count();
     }
 
     public function note()
@@ -143,8 +145,11 @@ class Call extends \App\BaseModel
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
 
-    public function patientId() {
-        return $this->has('outboundUser.patientInfo.user') ? $this->outbound_cpm_id : $this->inbound_cpm_id;
+    public function patientId()
+    {
+        return $this->has('outboundUser.patientInfo.user')
+            ? $this->outbound_cpm_id
+            : $this->inbound_cpm_id;
     }
 
     /**
@@ -154,7 +159,8 @@ class Call extends \App\BaseModel
      * @param Carbon $monthYear
      *
      */
-    public function scopeOfMonth($builder, Carbon $monthYear) {
+    public function scopeOfMonth($builder, Carbon $monthYear)
+    {
         $builder->whereBetween('called_date', [
             $monthYear->startOfMonth()->toDateTimeString(),
             $monthYear->copy()->endOfMonth()->toDateTimeString(),
@@ -168,8 +174,9 @@ class Call extends \App\BaseModel
      * @param $status
      *
      */
-    public function scopeOfStatus($builder, $status) {
-        if (!is_array($status)) {
+    public function scopeOfStatus($builder, $status)
+    {
+        if ( ! is_array($status)) {
             $status = [$status];
         }
 
@@ -181,21 +188,23 @@ class Call extends \App\BaseModel
      *
      * @param $builder
      */
-    public function scopeScheduled($builder) {
-        $builder->where('calls.status', '=', 'scheduled')
-                ->whereHas('inboundUser')
-                ->with([
-                    'inboundUser.billingProvider.user',
-                    'inboundUser.notes'                        => function ($q) {
-                        $q->latest();
-                    },
-                    'inboundUser.patientInfo.contactWindows',
-                    'inboundUser.patientSummaries' => function ($q) {
-                        $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
-                    },
-                    'inboundUser.primaryPractice',
-                    'outboundUser.nurseInfo',
-                    'note',
-                ]);
+    public function scopeScheduled($builder)
+    {
+        $builder->where(function ($q) {
+            $q->where('calls.status', '=', 'scheduled')
+              ->whereHas('inboundUser');
+        })->with([
+            'inboundUser.billingProvider.user',
+            'inboundUser.notes'            => function ($q) {
+                $q->latest();
+            },
+            'inboundUser.patientInfo.contactWindows',
+            'inboundUser.patientSummaries' => function ($q) {
+                $q->where('month_year', '=', Carbon::now()->startOfMonth()->format('Y-m-d'));
+            },
+            'inboundUser.primaryPractice',
+            'outboundUser.nurseInfo',
+            'note',
+        ]);
     }
 }

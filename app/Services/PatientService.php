@@ -1,15 +1,17 @@
 <?php namespace App\Services;
 
-use App\User;
+use App\Filters\PatientFilters;
+use App\Http\Resources\UserCsvResource;
+use App\Http\Resources\UserAutocompleteResource;
+use App\Http\Resources\UserSafeResource;
 use App\Patient;
 use App\Practice;
 use App\Repositories\PatientReadRepository;
 use App\Repositories\PatientWriteRepository;
-use App\Services\CCD\CcdAllergyService;
 use App\Repositories\UserRepositoryEloquent;
-use App\Filters\PatientFilters;
-use Excel;
+use App\Services\CCD\CcdAllergyService;
 use Carbon\Carbon;
+use Excel;
 
 class PatientService
 {
@@ -48,10 +50,19 @@ class PatientService
     public function patients(PatientFilters $filters) {
         $users = $this->readRepo()->patients($filters);
 
+        if ($filters->isAutocomplete()) {
+            return UserAutocompleteResource::collection($users);
+        }
+
+        if ($filters->isCsv()) {
+            return UserCsvResource::collection($users);
+        }
+
         if ($filters->isExcel()) {
             return $this->excelReport($users);
         }
-        return $users;
+
+        return UserSafeResource::collection($users);
     }
 
     public function excelReport($users) {
@@ -64,6 +75,8 @@ class PatientService
             $excel->sheet('Sheet 1', function ($sheet) use (
                 $users
             ) {
+                $practices = Practice::get()->keyBy('id');
+
                 $i = 0;
                 // header
                 $sheet->appendRow([
@@ -82,7 +95,7 @@ class PatientService
                     if ($i > 2000000) {
                         continue 1;
                     }
-                    $practice = Practice::find($user['program_id']);
+                    $practice = $practices->get($user['program_id']);
                     if (isset($user['patient_info'])) {
                         $patient = $user['patient_info'];
                         $careplan = $user['careplan'];

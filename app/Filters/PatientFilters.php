@@ -33,9 +33,9 @@ class PatientFilters extends QueryFilters
         });
     }
     
-    public function practice($name) {
-        return $this->builder->whereHas('primaryPractice', function ($query) use ($name) {
-            $query->where('display_name', $name);
+    public function practice($id) {
+        return $this->builder->whereHas('primaryPractice', function ($query) use ($id) {
+            $query->where('id', $id);
         });
     }
     
@@ -142,6 +142,14 @@ class PatientFilters extends QueryFilters
 
     public function isExcel() {
         return isset($this->filters()['excel']);
+    }
+
+    public function csv() {
+        return true;
+    }
+
+    public function isCsv() {
+        return isset($this->filters()['csv']);
     }
 
     public function autocomplete() {

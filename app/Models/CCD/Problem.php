@@ -1,15 +1,12 @@
 <?php namespace App\Models\CCD;
 
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Importer\Models\ItemLogs\ProblemLog;
-use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmInstruction;
+use App\Models\CPM\CpmProblem;
 use App\Models\ProblemCode;
-use App\Scopes\Imported;
-use App\Scopes\WithNonImported;
+use App\PatientMonthlySummary;
 use App\Traits\HasProblemCodes;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -88,7 +85,7 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
      */
     public function cpmProblem()
     {
-        return $this->belongsTo(CpmProblem::class);
+        return $this->belongsTo(CpmProblem::class, 'cpm_problem_id', 'id');
     }
     
     public function cpmInstruction()
@@ -128,5 +125,16 @@ class Problem extends \App\BaseModel implements \App\Contracts\Models\CCD\Proble
         $this->original_name = $name;
         if ($this->cpm_problem_id) return optional($this->cpmProblem)->name;
         return $name;
+    }
+
+    public function patientSummaries()
+    {
+        return $this->belongsToMany(PatientMonthlySummary::class, 'patient_summary_problems', 'problem_id')
+                    ->withPivot('name', 'icd_10_code')
+                    ->withTimestamps();
+    }
+
+    public function isBehavioral() : bool {
+        return ! ! optional($this->cpmProblem)->is_behavioral;
     }
 }

@@ -10,8 +10,7 @@ use Tests\TestCase;
 
 class UserOutboundCallControllerTest extends TestCase
 {
-    use DatabaseTransactions,
-        WithoutMiddleware;
+    use WithoutMiddleware;
 
     /**
      * A basic test example.

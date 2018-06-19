@@ -1,6 +1,6 @@
 <template>
     <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo">
-      <template scope="props" slot="title">
+      <template slot-scope="props" slot="title">
         <div class="row">
             <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
                 <v-select class="form-control" v-model="selectedPracticeData" 
@@ -9,7 +9,7 @@
             </div>
         </div>
       </template>
-      <template scope="props">
+      <template slot-scope="props">
         <div class="row">
             <div class="col-sm-12">
                 <div class="text-center" v-if="!patients.length">
@@ -18,7 +18,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <v-client-table ref="unscheduledPatients" :data="patients" :columns="columns" :options="options">
-                            <template slot="name" scope="props">
+                            <template slot="name" slot-scope="props">
                                 <a class="pointer" @click="triggerParentFilter(props.row.id, props.row.name)">{{props.row.name}}</a>
                             </template>
                         </v-client-table>
@@ -75,6 +75,10 @@
         computed: {
             practicesForSelect () {
                 return [ UNASSIGNED_VALUE, ...this.practices.map(practice => ({ label: practice.display_name, value: practice.id })) ]
+            },
+            patientUrl () {
+                const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
+                return rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`);
             }
         },
         methods: {
@@ -97,9 +101,8 @@
                 })
             },
             getPatients() {
-                const practice_addendum = this.practiceId ? `practices/${this.practiceId}/` : '';
                 this.loaders.patients = true
-                this.cache().get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls?autocomplete`)).then(patients => {
+                this.cache().get(this.patientUrl).then(patients => {
                     this.loaders.patients = false
                     this.patients = (patients || [])
                     console.log('unscheduled-patients-get-patients', patients)

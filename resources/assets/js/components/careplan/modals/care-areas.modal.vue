@@ -10,7 +10,7 @@
                     <div class="btn-group" :class="{ 'problem-buttons': problems.length > 12 }" role="group" aria-label="We are managing">
                         <div class="btn btn-secondary problem-button" :class="{ selected: selectedProblem && (selectedProblem.id === problem.id) }" 
                                 v-for="(problem, index) in problemsForListing" :key="index" @click="select(problem)">
-                            {{problem.name}}
+                            {{problem.name || `no name (${problem.id})`}}
                             <span class="delete" title="remove this cpm problem" @click="removeProblem">x</span>
                             <loader class="absolute" v-if="loaders.removeProblem && selectedProblem && (selectedProblem.id === problem.id)"></loader>
                         </div>
@@ -58,7 +58,7 @@
                                             v-model="selectedProblem.instruction.name" placeholder="Enter Instructions"></textarea>
                                         <loader class="absolute" v-if="loaders.addInstruction"></loader>
                                         <div class="font-14 color-blue" v-if="selectedProblem.original_name">
-                                            Full Name: {{ selectedProblem.original_name }}
+                                            Full Name: {{ selectedProblem.original_name }} {{ (selectedProblem.count() > 1) ? ` (+${selectedProblem.count() - 1})` : '' }}
                                         </div>
                                     </div>
                                     <div class="col-sm-12 top-20 text-right font-14">
@@ -79,7 +79,7 @@
                                                 <br>
                                                 <loader class="absolute" v-if="loaders.editProblem"></loader>
                                                 <input type="submit" class="btn btn-secondary margin-0 instruction-add selected" value="Save" 
-                                                    title="Edit this problem" :disabled="selectedProblem.name.length === 0 || patientHasSelectedProblem" />
+                                                    title="Edit this problem" :disabled="(selectedProblem.name || '').length === 0 || patientHasSelectedProblem" />
                                             </div>
                                         </div>
                                         
@@ -141,8 +141,8 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../../app.config'
+    import {Event} from 'vue-tables-2'
     import Modal from '../../../admin/common/modal'
     import VueSelect from 'vue-select'
     import VueComplete from 'v-complete'
@@ -167,14 +167,24 @@
                 return this.problems.distinct((p) => p.name)
             },
             patientHasSelectedProblem() {
-                if (!this.selectedProblem) return this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
-                else return this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
+                if (!this.selectedProblem) return (this.newProblem.name !== '') && this.problems.findIndex(problem => (problem.name || '').toLowerCase() == (this.newProblem.name || '').toLowerCase()) >= 0
+                else return (this.selectedProblem.name !== '') && this.problems.findIndex(problem => (problem != this.selectedProblem) && ((problem.name || '').toLowerCase() == (this.selectedProblem.name || '').toLowerCase())) >= 0
             },
             cpmProblemsForSelect() {
                 return this.cpmProblems.map(p => ({ label: p.name, value: p.id })).sort((a, b) => a.label < b.label ? -1 : 1)
             },
             cpmProblemsForAutoComplete() {
-                return this.cpmProblems.filter(p => p && p.name).map(p => ({ name: p.name, id: p.id })).distinct(p => p.name)
+                return this.cpmProblems.filter(p => p && p.name).reduce((pA, pB) => {
+                    return pA.concat([ {
+                        name: pB.name,
+                        id: pB.id,
+                        code: pB.code
+                    }, ...(pB.is_behavioral ? pB.snomeds.map(snomed => ({
+                        name: snomed.icd_10_name,
+                        id: pB.id,
+                        code: snomed.icd_10_code
+                    })) : [])])
+                }, []).distinct(p => p.name)
             },
             codeHasBeenSelectedBefore() {
                 return !!this.selectedProblem.codes.find(code => !!code.id && code.problem_code_system_id === (this.selectedProblem.newCode.selectedCode || {}).value)
@@ -221,8 +231,9 @@
                 this.newProblem.icd10 = null
             },
             resolveIcd10Code() {
-                this.newProblem.icd10 = (this.problems.find(p => p.name == this.newProblem.name) || {}).code || (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).code
-                this.newProblem.cpm_problem_id = (this.cpmProblems.find(p => p.name == this.newProblem.name) || {}).id
+                const autoCompleteProblem = this.cpmProblemsForAutoComplete.find(p => p.name == this.newProblem.name)
+                this.newProblem.icd10 = (autoCompleteProblem || {}).code || (this.problems.find(p => p.name == this.newProblem.name) || {}).code
+                this.newProblem.cpm_problem_id = (autoCompleteProblem || {}).id
             },
             removeProblem() {
                 if (this.selectedProblem && confirm('Are you sure you want to remove this problem?')) {
@@ -233,6 +244,7 @@
                         this.loaders.removeProblem = false
                         Event.$emit(`care-areas:remove-${this.selectedProblem.type}-problem`, this.selectedProblem.id)
                         this.selectedProblem = null
+                        setImmediate(() => this.checkPatientBehavioralStatus())
                     }).catch(err => {
                         console.error('care-areas:remove-problems', err)
                         this.loaders.removeProblem = false
@@ -258,6 +270,7 @@
                     Event.$emit('full-conditions:add', response.data)
                     this.reset()
                     this.selectedProblem = response.data
+                    setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:add', err)
                     this.loaders.addProblem = false
@@ -276,6 +289,7 @@
                     console.log('full-conditions:edit', response.data)
                     this.loaders.editProblem = false
                     Event.$emit('full-conditions:edit', response.data)
+                    setImmediate(() => this.checkPatientBehavioralStatus())
                 }).catch(err => {
                     console.error('full-conditions:edit', err)
                     this.loaders.editProblem = false
@@ -322,6 +336,27 @@
             },
             getProblemAutoCompleteTemplate(item) {
                 return (item || {}).name
+            },
+            /**
+             * is patient BHI, CCM or BOTH?
+             */
+            checkPatientBehavioralStatus() {
+                const ccmCount = this.problems.filter(problem => {
+                    if (problem.is_monitored) {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? !cpmProblem.is_behavioral: false
+                    }
+                    return false
+                }).length
+                const bhiCount = this.problems.filter(problem => {
+                        const cpmProblem = this.cpmProblems.find(cpm => cpm.id == problem.cpm_id)
+                        return cpmProblem ? cpmProblem.is_behavioral: false
+                    }).length
+                console.log('ccm', ccmCount, 'bhi', bhiCount)
+                Event.$emit('careplan:bhi', { 
+                    hasCcm: ccmCount > 0,
+                    hasBehavioral: bhiCount > 0
+                })
             }
         },
         mounted() {

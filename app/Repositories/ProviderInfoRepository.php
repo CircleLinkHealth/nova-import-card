@@ -22,16 +22,17 @@ class ProviderInfoRepository
     }
 
     public function list() {
-        $program_id = auth()->user()->program_id;
         $providers = $this->model()
                             ->join('users', 'provider_info.user_id', '=', 'users.id')
-                            ->where('users.program_id', $program_id)
+                            ->whereHas('user', function ($q) {
+                                $q->intersectPracticesWith(auth()->user());
+                            })
                             ->orderBy('provider_info.id', 'desc')->with([ 'user' ])->get()->map(function ($p) {
             return [
                 'id' => $p->id,
                 'user_id' => $p->user_id,
                 'specialty' => $p->specialty,
-                'name' => optional($p->user)->display_name,
+                'name' => trim(optional($p->user)->display_name ?? ''),
                 'address' => optional($p->user)->address
             ];
         });

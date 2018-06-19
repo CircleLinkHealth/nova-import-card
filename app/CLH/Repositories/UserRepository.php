@@ -8,7 +8,6 @@ use App\PatientMonthlySummary;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
-use App\Role;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -145,6 +144,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
 
+        DB::table('practice_role_user')
+          ->where('user_id', $user->id)
+          ->whereNotIn('program_id', $practices)
+          ->delete();
+
         // add patient info
         if ($user->hasRole('participant') && !$user->patientInfo) {
             $patientInfo = new Patient;
@@ -178,7 +182,6 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $userPrograms = [];
         if ($params->get('programs')) {
             $userPrograms = $params->get('programs');
-            $user->practices()->sync($userPrograms);
         }
 
         if ($params->get('program_id')) {
@@ -187,16 +190,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
 
-        // if still empty at this point, no program_id or program param
-        if (empty($userPrograms)) {
-            return false;
-        }
-
         // set primary program
         $user->program_id = $params->get('program_id');
         $user->save();
 
-        return $userPrograms;
+        return array_unique($userPrograms);
     }
 
     public function saveOrUpdatePhoneNumbers(

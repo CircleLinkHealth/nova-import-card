@@ -28,17 +28,16 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{{asset('/css/smoothness-jquery-ui-1.11.4.css')}}">
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
+          href="{{asset('/css/jquery-ui-timepicker-addon.min.css')}}">
 
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{asset('/css/bootstrap.min.css')}}">
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
@@ -72,6 +71,12 @@
                              style="position:relative;top:-5px"
                              width="50px"/>
                     </a>
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -129,7 +134,7 @@
                                     </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>
-                                    <li><a href="{{ route('admin.reports.nurse.monthly-index') }}">Monthly
+                                    <li><a href="{{ route('admin.reports.nurse.monthly') }}">Monthly
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.invoice') }}">
                                             Invoices</a></li>
@@ -219,7 +224,7 @@
                                     <a href="{{route('OpsDashboard.index')}}">Ops Dashboard</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('OpsDashboard.billingChurnIndex')}}">Billing Churn</a>
+                                    <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
                                 </li>
 
                             </ul>

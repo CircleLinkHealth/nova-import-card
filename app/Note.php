@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Contracts\PdfReport;
+use App\Filters\Filterable;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Notifications\NoteForwarded;
@@ -10,7 +11,6 @@ use App\Traits\IsAddendumable;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use App\Filters\Filterable;
 
 /**
  * App\Note
@@ -213,10 +213,11 @@ class Note extends \App\BaseModel implements PdfReport
     /**
      * Forwards note to CareTeam and/or Support
      *
-     * @param bool $notifySupport
      * @param bool $notifyCareteam
+     * @param bool $notifySupport
+     * @param bool|null $force
      */
-    public function forward(bool $notifyCareteam = null, bool $notifySupport = null)
+    public function forward(bool $notifyCareteam = null, bool $notifySupport = null, bool $force = false)
     {
         $this->load([
             'patient.primaryPractice.settings',
@@ -229,15 +230,21 @@ class Note extends \App\BaseModel implements PdfReport
 
         if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
             $recipients = $this->patient->care_team_receives_alerts;
+
+            if ($force) {
+                $recipients->push($this->patient->billingProviderUser());
+            }
         }
 
         if ($notifySupport) {
             $recipients->push(User::find(948));
         }
 
-        $recipients->map(function ($carePersonUser) {
-            optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
-        });
+        $recipients->unique()
+                   ->values()
+                   ->map(function ($carePersonUser) {
+                       optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
+                   });
 
         $channels = [];
 

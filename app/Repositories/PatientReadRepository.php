@@ -49,15 +49,6 @@ class PatientReadRepository
                 $users = $users->paginate($users->count());
             }
         }
-        $users->getCollection()->transform(function ($user) use ($filters) {
-            if ($filters->isAutocomplete()) {
-                $user = optional($user)->autocomplete();
-            }
-            else {
-                $user = optional($user)->safe();
-            }
-            return $user;
-        });
         return $users;
     }
 
