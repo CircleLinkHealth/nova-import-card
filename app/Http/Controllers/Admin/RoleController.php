@@ -69,7 +69,7 @@ class RoleController extends Controller
         return redirect()->route('roles.edit', [$role->id])->with(
             'messages',
             ['successfully added new role - ' . $params['name']]
-        )->send();
+        );
     }
 
     /**
@@ -140,7 +140,7 @@ class RoleController extends Controller
         }
         $role->save();
 
-        return redirect()->back()->with('messages', ['successfully updated role'])->send();
+        return redirect()->back()->with('messages', ['successfully updated role']);
     }
 
     /**

@@ -9,11 +9,11 @@ use App\PageTimer;
 use App\Practice;
 use App\Repositories\PatientReadRepository;
 use App\Services\CareplanAssessmentService;
+use App\Services\CareplanService;
 use App\Services\CCD\CcdInsurancePolicyService;
 use App\Services\CPM\CpmProblemService;
 use App\Services\PrintPausedPatientLettersService;
 use App\Services\ReportsService;
-use App\Services\CareplanService;
 use App\User;
 use Carbon\Carbon;
 use DateInterval;
@@ -170,7 +170,7 @@ class ReportsController extends Controller
                         ])
                         ->whereHas('patientSummaries', function ($q) use ($time) {
                             $q->where('month_year', $time->copy()->startOfMonth()->toDateString())
-                              ->where('ccm_time', '<', 1200);
+                              ->where('total_time', '<', 1200);
                         })
                         ->get();
 

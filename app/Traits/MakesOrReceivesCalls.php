@@ -85,8 +85,8 @@ trait MakesOrReceivesCalls
                     ->where(function ($q) use ($date) {
                         $q->where([
                             ['scheduled_date', '=', $date->toDateString()],
-                            ['called_date', '>=', $date->startOfDay()->toDateTimeString()],
-                            ['called_date', '<=', $date->endOfDay()->toDateTimeString()],
+                            ['called_date', '>=', $date->copy()->startOfDay()->toDateTimeString()],
+                            ['called_date', '<=', $date->copy()->endOfDay()->toDateTimeString()],
                         ])
                           ->orWhere([
                               ['scheduled_date', '=', $date->toDateString()],

@@ -22,11 +22,13 @@
                 </ul>
             </div>
             <div class="col-xs-12" v-if="ccdProblemsForListing.length > 0">
-                <h2 class="color-blue pointer">Other Conditions
-                     <!-- <span v-if="!isOtherConditionsVisible">({{ ccdProblemsForListing.length }})</span> -->
+                <h2 class="color-blue pointer" @click="toggleOtherConditions">
+                    <span v-if="!isOtherConditionsVisible">See </span>Other Conditions
+                    <span v-if="!isOtherConditionsVisible" class="font-22">({{ ccdProblemsForListing.length }})</span>
+                    <span v-if="isOtherConditionsVisible" class="font-22">(Click to Minimize)</span>
                 </h2>
                 
-                <ul class="row">
+                <ul class="row" v-if="isOtherConditionsVisible">
                     <li class='top-10 col-sm-6' 
                         v-for="(problem, index) in ccdProblemsForListing" :key="index">
                         {{problem.name}}
@@ -39,8 +41,8 @@
 </template>
 
 <script>
-    import { rootUrl } from '../../app.config'
-    import { Event } from 'vue-tables-2'
+    import {rootUrl} from '../../app.config'
+    import {Event} from 'vue-tables-2'
     import CareAreasModal from './modals/care-areas.modal'
     import CareplanMixin from './mixins/careplan.mixin'
 
@@ -87,6 +89,7 @@
                 })
                 problem.type = 'cpm'
                 problem.title = () => `${problem.code} ${problem.name}`
+                problem.count = () => this.cpmProblems.filter(p => p.name == problem.name).length
                 return problem
             },
             getCpmProblems() {
@@ -152,6 +155,10 @@
         color: #109ace;
     }
 
+    .font-18 {
+        font-size: 18px;
+    }
+
     .font-22 {
         font-size: 22px;
     }
@@ -168,9 +175,11 @@
         margin-left: 10px;
         z-index: 2;
         top: -5px;
+        max-width: 300px;
+        white-space: normal;
     }
 
     li:hover label.label.label-popover {
-        display: inline;
+        display: inline-block;
     }
 </style>

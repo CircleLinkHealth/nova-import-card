@@ -22,7 +22,8 @@ class DetermineEnrollmentEligibility
         $ehrPracticeId,
         Carbon $startDate,
         Carbon $endDate,
-        $offset = false
+        $offset = false,
+        $batchId = null
     ) {
         $start = $startDate->format('m/d/Y');
         $end   = $endDate->format('m/d/Y');
@@ -63,6 +64,10 @@ class DetermineEnrollmentEligibility
                     'ehr_practice_id'   => $ehrPracticeId,
                     'ehr_department_id' => $departmentId,
                 ]);
+
+                if ($batchId !== null){
+                    $target->batch_id = $batchId;
+                }
 
                 if ( ! $target->status) {
                     $target->status = 'to_process';

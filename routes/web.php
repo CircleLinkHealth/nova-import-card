@@ -878,6 +878,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'get.athena.ccdas',
         ]);
 
+        Route::post('athena-pull', [
+            'uses' => 'Admin\DashboardController@pullAthenaEnrollees',
+            'as'   => 'pull.athena.enrollees',
+        ]);
+
         Route::get('patients/letters/paused', [
             'uses' => 'ReportsController@pausedPatientsLetterPrintList',
             'as'   => 'get.print.paused.letters'
@@ -961,6 +966,8 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
         ]);
+
+
 
         Route::post('make-welcome-call-list', [
             'uses' => 'Admin\WelcomeCallListController@makeWelcomeCallList',
@@ -1164,10 +1171,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index'
                 ]);
-                Route::get('/daily-report', [
-                    'uses' => 'OpsDashboardController@getDailyReport',
-                    'as'   => 'OpsDashboard.dailyReport'
-                ]);
+
                 Route::get('/lost-added-index', [
                     'uses' => 'OpsDashboardController@getLostAddedIndex',
                     'as'   => 'OpsDashboard.lostAddedIndex'
@@ -1191,11 +1195,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ]);
 
                 //billing churn
-                Route::get('/billing-churn-index', [
-                    'uses' => 'OpsDashboardController@getBillingChurnIndex',
-                    'as'   => 'OpsDashboard.billingChurnIndex'
-                ]);
-
                 Route::get('/billing-churn', [
                     'uses' => 'OpsDashboardController@getBillingChurn',
                     'as'   => 'OpsDashboard.billingChurn'
@@ -1301,11 +1300,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-        // impersonation
-        Route::post('impersonate', [
-            'uses' => 'ImpersonationController@postImpersonate',
-            'as'   => 'post.impersonate',
-        ]);
+        Route::impersonate();
 
         // appConfig
         Route::group([
@@ -2027,8 +2022,6 @@ Route::group([
 
     Route::get('/call', 'TwilioController@makeCall');
 });
-
-Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',

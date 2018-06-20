@@ -40,41 +40,53 @@ class OpsDashboardController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
+        if ($request->has('date')) {
+            $requestDate = new Carbon($request['date']);
+            $date        = $requestDate->copy()->setTime('23', '0', '0');
+        } else {
+            $date = $maxDate->copy()->setTimeFromTimeString('23:00');
+        }
 
-        //used by query to get patients with CCM time
-        $date = $maxDate->copy()->setTimeFromTimeString('23:00');
+        $practices = Practice::activeBillable()
+                             ->with([
+                                 'patients' => function ($p) use ($date) {
+                                     $p->with([
+                                         'activities' => function ($a) use ($date) {
+                                             $a->where('performed_at', '>=',
+                                                 $date->copy()->startOfMonth()->startOfDay())
+                                               ->where('performed_at', '<=', $date);
+                                         },
+                                         'patientInfo',
+                                     ]);
+                                 },
+                             ])
+                             ->whereHas('patients', function ($p) {
+                                 $p->whereHas('patientInfo', function ($p) {
+                                     $p->where('ccm_status', Patient::ENROLLED)
+                                       ->orWhere('ccm_status', Patient::PAUSED)
+                                       ->orWhere('ccm_status', Patient::WITHDRAWN);
+                                 });
+                             })
+                             ->get()
+                             ->sortBy('display_name');
 
-
-        $enrolledPatients = User::with([
-                                    'activities' => function ($activity) use ($date) {
-                                        $activity->where('performed_at', '>=', $date->copy()->startOfMonth()->startOfDay())
-                                                 ->where('performed_at', '<=', $date);
-                                    },
-                                ])
-                                ->whereHas('patientInfo', function ($patient) {
-                                    $patient->enrolled();
-                                })->get();
-
-        //used by query to get Patients by status
-        $fromDate         = $date->copy()->subDay();
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(), $date->toDateTimeString());
-
+        $enrolledPatients = $practices->map(function ($practice) {
+            return $practice->patients->map(function ($user) {
+                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
+                    return $user;
+                }
+            })->filter();
+        })->flatten();
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
-
-        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
-
-
-        $rows = [];
-        foreach ($allPractices as $practice) {
-            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($date, $patientsByPractice, $statusPatientsByPractice);
+        foreach ($practices as $practice) {
+            $row = $this->service->dailyReportRow($practice->patients,
+                $enrolledPatients->where('program_id', $practice->id), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -92,6 +104,13 @@ class OpsDashboardController extends Controller
 
     }
 
+    /**
+     * To be removed.
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getDailyReport(Request $request)
     {
         $today       = Carbon::today();
@@ -306,36 +325,47 @@ class OpsDashboardController extends Controller
 
     }
 
-    public function getBillingChurnIndex()
+    public function getBillingChurn(Request $request)
     {
+        if ($request->has('months')) {
+            $months = $request['months'];
+            if ($months == 'all') {
+                $months = 8;
+            }
+        } else {
+            $months = 6;
+        }
 
-        $date = Carbon::today();
-
-
-        //default date range
-        $months   = 6;
+        $date     = Carbon::today();
         $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
         $months   = $this->getMonths($date, $months);
 
 
-        $summaries = PatientMonthlySummary::with('patient')
-                                          ->whereHas('patient')
-                                          ->where('actor_id', '!=', null)
-                                          ->where('approved', 1)
-                                          ->where('month_year', '>=', $fromDate->toDateString())
-                                          ->get();
+        $practices = Practice::activeBillable()
+                             ->with([
+                                 'patients' => function ($u) use ($fromDate) {
+                                     $u->with([
+                                         'patientSummaries' => function ($s) use ($fromDate) {
+                                             $s->where('actor_id', '!=', null)
+                                               ->where('approved', 1)
+                                               ->where('month_year', '>=', $fromDate->toDateString());
+                                         },
+                                     ]);
+                                 },
+                             ])->get()
+            ->sortBy('display_name');
 
-        $practices = Practice::activeBillable()->get()->sortBy('name');
 
-
-
-        $rows = [];
         foreach ($practices as $practice) {
-            $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
-            $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
+
+
+            $summaries = $practice->patients->map(function ($p){
+                return $p->patientSummaries;
+            })->filter()->flatten();
+            $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);
         }
         $total = $this->calculateBillingChurnTotalRow($rows, $months);
-        $rows                     = collect($rows);
+        $rows  = collect($rows);
 
         return view('admin.opsDashboard.billing-churn', compact([
             'date',
@@ -345,49 +375,6 @@ class OpsDashboardController extends Controller
             'total',
         ]));
 
-    }
-
-    public function getBillingChurn(Request $request)
-    {
-
-        $date = Carbon::today();
-
-        $months = $request['months'];
-        //default date range
-        if ($months == 'all') {
-            $months = 8;
-        }
-
-        $fromDate = $date->copy()->subMonth($months)->startOfMonth()->startOfDay();
-        $months   = $this->getMonths($date, $months);
-
-
-        $summaries = PatientMonthlySummary::with('patient')
-                                          ->whereHas('patient')
-                                          ->where('actor_id', '!=', null)
-                                          ->where('approved', 1)
-                                          ->where('month_year', '>=', $fromDate)
-                                          ->get();
-
-        $practices = Practice::activeBillable()->get()->sortBy('name');
-
-
-
-        $rows = [];
-        foreach ($practices as $practice) {
-            $practiceSummaries             = $this->service->filterSummariesByPractice($summaries, $practice->id);
-            $rows[$practice->display_name] = $this->service->billingChurnRow($practiceSummaries, $months);
-        }
-        $total = $this->calculateBillingChurnTotalRow($rows, $months);
-        $rows                     = collect($rows);
-
-        return view('admin.opsDashboard.billing-churn', compact([
-            'date',
-            'fromDate',
-            'rows',
-            'months',
-            'total'
-        ]));
     }
 
     /**
@@ -694,10 +681,10 @@ class OpsDashboardController extends Controller
             }
         }
 
-        foreach ($months as $month){
-            $totalRow['Billed'][$month->format('m, Y')]       = array_sum($total['Billed'][$month->format('m, Y')]);
+        foreach ($months as $month) {
+            $totalRow['Billed'][$month->format('m, Y')]            = array_sum($total['Billed'][$month->format('m, Y')]);
             $totalRow['Added to Billing'][$month->format('m, Y')]  = array_sum($total['Added to Billing'][$month->format('m, Y')]);
-            $totalRow['Lost from Billing'][$month->format('m, Y')]  = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
+            $totalRow['Lost from Billing'][$month->format('m, Y')] = array_sum($total['Lost from Billing'][$month->format('m, Y')]);
         }
 
         return collect($totalRow);

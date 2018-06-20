@@ -37,7 +37,7 @@
     <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="{{asset('/css/smoothness-jquery-ui-1.11.4.css')}}">
     @endif
 
 <!-- Fonts -->
@@ -91,9 +91,8 @@
         * other times, it is an instance of Patient::class
         * We have to make sure that $user is always an instance of User::class by deriving it from $patient
         */
-        use App\User;
-        use App\Patient;
-        $user = null;
+    use App\Patient;
+    $user = null;
         if (isset($patient)) {
             if (is_a($patient, Patient::class)) {
                 $user = $patient->user()->first();
@@ -109,7 +108,7 @@
     @endif
 
     <open-modal></open-modal>
-    <notifications></notifications>
+    <notifications ref="globalNotification"></notifications>
 
 </div> <!-- end #app -->
 

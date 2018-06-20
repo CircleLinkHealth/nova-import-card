@@ -64,6 +64,7 @@ class Settings extends \App\BaseModel
         'efax_pdf_careplan',
         'efax_pdf_notes',
         'efax_audit_reports',
+        'note_font_size',
 
         //Email Notifications
         'email_careplan_approval_reminders',
@@ -71,6 +72,7 @@ class Settings extends \App\BaseModel
         'email_weekly_report',
 
         'bill_to',
+        'api_auto_pull',
     ];
 
     /**

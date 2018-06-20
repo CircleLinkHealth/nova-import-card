@@ -2,6 +2,7 @@
 
 use App\CLH\Helpers\StringManipulation;
 use App\Models\Ehr;
+use App\Traits\HasChargeableServices;
 use App\Traits\HasSettings;
 use App\Traits\SaasAccountable;
 use Carbon\Carbon;
@@ -78,6 +79,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 class Practice extends \App\BaseModel implements HasMedia
 {
     use HasMediaTrait,
+        HasChargeableServices,
         HasSettings,
         SaasAccountable,
         SoftDeletes,
@@ -124,7 +126,8 @@ class Practice extends \App\BaseModel implements HasMedia
     public function users()
     {
         return $this->belongsToMany(User::class, 'practice_role_user', 'program_id', 'user_id')
-                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports');
+                    ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+                    ->withTimestamps();
     }
 
     public function patients()
@@ -142,13 +145,6 @@ class Practice extends \App\BaseModel implements HasMedia
         return $this->users()->whereHas('roles', function ($q) {
             $q->where('name', '=', 'care-center')->orWhere('name', 'registered-nurse');
         });
-    }
-
-    public function chargeableServices()
-    {
-        return $this->morphToMany(ChargeableService::class, 'chargeable')
-                    ->withPivot(['amount'])
-                    ->withTimestamps();
     }
 
     public function getCountOfUserTypeAtPractice($role)

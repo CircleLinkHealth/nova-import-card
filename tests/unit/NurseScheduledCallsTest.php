@@ -3,6 +3,7 @@
 namespace Tests\unit;
 
 use App\Call;
+use App\Practice;
 use Carbon\Carbon;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
@@ -13,13 +14,15 @@ class NurseScheduledCallsTest extends TestCase
 
     private $nurse;
     private $patient;
+    private $practice;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->nurse = $this->createUser(8, 'care-center');
-        $this->patient = $this->createUser(8, 'participant');
+        $this->practice = factory(Practice::class)->create();
+        $this->nurse = $this->createUser($this->practice->id, 'care-center');
+        $this->patient = $this->createUser($this->practice->id, 'participant');
     }
 
     /**
@@ -34,15 +37,15 @@ class NurseScheduledCallsTest extends TestCase
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
             'called_date' => null,
-            'scheduled_date' => Carbon::today(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
         $call2 = Call::create([
             'status' => 'not reached',
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::yesterday(),
-            'scheduled_date' => Carbon::today(),
+            'called_date' => Carbon::yesterday()->toDateTimeString(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
         $call3 = Call::create([
@@ -50,23 +53,23 @@ class NurseScheduledCallsTest extends TestCase
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
             'called_date' => null,
-            'scheduled_date' => Carbon::today(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
         $call4 = Call::create([
             'status' => 'reached',
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::yesterday(),
-            'scheduled_date' => Carbon::today(),
+            'called_date' => Carbon::yesterday()->toDateTimeString(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
         $call5 = Call::create([
             'status' => 'reached',
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
-            'called_date' => Carbon::now(),
-            'scheduled_date' => Carbon::today(),
+            'called_date' => Carbon::now()->toDateTimeString(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
         $call6 = Call::create([
@@ -74,12 +77,12 @@ class NurseScheduledCallsTest extends TestCase
             'inbound_cpm_id' => $this->patient->id,
             'outbound_cpm_id' => $this->nurse->id,
             'called_date' => null,
-            'scheduled_date' => Carbon::today(),
+            'scheduled_date' => Carbon::today()->toDateString(),
         ]);
 
-        $scheduledCallCount = $this->nurse->nurseInfo->countScheduledCallsForToday();
-        $successfulCallCount = $this->nurse->nurseInfo->countSuccessfulCallsMadeToday();
-        $completedCallCount = $this->nurse->nurseInfo->countCompletedCallsForToday();
+        $scheduledCallCount = $this->nurse->countScheduledCallsForToday();
+        $successfulCallCount = $this->nurse->countSuccessfulCallsMadeToday();
+        $completedCallCount = $this->nurse->countCompletedCallsForToday();
 
         $this->assertEquals(4, $scheduledCallCount);
         $this->assertEquals(1, $successfulCallCount);
@@ -93,7 +96,7 @@ class NurseScheduledCallsTest extends TestCase
      */
     public function testNoScheduledCallsForToday()
     {
-        $calls = $this->nurse->nurseInfo->countScheduledCallsForToday();
+        $calls = $this->nurse->countScheduledCallsForToday();
 
         $this->assertEquals(0, $calls);
     }
