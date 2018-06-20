@@ -26,7 +26,7 @@ if (isset($patient)) {
 
         <div class="navbar-header col-lg-1 col-sm-2 col-xs-2">
             <a href="{{ url('/') }}" style="border: none" class="navbar-brand"><img
-                        src="/img/ui/clh_logo_lt.png"
+                        src="{{mix('/img/ui/clh_logo_lt.png')}}"
                         alt="Care Plan Manager"
                         style="position:relative;top:-15px"
                         width="50px"/></a>

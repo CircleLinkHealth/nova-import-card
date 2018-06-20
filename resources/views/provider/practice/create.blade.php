@@ -73,7 +73,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{asset('/js/materialize.min.js')}}"></script>
+<script src="{{mix('/js/materialize.min.js')}}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {

@@ -31,7 +31,7 @@ $practiceSection = \App\Reports\Sales\Provider\Sections\PracticeDemographics::cl
     <div class="page-header">
 
         @if($data['isEmail'])
-            <div style="text-align: center"><img src="/img/ui/logo.png"
+            <div style="text-align: center"><img src="{{mix('/img/ui/logo.png')}}"
                                                  alt="Care Plan Manager"
                                                  style="position:relative;"
                                                  width="200px"/>
