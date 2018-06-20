@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 SHARED=$1
 RELEASE=$2
 
@@ -28,6 +30,11 @@ php artisan lada-cache:disable
 
 # Run migrations
 php artisan migrate --force
+
+# Force exit if the migrations fail.
+if [ $? = 1 ]; then
+    exit
+fi
 
 # Enable lada-cache after migrations
 # php artisan lada-cache:enable
