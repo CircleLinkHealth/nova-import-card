@@ -1,4 +1,4 @@
-<link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
 
 <div class="container">
 
@@ -51,7 +51,7 @@
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-<script src="{{ asset('js/browser-calls.js', true) }}"></script>
+<script src="{{ mix('js/browser-calls.js', true) }}"></script>
 <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 

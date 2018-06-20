@@ -6,11 +6,11 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="base-url" content="{{ url('/') }}">
     <title>CCD Importer</title>
-    <link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
 
-    <link rel="stylesheet" href="{{ asset('/compiled/css/stylesheet.css') }}"/>
+    <link rel="stylesheet" href="{{ mix('/compiled/css/stylesheet.css') }}"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link href="/img/favicon.png" rel="icon">
+    <link href="{{mix('/img/favicon.png')}}" rel="icon">
 </head>
 <body>
     <div class="container" id="app">
@@ -21,7 +21,7 @@
 
     @include('partials.footer')
 
-    <script src="{{ asset('compiled/js/app-ccd-importer.js') }}"></script>
+    <script src="{{ mix('compiled/js/app-ccd-importer.js') }}"></script>
 </body>
 </html>
 

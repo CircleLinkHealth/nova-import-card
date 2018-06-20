@@ -5,15 +5,16 @@
 
 @section('content')
 
+    @push('scripts')
+        <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
 
-    <script>
-        $(document).ready(function () {
-            $(".observation").select2();
+        <script>
+            $(function () {
+                $(".observation").select2();
+            });
+        </script>
+    @endpush
 
-        });
-    </script>
-
-    <script type="text/javascript" src="{{ asset('/js/patient/observation-create.vue') }}"></script>
     <div id="dtBox"></div>
     <div class="row" style="margin:60px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
