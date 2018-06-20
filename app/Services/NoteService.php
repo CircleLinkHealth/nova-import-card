@@ -484,9 +484,9 @@ class NoteService
         return $note->notifications()
                     ->hasNotifiableType(User::class)
                     ->where([
-                        ['read_at', '!=', null],
                         ['notifiable_id', '=', $note->patient->billingProviderUser()->id],
                     ])
+                    ->whereNotNull('read_at')
                     ->exists();
     }
 }
