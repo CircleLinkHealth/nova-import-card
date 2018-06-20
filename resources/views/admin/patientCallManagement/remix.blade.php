@@ -68,7 +68,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-    <!--<script src="{{ mix('compiled/js/v-call-mgmt.min.js') }}"></script>-->
-@endpush
