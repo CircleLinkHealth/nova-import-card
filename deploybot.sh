@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+SHARED=$1
+RELEASE=$2
 
 # Create a shared vendor directory and symlink it to the project root
 mkdir -p $SHARED/vendor
