@@ -55,9 +55,16 @@
                     <label>Starting CarePlan Mode</label>
                 </div>
 
-                <div class="input-field col s6" style="margin-top: 3rem;">
+                <div class="input-field col s4" style="margin-top: 3rem;">
                     {{ Form::select('settings[bill_to]', ['practice'=>'Practice','provider'=>'Provider'], $practiceSettings->bill_to) }}
                     <label>Bill to:</label>
+                </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    <input type="number" name="settings[note_font_size]" id="note_font_size"
+                           value="{{$practiceSettings->note_font_size ?? config('snappy.pdf.options.zoom')}}" step="0.1"
+                           min="0.1" max="2.0">
+                    <label for="note_font_size">PDF Note Font Size</label>
                 </div>
             </div>
 
@@ -88,15 +95,6 @@
             <div class="row">
                 <div class="input-field col s12"><h6>Efax Notifications</h6></div>
 
-                <div class="col s12">
-                    <div class="input-field mg-bottom-minus-30 col s3">
-                        <input type="number" name="settings[note_font_size]" id="note_font_size"
-                               value="{{$practiceSettings->note_font_size}}" step="0.1" min="0.1" max="2.0">
-                        <label for="note_font_size">Default Font Size</label>
-                    </div>
-                </div>
-
-
                 <div class="input-field col s6">
                     <input name="settings[efax_pdf_careplan]" type="checkbox" id="efax_pdf_careplan"
                            value="1" @if($practiceSettings->efax_pdf_careplan){{'checked'}}@endif>
@@ -116,8 +114,6 @@
                            value="1" @if($practiceSettings->efax_audit_reports){{'checked'}}@endif>
                     <label for="efax_audit_reports">Send Audit Reports</label>
                 </div>
-
-
             </div>
 
             <div class="row">

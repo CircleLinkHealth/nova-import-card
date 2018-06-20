@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddNoteFontSizeColumnToCpmSettingsTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddNoteFontSizeColumnToCpmSettingsTable extends Migration
     public function up()
     {
         Schema::table('cpm_settings', function (Blueprint $table) {
-            $table->decimal('note_font_size', 4, 1)
+            $table->decimal('note_font_size', 2, 1)
                   ->nullable()
                   ->after('efax_audit_reports');
         });
