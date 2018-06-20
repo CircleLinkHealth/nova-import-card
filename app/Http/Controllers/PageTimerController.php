@@ -2,6 +2,7 @@
 
 use App\Activity;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
+use App\Nurse;
 use App\PageTimer;
 use App\Services\ActivityService;
 use App\Services\TimeTracking\Service as TimeTrackingService;
@@ -64,6 +65,9 @@ class PageTimerController extends Controller
             $newActivity->provider_id       = $providerId;
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
+            $is_behavioral = isset($activity['is_behavioral'])
+                ? $activity['is_behavioral']
+                : false;
             $newActivity->url_full          = $activity['url'];
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];
@@ -77,7 +81,7 @@ class PageTimerController extends Controller
             $activityId = null;
 
             if ($newActivity->billable_duration > 0) {
-                $activityId = $this->addPageTimerActivities($newActivity);
+                $activityId = $this->addPageTimerActivities($newActivity, $is_behavioral);
             }
 
             if ($activityId) {
@@ -88,7 +92,7 @@ class PageTimerController extends Controller
         return response("PageTimer activities logged.", 201);
     }
 
-    public function addPageTimerActivities(PageTimer $pageTimer)
+    public function addPageTimerActivities(PageTimer $pageTimer, $is_behavioral = false)
     {
         // check params to see if rule exists
         $params = [];
@@ -96,7 +100,7 @@ class PageTimerController extends Controller
         //user
         $user = User::find($pageTimer->provider_id);
 
-        if ( ! (bool)$user->isCCMCountable() || $pageTimer->patient_id == 0) {
+        if (( ! (bool)$user->isCCMCountable()) || ($pageTimer->patient_id == 0)) {
             return false;
         }
 
@@ -114,6 +118,7 @@ class PageTimerController extends Controller
             $activityParams                  = [];
             $activityParams['type']          = $params['activity'];
             $activityParams['provider_id']   = $pageTimer->provider_id;
+            $activityParams['is_behavioral'] = $is_behavioral;
             $activityParams['performed_at']  = $pageTimer->start_time;
             $activityParams['duration']      = $pageTimer->billable_duration;
             $activityParams['duration_unit'] = 'seconds';
@@ -144,19 +149,22 @@ class PageTimerController extends Controller
 
     public function handleNurseLogs($activityId)
     {
+        $activity = Activity::with('patient.patientInfo')
+                            ->find($activityId);
 
-        $activity = Activity::find($activityId);
-
-        if ($activity) {
-            $nurse = User::find($activity->provider_id)->nurseInfo;
-            if ($nurse) {
-                $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
-
-                $alternativePayComputer->adjustCCMPaybleForActivity($activity);
-            }
+        if ( ! $activity) {
+            return;
         }
 
-        return false;
+        $nurse = Nurse::whereUserId($activity->provider_id)
+                      ->first();
+
+        if ( ! $nurse) {
+            return;
+        }
+
+        $alternativePayComputer = new AlternativeCareTimePayableCalculator($nurse);
+        $alternativePayComputer->adjustNursePayForActivity($activity);
     }
 
     /**

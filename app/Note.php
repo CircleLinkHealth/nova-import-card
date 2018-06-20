@@ -123,8 +123,15 @@ class Note extends \App\BaseModel implements PdfReport
             'provider' => $this->patient->billingProviderUser(),
         ]);
 
+        $fontSize = $this->patient
+            ->primaryPractice
+            ->cpmSettings()
+            ->note_font_size;
+
         if ( ! empty($scale)) {
             $pdf->setOption('zoom', $scale);
+        } elseif ( ! empty($fontSize)) {
+            $pdf->setOption('zoom', $fontSize);
         }
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
@@ -219,10 +226,11 @@ class Note extends \App\BaseModel implements PdfReport
     /**
      * Forwards note to CareTeam and/or Support
      *
-     * @param bool $notifySupport
      * @param bool $notifyCareteam
+     * @param bool $notifySupport
+     * @param bool|null $force
      */
-    public function forward(bool $notifyCareteam = null, bool $notifySupport = null)
+    public function forward(bool $notifyCareteam = null, bool $notifySupport = null, bool $force = false)
     {
         $this->load([
             'patient.primaryPractice.settings',
@@ -235,15 +243,21 @@ class Note extends \App\BaseModel implements PdfReport
 
         if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
             $recipients = $this->patient->care_team_receives_alerts;
+
+            if ($force) {
+                $recipients->push($this->patient->billingProviderUser());
+            }
         }
 
         if ($notifySupport) {
             $recipients->push(User::find(948));
         }
 
-        $recipients->map(function ($carePersonUser) {
-            optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
-        });
+        $recipients->unique()
+                   ->values()
+                   ->map(function ($carePersonUser) {
+                       optional($carePersonUser)->notify(new NoteForwarded($this, ['mail']));
+                   });
 
         $channels = [];
 

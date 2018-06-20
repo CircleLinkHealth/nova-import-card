@@ -53,7 +53,7 @@ class NoteForwarded extends Notification
      */
     public function toMail($notifiable)
     {
-        $saasAccountName = $notifiable->saasAccountName();
+        $saasAccountName     = $notifiable->saasAccountName();
         $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
 
         $mail = (new MailMessage())

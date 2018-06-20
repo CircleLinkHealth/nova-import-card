@@ -31,13 +31,13 @@
 
     <title>CarePlanManager - @yield('title')</title>
 
-    <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
-    <link href="{{ asset('/css/patientsearch.css') }}" rel="stylesheet">
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
+    <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
+    <link href="{{ mix('/css/patientsearch.css') }}" rel="stylesheet">
+    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     @if(!isset($isPdf))
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
     @endif
 
 <!-- Fonts -->
@@ -48,7 +48,7 @@
     @if(!isset($isPdf))
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
         <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
-        <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
+        <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
     @endif
@@ -108,7 +108,7 @@
     @endif
 
     <open-modal></open-modal>
-    <notifications></notifications>
+    <notifications ref="globalNotification"></notifications>
 
 </div> <!-- end #app -->
 
@@ -123,31 +123,20 @@
 @if (Agent::isIE())
     <!-- Script for polyfilling Promises on IE9 and 10 -->
     <script src='https://cdn.polyfill.io/v2/polyfill.min.js'></script>
-    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
 @include('partials.providerUItimer')
 @stack('prescripts')
 
-<script type="text/javascript" src="{{asset('compiled/js/app-provider-ui.js')}}"></script>
-<script type="text/javascript" src="{{ asset('compiled/js/issue-688.js') }}"></script>
+<script type="text/javascript" src="{{mix('compiled/js/app-provider-ui.js')}}"></script>
+<script type="text/javascript" src="{{ mix('compiled/js/issue-688.js') }}"></script>
 
 @stack('scripts')
 <script>
     $(function () {
         $('.selectpicker').selectpicker('refresh')
-    })
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-        .then(function(registration) {
-            console.log('Service Worker registration successful with scope: ',
-            registration.scope);
-        })
-        .catch(function(err) {
-            console.log(err);
-        });
-    }
+    });
 </script>
 @endif
 </body>

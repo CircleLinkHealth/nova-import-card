@@ -6,6 +6,7 @@ use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
 use App\Practice;
+use App\Repositories\PatientSummaryEloquentRepository;
 use App\Services\ApproveBillablePatientsService;
 use App\User;
 use Carbon\Carbon;
@@ -27,6 +28,7 @@ class BillablePatientsServiceTest extends TestCase
     private $patient;
     private $service;
     private $summary;
+    private $repo;
 
     /**
      * This test assumes that the patient has billable and non-billable ccd problems.
@@ -106,7 +108,7 @@ class BillablePatientsServiceTest extends TestCase
     private function createMonthlySummary(User $patient, Carbon $monthYear, $ccmTime)
     {
         return $patient->patientSummaries()->updateOrCreate([
-            'month_year' => $monthYear->startOfMonth()->toDateString(),
+            'month_year' => $monthYear->startOfMonth(),
         ], [
             'ccm_time'               => $ccmTime,
             'no_of_successful_calls' => 2,
@@ -131,11 +133,14 @@ class BillablePatientsServiceTest extends TestCase
         $problem1 = $problem1->fresh();
         $problem2 = $problem2->fresh();
 
+        $this->assertEquals($list->count(), 1);
+
         $this->assertTrue($list->count() == 1);
 
         $row = (new ApprovableBillablePatient($list->first()))->resolve();
 
         $this->assertEquals($row['report_id'], $summary->id);
+        $this->assertEquals($row['practice_id'], $this->practice->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);
         $this->assertEquals($row['ccm'], round($summary->ccm_time / 60, 2));
         $this->assertEquals($row['problem1'], $problem1->name);
@@ -252,6 +257,26 @@ class BillablePatientsServiceTest extends TestCase
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
     }
 
+    public function test_it_selects_bhi_problems()
+    {
+        //Set up
+        $problem1 = $this->createProblem(true, 33);
+        $problem2 = $this->createProblem(true, 2);
+        $problem3 = $this->createProblem(null, 0);
+        $problem4 = $this->createProblem(false, 2);
+        $problem5 = $this->createProblem(null, 9);
+
+        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary->save();
+
+        //Run
+        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
+                              ->getCollection();
+
+        //Assert
+        $this->assertMonthlySummary($this->summary, $problem1, $problem5, $list);
+    }
+
     public function test_it_stores_ccd_problem_with_cpm_id()
     {
         $uri = route('monthly.billing.store-problem');
@@ -277,6 +302,7 @@ class BillablePatientsServiceTest extends TestCase
         $this->practice = factory(Practice::class)->create();
         $this->patient  = $this->createUser($this->practice->id, 'participant');
         $this->service  = app(ApproveBillablePatientsService::class);
+        $this->repo     = app(PatientSummaryEloquentRepository::class);
         $this->summary  = $this->createMonthlySummary($this->patient, Carbon::now(), 1400);
     }
 }

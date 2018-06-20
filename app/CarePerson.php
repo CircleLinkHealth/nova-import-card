@@ -36,12 +36,7 @@ class CarePerson extends \App\BaseModel
     const MEMBER = 'member';
     const SEND_ALERT_TO = 'send_alert_to';
     const EXTERNAL = 'external';
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
+
 
     /**
      * The database table used by the model.

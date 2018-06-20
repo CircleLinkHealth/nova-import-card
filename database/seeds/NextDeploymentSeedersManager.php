@@ -12,6 +12,8 @@ class NextDeploymentSeedersManager extends Seeder
     public function run()
     {
         $this->call(RolesPermissionsSeeder::class);
+        $this->call(UpdateBHIProblems::class);
+        $this->call(CpmDefaultInstructionSeeder::class);
 
         $this->command->info('All Seeders ran!');
     }

@@ -1,16 +1,13 @@
 <?php namespace App\Models\CPM;
 
 use App\CareItem;
-use App\CarePlanItem;
 use App\CarePlanTemplate;
-use App\Keyword;
-use App\Models\CPM\CpmInstruction;
-use App\Models\CPM\CpmInstructable;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Contracts\Serviceable;
-use App\Services\CPM\CpmProblemService;
 use App\Importer\Models\ImportedItems\ProblemImport;
+use App\Keyword;
+use App\Services\CPM\CpmProblemService;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\CPM\CpmProblem
@@ -146,6 +143,11 @@ class CpmProblem extends \App\BaseModel implements Serviceable
 
     public function isDuplicateOf($name) {
         return $this->where('contains', 'LIKE', "%$name%");
+    }
+
+    public function snomedMaps()
+    {
+        return $this->hasMany(SnomedToCpmIcdMap::class);
     }
 
 

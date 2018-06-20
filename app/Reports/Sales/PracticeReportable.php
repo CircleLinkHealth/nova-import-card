@@ -148,7 +148,7 @@ class PracticeReportable implements Reportable
         $q = PatientMonthlySummary::whereHas('patient', function ($q) {
                 $q->whereProgramId($this->practice->id);
         })
-                                  ->where('ccm_time', '>', 1199);
+                                  ->where('total_time', '>', 1199);
 
         if ($month) {
             $q->where('month_year', $month->firstOfMonth());

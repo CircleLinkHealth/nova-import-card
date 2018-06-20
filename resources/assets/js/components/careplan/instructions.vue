@@ -78,6 +78,7 @@
                     return this.allCpmProblems.find(cpm => cpm.id === problem.cpm_id)
                 }).bind(this)
                 problem.title = () => `${(problem.icd10) || (problem.related() || {}).code || ''} ${problem.original_name}`
+                problem.count = () => this.allCpmProblems.filter(p => p.name == problem.name).length
                 if (!problem.icd10 && (problem.related() || {}).code) {
                     const icd10Code = {
                         code: (problem.related() || {}).code,

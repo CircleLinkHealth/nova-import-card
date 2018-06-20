@@ -14,7 +14,7 @@ $new_user = false;
 @endif
 
 @push('scripts')
-    <script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('/js/patient/careplan.js') }}"></script>
 @endpush
 
 @section('content')

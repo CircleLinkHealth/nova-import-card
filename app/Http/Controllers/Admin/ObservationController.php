@@ -85,7 +85,9 @@ class ObservationController extends Controller
         $observation->icon = $params['icon'];
         $observation->category = $params['category'];
         $observation->save();
-        return redirect()->route('admin.observations.edit', [$observation->qid])->with('messages', ['successfully added new observation - '.$params['msg_id']])->send();
+
+        return redirect()->route('admin.observations.edit', [$observation->qid])->with('messages',
+            ['successfully added new observation - ' . $params['msg_id']]);
     }
 
     /**
@@ -139,7 +141,8 @@ class ObservationController extends Controller
         $observation->icon = $params['icon'];
         $observation->category = $params['category'];
         $observation->save();
-        return redirect()->back()->with('messages', ['successfully updated observation'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated observation']);
     }
 
     /**
@@ -154,6 +157,7 @@ class ObservationController extends Controller
             abort(403);
         }
         Observation::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed observation'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed observation']);
     }
 }

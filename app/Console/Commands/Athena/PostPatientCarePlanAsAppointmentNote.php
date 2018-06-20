@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Athena;
 
 use App\CarePlan;
+use App\Patient;
 use App\Services\AthenaAPI\Calls;
 use Illuminate\Console\Command;
 
@@ -51,7 +52,9 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                 });
             },
         ])
-            ->where('status', '=', CarePlan::TO_ENROLL)
+                            ->whereHas('patient', function ($p) {
+                                $p->where('ccm_status', Patient::TO_ENROLL);
+                            })
                             ->get()
                             ->map(function ($c) {
                                 $link = route('patient.careplan.print', ['patientId' => $c->user_id]);
@@ -60,12 +63,14 @@ class PostPatientCarePlanAsAppointmentNote extends Command
                                     ->primaryPractice
                                     ->external_id;
 
-                                $appointments = $this->api->getPatientAppointments($practiceId, $c->user_id, false);
+                                $appointments       = $this->api->getPatientAppointments($practiceId, $c->user_id,
+                                    false);
                                 $sortedAppointments = collect($appointments['appointments'])->sortBy('date');
-                                $nextAppointment = $sortedAppointments->first();
+                                $nextAppointment    = $sortedAppointments->first();
 
 
-                                $response = $this->api->postAppointmentNotes($practiceId, $nextAppointment['appointmentid'], $link, true);
+                                $response = $this->api->postAppointmentNotes($practiceId,
+                                    $nextAppointment['appointmentid'], $link, true);
 
 
                             });

@@ -3,7 +3,6 @@
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\Practice;
-use App\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -74,7 +73,8 @@ class PracticeController extends Controller
 
         $program->save();
 
-        return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
+        return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages',
+            ['successfully created new program']);
     }
 
     /**
@@ -167,6 +167,7 @@ class PracticeController extends Controller
         }
 
         $program->delete();
-        return redirect()->back()->with('messages', ['successfully removed program'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed program']);
     }
 }

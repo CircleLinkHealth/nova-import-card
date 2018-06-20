@@ -1,4 +1,5 @@
 <?php
+use \Carbon\Carbon;
 
 $user_info = array();
 ?>
@@ -9,7 +10,7 @@ $user_info = array();
 @section('activity', 'Edit/Modify Care Plan')
 
 @push('scripts')
-    <!--<script type="text/javascript" src="{{ asset('/js/patient/careplan.js') }}"></script>-->
+    <!--<script type="text/javascript" src="{{ mix('/js/patient/careplan.js') }}"></script>-->
 @endpush
 
 @section('content')

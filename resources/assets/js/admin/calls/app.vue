@@ -21,7 +21,7 @@
     </div>
     <div>
       <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
-        <template slot="child_row" scope="props">
+        <template slot="child_row" slot-scope="props">
           <div class="row row-info">
             <div class="col-sm-12">
               <div class="row">
@@ -62,31 +62,31 @@
             </div>
           </div>
         </template>
-        <template slot="selected" scope="props">
+        <template slot="selected" slot-scope="props">
           <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)" type="checkbox" />
         </template>
-        <template slot="h__selected" scope="props">
+        <template slot="h__selected" slot-scope="props">
           <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox" />
         </template>
-        <template slot="Patient ID" scope="props">
+        <template slot="Patient ID" slot-scope="props">
           <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
         </template>
-        <template slot="Nurse" scope="props">
+        <template slot="Nurse" slot-scope="props">
           <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse" :values="props.row.nurses()" :class-name="'blue'" :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
         </template>
-        <template slot="Next Call" scope="props">
+        <template slot="Next Call" slot-scope="props">
           <div>
             <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onNextCallUpdate.bind(props.row)"></date-editable>
             <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
           </div>
         </template>
-        <template slot="Call Time Start" scope="props">
+        <template slot="Call Time Start" slot-scope="props">
           <div>
             <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"></time-editable>
             <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
           </div>
         </template>
-        <template slot="Call Time End" scope="props">
+        <template slot="Call Time End" slot-scope="props">
           <div>
             <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'" :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"></time-editable>
             <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
@@ -123,6 +123,7 @@
   import { DayOfWeek, ShortDayOfWeek } from '../helpers/day-of-week'
   import Loader from '../../components/loader'
   import VueCache from '../../util/vue-cache'
+  import { today } from '../../util/today'
   import { onNextCallUpdate, onNurseUpdate, onCallTimeStartUpdate, onCallTimeEndUpdate, onGeneralCommentUpdate, onAttemptNoteUpdate, updateMultiValues } from './utils/call-update.fn'
   import timeDisplay from '../../util/time-display'
 
@@ -153,7 +154,6 @@
             calls: false
           },
           currentDate: new Date(),
-          $nextPromise: null,
           tokens: {
             calls: null
           },
@@ -241,42 +241,46 @@
           this.$refs.tblCalls.setOrder()
           this.activateFilters()
         },
+        getFilters() {
+          return this.$refs.tblCalls.query || {}
+        },
         exportExcel() {
           const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
           console.log('calls:excel', url)
           document.location.href = url
         },
-        today() {
-          const d = new Date()
-          return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
-        },
+        today,
         urlFilterSuffix() {
             const $table = this.$refs.tblCalls
-            const query = $table.$data.query
-            const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
-            const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-            const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
-            console.log('sort:column', sortColumn)
-            return `${filters}${sortColumn}${unassigned}`
+            if ($table && $table.$data) {
+              const query = $table.$data.query
+              const filters = Object.keys(query).map(key => ({ key, value: query[key] })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
+              const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
+              const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
+              console.log('sort:column', sortColumn)
+              return `${filters}${sortColumn}${unassigned}`
+            }
+            return ''
         },
         nextPageUrl () {
+            const rowsFilterSuffix = this.$refs.tblCalls.limit ? `&rows=${this.$refs.tblCalls.limit}` : ''
             if (this.pagination) {
-                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
             else {
-                return rootUrl(`api/admin/calls?scheduled&rows=${this.$refs.tblCalls.limit}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                return rootUrl(`api/admin/calls?scheduled${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
             }
         },
         activateFilters () {
             this.pagination = null
-            this.tableData = []
-            this.$refs.tblCalls.setPage(1)
+            this.tableData = [];
+            (this.$refs.tblCalls.setPage || (() => ({})))(1)
             this.clearSelected()
             return this.next()
         },
         toggleAllSelect(e) {
           const $elem = this.$refs.tblCalls
-          const filteredData = $elem.filteredData
+          const filteredData = ($elem.filteredData || [])
           const fiteredDataIDs = filteredData.map(row => row.id)
           this.tableData = this.tableData.map(row => {
             if (fiteredDataIDs.indexOf(row.id) >= 0) row.selected = this.selected;
@@ -289,24 +293,25 @@
             row.selected = !row.selected
           }
         },
-        deleteSelected() {
-          if (window) {
-            const count = this.tableData.filter(row => !!row.selected).length;
-            if (count) {
-              if (confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
-                //perform delete action
-                this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
-                  console.log('calls:delete', response.data)
-                  response.data.forEach(id => {
-                    this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
-                  })
-                  this.activateFilters()
-                }).catch(err => {
-                  console.error('calls:delete', err)
+        deleteSelected(e, overrideConfirmation = false) {
+          const count = this.tableData.filter(row => !!row.selected).length;
+          if (count) {
+            if (overrideConfirmation || confirm(`Are you sure you want to delete the ${count} selected item${count > 1 ? 's' : ''}?`)) {
+              //perform delete action
+              return this.axios.delete(rootUrl(`api/admin/calls/${this.tableData.filter(row => !!row.selected).map(row => row.id).join(',')}`)).then(response => {
+                console.log('calls:delete', response.data)
+                response.data.forEach(id => {
+                  this.tableData.splice(this.tableData.findIndex(row => row.id == id), 1)
                 })
-              }
+                this.activateFilters()
+                return response.data
+              }).catch(err => {
+                console.error('calls:delete', err)
+              })
             }
+            else return Promise.reject('no confirmation')
           }
+          else return Promise.reject('no selected items')
         },
         clearSelected() {
           this.selected = false
@@ -340,6 +345,7 @@
             })
             console.log('calls:nurses', pagination)
             this.loaders.nurses = false
+            return this.nurses
           }).catch(err => {
             console.error('calls:nurses', err)
             this.loaders.nurses = false
@@ -375,14 +381,18 @@
               time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
             })
           }
-          this.cache().get(rootUrl(`api/patients/${call['Patient ID']}/notes?sort_id=desc&rows=3`)).then(pagination => {
-            call.Notes = ((pagination || {}).data || []).map(note => ({
-                                created_at: note.created_at,
-                                type: 'out',
-                                category: note.type,
-                                message: note.body
-                              }))
-          })
+          if (patient.id) {
+            console.log('calls:patient', patient)
+            this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
+              call.Notes = ((pagination || {}).data || []).map(note => ({
+                                  created_at: note.created_at,
+                                  type: 'out',
+                                  category: note.type,
+                                  message: note.body
+                                }))
+            })
+          }
+          
           return ({
                     id: call.id,
                     selected: false,
@@ -440,70 +450,70 @@
         next() {
           const $vm = this
           this.loaders.calls = true
-          return this.$nextPromise = this.axios.get(this.nextPageUrl(), {
+          return this.axios.get(this.nextPageUrl(), {
             cancelToken: new CancelToken((c) => {
-              if (this.tokens.calls) {
-                this.tokens.calls()
-              }
-              this.tokens.calls = c
-            })
-          }).then((result) => result).then(result => {
-            result = result.data;
-            this.pagination = {
-                          current_page: result.meta.current_page,
-                          from: result.meta.from,
-                          last_page: result.meta.last_page,
-                          last_page_url: result.links.last,
-                          next_page_url: result.links.next,
-                          path: result.meta.path,
-                          per_page: result.meta.per_page,
-                          to: result.meta.to,
-                          total: result.meta.total
+                if ($vm.tokens.calls) {
+                  $vm.tokens.calls()
+                }
+                $vm.tokens.calls = c
+              })
+            }).then((result) => result).then(result => {
+              console.log('calls:response', this.nextPageUrl())
+              result = result.data;
+              this.pagination = {
+                            current_page: result.meta.current_page,
+                            from: result.meta.from,
+                            last_page: result.meta.last_page,
+                            last_page_url: result.links.last,
+                            next_page_url: result.links.next,
+                            path: result.meta.path,
+                            per_page: result.meta.per_page,
+                            to: result.meta.to,
+                            total: result.meta.total
+                        }
+              if (result) {
+                const calls = result.data || [];
+                if (calls && Array.isArray(calls)) {
+                  const tableCalls = calls.map(this.setupCall)
+                  if (!this.tableData.length) {
+                      const arr = this.tableData.concat(tableCalls)
+                      const total = ((this.pagination || {}).total || 0)
+                      this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
+                                                                                                                    id: arr.length + index + 1, 
+                                                                                                                    nurses () { return ([]) },
+                                                                                                                    onNurseUpdate() {},
+                                                                                                                    onAttemptNoteUpdate() {},
+                                                                                                                    onGeneralCommentUpdate() {},
+                                                                                                                    onCallTimeStartUpdate() {},
+                                                                                                                    onCallTimeEndUpdate() {},
+                                                                                                                    onNextCallUpdate() {},
+                                                                                                                    loaders: {}
+                                                                                                                  })) ]
+                  }
+                  else {
+                      const from = ((this.pagination || {}).from || 0)
+                      const to = ((this.pagination || {}).to || 0)
+                      for (let i = from - 1; i < to; i++) {
+                          this.tableData[i] = tableCalls[i - from + 1]
                       }
-            if (result) {
-              const calls = result.data || [];
-              if (calls && Array.isArray(calls)) {
-                const tableCalls = calls.map(this.setupCall)
-                if (!this.tableData.length) {
-                    const arr = this.tableData.concat(tableCalls)
-                    const total = ((this.pagination || {}).total || 0)
-                    this.tableData = [ ...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({ 
-                                                                                                                  id: arr.length + index + 1, 
-                                                                                                                  nurses () { return ([]) },
-                                                                                                                  onNurseUpdate() {},
-                                                                                                                  onAttemptNoteUpdate() {},
-                                                                                                                  onGeneralCommentUpdate() {},
-                                                                                                                  onCallTimeStartUpdate() {},
-                                                                                                                  onCallTimeEndUpdate() {},
-                                                                                                                  onNextCallUpdate() {},
-                                                                                                                  loaders: {}
-                                                                                                                })) ]
+                  }
+                  setTimeout(() => {
+                    $vm.$refs.tblCalls.count = $vm.pagination.total
+                    $vm.loaders.calls = false
+                  }, 1000)
+                  return tableCalls;
                 }
-                else {
-                    const from = ((this.pagination || {}).from || 0)
-                    const to = ((this.pagination || {}).to || 0)
-                    for (let i = from - 1; i < to; i++) {
-                        this.tableData[i] = tableCalls[i - from + 1]
-                    }
-                }
-                setTimeout(() => {
-                  this.$refs.tblCalls.count = this.pagination.total
-                  delete this.$nextPromise;
-                  this.loaders.calls = false
-                }, 1000)
-                return tableCalls;
               }
-            }
-          }).catch(function (err) {
+          }).catch((err) => {
             console.error('calls:response', err)
-            this.loaders.calls = false
+            $vm.loaders.calls = false
           })
         }
       },
       mounted() {
         BindAppEvents(this, Event);
-        this.next();
-        this.getNurses();
+
+        return Promise.all([this.next(), this.getNurses()])
       }
   }
 </script>

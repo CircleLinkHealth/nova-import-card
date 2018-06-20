@@ -55,7 +55,7 @@ class QueueSendAuditReports extends Command
                                   });
                         })
                         ->whereHas('patientSummaries', function ($query) use ($date) {
-                            $query->where('ccm_time', '>', 0)
+                            $query->where('total_time', '>', 0)
                                   ->where('month_year', $date->toDateString());
                         })
                         ->get();

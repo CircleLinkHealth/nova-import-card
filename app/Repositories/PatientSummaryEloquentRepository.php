@@ -3,10 +3,13 @@
 namespace App\Repositories;
 
 
+use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
+use App\Practice;
 use App\User;
+use Cache;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
@@ -55,6 +58,10 @@ class PatientSummaryEloquentRepository
      */
     public function attachBillableProblems(User $patient, PatientMonthlySummary $summary)
     {
+        if ($summary->actor_id) {
+            return $summary;
+        }
+
         $skipValidation = false;
         if ( ! $this->hasBillableProblemsNameAndCode($summary)) {
             $summary = $this->fillBillableProblemsNameAndCode($summary);
@@ -68,7 +75,7 @@ class PatientSummaryEloquentRepository
             $olderSummary = PatientMonthlySummary::wherePatientId($summary->patient_id)
                                                  ->orderBy('month_year', 'desc')
                                                  ->where('month_year', '<=',
-                                                     $summary->month_year->copy()->subMonth()->startOfMonth()->toDateString())
+                                                     $summary->month_year->copy()->subMonth()->startOfMonth())
                                                  ->whereApproved(true)
                                                  ->first();
 
@@ -83,12 +90,17 @@ class PatientSummaryEloquentRepository
             }
         }
 
-        if ($this->lacksProblems($summary)) {
-            $summary = $this->fillProblems($patient, $summary, $patient->ccdProblems->where('billable', '=', true));
+        if ($summary->hasServiceCode('CPT 99484') && ! $summary->hasAtLeastOneBhiProblem()) {
+            $summary = $this->attachBhiProblem($summary);
         }
 
         if ($this->lacksProblems($summary)) {
-            $summary = $this->fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
+            $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary,
+                $patient->ccdProblems->where('billable', '=', true)->values());
+        }
+
+        if ($this->lacksProblems($summary)) {
+            $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
         }
 
         if ( ! $skipValidation && $this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
@@ -110,7 +122,7 @@ class PatientSummaryEloquentRepository
      *
      * @return PatientMonthlySummary
      */
-    private function fillProblems(
+    private function TO_DEPRECATE_fillProblems(
         User $patient,
         PatientMonthlySummary $summary,
         $billableProblems,
@@ -155,7 +167,7 @@ class PatientSummaryEloquentRepository
         if ($summary->problem_1 == $summary->problem_2) {
             $summary->problem_2 = null;
             if ($patient->cpmProblems->where('id', '>', 1)->count() >= 2 && $tryCount < $maxTries) {
-                $this->fillProblems($patient, $summary, $billableProblems, ++$tryCount);
+                $this->TO_DEPRECATE_fillProblems($patient, $summary, $billableProblems, ++$tryCount);
             }
         }
 
@@ -290,7 +302,9 @@ class PatientSummaryEloquentRepository
 
     public function approveIfShouldApprove(User $patient, PatientMonthlySummary $summary)
     {
-        if ( ! $this->lacksProblems($summary)) {
+        $isBHI = $summary->hasServiceCode('CPT 99484');
+
+        if (( ! $this->lacksProblems($summary) && ! $isBHI) || ($isBHI && $summary->hasAtLeastOneBhiProblem())) {
             if ( ! $summary->approved && ! $summary->rejected && $this->shouldApprove($patient, $summary)) {
                 $summary->approved = true;
 
@@ -307,6 +321,8 @@ class PatientSummaryEloquentRepository
                            'billable' => true,
                        ]);
             }
+        } else {
+            $summary->approved = false;
         }
 
         return $summary;
@@ -363,12 +379,12 @@ class PatientSummaryEloquentRepository
      * Attach the practice's default chargeable service to the given patient summary.
      *
      * @param $summary
-     * @param null $chargeableServiceId | The Chargeable Service Code to attach
+     * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
      * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
-    public function attachDefaultChargeableService($summary, $chargeableServiceId = null, $detach = false)
+    public function attachChargeableService($summary, $chargeableServiceId = null, $detach = false)
     {
         if ( ! $chargeableServiceId) {
             return $summary;
@@ -380,20 +396,30 @@ class PatientSummaryEloquentRepository
 //                ->updateSummaryChargeableServices;
         }
 
+        if (is_a($chargeableServiceId, ChargeableService::class)) {
+            $chargeableServiceId = $chargeableServiceId->id;
+        }
+
+        if ( ! is_array($chargeableServiceId)) {
+            $chargeableServiceId = [$chargeableServiceId];
+        }
+
         $sync = $summary->chargeableServices()
                         ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
+            $class = PatientMonthlySummary::class;
+            Cache::forget("$class:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 
         return $summary;
     }
 
-    public function detachDefaultChargeableService($summary, $defaultCodeId)
+    public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-                            ->detach($defaultCodeId);
+                            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -444,6 +470,52 @@ class PatientSummaryEloquentRepository
 
         $summary->{"billable_problem$problemNumber"}        = optional($problem)->name;
         $summary->{"billable_problem{$problemNumber}_code"} = optional($problem)->icd10Code();
+
+        return $summary;
+    }
+
+    public function attachChargeableServices(User $patient, PatientMonthlySummary $summary)
+    {
+        if ($summary->actor_id) {
+            return $summary;
+        }
+
+        $class = Practice::class;
+
+        $chargeableServices = Cache::remember("$class:{$patient->primaryPractice->id}:chargeableServices", 2,
+            function () use ($patient) {
+                return $patient->primaryPractice->chargeableServices->keyBy('code');
+            });
+
+        $attach = [];
+
+        if ($chargeableServices->has('CPT 99484') && $summary->bhi_time >= 1200) {
+            $attach[] = $chargeableServices['CPT 99484']->id;
+        }
+
+        if ($chargeableServices->has('CPT 99490') && $summary->ccm_time >= 1200) {
+            $attach[] = $chargeableServices['CPT 99490']->id;
+        }
+
+        return $this->attachChargeableService($summary, $attach);
+    }
+
+    private function attachBhiProblem($summary)
+    {
+        $bhiProblems = $summary->patient
+            ->ccdProblems
+            ->where('cpmProblem.is_behavioral', '=', true)
+            ->reject(function ($problem) {
+                return $problem && ! validProblemName($problem->name);
+            })
+            ->unique('cpm_problem_id')
+            ->values()
+            ->each(function ($problem) use ($summary) {
+                $summary->attachBillableProblem($problem->id, $problem->name, $problem->icd10Code(), 'bhi');
+
+                return false;
+            });
+
 
         return $summary;
     }

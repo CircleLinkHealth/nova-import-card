@@ -14,14 +14,14 @@
     ?>
 
     @push('styles')
-    <style>
-        .edit_button {
-            -webkit-appearance: none;
-            outline: none;
-            border: 0;
-            background: transparent;
-        }
-    </style>
+        <style>
+            .edit_button {
+                -webkit-appearance: none;
+                outline: none;
+                border: 0;
+                background: transparent;
+            }
+        </style>
     @endpush
 
     @include('partials.confirm-modal')
@@ -234,9 +234,10 @@
                                     <div class="form-group">
                                         <div class="col-sm-12">
                                             <input type="hidden" name="body" value="body">
-                                            <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note" class-name="form-control" :rows="10" :cols="100"
-                                                      placeholder="Enter Note..."
-                                                      name="body" :required="true"></persistent-textarea>
+                                            <persistent-textarea storage-key="notes:{{$patient->id}}:add" id="note"
+                                                                 class-name="form-control" :rows="10" :cols="100"
+                                                                 placeholder="Enter Note..."
+                                                                 name="body" :required="true"></persistent-textarea>
                                             <br>
                                         </div>
                                     </div>
@@ -285,45 +286,75 @@
     </div>
 
     @push('scripts')
-    <script>
+        <script>
 
-        $(document).ready(function () {
-            function phoneSessionChange(e) {
-                if (e) {
-                    if (e.currentTarget.checked) {
-                        $('#collapseOne').show()
+            $(document).ready(function () {
+                function phoneSessionChange(e) {
+                    if (e) {
+                        if (e.currentTarget.checked) {
+                            $('#collapseOne').show()
+                        }
+                        else {
+                            $('#collapseOne').hide()
+                        }
                     }
                     else {
-                        $('#collapseOne').hide()
+                        $('#collapseOne').toggle();
+                    }
+                    $("#Outbound").prop("checked", true);
+                }
+
+                $('#phone').change(phoneSessionChange);
+
+                phoneSessionChange({
+                    currentTarget: {
+                        checked: $('#phone').is(':checked')
+                    }
+                })
+
+                function tcmChange(e) {
+                    if (e) {
+                        if (e.currentTarget.checked) {
+                            $('#notify-careteam').prop("checked", true);
+                            $('#notify-careteam').prop("disabled", true);
+
+                            @empty($notifies_text)
+                            $('#who-is-notified').text("{{$patient->billingProviderUser()->fullName}}");
+                            @endempty
+                        }
+                        else {
+                            $('#notify-careteam').prop("checked", false);
+                            $('#notify-careteam').prop("disabled", false);
+
+                            $('#who-is-notified').text("{{$notifies_text}}");
+                        }
+                    }
+                    else {
+
                     }
                 }
-                else {
-                    $('#collapseOne').toggle();
-                }
-                $("#Outbound").prop("checked", true);
-            }
 
-            $('#phone').change(phoneSessionChange);
+                $('#tcm').change(tcmChange);
 
-            phoneSessionChange({
-                currentTarget: {
-                    checked: $('#phone').is(':checked')
-                }
+                tcmChange({
+                    currentTarget: {
+                        checked: $('#tcm').is(':checked')
+                    }
+                })
+            });
+
+            $('#newNote').submit(function (e) {
+                e.preventDefault()
+                var form = this
+                $.get('/api/test').always(function (response) {
+                    if (response.status == 200 || response.message == 'clh') {
+                        var key = 'notes:{{$patient->id}}:add'
+                        window.sessionStorage.removeItem(key)
+                    }
+                    form.submit()
+                })
+
             })
-        });
-
-        $('#newNote').submit(function (e) {
-            e.preventDefault()
-            var form = this
-            $.get('/api/test').always(function (response) {
-                if (response.status == 200 || response.message == 'clh') {
-                    var key = 'notes:{{$patient->id}}:add'
-                    window.sessionStorage.removeItem(key)
-                }
-                form.submit()
-            })
-            
-        })
-    </script>
+        </script>
     @endpush
 @endsection

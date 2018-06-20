@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Practice;
 use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Patient;
@@ -19,13 +20,16 @@ class CarePlanApprovalReminderTest extends TestCase
 
     private $provider;
     private $patient;
+    private $practice;
 
     protected function setUp()
     {
         parent::setUp();
+
+        $this->practice = factory(Practice::class)->create();
         
-        $this->provider = $this->createUser(8, 'provider');
-        $this->patient = $this->createUser(8, 'participant');
+        $this->provider = $this->createUser($this->practice->id, 'provider');
+        $this->patient = $this->createUser($this->practice->id, 'participant');
 
         $this->patient->billing_provider_id = $this->provider->id;
         $this->patient->ccm_status = Patient::ENROLLED;
@@ -55,6 +59,7 @@ class CarePlanApprovalReminderTest extends TestCase
             $this->provider,
             CarePlanApprovalReminder::class,
             function ($notification) use ($numberOfCareplans) {
+
                 $this->checkToMail($notification, $this->provider, $numberOfCareplans);
                 $this->checkToDatabase($notification, $this->provider, $numberOfCareplans);
 

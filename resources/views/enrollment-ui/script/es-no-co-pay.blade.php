@@ -1,10 +1,24 @@
 <div>
-    <p><b>Speak clearly and cheerfully</b>: Hola, @{{ name }} estoy llamando en nombre de
-        los doctores Dr. @{{provider_name}} de la @{{practice_name}}. Los médicos le han invitado a su nuevo programa de
-        gestión de atención personalizada y es posible que haya recibido una carta a este efecto.</p>
+    <p>
+        <b>Speak clearly and cheerfully</b>: Hola, @{{ name }} estoy llamando en nombre de
+        los doctores Dr. @{{provider_name}} de la @{{practice_name}}. Cómo estás?
+    </p>
+
+    <p>
+        Soy bien. Los médicos le han invitado a su nuevo programa de gestión de atención personalizada y es posible que
+        haya recibido una carta a este efecto.
+    </p>
 
     <p>Dr. @{{provider_name}} piensan que este programa sería muy útil para usted y le gustaría que se inscribiera.
-        Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse saludable.</p>
+        Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse saludable?</p>
+
+    <p>
+        <b>
+            [patients interested usually discuss their conditions here.. be sure to listen​] [if patient asks where
+            calling
+            from, use the practice name in google sheet, e.g., CCN or Ferguson]
+        </b>
+    </p>
 
     <p>Este es un nuevo programa de atención preventiva de Medicare para ayudarlo a usted y a su médico a
         cuidar mejor de su salud. Medicare ha decidido que su enfoque de la medicina necesitaba mejoras.
@@ -34,6 +48,11 @@
 
     <p>¿Puede informarle a su doctor que usted aceptó inscribirse en este programa? (Recuerde que siempre
         puede retirarse si no le gusta) </p>
+
+    <p><b>[patients interested usually discuss their conditions here.. be sure to listen​] [if patient asks where
+            calling
+            from, use the practice name in google sheet, e.g., CCN or Ferguson]</b></p>
+
     <p><i>[Ambassador: Please click the appropriate button based on patient’s
             answer and follow instructions in subsequent popup forms. Thank you!]</i></p>
 </div>

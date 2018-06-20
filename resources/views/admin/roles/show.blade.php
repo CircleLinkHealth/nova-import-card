@@ -2,7 +2,7 @@
 
 @section('content')
     @push('scripts')
-        <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/rules/rules.js') }}"></script>
     @endpush
     <div class="container-fluid">
         <div class="row">
