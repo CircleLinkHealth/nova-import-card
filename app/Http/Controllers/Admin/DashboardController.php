@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\Controller;
 use App\Practice;
-use App\Role;
 use App\User;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class DashboardController extends Controller
 {
@@ -44,7 +45,7 @@ class DashboardController extends Controller
         if ($user->hasRole('administrator')) {
             return view('admin.dashboard', compact(['user']));
         } else {
-            return redirect()->route('patients.dashboard', [])->send();
+            return redirect()->route('patients.dashboard', []);
         }
     }
 
@@ -61,5 +62,21 @@ class DashboardController extends Controller
 
         $patient = User::find('393');
         return view('admin.testplan', compact(['patient']));
+    }
+
+    public function pullAthenaEnrollees(Request $request){
+
+        $practice = Practice::find($request->input('practice_id'));
+
+        $from = Carbon::parse($request->input('from'));
+        $to = Carbon::parse($request->input('to'));
+
+        Artisan::call('athena:autoPullEnrolleesFromAthena',
+            ['athenaPracticeId' => $practice->external_id,
+                'from' => $from->format('y-m-d'),
+                'to' => $to->format('y-m-d'),
+                ]);
+
+        return redirect()->back()->with(['pullMsg' => 'Batch Created!']);
     }
 }

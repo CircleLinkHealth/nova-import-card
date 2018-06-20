@@ -13,17 +13,19 @@ class AddEligibilityJobIdToEnrollees extends Migration
      */
     public function up()
     {
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->unsignedInteger('eligibility_job_id')
-                  ->nullable()
-                  ->after('batch_id');
+        if ( ! Schema::hasColumn('enrollees', 'eligibility_job_id')) {
+            Schema::table('enrollees', function (Blueprint $table) {
+                $table->unsignedInteger('eligibility_job_id')
+                      ->nullable()
+                      ->after('batch_id');
 
-            $table->foreign('eligibility_job_id')
-                  ->references('id')
-                  ->on('eligibility_jobs')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');
-        });
+                $table->foreign('eligibility_job_id')
+                      ->references('id')
+                      ->on('eligibility_jobs')
+                      ->onDelete('cascade')
+                      ->onUpdate('cascade');
+            });
+        }
     }
 
     /**

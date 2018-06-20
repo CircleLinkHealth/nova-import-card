@@ -13,9 +13,11 @@ class DropXml extends Migration
      */
     public function up()
     {
-        Schema::table('ccdas', function (Blueprint $table) {
-            $table->dropColumn('xml');
-        });
+        if (Schema::hasColumn('ccdas', 'xml')) {
+            Schema::table('ccdas', function (Blueprint $table) {
+                $table->dropColumn('xml');
+            });
+        }
     }
 
     /**

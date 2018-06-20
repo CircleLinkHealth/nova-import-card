@@ -5,7 +5,7 @@ const DIST_DIR = 'public'
 const SRC_DIR = 'resources/assets'
 
 const webpackConfig = {
-    devtool: "#cheap-module-source-map",
+    devtool: "#source-map",
     node: {
         fs: 'empty' //to help webpack resolve 'fs'
     },

@@ -5,7 +5,7 @@
             <template slot="title">
                 You have gone idle ...
             </template>
-            <template scope="props">
+            <template slot-scope="props">
                 <div class="row">
                     <div class="col-sm-12">
                         We haven’t heard from you in a while 😢. Were you working on a specific patient while we were idle?

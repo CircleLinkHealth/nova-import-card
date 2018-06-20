@@ -97,7 +97,9 @@ class CPRUCPController extends Controller
         $ucp->meta_key = $params['meta_key'];
         $ucp->meta_value = $params['meta_value'];
         $ucp->save();
-        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with('messages', ['successfully added new ucp - '.$params['msg_id']])->send();
+
+        return redirect()->route('admin.ucp.edit', [$ucp->qid])->with('messages',
+            ['successfully added new ucp - ' . $params['msg_id']]);
     }
 
     /**
@@ -149,7 +151,8 @@ class CPRUCPController extends Controller
         $ucp->meta_key = $params['meta_key'];
         $ucp->meta_value = $params['meta_value'];
         $ucp->save();
-        return redirect()->back()->with('messages', ['successfully updated ucp'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated ucp']);
     }
 
     /**
@@ -164,6 +167,7 @@ class CPRUCPController extends Controller
             abort(403);
         }
         CPRulesUCP::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed ucp'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed ucp']);
     }
 }

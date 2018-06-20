@@ -124,6 +124,8 @@ class Patient extends \App\BaseModel
     const PAUSED = 'paused';
     const ENROLLED = 'enrolled';
     const WITHDRAWN = 'withdrawn';
+    const TO_ENROLL = 'to_enroll';
+    const PATIENT_REJECTED = 'patient_rejected';
 
     protected $dates = [
         'date_withdrawn',
@@ -131,20 +133,13 @@ class Patient extends \App\BaseModel
         'paused_letter_printed_at',
     ];
 
-
-
-    /**
-     * The connection name for the model.
-     *
-     * @var string
-     */
-    protected $connection = 'mysql';
     /**
      * The database table used by the model.
      *
      * @var string
      */
     protected $table = 'patient_info';
+
     /**
      * The primary key for the model.
      *
@@ -197,11 +192,6 @@ class Patient extends \App\BaseModel
         'family_id',
         'date_welcomed',
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-    }
 
     // START RELATIONSHIPS
 

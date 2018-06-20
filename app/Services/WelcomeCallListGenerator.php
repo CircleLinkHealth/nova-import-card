@@ -780,6 +780,10 @@ class WelcomeCallListGenerator
         return $this->patientList;
     }
 
+    public function getEligibilityJob(){
+        return $this->eligibilityJob;
+    }
+
     private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null)
     {
         if ( ! $this->eligibilityJob) {
@@ -790,4 +794,6 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
     }
+
+
 }

@@ -72,6 +72,7 @@ class Settings extends \App\BaseModel
         'email_weekly_report',
 
         'bill_to',
+        'api_auto_pull',
     ];
 
     /**

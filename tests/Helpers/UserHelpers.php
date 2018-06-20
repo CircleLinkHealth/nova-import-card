@@ -59,6 +59,8 @@ trait UserHelpers
 
         //check that the roles were created
         foreach ($roles as $role) {
+            $is_admin = $role == 1;
+            $user->attachPractice($practiceId, $is_admin, $is_admin, $role);
             $this->assertDatabaseHas('practice_role_user', [
                 'user_id'    => $user->id,
                 'role_id'    => $role,
@@ -70,6 +72,8 @@ trait UserHelpers
             $user->carePlan()->create([
                 'status' => 'draft',
             ]);
+
+            $user->patientInfo()->create();
         }
 
         $user->load('practices');
@@ -120,7 +124,9 @@ trait UserHelpers
         //create a user
         $user = (new UserRepository())->createNewUser(new User(), $bag);
 
-        $locations = Practice::find($practiceId)->locations
+        $practice = Practice::find($practiceId);
+
+        $locations = $practice->locations
             ->pluck('id')
             ->all();
 

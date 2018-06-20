@@ -21,12 +21,12 @@
 	<![endif]-->
 
 	<!-- Scripts -->
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="{{asset('/css/smoothness-jquery-ui-1.11.4.css')}}">
 	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 	<!-- http://trentrichardson.com/examples/timepicker/ -->
-	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
+	<link rel="stylesheet" href="{{asset('/css/jquery-ui-timepicker-addon.min.css')}}">
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>

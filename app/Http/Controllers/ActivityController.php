@@ -3,16 +3,15 @@
 use App\Activity;
 use App\ActivityMeta;
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
-use App\Practice;
 use App\Reports\PatientDailyAuditReport;
 use App\Services\ActivityService;
 use App\User;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-use GuzzleHttp\Client;
-use \Log;
+use Log;
 
 /**
  * Class ActivityController
@@ -143,82 +142,47 @@ class ActivityController extends Controller
         Request $request,
         $patientId
     ) {
-        if (auth()->user()->hasRole('care-center') && app()->environment() == 'production') {
+        if (auth()->user()->hasRole('care-center') && ! in_array(app()->environment(), ['local', 'staging'])) {
             return abort(403);
         }
 
-        if ($patientId) {
-            // patient view
-            $user = User::find($patientId);
-            if ( ! $user) {
-                return response("User not found", 401);
-            }
-
-            $patient_name = $user->getFullNameAttribute();
-
-            //Gather details to generate form
-
-            //timezone
-
-            if ($user->timeZone == '') {
-                $userTimeZone = 'America/New_York';
-            } else {
-                $userTimeZone = $user->timeZone;
-            }
-
-            //careteam
-            $careteam_info = [];
-            $careteam_ids  = $user->careTeam;
-            if ((@unserialize($careteam_ids) !== false)) {
-                $careteam_ids = unserialize($careteam_ids);
-            }
-            if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
-                foreach ($careteam_ids as $id) {
-                    $careteam_info[$id] = User::find($id)->getFullNameAttribute();
-                }
-            }
-
-            //providers
-            $providers     = Practice::getProviders($user->program_id);
-            $provider_info = [];
-
-            $nurse_ids = User::ofType('care-center')
-                             ->pluck('id');
-
-            foreach ($nurse_ids as $nurse_id) {
-                $nurse = User::find($nurse_id);
-
-                $viewable_patients = $nurse->viewablePatientIds();
-
-                if (in_array($patientId, $viewable_patients)) {
-                    $provider_info[$nurse->id] = $nurse->fullName;
-                }
-            }
-
-
-            foreach ($providers as $provider) {
-                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
-            }
-
-            foreach ($providers as $provider) {
-                $provider_info[$provider->id] = User::find($provider->id)->getFullNameAttribute();
-            }
-
-
-            asort($provider_info);
-
-            $view_data = [
-                'program_id'     => $user->program_id,
-                'patient'        => $user,
-                'patient_name'   => $patient_name,
-                'activity_types' => Activity::input_activity_types(),
-                'provider_info'  => $provider_info,
-                'careteam_info'  => $careteam_info,
-                'userTimeZone'   => $userTimeZone,
-            ];
-
-            return view('wpUsers.patient.activity.create', $view_data);
+        if ( ! $patientId) {
+            return abort(404);
         }
+
+        $patient = User::find($patientId);
+
+        if ( ! $patient) {
+            return response("User not found", 401);
+        }
+
+        $patient_name = $patient->full_name;
+
+        $userTimeZone = $patient->timeZone;
+
+        if (empty($userTimeZone)) {
+            $userTimeZone = 'America/New_York';
+        }
+
+        $provider_info = User::ofType(['care-center', 'provider'])
+                             ->intersectPracticesWith($patient)
+                             ->orderBy('first_name')
+                             ->get()
+                             ->mapWithKeys(function ($user) {
+                                 return [$user->id => $user->full_name];
+                             })
+                             ->all();
+
+        $view_data = [
+            'program_id'     => $patient->program_id,
+            'patient'        => $patient,
+            'patient_name'   => $patient_name,
+            'activity_types' => Activity::input_activity_types(),
+            'provider_info'  => $provider_info,
+            'userTimeZone'   => $userTimeZone,
+        ];
+
+        return view('wpUsers.patient.activity.create', $view_data);
     }
 
     public function store(
@@ -242,31 +206,53 @@ class ActivityController extends Controller
 
             $client = new Client();
 
-            $nurseId = $input['provider_id'];
+            $nurseId   = $input['provider_id'];
             $patientId = $input['patient_id'];
-            $duration = (int)$input['duration'];
+            $duration  = (int)$input['duration'];
+
+            $patient = User::find($patientId);
+
+            if ($patient) {
+                $isCcm        = $patient->isCcm();
+                $isBehavioral = $patient->isBehavioral();
+                if ($isCcm && $isBehavioral) {
+                    $is_bhi                 = isset($input['is_behavioral'])
+                        ? ($input['is_behavioral'] != 'true'
+                            ? false
+                            : true)
+                        : false;
+                    $input['is_behavioral'] = $is_bhi;
+                } else {
+                    $input['is_behavioral'] = $isBehavioral;
+                }
+            } else {
+                throw new \Exception('patient_id ' . $patientId . ' does not correspond to any patient');
+            }
+
 
             /**
-            * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
-            */
+             * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
+             */
             if ($nurseId && $patientId && $duration) {
                 $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
                 try {
-                    $res = $client->put($url, [
+                    $timeParam = $is_bhi
+                        ? 'bhiTime'
+                        : 'ccmTime';
+                    $res       = $client->put($url, [
                         'form_params' => [
-                            'startTime' => $duration
-                        ]
+                            'startTime' => $duration,
+                            $timeParam  => $duration,
+                        ],
                     ]);
-                    $status = $res->getStatusCode();
-                    $body = $res->getBody();
+                    $status    = $res->getStatusCode();
+                    $body      = $res->getBody();
                     if ($status == 200) {
                         Log::info($body);
-                    }
-                    else {
+                    } else {
                         Log::critical($body);
                     }
-                }
-                catch (\Exception $ex) {
+                } catch (\Exception $ex) {
                     Log::critical($ex);
                 }
             }
@@ -287,7 +273,6 @@ class ActivityController extends Controller
         if (array_key_exists('meta', $input)) {
             $meta = $input['meta'];
             unset($input['meta']);
-            $activity  = Activity::find($actId);
             $metaArray = [];
             $i         = 0;
             foreach ($meta as $actMeta) {
@@ -304,10 +289,8 @@ class ActivityController extends Controller
         $this->activityService->processMonthlyActivityTime($input['patient_id'], $performedAt);
 
         if ($nurse) {
-            $activity = Activity::find($actId);
-
             $computer = new AlternativeCareTimePayableCalculator($nurse);
-            $computer->adjustCCMPaybleForActivity($activity);
+            $computer->adjustNursePayForActivity($activity);
         }
 
         return redirect()->route('patient.activity.view', [

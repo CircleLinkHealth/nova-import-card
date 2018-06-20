@@ -3,9 +3,8 @@
 namespace App;
 
 use App\Models\Ehr;
-use Illuminate\Database\Eloquent\Model;
 
-class TargetPatient extends Model
+class TargetPatient extends BaseModel
 {
     protected $guarded = [];
 
