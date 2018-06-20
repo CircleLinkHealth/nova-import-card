@@ -95,7 +95,7 @@
     $user = null;
         if (isset($patient)) {
             if (is_a($patient, Patient::class)) {
-                $user = $patient->user()->first();
+                $user = $patient->user;
             }
             else {
                 $user = $patient;

@@ -476,7 +476,7 @@ class NoteService
     {
         return $note->notifications()
                     ->where('notifiable_id', '!=', 948)
-                    ->count() > 0;
+                    ->exists();
     }
 
     public function wasSeenByBillingProvider(Note $note)
@@ -487,6 +487,6 @@ class NoteService
                         ['read_at', '!=', null],
                         ['notifiable_id', '=', $note->patient->billingProviderUser()->id],
                     ])
-                    ->count() > 0;
+                    ->exists();
     }
 }
