@@ -5,8 +5,7 @@
 
 @section('content')
 
-    <!-- is this .vue or .js ? -->
-    <script type="text/javascript" src="{{ mix('/js/patient/observation-create.vue') }}"></script>
+    <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
 
     <script>
         $(document).ready(function () {
