@@ -5,16 +5,18 @@
 
 @section('content')
 
-    <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
+    @push('scripts')
+        <script type="text/javascript" src="{{ mix('/js/patient/observation-create.js') }}"></script>
 
-    <script>
-        $(document).ready(function () {
-            $(".provider").select2();
+        <script>
+            $(function () {
+                $(".provider").select2();
+            });
+        </script>
+    @endpush
 
-        });
-    </script>
-
-    <style>
+    @push('styles')
+        <style>
 
         .save-btn {
             width: 100px;
@@ -22,7 +24,8 @@
             position: relative;
         }
 
-    </style>
+        </style>
+    @endpush
 
     <div class="row" style="margin:30px 0px;">
         <div class="col-lg-10 col-lg-offset-1">
