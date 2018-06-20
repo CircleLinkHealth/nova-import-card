@@ -458,13 +458,15 @@ class NotesController extends Controller
         asort($careteam_info);
 
         $view_data = [
-            'note'          => $data,
-            'userTimeZone'  => $patient->timeZone,
-            'careteam_info' => $careteam_info,
-            'patient'       => $patient,
-            'program_id'    => $patient->program_id,
-            'meta'          => $meta_tags,
-            'hasReaders'    => $readers->all(),
+            'note'               => $data,
+            'userTimeZone'       => $patient->timeZone,
+            'careteam_info'      => $careteam_info,
+            'patient'            => $patient,
+            'program_id'         => $patient->program_id,
+            'meta'               => $meta_tags,
+            'hasReaders'         => $readers->all(),
+            'notifies_text'      => $patient->notifies_text,
+            'note_channels_text' => $patient->note_channels_text,
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

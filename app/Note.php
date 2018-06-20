@@ -123,8 +123,15 @@ class Note extends \App\BaseModel implements PdfReport
             'provider' => $this->patient->billingProviderUser(),
         ]);
 
+        $fontSize = $this->patient
+            ->primaryPractice
+            ->cpmSettings()
+            ->note_font_size;
+
         if ( ! empty($scale)) {
             $pdf->setOption('zoom', $scale);
+        } elseif ( ! empty($fontSize)) {
+            $pdf->setOption('zoom', $fontSize);
         }
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';

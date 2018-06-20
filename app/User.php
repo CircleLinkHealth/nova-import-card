@@ -2273,6 +2273,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     : ', ') . ($i == $last && $i > 1
                     ? 'and '
                     : '') . $carePerson->fullName;
+
+            $i++;
         }
 
         return $output;
@@ -2293,6 +2295,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                        . ($i == $last && $i > 1
                     ? 'and '
                     : '') . $channel;
+
+            $i++;
         }
 
         return $output;
