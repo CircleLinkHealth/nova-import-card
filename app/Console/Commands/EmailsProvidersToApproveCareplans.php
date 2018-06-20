@@ -3,12 +3,8 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\Notifications\CarePlanApprovalReminder;
-use App\Models\EmailSettings;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
 use Maknz\Slack\Facades\Slack;
 
 class EmailsProvidersToApproveCareplans extends Command
@@ -36,7 +32,9 @@ class EmailsProvidersToApproveCareplans extends Command
     {
         $pretend = $this->option('pretend');
 
-        $providers = User::ofType('provider')->get();
+        $providers = User::ofType('provider')
+                         ->with('forwardAlertsTo')
+                         ->get();
 
         $bar = $this->output->createProgressBar(count($providers));
 
