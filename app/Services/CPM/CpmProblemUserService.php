@@ -8,9 +8,10 @@
 
 namespace App\Services\CPM;
 
-use App\Services\CPM\CpmProblemService;
-use App\Repositories\UserRepositoryEloquent;
+use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmProblemUserRepository;
+use App\Repositories\UserRepositoryEloquent;
+use App\User;
 
 class CpmProblemUserService
 {
@@ -41,7 +42,7 @@ class CpmProblemUserService
             throw new Exception('a similar instruction->problem relationship already exists');
         }
     }
-    
+
     public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId) {
         $this->repo()->where([
             'patient_id' => $patientId,
@@ -57,26 +58,26 @@ class CpmProblemUserService
         }
         else return $problemUser;
     }
-    
+
     public function removeProblemFromPatient($patientId, $cpmProblemId) {
         return $this->repo()->remove($patientId, $cpmProblemId);
     }
 
     public function getPatientProblems($userId) {
-        $user = $this->userRepo->model()->find($userId);
+        $user = is_a($userId, User::class)
+            ? $userId
+            : $this->userRepo->model()->findOrFail($userId);
 
-        return $user->cpmProblems()->groupBy('cpm_problem_id')->with(['user'])->get()->map(function ($p) use ($user) {
+        $user->loadMissing(['cpmProblems']);
 
-            $instructions = $p->user->where('patient_id', $user->id)->values()->map(function ($u) {
-                return $u->instruction()->orderBy('id', 'desc')->first();
+        return $user->cpmProblems
+            ->map(function ($p) {
+                return [
+                    'id'          => $p->id,
+                    'name'        => $p->name,
+                    'code'        => $p->default_icd_10_code,
+                    'instruction' => CpmInstruction::find($p->pivot->cpm_instruction_id),
+                ];
             });
-            if ($instructions->count() == 0) $instructions->push($p->instruction());
-            return [
-                'id'   => $p->id,
-                'name' => $p->name,
-                'code' => $p->default_icd_10_code,
-                'instruction' => $instructions->last()
-            ];
-        });
     }
 }

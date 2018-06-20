@@ -128,7 +128,7 @@
             $ccdProblemService = app(CcdProblemService::class);
 
         //            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
-            $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
+        $ccdProblems = $ccdProblemService->getPatientProblems($patient);
     
             $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
                 return $problem['is_monitored'];
@@ -136,7 +136,7 @@
                 return $problems->first();
             });
         ?>
-        @if(!empty($cpmProblemsForListing) || !empty($ccdMonitoredProblems))
+        @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
