@@ -9,7 +9,7 @@ class CpmMedicationGroupRepository
 {
     public function model()
     {
-        return new CpmMedicationGroup();
+        return app(CpmMedicationGroup::class);
     }
 
     public function count()
@@ -19,53 +19,41 @@ class CpmMedicationGroupRepository
 
     function setupGroupMedicationCount($group)
     {
-        $group['medications'] = $group->medications->count();
+        $group['medications'] = $group->medications()->count();
 
         return $group;
     }
 
     function setupGroupMedication($group)
     {
-        $group['medications'] = $group->medications->paginate();
+        $group['medications'] = $group->medications()->paginate();
 
         return $group;
     }
 
     public function groups()
     {
-        $groups = $this->model()
-                       ->paginate();
+        $groups = $this->model()->paginate();
 
-        return $groups->getCollection()
-                      ->transform([$this, 'setupGroupMedicationCount']);
+        return $groups->getCollection()->transform([$this, 'setupGroupMedicationCount']);
     }
 
     public function group($id)
     {
-        $group = $this->model()
-                      ->with('medications')
-                      ->find($id);
-
+        $group = $this->model()->find($id);
         if ($group) {
             return $this->setupGroupMedication($group);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     public function patientGroups($userId)
     {
-        return Medication::where([
+        return array_values(Medication::where([
             'patient_id' => $userId,
-        ])
-                         ->select('medication_group_id')
-                         ->groupBy('medication_group_id')
-                         ->with(['cpmMedicationGroup'])
-                         ->get()
-                         ->map(function ($m) {
-                             return $m->cpmMedicationGroup;
-                         })
-                         ->unique()
-                         ->toArray();
+        ])->groupBy('medication_group_id')->with(['cpmMedicationGroup'])->get()->map(function ($m) {
+            return $m->cpmMedicationGroup;
+        })->filter()->toArray());
     }
 }
