@@ -53,7 +53,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Manage Patient Calls</div>
                         <div class="panel-body">
-                            <div>x
+                            <div>
                                 @include('errors.errors')
                                 @include('errors.messages')
                             </div>
