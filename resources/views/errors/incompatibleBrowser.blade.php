@@ -7,7 +7,7 @@
                 <div class="col-md-12">
                     <div class="radio">
                         <input id="doNotShowAgain" type="checkbox" name="doNotShowAgain" value="1">
-                        <label for="doNotShowAgain">Don't show this again <span> </span></label>
+                        <label for="doNotShowAgain">Don't show this again</label>
                     </div>
                 </div>
 
