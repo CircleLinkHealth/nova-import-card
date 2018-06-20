@@ -28,7 +28,7 @@ describe('TimeTrackerFlow', () => {
 
             describe('User chose NO', () => {
                 user.enter(info, ws)
-                user.respondToModal(false)
+                user.respondToModal(false, info)
 
                 it('should have totalSeconds as 30', () => {
                     assert.equal(user.totalSeconds, 30)
@@ -41,7 +41,7 @@ describe('TimeTrackerFlow', () => {
 
                 user.enter(info, ws)
                 user.inactiveSeconds = 20
-                user.respondToModal(true)
+                user.respondToModal(true, info)
 
                 it('should have totalSeconds as 20', () => {
                     assert.equal(user.totalSeconds, 20)
@@ -136,9 +136,9 @@ describe('TimeTrackerFlow', () => {
         
                     user.inactiveSeconds = 601
         
-                    user.clientInactivityLogout()
+                    user.clientInactivityLogout(info)
         
-                    user.clientInactivityLogout()
+                    user.clientInactivityLogout(info)
         
                     assert.equal(user.totalDuration, 35)
                 })
@@ -358,6 +358,36 @@ describe('TimeTrackerFlow', () => {
 
         it('should pass', () => {
 
+        })
+    })
+
+    describe('BHI', () => {
+
+        const timeTracker = new TimeTracker()
+
+        const info1 = { ...info, ...{ patientId: 1, isManualBehavioral: true } }
+        const info2 = { ...info, ...{ patientId: 1, isManualBehavioral: false } }
+
+        const user = timeTracker.get(info1)
+
+        it('should have different durations', () => {
+            user.start(info1, ws)
+
+            let activity1 = user.findActivity(info1)
+
+            activity1.duration += 30
+
+            user.enter(info2, ws)
+
+            let activity2 = user.findActivity(info2)
+
+            assert.notEqual(activity1, activity2)
+
+            assert.equal(user.totalBhiSeconds, 30)
+
+            assert.equal(user.totalCcmSeconds, 0)
+
+            assert.equal(user.totalSeconds, 30)
         })
     })
 })

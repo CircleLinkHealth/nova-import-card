@@ -6,6 +6,10 @@ function TimeTrackerInfo (options = {}) {
 
     this.totalTime = (typeof(options.totalTime) != 'undefined') ? options.totalTime : 339
 
+    this.totalCCMTime = (typeof(options.totalCCMTime) != 'undefined') ? options.totalCCMTime : 300
+
+    this.totalBHITime = (typeof(options.totalBHITime) != 'undefined') ? options.totalBHITime : 39
+
     this.wsUrl = options.wsUrl || 'ws://localhost:3000/time'
 
     this.programId = options.programId || '8'
@@ -29,6 +33,8 @@ function TimeTrackerInfo (options = {}) {
     this.patientFamilyId = options.patientFamilyId || 101
 
     this.initSeconds = options.initSeconds || 0
+
+    this.isManualBehavioral = options.isBehavioral || false
 
     this.createKey = function () {
         return `${this.patientId}-${this.providerId}`

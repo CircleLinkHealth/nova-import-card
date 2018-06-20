@@ -84,12 +84,16 @@ module.exports = app => {
                 return;
               }
             }
-            else if (data.message === 'client:enter') {
+            else if ([ 'client:enter', 'client:bhi' ].includes(data.message)) {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
+                user.closeOtherBehavioralActivity(info, ws)
                 user.enter(info, ws)
                 user.sync()
+                if (data.message === 'client:bhi') {
+                  user.switchBhi(info)
+                }
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -169,7 +173,7 @@ module.exports = app => {
               try {
                 const info = data.info
                 const user = app.getTimeTracker(info).get(info)
-                user.clientInactivityLogout()
+                user.clientInactivityLogout(info)
               }
               catch (ex) {
                 errorThrow(ex, ws)
@@ -210,13 +214,14 @@ module.exports = app => {
             providerId: user.providerId,
             ipAddr: user.ipAddr,
             programId: user.programId,
-            activities: user.activities.map(activity => ({
+            activities: user.activities.filter(activity => activity.duration > 0).map(activity => ({
               name: activity.name,
               title: activity.title,
               duration: activity.duration,
               url: activity.url,
               url_short: activity.url_short,
-              start_time: activity.start_time
+              start_time: activity.start_time,
+              is_behavioral: activity.isBehavioral
             }))
           }
 
@@ -250,7 +255,8 @@ module.exports = app => {
         console.log(
           'key:', user.key,
           'activities:', user.activities.filter(activity => activity.isActive).length, 
-          'total-seconds:', user.totalSeconds,
+          'ccm:', user.totalCcmSeconds,
+          'bhi:', user.totalBhiSeconds,
           'inactive-seconds:', user.inactiveSeconds,
           'durations:', user.activities.map(activity => (activity.isActive ? colors.FgGreen : colors.FgRed) + activity.duration + colors.Reset).join(', '),
           'sockets:', user.allSockets.length,

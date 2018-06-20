@@ -18,3 +18,4 @@ npm-debug.log
 .DS_Store
 public/.DS_Store
 /.nyc_output/
+/.idea/workspace.xml
