@@ -28,6 +28,9 @@ if (window && document) {
         if (error.response.status === 419) {
             window.location.href = '/auth/inactivity-logout'
         }
+        else {
+            return Promise.reject(error);
+        }
     })
 
     window.axios = axios
