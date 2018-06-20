@@ -53,7 +53,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Manage Patient Calls</div>
                         <div class="panel-body">
-                            <div>
+                            <div>x
                                 @include('errors.errors')
                                 @include('errors.messages')
                             </div>
@@ -68,7 +68,3 @@
     </div>
 </div>
 @endsection
-
-@push('scripts')
-    <!--<script src="{{ mix('compiled/js/v-call-mgmt.min.js') }}"></script>-->
-@endpush
