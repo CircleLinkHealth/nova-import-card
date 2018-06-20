@@ -1,5 +1,4 @@
 <?php
-use \Carbon\Carbon;
 
 $user_info = array();
 ?>
@@ -8,10 +7,6 @@ $user_info = array();
 
 @section('title', 'Patient Demographics')
 @section('activity', 'Edit/Modify Care Plan')
-
-@push('scripts')
-    <!--<script type="text/javascript" src="{{ mix('/js/patient/careplan.js') }}"></script>-->
-@endpush
 
 @section('content')
     {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
@@ -363,9 +358,11 @@ $user_info = array();
                                     @else
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
-                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->ccm_status == '' ? 'paused' : ucfirst($patient->ccm_status))) !!}</div>
+                                                <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->ccm_status == '' ? 'enrolled' : ucfirst($patient->ccm_status))) !!}</div>
                                                 <div class="col-lg-8">
-                                                    <input type="hidden" value="{{ $patient->ccm_status == '' ? 'paused' : $patient->ccm_status }}" name="ccm_status">
+                                                    <input type="hidden"
+                                                           value="{{ $patient->ccm_status == '' ? 'enrolled' : $patient->ccm_status }}"
+                                                           name="ccm_status">
                                                 </div>
                                                 
                                             </div>
