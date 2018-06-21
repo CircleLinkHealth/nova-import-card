@@ -15,6 +15,7 @@ let mix = require('laravel-mix');
 const webpackConfig = {
     devtool: "#source-map",
     output: {
+        publicPath: "/",
         chunkFilename: '[name].[chunkhash].js'
     },
     node: {
