@@ -123,10 +123,15 @@ class Note extends \App\BaseModel implements PdfReport
             'provider' => $this->patient->billingProviderUser(),
         ]);
 
-        $fontSize = $this->patient
-            ->primaryPractice
-            ->cpmSettings()
-            ->note_font_size;
+        $fontSize = null;
+
+        if (optional($this->patient)
+            ->primaryPractice) {
+            $fontSize = $this->patient
+                ->primaryPractice
+                ->cpmSettings()
+                ->note_font_size;
+        }
 
         if ( ! empty($scale)) {
             $pdf->setOption('zoom', $scale);
