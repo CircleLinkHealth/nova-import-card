@@ -1,7 +1,7 @@
 @extends('provider.layouts.default')
 
 @section('title', 'Signup for Wellness Management')
-@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
+@section('meta-image-url', "{{mix('/img/landing-pages/coordination-with-family.png')}}")
 
 @section('head')
     <style>
@@ -23,14 +23,14 @@
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
     <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
     <meta property="og:type" content="image.other"/>
 
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:type" content="image/jpeg"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
@@ -43,7 +43,7 @@
         <div class="navbar-fixed">
             <nav class="white">
                 <div class="header nav-wrapper">
-                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
+                    <a href="#" class="col s2"><img class="logo" src="{{mix('/img/clh_logo.svg')}}" alt=""></a>
                 </div>
             </nav>
         </div>

@@ -1,8 +1,8 @@
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('/webix/codebase/webix.css') }}" type="text/css">
-    <script src="{{ asset('/webix/codebase/webix.js') }}" type="text/javascript"></script>
-    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ mix('/js/rules/rules.js') }}"></script>
+    <link rel="stylesheet" href="{{ mix('/webix/codebase/webix.css') }}" type="text/css">
+    <script src="{{ mix('/webix/codebase/webix.js') }}" type="text/javascript"></script>
+    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
