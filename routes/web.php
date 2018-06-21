@@ -1304,7 +1304,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-//        Route::impersonate();
         Route::get('impersonate/take/{id}', [
             'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
             'as'   => 'impersonate',

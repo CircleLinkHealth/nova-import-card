@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\CarePlan;
-use App\Mail\CarePlanApprovalReminder;
 use App\User;
 use Illuminate\Console\Command;
-use Mail;
 
 class SendCarePlanApprovalReminderTestEmail extends Command
 {
@@ -45,7 +42,7 @@ class SendCarePlanApprovalReminderTestEmail extends Command
 
         $user = User::findOrFail($tester);
 
-        $user->sendCarePlanApprovalReminderEmail(true);
+        $user->sendCarePlanApprovalReminderEmail(10, true);
 
         $this->output->success('Email sent!');
     }
