@@ -18,17 +18,17 @@ trait ConsolidatesMedicationInfo
     {
         $consolidatedMedication = new \stdClass();
 
-        $consolidatedMedication->cons_code = null;
-        $consolidatedMedication->cons_code_system = null;
+        $consolidatedMedication->cons_code             = null;
+        $consolidatedMedication->cons_code_system      = null;
         $consolidatedMedication->cons_code_system_name = null;
-        $consolidatedMedication->cons_name = null;
-        $consolidatedMedication->cons_text = null;
+        $consolidatedMedication->cons_name             = null;
+        $consolidatedMedication->cons_text             = null;
 
-        if (!empty($medicationLog->translation_code)) {
-            $consolidatedMedication->cons_code = $medicationLog->translation_code;
-            $consolidatedMedication->cons_code_system = $medicationLog->translation_code_system;
+        if ( ! empty($medicationLog->translation_code)) {
+            $consolidatedMedication->cons_code             = $medicationLog->translation_code;
+            $consolidatedMedication->cons_code_system      = $medicationLog->translation_code_system;
             $consolidatedMedication->cons_code_system_name = $medicationLog->translation_code_system_name;
-            $consolidatedMedication->cons_name = $medicationLog->reference_title;
+            $consolidatedMedication->cons_name             = $medicationLog->reference_title;
 
             $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
             $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
@@ -38,10 +38,10 @@ trait ConsolidatesMedicationInfo
         }
 
 
-        $consolidatedMedication->cons_code = $medicationLog->product_code;
-        $consolidatedMedication->cons_code_system = $medicationLog->product_code_system;
+        $consolidatedMedication->cons_code             = $medicationLog->product_code;
+        $consolidatedMedication->cons_code_system      = $medicationLog->product_code_system;
         $consolidatedMedication->cons_code_system_name = $medicationLog->product_code_system_name;
-        $consolidatedMedication->cons_name = $medicationLog->reference_title;
+        $consolidatedMedication->cons_name             = $medicationLog->reference_title;
 
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
         $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
@@ -51,7 +51,8 @@ trait ConsolidatesMedicationInfo
         return $consolidatedMedication;
     }
 
-    private function determineNameSigValidity($consolidatedMedication){
+    private function determineNameSigValidity($consolidatedMedication)
+    {
 
         $keywords = $this->keywords();
 
@@ -59,9 +60,9 @@ trait ConsolidatesMedicationInfo
         $sig  = $consolidatedMedication->cons_text;
 
         //if both fields have the same value it stays the same
-        if (str_contains(strtolower($name), $keywords)){
+        if (str_contains(strtolower($name), $keywords)) {
             $consolidatedMedication->cons_text = $name;
-            if (!str_contains(strtolower($sig), $keywords)){
+            if ( ! str_contains(strtolower($sig), $keywords)) {
                 $consolidatedMedication->cons_name = $sig;
             }
         }
@@ -73,12 +74,13 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication,
         $medicationLog
     ) {
-        if (empty($consolidatedMedication->cons_name)) {
-            if (!empty($medicationLog->reference_title)) {
+        if (empty($consolidatedMedication->cons_name) || $this->containsKeywords($consolidatedMedication->cons_name)) {
+
+            if ( ! empty($medicationLog->reference_title) || ! $this->containsKeywords($medicationLog->reference_title)) {
                 $consolidatedMedication->cons_name = $medicationLog->reference_title;
-            } elseif (!empty($medicationLog->translation_name)) {
+            } elseif ( ! empty($medicationLog->translation_name) || ! $this->containsKeywords($medicationLog->translation_name)) {
                 $consolidatedMedication->cons_name = $medicationLog->translation_name;
-            } elseif (!empty($medicationLog->product_name)) {
+            } elseif ( ! empty($medicationLog->product_name) || ! $this->containsKeywords($medicationLog->product_name)) {
                 $consolidatedMedication->cons_name = $medicationLog->product_name;
             }
         }
@@ -90,10 +92,11 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication,
         $medicationLog
     ) {
-        if (empty($consolidatedMedication->cons_text)) {
-            if (!empty($medicationLog->reference_sig)) {
+        if (empty($consolidatedMedication->cons_text || ! $this->containsKeywords($consolidatedMedication->cons_text))) {
+
+            if ( ! empty($medicationLog->reference_sig) || $this->containsKeywords($medicationLog->reference_sig)) {
                 $consolidatedMedication->cons_text = $medicationLog->reference_sig;
-            } elseif (!empty($medicationLog->product_text)) {
+            } elseif ( ! empty($medicationLog->product_text) || $this->containsKeywords($medicationLog->product_text)) {
                 $consolidatedMedication->cons_text = $medicationLog->product_text;
             }
         }
@@ -101,7 +104,13 @@ trait ConsolidatesMedicationInfo
         return $consolidatedMedication;
     }
 
-    private function keywords() : array {
+    private function containsKeywords($field): bool
+    {
+        return str_contains(strtolower($field), $this->keywords());
+    }
+
+    private function keywords(): array
+    {
 
         return $keywords = [
             'daily',
