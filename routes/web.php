@@ -62,6 +62,10 @@ Route::group([
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('impersonate/leave', [
+        'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
+        'as'   => 'impersonate.leave',
+    ]);
 
     Route::get('cache/view/{key}', [
         'as'   => 'get.cached.view.by.key',
@@ -1300,7 +1304,10 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-        Route::impersonate();
+        Route::get('impersonate/take/{id}', [
+            'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
+            'as'   => 'impersonate',
+        ]);
 
         // appConfig
         Route::group([

@@ -2,17 +2,15 @@
 
 namespace Tests\Unit;
 
-use App\Practice;
 use App\CarePlan;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Patient;
-use App\User;
+use App\Practice;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Notification;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CarePlanApprovalReminderTest extends TestCase
 {
@@ -52,7 +50,7 @@ class CarePlanApprovalReminderTest extends TestCase
         $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this->provider);
 
         //send notification
-        $this->provider->sendCarePlanApprovalReminderEmail();
+        $this->provider->sendCarePlanApprovalReminderEmail(10);
 
         //assert set
         Notification::assertSentTo(

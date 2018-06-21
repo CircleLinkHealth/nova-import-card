@@ -3,13 +3,8 @@
 namespace App\Console\Commands;
 
 use App\CarePlan;
-use App\Notifications\CarePlanApprovalReminder;
-use App\Models\EmailSettings;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Mail;
-use Maknz\Slack\Facades\Slack;
 
 class EmailsProvidersToApproveCareplans extends Command
 {
@@ -36,7 +31,9 @@ class EmailsProvidersToApproveCareplans extends Command
     {
         $pretend = $this->option('pretend');
 
-        $providers = User::ofType('provider')->get();
+        $providers = User::ofType('provider')
+                         ->with('forwardAlertsTo')
+                         ->get();
 
         $bar = $this->output->createProgressBar(count($providers));
 
@@ -44,7 +41,7 @@ class EmailsProvidersToApproveCareplans extends Command
             $bar,
             $pretend
         ) {
-            if (!$this->shouldSend($providerUser)) {
+            if ( ! $this->shouldSend($providerUser)) {
                 return false;
             }
 
@@ -61,7 +58,7 @@ class EmailsProvidersToApproveCareplans extends Command
             }
 
             foreach ($recipients as $recipient) {
-                $this->sendEmail($recipient, $numberOfCareplans, $providerUser, $pretend);
+                $this->sendEmail($recipient, $numberOfCareplans, $pretend);
                 $bar->advance();
             }
 
@@ -107,11 +104,11 @@ class EmailsProvidersToApproveCareplans extends Command
             return false;
         }
 
-        if (!$providerUser->primaryPractice) {
+        if ( ! $providerUser->primaryPractice) {
             return false;
         }
 
-        if (!$providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
+        if ( ! $providerUser->primaryPractice->cpmSettings()->email_careplan_approval_reminders) {
             return false;
         }
 
@@ -144,11 +141,11 @@ class EmailsProvidersToApproveCareplans extends Command
         return $recipients;
     }
 
-    public function sendEmail(User $recipient, $numberOfCareplans, User $providerUser, bool $pretend)
+    public function sendEmail(User $recipient, $numberOfCareplans, bool $pretend)
     {
-        if (!$pretend) {
+        if ( ! $pretend) {
             if ($recipient->email) {
-                $recipient->sendCarePlanApprovalReminderEmail();
+                $recipient->sendCarePlanApprovalReminderEmail($numberOfCareplans);
             }
         }
     }
