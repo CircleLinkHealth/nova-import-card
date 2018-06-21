@@ -6,7 +6,7 @@
     <div id="trainer-results" class="container-fluid">
         <div class="row">
             {{--<div class="col-md-6 text-center">--}}
-                {{--<img class="col-md-12" src="{{asset('/img/robo-gif.gif')}}" alt="Hola, human.">--}}
+                {{--<img class="col-md-12" src="{{mix('/img/robo-gif.gif')}}" alt="Hola, human.">--}}
             {{--</div>--}}
             {{--<div class="col-md-6">--}}
                 {{--<h2>Here's what I see as features to help me identify future CCDs from this Practice.</h2>--}}

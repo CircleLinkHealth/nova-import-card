@@ -63,7 +63,7 @@
                             <a id="patient-list" href="{{ route('import.ccd') }}">
                                 <div class="icon-container column-centered">
                                     <i class="icon--menu" aria-hidden="true">
-                                        <img src="/img/icon--download.png"
+                                        <img src="{{mix('/img/icon--download.png')}}"
                                              style="
                                             max-width: 61px;
                                             position: absolute;

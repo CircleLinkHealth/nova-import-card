@@ -1,11 +1,23 @@
-let mix = require('laravel-mix')
-const path = require('path')
-const WorkboxPlugin = require('workbox-webpack-plugin')
-const DIST_DIR = 'public'
-const SRC_DIR = 'resources/assets'
+let mix = require('laravel-mix');
+
+//
+// NOTE:
+//
+// We use webpack in combination with Laravel Mix.
+//
+// We use chunks from webpack (see app-clh-admin-ui.js)
+// For the chunk we use webpack output property to define a filename with a hash for them.
+//
+// For the rest of the files, we use Laravel Mix
+// We use Mix's version() method + mix() in blade.php files to add version on the url.
+//
 
 const webpackConfig = {
     devtool: "#source-map",
+    output: {
+        publicPath: "/",
+        chunkFilename: '[name].[chunkhash].js'
+    },
     node: {
         fs: 'empty' //to help webpack resolve 'fs'
     },
@@ -15,16 +27,10 @@ const webpackConfig = {
         }
     ],
     plugins: [
-        new WorkboxPlugin({
-            globDirectory: DIST_DIR,
-            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css', 'css/wpstyle.css'],
-            swDest: path.join(DIST_DIR, 'sw.js'),
-            swSrc: path.join(SRC_DIR, 'js/sw.js')
-        }),
     ]
-}
+};
 
-mix.webpackConfig(webpackConfig)
+mix.webpackConfig(webpackConfig);
 
 /*
  |--------------------------------------------------------------------------
@@ -42,19 +48,19 @@ mix.webpackConfig(webpackConfig)
  * CSS
  *
  */
-mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css')
+mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css');
 
 mix.combine([
     'public/compiled/css/app-compiled.css',
     'resources/assets/less/css/animate.min.css'
-], 'public/compiled/css/stylesheet.css')
+], 'public/compiled/css/stylesheet.css');
 
-mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css')
+mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
 
 mix.combine([
     'public/compiled/css/provider-dashboard.css',
     'resources/assets/less/css/animate.min.css'
-], 'public/compiled/css/provider-dashboard.css')
+], 'public/compiled/css/provider-dashboard.css');
 
 
 /**
@@ -75,7 +81,7 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
     'public/js/DateTimePicker.min.js',
-], 'public/compiled/js/issue-688.js')
+], 'public/compiled/js/issue-688.js');
 /** end fixing issue 688 */
 
 /** start fixing admin-ui */
@@ -89,19 +95,35 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'bower_components/select2/dist/js/select2.js',
     'bower_components/bootstrap/dist/js/bootstrap.js'
-], 'public/compiled/js/admin-ui.js')
+], 'public/compiled/js/admin-ui.js');
 /** end fixing admin-ui */
 
 //apps
-mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
+mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps();
 
-if (mix.inProduction) {
-    mix.options({
-        uglify: false,
-      })
-}
+mix.version([
+    'public/js/*.*',
+    'public/js/admin/*.*',
+    'public/js/admin/reports/*.*',
+    'public/js/ccd/*.*',
+    'public/js/patient/*.*',
+    'public/js/polyfills/*.*',
+    'public/js/rules/*.*',
+    'public/js/wpUsers/*.*',
 
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps()
+    'public/css/*.*',
+
+    'public/img/*.*',
+    'public/img/ui/*.*',
+    'public/img/emails/*.*',
+    'public/img/emails/careplan-pending-approvals/*.*',
+    'public/img/landing-pages/*.*',
+
+    'public/vendor/datatables-images/*.*',
+
+    'public/webix/codebase/*.*'
+]);
