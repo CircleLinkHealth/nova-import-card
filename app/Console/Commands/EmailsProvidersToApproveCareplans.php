@@ -45,7 +45,9 @@ class EmailsProvidersToApproveCareplans extends Command
                 return false;
             }
 
-            $recipients = $this->recipients($providerUser);
+            $recipients = $this->recipients($providerUser)
+                               ->unique('id')
+                               ->values();
 
             if ($recipients->isEmpty()) {
                 return false;
@@ -64,7 +66,7 @@ class EmailsProvidersToApproveCareplans extends Command
 
             return [
                 'practice'         => $providerUser->primaryPractice->display_name,
-                'receivers'        => implode(', ', $recipients->all()),
+                'receivers'        => $recipients->implode('display_name', ', '),
                 'pendingApprovals' => $numberOfCareplans,
             ];
         });
