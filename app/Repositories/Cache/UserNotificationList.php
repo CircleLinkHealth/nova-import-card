@@ -21,7 +21,7 @@ class UserNotificationList implements UserNotificationListInterface
 
     public function __construct($user, $viewHashKey = null)
     {
-        $this->userId = is_a(User::class, $user)
+        $this->userId      = is_a($user, User::class)
             ? $user->id
             : $user;
         $this->viewHashKey = $viewHashKey;
@@ -37,7 +37,7 @@ class UserNotificationList implements UserNotificationListInterface
      */
     public function push($title = '', $description = '', $link = null, $linkTitle = 'Link')
     {
-        \Redis::rpush(
+        $pushed = \Redis::rpush(
             $this->userHashKey(),
             $this->userCachedNotificationFactory($title, $description, $link, $linkTitle)
         );
