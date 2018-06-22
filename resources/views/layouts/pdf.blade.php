@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CarePlanManager - @yield('title')</title>
 
-    <link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
-    <link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
-    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
+    <link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
+    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
