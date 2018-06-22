@@ -6,15 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CPM API - {!! Route::current()->getName() !!}</title>
 
-	<link href="{{ asset('/compiled/css/stylesheet.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/wpstyle.css') }}" rel="stylesheet">
-	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+	<link href="{{ mix('/compiled/css/stylesheet.css') }}" rel="stylesheet">
+	<link href="{{ mix('/css/wpstyle.css') }}" rel="stylesheet">
+	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
 </head>
 <body>
-<div class="container-fluid">
+<div class="container-fluid">F
 	<div class="content text-center" style="margin-top:30px;">
 		<a href="http://www.circlelinkhealth.com">
-			<img src="img/logo.svg" alt="Logo" class="logo--small" style="width:200px;margin-top:50px;">
+			<img src="{{mix('img/logo.svg')}}" alt="Logo" class="logo--small" style="width:200px;margin-top:50px;">
 		</a>
 	</div>
 	<div class="row" style="margin-top:30px;">

@@ -35,7 +35,7 @@
                         </li>
                         <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{(new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
+                        <li class="inline-block">{{formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
                     <li><span> <b>Provider</b>: {{$provider}}  </span></li>
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
@@ -55,7 +55,9 @@
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
                                 <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}"
+                                                         provider-id="{{auth()->id()}}"
+                                                         value="{{$monthlyTime}}"></server-time-display>
                                 </a>
                             </div>
                         @else
@@ -120,14 +122,13 @@
 
         </div>
         <?php
-            use App\Services\CPM\CpmProblemUserService;
-            use App\Services\CCD\CcdProblemService;
-        
-            $cpmProblemService = app(CpmProblemUserService::class);
+        use App\Services\CCD\CcdProblemService;
+
+        //            $cpmProblemService = app(CpmProblemUserService::class);
             $ccdProblemService = app(CcdProblemService::class);
-        
-            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
-            $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
+
+        //            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
+        $ccdProblems = $ccdProblemService->getPatientProblems($patient);
     
             $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
                 return $problem['is_monitored'];
@@ -135,7 +136,7 @@
                 return $problems->first();
             });
         ?>
-        @if(!empty($cpmProblemsForListing) || !empty($ccdMonitoredProblems))
+        @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">

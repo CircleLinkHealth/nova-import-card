@@ -1,4 +1,4 @@
-<link href="{{asset('/css/bootstrap.min.css')}}" rel="stylesheet">
+<link href="{{mix('/css/bootstrap.min.css')}}" rel="stylesheet">
 
 <div class="page-header">
     <h1>{{$data['program_name']}}

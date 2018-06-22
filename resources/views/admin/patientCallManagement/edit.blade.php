@@ -2,7 +2,7 @@
 
 @section('content')
     @push('scripts')
-        <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/admin/patientCallManagement.js') }}"></script>
     @endpush
     
     {!! Form::open(array('url' => route('admin.patientCallManagement.update', array('id' => $call->id)), 'class' => 'form-horizontal')) !!}
