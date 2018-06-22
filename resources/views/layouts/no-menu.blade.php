@@ -25,18 +25,7 @@
 	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-	<!-- http://trentrichardson.com/examples/timepicker/ -->
-	<link rel="stylesheet" href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
-
-	<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script src="{{ mix('/compiled/js/scripts.js') }}"></script>
-	<script src="{{ mix('/js/bootstrap-select.min.js') }}"></script>
-	{{--<script src="{{ mix('/js/ccd/bluebutton.min.js') }}"></script>--}}
-
-	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default">

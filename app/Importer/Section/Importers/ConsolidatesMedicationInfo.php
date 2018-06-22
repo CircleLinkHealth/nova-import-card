@@ -32,7 +32,6 @@ trait ConsolidatesMedicationInfo
 
             $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
             $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
-            $consolidatedMedication = $this->determineNameSigValidity($consolidatedMedication);
 
             return $consolidatedMedication;
         }
@@ -46,27 +45,6 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication = $this->consolidateName($consolidatedMedication, $medicationLog);
         $consolidatedMedication = $this->consolidateSig($consolidatedMedication, $medicationLog);
 
-        $consolidatedMedication = $this->determineNameSigValidity($consolidatedMedication);
-
-        return $consolidatedMedication;
-    }
-
-    private function determineNameSigValidity($consolidatedMedication)
-    {
-
-        $keywords = $this->keywords();
-
-        $name = $consolidatedMedication->cons_name;
-        $sig  = $consolidatedMedication->cons_text;
-
-        //if both fields have the same value it stays the same
-        if (str_contains(strtolower($name), $keywords)) {
-            $consolidatedMedication->cons_text = $name;
-            if ( ! str_contains(strtolower($sig), $keywords)) {
-                $consolidatedMedication->cons_name = $sig;
-            }
-        }
-
         return $consolidatedMedication;
     }
 
@@ -74,16 +52,17 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication,
         $medicationLog
     ) {
-        if (empty($consolidatedMedication->cons_name) or $this->containsKeywords($consolidatedMedication->cons_name)) {
+        collect([
+            $medicationLog->product_name,
+            $medicationLog->reference_title,
+            $medicationLog->translation_name,
+        ])->each(function ($c) use (&$consolidatedMedication) {
+            if ( ! empty($c) && ! $this->containsSigKeywords($c)) {
+                $consolidatedMedication->cons_name = $c;
 
-            if ( ! empty($medicationLog->reference_title) and ! $this->containsKeywords($medicationLog->reference_title)) {
-                $consolidatedMedication->cons_name = $medicationLog->reference_title;
-            } elseif ( ! empty($medicationLog->translation_name) and ! $this->containsKeywords($medicationLog->translation_name)) {
-                $consolidatedMedication->cons_name = $medicationLog->translation_name;
-            } elseif ( ! empty($medicationLog->product_name) and ! $this->containsKeywords($medicationLog->product_name)) {
-                $consolidatedMedication->cons_name = $medicationLog->product_name;
+                return false;
             }
-        }
+        });
 
         return $consolidatedMedication;
     }
@@ -92,29 +71,31 @@ trait ConsolidatesMedicationInfo
         $consolidatedMedication,
         $medicationLog
     ) {
-        if (empty($consolidatedMedication->cons_text) or ! $this->containsKeywords($consolidatedMedication->cons_text)) {
+        collect([
+            $medicationLog->reference_sig,
+            $medicationLog->product_text,
+            $medicationLog->text,
+            $medicationLog->reference_title,
+        ])->each(function ($c) use (&$consolidatedMedication) {
+            if ( ! empty($c) && $this->containsSigKeywords($c)) {
+                $consolidatedMedication->cons_text = $c;
 
-            if ( ! empty($medicationLog->reference_sig) and $this->containsKeywords($medicationLog->reference_sig)) {
-                $consolidatedMedication->cons_text = $medicationLog->reference_sig;
-            } elseif ( ! empty($medicationLog->product_text) and $this->containsKeywords($medicationLog->product_text)) {
-                $consolidatedMedication->cons_text = $medicationLog->product_text;
-            } elseif ( ! empty($medicationLog->reference_title) and $this->containsKeywords($medicationLog->reference_title)) {
-                $consolidatedMedication->cons_text = $medicationLog->reference_title;
+                return false;
             }
-        }
+        });
 
         return $consolidatedMedication;
     }
 
-    private function containsKeywords($field): bool
+    public function containsSigKeywords($field): bool
     {
-        return str_contains(strtolower($field), $this->keywords());
+        return str_contains(strtolower($field), $this->sigKeywords());
     }
 
-    private function keywords(): array
+    private function sigKeywords(): array
     {
-
         return $keywords = [
+            'take',
             'daily',
             'weekly',
             'spoon',
