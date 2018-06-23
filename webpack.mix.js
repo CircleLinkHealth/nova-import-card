@@ -1,5 +1,6 @@
-let mix = require('laravel-mix');
-
+const mix = require('laravel-mix');
+const path = require('path');
+const fs = require('fs');
 //
 // NOTE:
 //
@@ -105,25 +106,42 @@ mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js
 mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
 mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps();
 
-mix.version([
-    'public/js/*.*',
-    'public/js/admin/*.*',
-    'public/js/admin/reports/*.*',
-    'public/js/ccd/*.*',
-    'public/js/patient/*.*',
-    'public/js/polyfills/*.*',
-    'public/js/rules/*.*',
-    'public/js/wpUsers/*.*',
+const walkSync = function (dir, fileList) {
+    const files = fs.readdirSync(dir);
+    fileList = fileList || [];
+    files.forEach(function (file) {
+        if (fs.statSync(path.join(dir, file)).isDirectory()) {
+            fileList = walkSync(path.join(dir, file), fileList);
+        }
+        else {
+            fileList.push(path.join(dir, file));
+        }
+    });
+    return fileList;
+};
+const allPublicFiles = walkSync('public');
+const toVersion = [];
+allPublicFiles.forEach((fullPath) => {
 
-    'public/css/*.*',
+    const dirName = path.dirname(fullPath);
 
-    'public/img/*.*',
-    'public/img/ui/*.*',
-    'public/img/emails/*.*',
-    'public/img/emails/careplan-pending-approvals/*.*',
-    'public/img/landing-pages/*.*',
+    //looking for compiled folder
+    if (dirName.indexOf('compiled') > -1) {
+        //we assume this file is already processed and ignore
+        return;
+    }
 
-    'public/vendor/datatables-images/*.*',
+    const fileName = path.basename(fullPath);
 
-    'public/webix/codebase/*.*'
-]);
+    if (fileName.indexOf('chunk-') > -1) {
+        //we assume this file is already processed and ignore
+        return;
+    }
+
+
+    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico"].includes(path.extname(fullPath))) {
+        toVersion.push(fullPath);
+    }
+
+});
+mix.version(toVersion);
