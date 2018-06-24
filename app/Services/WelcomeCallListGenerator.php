@@ -159,19 +159,21 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $cpmProblems    = CpmProblem::all();
-        $snomedToIcdMap = SnomedToCpmIcdMap::all();
-        $icd9Map        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
-        $icd10Map       = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
-        $snomedMap      = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
-        $cpmProblemsMap = $cpmProblems->pluck('name', 'id');
+        $cpmProblems      = CpmProblem::all();
+        $snomedToIcdMap   = SnomedToCpmIcdMap::all();
+        $icd9Map          = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        $icd10Map         = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        $snomedMap        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        $cpmProblemsMap   = $cpmProblems->pluck('name', 'id');
+        $allBhiProblemIds = $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
 
         $patientList = $this->patientList->map(function ($row) use (
             $cpmProblems,
             $icd9Map,
             $icd10Map,
             $snomedMap,
-            $cpmProblemsMap
+            $cpmProblemsMap,
+            $allBhiProblemIds
         ) {
             $row['ccm_condition_1'] = '';
             $row['ccm_condition_2'] = '';
@@ -199,8 +201,11 @@ class WelcomeCallListGenerator
             }
 
             $qualifyingProblems = [];
+
             //the cpm_problem_id for qualifying problems
             $qualifyingProblemsCpmIdStack = [];
+
+            $eligibleBhiProblemIds = [];
 
 
             if ( ! (is_array($problems) || is_a($problems, Collection::class))) {
@@ -230,6 +235,11 @@ class WelcomeCallListGenerator
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
                                 $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+
+                                if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                    $eligibleBhiProblemIds[] = $cpmProblemId;
+                                }
+
                                 continue;
                             }
                         }
@@ -240,6 +250,11 @@ class WelcomeCallListGenerator
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
                                 $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+
+                                if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                    $eligibleBhiProblemIds[] = $cpmProblemId;
+                                }
+
                                 continue;
                             }
                         }
@@ -250,6 +265,11 @@ class WelcomeCallListGenerator
                             if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
                                 $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
                                 $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+
+                                if ($allBhiProblemIds->contains($cpmProblemId)) {
+                                    $eligibleBhiProblemIds[] = $cpmProblemId;
+                                }
+
                                 continue;
                             }
                         }
@@ -294,6 +314,10 @@ class WelcomeCallListGenerator
 
                                     $qualifyingProblems[]           = "{$problem->name}, $code";
                                     $qualifyingProblemsCpmIdStack[] = $problem->id;
+
+                                    if ( ! ! $problem->is_behavioral) {
+                                        $eligibleBhiProblemIds[] = $problem->id;
+                                    }
                                 }
                             }
                         }
@@ -302,9 +326,10 @@ class WelcomeCallListGenerator
             }
 
 
-            $qualifyingProblems = array_unique($qualifyingProblems);
+            $qualifyingProblems    = array_unique($qualifyingProblems);
+            $qualifyingBhiProblems = array_unique($eligibleBhiProblemIds);
 
-            if (count($qualifyingProblems) < 2) {
+            if (count($qualifyingProblems) < 2 && count($qualifyingBhiProblems) == 0) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has less than 2 ccm conditions'],
@@ -314,10 +339,10 @@ class WelcomeCallListGenerator
             }
 
             $row['ccm_condition_1'] = $qualifyingProblems[0];
-            $row['ccm_condition_2'] = $qualifyingProblems[1];
+            $row['ccm_condition_2'] = $qualifyingProblems[1] ?? null;
 
             $row['cpm_problem_1'] = $qualifyingProblemsCpmIdStack[0];
-            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1];
+            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1] ?? null;
 
             return $row;
         })->values();
@@ -780,7 +805,8 @@ class WelcomeCallListGenerator
         return $this->patientList;
     }
 
-    public function getEligibilityJob(){
+    public function getEligibilityJob()
+    {
         return $this->eligibilityJob;
     }
 
