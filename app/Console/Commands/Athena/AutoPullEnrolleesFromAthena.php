@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Athena;
 
 use App\EligibilityBatch;
-use App\Enrollee;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
-use App\TargetPatient;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -31,12 +29,12 @@ class AutoPullEnrolleesFromAthena extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Pull eligible patients from Athena API.';
 
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param ProcessEligibilityService $service
      */
     public function __construct(ProcessEligibilityService $service)
     {
@@ -61,7 +59,7 @@ class AutoPullEnrolleesFromAthena extends Command
     {
         $to   = Carbon::now()->format('y-m-d');
         $from = Carbon::now()->subWeek()->format('y-m-d');;
-        $offset = false;
+        $offset = true;
 
         if ($this->argument('offset')) {
             $offset = $this->argument('offset');
@@ -99,6 +97,7 @@ class AutoPullEnrolleesFromAthena extends Command
                 return null;
             }
         }
+
         foreach ($practices as $practice) {
 
             $batch = $this->service->createBatch(EligibilityBatch::ATHENA_API, $practice->id, $this->options);
