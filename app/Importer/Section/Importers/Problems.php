@@ -141,6 +141,12 @@ class Problems extends BaseImporter
          * Try to match keywords
          */
         foreach ($this->cpmProblems as $cpmProblem) {
+            //Do not perform keyword matching if name is just Cancer
+            //https://circlelinkhealth.atlassian.net/browse/CPM-108
+            if (strcasecmp($problemName, 'cancer') === 0) {
+                break;
+            }
+
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
