@@ -49,7 +49,7 @@ if (isset($patient) && ! empty($patient)) {
                                               data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
                                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
                                                           :hide-tracker="true"
-                                                          :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                         </span>
                                     </span>
                                 </div>

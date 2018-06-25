@@ -55,7 +55,7 @@
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
                                 <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}"
+                                    <server-time-display url="{{config('services.ws.server-url')}}" patient-id="{{$patient->id}}"
                                                          provider-id="{{auth()->id()}}"
                                                          value="{{$monthlyTime}}"></server-time-display>
                                 </a>
@@ -74,14 +74,14 @@
                                         <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                             :info="timeTrackerInfo" 
                                             :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                            :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                            :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                     </span>
                                 </div>
                             @else
                                 <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
                                     :info="timeTrackerInfo" 
                                     :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                    :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}">
+                                    :override-timeout="{{config('services.time-tracker.override-timeout')}}">
                                         @include('partials.tt-loader')
                                 </time-tracker>
                              @endif

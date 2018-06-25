@@ -80,7 +80,7 @@ if (isset($patient)) {
                         style="line-height: 20px;">
                         <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo" :hide-tracker="true"
                                       :no-live-count="{{$noLiveCountTimeTracking ?? true}}"
-                                      :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                      :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                     </li>
                 @endif
                 <li>

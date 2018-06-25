@@ -19,8 +19,8 @@ class CheckWebSocketServer
         if (!cache()->get('ws:server:working')) {
             try {
                 $client = new Client();
-                $url = env('WS_SERVER_URL') . '/';
-                $res = $client->get($url);
+                $url    = config('services.ws.server-url') . '/';
+                $res    = $client->get($url);
 
                 $status = $res->getStatusCode();
                 $body = $res->getBody();

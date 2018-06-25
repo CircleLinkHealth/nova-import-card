@@ -60,7 +60,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        if ($this->shouldReport($e) && ! in_array(env('APP_ENV'), [
+        if ($this->shouldReport($e) && ! in_array(app()->environment(), [
                 'local',
                 'development',
                 'dev',
@@ -118,7 +118,7 @@ class Handler extends ExceptionHandler
         if ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
         } elseif ($e instanceof \ErrorException) {
-            if ( ! env('APP_DEBUG')) {
+            if ( ! config('app.debug')) {
                 abort(500);
             }
 
