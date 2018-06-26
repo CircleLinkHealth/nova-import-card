@@ -2,7 +2,7 @@
 
 ?>
 
-<link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
 
 <div class="table-responsive  panel">
     <table class="table table-striped table-bordered">
