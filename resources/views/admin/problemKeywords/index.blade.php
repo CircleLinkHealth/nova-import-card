@@ -1,5 +1,6 @@
 @extends('partials.adminUI')
 
+
 @section('content')
     @push('styles')
         <style>
@@ -9,50 +10,79 @@
             }
         </style>
     @endpush
-    <div class="container">
-        <h3 align="center">Assign Keywords to CPM Problems</h3>
-        <br>
-        <hr>
-        <br>
-        <div class="text-center">
-            <div>
-                <form action="{{route('problem-keywords.edit')}}">
-                    <select name="problem_id" class="select2">
-                        <option value="none">CPM Problems</option>
-                        @foreach($problems as $p)
-                            <option value="{{$p->id}}">{{$p->name}}</option>
-                        @endforeach
-                    </select>
-                    <input type="submit" class="btn btn-info">
-                </form>
-            </div>
-        </div>
-        <hr>
-        <div class="text-center">
-            <div>
-                <form action="{{route('problem-keywords.update')}}" method="POST">
-                    {!! method_field('patch') !!}
-                    <div class="form-group">
-                        Edit keywords for CPM Problem @if($problem != null): <strong>{{$problem->name}}</strong>. @elseif($problem == null) -select problem above. @endif (Remember to seperate by comma!)
-                    </div>
-                    @if($problem != null)
-                    <textarea class="col-md-12 form-group" name="contains">{{$problem->contains}}</textarea>
-                    <input type="hidden" name="problemId" value="{{$problem->id}}">
-                    @else
-                        <textarea class="col-md-12" name="contains">Select CPM Problem.</textarea>
-                    <input type="hidden" name="problemId" value="{{null}}">
-                    @endif
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-info">
-                    </div>
-                    {{csrf_field()}}
-                </form>
-                <br>
-            </div>
-        </div>
-        <div class="alert-success col-md-4 col-md-offset-4">
-            @isset($message){{$message}}@endisset
-        </div>
-        <br>
+    <div class="container-fluid">
+        <h3 align="center">Manage CPM Problems</h3>
+
+        <table id="myTable" class="table table-striped table-bordered table-curved table-condensed table-hover">
+            <tr>
+                <th>Problem Name <br> <input type="text" id="nameInput" onkeyup="filterByName()"
+                                             placeholder="Search.."></th>
+                <th>Keywords <br> <input type="text" id="keywordInput" onkeyup="filterByKeywords()"
+                                         placeholder="Search.."></th>
+                <th>Default ICD10 Code</th>
+                <th>Is Behavioural</th>
+                <th>Weight</th>
+                <th></th>
+            </tr>
+            @foreach($problems as $p)
+                <tr>
+                    <td>{{$p->name}}</td>
+                    <td>{{$p->contains}}</td>
+                    <td>{{$p->default_icd_10_code}}</td>
+                    <td>{{$p->is_behavioral}}</td>
+                    <td>{{$p->weight}}</td>
+                    <td>
+                        <form action="{{route('manage-cpm-problems.edit')}}" method="GET">
+                            <input type="hidden" name="problem_id" value="{{$p->id}}">
+                            <input align="center" type="submit" value="Edit" class="btn btn-warning">
+                            <br>
+                        </form>
+                    </td>
+                </tr>
+
+            @endforeach
+
+        </table>
+
+        @push('scripts')
+            <script>
+                function filterByName() {
+                    let input, filter, table, tr, td, i;
+                    input = document.getElementById("nameInput");
+                    filter = input.value.toUpperCase();
+                    table = document.getElementById("myTable");
+                    tr = table.getElementsByTagName("tr");
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[0];
+                        if (td) {
+                            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
+                }
+
+                function filterByKeywords() {
+                    let input, filter, table, tr, td, i;
+                    input = document.getElementById("keywordInput");
+                    filter = input.value.toUpperCase();
+                    table = document.getElementById("myTable");
+                    tr = table.getElementsByTagName("tr");
+                    for (i = 0; i < tr.length; i++) {
+                        td = tr[i].getElementsByTagName("td")[1];
+                        if (td) {
+                            if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }
+                    }
+                }
+            </script>
+        @endpush
     </div>
+
 @endsection
