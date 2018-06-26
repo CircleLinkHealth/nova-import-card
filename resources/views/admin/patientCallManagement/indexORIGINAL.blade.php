@@ -2,7 +2,7 @@
 
 @section('content')
     @push('scripts')
-        <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/admin/patientCallManagement.js') }}"></script>
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     @endpush
     @push('styles')

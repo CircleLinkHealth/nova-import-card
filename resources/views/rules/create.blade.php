@@ -1,7 +1,7 @@
 @extends('partials.adminUI')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('/js/rules/rules.js') }}"></script>
     {!! Form::open(array('url' => route('admin.rules.store'), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">
         <div class="row">

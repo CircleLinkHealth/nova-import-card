@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Controller;
 use App\Practice;
-use App\Role;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -46,7 +45,7 @@ class DashboardController extends Controller
         if ($user->hasRole('administrator')) {
             return view('admin.dashboard', compact(['user']));
         } else {
-            return redirect()->route('patients.dashboard', [])->send();
+            return redirect()->route('patients.dashboard', []);
         }
     }
 

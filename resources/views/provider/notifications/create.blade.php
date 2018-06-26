@@ -7,6 +7,14 @@
 
     @include('errors.materialize-errors')
 
+    @push('styles')
+        <style>
+            .mg-bottom-minus-30 {
+                margin-bottom: -30px;
+            }
+        </style>
+    @endpush
+
 
     <div class="container">
         <div class="row">
@@ -50,6 +58,13 @@
                 <div class="input-field col s4" style="margin-top: 3rem;">
                     {{ Form::select('settings[bill_to]', ['practice'=>'Practice','provider'=>'Provider'], $practiceSettings->bill_to) }}
                     <label>Bill to:</label>
+                </div>
+
+                <div class="input-field col s4" style="margin-top: 3rem;">
+                    <input type="number" name="settings[note_font_size]" id="note_font_size"
+                           value="{{$practiceSettings->note_font_size ?? config('snappy.pdf.options.zoom')}}" step="0.1"
+                           min="0.1" max="2.0">
+                    <label for="note_font_size">PDF Note Font Size</label>
                 </div>
             </div>
 

@@ -103,9 +103,11 @@ class Note extends \App\BaseModel implements PdfReport
     /**
      * Create a PDF of this resource and return the path to it.
      *
+     * @param null $scale
+     *
      * @return string
      */
-    public function toPdf(): string
+    public function toPdf($scale = null): string
     {
         $problems = $this->patient
             ->cpmProblems
@@ -120,6 +122,22 @@ class Note extends \App\BaseModel implements PdfReport
             'note'     => $this,
             'provider' => $this->patient->billingProviderUser(),
         ]);
+
+        $fontSize = null;
+
+        if (optional($this->patient)
+            ->primaryPractice) {
+            $fontSize = $this->patient
+                ->primaryPractice
+                ->cpmSettings()
+                ->note_font_size;
+        }
+
+        if ( ! empty($scale)) {
+            $pdf->setOption('zoom', $scale);
+        } elseif ( ! empty($fontSize)) {
+            $pdf->setOption('zoom', $fontSize);
+        }
 
         $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
         $filePath       = base_path('storage/pdfs/notes/' . $this->fileName);

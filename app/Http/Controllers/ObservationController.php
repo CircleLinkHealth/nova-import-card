@@ -170,7 +170,7 @@ class ObservationController extends Controller
             return redirect()->route('patient.summary', [
                 'id'        => $wpUser->id,
                 'programId' => $request->input('programId'),
-            ])->with('messages', ['Successfully added new observation'])->send();
+            ])->with('messages', ['Successfully added new observation']);
         }
     }
 

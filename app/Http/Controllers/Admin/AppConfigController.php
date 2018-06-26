@@ -52,7 +52,9 @@ class AppConfigController extends Controller
         $appConfig->config_key = $params['config_key'];
         $appConfig->config_value = $params['config_value'];
         $appConfig->save();
-        return redirect()->route('admin.appConfig.edit', [$appConfig->id])->with('messages', ['successfully added new app config - '.$params['config_key']])->send();
+
+        return redirect()->route('admin.appConfig.edit', [$appConfig->id])->with('messages',
+            ['successfully added new app config - ' . $params['config_key']]);
     }
 
     /**
@@ -102,7 +104,8 @@ class AppConfigController extends Controller
         $appConfig->config_key = $params['config_key'];
         $appConfig->config_value = $params['config_value'];
         $appConfig->save();
-        return redirect()->back()->with('messages', ['successfully updated app config'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated app config']);
     }
 
     /**

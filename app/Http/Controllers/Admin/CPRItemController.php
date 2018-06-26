@@ -1,12 +1,9 @@
 <?php namespace App\Http\Controllers\Admin;
 
 use App\CPRulesItem;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Auth;
+use Illuminate\Http\Request;
 
 class CPRItemController extends Controller
 {
@@ -57,7 +54,9 @@ class CPRItemController extends Controller
         $item->qid = $params['qid'];
         $item->items_text = $params['items_text'];
         $item->save();
-        return redirect()->route('admin.items.edit', [$item->items_id])->with('messages', ['successfully added new item - '])->send();
+
+        return redirect()->route('admin.items.edit', [$item->items_id])->with('messages',
+            ['successfully added new item - ']);
     }
 
     /**
@@ -109,7 +108,8 @@ class CPRItemController extends Controller
         $item->qid = $params['qid'];
         $item->items_text = $params['items_text'];
         $item->save();
-        return redirect()->back()->with('messages', ['successfully updated item'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated item']);
     }
 
     /**
@@ -124,6 +124,7 @@ class CPRItemController extends Controller
             abort(403);
         }
         CPRulesItem::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed item'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed item']);
     }
 }

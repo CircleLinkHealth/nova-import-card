@@ -9,7 +9,7 @@
     ?>
 
     @push('styles')
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
         <link href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
         <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
         <style>
@@ -28,11 +28,11 @@
             }
             td.details-control {
                 color:#fff;
-                background: url('{{ asset('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
+                background: url('{{ mix('/vendor/datatables-images/details_open.png') }}') no-repeat center center;
                 cursor: pointer;
             }
             tr.shown td.details-control {
-                background: url('{{ asset('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
+                background: url('{{ mix('/vendor/datatables-images/details_close.png') }}') no-repeat center center;
             }
             div.modal-dialog {
                 z-index: 1051; /* should ensure the modal body is always visible */
@@ -45,7 +45,7 @@
             var callUpdatePostUri = "{{ route('api.callupdate') }}";
             var datatableDataUri = "{{ route('call.anyCallsManagement') }}";
         </script>
-        <script type="text/javascript" src="{{ asset('/js/admin/patientCallManagement.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/admin/patientCallManagement.js') }}"></script>
         <!-- <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>

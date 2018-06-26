@@ -2,6 +2,9 @@
     <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
       <template slot-scope="props">
         <div class="row">
+            <div class="col-sm-12 text-right">
+                <loader v-if="loaders.nurses"></loader>
+            </div>
             <div class="col-sm-12 text-right" v-if="filterPatients.length">
                 <label>
                     <input type="checkbox" v-model="showOnlyPatientsWithNurses" > Show only patients with nurses
@@ -63,7 +66,9 @@
             const $vm = this
 
             return {
-                $nursePromise: false,
+                loaders: {
+                    nurses: false
+                },
                 patients: [],
                 showOnlyPatientsWithNurses: true,
                 selectNursesModalInfo: {
@@ -93,10 +98,12 @@
                                     patient.loaders.update = false
 
                                     /* emit the event so other components know that the nurseId has been updated */
-                                    Event.$emit('select-nurse:update', {
+                                    const data = {
                                         callId: patient.callId,
                                         nurseId: patient.selectedNurseId
-                                    })
+                                    }
+                                    Event.$emit('select-nurse:update', data)
+                                    return data
                                 }).catch(err => {
                                     console.error('select-nurse:update', err)
                                     patient.loaders.update = false
@@ -104,13 +111,16 @@
                             })).then(responses => {
                                 console.log('select-nurse:update:all', responses)
                                 Event.$emit('modal-select-nurse:hide')
+                                return responses
                             })
                         }
                         else {
+                            const reason = `Patients with names ${eligiblePatients.filter(patient => !patient.isValidSelection()).map(patient => patient.name).join(', ')} have not been assigned to available nurses`
                             Event.$emit('notifications-select-nurse:create', {
                                 type: 'error',
-                                text: `Patients with names ${eligiblePatients.filter(patient => !patient.isValidSelection()).map(patient => patient.name).join(', ')} have not been assigned to available nurses`
+                                text: reason
                             })
+                            return Promise.reject(reason)
                         }
                     }
                 }
@@ -125,7 +135,8 @@
         },
         methods: {
             getNurses() {
-                return this.$nursePromise = Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
+                this.loaders.nurses = true
+                return Promise.all(this.selectedPatients.map(patient => patient.id).filter(Boolean).map(id => {
                     return this.cache().get(rootUrl('api/nurses?canCallPatient=' + id)).then((response) => {
                         const nurses = (response.data || []).map(nurse => {
                             nurse.user = nurse.user || {}
@@ -142,20 +153,19 @@
                             patient.nurses = nurses.filter(nurse => nurse.id != patient.nurse.id)
                             return patient.nurses
                         }
-                        return []
+                        return patient.nurses
                     }).catch((err) => {
                         console.error("error: get-patient-available-nurses", id, err)
                     })
-                })).then(results => {
-                    this.$nursePromise = false
-                    return (results || []).reduce((a, b) => a.concat(b), [])
+                })).then(nurses => {
+                    this.loaders.nurses = false
+                    return (nurses || []).reduce((a, b) => a.concat(b), [])
                 }).catch((err) => {
+                    this.loaders.nurses = false
                     console.error("error: get-available-nurses", err)
                 })
-            }
-        },
-        watch: {
-            selectedPatients(patients, oldVal) {
+            },
+            setPatients (patients = []) {
                 this.patients = patients.filter(patient => patient.name).map(patient => ({
                     id: patient.id,
                     name: patient.name,
@@ -173,10 +183,16 @@
                 }))
                 console.log('select-nurse:patients', this.patients)
                 this.getNurses()
+                return this.patients
+            }
+        },
+        watch: {
+            selectedPatients (patients) {
+                return this.setPatients(patients)
             }
         },
         mounted() {
-            
+            this.setPatients(this.selectedPatients)
         }
     }
 </script>

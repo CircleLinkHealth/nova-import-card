@@ -22,8 +22,8 @@ class TwilioController extends Controller
     public function __construct(Request $request)
     {
 
-        $this->capability = new ClientToken(env('TWILIO_SID'), env('TWILIO_TOKEN'));
-        $this->capability->allowClientOutgoing(env('TWILIO_ENROLLMENT_TWIML_APP_SID'));
+        $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
+        $this->capability->allowClientOutgoing(config('services.twilio.enrollment-app-sid'));
         $this->token = $this->capability->generateToken();
     }
 

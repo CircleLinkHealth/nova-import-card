@@ -38,7 +38,7 @@ class DeleteProcessedFiles extends Command
      */
     public function handle()
     {
-        $ccdaPath = env('CCDA_DROPBOX_PATH');
+        $ccdaPath = config('services.ccda.dropbox-path');
 
         foreach (ProcessedFiles::get() as $file) {
             $path = str_replace($ccdaPath, '', $file->path);

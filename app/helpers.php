@@ -128,6 +128,32 @@ if ( ! function_exists('formatPhoneNumber')) {
     }
 }
 
+if ( ! function_exists('formatPhoneNumberE164')) {
+    /**
+     * Formats a string of numbers as a phone number delimited by dashes as such: xxx-xxx-xxxx
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function formatPhoneNumberE164(
+        $string,
+        $countryCode = '1'
+    ) {
+        $sanitized = extractNumbers($string);
+
+        if (strlen($sanitized) < 10) {
+            return '';
+        }
+
+        if (strlen($sanitized) > 10) {
+            $sanitized = substr($sanitized, -10);
+        }
+
+        return "+$countryCode$sanitized";
+    }
+}
+
 if ( ! function_exists('extractNumbers')) {
     /**
      * Returns only numerical values in a string

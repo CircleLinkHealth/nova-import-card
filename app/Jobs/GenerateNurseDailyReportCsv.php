@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Reports\NurseDailyReport;
 use App\Services\Cache\NotificationService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -49,7 +50,13 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     {
         $path = $this->exportToCsv($this->reportData);
 
-        $link = linkToDownloadFile("exports/{$path['file']}");
+        $date = Carbon::now();
+
+        $media = User::find(357)
+                     ->addMedia($path['full'])
+                     ->toMediaCollection("nurse_daily_report_for_{$date->toDateString()}");
+
+        $link = $media->getUrl();
 
         $notificationService->notifyAdmins('Nurse Daily Report', '', $link, 'Download Spreadsheet');
     }
@@ -68,6 +75,6 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                     $this->reportData->all()
                 );
             });
-        })->store('xls', false, true);
+        })->store('csv', false, true);
     }
 }

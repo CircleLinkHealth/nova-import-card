@@ -62,6 +62,10 @@ Route::group([
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('impersonate/leave', [
+        'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
+        'as'   => 'impersonate.leave',
+    ]);
 
     Route::get('cache/view/{key}', [
         'as'   => 'get.cached.view.by.key',
@@ -73,6 +77,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('download/{filePath}', [
         'uses' => 'DownloadController@file',
         'as'   => 'download',
+    ]);
+
+    Route::get('download', [
+        'uses' => 'DownloadController@postDownloadfile',
+        'as'   => 'post.file.download',
     ]);
 
     /**
@@ -774,6 +783,20 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::group(['prefix' => 'demo'], function () {
+            Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
+
+            Route::post('make-pdf', [
+                'as'   => 'demo.note.make.pdf',
+                'uses' => 'Demo\SendSampleNoteController@makePdf',
+            ]);
+
+            Route::post('send-efax', [
+                'as'   => 'demo.note.efax',
+                'uses' => 'Demo\SendSampleNoteController@sendNoteViaEFax',
+            ]);
+        });
+
         Route::group(['prefix' => 'eligibility-batches'], function() {
 
             Route::get('', [
@@ -1281,10 +1304,9 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-        // impersonation
-        Route::post('impersonate', [
-            'uses' => 'ImpersonationController@postImpersonate',
-            'as'   => 'post.impersonate',
+        Route::get('impersonate/take/{id}', [
+            'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
+            'as'   => 'impersonate',
         ]);
 
         // appConfig
@@ -2007,8 +2029,6 @@ Route::group([
 
     Route::get('/call', 'TwilioController@makeCall');
 });
-
-Route::impersonate();
 
 Route::group([
     'prefix' => 'saas/admin',

@@ -24,15 +24,11 @@
     <link rel="apple-touch-icon-precomposed" href="@yield('meta-image-url')">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
     <meta name="msapplication-TileColor" content="#3372DF">
 
-    <link rel="shortcut icon" href="images/favicon.png">
+    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
-
-    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
-
-    <link rel="stylesheet" href="{{ asset('/css/materialize.min.css') }}"/>
+    <link rel="stylesheet" href="{{ mix('/css/materialize.min.css') }}"/>
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
@@ -51,7 +47,7 @@
 
 @include('partials.footer')
 
-<script src="{{asset('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
+<script src="{{mix('compiled/js/app-provider-admin-panel-ui.js')}}"></script>
 @stack('scripts')
 
 </body>

@@ -259,7 +259,8 @@ class Enrollee extends \App\BaseModel
 
     public function sendEnrollmentConsentSMS()
     {
-        $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+        $twilio = new Twilio(config('services.twilio.sid'), config('services.twilio.token'),
+            config('services.twilio.from'));
 
         $link          = url("join/$this->invite_code");
         $provider_name = User::find($this->provider_id)->fullName;
@@ -335,7 +336,8 @@ class Enrollee extends \App\BaseModel
 
         $emjo = 'u"\U0001F31F"';
 
-        $twilio = new Twilio(env('TWILIO_SID'), env('TWILIO_TOKEN'), env('TWILIO_FROM'));
+        $twilio = new Twilio(config('services.twilio.sid'), config('services.twilio.token'),
+            config('services.twilio.from'));
 
         $link = url("join/$this->invite_code");
 

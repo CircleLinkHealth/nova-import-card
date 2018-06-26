@@ -44,12 +44,10 @@ class ApprovableBillablePatient extends Resource
             }
         }
 
-        if ($this->hasServiceCode('CPT 99490')) {
-            $problems['problem1']      = $this->billable_problem1;
-            $problems['problem1_code'] = $this->billable_problem1_code;
-            $problems['problem2']      = $this->billable_problem2;
-            $problems['problem2_code'] = $this->billable_problem2_code;
-        }
+        $problems['problem1']      = $this->billable_problem1;
+        $problems['problem1_code'] = $this->billable_problem1_code;
+        $problems['problem2']      = $this->billable_problem2;
+        $problems['problem2_code'] = $this->billable_problem2_code;
 
         return array_merge([
             'id'                     => $this->patient->id,

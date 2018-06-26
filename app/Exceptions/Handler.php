@@ -21,7 +21,6 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         AuthenticationException::class,
         AuthorizationException::class,
-        HasPatientTabOpenException::class,
         HttpException::class,
         ModelNotFoundException::class,
         TokenMismatchException::class,
@@ -61,7 +60,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        if ($this->shouldReport($e) && !in_array(env('APP_ENV'), [
+        if ($this->shouldReport($e) && ! in_array(app()->environment(), [
                 'local',
                 'development',
                 'dev',
@@ -114,16 +113,12 @@ class Handler extends ExceptionHandler
             return response()->json(['token_invalid'], $e->getStatusCode());
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
             return response()->json(['token_blacklisted'], '403');
-        } elseif ($e instanceof HasPatientTabOpenException) {
-            return response()->view('errors.patientTabAlreadyOpen', [
-                'patientId' => \Session::get('inOpenSessionWithPatientId'),
-            ], 403);
         }
 
         if ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
         } elseif ($e instanceof \ErrorException) {
-            if (!env('APP_DEBUG')) {
+            if ( ! config('app.debug')) {
                 abort(500);
             }
 

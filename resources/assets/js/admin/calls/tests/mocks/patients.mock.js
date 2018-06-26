@@ -46,7 +46,7 @@ export default [
     "state": "NM",
     "specialty": "",
     "program_id": 8,
-    "status": "Active",
+    "status": "draft",
     "user_status": 0,
     "is_online": 0,
     "patient_info": {

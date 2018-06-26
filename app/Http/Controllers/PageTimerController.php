@@ -152,7 +152,7 @@ class PageTimerController extends Controller
         $activity = Activity::with('patient.patientInfo')
                             ->find($activityId);
 
-        if ($activity) {
+        if ( ! $activity) {
             return;
         }
 

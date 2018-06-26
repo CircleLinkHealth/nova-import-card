@@ -51,6 +51,8 @@
         "michalisantoniou6/laravel-cerberus": "dev-master",
         "nao-pon/flysystem-google-drive": "~1.1",
         "phaxio/phaxio": "^1.0",
+        "php-pm/httpkernel-adapter": "1.*",
+        "php-pm/php-pm": "1.*",
         "predis/predis": "^1.1",
         "prettus/l5-repository": "dev-master",
         "prettus/laravel-validation": "*",
@@ -110,10 +112,7 @@
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover",
-            "php artisan config:clear",
-            "php artisan route:clear",
-            "php artisan view:clear"
+            "@php artisan package:discover"
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",

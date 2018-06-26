@@ -9,13 +9,11 @@
     <meta name="base-url" content="{{ url('/') }}">
     <title>CPM API</title>
 
-    <base href="{{asset('')}}">
-
 @include('partials.hotjar-code')
 
 <!-- Stylesheets -->
-    <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
-    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
+    <link href="{{ mix('/css/admin.css') }}" rel="stylesheet">
+    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -28,17 +26,16 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
-          href="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css">
+          href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
 
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
@@ -67,7 +64,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                        <img src="/img/clh_logo_sm.png"
+                        <img src="{{mix('/img/clh_logo_sm.png')}}"
                              alt="Care Plan Manager"
                              style="position:relative;top:-5px"
                              width="50px"/>
@@ -376,29 +373,17 @@
     <!-- Script for polyfilling Promises on IE9 and 10 -->
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
-<script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
+<script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('.select2').select2();
     });
 </script>
 @stack('scripts')
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function (registration) {
-                console.log('Service Worker registration successful with scope: ',
-                    registration.scope);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    }
-</script>
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>

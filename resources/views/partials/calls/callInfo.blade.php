@@ -60,7 +60,7 @@
                                     <div class="col-sm-12">
                                         <h3 style="{{$ccm_above ? 'color: #47beab;' : ''}}">
                                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
-                                                :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                                :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                             @if($ccm_above)
                                                 <span class="glyphicon glyphicon-ok"></span>
                                             @endif

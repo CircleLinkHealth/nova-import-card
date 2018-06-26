@@ -48,7 +48,7 @@ class ApproveBillablePatientsService
             ->paginate();
         $summaries->getCollection()->transform(function ($summary) {
             $summary = $this->patientSummaryRepo
-                ->attachDefaultChargeableService($summary);
+                ->attachChargeableService($summary);
 
             return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
         });
@@ -74,10 +74,10 @@ class ApproveBillablePatientsService
     }
 
     public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false) {
-        return $this->patientSummaryRepo->attachDefaultChargeableService($summary, $defaultCodeId, $detach);
+        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
     }
     
     public function detachDefaultChargeableService($summary, $defaultCodeId) {
-        return $this->patientSummaryRepo->detachDefaultChargeableService($summary, $defaultCodeId);
+        return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
     }
 }

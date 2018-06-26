@@ -108,7 +108,9 @@ class CPRQuestionSetController extends Controller
         $questionSet->high = $params['high'];
         $questionSet->action = $params['action'];
         $questionSet->save();
-        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages', ['successfully added new question set'])->send();
+
+        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages',
+            ['successfully added new question set']);
     }
 
     /**
@@ -164,7 +166,7 @@ class CPRQuestionSetController extends Controller
         $params = $request->input();
         $questionSet = CPRulesQuestionSets::find($id);
         if (!$questionSet) {
-            return redirect()->back()->with('messages', ['could not find question set'.$id])->send();
+            return redirect()->back()->with('messages', ['could not find question set' . $id]);
         }
         $questionSet->provider_id = $params['provider_id'];
         $questionSet->qs_type = $params['qs_type'];
@@ -182,7 +184,8 @@ class CPRQuestionSetController extends Controller
         $questionSet->high = $params['high'];
         $questionSet->action = $params['action'];
         $questionSet->save();
-        return redirect()->back()->with('messages', ['successfully updated question set'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated question set']);
     }
 
     /**
@@ -197,6 +200,7 @@ class CPRQuestionSetController extends Controller
             abort(403);
         }
         CPRulesQuestionSets::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed questionSet'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed questionSet']);
     }
 }
