@@ -37,7 +37,9 @@ return [
     ],
 
     'time-tracker' => [
-        'override-timeout' => in_array(env('APP_ENV'), ['local', 'staging']),
+        'override-timeout' => in_array(env('APP_ENV'), ['local', 'staging'])
+            ? 'true'
+            : 'false',
     ],
 
     'ccd-parser' => [
@@ -49,7 +51,7 @@ return [
     ],
 
     'no-call-mode' => [
-        'env' => ! ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')),
+        'env' => ! in_array(env('APP_ENV'), ['local', 'staging']),
     ],
 
     'emr-direct' => [
