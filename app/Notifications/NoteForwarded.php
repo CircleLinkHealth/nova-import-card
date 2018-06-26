@@ -74,6 +74,7 @@ class NoteForwarded extends Notification
                 'raph@circlelinkhealth.com',
                 'chelsea@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
+                'mantoniou@circlelinkhealth.com',
             ]);
         }
 
@@ -174,6 +175,7 @@ class NoteForwarded extends Notification
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
+            'link'    => $this->note->link(),
             'subject' => $this->getSubject(),
 
             'note_id' => $this->note->id,
