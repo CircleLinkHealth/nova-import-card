@@ -2703,7 +2703,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
-        if (in_array(env('CACHE_DRIVER'), ['redis'])) {
+        if (in_array(config('cache.default'), ['redis'])) {
             return new UserNotificationList($this->id);
         }
 

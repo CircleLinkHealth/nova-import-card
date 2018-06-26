@@ -9,7 +9,8 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <time-tracker-events ws-root-url="{{ env('WS_ROOT') }}" ref="timeTrackerEventsComponent"></time-tracker-events>
+                    <time-tracker-events ws-root-url="{{ config('services.ws.root') }}"
+                                         ref="timeTrackerEventsComponent"></time-tracker-events>
                 </div>
             </div>
         </div>

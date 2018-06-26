@@ -13,26 +13,58 @@ return [
     | to have a conventional place to find your various credentials.
     |
     */
-
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-    ],
-
-    'ses' => [
-        'key' => env('SES_KEY'),
-        'secret' => env('SES_SECRET'),
-        'region' => 'us-east-1',
-    ],
-
     'sparkpost' => [
         'secret' => env('SPARKPOST_SECRET'),
     ],
 
     'stripe' => [
-        'model' => App\User::class,
-        'key' => env('STRIPE_KEY'),
+        'model'  => App\User::class,
+        'key'    => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'twilio' => [
+        'sid'                => env('TWILIO_SID'),
+        'token'              => env('TWILIO_TOKEN'),
+        'from'               => env('TWILIO_FROM'),
+        'enrollment-app-sid' => env('TWILIO_ENROLLMENT_TWIML_APP_SID'),
+    ],
+
+    'ws' => [
+        'server-url' => env('WS_SERVER_URL'),
+        'url'        => env('WS_URL'),
+        'root'       => env('WS_ROOT'),
+    ],
+
+    'time-tracker' => [
+        'override-timeout' => in_array(env('APP_ENV'), ['local', 'staging']),
+    ],
+
+    'ccd-parser' => [
+        'base-uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
+    ],
+
+    'ccda' => [
+        'dropbox-path' => env('CCDA_DROPBOX_PATH'),
+    ],
+
+    'no-call-mode' => [
+        'env' => ! ((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')),
+    ],
+
+    'emr-direct' => [
+        'user'                 => env('EMR_DIRECT_USER'),
+        'password'             => env('EMR_DIRECT_PASSWORD'),
+        'conc-keys-pem-path'   => env('EMR_DIRECT_CONC_KEYS_PEM_PATH'),
+        'pass-phrase'          => env('EMR_DIRECT_PASS_PHRASE'),
+        'server-cert-pem-path' => env('EMR_DIRECT_SERVER_CERT_PEM_PATH'),
+        'mail-server'          => env('EMR_DIRECT_MAIL_SERVER'),
+        'port'                 => env('EMR_DIRECT_PORT'),
+    ],
+
+    'athena' => [
+        'key'     => env('ATHENA_KEY'),
+        'secret'  => env('ATHENA_SECRET'),
+        'version' => env('ATHENA_VERSION'),
+    ],
 ];

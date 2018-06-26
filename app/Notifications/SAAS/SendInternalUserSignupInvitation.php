@@ -7,10 +7,10 @@ use App\Practice;
 use App\SaasAccount;
 use App\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /*
 
@@ -119,7 +119,7 @@ class SendInternalUserSignupInvitation extends Notification
             ->implode(', ');
         $saasAccountName = $this->saasAccount->name;
 
-        $appUrl = env('APP_URL');
+        $appUrl = config('app.url');
 
         return [
             'subject'     => "$inviterName Invited You to {$practiceName}’s CCM Program!",
