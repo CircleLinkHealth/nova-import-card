@@ -50,24 +50,27 @@ class DetermineTargetPatientEligibility extends Command
     {
         $patients = TargetPatient::where('status', '=', 'to_process')
                                  ->get()
-                                 ->map(function ($patient){
-                                     $patientInfo = $this->service->getPatientProblemsAndInsurances($patient->ehr_patient_id, $patient->ehr_practice_id, $patient->ehr_department_id);
+                                 ->map(function ($patient) {
+                                     $patientInfo = $this->service->getPatientProblemsAndInsurances($patient->ehr_patient_id,
+                                         $patient->ehr_practice_id, $patient->ehr_department_id);
 
-                                     $batch = EligibilityBatch::find($this->argument('batchId'));
-                                     $adapter = new AthenaAPIAdapter($patientInfo, new EligibilityJob(['batch_id' => $batch->id]), $batch);
+                                     $batch      = EligibilityBatch::find($this->argument('batchId'));
+                                     $adapter    = new AthenaAPIAdapter($patientInfo,
+                                         new EligibilityJob(['batch_id' => $batch->id]), $batch);
                                      $isEligible = $adapter->isEligible();
 
-                                     if (! $isEligible){
+                                     $job                         = $adapter->getEligibilityJob();
+                                     $patient->eligibility_job_id = $job->id;
 
-                                         $job = $adapter->getEligibilityJob();
-                                         $patient->eligibility_job_id = $job->id;
-
+                                     if ( ! $isEligible) {
                                          $patient->status = 'ineligible';
                                          $patient->save();
+
                                          return false;
                                      }
 
-                                     $demos = $this->service->getDemographics($patient->ehr_patient_id, $patient->ehr_practice_id);
+                                     $demos = $this->service->getDemographics($patient->ehr_patient_id,
+                                         $patient->ehr_practice_id);
 
                                      try {
                                          $demos = $demos[0];
@@ -77,15 +80,17 @@ class DetermineTargetPatientEligibility extends Command
 
                                      if ($demos['homephone'] or $demos['mobilephone']) {
                                          $patient->status = 'eligible';
-                                     }else {
-                                         $patient->status = 'error';
+                                     } else {
+                                         $patient->status      = 'error';
                                          $patient->description = 'Homephone or mobile phone must be provided';
                                      }
 
-                                     $practice = Practice::where('external_id', '=', $patient->ehr_practice_id )->first();
+                                     $practice = Practice::where('external_id', '=',
+                                         $patient->ehr_practice_id)->first();
 
-                                     if (!$practice) {
-                                         throw new \Exception("Practice with AthenaId $patient->ehr_practice_id was not found.", 500);
+                                     if ( ! $practice) {
+                                         throw new \Exception("Practice with AthenaId $patient->ehr_practice_id was not found.",
+                                             500);
                                      }
 
                                      $insurances = $patientInfo->getInsurances();
@@ -98,7 +103,7 @@ class DetermineTargetPatientEligibility extends Command
                                              'home_phone'  => $demos['homephone'],
                                              'cell_phone'  => $demos['mobilephone'] ?? null,
                                              'practice_id' => $practice->id,
-                                             'batch_id'    => $this->argument('batchId') ?? null ,
+                                             'batch_id'    => $this->argument('batchId') ?? null,
 
                                              //notRequired
                                              'address'     => $demos['address1'] ?? null,

@@ -9,13 +9,11 @@
     <meta name="base-url" content="{{ url('/') }}">
     <title>CPM API</title>
 
-    <base href="{{asset('')}}">
-
 @include('partials.hotjar-code')
 
 <!-- Stylesheets -->
-    <link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
-    <link href="{{ asset('/img/favicon.png') }}" rel="icon">
+    <link href="{{ mix('/css/admin.css') }}" rel="stylesheet">
+    <link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
     <!-- Fonts -->
     <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -28,16 +26,16 @@
     <![endif]-->
 
     <!-- JQuery -->
-    <link rel="stylesheet" href="{{asset('/css/smoothness-jquery-ui-1.11.4.css')}}">
+    <link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
 
     <!-- http://trentrichardson.com/examples/timepicker/ -->
     <link rel="stylesheet"
-          href="{{asset('/css/jquery-ui-timepicker-addon.min.css')}}">
+          href="{{mix('/css/jquery-ui-timepicker-addon.min.css')}}">
 
     <!-- http://curioussolutions.github.io/DateTimePicker/ -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/datetimepicker/latest/DateTimePicker.min.css"/>
 
-    <link rel="stylesheet" href="{{asset('/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{mix('/css/bootstrap.min.css')}}">
 
     <!-- select2 -->
     <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
@@ -66,7 +64,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                        <img src="/img/clh_logo_sm.png"
+                        <img src="{{mix('/img/clh_logo_sm.png')}}"
                              alt="Care Plan Manager"
                              style="position:relative;top:-5px"
                              width="50px"/>
@@ -270,30 +268,10 @@
                                 Settings<span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-
-                                <li role="presentation" class="dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                       aria-expanded="false">
-                                        Practices <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                        <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
-
-                                        <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
-                                        <li>
-                                            <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
-                                        </li>
-                                        <li><a href="{{ route('locations.index', []) }}">Locations</a></li>
-                                        <li><a href="{{ route('practice.billing.create', []) }}">Invoice/Billable
-                                                Patient Report</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="{{route('problem-keywords.index')}}">Problem Keywords
+                                <li><a href="{{route('manage-cpm-problems.index')}}">Manage CPM Problems
                                     </a></li>
                                 <li><a href="{{route('medication-groups-maps.index')}}">Medication Group Map
                                     </a></li>
-
                             </ul>
                         </li>
 
@@ -375,29 +353,17 @@
     <!-- Script for polyfilling Promises on IE9 and 10 -->
 
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <script src="{{ asset('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
 @endif
 
-<script src="{{asset('compiled/js/app-clh-admin-ui.js')}}"></script>
-<script type="text/javascript" src="{{ asset('compiled/js/admin-ui.js') }}"></script>
+<script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
 <script>
     $(document).ready(function () {
         $('.select2').select2();
     });
 </script>
 @stack('scripts')
-<script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function (registration) {
-                console.log('Service Worker registration successful with scope: ',
-                    registration.scope);
-            })
-            .catch(function (err) {
-                console.log(err);
-            });
-    }
-</script>
 <div style="clear:both;height:100px;"></div>
 </body>
 </html>

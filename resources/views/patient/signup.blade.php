@@ -1,7 +1,7 @@
 @extends('provider.layouts.default')
 
 @section('title', 'Wellness Manager')
-@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
+@section('meta-image-url', "{{mix('/img/landing-pages/coordination-with-family.png')}}")
 
 @section('head')
     <style>
@@ -56,14 +56,14 @@
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
     <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
     <meta property="og:type" content="image.other"/>
 
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:type" content="image/jpeg"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
@@ -79,7 +79,7 @@
                     <div class="row">
                         <div class="col s12">
                             <div class="center">
-                                <img class="logo" src="{{asset('/img/clh_logo.svg')}}">
+                                <img class="logo" src="{{mix('/img/clh_logo.svg')}}">
                             </div>
                         </div>
                     </div>
@@ -159,19 +159,19 @@
                 <div class="col s12 m4 center">
                     <div class="center">
                         <p>Instructor at</p>
-                        <img class="promo-picture harvard-logo" src="{{asset('/img/harvard-medical-school.png')}}">
+                        <img class="promo-picture harvard-logo" src="{{mix('/img/harvard-medical-school.png')}}">
                     </div>
                 </div>
                 <div class="col s12 m4 center">
                     <div class="center">
                         <p>Medical Director at</p>
-                        <img class="promo-picture" src="{{asset('/img/keck-medical-center.jpg')}}">
+                        <img class="promo-picture" src="{{mix('/img/keck-medical-center.jpg')}}">
                     </div>
                 </div>
                 <div class="col s12 m4 center">
                     <div class="center">
                         <p>Chief of Medicine at</p>
-                        <img class="promo-picture" src="{{asset('/img/brickham-and-womens-hospital.jpg')}}">
+                        <img class="promo-picture" src="{{mix('/img/brickham-and-womens-hospital.jpg')}}">
                     </div>
                 </div>
             </div>

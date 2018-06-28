@@ -56,7 +56,8 @@ class WeeklyPracticeReport extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)->view('sales.by-practice.report', ['data' => $this->data])
-                                ->from('notifications@careplanmanager.com', $notifiable->saasAccountName())
+                                ->from('notifications@careplanmanager.com',
+                                    optional($notifiable)->saasAccountName() ?? 'CircleLink Health')
                                 ->subject($this->subject);
     }
 

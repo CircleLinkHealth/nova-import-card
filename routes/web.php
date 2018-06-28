@@ -62,6 +62,10 @@ Route::group([
 /****************************/
 /****************************/
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('impersonate/leave', [
+        'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@leave',
+        'as'   => 'impersonate.leave',
+    ]);
 
     Route::get('cache/view/{key}', [
         'as'   => 'get.cached.view.by.key',
@@ -1225,21 +1229,21 @@ Route::group(['middleware' => 'auth'], function () {
             'prefix' => 'settings',
         ], function () {
             Route::group([
-                'prefix' => 'problem-keywords',
+                'prefix' => 'manage-cpm-problems',
             ], function () {
                 Route::get('/index', [
-                    'uses' => 'ProblemKeywordsController@index',
-                    'as'   => 'problem-keywords.index',
+                    'uses' => 'ManageCpmProblemsController@index',
+                    'as'   => 'manage-cpm-problems.index',
                 ]);
 
                 Route::get('/edit', [
-                    'uses' => 'ProblemKeywordsController@edit',
-                    'as'   => 'problem-keywords.edit',
+                    'uses' => 'ManageCpmProblemsController@edit',
+                    'as'   => 'manage-cpm-problems.edit',
                 ]);
 
                 Route::patch('/update', [
-                    'uses' => 'ProblemKeywordsController@update',
-                    'as'   => 'problem-keywords.update',
+                    'uses' => 'ManageCpmProblemsController@update',
+                    'as'   => 'manage-cpm-problems.update',
                 ]);
             });
 
@@ -1300,7 +1304,10 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'admin.testplan',
         ]);
 
-        Route::impersonate();
+        Route::get('impersonate/take/{id}', [
+            'uses' => '\Lab404\Impersonate\Controllers\ImpersonateController@take',
+            'as'   => 'impersonate',
+        ]);
 
         // appConfig
         Route::group([

@@ -234,7 +234,7 @@ class ActivityController extends Controller
              * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
              */
             if ($nurseId && $patientId && $duration) {
-                $url = env('WS_SERVER_URL') . '/' . $nurseId . '/' . $patientId;
+                $url = config('services.ws.server-url') . '/' . $nurseId . '/' . $patientId;
                 try {
                     $timeParam = $is_bhi
                         ? 'bhiTime'

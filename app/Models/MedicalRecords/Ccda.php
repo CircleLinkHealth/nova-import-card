@@ -213,7 +213,7 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
     protected function parseToJson($xml)
     {
         $client = new Client([
-            'base_uri' => env('CCD_PARSER_BASE_URI', 'https://circlelink-ccd-parser.medstack.net'),
+            'base_uri' => config('services.ccd-parser.base-uri'),
         ]);
 
         $response = $client->request('POST', '/api/parser', [

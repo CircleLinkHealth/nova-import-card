@@ -1,14 +1,16 @@
 <?php namespace App\Console;
 
+use App\Console\Commands\Athena\AutoPullEnrolleesFromAthena;
 use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
-use App\Console\Commands\AutoPullEnrolleesFromAthena;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
+use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
+use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
@@ -37,9 +39,19 @@ class Kernel extends ConsoleKernel
                  ->everyMinute()->withoutOverlapping(15);
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
-            ->weekly()
-            ->sundays()
-            ->at('14:30');
+                 ->weekly()
+                 ->sundays()
+                 ->at('14:30');
+
+        $schedule->command(AutoPullEnrolleesFromAthena::class)
+                 ->weekly()
+                 ->sundays()
+                 ->at('16:30');
+
+        $schedule->command(AutoPullEnrolleesFromAthena::class)
+                 ->weekly()
+                 ->sundays()
+                 ->at('18:30');
 
         $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
 
@@ -54,8 +66,8 @@ class Kernel extends ConsoleKernel
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
 
-//        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
-//                 ->weeklyOn(1, '10:00');
+        $schedule->command(EmailWeeklyReports::class, ['--practice', '--provider'])
+            ->weeklyOn(1, '10:00');
 
         $schedule->command('emailapprovalreminder:providers')
             ->weekdays()
@@ -87,7 +99,11 @@ class Kernel extends ConsoleKernel
 //            ->dailyAt('05:00');
 
         $schedule->command(QueueGenerateNurseInvoices::class)
-            ->dailyAt('04:00')
+            ->dailyAt('23:50')
+            ->withoutOverlapping();
+
+        $schedule->command(QueueGenerateNurseDailyReport::class)
+            ->dailyAt('23:55')
             ->withoutOverlapping();
 
         $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)

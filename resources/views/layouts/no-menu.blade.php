@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>CPM API</title>
 
-	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
-	<link href="{{ asset('/css/lavish.css') }}" rel="stylesheet">
-	<link href="{{ asset('/img/favicon.png') }}" rel="icon">
+	<link href="{{ mix('/css/app.css') }}" rel="stylesheet">
+	<link href="{{ mix('/css/lavish.css') }}" rel="stylesheet">
+	<link href="{{ mix('/img/favicon.png') }}" rel="icon">
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
@@ -21,22 +21,11 @@
 	<![endif]-->
 
 	<!-- Scripts -->
-	<link rel="stylesheet" href="{{asset('/css/smoothness-jquery-ui-1.11.4.css')}}">
+	<link rel="stylesheet" href="{{mix('/css/smoothness-jquery-ui-1.11.4.css')}}">
 	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-	<!-- http://trentrichardson.com/examples/timepicker/ -->
-	<link rel="stylesheet" href="{{asset('/css/jquery-ui-timepicker-addon.min.css')}}">
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
-
-	<script src="//cdnjs.cloudflare.com/ajax/libs/parsley.js/2.0.7/parsley.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script src="{{ asset('/compiled/js/scripts.js') }}"></script>
-	<script src="{{ asset('/js/bootstrap-select.min.js') }}"></script>
-	{{--<script src="{{ asset('/js/ccd/bluebutton.min.js') }}"></script>--}}
-
-	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
 </head>
 <body>
 	<nav class="navbar navbar-default">
@@ -44,7 +33,7 @@
 			<div class="navbar-header">
 
 				<a class="navbar-brand" href="">
-					<img src="/img/cpm-logo.png" height="40" width="70">
+					<img src="{{mix('/img/cpm-logo.png')}}" height="40" width="70">
 				</a>
 			</div>
 
