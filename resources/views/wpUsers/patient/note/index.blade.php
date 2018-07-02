@@ -19,7 +19,18 @@
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
-                    <div class="col-sm-6 pull-right"
+                    @if($showAll == true)
+                        <div class="col-sm-3"><a
+                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}"
+                                    class="btn btn-primary btn-default form-item--button form-item-spacing"
+                                    role="button">Show Last Two Months</a></div>
+                    @else
+                        <div class="col-sm-3"><a
+                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}"
+                                    class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">Show
+                                All</a></div>
+                    @endif
+                    <div class="col-sm-3 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
                         @include('partials.complex-ccm-badge')
                     </div>
