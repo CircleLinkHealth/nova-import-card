@@ -24,6 +24,7 @@ return [
      * how many proxies that client's request has
      * subsequently passed through.
      */
+
     'proxies' => [
         '192.168.1.10',
         '127.0.0.1',
