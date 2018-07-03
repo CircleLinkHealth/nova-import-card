@@ -74,7 +74,6 @@ class NoteForwarded extends Notification
                 'raph@circlelinkhealth.com',
                 'chelsea@circlelinkhealth.com',
                 'sheller@circlelinkhealth.com',
-                'mantoniou@circlelinkhealth.com',
             ]);
         }
 
