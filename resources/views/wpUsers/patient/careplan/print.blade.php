@@ -394,7 +394,12 @@ if (isset($patient) && ! empty($patient)) {
                 <script>
                     var careplan = (<?php
                         echo json_encode($careplan)
-                        ?>) || {}
+                        ?>) || {};
+
+                    if (careplan.ccdProblems && !(careplan.ccdProblems instanceof Array)) {
+                        careplan.ccdProblems = Object.values(careplan.ccdProblems);
+                    }
+
                 </script>
             @endpush
         @endif
