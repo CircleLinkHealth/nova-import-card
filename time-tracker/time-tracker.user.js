@@ -358,14 +358,22 @@ function TimeTrackerUser(info, $emitter = new EventEmitter()) {
     user.close = () => {
         /**
          * to be executed when all sockets have closed
+         * reset everything related to user.
+         * see CPM-111 - CCM time isn't showing correctly for the nurse
          */
-        user.inactiveSeconds = 0
+        user.inactiveSeconds = 0;
+        user.totalBHITime = 0;
+        user.totalCCMTime = 0;
+        user.totalTime = 0;
+        user.activities = [];
+        /*
         user.totalTime += user.activities.reduce((a, b) => a + b.duration, 0)
         user.totalCCMTime += user.activities.filter(activity => !activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
         user.totalBHITime += user.activities.filter(activity => activity.isBehavioral).reduce((a, b) => a + b.duration, 0)
         user.activities.forEach(activity => {
             activity.duration = 0
         })
+        */
         user.isLoggingOut = null
     }
 
