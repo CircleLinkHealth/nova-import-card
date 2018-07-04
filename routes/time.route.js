@@ -6,27 +6,27 @@ if (!app) throw new Error('express app should be globally accessible')
 if (!app.timeTracker) throw new Error('app.timeTracker should be an instance of TimeTracker')
 
 router.use(function (req, res, next) {
-  const allowedOrigins = [ 'https://cpm-web.dev', 'https://staging.careplanmanager.com', 'https://careplanmanager.com' ]
-  const origin = req.headers.origin
-  if (allowedOrigins.indexOf(origin) >= 0) res.header('Access-Control-Allow-Origin', origin)
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-CSRF-TOKEN")
-  next()
+    const allowedOrigins = ['https://cpm-web.dev', 'https://staging.careplanmanager.com', 'https://careplanmanager.com']
+    const origin = req.headers.origin
+    if (allowedOrigins.indexOf(origin) >= 0) res.header('Access-Control-Allow-Origin', origin)
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-CSRF-TOKEN")
+    next()
 })
 
 const userExistsValidator = function (req, res, next) {
-  const providerId = req.params.providerId
-  const patientId = req.params.patientId
+    const providerId = req.params.providerId
+    const patientId = req.params.patientId
 
-  const timeTracker = app.timeTracker
+    const timeTracker = app.timeTracker
 
-  const info = { providerId, patientId }
+    const info = {providerId, patientId}
 
-  const userExists = timeTracker.exists(info)
+    const userExists = timeTracker.exists(info)
 
-  if (userExists) next()
-  else res.status(404).send({
-    error: 'user key not found'
-  })
+    if (userExists) next()
+    else res.status(404).send({
+        error: 'user key not found'
+    })
 }
 
 /**
@@ -48,37 +48,37 @@ const userExistsValidator = function (req, res, next) {
  *         description: practitioner-patient activities
  */
 router.put('/:providerId/:patientId', userExistsValidator, function (req, res, next) {
-  const providerId = req.params.providerId
-  const patientId = req.params.patientId
+    const providerId = req.params.providerId
+    const patientId = req.params.patientId
 
-  const timeTracker = app.timeTracker
+    const timeTracker = app.timeTracker
 
-  const info = { providerId, patientId }
-  
-  const user = timeTracker.get(info)
+    const info = {providerId, patientId}
 
-  if (user) {
-    const {
-      startTime,
-      ccmTime,
-      bhiTime
-    } = req.body
-  
-    if (Number(startTime)) {
-      user.totalTime += Number(startTime)
+    const user = timeTracker.get(info)
+
+    if (user) {
+        const {
+            startTime,
+            ccmTime,
+            bhiTime
+        } = req.body
+
+        if (Number(startTime)) {
+            user.totalTime += Number(startTime)
+        }
+        if (Number(ccmTime)) {
+            user.totalCCMTime += Number(ccmTime)
+        }
+        if (Number(bhiTime)) {
+            user.totalBHITime += Number(bhiTime)
+        }
+        user.sync()
+        res.send(user.report())
     }
-    if (Number(ccmTime)) {
-      user.totalCCMTime += Number(ccmTime)
-    }
-    if (Number(bhiTime)) {
-      user.totalBHITime += Number(bhiTime)
-    }
-    user.sync()
-    res.send(user.report())
-  }
-  else res.status(404).send({
-    error: 'user not found'
-  })
+    else res.status(404).send({
+        error: 'user not found'
+    })
 })
 
 /**
@@ -94,20 +94,20 @@ router.put('/:providerId/:patientId', userExistsValidator, function (req, res, n
  *       200:
  *         description: practitioner-patient activities
  */
-router.get('/:providerId/:patientId', userExistsValidator, function(req, res, next) {
+router.get('/:providerId/:patientId', userExistsValidator, function (req, res, next) {
 
-  const providerId = req.params.providerId
-  const patientId = req.params.patientId
+    const providerId = req.params.providerId
+    const patientId = req.params.patientId
 
-  const timeTracker = app.timeTracker
+    const timeTracker = app.timeTracker
 
-  const info = { providerId, patientId }
+    const info = {providerId, patientId}
 
-  const user = timeTracker.get(info)
-  if (user) res.send(user.report())
-  else res.status(404).send({
-    error: 'user not found'
-  })
+    const user = timeTracker.get(info)
+    if (user) res.send(user.report())
+    else res.status(404).send({
+        error: 'user not found'
+    })
 });
 
 /**
@@ -124,13 +124,29 @@ router.get('/:providerId/:patientId', userExistsValidator, function(req, res, ne
  *         description: list of practitionerId-patientId keys currently active
  */
 router.get('/keys', function (req, res, next) {
-  const timeTracker = app.timeTracker
+    const timeTracker = app.timeTracker
 
-  res.send(timeTracker.keys())
+    res.send(timeTracker.keys())
+})
+
+router.get('/active', function (req, res, next) {
+    const timeTracker = app.timeTracker
+
+    const result = timeTracker.users()
+        .filter(x => x.totalSeconds > 0)
+        .map(x => {
+            return {
+                report: x.report(),
+                totalCCMTime: x.totalCCMTime,
+                totalBHITime: x.totalBHITime,
+                isActive: x.isActive
+            }
+        });
+    res.send(result);
 })
 
 router.get('/', (req, res) => {
-  res.send({ message: 'Time Tracker' })
+    res.send({message: 'Time Tracker'})
 })
 
 module.exports = router;
