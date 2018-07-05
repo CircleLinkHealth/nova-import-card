@@ -74,13 +74,10 @@ class NurseMonthlyBillGenerator
 
     public function handle()
     {
-
-        $this->getSystemTimeForNurse();
-
         return $this->generatePdf();
     }
 
-    public function getSystemTimeForNurse()
+    private function getSystemTimeForNurse()
     {
 
         $this->systemTime = PageTimer::where('provider_id', $this->nurse->user_id)
@@ -123,11 +120,9 @@ class NurseMonthlyBillGenerator
         } else if ($this->systemTime == null) {
             $this->formattedSystemTime = 0;
         }
-
-        return $this->formattedSystemTime;
     }
 
-    public function getItemizedActivities()
+    private function getItemizedActivities()
     {
 
         $data = [];
@@ -175,15 +170,11 @@ class NurseMonthlyBillGenerator
         return $data;
     }
 
-    public function formatItemizedActivities()
+    private function formatItemizedActivities()
     {
-
         $activities = $this->getItemizedActivities();
 
         $data = [];
-
-        $this->total['hours'] = $this->formattedSystemTime;
-        $this->total['minutes'] = $this->formattedSystemTime * 60;
 
         $this->payable = $this->formattedSystemTime * $this->nurse->hourly_rate;
 
@@ -218,9 +209,7 @@ class NurseMonthlyBillGenerator
             $this->formattedAddDuration = ceil(($this->addDuration * 2) / 60) / 2;
             $this->formattedSystemTime += $this->formattedAddDuration;
 
-            $extraMultiplier = ($this->withVariablePaymentSystem) ? 30 : 20;
-
-//            $this->payable += $this->formattedAddDuration * $extraMultiplier;
+            $this->payable += $this->formattedAddDuration * $this->nurse->hourly_rate;
 
             $others = [
 
@@ -255,6 +244,9 @@ class NurseMonthlyBillGenerator
             $dayCounterCarbon->addDay();
             $dayCounterDate = $dayCounterCarbon->toDateString();
         }
+
+        $this->total['hours']   = $this->formattedSystemTime;
+        $this->total['minutes'] = $this->formattedSystemTime * 60;
         
         $this->formattedItemizedActivities = [
         //days data
@@ -281,15 +273,12 @@ class NurseMonthlyBillGenerator
             //range
             'date_start' => $this->startDate->format('jS M, Y'),
             'date_end' => $this->endDate->format('jS M, Y')
-
         ];
-
-        return $this->formattedItemizedActivities;
     }
 
-    public function generatePdf($onlyLink = false)
+    private function generatePdf($onlyLink = false)
     {
-
+        $this->getSystemTimeForNurse();
         $this->formatItemizedActivities();
 
         $pdf = PDF::loadView('billing.nurse.invoice', $this->formattedItemizedActivities);
@@ -321,7 +310,7 @@ class NurseMonthlyBillGenerator
         ];
     }
 
-    public function getCallsPerHourOverPeriod()
+    private function getCallsPerHourOverPeriod()
     {
 
         $duration = intval(PageTimer::where('provider_id', $this->nurse->user_id)
