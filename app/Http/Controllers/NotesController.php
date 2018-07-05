@@ -50,14 +50,12 @@ class NotesController extends Controller
                   ->orderBy('performed_at', 'desc');
             },
             'appointments' => function ($q) use ($date) {
-                $q->where('date', '>=', $date)
-                  ->orderBy('date', 'desc');
+                $q->where('date', '>=', $date);
             },
             'billingProvider',
             'notes'        => function ($q) use ($date) {
                 $q->where('performed_at', '>=', $date)
-                  ->with(['author', 'call', 'notifications'])
-                  ->orderBy('performed_at', 'desc');
+                  ->with(['author', 'call', 'notifications']);
             },
             'patientInfo',
         ])
