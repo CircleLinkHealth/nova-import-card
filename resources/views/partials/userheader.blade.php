@@ -47,8 +47,9 @@
                     @endif
                     <li>
                         <patient-next-call
-                                :patient-id="<?php echo json_encode($patient->id) ?>"
-                                :is-care-center="<?php echo json_encode(Auth::user()->hasRole('care-center')) ?>">
+                                :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
+                                :patient-preferences="{{json_encode( $patient->patientInfo->getPreferences(),JSON_HEX_QUOT)}}"
+                                :is-care-center="{{json_encode(Auth::user()->hasRole('care-center'))}}">
                         </patient-next-call>
                     </li>
                 </ul>

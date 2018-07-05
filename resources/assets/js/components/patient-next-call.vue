@@ -25,7 +25,7 @@
             None
         </span>
 
-        <edit-call-modal></edit-call-modal>
+        <edit-call-modal :patient-preferences="patientPreferences"></edit-call-modal>
         <br/>
     </div>
 </template>
@@ -51,6 +51,7 @@
         name: 'patient-next-call',
         props: [
             'patientId',
+            'patientPreferences',
             'isCareCenter'
         ],
         components: {
@@ -108,6 +109,7 @@
                 console.error("PatientNextCall component missing patient id.")
                 return;
             }
+
             this.setPatientId(this.patientId);
             this.getNextCall();
 

@@ -413,7 +413,8 @@ class Patient extends \App\BaseModel
         return $query->where('ccm_status', 'enrolled');
     }
 
-    public function scopeByStatus($query, $fromDate, $toDate) {
+    public function scopeByStatus($query, $fromDate, $toDate)
+    {
 
         return $query->where(function ($query) use ($fromDate, $toDate) {
             $query->where(function ($subQuery) use ($fromDate, $toDate) {
@@ -520,7 +521,8 @@ class Patient extends \App\BaseModel
      * @param $status
      * @param string $operator
      */
-    public function scopeCcmStatus($builder, $status, $operator = '=') {
+    public function scopeCcmStatus($builder, $status, $operator = '=')
+    {
         $builder->where('ccm_status', $operator, $status);
     }
 
@@ -573,17 +575,33 @@ class Patient extends \App\BaseModel
         return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
 
-    public function safe() {
+    public function getPreferences()
+    {
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'ccm_status' => $this->ccm_status,
-            'birth_date' => $this->birth_date,
-            'age' => $this->birth_date ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year): 0,
-            'gender' => $this->gender,
-            'created_at' => $this->created_at->format('c'),
-            'updated_at' => $this->updated_at->format('c'),
-            'cur_month_activity_time' => $this->cur_month_activity_time
+            'calls_per_month' => $this->preferred_calls_per_month,
+            'contact_days' => $this->preferred_cc_contact_days,
+            'contact_time' => $this->preferred_contact_time,
+            'contact_timezone' => $this->preferred_contact_timezone,
+            'contact_language' => $this->preferred_contact_language,
+            'contact_method' => $this->preferred_contact_method,
+            //'contact_location' => $this->location()->get()
+        ];
+    }
+
+    public function safe()
+    {
+        return [
+            'id'                      => $this->id,
+            'user_id'                 => $this->user_id,
+            'ccm_status'              => $this->ccm_status,
+            'birth_date'              => $this->birth_date,
+            'age'                     => $this->birth_date
+                ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
+                : 0,
+            'gender'                  => $this->gender,
+            'created_at'              => $this->created_at->format('c'),
+            'updated_at'              => $this->updated_at->format('c'),
+            'cur_month_activity_time' => $this->cur_month_activity_time,
         ];
     }
 }

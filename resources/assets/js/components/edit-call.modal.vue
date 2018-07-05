@@ -12,6 +12,42 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
             </div>
         </template>
         <template slot-scope="props">
+            <div class="preferences row">
+                <div class="row">
+                    <div class="col-sm-4">
+                        Preferred days
+                    </div>
+                    <div class="col-sm-8">
+                        {{patientPreferences.contact_days ? patientPreferences.contact_days : '-' }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        Preferred time
+                    </div>
+                    <div class="col-sm-8">
+                        <span v-if="patientPreferences.contact_time">
+                            {{patientPreferences.contact_time}} {{patientPreferences.contact_timezone}}
+                        </span>
+                        <span v-else-if="patientPreferences.contact_timezone">
+                            {{patientPreferences.contact_timezone}}
+                        </span>
+                        <span v-else>
+                            -
+                        </span>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        Frequency
+                    </div>
+                    <div class="col-sm-8">
+                        {{patientPreferences.calls_per_month}} (monthly)
+                    </div>
+                </div>
+            </div>
+            <br/>
             <form action="" @submit="submitForm">
                 <div class="row">
                     <div class="col-sm-12">
@@ -86,7 +122,9 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
 
     export default {
         name: 'edit-call-modal',
-        props: [],
+        props: [
+            'patientPreferences'
+        ],
         mixins: [VueCache],
         components: {
             'modal': Modal,
@@ -177,6 +215,8 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
             Event.$on("modal-edit-call:show", (callToEdit) => {
                 this.resetFormData(callToEdit);
             });
+
+            console.log(this.patientPreferences);
         }
     }
 </script>
@@ -186,21 +226,17 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
         width: 520px;
     }
 
+    .preferences {
+        margin-top: -20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e5e5e5;
+    }
+
     span.required {
         color: red;
         font-size: 29px;
         position: absolute;
-        top: -7px;
-        margin-left: 5px;
-    }
-
-    .dropdown.v-select.form-control {
-        height: auto;
-        padding: 0;
-    }
-
-    .v-select .dropdown-toggle {
-        height: 34px;
-        overflow: hidden;
+        top: 0;
+        margin-left: 0;
     }
 </style>
