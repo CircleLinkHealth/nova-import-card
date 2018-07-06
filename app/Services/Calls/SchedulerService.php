@@ -198,8 +198,11 @@ class SchedulerService
     {
 
         //get all patients that are withdrawn
-        $withdrawn = Patient::where('ccm_status', 'withdrawn')
-                            ->orWhere('ccm_status', 'paused')
+        $withdrawn = Patient::whereIn('ccm_status', [
+            Patient::WITHDRAWN,
+            Patient::PAUSED,
+            Patient::UNREACHABLE,
+        ])
                             ->pluck('user_id')
                             ->all();
 
