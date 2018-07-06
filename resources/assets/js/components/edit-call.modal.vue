@@ -18,7 +18,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         Preferred days
                     </div>
                     <div class="col-sm-8">
-                        {{patientPreferences.contact_days ? patientPreferences.contact_days : '-' }}
+                        {{preferredContactDays}}
                     </div>
                 </div>
                 <div class="row">
@@ -26,16 +26,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         Preferred time
                     </div>
                     <div class="col-sm-8">
-                        <span v-if="patientPreferences.contact_time">
-                            {{patientPreferences.contact_time}} {{patientPreferences.contact_timezone}}
-                        </span>
-                        <span v-else-if="patientPreferences.contact_timezone">
-                            {{patientPreferences.contact_timezone}}
-                        </span>
-                        <span v-else>
-                            -
-                        </span>
-
+                        {{preferredContactTime}} {{preferredContactTimezone}}
                     </div>
                 </div>
                 <div class="row">
@@ -52,34 +43,40 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="row form-group">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 Date <span class="required">*</span>
                             </div>
-                            <div class="col-sm-8">
+                            <div class="col-sm-9">
                                 <input class="form-control" type="date" name="scheduled_date"
                                        v-model="formData.scheduled_date"
                                        required/>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 Time <span class="required">*</span>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <input class="form-control" type="time" name="window_start"
                                        v-model="formData.window_start"
                                        required/>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-1 form-text-middle">
+                                -
+                            </div>
+                            <div class="col-sm-3">
                                 <input class="form-control" type="time" name="window_end" v-model="formData.window_end"
                                        required/>
                             </div>
+                            <div class="col-sm-2 form-text-middle bold">
+                                {{preferredContactTimezone}}
+                            </div>
                         </div>
                         <div class="row form-group">
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 Notes <span class="required">*</span>
                             </div>
-                            <div class="col-sm-8">
+                            <div class="col-sm-9">
                                 <textarea class="form-control" name="attempt_note" v-model="formData.attempt_note"
                                           required></textarea>
                                 <button class="submit hidden"></button>
@@ -120,6 +117,26 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
         outbound_cpm_id: null
     };
 
+    const weekDays = {
+        1: 'Mon',
+        2: 'Tue',
+        3: 'Wed',
+        4: 'Thur',
+        5: 'Fri',
+        6: 'Sat',
+        7: 'Sun'
+    };
+
+    const timeZoneAbbr = {
+        'Eastern Time': 'ET', // or EST
+        'Central Time': 'CT', // or CST
+        'Mountain Time': 'MDT',
+        'Mountain Time (no DST)': 'MST',
+        'Pacific Time': 'PT', // or PST
+        'Alaska Time': 'AKT', // or AKST
+        'Hawaii-Aleutian Time (no DST)': 'HST'
+    };
+
     export default {
         name: 'edit-call-modal',
         props: [
@@ -158,7 +175,37 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 formData: Object.assign({}, defaultFormData)
             }
         },
-        computed: {},
+        computed: {
+            preferredContactDays() {
+                if (!this.patientPreferences || !this.patientPreferences.contact_window) {
+                    return '-';
+                }
+
+                return this.patientPreferences.contact_window.map(x=> weekDays[x.day_of_week]).join(', ');
+            },
+            preferredContactTime() {
+                if (!this.patientPreferences ||
+                    !this.patientPreferences.contact_window ||
+                    !this.patientPreferences.contact_window.length) {
+                    return '-';
+                }
+
+                const aDay = this.patientPreferences.contact_window[0];
+                if (!aDay['window_time_start'] || !aDay['window_time_end']) {
+                    return '-';
+                }
+
+                return `${aDay['window_time_start']} - ${aDay['window_time_end']}`;
+            },
+            preferredContactTimezone() {
+                if (!this.patientPreferences ||
+                    !this.patientPreferences.contact_timezone) {
+                    return '';
+                }
+
+                return timeZoneAbbr[this.patientPreferences.contact_timezone] || this.patientPreferences.contact_timezone;
+            }
+        },
         methods: {
             resetFormData(data) {
                 //do not create new formData object, cz you will break Vue
@@ -215,15 +262,22 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
             Event.$on("modal-edit-call:show", (callToEdit) => {
                 this.resetFormData(callToEdit);
             });
-
-            console.log(this.patientPreferences);
         }
     }
 </script>
 
 <style>
+
+    .bold {
+        font-weight:600;
+    }
+
+    .form-text-middle {
+        line-height: 2.1;
+    }
+
     .modal-edit-call .modal-container {
-        width: 520px;
+        width: 570px;
     }
 
     .preferences {

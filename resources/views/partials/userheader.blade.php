@@ -48,8 +48,8 @@
                     <li>
                         <patient-next-call
                                 :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
-                                :patient-preferences="{{json_encode( $patient->patientInfo->getPreferences(),JSON_HEX_QUOT)}}"
-                                :is-care-center="{{json_encode(Auth::user()->hasRole('care-center'))}}">
+                                :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
+                                :is-care-center="{{json_encode(Auth::user()->hasRole('care-center')), JSON_HEX_QUOT}}">
                         </patient-next-call>
                     </li>
                 </ul>

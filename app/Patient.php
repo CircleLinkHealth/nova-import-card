@@ -62,6 +62,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read \App\User $user
+ * @property mixed location
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -577,14 +578,29 @@ class Patient extends \App\BaseModel
 
     public function getPreferences()
     {
+        $timezones = timezones();
+        $patientTimezone = User::whereId($this->user_id)->first()->timezone;
+        if (!isset($timezones[$patientTimezone])) {
+            $uiTimezone = array_values($timezones)[0];
+        }
+        else {
+            $uiTimezone = $timezones[$patientTimezone];
+        }
+
+
         return [
             'calls_per_month' => $this->preferred_calls_per_month,
-            'contact_days' => $this->preferred_cc_contact_days,
-            'contact_time' => $this->preferred_contact_time,
-            'contact_timezone' => $this->preferred_contact_timezone,
+            //found in contact_window
+            //'contact_days' => $this->preferred_cc_contact_days,
+            //'contact_time' => $this->preferred_contact_time,
+
+            //'contact_timezone' => $this->preferred_contact_timezone,
+            'contact_timezone' => $uiTimezone,
+
             'contact_language' => $this->preferred_contact_language,
             'contact_method' => $this->preferred_contact_method,
-            //'contact_location' => $this->location()->get()
+            'contact_window' => $this->contactWindows,
+            'contact_location' => $this->location
         ];
     }
 
