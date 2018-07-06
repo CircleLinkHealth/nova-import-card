@@ -27,7 +27,8 @@
                     @else
                         <div class="col-sm-3"><a
                                     href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}"
-                                    class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">Show
+                                    class="btn btn-primary btn-default form-item--button form-item-spacing"
+                                    role="button">Show
                                 All</a></div>
                     @endif
                     <div class="col-sm-3 pull-right"
@@ -42,165 +43,165 @@
                         <div id="paging_container"></div><br/>
 
                         @push('styles')
-                        <style>
-                            .webix_hcell {
-                                background-color: #d2e3ef;
-                            }
-                        </style>
+                            <style>
+                                .webix_hcell {
+                                    background-color: #d2e3ef;
+                                }
+                            </style>
                         @endpush
 
                         @push('scripts')
-                        <script>
-                            function startCompare(value, filter) {
-                                value = value.toString().toLowerCase();
-                                filter = '<' + filter.toString().toLowerCase();
-                                return value.indexOf(filter) === 0;
-                            }
+                            <script>
+                                function startCompare(value, filter) {
+                                    value = value.toString().toLowerCase();
+                                    filter = '<' + filter.toString().toLowerCase();
+                                    return value.indexOf(filter) === 0;
+                                }
 
-                            webix.locale.pager = {
-                                first: "<<",// the first button
-                                last: ">>",// the last button
-                                next: ">",// the next button
-                                prev: "<"// the previous button
-                            };
+                                webix.locale.pager = {
+                                    first: "<<",// the first button
+                                    last: ">>",// the last button
+                                    next: ">",// the next button
+                                    prev: "<"// the previous button
+                                };
 
-                            obs_alerts_dtable = new webix.ui({
-                                container: "obs_alerts_container",
-                                view: "datatable",
-                                //css:"webix_clh_cf_style",
-                                autoheight: true,
-                                fixedRowHeight: true, rowLineHeight: 25, rowHeight: 25,
-                                // leftSplit:2,
-                                scrollX: false,
-                                resizeColumn: true,
-                                footer: true,
-                                tooltip: true,
-                                columns: [
-                                    {
-                                        id: "type_name",
-                                        header: ["Topic / Offline Activity", {
-                                            content: "textFilter",
-                                            placeholder: "Filter"
-                                        }],
-                                        template: function (obj) {
-                                            if (obj.logged_from == "note")
-                                                return "<a href='<?php echo route('patient.note.view', [
-                                                    'patientId' => $patient->id,
-                                                    'noteId'    => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
-                                            else if (obj.logged_from == "appointment") {
-                                                return "<a href='<?php echo route('patient.appointment.view', [
-                                                    'patientId'     => $patient->id,
-                                                    'appointmentId' => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
-                                            } else {
-                                                return "<a href='<?php echo route('patient.activity.view', [
-                                                    'patientId' => $patient->id,
-                                                    'actId'     => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
-                                            }
-                                            return obj.type_name;
-                                        },
-
-                                        width: 175,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "left"}
-                                    },
-                                    {
-                                        id: "logged_from",
-                                        header: ["Type", {content: "textFilter", placeholder: "Filter"}],
-                                        template: function (obj) {
-                                            if (obj.logged_from == "note")
-                                                return "Note";
-                                            else if (obj.logged_from == "manual_input") {
-                                                return "Offline Activity";
-                                            } else if (obj.logged_from == "appointment") {
-                                                return "Appointment";
-
-                                            }
-                                            return obj.type_name;
-                                        },
-                                        width: 120,
-                                        sort: 'string'
-                                    },
-                                    {
-                                        id: "tags",
-                                        css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
-                                        header: ["Status"],
-                                        width: 110,
-                                        sort: 'string'
-                                    },
-                                    {
-                                        id: "comment",
-                                        header: ["Preview"],
-                                        template: function (obj) {
-                                            if (obj.logged_from == "note")
-                                                return "<a href='<?php echo route('patient.note.view', [
-                                                    'patientId' => $patient->id,
-                                                    'noteId'    => ''
-                                                ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
-                                            else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
-                                                return "<a href='<?php echo route('patient.activity.view', [
-                                                    'patientId' => $patient->id,
-                                                    'actId'     => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            } else if (obj.logged_from == "appointment") {
-                                                return "<a href='<?php echo route('patient.appointment.view', [
-                                                    'patientId'     => $patient->id,
-                                                    'appointmentId' => ''
-                                                ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
-                                            } else
+                                obs_alerts_dtable = new webix.ui({
+                                    container: "obs_alerts_container",
+                                    view: "datatable",
+                                    //css:"webix_clh_cf_style",
+                                    autoheight: true,
+                                    fixedRowHeight: true, rowLineHeight: 25, rowHeight: 25,
+                                    // leftSplit:2,
+                                    scrollX: false,
+                                    resizeColumn: true,
+                                    footer: true,
+                                    tooltip: true,
+                                    columns: [
+                                        {
+                                            id: "type_name",
+                                            header: ["Topic / Offline Activity", {
+                                                content: "textFilter",
+                                                placeholder: "Filter"
+                                            }],
+                                            template: function (obj) {
+                                                if (obj.logged_from == "note")
+                                                    return "<a href='<?php echo route('patient.note.view', [
+                                                        'patientId' => $patient->id,
+                                                        'noteId'    => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>";
+                                                else if (obj.logged_from == "appointment") {
+                                                    return "<a href='<?php echo route('patient.appointment.view', [
+                                                        'patientId'     => $patient->id,
+                                                        'appointmentId' => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                } else {
+                                                    return "<a href='<?php echo route('patient.activity.view', [
+                                                        'patientId' => $patient->id,
+                                                        'actId'     => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.type_name + "</a>"
+                                                }
                                                 return obj.type_name;
-                                        },
-                                        fillspace: true,
-                                        width: 400,
-                                        sort: 'string',
-                                        tooltip: false
-                                    },
-                                    {
-                                        id: "performed_at",
-                                        header: ["Date", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 100,
-                                        sort: 'date'
-                                    },
+                                            },
 
-                                    {
-                                        id: "logger_name",
-                                        header: ["Author", {content: "textFilter", placeholder: "Filter"}],
-                                        width: 210,
-                                        sort: 'string',
-                                        css: {"color": "black", "text-align": "left"}
+                                            width: 175,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "left"}
+                                        },
+                                        {
+                                            id: "logged_from",
+                                            header: ["Type", {content: "textFilter", placeholder: "Filter"}],
+                                            template: function (obj) {
+                                                if (obj.logged_from == "note")
+                                                    return "Note";
+                                                else if (obj.logged_from == "manual_input") {
+                                                    return "Offline Activity";
+                                                } else if (obj.logged_from == "appointment") {
+                                                    return "Appointment";
+
+                                                }
+                                                return obj.type_name;
+                                            },
+                                            width: 120,
+                                            sort: 'string'
+                                        },
+                                        {
+                                            id: "tags",
+                                            css: {'text-align': 'left', 'top': 0, 'left': 0, 'bottom': 0, 'right': 0},
+                                            header: ["Status"],
+                                            width: 110,
+                                            sort: 'string'
+                                        },
+                                        {
+                                            id: "comment",
+                                            header: ["Preview"],
+                                            template: function (obj) {
+                                                if (obj.logged_from == "note")
+                                                    return "<a href='<?php echo route('patient.note.view', [
+                                                        'patientId' => $patient->id,
+                                                        'noteId'    => ''
+                                                    ]); ?>/" + obj.id + "' title='" + obj.comment + "'>" + obj.comment + "</a>";
+                                                else if (obj.logged_from == "manual_input" || obj.logged_from == "activity") {
+                                                    return "<a href='<?php echo route('patient.activity.view', [
+                                                        'patientId' => $patient->id,
+                                                        'actId'     => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                } else if (obj.logged_from == "appointment") {
+                                                    return "<a href='<?php echo route('patient.appointment.view', [
+                                                        'patientId'     => $patient->id,
+                                                        'appointmentId' => ''
+                                                    ]); ?>/" + obj.id + "'>" + obj.comment + "</a>"
+                                                } else
+                                                    return obj.type_name;
+                                            },
+                                            fillspace: true,
+                                            width: 400,
+                                            sort: 'string',
+                                            tooltip: false
+                                        },
+                                        {
+                                            id: "performed_at",
+                                            header: ["Date", {content: "textFilter", placeholder: "Filter"}],
+                                            width: 100,
+                                            sort: 'date'
+                                        },
+
+                                        {
+                                            id: "logger_name",
+                                            header: ["Author", {content: "textFilter", placeholder: "Filter"}],
+                                            width: 210,
+                                            sort: 'string',
+                                            css: {"color": "black", "text-align": "left"}
+                                        },
+                                    ],
+                                    ready: function () {
+                                        this.adjustRowHeight("comment");
                                     },
-                                ],
-                                ready: function () {
-                                    this.adjustRowHeight("comment");
-                                },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
-                                pager: {
-                                    animate: true,
-                                    container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
-                                    size: 10, // the number of records per a page
-                                    group: 5   // the number of pages in the pager
-                                },
-                                {!!$activity_json!!}
-                            })
-                            ;
-                            webix.event(window, "resize", function () {
-                                obs_alerts_dtable.adjust();
-                            })
-                        </script>
+                                    /*ready:function(){
+                                     this.adjustRowHeight("obs_value");
+                                     },*/
+                                    pager: {
+                                        animate: true,
+                                        container: "paging_container",// the container where the pager controls will be placed into
+                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                        size: 10, // the number of records per a page
+                                        group: 5   // the number of pages in the pager
+                                    },
+                                    {!!$activity_json!!}
+                                })
+                                ;
+                                webix.event(window, "resize", function () {
+                                    obs_alerts_dtable.adjust();
+                                })
+                            </script>
                         @endpush
 
                         <div class="row">
                             @push('styles')
-                            <style>
-                                li {
-                                    padding-bottom: 2px;
-                                }
-                            </style>
+                                <style>
+                                    li {
+                                        padding-bottom: 2px;
+                                    }
+                                </style>
                             @endpush
                             <div class="col-sm-6" style="padding: 10px; top: -14px">
                                 <li>
