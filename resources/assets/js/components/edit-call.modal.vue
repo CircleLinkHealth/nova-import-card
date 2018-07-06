@@ -127,16 +127,6 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
         7: 'Sun'
     };
 
-    const timeZoneAbbr = {
-        'Eastern Time': 'ET', // or EST
-        'Central Time': 'CT', // or CST
-        'Mountain Time': 'MDT',
-        'Mountain Time (no DST)': 'MST',
-        'Pacific Time': 'PT', // or PST
-        'Alaska Time': 'AKT', // or AKST
-        'Hawaii-Aleutian Time (no DST)': 'HST'
-    };
-
     export default {
         name: 'edit-call-modal',
         props: [
@@ -203,7 +193,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                     return '';
                 }
 
-                return timeZoneAbbr[this.patientPreferences.contact_timezone] || this.patientPreferences.contact_timezone;
+                return this.patientPreferences.contact_timezone;
             }
         },
         methods: {

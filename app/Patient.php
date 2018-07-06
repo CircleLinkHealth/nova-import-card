@@ -578,14 +578,11 @@ class Patient extends \App\BaseModel
 
     public function getPreferences()
     {
-        $timezones = timezones();
-        $patientTimezone = User::whereId($this->user_id)->first()->timezone;
-        if (!isset($timezones[$patientTimezone])) {
-            $uiTimezone = array_values($timezones)[0];
+        $patientTimezone = User::find($this->user_id)->timezone;
+        if (!isset($patientTimezone)) {
+            $patientTimezone = 'America/New_York';
         }
-        else {
-            $uiTimezone = $timezones[$patientTimezone];
-        }
+        $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');
 
 
         return [
@@ -595,7 +592,7 @@ class Patient extends \App\BaseModel
             //'contact_time' => $this->preferred_contact_time,
 
             //'contact_timezone' => $this->preferred_contact_timezone,
-            'contact_timezone' => $uiTimezone,
+            'contact_timezone' => $tzAbbr,
 
             'contact_language' => $this->preferred_contact_language,
             'contact_method' => $this->preferred_contact_method,
