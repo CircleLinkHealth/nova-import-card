@@ -147,14 +147,9 @@ class CallController extends Controller
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
     }
 
-    public function getPatientNextScheduledCall($patientId)
+    public function getPatientNextScheduledCallJson($patientId)
     {
-        $call = Call::where('inbound_cpm_id', $patientId)
-                    ->where('status', '=', 'scheduled')
-                    ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                    ->orderBy('scheduled_date', 'desc')
-                    ->first();
-        return response()->json($call);
+        return response()->json(SchedulerService::getNextScheduledCall($patientId));
     }
 
     public function update(Request $request)

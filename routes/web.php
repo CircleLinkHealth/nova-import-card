@@ -776,7 +776,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'call.edit',
             ]);
             Route::get('next', [
-                'uses' => 'CallController@getPatientNextScheduledCall',
+                'uses' => 'CallController@getPatientNextScheduledCallJson',
                 'as'   => 'call.next',
             ]);
             Route::post('reschedule', [
