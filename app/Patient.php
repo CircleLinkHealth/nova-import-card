@@ -121,6 +121,7 @@ class Patient extends \App\BaseModel
     use Filterable, SoftDeletes;
     use \Venturecraft\Revisionable\RevisionableTrait;
 
+    const UNREACHABLE = 'unreachable';
     const PAUSED = 'paused';
     const ENROLLED = 'enrolled';
     const WITHDRAWN = 'withdrawn';
@@ -130,6 +131,7 @@ class Patient extends \App\BaseModel
     protected $dates = [
         'date_withdrawn',
         'date_paused',
+        'date_unreachable',
         'paused_letter_printed_at',
     ];
 
@@ -164,6 +166,7 @@ class Patient extends \App\BaseModel
         'gender',
         'date_paused',
         'date_withdrawn',
+        'date_unreachable',
         'mrn_number',
         'preferred_cc_contact_days',
         'preferred_contact_language',

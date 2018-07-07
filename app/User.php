@@ -1837,12 +1837,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         $this->patientInfo->save();
         // update date tracking
         if ($statusBefore !== $value) {
-            if ($value == 'paused') {
+            if ($value == Patient::PAUSED) {
                 $this->datePaused = date("Y-m-d H:i:s");
-            };
-            if ($value == 'withdrawn') {
+            }
+            if ($value == Patient::WITHDRAWN) {
                 $this->dateWithdrawn = date("Y-m-d H:i:s");
-            };
+            }
+            if ($value == Patient::UNREACHABLE) {
+                $this->dateUnreachable = date("Y-m-d H:i:s");
+            }
         }
 
         $this->load('patientInfo');
@@ -1885,6 +1888,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             return '';
         }
         $this->patientInfo->date_withdrawn = $value;
+        $this->patientInfo->save();
+
+        return true;
+    }
+
+    public function getDateUnreachableAttribute()
+    {
+        if ( ! $this->patientInfo) {
+            return '';
+        }
+
+        return $this->patientInfo->date_unreachable;
+    }
+
+    public function setDateUnreachableAttribute($value)
+    {
+        if ( ! $this->patientInfo) {
+            return '';
+        }
+        $this->patientInfo->date_unreachable = $value;
         $this->patientInfo->save();
 
         return true;

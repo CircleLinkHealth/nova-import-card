@@ -83,6 +83,9 @@ return [
     | will not be cached.
     |
     */
-    'exclude-tables' => [],
+    'exclude-tables' => [
+//        (new PageTimer())->getTable(),
+//        (new Activity())->getTable(),
+    ],
 
 ];
