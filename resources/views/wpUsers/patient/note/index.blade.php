@@ -15,25 +15,32 @@
                 </div>
                 @include('partials.userheader')
                 <div class="col-sm-12">
-                    <div class="col-sm-6"><a
+                    <div class="col-sm-4"><a
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
-                    @if($showAll == true)
-                        <div class="col-sm-3"><a
-                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}"
-                                    class="btn btn-primary btn-default form-item--button form-item-spacing"
-                                    role="button">Show Last Two Months</a></div>
-                    @else
-                        <div class="col-sm-3"><a
-                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}"
-                                    class="btn btn-primary btn-default form-item--button form-item-spacing"
-                                    role="button">Show
-                                All</a></div>
-                    @endif
-                    <div class="col-sm-3 pull-right"
-                         style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
+                    <div class="col-sm-4">
+
+                    </div>
+                    <div class="col-sm-4 pull-right"
+                         style="text-align: right;font-size: 22px;color: #ec683e;">
                         @include('partials.complex-ccm-badge')
+
+                        <div style="text-align: right;font-size: 12px;color: #7b7d81;">
+                            @if($showAll == true)
+                                <span>Showing all data.</span>
+                                <a style="color: #337ab7;"
+                                   href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}">
+                                    Show Data from Last 2 Months
+                                </a>
+                            @else
+                                <span>Showing data from last 2 months.</span>
+                                <a style="color: #337ab7;"
+                                   href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}">
+                                    Show All Data
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
