@@ -124,8 +124,6 @@
                 this.setDisplayDate();
             },
             setDisplayDate() {
-
-
                 if (this.isCareCenter && this.isCallBeingAddedToNote && this.isNextCallToday()) {
                     this.displayDate = 'TBD';
                 }

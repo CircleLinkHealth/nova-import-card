@@ -33,22 +33,31 @@ class NotesController extends Controller
 
     public function index(
         Request $request,
-        $patientId
+        $patientId,
+        $showAll = false
     ) {
+        $date = Carbon::now()->subMonth(2);
+        if ($showAll == true) {
+            $date = 0;
+        }
 
         $patient = User::with([
-                           'activities' => function ($q) {
-                               return $q->where('logged_from', '=', 'manual_input')
-                                        ->with('meta')
-                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                        ->orderBy('performed_at', 'desc');
-                           },
-                           'appointments',
-                           'billingProvider',
-                           'notes.author',
-                           'notes.call',
-                           'notes.notifications',
-                           'patientInfo',
+            'activities'   => function ($q) use ($date) {
+                $q->where('logged_from', '=', 'manual_input')
+                  ->where('performed_at', '>=', $date)
+                  ->with('meta')
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                  ->orderBy('performed_at', 'desc');
+            },
+            'appointments' => function ($q) use ($date) {
+                $q->where('date', '>=', $date);
+            },
+            'billingProvider',
+            'notes'        => function ($q) use ($date) {
+                $q->where('performed_at', '>=', $date)
+                  ->with(['author', 'call', 'notifications']);
+            },
+            'patientInfo',
         ])
                        ->findOrFail($patientId);
 
@@ -65,6 +74,7 @@ class NotesController extends Controller
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'ccm_complex'   => $ccm_complex,
+                'showAll'       => $showAll
             ]
         );
     }

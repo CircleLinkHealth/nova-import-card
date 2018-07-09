@@ -708,7 +708,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
             ]);
-            Route::get('', [
+            Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
             ]);
