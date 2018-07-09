@@ -19,17 +19,6 @@
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
-                    @if($showAll == true)
-                        <div class="col-sm-3"><a
-                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}"
-                                    class="btn btn-primary btn-default form-item--button form-item-spacing"
-                                    role="button">Show Last Two Months</a></div>
-                    @else
-                        <div class="col-sm-3"><a
-                                    href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}"
-                                    class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">Show
-                                All</a></div>
-                    @endif
                     <div class="col-sm-3 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
                         @include('partials.complex-ccm-badge')
@@ -39,7 +28,8 @@
                      style="border-top: 3px solid #50b2e2">
                     @if($activity_json)
                         <div id="obs_alerts_container" class=""></div><br/>
-                        <div id="paging_container"></div><br/>
+                        <div id="paging_container"></div>
+                        <br/>
 
                         @push('styles')
                         <style>
@@ -181,7 +171,17 @@
                                 pager: {
                                     animate: true,
                                     container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()} <!DOCTYPE html>@if($showAll == true)\n" +
+                                    "                            <a\n" +
+                                    "                                        href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
+                                    "                                        class=\"btn btn-primary btn-sm\"\n" +
+                                    "                                        role=\"button\">Show Last Two Months</a>\n" +
+                                    "                        @else\n" +
+                                    "                            <a\n" +
+                                    "                                        href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
+                                    "                                        class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
+                                    "                                    All Notes</a>\n" +
+                                    "                        @endif",
                                     size: 10, // the number of records per a page
                                     group: 5   // the number of pages in the pager
                                 },
