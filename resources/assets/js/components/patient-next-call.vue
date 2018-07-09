@@ -9,13 +9,13 @@
             </span>
         </span>
 
-        <span v-if="!loaders.nextCall && isEditable && nextCall.id != null"
+        <span v-if="!loaders.nextCall && isCareCenter && nextCall.id != null"
               @click="showEditCallModal"
               class="glyphicon glyphicon-pencil"
               style="cursor:pointer;">
         </span>
 
-        <div v-if="!loaders.nextCall && isEditable && nextCall.id == null"
+        <div v-if="!loaders.nextCall && isCareCenter && nextCall.id == null"
              class="btn btn-primary"
              @click="showEditCallModal">
             Schedule
@@ -62,7 +62,6 @@
             return {
                 nextCall: Object.assign({}, defaultNextCall),
                 isCallBeingAddedToNote: false,
-                isEditable: false,
                 displayDate: '',
                 loaders: {
                     nextCall: false
@@ -106,7 +105,7 @@
                 this.nextCall.attempt_note = call.attempt_note;
                 this.setDisplayDate();
             },
-            isForToday() {
+            isNextCallToday() {
                 //could use a date lib here
                 const today = new Date();
                 const year = today.getFullYear();
@@ -126,25 +125,17 @@
             },
             setDisplayDate() {
 
-                if (this.isCallBeingAddedToNote) {
-                    if (this.isForToday() && this.isCareCenter) {
-                        this.displayDate = 'TBD';
-                        this.isEditable = false;
-                    }
-                    else {
-                        this.isEditable = this.isCareCenter;
-                    }
+
+                if (this.isCareCenter && this.isCallBeingAddedToNote && this.isNextCallToday()) {
+                    this.displayDate = 'TBD';
+                }
+                else if (this.nextCall.id === null) {
+                    //a.Schedule button will appear in case of care center
+                    //b.None will be shown if not care center
+                    this.displayDate = '';
                 }
                 else {
-                    if (this.nextCall.id === null) {
-                        //a.Schedule button will appear in case of care center
-                        //b.None will be shown if not care center
-                        this.displayDate = '';
-                    }
-                    else {
-                        this.displayDate = `${this.nextCall.scheduled_date} @ ${this.nextCall.window_start} - ${this.nextCall.window_end}`;
-                    }
-                    this.isEditable = this.isCareCenter;
+                    this.displayDate = `${this.nextCall.scheduled_date} @ ${this.nextCall.window_start} - ${this.nextCall.window_end}`;
                 }
 
             },

@@ -34,7 +34,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         Frequency
                     </div>
                     <div class="col-sm-8">
-                        {{patientPreferences.calls_per_month}} (monthly)
+                        {{patientPreferences.calls_per_month}}x monthly
                     </div>
                 </div>
             </div>
@@ -74,11 +74,10 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         </div>
                         <div class="row form-group">
                             <div class="col-sm-3">
-                                Notes <span class="required">*</span>
+                                Popup note
                             </div>
                             <div class="col-sm-9">
-                                <textarea class="form-control" name="attempt_note" v-model="formData.attempt_note"
-                                          required></textarea>
+                                <textarea class="form-control" name="attempt_note" v-model="formData.attempt_note"></textarea>
                                 <button class="submit hidden"></button>
                             </div>
                         </div>
