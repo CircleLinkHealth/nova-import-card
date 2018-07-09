@@ -14,7 +14,6 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                <div>
                     <div class="col-sm-6"><a
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
@@ -24,7 +23,6 @@
                          @include('partials.complex-ccm-badge')
                     </div>
 
-                </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
                     @if($activity_json)
