@@ -38,7 +38,7 @@ return [
             'driver'      => 'database',
             'table'       => 'jobs',
             'queue'       => 'default',
-            'retry_after' => 180,
+            'retry_after' => 300,
         ],
 
         'beanstalkd' => [
@@ -61,7 +61,7 @@ return [
             'driver'      => 'redis',
             'connection'  => 'default',
             'queue'       => 'default',
-            'retry_after' => 180,
+            'retry_after' => 300,
         ],
 
     ],
