@@ -107,16 +107,14 @@ class SchedulerService
 
     public static function getNextScheduledCall($patientId, $excludeToday = false)
     {
-        $query = Call::where('inbound_cpm_id', $patientId)
-                     ->where('status', '=', 'scheduled');
-
-        if ($excludeToday) {
-            $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-        } else {
-            $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-        }
-
-        return $query->orderBy('scheduled_date', 'desc')
+        return Call::where('inbound_cpm_id', $patientId)
+                     ->where('status', '=', 'scheduled')
+                     ->when($excludeToday, function ($query) {
+                         $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+                     }, function ($query) {
+                         $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+                     })
+                     ->orderBy('scheduled_date', 'desc')
                      ->first();
     }
 
