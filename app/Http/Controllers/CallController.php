@@ -67,9 +67,9 @@ class CallController extends Controller
 
         if ($patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
-                                ->where('status', '=', 'scheduled')
-                                ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
-                                ->first();
+                                     ->where('status', '=', 'scheduled')
+                                     ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
+                                     ->first();
             if ($scheduledCall) {
                 return response([
                     'errors' => ['patient already has a scheduled call'],
@@ -147,6 +147,11 @@ class CallController extends Controller
         return view('admin.calls.index', ['calls' => $calls, 'patient' => User::find($patientId)]);
     }
 
+    public function getPatientNextScheduledCallJson($patientId)
+    {
+        return response()->json(SchedulerService::getNextScheduledCall($patientId));
+    }
+
     public function update(Request $request)
     {
 
@@ -217,5 +222,45 @@ class CallController extends Controller
                 echo "Name: $fail" . PHP_EOL;
             }
         }
+    }
+
+    /**
+     * Cancel a call and create a new one (setting the status to 'rescheduled/cancelled').
+     * If no call exists, just create the new one.
+     * If called from a care-center role, the outbound_cpm_id is
+     * set to the caller's user id.
+     * If called from any other role, outbound_cpm_id must be provided.
+     */
+    public function reschedule(Request $request)
+    {
+        $input = $request->only(
+            'id',
+            'outbound_cpm_id'
+        );
+
+        //if no outbound id is set, we user the authenticated user's id
+        //we do not have outbound_cpm_id when we are not sending a call to reschedule/cancel
+        //and we are just creating a new one.
+        if (empty($input['outbound_cpm_id'])) {
+
+            $user = Auth::user();
+            if ($user->hasRole('care-center')) {
+                $request->merge(['outbound_cpm_id' => auth()->user()->id]);
+            } else {
+                return response("missing outbound_cpm_id", 402);
+            }
+        }
+
+        if ( ! empty($input['id'])) {
+            $previousCall = Call::find($input['id']);
+            if ( ! $previousCall) {
+                return response("could not locate call " . $input['id'], 401);
+            }
+
+            $previousCall->status = 'rescheduled/cancelled';
+            $previousCall->save();
+        }
+
+        return $this->create($request);
     }
 }
