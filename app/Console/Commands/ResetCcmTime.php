@@ -52,6 +52,11 @@ class ResetCcmTime extends Command
         $lastReset->config_value = Carbon::now();
         $lastReset->save();
 
+        AppConfig::updateOrCreate([
+            'config_key'   => 'reset_cur_month_activity_time',
+            'config_value' => Carbon::now(),
+        ]);
+
         $this->info('CCM Time reset.');
     }
 }
