@@ -14,15 +14,16 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-12">
+                <div>
                     <div class="col-sm-6"><a
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
-                    <div class="col-sm-3 pull-right"
+                    <div class="col-sm-6 pull-right"
                          style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
-                        @include('partials.complex-ccm-badge')
+                         @include('partials.complex-ccm-badge')
                     </div>
+
                 </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
@@ -171,7 +172,7 @@
                                 pager: {
                                     animate: true,
                                     container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()} <!DOCTYPE html>@if($showAll == 'hide') <p></p>\n" +
+                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
                                     "@elseif($showAll == true)\n" +
                                     "<a\n" +
                                     "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
