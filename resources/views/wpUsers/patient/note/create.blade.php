@@ -292,11 +292,14 @@
                 function phoneSessionChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
-                            $('#collapseOne').show()
+                            $('#collapseOne').show();
                         }
                         else {
-                            $('#collapseOne').hide()
+                            $('#collapseOne').hide();
                         }
+                        //risky
+                        //what if app is not available?
+                        App.$emit('create-note:with-call', e.currentTarget.checked);
                     }
                     else {
                         $('#collapseOne').toggle();
