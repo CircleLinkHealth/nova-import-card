@@ -175,7 +175,7 @@
                                     "                            <a\n" +
                                     "                                        href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
                                     "                                        class=\"btn btn-primary btn-sm\"\n" +
-                                    "                                        role=\"button\">Show Last Two Months</a>\n" +
+                                    "                                        role=\"button\">Show Last 2 Months</a>\n" +
                                     "                        @else\n" +
                                     "                            <a\n" +
                                     "                                        href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
