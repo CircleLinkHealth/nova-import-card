@@ -61,6 +61,15 @@ class NotesController extends Controller
         ])
                        ->findOrFail($patientId);
 
+        //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
+        if ($patient->notes->isEmpty() and $showAll == false){
+            $patient->load(['notes' => function($notes){
+                $notes->with(['author', 'call', 'notifications']);
+            }]);
+
+            $showAll = null;
+        }
+
         $messages = \Session::get('messages');
 
         $report_data = $this->formatter->formatDataForNotesAndOfflineActivitiesReport($patient);
