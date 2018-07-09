@@ -13,16 +13,25 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class Problems extends BaseImporter
 {
-    use ConsolidatesProblemInfo;
+    use ConsolidatesProblemInfo,
+        RevisionableTrait;
+
+    protected $revisionCreationsEnabled = true;
 
     private $cpmProblems;
 
     public function __construct()
     {
         $this->cpmProblems = CpmProblem::all();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
     }
 
     public function import(
@@ -64,12 +73,11 @@ class Problems extends BaseImporter
                                         if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['2'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name',
                                                 'Diabetes Type 2')->id;
-                                        }
-                                        else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name, ['1'])) {
+                                        } else if ($cpmProblemId == 1 && str_contains($problemCodes->cons_name,
+                                                ['1'])) {
                                             $cpmProblemId = $this->cpmProblems->firstWhere('name',
                                                 'Diabetes Type 1')->id;
-                                        }
-                                        else if ($cpmProblemId == 1) {
+                                        } else if ($cpmProblemId == 1) {
                                             return ['do_not_import' => $itemLog->id];
                                         }
 
@@ -150,13 +158,14 @@ class Problems extends BaseImporter
             $keywords = array_merge(explode(',', $cpmProblem->contains), [$cpmProblem->name]);
 
             foreach ($keywords as $keyword) {
-                if (!$keyword || empty($keyword)) {
+                if ( ! $keyword || empty($keyword)) {
                     continue;
                 }
 
                 $keyword = trim($keyword);
 
-                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(strtolower($keyword), strtolower($problemName))) {
+                if (str_contains(strtolower($problemName), strtolower($keyword)) || str_contains(strtolower($keyword),
+                        strtolower($problemName))) {
                     return $cpmProblem->id;
                 }
             }

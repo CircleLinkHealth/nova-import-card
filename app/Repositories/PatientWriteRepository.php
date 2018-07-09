@@ -7,8 +7,8 @@ use App\Exceptions\InvalidArgumentException;
 use App\Patient;
 use App\PatientMonthlySummary;
 use App\User;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class PatientWriteRepository
 {
@@ -94,7 +94,7 @@ class PatientWriteRepository
             $patient->no_call_attempts_since_last_success = ($patient->no_call_attempts_since_last_success + 1);
 
             if ($patient->no_call_attempts_since_last_success == 5 && optional($record)->no_of_successful_calls < 1) {
-                $patient->ccm_status = 'paused';
+                $patient->ccm_status = Patient::UNREACHABLE;
             }
         }
         $patient->save();

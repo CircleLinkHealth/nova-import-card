@@ -94,7 +94,7 @@ class PermissionsConfig extends Seeder
                 ]
             ],
             'care-center'   => [
-                'display_name' => 'Care Center',
+                'display_name' => 'Care Coach',
                 'description' => 'Care Center',
                 'permissions' => [
                     'activities-pagetimer-view',
