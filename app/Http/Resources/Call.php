@@ -26,6 +26,7 @@ class Call extends Resource
 
         return [
             'id'                    => $this->id,
+            'is_from_care_center'   => $this->isFromCareCenter,
             'note_id'               => $this->note_id,
             'service'               => $this->service,
             'status'                => $this->status,
