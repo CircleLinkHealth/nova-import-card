@@ -65,6 +65,7 @@ class PatientCareplanController extends Controller
                                              'primaryPractice',
                                              'patientInfo',
                                          ])
+                                         ->intersectPracticesWith(auth()->user())
                                          ->withCareTeamOfType('billing_provider');
                                  },
                              ])
