@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\CallsAlgo;
 
+use App\Patient;
 use App\PatientContactWindow;
 use App\Repositories\PatientWriteRepository;
 use App\User;
@@ -35,11 +36,11 @@ class CallSchedulerTest extends TestCase
 
         $this->assertDatabaseHas('patient_info', [
             'id'         => $patientInfo->id,
-            'ccm_status' => 'paused',
+            'ccm_status' => Patient::UNREACHABLE,
         ]);
 
         $patientInfo->fresh();
 
-        $this->assertEquals('paused', $patientInfo->ccm_status);
+        $this->assertEquals(Patient::UNREACHABLE, $patientInfo->ccm_status);
     }
 }
