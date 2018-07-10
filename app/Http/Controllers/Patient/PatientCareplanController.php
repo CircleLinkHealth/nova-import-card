@@ -57,7 +57,9 @@ class PatientCareplanController extends Controller
         $carePlans = CarePlan::with('providerApproverUser')
                              ->whereNull('first_printed')
                              ->whereNull('last_printed')
-                             ->has('patient')
+                             ->whereHas('patient', function ($q) {
+                                 $q->intersectPracticesWith(auth()->user());
+                             })
                              ->with([
                                  'patient' => function ($q) {
                                      $q
@@ -70,8 +72,7 @@ class PatientCareplanController extends Controller
                                  },
                              ])
                              ->whereHas('patient.patientInfo', function ($q) {
-                                 $q->enrolled()
-                                   ->intersectPracticesWith(auth()->user());
+                                 $q->enrolled();
                              })
                              ->get()
                              ->map(function ($cp) {
@@ -120,7 +121,10 @@ class PatientCareplanController extends Controller
                                      }
                                  }
 
-                                 if ($cp->patient->patientInfo && ! empty($cp->patient->fullName) && ! empty($cp->patient->first_name) && ! empty($cp->patient->last_name)) {
+                                 if ($cp->patient->patientInfo
+                                     && ! empty($cp->patient->fullName)
+                                     && ! empty($cp->patient->first_name)
+                                     && ! empty($cp->patient->last_name)) {
                                      return [
                                          'key'                        => $cp->patient->id,
                                          'id'                         => $cp->patient->id,
