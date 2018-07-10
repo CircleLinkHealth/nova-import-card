@@ -170,35 +170,21 @@
                                     pager: {
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
-                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
+                                        "@elseif($showAll == true)\n" +
+                                        "<a\n" +
+                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
+                                        "class=\"btn btn-primary btn-sm\"\n" +
+                                        "role=\"button\">Show Last 2 Months</a>\n" +
+                                        "@else\n" +
+                                        "<a\n" +
+                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
+                                        "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
+                                        "All</a>\n" +
+                                        "@endif",
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
-                                ],
-                                ready: function () {
-                                    this.adjustRowHeight("comment");
-                                },
-                                /*ready:function(){
-                                 this.adjustRowHeight("obs_value");
-                                 },*/
-                                pager: {
-                                    animate: true,
-                                    container: "paging_container",// the container where the pager controls will be placed into
-                                    template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
-                                    "@elseif($showAll == true)\n" +
-                                    "<a\n" +
-                                    "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
-                                    "class=\"btn btn-primary btn-sm\"\n" +
-                                    "role=\"button\">Show Last 2 Months</a>\n" +
-                                    "@else\n" +
-                                    "<a\n" +
-                                    "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
-                                    "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
-                                    "All</a>\n" +
-                                    "@endif",
-                                    size: 10, // the number of records per a page
-                                    group: 5   // the number of pages in the pager
-                                },
                                 {!!$activity_json!!}
                             })
                             ;
