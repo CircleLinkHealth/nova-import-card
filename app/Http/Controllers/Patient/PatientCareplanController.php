@@ -70,7 +70,8 @@ class PatientCareplanController extends Controller
                                  },
                              ])
                              ->whereHas('patient.patientInfo', function ($q) {
-                                 $q->enrolled();
+                                 $q->enrolled()
+                                   ->intersectPracticesWith(auth()->user());
                              })
                              ->get()
                              ->map(function ($cp) {
@@ -186,7 +187,7 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            $user           = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
+            $user = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
 
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];
@@ -194,7 +195,7 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount        = 0;
+            $pageCount = 0;
 
             if ($request->filled('render') && $request->input('render') == 'html') {
                 return view('wpUsers.patient.multiview', [
