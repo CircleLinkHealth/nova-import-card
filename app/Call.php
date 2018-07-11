@@ -99,12 +99,12 @@ class Call extends \App\BaseModel
 
     public function getIsFromCareCenterAttribute() {
 
-        if (!$this->schedulerUser instanceof \App\User) {
+        if (!is_a($this->schedulerUser, User::class)) {
             //null in cases of scheduler = 'algorithm'
             return false;
         }
 
-        return $this->schedulerUser->roles->where('name', 'care-center')->isNotEmpty();
+        return $this->schedulerUser->hasRole('care-center');
     }
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)

@@ -198,7 +198,7 @@ class CallController extends Controller
             // CPM-149 - assigning a nurse to the call should not change scheduler,
             // so we will know if it was a nurse that originally scheduled this call
             if ($col != 'outbound_cpm_id') {
-                $call->scheduler = Auth::user()->id;
+                $call->scheduler = Auth::id();
             }
 
         }
