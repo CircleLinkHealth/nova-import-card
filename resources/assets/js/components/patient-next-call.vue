@@ -120,8 +120,8 @@
                 else if (this.nextCall.id === null) {
                     //a.Schedule button will appear in case of care center
                     //b.None will be shown if not care center
-                    this.displayDate = 'None';
-                }
+                    this.displayDate = 'None';                
+                    }
                 else {
                     this.displayDate = `${this.nextCall.scheduled_date} @ ${this.nextCall.window_start} - ${this.nextCall.window_end}`;
                 }

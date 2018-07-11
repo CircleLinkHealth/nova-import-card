@@ -14,40 +14,21 @@
                     Notes and Activities
                 </div>
                 @include('partials.userheader')
-                <div class="col-sm-12">
-                    <div class="col-sm-4"><a
+                    <div class="col-sm-6"><a
                                 href="{{ route('patient.note.create', array('patient' => $patient->id)) }}"
                                 class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">+NEW
                             NOTE</a></div>
-                    <div class="col-sm-4">
-
+                    <div class="col-sm-6 pull-right"
+                         style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
+                         @include('partials.complex-ccm-badge')
                     </div>
-                    <div class="col-sm-4 pull-right"
-                         style="text-align: right;font-size: 22px;color: #ec683e;">
-                        @include('partials.complex-ccm-badge')
 
-                        <div style="text-align: right;font-size: 12px;color: #7b7d81;">
-                            @if($showAll == true)
-                                <span>Showing all data.</span>
-                                <a style="color: #337ab7;"
-                                   href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}">
-                                    Show Data from Last 2 Months
-                                </a>
-                            @else
-                                <span>Showing data from last 2 months.</span>
-                                <a style="color: #337ab7;"
-                                   href="{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}">
-                                    Show All Data
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
                 <div class="main-form-horizontal main-form-primary-horizontal col-md-12"
                      style="border-top: 3px solid #50b2e2">
                     @if($activity_json)
                         <div id="obs_alerts_container" class=""></div><br/>
-                        <div id="paging_container"></div><br/>
+                        <div id="paging_container"></div>
+                        <br/>
 
                         @push('styles')
                             <style>
@@ -189,7 +170,18 @@
                                     pager: {
                                         animate: true,
                                         container: "paging_container",// the container where the pager controls will be placed into
-                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}",
+                                        template: "{common.first()} {common.prev()} {common.pages()} {common.next()} {common.last()}@if(is_null($showAll)) <p></p>\n" +
+                                        "@elseif($showAll == true)\n" +
+                                        "<a\n" +
+                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => false)) }}\"\n" +
+                                        "class=\"btn btn-primary btn-sm\"\n" +
+                                        "role=\"button\">Show Last 2 Months</a>\n" +
+                                        "@else\n" +
+                                        "<a\n" +
+                                        "href=\"{{ route('patient.note.index', array('patient' => $patient->id, 'showAll' => true)) }}\"\n" +
+                                        "class=\"btn btn-primary btn-sm\" role=\"button\">Show\n" +
+                                        "All</a>\n" +
+                                        "@endif",
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
@@ -245,7 +237,7 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'CarePlan Manager notes for {!!  $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               header: 'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
@@ -259,7 +251,7 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlan Manager notes for {!! $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() !!}',
+                                               header:'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
                                                filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
