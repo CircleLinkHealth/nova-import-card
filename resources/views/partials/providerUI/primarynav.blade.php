@@ -99,9 +99,11 @@ if (isset($patient)) {
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">
+                        @role('administrator')
                         <li>
                             <a href="{{ route('patients.careplan.printlist', []) }}">Care Plan Print List</a>
                         </li>
+                        @endrole
                         <li>
                             <a href="{{ route('patient.note.listing') }}">Notes Report</a>
                         </li>
