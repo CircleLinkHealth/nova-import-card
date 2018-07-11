@@ -108,14 +108,14 @@ class SchedulerService
     public static function getNextScheduledCall($patientId, $excludeToday = false)
     {
         return Call::where('inbound_cpm_id', $patientId)
-                     ->where('status', '=', 'scheduled')
-                     ->when($excludeToday, function ($query) {
-                         $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
-                     }, function ($query) {
-                         $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
-                     })
-                     ->orderBy('scheduled_date', 'desc')
-                     ->first();
+                   ->where('status', '=', 'scheduled')
+                   ->when($excludeToday, function ($query) {
+                       $query->where('scheduled_date', '>', Carbon::today()->format('Y-m-d'));
+                   }, function ($query) {
+                       $query->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'));
+                   })
+                   ->orderBy('scheduled_date', 'desc')
+                   ->first();
     }
 
     /**
@@ -375,6 +375,13 @@ class SchedulerService
     public function syncFamilialCalls()
     {
 
+        $nurseIds = User::select('id')
+                        ->whereHas('roles', function ($q) {
+                            $q->where('name', '=', 'care-center');
+                        })
+                        ->pluck('id')
+                        ->all();
+
         $families    = Family::all();
         $familyCalls = [];
 
@@ -383,15 +390,20 @@ class SchedulerService
             $patients = $family->patients()->get();
 
             //Then get their family's calls
-            $scheduledDates  = [];
             $scheduledCalls  = [];
+            $scheduledCallsScheduler = collect();
+
             $designatedNurse = null;
 
             $window_start = '09:00:00';
             $window_end   = '17:00:00';
 
+            $familyUsers = [];
+
             foreach ($patients as $patient) {
-                $call = $this->getScheduledCallForPatient($patient->user);
+                $familyUsers[$patient->user_id] = $patient->user;
+
+                $call = $this->getScheduledCallForPatient($familyUsers[$patient->user_id]);
 
                 if (is_object($call)) {
                     //If the patient has a call,
@@ -407,7 +419,10 @@ class SchedulerService
 
                     //ignore if past call
                     if (Carbon::now()->toDateTimeString() < $date->toDateTimeString()) {
-                        $scheduledDates[$patient->user_id] = $date->toDateTimeString();
+                        $scheduledCallsScheduler->push([
+                            'scheduler' => $call->scheduler,
+                            'date' => $date->toDateTimeString()
+                        ]);
                     }
                 } else {
                     //fill in some call info:
@@ -434,13 +449,23 @@ class SchedulerService
                 $scheduledCalls[$patient->user_id] = $call;
             }
 
-            if ( ! empty($scheduledDates)) {
-                //determine minimum date
-                $minDate = Carbon::parse(min($scheduledDates));
+            if ($scheduledCallsScheduler->isNotEmpty()) {
+                //determine minimum date, but also check if there are calls scheduled from nurses
+                $scheduledCallsCollect = $scheduledCallsScheduler
+                    ->whereIn('scheduler', $nurseIds);
+
+                if ($scheduledCallsCollect->count() > 0) {
+                    $candidateDates = $scheduledCallsCollect->pluck('date')->all();
+                    $minDate = Carbon::parse(min($candidateDates));
+                } else {
+                    $candidateDates = $scheduledCallsScheduler->pluck('date')->all();
+                    $minDate = Carbon::parse(min($candidateDates));
+                }
 
                 //patientId => patientScheduledCall
                 foreach ($scheduledCalls as $key => $value) {
-                    $callPatient = User::find($key);
+
+                    $callPatient = $familyUsers[$key];
 
                     $value->scheduled_date       = $minDate->toDateTimeString();
                     $value->inbound_phone_number = $callPatient->phone
