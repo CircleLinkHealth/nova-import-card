@@ -102,21 +102,27 @@
                 <template slot="Next Call" slot-scope="props">
                     <div>
                         <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"
-                                       :on-change="props.row.onNextCallUpdate.bind(props.row)"></date-editable>
+                                       :on-change="props.row.onNextCallUpdate.bind(props.row)"
+                                       :show-confirm="props.row['Manual']"
+                                       :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
                         <loader class="relative" v-if="props.row.loaders.nextCall"></loader>
                     </div>
                 </template>
                 <template slot="Call Time Start" slot-scope="props">
                     <div>
                         <time-editable :value="props.row['Call Time Start']" :format="'YYYY-mm-DD'" :class-name="'blue'"
-                                       :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"></time-editable>
+                                       :on-change="props.row.onCallTimeStartUpdate.bind(props.row)"
+                                       :show-confirm="props.row['Manual']"
+                                       :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
                         <loader class="relative" v-if="props.row.loaders.callTimeStart"></loader>
                     </div>
                 </template>
                 <template slot="Call Time End" slot-scope="props">
                     <div>
                         <time-editable :value="props.row['Call Time End']" :format="'YYYY-mm-DD'" :class-name="'blue'"
-                                       :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"></time-editable>
+                                       :on-change="props.row.onCallTimeEndUpdate.bind(props.row)"
+                                       :show-confirm="props.row['Manual']"
+                                       :confirm-message="getEditDateTimeConfirmMessage(props.row)"></time-editable>
                         <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
                     </div>
                 </template>
@@ -169,6 +175,9 @@
 
     library.add(faHandPointUp);
     library.add(faCalendarCheck);
+
+    const editCallDateTimeMessageForCall = "Warning: The selected call has been manually set by a Care Coach. Rescheduling may frustrate the patient expecting the call. Are you sure you want to reschedule this call?\nNote: Be sure to check with $CARE_COACH$ if you must reschedule this call.";
+    const editCallDateTimeMessageForCalls = "Warning: The selected calls have at least one of them manually set by a Care Coach. Rescheduling may frustrate the patients expecting the calls. Are you sure you want to reschedule these calls?\nNote: Be sure to check with the Care Coaches if you must reschedule these calls.";
 
     export default {
         name: 'CallMgmtApp',
@@ -372,7 +381,22 @@
                 Event.$emit('modal-select-nurse:show')
             },
             assignTimesForSelected() {
-                Event.$emit('modal-select-times:show')
+                const selectedCalls = this.tableData.filter(x => x.selected);
+                const manualCalls = selectedCalls.filter(x => x['Manual']);
+                let showModal = false;
+                if (manualCalls.length === 0) {
+                    showModal = true;
+                }
+                else if (selectedCalls.length === 1 && manualCalls.length === 1 && confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
+                    showModal = true;
+                }
+                else if (confirm(editCallDateTimeMessageForCalls)) {
+                    showModal = true;
+                }
+
+                if (showModal) {
+                    Event.$emit('modal-select-times:show');
+                }
             },
             addCall() {
                 Event.$emit("modal-add-call:show")
@@ -401,6 +425,15 @@
                     console.error('calls:nurses', err)
                     this.loaders.nurses = false
                 })
+            },
+
+            getEditDateTimeConfirmMessage(call) {
+                if (call['Manual']) {
+                    return editCallDateTimeMessageForCall.replace('$CARE_COACH$', call['Scheduler']);
+                }
+                else {
+                    return undefined;
+                }
             },
 
             setupCall(call) {

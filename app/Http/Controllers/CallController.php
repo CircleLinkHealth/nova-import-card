@@ -175,30 +175,32 @@ class CallController extends Controller
             return response("could not locate call " . $data['callId'], 401);
         }
 
+        $col   = $data['columnName'];
+        $value = $data['value'];
+
         // for null outbound_cpm_id
-        if ($data['columnName'] == 'outbound_cpm_id' && (empty($data['value']) || strtolower($data['value']) == 'unassigned')) {
+        if ($col == 'outbound_cpm_id' && (empty($value) || strtolower($value) == 'unassigned')) {
             $call->scheduler = Auth::user()->id;
-            $col             = $data['columnName'];
             $call->$col      = null;
-        } else {
-            if ($data['columnName'] == 'attempt_note' && (empty($data['value']) || strtolower($data['value']) == 'add text')) {
-                $call->attempt_note = '';
-            } else {
-                if ($data['columnName'] == 'general_comment') {
-                    $generalComment = $data['value'];
-                    if ((empty($generalComment) || strtolower($generalComment) == 'add text')) {
-                        $generalComment = '';
-                    }
-                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                        $call->inboundUser->patientInfo->general_comment = $generalComment;
-                        $call->inboundUser->patientInfo->save();
-                    }
-                } else {
-                    $call->scheduler = Auth::user()->id;
-                    $col             = $data['columnName'];
-                    $call->$col      = $data['value'];
-                }
+        } else if ($col == 'attempt_note' && (empty($value) || strtolower($value) == 'add text')) {
+            $call->attempt_note = '';
+        } else if ($col == 'general_comment') {
+            if ((empty($value) || strtolower($value) == 'add text')) {
+                $value = '';
             }
+            if ($call->inboundUser && $call->inboundUser->patientInfo) {
+                $call->inboundUser->patientInfo->general_comment = $value;
+                $call->inboundUser->patientInfo->save();
+            }
+        } else {
+            $call->$col = $value;
+
+            // CPM-149 - assigning a nurse to the call should not change scheduler,
+            // so we will know if it was a nurse that originally scheduled this call
+            if ($col != 'outbound_cpm_id') {
+                $call->scheduler = Auth::user()->id;
+            }
+
         }
 
         $call->save();
