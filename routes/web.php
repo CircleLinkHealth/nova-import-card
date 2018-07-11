@@ -534,10 +534,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
         ]);
+
         Route::get('careplan-print-list', [
             'uses' => 'Patient\PatientCareplanController@index',
             'as'   => 'patients.careplan.printlist',
-        ]);
+        ])->middleware('role:administrator');
+
         Route::post('select', [
             'uses' => 'Patient\PatientController@processPatientSelect',
             'as'   => 'patients.select.process',
