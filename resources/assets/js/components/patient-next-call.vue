@@ -9,20 +9,10 @@
             </span>
         </span>
 
-        <span v-if="!loaders.nextCall && isCareCenter && nextCall.id != null"
+        <span v-if="!loaders.nextCall && isCareCenter"
               @click="showEditCallModal"
               class="glyphicon glyphicon-pencil"
               style="cursor:pointer;">
-        </span>
-
-        <div v-if="!loaders.nextCall && isCareCenter && nextCall.id == null"
-             class="btn btn-primary"
-             @click="showEditCallModal">
-            Schedule
-        </div>
-
-        <span v-if="!loaders.nextCall && !isCareCenter && nextCall.id == null">
-            None
         </span>
 
         <edit-call-modal :patient-preferences="patientPreferences"></edit-call-modal>
@@ -62,7 +52,7 @@
             return {
                 nextCall: Object.assign({}, defaultNextCall),
                 isCallBeingAddedToNote: false,
-                displayDate: '',
+                displayDate: 'None',
                 loaders: {
                     nextCall: false
                 },
@@ -130,7 +120,7 @@
                 else if (this.nextCall.id === null) {
                     //a.Schedule button will appear in case of care center
                     //b.None will be shown if not care center
-                    this.displayDate = '';
+                    this.displayDate = 'None';
                 }
                 else {
                     this.displayDate = `${this.nextCall.scheduled_date} @ ${this.nextCall.window_start} - ${this.nextCall.window_end}`;
