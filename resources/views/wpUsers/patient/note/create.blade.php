@@ -305,9 +305,6 @@
                         if (window['App']) {
                             App.$emit('create-note:with-call', e.currentTarget.checked);
                         }
-                        //risky
-                        //what if app is not available?
-                        App.$emit('create-note:with-call', e.currentTarget.checked);
                     }
                     else {
                         $('#collapseOne').toggle();
