@@ -266,7 +266,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
     }
 
     .modal-edit-call .modal-container {
-        width: 600px;
+        width: 650px;
     }
 
     .preferences {
