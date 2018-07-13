@@ -5,6 +5,7 @@ use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
@@ -36,7 +37,8 @@ class Kernel extends ConsoleKernel
                  ->everyTenMinutes();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyMinute()->withoutOverlapping(15);
+                 ->everyMinute()
+                 ->withoutOverlapping(15);
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
                  ->monthlyOn(1);
@@ -94,7 +96,7 @@ class Kernel extends ConsoleKernel
                  ->dailyAt('23:55')
                  ->withoutOverlapping();
 
-        $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
+        $schedule->command(CareplanEnrollmentAdminNotification::class)
                  ->dailyAt('09:00')
                  ->withoutOverlapping();
 
