@@ -352,7 +352,7 @@ $user_info = array();
                                         <div class="form-group form-item form-item-spacing col-sm-12">
                                             <div class="row">
                                                 <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                <div class="col-lg-8">{!! Form::select('ccm_status', [ 'paused' => 'Paused', 'enrolled' => 'Enrolled', 'withdrawn' => 'Withdrawn' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                <div class="col-lg-8">{!! Form::select('ccm_status', [ App\Patient::PAUSED => 'Paused', App\Patient::ENROLLED => 'Enrolled', App\Patient::WITHDRAWN => 'Withdrawn', App\Patient::UNREACHABLE => 'Unreachable' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                             </div>
                                         </div>
                                     @else
