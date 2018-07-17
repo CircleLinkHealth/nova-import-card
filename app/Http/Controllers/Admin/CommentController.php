@@ -15,9 +15,7 @@ class CommentController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->hasPermission('observations-view')) {
-            abort(403);
-        }
+
         // display view
         $comments = Comment::OrderBy('id', 'desc')->limit('100')->paginate(10);
         return view('admin.comments.index', [ 'comments' => $comments ]);
@@ -30,9 +28,7 @@ class CommentController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('observations-add')) {
-            abort(403);
-        }
+
         // display view
         return view('admin.comments.create', []);
     }
@@ -44,9 +40,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('observations-add')) {
-            abort(403);
-        }
+
         $params = $request->input();
         $comment = new Comment;
         $comment->msg_id = $params['msg_id'];
@@ -69,9 +63,7 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('observations-view')) {
-            abort(403);
-        }
+
         // display view
         $comment = Comment::find($id);
         return view('admin.comments.show', [ 'comment' => $comment, 'errors' => [], 'messages' => [] ]);
@@ -85,9 +77,6 @@ class CommentController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('observations-edit')) {
-            abort(403);
-        }
         $comment = Comment::find($id);
         return view('admin.comments.edit', [ 'comment' => $comment, 'messages' => \Session::get('messages') ]);
     }
@@ -100,9 +89,6 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('observations-edit')) {
-            abort(403);
-        }
         $params = $request->input();
         $comment = Comment::find($id);
         $comment->msg_id = $params['msg_id'];
@@ -124,9 +110,6 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('observations-destroy')) {
-            abort(403);
-        }
         Comment::destroy($id);
 
         return redirect()->back()->with('messages', ['successfully removed comment']);

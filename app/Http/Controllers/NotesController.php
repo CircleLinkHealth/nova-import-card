@@ -233,6 +233,7 @@ class NotesController extends Controller
                 return response("User's Program not found", 401);
             }
 
+            //is there any check here? returns true or false
             Auth::user()->hasRole('care-center');
 
             //providers

@@ -387,6 +387,7 @@ class PatientController extends Controller
             }
         }
 
+        //route not found
         return redirect()->route('patient.dashboard', [$params['findUser']]);
     }
 
@@ -492,6 +493,7 @@ class PatientController extends Controller
             }
         }
 
+        //leave it here?
         // security
         if ( ! Auth::user()->hasPermissionForSite('observations-create', $patient->primary_practice_id)) {
             abort(403);
