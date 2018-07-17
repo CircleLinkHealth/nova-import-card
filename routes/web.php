@@ -534,10 +534,12 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
         ]);
+
         Route::get('careplan-print-list', [
             'uses' => 'Patient\PatientCareplanController@index',
             'as'   => 'patients.careplan.printlist',
-        ]);
+        ])->middleware('role:administrator');
+
         Route::post('select', [
             'uses' => 'Patient\PatientController@processPatientSelect',
             'as'   => 'patients.select.process',
@@ -708,7 +710,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
             ]);
-            Route::get('', [
+            Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
             ]);
@@ -774,6 +776,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('edit/{actId}', [
                 'uses' => 'CallController@edit',
                 'as'   => 'call.edit',
+            ]);
+            Route::get('next', [
+                'uses' => 'CallController@getPatientNextScheduledCallJson',
+                'as'   => 'call.next',
+            ]);
+            Route::post('reschedule', [
+                'uses' => 'CallController@reschedule',
+                'as'   => 'call.reschedule',
             ]);
         });
     });
@@ -1003,7 +1013,6 @@ Route::group(['middleware' => 'auth'], function () {
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
-
 
         Route::group([
             'prefix' => 'reports',

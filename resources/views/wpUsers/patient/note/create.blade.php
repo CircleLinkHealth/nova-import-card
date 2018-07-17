@@ -150,8 +150,7 @@
                                                     </div>
                                                 </label>
 
-                                                <div id="collapseOne" class="panel-collapse collapse in"
-                                                     style="display:none">
+                                                <div id="collapseOne" class="panel-collapse collapse in">
                                                     <div class="radio-inline"><input type="radio"
                                                                                      name="phone"
                                                                                      value="inbound"
@@ -289,19 +288,31 @@
         <script>
 
             $(document).ready(function () {
+
                 function phoneSessionChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
-                            $('#collapseOne').show()
+                            $('#collapseOne').show();
+                            $("#Inbound").prop("checked", false);
+                            $("#Outbound").prop("checked", true);
                         }
                         else {
-                            $('#collapseOne').hide()
+                            $('#collapseOne').hide();
+                            $("#Inbound").prop("checked", false);
+                            $("#Outbound").prop("checked", false);
+                        }
+
+                        if (window['App']) {
+                            App.$emit('create-note:with-call', e.currentTarget.checked);
                         }
                     }
                     else {
                         $('#collapseOne').toggle();
                     }
-                    $("#Outbound").prop("checked", true);
+                    //bug fix - this set value to phone="Outbound" in the form without
+                    //the user knowing
+                    //instead, set default only when visible
+                   // $("#Outbound").prop("checked", true);
                 }
 
                 $('#phone').change(phoneSessionChange);

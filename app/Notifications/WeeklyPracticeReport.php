@@ -55,9 +55,12 @@ class WeeklyPracticeReport extends Notification
      */
     public function toMail($notifiable)
     {
+        $saasAccountName = is_object($notifiable) && method_exists($notifiable, 'saasAccountName')
+            ? $notifiable->saasAccountName()
+            : 'CircleLink Health';
+
         return (new MailMessage)->view('sales.by-practice.report', ['data' => $this->data])
-                                ->from('notifications@careplanmanager.com',
-                                    optional($notifiable)->saasAccountName() ?? 'CircleLink Health')
+                                ->from('notifications@careplanmanager.com', $saasAccountName)
                                 ->subject($this->subject);
     }
 

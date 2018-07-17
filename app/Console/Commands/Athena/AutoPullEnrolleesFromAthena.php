@@ -57,7 +57,7 @@ class AutoPullEnrolleesFromAthena extends Command
     public function handle()
     {
         $to   = Carbon::now()->format('y-m-d');
-        $from = Carbon::now()->subWeek()->format('y-m-d');;
+        $from = Carbon::now()->subMonth()->format('y-m-d');;
         $offset = true;
 
         if ($this->argument('offset')) {

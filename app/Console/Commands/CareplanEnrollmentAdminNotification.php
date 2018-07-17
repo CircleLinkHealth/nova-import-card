@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\User;
 use App\CarePlan;
-use App\CareplanAssessment;
+use App\Notifications\SendAssessmentNotification;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -42,15 +42,16 @@ class CareplanEnrollmentAdminNotification extends Command
     public function handle()
     {
         $admins = User::ofType('administrator')->get();
+
         CarePlan::where('provider_date', '>=', Carbon::yesterday())
                 ->with('assessment')
                 ->get()
-                ->map(function ($c) {
-            if ($c->assessment) {
-                $admins->map(function ($user) use ($c) {
-                    $user->notify(new SendAssessmentNotification($c->assessment));
+                ->map(function ($c) use ($admins) {
+                    if ($c->assessment) {
+                        $admins->map(function ($user) use ($c) {
+                            $user->notify(new SendAssessmentNotification($c->assessment));
+                        });
+                    }
                 });
-            }
-        });
     }
 }
