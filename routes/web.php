@@ -798,6 +798,11 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+        Route::get('opcache-gui', [
+            'uses' => 'Admin\OPCacheGUIController@index',
+            'as'   => 'opcache.gui',
+        ]);
+
         Route::group(['prefix' => 'demo'], function () {
             Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
 
