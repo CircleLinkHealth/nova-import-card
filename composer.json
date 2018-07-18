@@ -26,6 +26,7 @@
     ],
     "require": {
         "php": ">=7.0.0",
+        "amnuts/opcache-gui": "^2.4",
         "appstract/laravel-opcache": "^2.0",
         "arcturial/clickatell": "*",
         "barryvdh/laravel-debugbar": "*",

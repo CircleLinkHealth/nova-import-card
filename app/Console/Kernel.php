@@ -16,7 +16,7 @@ use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
-use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
@@ -78,7 +78,7 @@ class Kernel extends ConsoleKernel
                  ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command(ResetCcmTime::class)
+        $schedule->command(ResetPatients::class)
                  ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month

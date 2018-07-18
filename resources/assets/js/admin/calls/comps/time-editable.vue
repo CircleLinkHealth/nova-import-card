@@ -23,9 +23,18 @@
      * on-change: To contain a reference to a function that the text value will be passed to when changed
      */
 
+    const defaultConfirmMessage = 'Are you sure?';
+
     export default {
         name: 'TimeEditable',
-        props: ['value', 'is-edit', 'class-name', 'on-change'],
+        props: [
+            'value',
+            'is-edit',
+            'class-name',
+            'on-change',
+            'show-confirm',
+            'confirm-message'
+        ],
         data(){
             return {
                 text: this.value,
@@ -35,6 +44,11 @@
         methods: {
             toggleEdit(e) {
                 e.preventDefault();
+
+                if (!this.isEditMode && this.showConfirm && !confirm(this.confirmMessage || defaultConfirmMessage)) {
+                    return;
+                }
+
                 this.isEditMode = !this.isEditMode;
                 if (!this.isEditMode && typeof(this.onChange) === 'function') {
                     this.onChange(this.text)

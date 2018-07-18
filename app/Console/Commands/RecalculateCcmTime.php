@@ -16,7 +16,7 @@ class RecalculateCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for in format YYYY-MM-DD}';
+    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for in format YYYY-MM-DD} {userIds? : comma separated. leave empty to recalculate for all}';
 
     /**
      * The console command description.
@@ -51,9 +51,15 @@ class RecalculateCcmTime extends Command
      */
     public function handle()
     {
-        $userIds = User::ofType('participant')
-            ->pluck('id')
-            ->all();
+        $userIds = $this->argument('userIds') ?? null;
+        if ($userIds != null) {
+            $userIds = explode(',', $userIds);
+        }
+        else {
+            $userIds = User::ofType('participant')
+                           ->pluck('id')
+                           ->all();
+        }
 
         $this->comment(count($userIds) . ' Users to recalculate time.');
 

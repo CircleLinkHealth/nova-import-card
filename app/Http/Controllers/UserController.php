@@ -217,7 +217,7 @@ class UserController extends Controller
 
         $wpUser = new User;
 
-        $roles = Role::pluck('name', 'id')->all();
+        $roles = Role::pluck('display_name', 'id')->all();
 
         // set role
         $wpRole = '';

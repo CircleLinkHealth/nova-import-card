@@ -14,7 +14,7 @@ class ResetCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:reset';
+    protected $signature = 'reset:ccm_time';
 
     /**
      * The console command description.

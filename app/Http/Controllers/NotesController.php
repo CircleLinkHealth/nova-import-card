@@ -33,24 +33,42 @@ class NotesController extends Controller
 
     public function index(
         Request $request,
-        $patientId
+        $patientId,
+        $showAll = false
     ) {
+        $date = Carbon::now()->subMonth(2);
+        if ($showAll == true) {
+            $date = 0;
+        }
 
         $patient = User::with([
-                           'activities' => function ($q) {
-                               return $q->where('logged_from', '=', 'manual_input')
-                                        ->with('meta')
-                                        ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                                        ->orderBy('performed_at', 'desc');
-                           },
-                           'appointments',
-                           'billingProvider',
-                           'notes.author',
-                           'notes.call',
-                           'notes.notifications',
-                           'patientInfo',
+            'activities'   => function ($q) use ($date) {
+                $q->where('logged_from', '=', 'manual_input')
+                  ->where('performed_at', '>=', $date)
+                  ->with('meta')
+                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+                  ->orderBy('performed_at', 'desc');
+            },
+            'appointments' => function ($q) use ($date) {
+                $q->where('date', '>=', $date);
+            },
+            'billingProvider',
+            'notes'        => function ($q) use ($date) {
+                $q->where('performed_at', '>=', $date)
+                  ->with(['author', 'call', 'notifications']);
+            },
+            'patientInfo',
         ])
                        ->findOrFail($patientId);
+
+        //if a patient has no notes for the past 2 months, we load all the results and DON'T display 'show all notes button'
+        if ($patient->notes->isEmpty() and $showAll == false){
+            $patient->load(['notes' => function($notes){
+                $notes->with(['author', 'call', 'notifications']);
+            }]);
+
+            $showAll = null;
+        }
 
         $messages = \Session::get('messages');
 
@@ -65,6 +83,7 @@ class NotesController extends Controller
                 'patient'       => $patient,
                 'messages'      => $messages,
                 'ccm_complex'   => $ccm_complex,
+                'showAll'       => $showAll
             ]
         );
     }
@@ -257,6 +276,24 @@ class NotesController extends Controller
         }
     }
 
+    /**
+     * Store a note.
+     * If note has call and user is care-center:
+     * Update TODAY's call based on the note.
+     * Set TODAY's call status to 'reached' or 'not reached'.
+     * If another call for the future is scheduled redirect to Notes page.
+     * If no other call is scheduled redirect to Schedule Next Call Attempt page
+     * with a next call prediction.
+     *
+     * Also: in some conditions call will be stored for other roles as well.
+     * They are never redirected to Schedule Next Calll page.
+     *
+     * @param Request $input
+     * @param SchedulerService $schedulerService
+     * @param $patientId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(
         Request $input,
         SchedulerService $schedulerService,
@@ -304,12 +341,14 @@ class NotesController extends Controller
         }
 
         /**
-         * If the note wasn't a phone call, redirect to Notes/Offline Activities page
-         * If the note was a successful or unsuccessful call, take to prediction
-         * engine, then to call create
+         * If phone call AND:
+         *   - if a nurse (care-center): update today's call and check if should redirect to schedule next call page
+         *   - if any other role: store a call
          */
 
         if (Auth::user()->hasRole('care-center')) {
+
+            //todo: even if just withdrawn, shouldn't we update today's call and patient's info?
             //If the patient was just withdrawn, let's redirect them back to notes.index
             if ($info->ccm_status == 'withdrawn') {
                 return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
@@ -319,22 +358,32 @@ class NotesController extends Controller
             }
 
             if (isset($input['phone'])) {
+
+                $prediction = null;
+
                 if (isset($input['call_status']) && $input['call_status'] == 'reached') {
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
 
                     if (auth()->user()->isNotSaas()) {
-                        $prediction = $schedulerService->getNextCall($patient, $note->id, true);
+                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, true);
                     }
                 } else {
                     if (auth()->user()->isNotSaas()) {
-                        $prediction = $schedulerService->getNextCall($patient, $note->id, false);
+                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, false);
                     }
                 }
 
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
+
+                if ($prediction == null || auth()->user()->isSaas()) {
+                    return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                        'messages',
+                        ['Successfully Created Note']
+                    );
+                }
 
                 $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
 
@@ -347,22 +396,16 @@ class NotesController extends Controller
                     $ccm_above = true;
                 }
 
-                if (auth()->user()->isSaas()) {
-                    return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
-                        'messages',
-                        ['Successfully Created Note']
-                    );
-                }
                 $prediction['ccm_above']   = $ccm_above;
                 $prediction['ccm_complex'] = $ccm_complex;
 
                 return view('wpUsers.patient.calls.create', $prediction);
-
             }
         }
 
         //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
         if (isset($input['phone'])) {
+
             if (isset($input['call_status']) && $input['call_status'] == 'reached') {
                 if (auth()->user()->hasRole('provider')) {
                     $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
@@ -410,7 +453,6 @@ class NotesController extends Controller
                 }
             }
         }
-
 
         return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
             'messages',
