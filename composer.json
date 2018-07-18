@@ -120,13 +120,13 @@
             "php artisan ide-helper:meta"
         ],
         "test": [
-            "paratest ./tests/Unit --stop-on-failure --colors"
+          "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
         ],
         "integration": [
-            "paratest ./tests/integration --stop-on-failure --colors"
+          "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"
         ],
         "feature": [
-            "paratest ./tests/feature --stop-on-failure --colors"
+          "./vendor/bin/paratest ./tests/feature --stop-on-failure --colors --runner SqliteRunner"
         ],
         "clear": [
             "php artisan clear-compiled",

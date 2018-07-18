@@ -56,6 +56,6 @@
 
         <!--We can use sqlite in memory if we don't want to use the actual db-->
         <!--<server name="DB_CONNECTION" value="sqlite"/>-->
-        <!--<server name="DB_DATABASE" value=":memory:"/>-->
+        <server name="DB_DATABASE" value=":memory:"/>
     </php>
 </phpunit>

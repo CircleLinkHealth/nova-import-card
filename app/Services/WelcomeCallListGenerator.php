@@ -624,13 +624,27 @@ class WelcomeCallListGenerator
                     });
                 })->first();
 
+            $duplicateMySqlError = false;
+            $errorMsg            = null;
 
             if ( ! $enrolleeExists && ! $enrolledPatientExists) {
-                $this->enrollees = Enrollee::create($args);
+                try {
+                    $this->enrollees = Enrollee::create($args);
+                } catch (\Exception $e) {
+                    if ($e instanceof \Illuminate\Database\QueryException) {
+                        $errorCode = $e->errorInfo[1];
+                        if ($errorCode == 1062) {
+                            $duplicateMySqlError = true;
+                            $errorMsg            = $e->getMessage();
+                        }
+                    }
+                }
 
-                $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
+                if ( ! $duplicateMySqlError) {
+                    $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
 
-                return false;
+                    return false;
+                }
             }
 
             if ($enrolledPatientExists) {
@@ -638,9 +652,13 @@ class WelcomeCallListGenerator
                     'duplicate' => 'This patient already has a careplan. ' . route('patient.careplan.print',
                             [$enrolledPatientExists->id]),
                 ], EligibilityJob::DUPLICATE);
-            } else {
+            } elseif ($enrolleeExists) {
                 $this->setEligibilityJobStatus(3,
                     ['duplicate' => 'This patient was already processed and was found to be eligible. Eligible Patient Id: ' . $enrolleeExists->id],
+                    EligibilityJob::DUPLICATE);
+            } elseif ($duplicateMySqlError) {
+                $this->setEligibilityJobStatus(3,
+                    ['duplicate' => "Seems like the Enrollee already exists. Error caused: $errorMsg."],
                     EligibilityJob::DUPLICATE);
             }
 

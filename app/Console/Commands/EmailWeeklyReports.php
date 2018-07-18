@@ -25,8 +25,6 @@ class EmailWeeklyReports extends Command
      */
     protected $description = 'Emails weekly practice reports to distributors and providers. If a tester user id is passed to the command, all emails will be sent to that user (ie. useful for testing)';
 
-    protected $activePractices;
-
     /**
      * Create a new command instance.
      *
@@ -35,8 +33,6 @@ class EmailWeeklyReports extends Command
     public function __construct()
     {
         parent::__construct();
-
-        $this->activePractices = Practice::active()->get();
     }
 
     /**
@@ -75,7 +71,7 @@ class EmailWeeklyReports extends Command
             return;
         }
 
-        foreach ($this->activePractices as $practice) {
+        foreach (Practice::active()->get() as $practice) {
             if ($practice->settings->first() && $practice->settings->first()->email_weekly_report && $this->option('provider')) {
                 dispatch(new EmailWeeklyProviderReport($practice, $startRange, $endRange, $tester));
             }

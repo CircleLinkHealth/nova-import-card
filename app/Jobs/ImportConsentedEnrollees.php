@@ -86,7 +86,9 @@ class ImportConsentedEnrollees implements ShouldQueue
 
                                 //import PHX
                                 if ($enrollee->practice_id == 139) {
-                                    return $importService->importPHXEnrollee($enrollee);
+                                    ImportPHXEnrollee::dispatch($enrollee);
+
+                                    return $enrollee;
                                 }
 
                                 //import from AthenaAPI
