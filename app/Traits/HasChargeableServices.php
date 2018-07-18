@@ -32,4 +32,11 @@ trait HasChargeableServices
 
         return $chargeableServices->has($code);
     }
+
+    public function scopeHasServiceCode($builder, $code)
+    {
+        return $builder->whereHas('chargeableServices', function ($q) use ($code) {
+            $q->whereCode($code);
+        });
+    }
 }
