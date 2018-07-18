@@ -161,7 +161,7 @@ class ImportService
         }
 
         if ($practice->id == 139) {
-            $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob']);
+            $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob'], $row['mrn']);
 
             if ( ! $mrn) {
                 throw new \Exception("Phoenix Heart Patient not found");
@@ -175,13 +175,20 @@ class ImportService
         return $mr->import();
     }
 
-    private function lookupPHXmrn($firstName, $lastName, $dob)
+    private function lookupPHXmrn($firstName, $lastName, $dob, $mrn)
     {
         $dob = Carbon::parse($dob)->format('n/j/Y');
 
         $row = PhoenixHeartName::where('patient_first_name', $firstName)
                                ->where('patient_last_name', $lastName)
                                ->where('dob', $dob)
+                               ->first();
+
+        if ($row && $row->patient_id && empty($mrn)) {
+            return $row->patient_id;
+        }
+
+        $row = PhoenixHeartName::where('patient_id', $mrn)
                                ->first();
 
         if ($row && $row->patient_id) {

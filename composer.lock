@@ -1,11 +1,61 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3be40ae3b9d328d4d0fbccb0c9c41077",
+    "content-hash": "0db680047b5e2d39b09c342ff28c6a18",
     "packages": [
+        {
+            "name": "amnuts/opcache-gui",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amnuts/opcache-gui.git",
+                "reference": "64247d6ffc02cf6588672a65eeb64a654ead0a74"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/64247d6ffc02cf6588672a65eeb64a654ead0a74",
+                "reference": "64247d6ffc02cf6588672a65eeb64a654ead0a74",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zend-opcache": "*",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpcacheGui\\": "/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andrew Collington",
+                    "email": "andy@amnuts.com",
+                    "homepage": "http://www.amnuts.com/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/amnuts/opcache-gui/graphs/contributors"
+                }
+            ],
+            "description": "A clean, effective and responsive interface for Zend OPcache, with real(ish)-time monitoring, filtering and the ability to invalidate files",
+            "keywords": [
+                "Opcache",
+                "cache",
+                "gui",
+                "interface",
+                "opcodes"
+            ],
+            "time": "2017-12-28T19:37:52+00:00"
+        },
         {
             "name": "appstract/laravel-opcache",
             "version": "2.0.1",
@@ -9046,8 +9096,7 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
+                    "homepage": "http://github.com/chrisboulton"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",

@@ -11,6 +11,18 @@ use App\View\Composers\SAAS\Admin\ManageInternalUser;
 
 return [
 
+    /**
+     * Configure the editor you want to use:
+     * sublime
+     * idea
+     * phpstorm
+     * emacs
+     * macvim
+     * vscode
+     * atom
+     */
+    'editor' => env('IDE', 'phpstorm'),
+
     /*
    |--------------------------------------------------------------------------
    | Application Name

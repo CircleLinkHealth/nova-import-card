@@ -26,6 +26,8 @@ use Carbon\Carbon;
  * @property string|null $called_date
  * @property string $attempt_note
  * @property string|null $scheduler
+ * @property bool $is_from_care_center
+ * @property-read \App\User|null $schedulerUser
  * @property-read \App\User $inboundUser
  * @property-read \App\Note|null $note
  * @property-read \App\User|null $outboundUser
@@ -57,6 +59,8 @@ class Call extends \App\BaseModel
         \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'calls';
+
+    protected $appends = ['is_from_care_center'];
 
     protected $fillable = [
         'note_id',
@@ -92,6 +96,16 @@ class Call extends \App\BaseModel
 
         'is_cpm_outbound',
     ];
+
+    public function getIsFromCareCenterAttribute() {
+
+        if (!is_a($this->schedulerUser, User::class)) {
+            //null in cases of scheduler = 'algorithm'
+            return false;
+        }
+
+        return $this->schedulerUser->hasRole('care-center');
+    }
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
@@ -130,6 +144,10 @@ class Call extends \App\BaseModel
         return $calls->count();
     }
 
+    public function schedulerUser() {
+        return $this->belongsTo(User::class, 'scheduler', 'id');
+    }
+
     public function note()
     {
         return $this->belongsTo(Note::class, 'note_id', 'id');
@@ -144,6 +162,8 @@ class Call extends \App\BaseModel
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
+
+
 
     public function patientId()
     {
