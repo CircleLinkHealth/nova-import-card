@@ -135,7 +135,7 @@
                         </div>
 
                         <!-- Phone Sessions -->
-                        <div class="form-block col-md-6">
+                        <div class="form-block col-md-12">
                             <div class="row">
                                 <div class="new-note-item">
                                     <div class="form-group">
@@ -150,7 +150,7 @@
                                                     </div>
                                                 </label>
 
-                                                <div id="collapseOne" class="panel-collapse collapse in">
+                                                <div id="collapseOne" class="panel-collapse collapse in" style="display: none;">
                                                     <div class="radio-inline"><input type="radio"
                                                                                      name="phone"
                                                                                      value="inbound"
@@ -165,15 +165,36 @@
 
                                                     @if(auth()->user()->isCCMCountable())
                                                         <div>
-                                                            <div class="radio-inline"><input type="checkbox"
-                                                                                             name="call_status"
-                                                                                             value="reached"
-                                                                                             id="reached"/><label
-                                                                        for="reached"><span> </span>Successful Clinical
-                                                                    Call</label>
+                                                            <div class="radio-inline">
+                                                                <input checked="checked"
+                                                                       type="radio"
+                                                                       name="call_status"
+                                                                       value="not reached"
+                                                                       id="not-reached"/>
+                                                                <label for="not-reached">
+                                                                    <span> </span>Patient Not Reached
+                                                                </label>
+                                                            </div>
+                                                            <div class="radio-inline">
+                                                                <input type="radio"
+                                                                       name="call_status"
+                                                                       value="reached"
+                                                                       id="reached"/>
+                                                                <label for="reached">
+                                                                    <span> </span>Successful Clinical Call
+                                                                </label>
+                                                            </div>
+                                                            <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
+                                                            <div class="radio-inline">
+                                                                <input type="radio"
+                                                                       name="call_status"
+                                                                       value="ignored"
+                                                                       id="ignored"/>
+                                                                <label for="ignored">
+                                                                    <span> </span>Patient Busy - Rescheduled Call
+                                                                </label>
                                                             </div>
                                                         </div>
-
                                                     @else
 
                                                         <div>
@@ -312,7 +333,7 @@
                     //bug fix - this set value to phone="Outbound" in the form without
                     //the user knowing
                     //instead, set default only when visible
-                   // $("#Outbound").prop("checked", true);
+                    // $("#Outbound").prop("checked", true);
                 }
 
                 $('#phone').change(phoneSessionChange);
@@ -321,7 +342,7 @@
                     currentTarget: {
                         checked: $('#phone').is(':checked')
                     }
-                })
+                });
 
                 function tcmChange(e) {
                     if (e) {

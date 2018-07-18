@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
@@ -345,40 +346,47 @@ class NotesController extends Controller
          *   - if a nurse (care-center): update today's call and check if should redirect to schedule next call page
          *   - if any other role: store a call
          */
+        $is_phone_session = isset($input['phone']);
 
         if (Auth::user()->hasRole('care-center')) {
 
-            //todo: even if just withdrawn, shouldn't we update today's call and patient's info?
-            //If the patient was just withdrawn, let's redirect them back to notes.index
-            if ($info->ccm_status == 'withdrawn') {
+            $is_withdrawn = $info->ccm_status == 'withdrawn';
+
+            if (!$is_phone_session && $is_withdrawn) {
                 return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                     'messages',
                     ['Successfully Created Note']
                 );
             }
 
-            if (isset($input['phone'])) {
+            if ($is_phone_session) {
 
+                if (!isset($input['call_status'])) {
+                    //exit with error
+                    return redirect()
+                        ->back()
+                        ->withErrors(["Invalid form input. Missing ['call_status']"])
+                        ->withInput();
+                }
+
+                $call_status = $input['call_status'];
+                $is_saas = auth()->user()->isSaas();
                 $prediction = null;
 
-                if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+                if ($call_status == Call::REACHED) {
                     //Updates when the patient was successfully contacted last
                     $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
+                }
 
-                    if (auth()->user()->isNotSaas()) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, true);
-                    }
-                } else {
-                    if (auth()->user()->isNotSaas()) {
-                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, false);
-                    }
+                if (!$is_saas && !$is_withdrawn) {
+                    $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, $call_status);
                 }
 
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
 
-                if ($prediction == null || auth()->user()->isSaas()) {
+                if ($is_withdrawn || $prediction == null || $is_saas) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         ['Successfully Created Note']
@@ -404,7 +412,7 @@ class NotesController extends Controller
         }
 
         //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
-        if (isset($input['phone'])) {
+        if ($is_phone_session) {
 
             if (isset($input['call_status']) && $input['call_status'] == 'reached') {
                 if (auth()->user()->hasRole('provider')) {
