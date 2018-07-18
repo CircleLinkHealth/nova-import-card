@@ -2,19 +2,15 @@
 
 namespace Tests\Unit\CallsAlgo;
 
-use App\Practice;
 use App\Algorithms\Calls\SuccessfulHandler;
+use App\Practice;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers;
+    use UserHelpers;
 
     private $nurse;
     private $practice;
