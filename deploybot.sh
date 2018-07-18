@@ -31,9 +31,10 @@ php artisan lada-cache:disable
 # Run migrations
 php artisan migrate --force
 
-# Force exit if the migrations fail.
-if [ $? = 1 ]; then
-    exit
+# Exit if the migrations fail.
+if [ $? -ne 0 ]; then
+  echo "Migrations failed.";
+  exit 1;
 fi
 
 # Enable lada-cache after migrations

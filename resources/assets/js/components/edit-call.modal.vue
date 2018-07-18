@@ -216,6 +216,11 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                             this.loaders.submit = false;
                             const call = response.data;
 
+                            if (!call || !call.id) {
+                                console.error('add-call', response);
+                                throw new Error('Could not create call. No call found in response.');
+                            }
+
                             //tricky part here
                             //make sure we update our data in this component
                             //cz if one edits again without closing and opening the modal
@@ -266,7 +271,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
     }
 
     .modal-edit-call .modal-container {
-        width: 600px;
+        width: 700px;
     }
 
     .preferences {
