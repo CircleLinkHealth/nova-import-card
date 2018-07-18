@@ -245,7 +245,7 @@ class RolesPermissionsSeeder extends Seeder
             ],
             [
                 'name'         => 'care-center',
-                'display_name' => 'Care Center',
+                'display_name' => 'Care Coach',
                 'description'  => 'CLH Nurses, the ones who make calls to patients. CCM countable.',
                 'permissions'  => [
                     'care-plan-qa-approve',

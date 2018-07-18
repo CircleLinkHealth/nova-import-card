@@ -46,11 +46,11 @@ class CarePlanApprovalReminderTest extends TestCase
         Notification::fake();
 
         $this->patient->care_plan_status = CarePlan::QA_APPROVED;
-        
-        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this->provider);
+
+        $numberOfCareplans = 10;
 
         //send notification
-        $this->provider->sendCarePlanApprovalReminderEmail(10);
+        $this->provider->sendCarePlanApprovalReminderEmail($numberOfCareplans);
 
         //assert set
         Notification::assertSentTo(

@@ -5,6 +5,7 @@ use App\Console\Commands\Athena\DetermineTargetPatientEligibility;
 use App\Console\Commands\Athena\GetAppointments;
 use App\Console\Commands\Athena\GetCcds;
 use App\Console\Commands\AttachBillableProblemsToLastMonthSummary;
+use App\Console\Commands\CareplanEnrollmentAdminNotification;
 use App\Console\Commands\CheckEmrDirectInbox;
 use App\Console\Commands\DeleteProcessedFiles;
 use App\Console\Commands\EmailRNDailyReport;
@@ -15,7 +16,7 @@ use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
-use App\Console\Commands\ResetCcmTime;
+use App\Console\Commands\ResetPatients;
 use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
@@ -36,7 +37,8 @@ class Kernel extends ConsoleKernel
                  ->everyTenMinutes();
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
-                 ->everyMinute()->withoutOverlapping(15);
+                 ->everyMinute()
+                 ->withoutOverlapping(15);
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
                  ->monthlyOn(1);
@@ -76,7 +78,7 @@ class Kernel extends ConsoleKernel
                  ->at('21:00');
 
         //Run at 12:01am every 1st of month
-        $schedule->command(ResetCcmTime::class)
+        $schedule->command(ResetPatients::class)
                  ->cron('1 0 1 * *');
 
         //Run at 12:30am every 1st of month
@@ -94,7 +96,7 @@ class Kernel extends ConsoleKernel
                  ->dailyAt('23:55')
                  ->withoutOverlapping();
 
-        $schedule->command(\App\Console\Commands\CareplanEnrollmentAdminNotification::class)
+        $schedule->command(CareplanEnrollmentAdminNotification::class)
                  ->dailyAt('09:00')
                  ->withoutOverlapping();
 

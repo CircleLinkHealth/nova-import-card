@@ -142,9 +142,17 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
+                                       ->orderBy('created_at', 'desc')
                                        ->get();
 
+        $latestDate = optional($problems->first())
+            ->created_at;
+
         foreach ($problems as $problem) {
+            if ($latestDate->toDateString() != $problem->created_at->toDateString()) {
+                continue;
+            }
+
             if (str_contains($problem->code, ['-'])) {
                 $pos         = strpos($problem->code, '-') + 1;
                 $problemCode = mb_substr($problem->code, $pos);

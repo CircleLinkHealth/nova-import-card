@@ -2,8 +2,6 @@
 
 namespace App\Models\PatientData\PhoenixHeart;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem
  *
@@ -27,5 +25,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PhoenixHeartProblem extends \App\BaseModel
 {
-    //
+    protected $dates = ['created_at'];
 }
