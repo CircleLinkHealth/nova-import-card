@@ -273,7 +273,18 @@ class NotesController extends Controller
                 'note_channels_text' => $patient->note_channels_text,
             ];
 
-            return view('wpUsers.patient.note.create', $view_data);
+            $isV2 = strpos($request->path(), 'v2') !== false;
+            $isV3 = strpos($request->path(), 'v3') !== false;
+
+            if ($isV2) {
+                return view('wpUsers.patient.note.create-v2', $view_data);
+            }
+            else if ($isV3) {
+                return view('wpUsers.patient.note.create-v3', $view_data);
+            }
+            else {
+                return view('wpUsers.patient.note.create', $view_data);
+            }
         }
     }
 
@@ -303,6 +314,10 @@ class NotesController extends Controller
 
         $input = $input->all();
 
+        //in case Performed By field is removed from the form (per CPM-165)
+        if (!isset($input['author_id'])) {
+            $input['author_id'] = auth()->id();
+        }
         $input['performed_at'] = Carbon::parse($input['performed_at'])->toDateTimeString();
 
         $note = $this->service->storeNote($input);

@@ -706,6 +706,14 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
             ]);
+            Route::get('create-v2', [
+                'uses' => 'NotesController@create',
+                'as'   => 'patient.note.create-v2',
+            ]);
+            Route::get('create-v3', [
+                'uses' => 'NotesController@create',
+                'as'   => 'patient.note.create-v3',
+            ]);
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
