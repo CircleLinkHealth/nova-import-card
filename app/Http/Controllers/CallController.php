@@ -38,6 +38,7 @@ class CallController extends Controller
             'window_start'    => 'required|date_format:H:i',
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
+            'is_manual'       => 'required|boolean',
         ]);
 
         if ($validation->fails()) {
@@ -53,7 +54,8 @@ class CallController extends Controller
             'scheduled_date',
             'window_start',
             'window_end',
-            'attempt_note'
+            'attempt_note',
+            'is_manual'
         );
 
         // validate patient doesnt already have a scheduled call
@@ -94,12 +96,22 @@ class CallController extends Controller
         $call->service         = 'phone';
         $call->status          = 'scheduled';
         $call->scheduler       = auth()->user()->id;
+        $call->is_manual       = boolval($input['is_manual']);
         $call->save();
 
         return response()->json(CallResource::make($call), 201);
         //return view('wpUsers.patient.calls.create');
     }
 
+    /**
+     * This handler is only used by nurses, so calls scheduled from here
+     * have is_manual = true
+     *
+     * @param Request $request
+     * @param $patientId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function schedule(Request $request, $patientId)
     {
         $input = $request->all();
@@ -113,6 +125,10 @@ class CallController extends Controller
             ? 'core algorithm'
             : Auth::user()->id;
 
+        //should is_manual be based on scheduler?
+        //$is_manual = $scheduler !== 'core algorithm';
+        $is_manual = true;
+
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
             $patientId,
@@ -123,11 +139,12 @@ class CallController extends Controller
             $input['nurse'],
             isset($input['attempt_note'])
                 ? $input['attempt_note']
-                : ''
+                : '',
+            $is_manual
         );
 
-
-        $patient = Patient::where('user_id', intval($patientId))->first();
+        //not used ??
+        //$patient = Patient::where('user_id', intval($patientId))->first();
 
         return redirect()->route('patient.note.index', [
             'patientId' => $patientId,
