@@ -125,9 +125,7 @@ class CallController extends Controller
             ? 'core algorithm'
             : Auth::user()->id;
 
-        //should is_manual be based on scheduler?
-        //$is_manual = $scheduler !== 'core algorithm';
-        $is_manual = true;
+        $is_manual = $scheduler !== 'core algorithm';
 
         //We are storing the current caller as the next scheduled call's outbound cpm_id
         $this->scheduler->storeScheduledCall(
