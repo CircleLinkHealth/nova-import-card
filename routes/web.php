@@ -235,7 +235,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group([
                 'prefix' => '{userId}',
             ], function () {
-                Route::get('', 'PatientController@getPatient')->middleware('permissions:patient.read');
+                Route::get('', 'PatientController@getPatient')->middleware('permission:patient.read');
 
                 Route::group([
                     'prefix' => 'biometrics',
@@ -1502,7 +1502,10 @@ Route::group(['middleware' => 'auth'], function () {
         ], function () {
             Route::resource('permissions', 'Admin\PermissionController')->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
         });
-
+        Route::get('roles-permissions', [
+            'uses' => 'Admin\PermissionController@makeExcel',
+            'as'   => 'admin.permissions.makeExcel',
+        ]);
         Route::group([
             'middleware' => [
                 'permission:permission.update',
@@ -1512,6 +1515,9 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Admin\PermissionController@update',
                 'as'   => 'admin.permissions.update',
             ]);
+
+
+
         });
 
         // report - nurse time report

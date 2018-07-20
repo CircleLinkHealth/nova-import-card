@@ -4,7 +4,9 @@ use App\Http\Controllers\Controller;
 use App\Permission;
 use App\Role;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermissionController extends Controller
 {
@@ -132,5 +134,44 @@ class PermissionController extends Controller
             abort(403);
         }
         //
+    }
+
+    public function makeExcel(){
+        $perms = Permission::with('roles')->get();
+        $roles = Role::get();
+        $rolesRow = [];
+        foreach ($roles as $role){
+            $rolesRow[] = $role->display_name;
+        }
+        $roles = collect($rolesRow);
+        $rows = [];
+        $today = Carbon::now();
+
+        foreach ($perms as $perm) {
+            $row = [];
+            $row['Permission'] = $perm->display_name;
+            foreach ($roles as $role){
+                $input = ' ';
+                if ($perm->roles->where('display_name', $role)->count() > 0){
+                    $input = 'X';
+                }
+                $row[$role] = $input;
+            }
+            $rows[] = $row;
+        }
+
+        $report = Excel::create("Roles-Permissions Chart for {$today->toDateString()}", function ($excel) use ($rows) {
+            $excel->sheet('Rules-Permissions', function ($sheet) use ($rows) {
+                $sheet->fromArray($rows);
+            });
+        })
+                       ->store('xls', false, true);
+
+        $excel = auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("excel_report_for_roles_permissions{$today->toDateString()}");
+
+        return $this->downloadMedia($excel);
     }
 }

@@ -13,6 +13,8 @@ class LvPermissionsTableSeeder extends Seeder
      */
     public function run()
     {
+        Permission::truncate();
+
         foreach ($this->perms() as $perm) {
             Permission::updateOrCreate([
                 'name' => $perm['name'],
@@ -68,6 +70,11 @@ class LvPermissionsTableSeeder extends Seeder
                 'display_name' => 'CLH Approve Careplan',
                 'description'  => 'Can approve CarePlans with status draft. Changes the CarePlan status to qa_approved.',
             ],
+            [
+                'name'         => 'users-edit-self',
+                'display_name' => 'Users - edit self',
+            ],
+
         ];
 
         return array_merge($perms, $old);
