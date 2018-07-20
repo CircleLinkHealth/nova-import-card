@@ -37,13 +37,13 @@ use App\Patient;
                 $patientId = $user->id;
                 $patientFamilyId = $patient->family_id;
 
-                $patientIsCcm = $user->isCcm();
-                $patientIsBehavioral = $user->isBehavioral();
+                $patientIsCcm        = $user->isCcm();
+                $patientIsBehavioral = $user->isBhi();
             }
             else {
-                $patientFamilyId = optional($patient->patientInfo()->first())->family_id;
-                $patientIsCcm = $patient->isCcm();
-                $patientIsBehavioral = $patient->isBehavioral();
+                $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
+                $patientIsCcm        = $patient->isCcm();
+                $patientIsBehavioral = $patient->isBhi();
             }
         }
         else {

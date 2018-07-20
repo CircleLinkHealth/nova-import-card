@@ -111,7 +111,7 @@
                         </div>
                     </div>
 
-                    @if ($patient->isCcm() && $patient->isBehavioral()) 
+                    @if ($patient->isCcm() && $patient->isBhi())
                         <div class="form-block col-md-6">
                             <div class="row">
                                 <div class="col-sm-6">

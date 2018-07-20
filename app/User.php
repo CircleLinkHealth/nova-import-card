@@ -606,8 +606,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function viewableProgramIds(): array
     {
         return $this->practices
-                ->pluck('id')
-                ->all();
+            ->pluck('id')
+            ->all();
     }
 
     public function viewableProviderIds()
@@ -2692,15 +2692,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     ->exists();
     }
 
-    public function isBehavioral()
-    {
-        return $this->ccdProblems()
-                    ->whereHas('cpmProblem', function ($cpm) {
-                        return $cpm->where('is_behavioral', 1);
-                    })
-                    ->exists();
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -2984,5 +2975,45 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function calls()
     {
         return $this->outboundCalls();
+    }
+
+    /**
+     * Scope for patients who can be charged for a BHI.
+     *
+     * Conditions are:
+     *      1. Patient is Enrolled
+     *      2. Patient's Primary Practice is chargeable for BHI
+     *      3. Patient has at least one BHI problem
+     *      4. Patient has consented for BHI
+     *
+     * @param $builder
+     *
+     * @return mixed
+     */
+    public function scopeIsBhi($builder)
+    {
+        return $builder
+            ->whereHas('primaryPractice', function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            })->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas('ccdProblems.cpmProblem', function ($q) {
+                $q->where('is_behavioral', true);
+            });
+
+        //@todo: Add consent for BHI check
+    }
+
+    /**
+     * Determine whether the User is BHI chargeable (ie. eligible and enrolled)
+     *
+     * @return bool
+     */
+    public function isBhi()
+    {
+        return User::isBhi()
+                   ->where('id', $this->id)
+                   ->exists();
     }
 }
