@@ -225,7 +225,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
-            ])->middleware(['permission'=> ['patient.read', 'carePlan.read', 'call.read']]);
+            ])->middleware(['permission'=> ['patient.read', 'careplan.read', 'call.read']]);
 
             Route::get('without-inbound-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
@@ -338,7 +338,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
-            ])->middleware(['permission' => ['patient.read', 'carePlan.read']]);
+            ])->middleware(['permission' => ['patient.read', 'careplan.read']]);
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
@@ -1388,9 +1388,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         // users
         Route::group([
-            'middleware' => [
-                'permission:users-view-all',
-            ],
         ], function () {
             Route::get('users', [
                 'uses' => 'UserController@index',
@@ -1456,9 +1453,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         // families
         Route::group([
-            'middleware' => [
-                'permission:users-view-all',
-            ],
         ], function () {
             Route::get('families', [
                 'uses' => 'FamilyController@index',
@@ -1576,10 +1570,10 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'stats.nurse.info',
         ]);
 
-        // questions
+        // questions TODO: review permissions for this group
         Route::group([
             'middleware' => [
-                'permission:programs-manage',
+                'permission:practice.read',
             ],
         ], function () {
             Route::resource('questions', 'Admin\CPRQuestionController');
