@@ -538,7 +538,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',
-        ])->middleware(['permission' => ['patient.read', 'careplan.read']]);
+        ])->middleware(['permission' => ['patient.read']]);
 
         Route::get('listing/old', [
             'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',

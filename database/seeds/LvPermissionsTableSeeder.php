@@ -13,9 +13,6 @@ class LvPermissionsTableSeeder extends Seeder
      */
     public function run()
     {
-        $x = $this->perms();
-
-        $x = 1;
         foreach ($this->perms() as $perm) {
             Permission::updateOrCreate([
                 'name' => $perm['name'],
