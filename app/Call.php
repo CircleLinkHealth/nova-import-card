@@ -27,6 +27,7 @@ use Carbon\Carbon;
  * @property string $attempt_note
  * @property string|null $scheduler
  * @property bool $is_from_care_center
+ * @property bool is_manual
  * @property-read \App\User|null $schedulerUser
  * @property-read \App\User $inboundUser
  * @property-read \App\Note|null $note
@@ -68,6 +69,7 @@ class Call extends \App\BaseModel
         'status',
 
         'scheduler',
+        'is_manual',
 
         /*
         Mini-documentation for call statuses:

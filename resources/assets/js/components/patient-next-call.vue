@@ -35,6 +35,7 @@
         scheduled_date: today(),
         inbound_cpm_id: null,
         outbound_cpm_id: null,
+        is_manual: 1
     };
 
     export default {
@@ -93,6 +94,7 @@
                 this.nextCall.window_start = call.window_start;
                 this.nextCall.window_end = call.window_end;
                 this.nextCall.attempt_note = call.attempt_note;
+                this.nextCall.is_manual = call.is_manual;
                 this.setDisplayDate();
             },
             isNextCallToday() {

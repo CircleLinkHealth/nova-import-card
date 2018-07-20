@@ -113,7 +113,8 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
         window_end: '17:00',
         scheduled_date: today(),
         inbound_cpm_id: null, //the patient id
-        outbound_cpm_id: null
+        outbound_cpm_id: null,
+        is_manual: 1
     };
 
     const weekDays = {
@@ -205,10 +206,14 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 this.formData.window_start = data.window_start;
                 this.formData.window_end = data.window_end;
                 this.formData.attempt_note = data.attempt_note;
+                this.formData.is_manual = data.is_manual;
             },
             submitForm(e) {
                 e.preventDefault();
                 const formData = Object.assign({}, this.formData);
+                //always set is_manual - a nurse is scheduling this call
+                formData['is_manual'] = 1;
+
                 this.loaders.submit = true;
                 return this.axios.post(rootUrl(`manage-patients/${formData.inbound_cpm_id}/calls/reschedule`), formData)
                     .then((response, status) => {
@@ -242,8 +247,11 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                         console.error('add-call', err);
 
                         let msg = err.message;
-                        if (err.response && err.response.data) {
-                            msg += `: ${err.response.data}`;
+                        if (err.response && err.response.data && err.response.data.errors) {
+                            // {is_manual: ['error message']}
+                            const errors = err.response.data.errors;
+                            const errorsMessages = Object.values(errors).map(x=>x[0]).join(', ');
+                            msg += `: ${errorsMessages}`;
                         }
 
                         Event.$emit('notifications-edit-call-modal:create', {text: msg, type: 'error'});
