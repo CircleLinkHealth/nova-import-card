@@ -203,7 +203,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::group(['prefix' => 'codes'], function () {
                 Route::get('{id}', 'ProblemCodeController@show')->middleware('permission:patientProblem.read');
                 Route::delete('{id}', 'ProblemCodeController@remove')->middleware('permission:patientProblem.delete');
-                Route::resource('', 'ProblemCodeController')->middleware(['permission' => ['patientProblem.read', 'patientProblem.create', 'patientProblem.delete']]);
+                Route::resource('', 'ProblemCodeController')->middleware('permission:patientProblem.read,patientProblem.create,patientProblem.delete');
             });
 
             Route::group(['prefix' => 'instructions'], function () {
@@ -225,12 +225,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'patients.without-scheduled-calls',
-            ])->middleware(['permission'=> ['patient.read', 'careplan.read', 'call.read']]);
+            ])->middleware('permission:patient.read,careplan.read,call.read');
 
             Route::get('without-inbound-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
                 'as'   => 'patients.without-inbound-calls',
-            ])->middleware(['permission'=> ['patient.read', 'call.read']]);
+            ])->middleware('permission:patient.read,call.read');
 
             Route::group([
                 'prefix' => '{userId}',
@@ -249,9 +249,9 @@ Route::group(['middleware' => 'auth'], function () {
                     'prefix' => 'problems',
                 ], function () {
                     Route::get('', 'PatientController@getProblems')->middleware('permission:patientProblem.read');
-                    Route::post('', 'PatientController@addCpmProblem')->middleware(['permission' => ['patientProblem.create', 'patientProblem.update']]);
+                    Route::post('', 'PatientController@addCpmProblem')->middleware('permission:patientProblem.create,patientProblem.update');
                     Route::get('cpm', 'PatientController@getCpmProblems')->middleware('permission:patientProblem.read');
-                    Route::delete('cpm/{cpmId}', 'PatientController@removeCpmProblem')->middleware(['permission' => ['instruction.delete', 'patientProblem.delete']]);
+                    Route::delete('cpm/{cpmId}', 'PatientController@removeCpmProblem')->middleware('permission:instruction.delete,patientProblem.delete');
                     Route::get('ccd', 'PatientController@getCcdProblems')->middleware('permission:patientProblem.read');
                     Route::post('ccd', 'PatientController@addCcdProblem')->middleware('permission:patientProblem.create');
                     Route::put('ccd/{ccdId}', 'PatientController@editCcdProblem')->middleware('permission:patientProblem.update');
@@ -307,7 +307,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{userId}/misc', 'PatientController@getMisc')->middleware('permission:misc.read');
             Route::get('{userId}/misc/{miscTypeId}', 'PatientController@getMiscByType')->middleware('permission:misc.read');
             Route::post('{userId}/misc', 'PatientController@addMisc')->middleware('permission:misc.create');
-            Route::post('{userId}/misc/{miscId}/instructions', 'PatientController@addInstructionToMisc')->middleware(['permission' => ['misc.create', 'misc.delete']]);
+            Route::post('{userId}/misc/{miscId}/instructions', 'PatientController@addInstructionToMisc')->middleware('permission:misc.create,misc.delete');
             Route::delete('{userId}/misc/{miscId}/instructions/{instructionId}',
                 'PatientController@removeInstructionFromMisc')->middleware('permission:misc.delete');
             Route::delete('{userId}/misc/{miscId}', 'PatientController@removeMisc')->middleware('permission:misc.delete');
@@ -331,14 +331,14 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('{practiceId}/providers', 'API\PracticeController@getPracticeProviders')->middleware('permission:provider.read');
             Route::get('{practiceId}/locations', 'API\PracticeController@getPracticeLocations')->middleware('permission:location.read');
             Route::get('{practiceId}/locations/{locationId}/providers', 'API\PracticeController@getLocationProviders')->middleware('permission:provider.read');
-            Route::get('all', 'API\PracticeController@allPracticesWithLocationsAndStaff')->middleware(['permission' => ['practice.read', 'location.read', 'provider.read']]);
+            Route::get('all', 'API\PracticeController@allPracticesWithLocationsAndStaff')->middleware('permission:practice.read,location.read,provider.read');
             Route::get('{practiceId}/patients', 'API\PracticeController@getPatients')->middleware('permission:patient.read');
             Route::get('{practiceId}/nurses', 'API\PracticeController@getNurses')->middleware('permission:nurse.read');
 
             Route::get('{practiceId}/patients/without-scheduled-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutScheduledCalls',
                 'as'   => 'practice.patients.without-scheduled-calls',
-            ])->middleware(['permission' => ['patient.read', 'careplan.read']]);
+            ])->middleware('permission:patient.read,careplan.read');
 
             Route::get('{practiceId}/patients/without-inbound-calls', [
                 'uses' => 'API\Admin\CallsController@patientsWithoutInboundCalls',
@@ -351,7 +351,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'call.anyCallsManagement',
         ])->middleware('permission:call.read');
 
-        Route::resource('profile', 'API\ProfileController')->middleware(['permission' => ['user.read', 'role.read']] );
+        Route::resource('profile', 'API\ProfileController')->middleware('permission:user.read,role.read');
 
         Route::resource('nurses', 'API\NurseController')->middleware('permission:nurse.read');
 
@@ -382,12 +382,12 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     //duplicate or different prefix?
-    Route::resource('profiles', 'API\ProfileController')->middleware(['permission' => ['user.read', 'role.read']]);
+    Route::resource('profiles', 'API\ProfileController')->middleware('permission:user.read,role.read');
 
     Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
-    Route::resource('user.care-team', 'API\CareTeamController')->middleware(['permission' => ['carePerson.create', 'carePerson.read', 'carePerson.update', 'carePerson.delete']]);
-    Route::resource('practice.locations', 'API\PracticeLocationsController')->middleware(['permission' => ['location.create', 'location.read', 'location.update', 'location.delete']]);
-    Route::resource('practice.users', 'API\PracticeStaffController')->middleware(['permission' => ['practiceStaff.create', 'practiceStaff.read', 'practiceStaff.update', 'practiceStaff.delete']]);
+    Route::resource('user.care-team', 'API\CareTeamController')->middleware('permission:carePerson.create,carePerson.read,carePerson.update,carePerson.delete');
+    Route::resource('practice.locations', 'API\PracticeLocationsController')->middleware('permission:location.create,location.read,location.update,location.delete');
+    Route::resource('practice.users', 'API\PracticeStaffController')->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
 
     Route::get('provider/search', [
         'uses' => 'API\CareTeamController@searchProviders',
@@ -396,7 +396,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf')->middleware('permission:pdf.delete');
 
-    Route::post('care-plans/{careplan_id}/pdfs', 'API\PatientCarePlanController@uploadPdfs')->middleware(['permission' => ['careplan.update', 'pdf.create']]);
+    Route::post('care-plans/{careplan_id}/pdfs', 'API\PatientCarePlanController@uploadPdfs')->middleware('permission:careplan.update,pdf.create');
 
     Route::get('download-pdf-careplan/{filePath}', [
         'uses' => 'API\PatientCarePlanController@downloadPdf',
@@ -406,7 +406,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::patch('work-hours/{id}', 'CareCenter\WorkScheduleController@updateDailyHours')->middleware('permission:workHours.update');
 // end API
 
-    Route::resource('settings/email', 'EmailSettingsController')->middleware(['permission' => ['emailSettings.update', 'emailSettings.create']]);
+    Route::resource('settings/email', 'EmailSettingsController')->middleware('permission:emailSettings.update,emailSettings.create');
 
     Route::get('/CCDModels/Items/MedicationListItem', 'CCDModels\Items\MedicationListItemController@index')->middleware('permission:medication.read');
     Route::post('/CCDModels/Items/MedicationListItem/store', 'CCDModels\Items\MedicationListItemController@store')->middleware('permission:medication.create');
@@ -538,7 +538,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('listing', [
             'uses' => 'Patient\PatientController@showPatientListing',
             'as'   => 'patients.listing',
-        ])->middleware(['permission' => ['patient.read']]);
+        ])->middleware('permission:patient.read');
 
         Route::get('listing/old', [
             'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',
@@ -553,11 +553,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
-        ])->middleware(['permission' => ['careplan.read', 'careplan.update', 'care-plan-approve']]);
+        ])->middleware('permission:careplan.read,careplan.update,care-plan-approve');
         Route::get('careplan-print-list', [
             'uses' => 'Patient\PatientCareplanController@index',
             'as'   => 'patients.careplan.printlist',
-        ])->middleware(['permission' => ['careplan.read', 'patient.read', 'provider.read']]);
+        ])->middleware('permission:careplan.read,patient.read,provider.read');
         Route::post('select', [
             'uses' => 'Patient\PatientController@processPatientSelect',
             'as'   => 'patients.select.process',
@@ -577,23 +577,23 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('careplan/demographics', [
             'uses' => 'Patient\PatientCareplanController@showPatientDemographics',
             'as'   => 'patients.demographics.show',
-        ])->middleware(['permission' => ['patient.read', 'location.read', 'practice.read']]);
+        ])->middleware('permission:patient.read,location.read,practice.read');
         Route::post('careplan/demographics', [
             'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
             'as'   => 'patients.demographics.store',
-        ])->middleware(['permission' => ['patient.update', 'patient.create']]);
+        ])->middleware('permission:patient.update,patient.create');
         Route::get('u20', [
             'uses' => 'ReportsController@u20',
             'as'   => 'patient.reports.u20',
-        ])->middleware(['permission' => ['patient.read', 'activity.read']]);
+        ])->middleware('permission:patient.read,activity.read');
         Route::get('billing', [
             'uses' => 'ReportsController@billing',
             'as'   => 'patient.reports.billing',
-        ])->middleware(['permission' => ['patient.read', 'activity.read']]);
+        ])->middleware('permission:patient.read,activity.read');
         Route::get('provider-notes', [
             'uses' => 'NotesController@listing',
             'as'   => 'patient.note.listing',
-        ])->middleware(['permission' => ['provider.read', 'note.read']]);
+        ])->middleware('permission:provider.read,note.read');
 
         // nurse call list
         Route::group(['prefix' => 'patient-call-list'], function () {
@@ -614,11 +614,11 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
-        ])->middleware(['permission' => ['patient.read', 'patientProblem.read', 'misc.read', 'observation.read', 'patientSummary.read']]);
+        ])->middleware('permission:patient.read,patientProblem.read,misc.read,observation.read,patientSummary.read');
         Route::get('summary-biochart', [
             'uses' => 'ReportsController@biometricsCharts',
             'as'   => 'patient.charts',
-        ])->middleware(['permission' => ['patient.read', 'biometric.read']]);
+        ])->middleware('permission:patient.read,biometric.read');
         Route::get('alerts', [
             'uses' => 'Patient\PatientController@showPatientAlerts',
             'as'   => 'patient.alerts',
@@ -626,7 +626,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('input/observation', [
             'uses' => 'Patient\PatientController@showPatientObservationCreate',
             'as'   => 'patient.observation.create',
-        ])->middleware(['permission' => ['patient.read', 'observation.read']]);
+        ])->middleware('permission:patient.read,observation.read');
 
         Route::get('view-careplan', [
             'uses' => 'ReportsController@viewPrintCareplan',
@@ -636,17 +636,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment',
-        ])->middleware(['permission' => ['careplan.read', 'careplanAssessment.read']]);
+        ])->middleware('permission:careplan.read,careplanAssessment.read');
 
         Route::get('view-careplan/assessment/{approverId}', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment.approver',
-        ])->middleware(['permission' => ['careplan.read', 'careplanAssessment.read']]);
+        ])->middleware('permission:careplan.read,careplanAssessment.read');
 
         Route::post('view-careplan/assessment', [
             'uses' => 'CareplanAssessmentController@store',
             'as'   => 'patient.careplan.assessment.create',
-        ])->middleware(['permission' => ['note.create', 'careplanAssessment.update']]);
+        ])->middleware('permission:note.create,careplanAssessment.update');
 
         Route::get('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
@@ -661,7 +661,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('input/observation/create', [
             'uses' => 'ObservationController@store',
             'as'   => 'patient.observation.store',
-        ])->middleware(['permission' => ['observation.create',]]);
+        ])->middleware('permission:observation.create');
 
         // careplan
         Route::group(['prefix' => 'careplan'], function () {
@@ -669,16 +669,16 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('demographics', [
                 'uses' => 'Patient\PatientCareplanController@showPatientDemographics',
                 'as'   => 'patient.demographics.show',
-            ])->middleware(['permission' => ['patient.create', 'patient.update', 'location.read', 'practice.read']]);
+            ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
             Route::post('demographics', [
                 'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
                 'as'   => 'patient.demographics.store',
-            ])->middleware(['permission' => ['patient.create', 'patient.update', 'careplan.update']]);
+            ])->middleware('permission:patient.create,patient.update,careplan.update');
             // careplan team
             Route::get('team', [
                 'uses' => 'Patient\PatientCareplanController@showPatientCareteam',
                 'as'   => 'patient.careteam.show',
-            ])->middleware(['permission' => ['patient.read', 'provider.read', 'careplan.read']]);
+            ])->middleware('permission:patient.read,provider.read,careplan.read');
             Route::post('team', [
                 'uses' => 'Patient\PatientCareplanController@storePatientCareteam',
                 'as'   => 'patient.careteam.store',
@@ -689,11 +689,11 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('sections/{page}', [
                     'uses' => 'Patient\PatientCareplanController@showPatientCareplan',
                     'as'   => 'patient.careplan.show',
-                ])->middleware(['permission' => ['patient.read', 'patientProblem.read', 'careplan.read']]);
+                ])->middleware('permission:patient.read,patientProblem.read,careplan.read');
                 Route::post('sections', [
                     'uses' => 'Patient\PatientCareplanController@storePatientCareplan',
                     'as'   => 'patient.careplan.store',
-                ])->middleware(['permission' => ['patient.update', 'biometric.update', 'careplan.update']]);
+                ])->middleware('permission:patient.update,biometric.update,careplan.update');
             });
         });
 
@@ -703,11 +703,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('create', [
                 'uses' => 'AppointmentController@create',
                 'as'   => 'patient.appointment.create',
-            ])->middleware(['permission' => ['patient.read', 'provider.read']]);
+            ])->middleware('permission:patient.read,provider.read');
             Route::post('store', [
                 'uses' => 'AppointmentController@store',
                 'as'   => 'patient.appointment.store',
-            ])->middleware(['permission' => ['appointment.create']]);
+            ])->middleware('permission:appointment.create');
             Route::get('', [
                 'uses' => 'AppointmentController@index',
                 'as'   => 'patient.appointment.index',
@@ -715,7 +715,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('view/{appointmentId}', [
                 'uses' => 'AppointmentController@view',
                 'as'   => 'patient.appointment.view',
-            ])->middleware(['permission' => ['appointment.create', 'patient.read']]);
+            ])->middleware('permission:appointment.create,patient.read');
         });
 
         // notes
@@ -727,15 +727,15 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
-            ])->middleware(['permission' => ['note.create', 'patient.update', 'patientSummary.update']]);
+            ])->middleware('permission:note.create,patient.update,patientSummary.update');
             Route::get('{showAll?}', [
                 'uses' => 'NotesController@index',
                 'as'   => 'patient.note.index',
-            ])->middleware(['permission' => ['patient.read', 'provider.read', 'note.read', 'appointment.read', 'activity.read']]);
+            ])->middleware('permission:patient.read,provider.read,note.read,appointment.read,activity.read');
             Route::get('view/{noteId}', [
                 'uses' => 'NotesController@show',
                 'as'   => 'patient.note.view',
-            ])->middleware(['permission' => ['patient.read', 'provider.read', 'note.read']]);
+            ])->middleware('permission:patient.read,provider.read,note.read');
             Route::post('send/{noteId}', [
                 'uses' => 'NotesController@send',
                 'as'   => 'patient.note.send',
@@ -755,7 +755,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('progress', [
             'uses' => 'ReportsController@index',
             'as'   => 'patient.reports.progress',
-        ])->middleware(['permission' => ['patient.read', 'provider.read', 'biometric.read', 'biometric.update', 'medication.read', 'medication.update']]);
+        ])->middleware('permission:patient.read,provider.read,biometric.read,biometric.update,medication.read,medication.update');
 
         // activities
         Route::group(['prefix' => 'activities'], function () {
@@ -766,15 +766,15 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('store', [
                 'uses' => 'ActivityController@store',
                 'as'   => 'patient.activity.store',
-            ])->middleware(['permission' => ['activity.create', 'patientSummary.create', 'patientSummary.update']]);
+            ])->middleware('permission:activity.create,patientSummary.create,patientSummary.update');
             Route::get('view/{actId}', [
                 'uses' => 'ActivityController@show',
                 'as'   => 'patient.activity.view',
-            ])->middleware(['permission' => ['activity.read', 'patient.read', 'provider.read']]);
+            ])->middleware('permission:activity.read,patient.read,provider.read');
             Route::get('', [
                 'uses' => 'ActivityController@providerUIIndex',
                 'as'   => 'patient.activity.providerUIIndex',
-            ])->middleware(['permission' => ['activity.read', 'patient.read', 'provider.read']]);
+            ])->middleware('permission:activity.read,patient.read,provider.read');
         });
 
         //call scheduling
@@ -822,7 +822,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('make-pdf', [
                 'as'   => 'demo.note.make.pdf',
                 'uses' => 'Demo\SendSampleNoteController@makePdf',
-            ])->middleware(['permission' => ['practice.read', 'note.create', 'pdf.create']]);
+            ])->middleware('permission:practice.read,note.create,pdf.create');
 
             Route::post('send-efax', [
                 'as'   => 'demo.note.efax',
@@ -851,12 +851,12 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('', [
                     'uses' => 'EligibilityBatchController@show',
                     'as'   => 'eligibility.batch.show',
-                ])->middleware(['permission' => ['batch.read', 'practice.read', 'ccda.read']]);
+                ])->middleware('permission:batch.read,practice.read,ccda.read');
 
                 Route::get('/counts', [
                     'uses' => 'EligibilityBatchController@getCounts',
                     'as'   => 'eligibility.batch.getCounts',
-                ])->middleware(['permission' => ['enrollee.read', 'ccda.read']]);
+                ])->middleware('permission:enrollee.read,ccda.read');
 
                 Route::get('/eligible-csv', [
                     'uses' => 'EligibilityBatchController@downloadEligibleCsv',
@@ -879,23 +879,23 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('', [
                 'uses' => 'EnrolleesController@index',
                 'as'   => 'admin.enrollees.index',
-            ])->middleware(['permission' => ['enrollee.read', 'practice.read']]);
+            ])->middleware('permission:enrollee.read,practice.read');
             Route::get('batch/{batch}', [
                 'uses' => 'EnrolleesController@showBatch',
                 'as'   => 'admin.enrollees.show.batch',
-            ])->middleware(['permission' => ['enrollee.read', 'practice.read', 'batch.read']]);
+            ])->middleware('permission:enrollee.read,practice.read,batch.read');
             Route::post('{batch}/import', [
                 'uses' => 'EnrolleesController@import',
                 'as'   => 'admin.enrollees.import',
-            ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+            ])->middleware('permission:enrollee.read,enrollee.update');
             Route::post('import', [
                 'uses' => 'EnrolleesController@import',
                 'as'   => 'admin.enrollees.import.from.all.practices',
-            ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+            ])->middleware('permission:enrollee.read,enrollee.update');
             Route::post('/import-array-of-ids', [
                 'uses' => 'EnrolleesController@importArray',
                 'as'   => 'admin.enrollees.import.array',
-            ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+            ])->middleware('permission:enrollee.read,enrollee.update');
             Route::post('/import-using-medical-record-id', [
                 'uses' => 'EnrolleesController@importMedicalRecords',
                 'as'   => 'admin.enrollees.import.medical.records',
@@ -908,7 +908,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
-        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware(['permission' => ['medicationGroup.read', 'medicationGroup.create', 'medicationGroup.delete']]);
+        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
 
         Route::post('get-athena-ccdas', [
             'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',
@@ -918,7 +918,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('athena-pull', [
             'uses' => 'Admin\DashboardController@pullAthenaEnrollees',
             'as'   => 'pull.athena.enrollees',
-        ])->middleware(['permission' => ['batch.create', 'enrollee.create', 'enrollee.update']]);
+        ])->middleware('permission:batch.create,enrollee.create,enrollee.update');
 
         Route::get('patients/letters/paused', [
             'uses' => 'ReportsController@pausedPatientsLetterPrintList',
@@ -928,7 +928,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('patients/letters/paused/file', [
             'uses' => 'ReportsController@getPausedLettersFile',
             'as'   => 'get.paused.letters.file',
-        ])->middleware(['permission' => ['pdf.create', 'pdf.read', 'patient.read']]);
+        ])->middleware('permission:pdf.create,pdf.read,patient.read');
 
         /**
          * LOGGER
@@ -943,42 +943,42 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('enrollment/list', [
             'uses' => 'Enrollment\EnrollmentConsentController@makeEnrollmentReport',
             'as'   => 'patient.enroll.makeReport',
-        ])->middleware(['permission' => ['enrollee.read', 'enrollee.update', 'call.read', 'practice.read', 'provider.read']]);
+        ])->middleware('permission:enrollee.read,enrollee.update,call.read,practice.read,provider.read');
 
         Route::get('enrollment/list/data', [
             'uses' => 'Enrollment\EnrollmentConsentController@index',
             'as'   => 'patient.enroll.index',
-        ])->middleware(['permission' => ['enrollee.read', 'enrollee.update','call.read', 'practice.read', 'provider.read']]);
+        ])->middleware('permission:enrollee.read,enrollee.update,call.read,practice.read,provider.read');
 
         Route::get('enrollment/ambassador/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makeAmbassadorStats',
             'as'   => 'enrollment.ambassador.stats',
-        ])->middleware(['permission' => ['ambassador.read']]);
+        ])->middleware('permission:ambassador.read');
 
         Route::get('enrollment/ambassador/kpis/excel', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStatsExcel',
             'as'   => 'enrollment.ambassador.stats.excel',
-        ])->middleware(['permission' => ['ambassador.read']]);
+        ])->middleware('permission:ambassador.read');
 
         Route::get('enrollment/ambassador/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@ambassadorStats',
             'as'   => 'enrollment.ambassador.stats.data',
-        ])->middleware(['permission' => ['ambassador.read']]);
+        ])->middleware('permission:ambassador.read');
 
         Route::get('enrollment/practice/kpis', [
             'uses' => 'Enrollment\EnrollmentStatsController@makePracticeStats',
             'as'   => 'enrollment.practice.stats',
-        ])->middleware(['permission' => ['ambassador.read', 'practice.read']]);
+        ])->middleware('permission:ambassador.read,practice.read');
 
         Route::get('enrollment/practice/kpis/excel', [
             'uses' => 'Enrollment\EnrollmentStatsController@practiceStatsExcel',
             'as'   => 'enrollment.practice.stats.excel',
-        ])->middleware(['permission' => ['ambassador.read', 'practice.read']]);
+        ])->middleware('permission:ambassador.read,practice.read');
 
         Route::get('enrollment/practice/kpis/data', [
             'uses' => 'Enrollment\EnrollmentStatsController@practiceStats',
             'as'   => 'enrollment.practice.stats.data',
-        ])->middleware(['permission' => ['ambassador.read', 'practice.read']]);
+        ])->middleware('permission:ambassador.read,practice.read');
 
         Route::get('invites/create', [
             'uses' => 'InviteController@create',
@@ -1004,7 +1004,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('calls/import', [
             'uses' => 'CallController@import',
             'as'   => 'post.CallController.import',
-        ])->middleware(['permission' => ['call.update', 'call.create']]);
+        ])->middleware('permission:call.update,call.create');
 
 
         Route::post('make-welcome-call-list', [
@@ -1025,9 +1025,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('calls/old', [
             'uses' => 'Admin\PatientCallManagementController@index',
             'as'   => 'admin.patientCallManagement.old',
-        ])->middleware(['permission' => ['call.read', 'patient.read', 'nurse.read']]);
+        ])->middleware('permission:call.read,patient.read,nurse.read');
 
-        Route::get('calls/{patientId}', 'CallController@showCallsForPatient')->middleware(['permission' => ['call.read', 'patient.read']]);
+        Route::get('calls/{patientId}', 'CallController@showCallsForPatient')->middleware('permission:call.read,patient.read');
 
         Route::group([
             'prefix' => 'reports',
@@ -1039,16 +1039,16 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::get('/make', [
                     'uses' => 'Billing\PracticeInvoiceController@make',
                     'as'   => 'monthly.billing.make',
-                ])->middleware(['permission' => ['patientSummary.read', 'patientProblem.read', 'chargeableService.read', 'practice.read']]);
+                ])->middleware('permission:patientSummary.read,patientProblem.read,chargeableService.read,practice.read');
 
                 Route::post('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data',
                     'as'   => 'monthly.billing.data',
-                ])->middleware(['permission' => ['patientSummary.read', 'patientSummary.update', 'patientSummary.create']]);
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
                 Route::get('/data', [
                     'uses' => 'Billing\PracticeInvoiceController@data',
-                ])->middleware(['permission' => ['patientSummary.read', 'patientSummary.update', 'patientSummary.create']]);
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
                 Route::get('/services', [
                     'uses' => 'Billing\PracticeInvoiceController@getChargeableServices',
@@ -1058,12 +1058,12 @@ Route::group(['middleware' => 'auth'], function () {
                 Route::post('/updatePracticeServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updatePracticeChargeableServices',
                     'as'   => 'monthly.billing.practice.services',
-                ])->middleware(['permission' => ['patientSummary.read', 'patientSummary.update', 'patientSummary.create']]);
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
                 Route::post('/updateSummaryServices', [
                     'uses' => 'Billing\PracticeInvoiceController@updateSummaryChargeableServices',
                     'as'   => 'monthly.billing.summary.services',
-                ])->middleware(['permission' => ['patientSummary.read', 'patientSummary.update', 'patientSummary.create']]);
+                ])->middleware('permission:patientSummary.read,patientSummary.update,patientSummary.create');
 
                 Route::post('/open', [
                     'uses' => 'Billing\PracticeInvoiceController@openMonthlySummaryStatus',
@@ -1108,7 +1108,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('patients-for-insurance-check', [
                 'uses' => 'Reports\PatientsForInsuranceCheck@make',
                 'as'   => 'get.patients.for.insurance.check',
-            ])->middleware(['permission' => ['patient.read', 'practice.read', 'insurance.read']]);
+            ])->middleware('permission:patient.read,practice.read,insurance.read');
 
             Route::group([
                 'prefix' => 'sales',
@@ -1159,22 +1159,22 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('call', [
                 'uses' => 'Admin\Reports\CallReportController@exportxls',
                 'as'   => 'CallReportController.exportxls',
-            ])->middleware(['permission' => ['call.read', 'note.read', 'patient.read', 'patientSummary.read']]);
+            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
             Route::get('provider-usage', [
                 'uses' => 'Admin\Reports\ProviderUsageReportController@index',
                 'as'   => 'ProviderUsageReportController.index',
-            ])->middleware(['permission' => ['provider.read', 'nurse.read']]);
+            ])->middleware('permission:provider.read,nurse.read');
 
             Route::get('provider-monthly-usage', [
                 'uses' => 'Admin\Reports\ProviderMonthlyUsageReportController@index',
                 'as'   => 'ProviderMonthlyUsageReportController.index',
-            ])->middleware(['permission' => ['provider.read', 'nurse.read']]);
+            ])->middleware('permission:provider.read,nurse.read');
 
             Route::get('patient-conditions', [
                 'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
                 'as'   => 'PatientConditionsReportController.getReport',
-            ])->middleware(['permission' => ['patient.read', 'patientProblem.read']]);
+            ])->middleware('permission:patient.read,patientProblem.read');
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {
@@ -1392,7 +1392,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users', [
                 'uses' => 'UserController@index',
                 'as'   => 'admin.users.index',
-            ])->middleware(['permission' => ['user.read', 'practice.read']]);
+            ])->middleware('permission:user.read,practice.read');
             Route::post('users', [
                 'uses' => 'UserController@store',
                 'as'   => 'admin.users.store',
@@ -1400,7 +1400,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/create', [
                 'uses' => 'UserController@create',
                 'as'   => 'admin.users.create',
-            ])->middleware(['permission' => ['user.read', 'practice.read', 'location.read', 'role.read']]);
+            ])->middleware('permission:user.read,practice.read,location.read,role.read');
             Route::get('users/doAction', [
                 'uses' => 'UserController@doAction',
                 'as'   => 'admin.users.doAction',
@@ -1408,7 +1408,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('users/{id}/edit', [
                 'uses' => 'UserController@edit',
                 'as'   => 'admin.users.edit',
-            ])->middleware(['permission' => ['user.read', 'practice.read', 'location.read', 'role.read']]);
+            ])->middleware('permission:user.read,practice.read,location.read,role.read');
             Route::get('users/{id}/destroy', [
                 'uses' => 'UserController@destroy',
                 'as'   => 'admin.users.destroy',
@@ -1440,7 +1440,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@edit',
                 'as'   => 'admin.patientCallManagement.edit',
-            ])->middleware(['permission' => ['nurse.read', 'call.read']]);
+            ])->middleware('permission:nurse.read,call.read');
             Route::post('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@update',
                 'as'   => 'admin.patientCallManagement.update',
@@ -1461,7 +1461,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('families', [
                 'uses' => 'FamilyController@store',
                 'as'   => 'admin.families.store',
-            ])->middleware(['permission' => ['family.create', 'family.delete']]);
+            ])->middleware('permission:family.create,family.delete');
             Route::get('families/create', [
                 'uses' => 'FamilyController@create',
                 'as'   => 'admin.families.create',
@@ -1486,7 +1486,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'permission:role.read',
             ],
         ], function () {
-            Route::resource('roles', 'Admin\RoleController')->middleware(['permission' => ['user.read', 'practice.read', 'location.read']]);
+            Route::resource('roles', 'Admin\RoleController')->middleware('permission:user.read,practice.read,location.read');
         });
 
         Route::group([
@@ -1500,7 +1500,7 @@ Route::group(['middleware' => 'auth'], function () {
         // permissions
         Route::group([
         ], function () {
-            Route::resource('permissions', 'Admin\PermissionController')->middleware(['permission' => ['permission.read', 'permission.create', 'permission.update', 'permission.delete']]);
+            Route::resource('permissions', 'Admin\PermissionController')->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
         });
 
         Route::group([
@@ -1626,8 +1626,8 @@ Route::group(['middleware' => 'auth'], function () {
         // observations
         Route::group([
         ], function () {
-            Route::resource('comments', 'Admin\CommentController')->middleware(['permission' => ['comment.create', 'comment.read', 'comment.update', 'comment.delete']]);
-            Route::resource('observations', 'Admin\ObservationController')->middleware(['permission' => ['observation.create', 'observation.read', 'observation.update', 'observation.delete']]);
+            Route::resource('comments', 'Admin\CommentController')->middleware('permission:comment.create,comment.read,comment.update,comment.delete');
+            Route::resource('observations', 'Admin\ObservationController')->middleware('permission:observation.create,observation.read,observation.update,observation.delete');
         });
 
         Route::group([
@@ -1715,11 +1715,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('programs/{id}', [
                 'uses' => 'Admin\PracticeController@show',
                 'as'   => 'admin.programs.show',
-            ])->middleware(['permission' => ['practice.read', 'location.read']]);
+            ])->middleware('permission:practice.read,location.read');
             Route::get('programs/{id}/edit', [
                 'uses' => 'Admin\PracticeController@edit',
                 'as'   => 'admin.programs.edit',
-            ])->middleware(['permission' => ['practice.read', 'location.read']]);
+            ])->middleware('permission:practice.read,location.read');
             Route::post('programs/{id}/edit', [
                 'uses' => 'Admin\PracticeController@update',
                 'as'   => 'admin.programs.update',
@@ -1753,7 +1753,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('locations/{id}/edit', [
                 'uses' => 'LocationController@edit',
                 'as'   => 'locations.edit',
-            ])->middleware(['permission' => ['location.read', 'practice.read']]);
+            ])->middleware('permission:location.read,practice.read');
             Route::post('locations/update', [
                 'uses' => 'LocationController@update',
                 'as'   => 'locations.update',
@@ -1786,7 +1786,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'index' => 'care.center.work.schedule.index',
                 'store' => 'care.center.work.schedule.store',
             ],
-        ])->middleware(['permission' => ['nurseContactWindow.read', 'nurseContactWindow.create']]);
+        ])->middleware('permission:nurseContactWindow.read,nurseContactWindow.create');
 
         Route::get('work-schedule/destroy/{id}', [
             'uses' => 'CareCenter\WorkScheduleController@destroy',
@@ -1914,7 +1914,7 @@ Route::group([
         Route::get('/', [
             'uses' => 'Enrollment\EnrollmentCenterController@dashboard',
             'as'   => 'enrollment-center.dashboard',
-        ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+        ])->middleware('permission:enrollee.read,enrollee.update');
 
         Route::post('/consented', [
             'uses' => 'Enrollment\EnrollmentCenterController@consented',
@@ -1944,17 +1944,17 @@ Route::group([
     Route::post('/save', [
         'uses' => 'Enrollment\EnrollmentConsentController@store',
         'as'   => 'patient.enroll.store',
-    ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+    ])->middleware('permission:enrollee.read,enrollee.update');
 
     Route::get('{invite_code}', [
         'uses' => 'Enrollment\EnrollmentConsentController@create',
         'as'   => 'patient.enroll.create',
-    ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+    ])->middleware('permission:enrollee.read,enrollee.update');
 
     Route::post('/update', [
         'uses' => 'Enrollment\EnrollmentConsentController@update',
         'as'   => 'patient.enroll.update',
-    ])->middleware(['permission' => ['enrollee.read', 'enrollee.update']]);
+    ])->middleware('permission:enrollee.read,enrollee.update');
 });
 
 Route::group([
@@ -1971,12 +1971,12 @@ Route::group([
         'middleware' => 'verify.invite',
         'uses'       => 'Provider\OnboardingController@getCreatePracticeLeadUser',
         'as'         => 'get.onboarding.create.program.lead.user',
-    ])->middleware(['permission' => ['provider.read', 'invite.read', 'invite.create']]);
+    ])->middleware('permission:provider.read,invite.read,invite.create');
 
     Route::post('store-invited-user', [
         'uses' => 'Provider\OnboardingController@postStoreInvitedUser',
         'as'   => 'get.onboarding.store.invited.user',
-    ])->middleware(['permission' => ['provider.update', 'provider.create','invite.delete']]);
+    ])->middleware('permission:provider.update,provider.create,invite.delete');
 
     Route::post('store-practice-lead-user', [
         'uses' => 'Provider\OnboardingController@postStorePracticeLeadUser',
@@ -1995,7 +1995,7 @@ Route::group([
         Route::post('store-practice/{lead_id}', [
             'uses' => 'Provider\OnboardingController@postStorePractice',
             'as'   => 'post.onboarding.store.practice',
-        ])->middleware(['permission' => ['practice.create', 'provider.update']]);
+        ])->middleware('permission:practice.create,provider.update');
 
         Route::get('{practiceSlug}/locations/create/{lead_id}', [
             'uses' => 'Provider\OnboardingController@getCreateLocations',
@@ -2015,7 +2015,7 @@ Route::group([
         Route::post('{practiceSlug}/store-staff', [
             'uses' => 'Provider\OnboardingController@postStoreStaff',
             'as'   => 'post.onboarding.store.staff',
-        ])->middleware(['permission' => ['provider.create', 'provider.update', 'practiceSetting.update']]);
+        ])->middleware('permission:provider.create,provider.update,practiceSetting.update');
     });
 });
 
