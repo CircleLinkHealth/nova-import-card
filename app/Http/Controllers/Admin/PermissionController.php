@@ -6,6 +6,7 @@ use App\Role;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PermissionController extends Controller
@@ -136,17 +137,20 @@ class PermissionController extends Controller
         //
     }
 
-    public function makeExcel(){
+    public function makeRoleExcel(){
+
+        $today = Carbon::now();
         $perms = Permission::with('roles')->get();
         $roles = Role::get();
-        $rolesRow = [];
-        foreach ($roles as $role){
-            $rolesRow[] = $role->display_name;
-        }
-        $roles = collect($rolesRow);
-        $rows = [];
-        $today = Carbon::now();
 
+        $columns = [];
+        foreach ($roles as $role){
+            $columns[] = $role->display_name;
+        }
+        $roles = collect($columns);
+
+
+        $rows = [];
         foreach ($perms as $perm) {
             $row = [];
             $row['Permission'] = $perm->display_name;
@@ -160,18 +164,54 @@ class PermissionController extends Controller
             $rows[] = $row;
         }
 
+
+
         $report = Excel::create("Roles-Permissions Chart for {$today->toDateString()}", function ($excel) use ($rows) {
             $excel->sheet('Rules-Permissions', function ($sheet) use ($rows) {
                 $sheet->fromArray($rows);
             });
         })
                        ->store('xls', false, true);
-
         $excel = auth()->user()
             ->saasAccount
             ->addMedia($report['full'])
             ->toMediaCollection("excel_report_for_roles_permissions{$today->toDateString()}");
 
+
+
         return $this->downloadMedia($excel);
+    }
+
+    public function makeRouteExcel(){
+        $today = Carbon::now();
+        $collection = Route::getRoutes();
+        $allRoutes = collect($collection->getRoutesByName());
+
+        $routes = [];
+
+        foreach($allRoutes as $route) {
+            //maybe there is a way to get middleware from the $route object
+            $middleware = implode(", ", $route->gatherMiddleware());
+            $routes[] = [
+                'Route' => $route->getName(),
+                'Middleware' => $middleware,
+            ];
+        }
+
+        $report = Excel::create("Route-Permissions Chart for {$today->toDateString()}", function ($excel) use ($routes) {
+            $excel->sheet('Routes-Permissions', function ($sheet) use ($routes) {
+                $sheet->fromArray($routes);
+            });
+        })
+                       ->store('xls', false, true);
+        $excel = auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("excel_report_for_routes_permissions{$today->toDateString()}");
+
+
+
+        return $this->downloadMedia($excel);
+
     }
 }

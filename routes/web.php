@@ -1503,8 +1503,12 @@ Route::group(['middleware' => 'auth'], function () {
             Route::resource('permissions', 'Admin\PermissionController')->middleware('permission:permission.read,permission.create,permission.update,permission.delete');
         });
         Route::get('roles-permissions', [
-            'uses' => 'Admin\PermissionController@makeExcel',
-            'as'   => 'admin.permissions.makeExcel',
+            'uses' => 'Admin\PermissionController@makeRoleExcel',
+            'as'   => 'admin.permissions.makeRoleExcel',
+        ]);
+        Route::get('routes-permissions', [
+            'uses' => 'Admin\PermissionController@makeRouteExcel',
+            'as'   => 'admin.permissions.makeRouteExcel',
         ]);
         Route::group([
             'middleware' => [
