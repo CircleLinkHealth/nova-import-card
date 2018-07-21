@@ -193,7 +193,7 @@ class PermissionController extends Controller
             //maybe there is a way to get middleware from the $route object
             $middleware = implode(", ", $route->gatherMiddleware());
             $routes[] = [
-                'Route' => $route->getName(),
+                'Route(uri)' => $route->uri(),
                 'Middleware' => $middleware,
             ];
         }
