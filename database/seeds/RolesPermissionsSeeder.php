@@ -488,7 +488,6 @@ class RolesPermissionsSeeder extends Seeder
                     'ambassador.read',
                     'patient.read',
                     'observation.read',
-                    'careplan.read',
                     'note.read',
                     'activity.read',
                     'location.read',
@@ -501,6 +500,7 @@ class RolesPermissionsSeeder extends Seeder
                     'patientSummary.read',
                     'appointment.read',
                     'pdf.create',
+                    'users-view-all',
                 ],
             ],
             [
