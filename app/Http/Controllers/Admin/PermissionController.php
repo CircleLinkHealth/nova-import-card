@@ -137,6 +137,12 @@ class PermissionController extends Controller
         //
     }
 
+
+    /**
+     * Creates Excel file that shows which roles have which permissions.
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
     public function makeRoleExcel(){
 
         $today = Carbon::now();
@@ -182,6 +188,13 @@ class PermissionController extends Controller
         return $this->downloadMedia($excel);
     }
 
+
+    /**
+     * Creates Excel file that shows all middleware(permissions included)
+     * that each route in the system uses.
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
     public function makeRouteExcel(){
         $today = Carbon::now();
         $collection = Route::getRoutes();
@@ -190,7 +203,7 @@ class PermissionController extends Controller
         $routes = [];
 
         foreach($allRoutes as $route) {
-            //maybe there is a way to get middleware from the $route object
+
             $middleware = implode(", ", $route->gatherMiddleware());
             $routes[] = [
                 'Route(uri)' => $route->uri(),
@@ -208,8 +221,6 @@ class PermissionController extends Controller
             ->saasAccount
             ->addMedia($report['full'])
             ->toMediaCollection("excel_report_for_routes_permissions{$today->toDateString()}");
-
-
 
         return $this->downloadMedia($excel);
 

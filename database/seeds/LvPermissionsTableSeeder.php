@@ -74,6 +74,10 @@ class LvPermissionsTableSeeder extends Seeder
                 'name'         => 'users-edit-self',
                 'display_name' => 'Users - edit self',
             ],
+            [
+                'name'         => 'note.send',
+                'display_name' => 'Note - send',
+            ]
 
         ];
 

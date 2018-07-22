@@ -1680,27 +1680,27 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('index', [
                 'uses' => 'ObservationController@dashboardIndex',
                 'as'   => 'observations-dashboard.index',
-            ])->middleware('observation.read');
+            ])->middleware('permission:observation.read');
 
             Route::get('list', [
                 'uses' => 'ObservationController@getObservationsList',
                 'as'   => 'observations-dashboard.list',
-            ])->middleware('observation.read');
+            ])->middleware('permission:observation.read');
 
             Route::get('edit', [
                 'uses' => 'ObservationController@editObservation',
                 'as'   => 'observations-dashboard.edit',
-            ])->middleware('observation.read');
+            ])->middleware('permission:observation.read');
 
             Route::patch('update', [
                 'uses' => 'ObservationController@updateObservation',
                 'as'   => 'observations-dashboard.update',
-            ])->middleware('observation.update');
+            ])->middleware('permission:observation.update');
 
             Route::delete('delete', [
                 'uses' => 'ObservationController@deleteObservation',
                 'as'   => 'observations-dashboard.delete',
-            ])->middleware('observation.delete');
+            ])->middleware('permission:observation.delete');
 
         });
 
