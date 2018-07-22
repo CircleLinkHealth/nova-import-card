@@ -650,6 +650,10 @@ class RolesPermissionsSeeder extends Seeder
                     'nurseContactWindow.read',
                     'nurseContactWindow.update',
                     'nurseContactWindow.delete',
+                    'nurseHoliday.create',
+                    'nurseHoliday.read',
+                    'nurseHoliday.update',
+                    'nurseHoliday.delete',
                     'pdf.create'
 
 
