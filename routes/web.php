@@ -381,12 +381,38 @@ Route::group(['middleware' => 'auth'], function () {
 
     });
 
-    //duplicate or different prefix?
     Route::resource('profiles', 'API\ProfileController')->middleware('permission:user.read,role.read');
 
     Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
+
     Route::resource('user.care-team', 'API\CareTeamController')->middleware('permission:carePerson.create,carePerson.read,carePerson.update,carePerson.delete');
+    Route::get('user/{user}/care-team',[
+        'uses' => 'API\CareTeamController@index',
+        'as' => 'user.care-team.index'
+    ])->middleware('permission:carePerson.read');
+    Route::get('user/{user}/care-team',[
+        'uses' => 'API\CareTeamController@index',
+        'as' => 'user.care-team.index'
+    ])->middleware('permission:carePerson.read');
+    Route::delete('user/{user}/care-team/{care_team}',[
+        'uses' => 'API\CareTeamController@destroy',
+        'as' => 'user.care-team.destroy'
+    ])->middleware('permission:carePerson.delete');
+    Route::patch('user/{user}/care-team/{care_team}',[
+        'uses' => 'API\CareTeamController@update',
+        'as' => 'user.care-team.update'
+    ])->middleware('permission:carePerson.update');
+    Route::get('user/{user}/care-team/{care_team}/edit',[
+        'uses' => 'API\CareTeamController@edit',
+        'as' => 'user.care-team.edit'
+    ])->middleware('permission:carePerson.read');
+
     Route::resource('practice.locations', 'API\PracticeLocationsController')->middleware('permission:location.create,location.read,location.update,location.delete');
+    Route::get('practice/{practice}/locations',[
+        'uses' => 'API\PracticeLocationsController@index',
+        'as' => 'practice.locations.index'
+    ])->middleware('permission:location.read');
+
     Route::resource('practice.users', 'API\PracticeStaffController')->middleware('permission:practiceStaff.create,practiceStaff.read,practiceStaff.update,practiceStaff.delete');
 
     Route::get('provider/search', [
