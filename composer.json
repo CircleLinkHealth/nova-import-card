@@ -136,6 +136,7 @@
         ]
     },
     "config": {
+        "discard-changes": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true,

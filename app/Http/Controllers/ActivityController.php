@@ -214,7 +214,7 @@ class ActivityController extends Controller
 
             if ($patient) {
                 $isCcm        = $patient->isCcm();
-                $isBehavioral = $patient->isBehavioral();
+                $isBehavioral = $patient->isBhi();
                 if ($isCcm && $isBehavioral) {
                     $is_bhi                 = isset($input['is_behavioral'])
                         ? ($input['is_behavioral'] != 'true'
