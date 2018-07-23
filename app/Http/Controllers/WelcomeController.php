@@ -52,7 +52,7 @@ class WelcomeController extends Controller
             return redirect()->route('saas-admin.home', []);
         }
 
-        if ($user->hasRole('care-ambassador')) {
+        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             return redirect()->route('enrollment-center.dashboard', []);
         }
 
