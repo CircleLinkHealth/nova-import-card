@@ -165,6 +165,7 @@ class LvPermissionsTableSeeder extends Seeder
             "nurseContactWindow",
             "nurseHoliday",
             "practiceSetting",
+            "medicationGroup"
         ]);
     }
 }

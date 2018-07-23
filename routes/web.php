@@ -908,7 +908,23 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::view('api-clients', 'admin.manage-api-clients');
 
-        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
+//        Route::resource('medication-groups-maps', 'MedicationGroupsMapController')->middleware('permission:medicationGroup.read,medicationGroup.create,medicationGroup.delete');
+
+        Route::get('medication-groups-maps', [
+            'uses' => 'MedicationGroupsMapController@index',
+            'as'   => 'medication-groups-maps.index'
+        ])->middleware('permission:medicationGroup.read');
+
+        Route::post('medication-groups-maps', [
+            'uses' => 'MedicationGroupsMapController@store',
+            'as'   => 'medication-groups-maps.store'
+        ])->middleware('permission:medicationGroup.create');
+
+        Route::delete('medication-groups-maps', [
+            'uses' => 'MedicationGroupsMapController@destroy',
+            'as'   => 'medication-groups-maps.destroy'
+        ])->middleware('permission:medicationGroup.delete');
+
 
         Route::post('get-athena-ccdas', [
             'uses' => 'CcdApi\Athena\AthenaApiController@getCcdas',

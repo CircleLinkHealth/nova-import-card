@@ -296,7 +296,8 @@ class RolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'nurseContactWindow.read',
                     'nurseHoliday.read',
-                    'practiceSetting.read'
+                    'practiceSetting.read',
+                    'medicationGroup.read'
                 ],
             ],
             [
@@ -347,6 +348,10 @@ class RolesPermissionsSeeder extends Seeder
                     'medication.read',
                     'medication.update',
                     'medication.delete',
+                    'medicationGroup.create',
+                    'medicationGroup.read',
+                    'medicationGroup.update',
+                    'medicationGroup.delete',
                     'patientProblem.create',
                     'patientProblem.read',
                     'patientProblem.update',
@@ -594,6 +599,9 @@ class RolesPermissionsSeeder extends Seeder
                     'location.read',
                     'location.update',
                     'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
                     'practice.read',
                     'practice.update',
                     'pdf.create',
