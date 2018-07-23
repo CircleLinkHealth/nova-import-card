@@ -1595,17 +1595,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->patientInfo->consent_date;
     }
 
-    public function setConsentDateAttribute($value)
-    {
-        if ( ! $this->patientInfo) {
-            return '';
-        }
-        $this->patientInfo->consent_date = $value;
-        $this->patientInfo->save();
-
-        return true;
-    }
-
     public function getAgentNameAttribute()
     {
         if ( ! $this->patientInfo) {
