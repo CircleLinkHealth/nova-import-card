@@ -137,6 +137,7 @@ class Patient extends \App\BaseModel
      * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
      */
     const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
+    const BHI_CONSENT_NOTE_TYPE = 'BHI Consent';
 
     protected $dates = [
         'consent_date',

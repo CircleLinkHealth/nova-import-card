@@ -2994,7 +2994,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                 $q->whereHas('patientInfo', function ($q) {
                     $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
                 })->orWhereHas('notes', function ($q) {
-                    $q->where('type', '=', 'BHI Consent');
+                    $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
                 });
             });
     }
