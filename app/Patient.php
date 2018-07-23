@@ -130,6 +130,7 @@ class Patient extends \App\BaseModel
     const PATIENT_REJECTED = 'patient_rejected';
 
     protected $dates = [
+        'consent_date',
         'date_withdrawn',
         'date_paused',
         'date_unreachable',

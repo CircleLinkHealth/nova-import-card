@@ -2,10 +2,14 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 class ChargeableService extends \App\BaseModel
 {
+    const DEFAULT_CHARGEABLE_SERVICE_CODES = [
+        'CPT 99490',
+        'CPT 99487',
+        'CPT 99489',
+        'G0511',
+    ];
 
     protected $fillable = [
         'code',
