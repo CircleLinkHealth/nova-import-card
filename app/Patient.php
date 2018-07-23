@@ -614,8 +614,8 @@ class Patient extends \App\BaseModel
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
             'gender'                  => $this->gender,
-            'created_at'              => $this->created_at->format('c'),
-            'updated_at'              => $this->updated_at->format('c'),
+            'created_at'              => optional($this->created_at)->format('c'),
+            'updated_at'              => optional($this->updated_at)->format('c'),
             'cur_month_activity_time' => $this->cur_month_activity_time,
         ];
     }

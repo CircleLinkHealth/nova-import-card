@@ -137,7 +137,7 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        @if ( ! auth()->guest() && auth()->user()->hasRole(['administrator']) && auth()->user()->isNotSaas())
+                        @if ( ! auth()->guest() && auth()->user()->hasRole(['administrator', 'administrator-view-only']) && auth()->user()->isNotSaas())
                             <li><a style="color: #47beab"
                                    href="{{ empty($patient->id) ? route('admin.dashboard') : route('admin.users.edit', array('patient' => $patient->id)) }}">
                                     Admin Panel

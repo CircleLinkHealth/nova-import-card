@@ -121,7 +121,8 @@ class ReschedulerHandler
                         $call->outbound_cpm_id
                             ? $call->outbound_cpm_id
                             : null,
-                        ''
+                        '',
+                        false
                     );
                 }
             } catch (\Exception $exception) {

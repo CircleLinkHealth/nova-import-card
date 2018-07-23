@@ -42,7 +42,7 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         // switch dashboard view based on logged in user
-        if ($user->hasRole('administrator')) {
+        if ($user->hasRole(['administrator','administrator-view-only'] )) {
             return view('admin.dashboard', compact(['user']));
         } else {
             return redirect()->route('patients.dashboard', []);
