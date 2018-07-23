@@ -129,6 +129,15 @@ class Patient extends \App\BaseModel
     const TO_ENROLL = 'to_enroll';
     const PATIENT_REJECTED = 'patient_rejected';
 
+    /**
+     * Starting on this date, when a patients consents for CCM, they also consent for BHI.
+     *
+     * Patients who consented before this date need to have a separate BHI consent. Separate BHI consent is denoted by
+     * the patient having a Note with type "BHI Consent". This affects only Patients who consent to receiving BHI
+     * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
+     */
+    const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
+
     protected $dates = [
         'consent_date',
         'date_withdrawn',
@@ -583,13 +592,13 @@ class Patient extends \App\BaseModel
     public function getPreferences()
     {
         $patientTimezone = $this->user->timezone;
-        if (!isset($patientTimezone)) {
+        if ( ! isset($patientTimezone)) {
             $patientTimezone = 'America/New_York';
         }
         $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');
 
         return [
-            'calls_per_month' => $this->preferred_calls_per_month,
+            'calls_per_month'  => $this->preferred_calls_per_month,
             //found in contact_window
             //'contact_days' => $this->preferred_cc_contact_days,
             //'contact_time' => $this->preferred_contact_time,
@@ -598,9 +607,9 @@ class Patient extends \App\BaseModel
             'contact_timezone' => $tzAbbr,
 
             'contact_language' => $this->preferred_contact_language,
-            'contact_method' => $this->preferred_contact_method,
-            'contact_window' => $this->contactWindows,
-            'contact_location' => $this->location
+            'contact_method'   => $this->preferred_contact_method,
+            'contact_window'   => $this->contactWindows,
+            'contact_location' => $this->location,
         ];
     }
 

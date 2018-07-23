@@ -2989,9 +2989,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             })
             ->whereHas('ccdProblems.cpmProblem', function ($q) {
                 $q->where('is_behavioral', true);
+            })
+            ->where(function ($q) {
+                $q->whereHas('patientInfo', function ($q) {
+                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                })->orWhereHas('notes', function ($q) {
+                    $q->where('type', '=', 'BHI Consent');
+                });
             });
-
-        //@todo: Add consent for BHI check
     }
 
     /**
