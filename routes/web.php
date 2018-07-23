@@ -385,7 +385,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::resource('user.care-plan', 'API\PatientCarePlanController')->middleware('permission:careplan.read');
 
-    Route::resource('user.care-team', 'API\CareTeamController')->middleware('permission:carePerson.create,carePerson.read,carePerson.update,carePerson.delete');
+//    Route::resource('user.care-team', 'API\CareTeamController')->middleware('permission:carePerson.create,carePerson.read,carePerson.update,carePerson.delete');
     Route::get('user/{user}/care-team',[
         'uses' => 'API\CareTeamController@index',
         'as' => 'user.care-team.index'
