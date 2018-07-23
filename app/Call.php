@@ -99,6 +99,16 @@ class Call extends \App\BaseModel
         'is_cpm_outbound',
     ];
 
+    //patient was reached
+    const REACHED = 'reached';
+
+    //patient was not reached
+    const NOT_REACHED = 'not reached';
+
+    //patient was reached/not reached but this call is to be ignored
+    //eg. patient was reached but was busy, so ignore call from reached/not reached reports
+    const IGNORED = 'ignored';
+
     public function getIsFromCareCenterAttribute() {
 
         if (!is_a($this->schedulerUser, User::class)) {
