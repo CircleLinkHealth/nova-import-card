@@ -308,6 +308,8 @@
     @push('scripts')
         <script>
 
+            const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
+
             $(document).ready(function () {
 
                 function phoneSessionChange(e) {
@@ -379,7 +381,7 @@
                 e.preventDefault();
                 const form = this;
 
-                if ($('#phone').is(':checked') && (!form['call_status'] || !form['call_status'].value || !form['call_status'].value.length)) {
+                if (userIsCCMCountable && $('#phone').is(':checked') && (!form['call_status'] || !form['call_status'].value || !form['call_status'].value.length)) {
                     alert('Please select whether patient was reached or not.');
                     return;
                 }

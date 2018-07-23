@@ -21,6 +21,20 @@
                 border: 0;
                 background: transparent;
             }
+
+            .radio-inline {
+                padding-left: 0;
+                margin-left: 0;
+            }
+
+            .multi-input-wrapper {
+                margin-left: -10px;
+                margin-bottom: 4px;
+                padding-left: 6px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
         </style>
     @endpush
 
@@ -126,9 +140,11 @@
                                             <div class="col-sm-12">
                                                 <div class="form-group">
                                                     <select id="author_id" name="author_id"
-                                                            class="selectpickerX dropdown Valid form-control" data-size="10"
+                                                            class="selectpickerX dropdown Valid form-control"
+                                                            data-size="10"
                                                             required disabled>
-                                                        <option value="{{$author_id}}" selected> {{$author_name}} </option>
+                                                        <option value="{{$author_id}}"
+                                                                selected> {{$author_name}} </option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -146,33 +162,41 @@
                                     <div class="new-note-item">
                                         <div class="form-group">
                                             <div class="col-sm-12">
+                                                <label>
+                                                    <div>
+                                                        <input type="checkbox"
+                                                               name="meta[0][meta_key]"
+                                                               id="phone"
+                                                               value="phone"/>
+                                                        <label for="phone">
+                                                            <span> </span>Patient Phone Session
+                                                        </label>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-12">
                                                 <div class="panel-group" id="accordion">
-
-                                                    <label>
-                                                        <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
-                                                                                  id="phone"
-                                                                                  value="phone"/><label
-                                                                    for="phone"><span> </span>Patient Phone Session</label>
-                                                        </div>
-                                                    </label>
-
                                                     <div id="collapseOne" class="panel-collapse collapse in"
                                                          style="display: none;">
-                                                        <div class="radio-inline"><input type="radio"
-                                                                                         name="phone"
-                                                                                         value="inbound"
-                                                                                         id="Inbound"/><label
-                                                                    for="Inbound"><span> </span>Inbound</label>
+                                                        <div class="multi-input-wrapper">
+                                                            <div class="radio-inline"><input type="radio"
+                                                                                             name="phone"
+                                                                                             value="inbound"
+                                                                                             id="Inbound"/><label
+                                                                        for="Inbound"><span> </span>Inbound</label>
+                                                            </div>
+                                                            <div class="radio-inline"><input type="radio"
+                                                                                             name="phone"
+                                                                                             value="outbound"
+                                                                                             id="Outbound"/><label
+                                                                        for="Outbound"><span> </span>Outbound</label>
+                                                            </div>
                                                         </div>
-                                                        <div class="radio-inline"><input type="radio"
-                                                                                         name="phone"
-                                                                                         value="outbound"
-                                                                                         id="Outbound"/><label
-                                                                    for="Outbound"><span> </span>Outbound</label></div>
+
 
                                                         @if(auth()->user()->isCCMCountable())
-                                                            <div>
-                                                                <div class="radio-inline">
+                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                                <div class="radio">
                                                                     <input type="radio"
                                                                            name="call_status"
                                                                            value="not reached"
@@ -181,7 +205,7 @@
                                                                         <span> </span>Patient Not Reached
                                                                     </label>
                                                                 </div>
-                                                                <div class="radio-inline">
+                                                                <div class="radio">
                                                                     <input type="radio"
                                                                            name="call_status"
                                                                            value="reached"
@@ -191,7 +215,7 @@
                                                                     </label>
                                                                 </div>
                                                                 <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
-                                                                <div class="radio-inline">
+                                                                <div class="radio">
                                                                     <input type="radio"
                                                                            name="call_status"
                                                                            value="ignored"
@@ -203,46 +227,56 @@
                                                             </div>
                                                         @else
 
-                                                            <div>
-                                                                <div class="radio-inline"><input type="checkbox"
-                                                                                                 name="welcome_call"
-                                                                                                 value="welcome_call"
-                                                                                                 id="welcome_call"/><label
-                                                                            for="welcome_call"><span> </span>Successful
-                                                                        Welcome Call</label>
+                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                                <div>
+                                                                    <div class="radio">
+                                                                        <input type="checkbox"
+                                                                               name="welcome_call"
+                                                                               value="welcome_call"
+                                                                               id="welcome_call"/>
+                                                                        <label for="welcome_call">
+                                                                            <span> </span>Successful
+                                                                            Welcome Call
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <div>
-                                                                <div class="radio-inline"><input type="checkbox"
-                                                                                                 name="other_call"
-                                                                                                 value="other_call"
-                                                                                                 id="other_call"/><label
-                                                                            for="other_call"><span> </span>Successful Other
-                                                                        Patient Call</label>
+                                                                <div>
+                                                                    <div class="radio">
+                                                                        <input type="checkbox"
+                                                                               name="other_call"
+                                                                               value="other_call"
+                                                                               id="other_call"/>
+                                                                        <label for="other_call">
+                                                                            <span> </span>Successful
+                                                                            Other
+                                                                            Patient Call
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
                                                         @endif
-                                                        <div>
-                                                            <div class="radio-inline"><input type="checkbox"
-                                                                                             name="medication_recon"
-                                                                                             value="true"
-                                                                                             id="medication_recon"/><label
-                                                                        for="medication_recon"><span> </span>Medication
-                                                                    Reconciliation
+                                                        <div class="multi-input-wrapper" style="padding-top: 3px">
+                                                            <div><input type="checkbox"
+                                                                        name="medication_recon"
+                                                                        value="true"
+                                                                        id="medication_recon"/>
+                                                                <label for="medication_recon">
+                                                                    <span> </span>Medication Reconciliation
+                                                                </label>
+                                                            </div>
+                                                            <input type="hidden" name="tcm" value="hospital">
+                                                            <div><input type="checkbox"
+                                                                        name="tcm"
+                                                                        value="true"
+                                                                        id="tcm"/>
+                                                                <label for="tcm">
+                                                                    <span> </span>Patient in Hospital/ER (now or
+                                                                    recently)
                                                                 </label>
                                                             </div>
                                                         </div>
-                                                        <input type="hidden" name="tcm" value="hospital">
-                                                        <div>
-                                                            <div class="radio-inline"><input type="checkbox"
-                                                                                             name="tcm"
-                                                                                             value="true" id="tcm"/><label
-                                                                        for="tcm"><span> </span>Patient in Hospital/ER (now
-                                                                    or
-                                                                    recently)</label>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -313,6 +347,8 @@
 
     @push('scripts')
         <script>
+
+            const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
 
             $(document).ready(function () {
 
@@ -385,7 +421,7 @@
                 e.preventDefault();
                 const form = this;
 
-                if ($('#phone').is(':checked') && (!form['call_status'] || !form['call_status'].value || !form['call_status'].value.length)) {
+                if (userIsCCMCountable && $('#phone').is(':checked') && (!form['call_status'] || !form['call_status'].value || !form['call_status'].value.length)) {
                     alert('Please select whether patient was reached or not.');
                     return;
                 }
