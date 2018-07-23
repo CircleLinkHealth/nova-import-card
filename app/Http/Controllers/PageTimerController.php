@@ -56,7 +56,7 @@ class PageTimerController extends Controller
 
             $redirectTo = $data['redirectLocation'] ?? null;
 
-            $isBhi = User::isBhi()
+            $isBhi = User::isBhiChargeable()
                          ->where('id', $patientId)
                          ->exists();
 

@@ -2979,7 +2979,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      *
      * @return mixed
      */
-    public function scopeIsBhi($builder)
+    public function scopeIsBhiChargeable($builder)
     {
         return $builder
             ->whereHas('primaryPractice', function ($q) {
@@ -3006,8 +3006,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function isBhi()
     {
-        return User::isBhi()
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi", 1, function (){
+        return User::isBhiChargeable()
                    ->where('id', $this->id)
                    ->exists();
+//        });
     }
 }
