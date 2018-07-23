@@ -396,7 +396,21 @@
                             this.errors.submit = err.message
                             this.loaders.submit = false
                             console.error('add-call', err)
-                            Event.$emit('notifications-add-call-modal:create', {text: err.message, type: 'error'})
+
+                            let msg = err.message;
+                            if (err.response && err.response.data && err.response.data.errors) {
+                                // {is_manual: ['error message']}
+                                const errors = err.response.data.errors;
+                                if (Array.isArray(errors)) {
+                                    msg += `: ${errors.join(', ')}`;
+                                }
+                                else {
+                                    const errorsMessages = Object.values(errors).map(x=>x[0]).join(', ');
+                                    msg += `: ${errorsMessages}`;
+                                }
+                            }
+
+                            Event.$emit('notifications-add-call-modal:create', {text: msg, type: 'error'})
                         })
                     }
                 }
