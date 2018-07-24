@@ -334,22 +334,25 @@ class WebixFormatter implements ReportFormatter
 
         //Allergies
         $careplanReport[$user->id]['allergies'] = 'No instructions at this time';
-        $allergy                                = $user->cpmMiscs->where('name', CpmMisc::ALLERGIES)->all();
-        if ( ! empty($allergy)) {
-            $allergies = Allergy::where('patient_id', '=', $user->id)->orderBy('allergen_name')->get();
-            if ($allergies->count() > 0) {
-                $careplanReport[$user->id]['allergies'] = '';
-                $i                                      = 0;
-                foreach ($allergies as $allergy) {
-                    if (empty($allergy->allergen_name)) {
-                        continue 1;
-                    }
-                    if ($i > 0) {
-                        $careplanReport[$user->id]['allergies'] .= '<br>';
-                    }
-                    $careplanReport[$user->id]['allergies'] .= $allergy->allergen_name;
-                    $i++;
+
+        $allergies = Allergy::where('patient_id', '=', $user->id)
+                            ->orderBy('allergen_name')
+                            ->get()
+                            ->unique('allergen_name')
+                            ->values();
+
+        if ($allergies->count() > 0) {
+            $careplanReport[$user->id]['allergies'] = '';
+            $i                                      = 0;
+            foreach ($allergies as $allergy) {
+                if (empty($allergy->allergen_name)) {
+                    continue 1;
                 }
+                if ($i > 0) {
+                    $careplanReport[$user->id]['allergies'] .= '<br>';
+                }
+                $careplanReport[$user->id]['allergies'] .= $allergy->allergen_name;
+                $i++;
             }
         }
 
