@@ -21,6 +21,20 @@
                 border: 0;
                 background: transparent;
             }
+
+            .radio-inline {
+                padding-left: 0;
+                margin-left: 0;
+            }
+
+            .multi-input-wrapper {
+                margin-left: -10px;
+                margin-bottom: 4px;
+                padding-left: 6px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
         </style>
     @endpush
 
@@ -59,183 +73,210 @@
 
                     <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12"
                          style=" border:0px solid #50b2e2;padding: 10px 35px;">
-                        <!-- Note Type -->
-                        <div class="form-block col-md-6">
-                            <div class="row">
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label for="activityKey">
-                                                Note Topic
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <select id="activityKey" name="type"
-                                                        class="selectpickerX dropdownValid form-control"
-                                                        data-size="10" required>
-                                                    <option value=""> Select Topic</option>
-                                                    @foreach ($note_types as $note_type)
-                                                        <option value="{{$note_type}}"> {{$note_type}} </option>
-                                                    @endforeach
-                                                </select>
+
+                        <div class="col-md-6">
+
+                            <!-- Note Type -->
+                            <div class="form-block col-md-12">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label for="activityKey">
+                                                    Note Topic
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <select id="activityKey" name="type"
+                                                            class="selectpickerX dropdownValid form-control"
+                                                            data-size="10" required>
+                                                        <option value=""> Select Topic</option>
+                                                        @foreach ($note_types as $note_type)
+                                                            <option value="{{$note_type}}"> {{$note_type}} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Performance Time -->
-                        <div class="form-block col-md-6">
-                            <div class="row">
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label for="performed_at">
-                                                When (Patient Local Time):
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <input name="performed_at" type="datetime-local"
-                                                       class="selectpickerX form-control"
-                                                       data-width="95px" data-size="10" list max="{{$userTime}}"
-                                                       value="{{$userTime}}"
-                                                       required>
+                            <!-- Performance Time -->
+                            <div class="form-block col-md-12">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label for="performed_at">
+                                                    When (Patient Local Time):
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <input name="performed_at" type="datetime-local"
+                                                           class="selectpickerX form-control"
+                                                           data-width="95px" data-size="10" list max="{{$userTime}}"
+                                                           value="{{$userTime}}"
+                                                           required>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Author -->
-                        <div class="form-block col-md-6">
-                            <div class="row">
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <label for="author_id">
-                                                Performed By
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <select id="author_id" name="author_id"
-                                                        class="selectpickerX dropdown Valid form-control" data-size="10"
-                                                        required disabled>
-                                                    <option value="{{$author_id}}" selected> {{$author_name}} </option>
-                                                </select>
+                            <!-- Author -->
+                            <div class="form-block col-md-12">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <label for="author_id">
+                                                    Performed By
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <select id="author_id" name="author_id"
+                                                            class="selectpickerX dropdown Valid form-control"
+                                                            data-size="10"
+                                                            required disabled>
+                                                        <option value="{{$author_id}}"
+                                                                selected> {{$author_name}} </option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
-                        <!-- Phone Sessions -->
-                        <div class="form-block col-md-12">
-                            <div class="row">
-                                <div class="new-note-item">
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <div class="panel-group" id="accordion">
-
+                        <div class="col-md-6">
+                            <!-- Phone Sessions -->
+                            <div class="form-block col-md-12">
+                                <div class="row">
+                                    <div class="new-note-item">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
                                                 <label>
-                                                    <div class="radio"><input type="checkbox" name="meta[0][meta_key]"
-                                                                              id="phone"
-                                                                              value="phone"/><label
-                                                                for="phone"><span> </span>Patient Phone Session</label>
+                                                    <div>
+                                                        <input type="checkbox"
+                                                               name="meta[0][meta_key]"
+                                                               id="phone"
+                                                               value="phone"/>
+                                                        <label for="phone">
+                                                            <span> </span>Patient Phone Session
+                                                        </label>
                                                     </div>
                                                 </label>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="panel-group" id="accordion">
+                                                    <div id="collapseOne" class="panel-collapse collapse in"
+                                                         style="display: none;">
+                                                        <div class="multi-input-wrapper">
+                                                            <div class="radio-inline"><input type="radio"
+                                                                                             name="phone"
+                                                                                             value="inbound"
+                                                                                             id="Inbound"/><label
+                                                                        for="Inbound"><span> </span>Inbound</label>
+                                                            </div>
+                                                            <div class="radio-inline"><input type="radio"
+                                                                                             name="phone"
+                                                                                             value="outbound"
+                                                                                             id="Outbound"/><label
+                                                                        for="Outbound"><span> </span>Outbound</label>
+                                                            </div>
+                                                        </div>
 
-                                                <div id="collapseOne" class="panel-collapse collapse in"
-                                                     style="display: none;">
-                                                    <div class="radio-inline"><input type="radio"
-                                                                                     name="phone"
-                                                                                     value="inbound"
-                                                                                     id="Inbound"/><label
-                                                                for="Inbound"><span> </span>Inbound</label>
-                                                    </div>
-                                                    <div class="radio-inline"><input type="radio"
-                                                                                     name="phone"
-                                                                                     value="outbound"
-                                                                                     id="Outbound"/><label
-                                                                for="Outbound"><span> </span>Outbound</label></div>
 
-                                                    @if(auth()->user()->isCCMCountable())
-                                                        <div>
-                                                            <div class="radio-inline">
-                                                                <input type="radio"
-                                                                       name="call_status"
-                                                                       value="not reached"
-                                                                       id="not-reached"/>
-                                                                <label for="not-reached">
-                                                                    <span> </span>Patient Not Reached
+                                                        @if(auth()->user()->isCCMCountable())
+                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                                <div class="radio">
+                                                                    <input type="radio"
+                                                                           name="call_status"
+                                                                           value="not reached"
+                                                                           id="not-reached"/>
+                                                                    <label for="not-reached">
+                                                                        <span> </span>Patient Not Reached
+                                                                    </label>
+                                                                </div>
+                                                                <div class="radio">
+                                                                    <input type="radio"
+                                                                           name="call_status"
+                                                                           value="reached"
+                                                                           id="reached"/>
+                                                                    <label for="reached">
+                                                                        <span> </span>Successful Clinical Call
+                                                                    </label>
+                                                                </div>
+                                                                <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
+                                                                <div class="radio">
+                                                                    <input type="radio"
+                                                                           name="call_status"
+                                                                           value="ignored"
+                                                                           id="ignored"/>
+                                                                    <label for="ignored">
+                                                                        <span> </span>Patient Busy - Rescheduled Call
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        @else
+
+                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                                <div>
+                                                                    <div class="radio">
+                                                                        <input type="checkbox"
+                                                                               name="welcome_call"
+                                                                               value="welcome_call"
+                                                                               id="welcome_call"/>
+                                                                        <label for="welcome_call">
+                                                                            <span> </span>Successful
+                                                                            Welcome Call
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="radio">
+                                                                        <input type="checkbox"
+                                                                               name="other_call"
+                                                                               value="other_call"
+                                                                               id="other_call"/>
+                                                                        <label for="other_call">
+                                                                            <span> </span>Successful
+                                                                            Other
+                                                                            Patient Call
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        @endif
+                                                        <div class="multi-input-wrapper" style="padding-top: 3px">
+                                                            <div><input type="checkbox"
+                                                                        name="medication_recon"
+                                                                        value="true"
+                                                                        id="medication_recon"/>
+                                                                <label for="medication_recon">
+                                                                    <span> </span>Medication Reconciliation
                                                                 </label>
                                                             </div>
-                                                            <div class="radio-inline">
-                                                                <input type="radio"
-                                                                       name="call_status"
-                                                                       value="reached"
-                                                                       id="reached"/>
-                                                                <label for="reached">
-                                                                    <span> </span>Successful Clinical Call
-                                                                </label>
-                                                            </div>
-                                                            <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
-                                                            <div class="radio-inline">
-                                                                <input type="radio"
-                                                                       name="call_status"
-                                                                       value="ignored"
-                                                                       id="ignored"/>
-                                                                <label for="ignored">
-                                                                    <span> </span>Patient Busy - Rescheduled Call
+                                                            <input type="hidden" name="tcm" value="hospital">
+                                                            <div><input type="checkbox"
+                                                                        name="tcm"
+                                                                        value="true"
+                                                                        id="tcm"/>
+                                                                <label for="tcm">
+                                                                    <span> </span>Patient in Hospital/ER (now or
+                                                                    recently)
                                                                 </label>
                                                             </div>
                                                         </div>
-                                                    @else
 
-                                                        <div>
-                                                            <div class="radio-inline"><input type="checkbox"
-                                                                                             name="welcome_call"
-                                                                                             value="welcome_call"
-                                                                                             id="welcome_call"/><label
-                                                                        for="welcome_call"><span> </span>Successful
-                                                                    Welcome Call</label>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <div class="radio-inline"><input type="checkbox"
-                                                                                             name="other_call"
-                                                                                             value="other_call"
-                                                                                             id="other_call"/><label
-                                                                        for="other_call"><span> </span>Successful Other
-                                                                    Patient Call</label>
-                                                            </div>
-                                                        </div>
-
-                                                    @endif
-                                                    <div>
-                                                        <div class="radio-inline"><input type="checkbox"
-                                                                                         name="medication_recon"
-                                                                                         value="true"
-                                                                                         id="medication_recon"/><label
-                                                                    for="medication_recon"><span> </span>Medication
-                                                                Reconciliation
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <input type="hidden" name="tcm" value="hospital">
-                                                    <div>
-                                                        <div class="radio-inline"><input type="checkbox"
-                                                                                         name="tcm"
-                                                                                         value="true" id="tcm"/><label
-                                                                    for="tcm"><span> </span>Patient in Hospital/ER (now
-                                                                or
-                                                                recently)</label>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -244,7 +285,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="form-block col-md-12">
                             <div class="row">

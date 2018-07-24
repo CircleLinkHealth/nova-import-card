@@ -56,6 +56,10 @@ class PageTimerController extends Controller
 
             $redirectTo = $data['redirectLocation'] ?? null;
 
+            $isBhi = User::isBhiChargeable()
+                         ->where('id', $patientId)
+                         ->exists();
+
             $newActivity                    = new PageTimer();
             $newActivity->redirect_to       = $redirectTo;
             $newActivity->billable_duration = $duration;
@@ -65,9 +69,9 @@ class PageTimerController extends Controller
             $newActivity->provider_id       = $providerId;
             $newActivity->start_time        = $startTime->toDateTimeString();
             $newActivity->end_time          = $endTime->toDateTimeString();
-            $is_behavioral = isset($activity['is_behavioral'])
-                ? $activity['is_behavioral']
-                : false;
+            $is_behavioral                  = isset($activity['is_behavioral'])
+                ? (boolean)$activity['is_behavioral'] && $isBhi
+                : $isBhi;
             $newActivity->url_full          = $activity['url'];
             $newActivity->url_short         = $activity['url_short'];
             $newActivity->program_id        = $data['programId'];

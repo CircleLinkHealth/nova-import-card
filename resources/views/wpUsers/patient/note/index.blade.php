@@ -19,16 +19,6 @@
                        class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
                         + NEW NOTE
                     </a>
-
-                    <a href="{{ route('patient.note.create-v2', array('patient' => $patient->id)) }}"
-                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
-                        + NEW NOTE (v2)
-                    </a>
-
-                    <a href="{{ route('patient.note.create-v3', array('patient' => $patient->id)) }}"
-                       class="btn btn-primary btn-default form-item--button form-item-spacing" role="button">
-                        + NEW NOTE (v3)
-                    </a>
                 </div>
                 <div class="col-sm-6 pull-right"
                      style="text-align: right;top: 12px;font-size: 22px;color: #ec683e;">
