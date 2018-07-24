@@ -228,7 +228,8 @@ class SchedulerService
         $date,
         $scheduler,
         $nurse_id = null,
-        $attempt_note = ''
+        $attempt_note = '',
+        $is_manual = false
     ) {
 
         $patient = User::find($patientId);
@@ -248,6 +249,7 @@ class SchedulerService
             'attempt_note' => $attempt_note,
 
             'scheduler' => $scheduler,
+            'is_manual' => $is_manual,
 
             'inbound_phone_number' => $patient->patientInfo->phone
                 ? $patient->patientInfo->phone
