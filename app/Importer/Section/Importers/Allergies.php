@@ -20,8 +20,10 @@ class Allergies extends BaseImporter
         ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLogs = AllergyLog::where('medical_record_type', '=', $medicalRecordType)
-            ->where('medical_record_id', '=', $medicalRecordId)
-            ->get();
+                              ->where('medical_record_id', '=', $medicalRecordId)
+                              ->get()
+                              ->unique('allergen_name')
+                              ->values();
 
         foreach ($itemLogs as $itemLog) {
             if (!$this->validate($itemLog)) {
