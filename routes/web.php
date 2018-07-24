@@ -1893,7 +1893,7 @@ Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator|saas-admin|mdally',
+        'providerDashboardACL:administrator|saas-admin|saas-admin-view-only',
     ],
 ], function () {
 
@@ -2114,7 +2114,7 @@ Route::group([
 
 Route::group([
     'prefix'     => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin|administrator|mdally'],
+    'middleware' => ['auth', 'role:saas-admin|administrator|saas-admin-view-only'],
 ], function () {
 
     Route::get('home', [
