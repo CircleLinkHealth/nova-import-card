@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-  "content-hash": "e61ec543a0a154c3806585d928790066",
+  "content-hash": "6d45cf0b8d4c2e21c2e9f9f3249038f4",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -5501,6 +5501,60 @@
             "time": "2018-01-15T21:00:49+00:00"
         },
         {
+          "name": "signifly/laravel-database-refactors",
+          "version": "v1.0.0",
+          "source": {
+            "type": "git",
+            "url": "https://github.com/signifly/laravel-database-refactors.git",
+            "reference": "e09551911fe1d300323533d543ca71af9088cf82"
+          },
+          "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/signifly/laravel-database-refactors/zipball/e09551911fe1d300323533d543ca71af9088cf82",
+            "reference": "e09551911fe1d300323533d543ca71af9088cf82",
+            "shasum": ""
+          },
+          "require": {
+            "illuminate/console": "~5.5.0|~5.6.0",
+            "illuminate/database": "~5.5.0|~5.6.0",
+            "illuminate/filesystem": "~5.5.0|~5.6.0",
+            "illuminate/support": "~5.5.0|~5.6.0",
+            "php": "^7.1"
+          },
+          "require-dev": {
+            "orchestra/testbench": "~3.5.0|~3.6.0",
+            "phpunit/phpunit": "^6.5 || ^7.0"
+          },
+          "type": "library",
+          "extra": {
+            "laravel": {
+              "providers": [
+                "Signifly\\DatabaseRefactors\\RefactorServiceProvider"
+              ],
+              "aliases": []
+            }
+          },
+          "autoload": {
+            "psr-4": {
+              "Signifly\\DatabaseRefactors\\": "src"
+            }
+          },
+          "notification-url": "https://packagist.org/downloads/",
+          "license": [
+            "MIT"
+          ],
+          "authors": [
+            {
+              "name": "Morten Poul Jensen",
+              "email": "mpj@signifly.com",
+              "role": "Developer"
+            }
+          ],
+          "description": "Add database refactors to your Laravel app.",
+          "homepage": "https://github.com/signifly/laravel-database-refactors",
+          "time": "2018-05-18T15:41:01+00:00"
+        },
+      {
             "name": "spatie/image",
             "version": "1.5.2",
             "source": {
