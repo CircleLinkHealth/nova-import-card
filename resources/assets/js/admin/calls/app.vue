@@ -284,7 +284,7 @@
                     'Next Call': 'scheduledDate',
                     'Last Call': 'lastCall',
                     'CCM Time': 'ccmTime',
-                    'Manual': 'is_from_care_center'
+                    'Manual': 'is_manual'
                 }
                 //to camel case
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
@@ -485,7 +485,7 @@
                 return ({
                     id: call.id,
                     selected: false,
-                    Manual: call['is_from_care_center'] || false,
+                    Manual: call['is_manual'] || false,
                     Nurse: (call.getNurse() || {}).full_name,
                     NurseId: (call.getNurse() || {}).id,
                     Patient: (call.getPatient() || {}).full_name,
