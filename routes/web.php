@@ -1765,7 +1765,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('programs', [
                 'uses' => 'Admin\PracticeController@index',
                 'as'   => 'admin.programs.index',
-            ])->middleware('permission.practice.read');
+            ])->middleware('permission:practice.read');
             Route::get('programs/create', [
                 'uses' => 'Admin\PracticeController@create',
                 'as'   => 'admin.programs.create',
@@ -1773,7 +1773,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('programs/create', [
                 'uses' => 'Admin\PracticeController@store',
                 'as'   => 'admin.programs.store',
-            ])->middleware('permission.practice.create');
+            ])->middleware('permission:practice.create');
             Route::get('programs/{id}', [
                 'uses' => 'Admin\PracticeController@show',
                 'as'   => 'admin.programs.show',
