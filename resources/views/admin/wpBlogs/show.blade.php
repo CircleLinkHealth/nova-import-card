@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="pull-right" style="margin:20px;">
-                            @if(Cerberus::hasPermission('programs-manage'))
+                            @if(Cerberus::hasPermission('practice.read'))
                                 <a href="{{ route('admin.programs.edit', array('id' => $program->id)) }}"
                                    class="btn btn-info">Edit</a>
                             @endif
