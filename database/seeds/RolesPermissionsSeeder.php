@@ -15,6 +15,11 @@ class RolesPermissionsSeeder extends Seeder
     {
         $this->call(LvPermissionsTableSeeder::class);
 
+        $mdally = Role::where('name', 'mdally')->first();
+        if ($mdally){
+            $mdally->delete();
+        }
+
         foreach ($this->roles() as $role) {
             $permissionsArr = $role['permissions'];
 
@@ -676,9 +681,9 @@ class RolesPermissionsSeeder extends Seeder
                 ],
             ],
             [
-                'name'         => 'mdally',
-                'display_name' => 'MDAlly',
-                'description'  => 'MDAlly, a partner which white-labels our CCM service to their customers',
+                'name'         => 'saas-admin-view-only',
+                'display_name' => 'Saas Admin - View Only',
+                'description'  => 'Created for MDAlly, a partner which white-labels our CCM service to their customers',
                 'permissions'  => [
                     'admin-access',
                     'users-edit-self',

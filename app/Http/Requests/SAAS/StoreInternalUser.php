@@ -14,7 +14,7 @@ class StoreInternalUser extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole(['saas-admin', 'mdally']);
+        return auth()->user()->hasRole(['saas-admin', 'saas-admin-view-only']);
     }
 
     /**

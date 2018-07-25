@@ -15,7 +15,7 @@ class User extends Resource
      */
     public function toArray($request)
     {
-        return [
+        $result = [
             'id'                  => $this->id,
             'username'            => $this->username,
             'email'               => $this->email,
@@ -51,6 +51,14 @@ class User extends Resource
             'primary_practice'    => Practice::make($this->whenLoaded('primaryPractice')),
             'status'              => optional($this->carePlan)->status,
             'is_bhi'              => $this->isBhi(),
+            'is_ccm'              => $this->isCcm(),
         ];
+
+        if ($this->relationLoaded('patientSummaries')) {
+            $result['ccm_time'] = $this->ccmTime;
+            $result['bhi_time'] = $this->bhiTime;
+        }
+
+        return $result;
     }
 }
