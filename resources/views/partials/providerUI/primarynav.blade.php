@@ -46,7 +46,7 @@ if (isset($patient)) {
                         <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
                     </li>
                 @endif
-                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('mdally'))
+                @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
                     <li class="dropdown-toggle">
                         <div class="dropdown-toggle" data-toggle="dropdown" role="button"
                              aria-expanded="false"
