@@ -39,7 +39,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function handle()
     {
-        $date = Carbon::now()->subDay(11);
+        $date = Carbon::now();
 
         $practices = Practice::activeBillable()
                              ->with([
