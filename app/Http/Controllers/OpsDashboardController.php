@@ -6,6 +6,7 @@ use App\Patient;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
+use App\SaasAccount;
 use App\Services\OpsDashboardService;
 use App\User;
 use Carbon\Carbon;
@@ -54,15 +55,25 @@ class OpsDashboardController extends Controller
         }
 
 
-            try{
-                $json = Storage::disk('media')->get("ops-daily-report-{$date->toDateString()}.json");
-            }catch (\Exception $e) {
-                abort(404, 'We could not find a report for the date you requested.');
-            }
+        try{
+            $json = SaasAccount::whereSlug('circlelink-health')
+                               ->first()
+                               ->getMedia("ops-daily-report-{$date->toDateString()}.json")
+                ->sortByDesc('id')
+
+                               ->first()
+                               ->getFile();
+        }catch (\Exception $e){
+            abort(404, 'There is no report for this specific date.');
+        }
+
 
         $data = json_decode($json, true);
         $hoursBehind = $data['hoursBehind'];
         $rows =  $data['rows'];
+
+
+
 
 
         return view('admin.opsDashboard.daily', compact([

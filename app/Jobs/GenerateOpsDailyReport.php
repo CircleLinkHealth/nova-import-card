@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Patient;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
+use App\SaasAccount;
 use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -38,7 +39,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function handle()
     {
-        $date = Carbon::now();
+        $date = Carbon::now()->subDay(11);
 
         $practices = Practice::activeBillable()
                              ->with([
@@ -85,24 +86,22 @@ class GenerateOpsDailyReport implements ShouldQueue
             'hoursBehind' => $hoursBehind,
             'rows'        => $rows,
         ];
-        $json = json_encode($data);
 
-        Storage::disk('media')->put("ops-daily-report-{$date->toDateString()}.json", $json);
+        $path = storage_path("ops-daily-report-{$date->toDateString()}.json");
 
-        //log into media table
-        DB::table('media')->insert([
-            'model_id'        => 1,
-            'model_type'      => 'App\SaasAccount',
-            'collection_name' => "ops-daily-report-{$date->toDateString()}.json",
-            'name'            => "ops-daily-report-{$date->toDateString()}.json",
-            'file_name'       => "ops-daily-report-{$date->toDateString()}.json",
-            'mime_type'       => 'application/json',
-            'disk'            => 'media',
-            'size'            => 1,
-            'created_at'      => $date->toDateTimeString(),
-            'updated_at'      => $date->toDateTimeString(),
-        ]);
+        $saved = file_put_contents($path, json_encode($data));
 
+        if (!$saved) {
+            if (app()->environment('worker')) {
+                sendSlackMessage('#callcenter_ops',
+                    "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
+            }
+        }
+
+        SaasAccount::whereSlug('circlelink-health')
+            ->first()
+                       ->addMedia($path)
+                       ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
 
         if (app()->environment('worker')) {
             sendSlackMessage('#callcenter_ops',
