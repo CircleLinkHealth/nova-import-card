@@ -17,9 +17,6 @@ class CPRQuestionSetController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $questionSets = CPRulesQuestionSets::orderBy('qsid', 'desc');
 
@@ -79,9 +76,6 @@ class CPRQuestionSetController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         return view('admin.questionSets.create', []);
     }
@@ -93,9 +87,6 @@ class CPRQuestionSetController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $questionSet = new CPRulesQuestionSets;
         $questionSet->provider_id = $params['provider_id'];
@@ -121,9 +112,7 @@ class CPRQuestionSetController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
+
         // display view
         $questionSet = CPRulesQuestionSets::find($id);
         return view('admin.questionSets.show', ['questionSet' => $questionSet, 'errors' => [], 'messages' => []]);
@@ -137,9 +126,6 @@ class CPRQuestionSetController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $questionSet = CPRulesQuestionSets::find($id);
         $programs = Practice::get();
         if (!empty($questionSet->rulesItems)) {
@@ -160,9 +146,6 @@ class CPRQuestionSetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $questionSet = CPRulesQuestionSets::find($id);
         if (!$questionSet) {
@@ -196,9 +179,6 @@ class CPRQuestionSetController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         CPRulesQuestionSets::destroy($id);
 
         return redirect()->back()->with('messages', ['successfully removed questionSet']);

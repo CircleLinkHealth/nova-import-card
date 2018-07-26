@@ -17,9 +17,6 @@ class CPRUCPController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $ucps = CPRulesUCP::orderBy('items_id', 'desc');
 
@@ -73,9 +70,6 @@ class CPRUCPController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         return view('admin.ucp.create', []);
     }
@@ -87,9 +81,6 @@ class CPRUCPController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $ucp = new CPRulesUCP;
         $ucp->items_id = $params['items_id'];
@@ -110,9 +101,6 @@ class CPRUCPController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $ucp = CPRulesUCP::find($id);
         return view('admin.ucp.show', [ 'ucp' => $ucp, 'errors' => [], 'messages' => [] ]);
@@ -126,9 +114,6 @@ class CPRUCPController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $ucp = CPRulesUCP::find($id);
         return view('admin.ucp.edit', [ 'ucp' => $ucp, 'messages' => \Session::get('messages') ]);
     }
@@ -141,9 +126,6 @@ class CPRUCPController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $ucp = CPRulesUCP::find($id);
         $ucp->items_id = $params['items_id'];
@@ -163,9 +145,6 @@ class CPRUCPController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         CPRulesUCP::destroy($id);
 
         return redirect()->back()->with('messages', ['successfully removed ucp']);
