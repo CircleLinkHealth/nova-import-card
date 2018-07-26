@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AppConfigTableSeeder::class);
         $this->call(CpmProblemsTableSeeder::class);
         $this->call(AddNewDefaultCarePlanTemplate::class);
-        $this->call(RolesPermissionsSeeder::class);
+        $this->call(RequiredRolesPermissionsSeeder::class);
         $this->call(ChargeableServiceSeeder::class);
 
         ini_set('memory_limit', $limit);

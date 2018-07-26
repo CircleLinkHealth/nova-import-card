@@ -12,7 +12,7 @@ class RolesAndPermissionsChanges extends Migration
     public function up()
     {
         Artisan::call('db:seed', [
-            '--class' => 'RolesPermissionsSeeder',
+            '--class' => 'RequiredRolesPermissionsSeeder',
         ]);
     }
 

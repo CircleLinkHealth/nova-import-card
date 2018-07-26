@@ -3,7 +3,7 @@
 use App\Permission;
 use Illuminate\Database\Seeder;
 
-class LvPermissionsTableSeeder extends Seeder
+class RequiredPermissionsTableSeeder extends Seeder
 {
 
     /**

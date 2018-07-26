@@ -4,7 +4,7 @@ use App\Permission;
 use App\Role;
 use Illuminate\Database\Seeder;
 
-class RolesPermissionsSeeder extends Seeder
+class RequiredRolesPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,7 +13,7 @@ class RolesPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(LvPermissionsTableSeeder::class);
+        $this->call(RequiredPermissionsTableSeeder::class);
 
         $mdally = Role::where('name', 'mdally')->first();
         if ($mdally){
