@@ -4,6 +4,7 @@ namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * App\Call
@@ -57,7 +58,14 @@ class Call extends \App\BaseModel
 {
 
     use Filterable,
-        \Venturecraft\Revisionable\RevisionableTrait;
+        RevisionableTrait;
+
+    /**
+     * Store a Revision when a call is created
+     *
+     * @var bool
+     */
+    protected $revisionCreationsEnabled = true;
 
     protected $table = 'calls';
 
