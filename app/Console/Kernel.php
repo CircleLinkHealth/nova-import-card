@@ -13,6 +13,7 @@ use App\Console\Commands\EmailWeeklyReports;
 use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
+use App\Console\Commands\QueueGenerateOpsDailyReport;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
@@ -68,7 +69,7 @@ class Kernel extends ConsoleKernel
 //                 ->hourly();
 
         $schedule->command(GetAppointments::class)
-                 ->dailyAt('23:00');
+                 ->dailyAt('22:30');
 
         $schedule->command(GetCcds::class)
                  ->everyThirtyMinutes();
@@ -76,6 +77,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(EmailRNDailyReport::class)
                  ->weekdays()
                  ->at('21:00');
+
+        $schedule->command(QueueGenerateOpsDailyReport::class)
+                 ->dailyAt('23:00');
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)

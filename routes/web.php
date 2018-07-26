@@ -566,11 +566,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.listing',
         ])->middleware('permission:patient.read');
 
-        Route::get('listing/old', [
-            'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',
-            'as'   => 'patients.listing.old',
-        ]);
-
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
             'as'   => 'patients.listing.pdf',
@@ -750,7 +745,7 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
             ])->middleware('permission:patient.read');
-          
+
             Route::get('create-v2', [
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create-v2',
@@ -1074,12 +1069,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'post.GeneralCommentsCsv',
         ])->middleware('permission:patient.update');
 
-        Route::get('calls/old', [
-            'uses' => 'Admin\PatientCallManagementController@index',
-            'as'   => 'admin.patientCallManagement.old',
-        ])->middleware('permission:call.read,patient.read,nurse.read');
-
-        Route::get('calls/{patientId}', 'CallController@showCallsForPatient')->middleware('permission:call.read,patient.read');
+        Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
 
         Route::group([
             'prefix' => 'reports',

@@ -105,8 +105,6 @@
 
                                     <li><a href="{{ route('admin.patientCallManagement.index') }}">
                                             Manage (New)</a></li>
-                                    <li><a href="{{ route('admin.patientCallManagement.old') }}">
-                                            Manage (Old)</a></li>
                                     <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                     <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>

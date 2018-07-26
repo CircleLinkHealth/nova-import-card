@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 class OpsDashboardController extends Controller
 {
@@ -42,57 +43,26 @@ class OpsDashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $today   = Carbon::today();
-        $maxDate = $today->copy()->subDay(1);
+        $maxDate = Carbon::today()->subDay(1);
+
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
             $date        = $requestDate->copy()->setTime('23', '0', '0');
         } else {
+            //if the admin loads the page today, we need to display last night's report
             $date = $maxDate->copy()->setTimeFromTimeString('23:00');
         }
 
-        $practices = Practice::activeBillable()
-                             ->with([
-                                 'patients' => function ($p) use ($date) {
-                                     $p->with([
-                                         'activities' => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay())
-                                               ->where('performed_at', '<=', $date);
-                                         },
-                                         'patientInfo',
-                                     ]);
-                                 },
-                             ])
-                             ->whereHas('patients', function ($p) {
-                                 $p->whereHas('patientInfo', function ($p) {
-                                     $p->where('ccm_status', Patient::ENROLLED)
-                                       ->orWhere('ccm_status', Patient::PAUSED)
-                                       ->orWhere('ccm_status', Patient::WITHDRAWN);
-                                 });
-                             })
-                             ->get()
-                             ->sortBy('display_name');
 
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->map(function ($user) {
-                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
-                    return $user;
-                }
-            })->filter();
-        })->flatten();
-
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
-
-        foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients,
-                $enrolledPatients->where('program_id', $practice->id), $date);
-            if ($row != null) {
-                $rows[$practice->display_name] = $row;
+            try{
+                $json = Storage::disk('media')->get("ops-daily-report-{$date->toDateString()}.json");
+            }catch (\Exception $e) {
+                abort(404, 'We could not find a report for the date you requested.');
             }
-        }
-        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
-        $rows                     = collect($rows);
+
+        $data = json_decode($json, true);
+        $hoursBehind = $data['hoursBehind'];
+        $rows =  $data['rows'];
 
 
         return view('admin.opsDashboard.daily', compact([
