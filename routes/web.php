@@ -520,11 +520,6 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.listing',
         ]);
 
-        Route::get('listing/old', [
-            'uses' => 'Patient\PatientController@toDeprecateShowPatientListing',
-            'as'   => 'patients.listing.old',
-        ]);
-
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
             'as'   => 'patients.listing.pdf',
@@ -1005,11 +1000,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('general-comments/import', [
             'uses' => 'Admin\UploadsController@postGeneralCommentsCsv',
             'as'   => 'post.GeneralCommentsCsv',
-        ]);
-
-        Route::get('calls/old', [
-            'uses' => 'Admin\PatientCallManagementController@index',
-            'as'   => 'admin.patientCallManagement.old',
         ]);
 
         Route::get('calls/{patientId}', 'CallController@showCallsForPatient');
