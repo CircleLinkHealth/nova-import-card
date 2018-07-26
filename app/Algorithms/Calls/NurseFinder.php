@@ -41,7 +41,7 @@ class NurseFinder
         Carbon $date,
         $windowStart,
         $windowEnd,
-        $previousCall
+        Call $previousCall
     ) {
 
         $this->patient          = $patient;
@@ -88,21 +88,50 @@ class NurseFinder
             }
         }
 
-        if ($this->previousCall['attempt_note'] == '') {
+        $isPreviousCallNurseActive = false;
+        $previousCallUser          = User::ofType('care-center')
+                                         ->whereHas('nurseInfo', function ($q) {
+                                             $q->where('status', 'active');
+                                         })
+                                         ->with('nurseInfo')
+                                         ->find($this->previousCall['outbound_cpm_id'])
+                                         ->first();
+
+        if ($previousCallUser) {
+            $isPreviousCallNurseActive = true;
+        }
+
+        if ( ! $isPreviousCallNurseActive) {
+            $user = auth()->user();
+            if ($user->hasRole('care-center')) {
+                $match['nurse']        = auth()->id();
+                $match['window_match'] = "No previous call with active nurse found, assigning to you.";
+                return $match;
+            }
+        }
+
+        $nurseDisplayName = '';
+        if ($isPreviousCallNurseActive && $this->previousCall['attempt_note'] == '') {
             $match['nurse']        = $this->previousCall['outbound_cpm_id'];
             $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
+            $nurseDisplayName      = $previousCallUser->display_name;
         } else {
-            $data                  = $this->getLastRNCallWithoutAttemptNote($this->patient,
-                $this->previousCall['outbound_cpm_id']);
+
+            $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
+
             $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
 
-            if ($data == null) {
+            if ($data != null) {
+                $match['nurse']        = $data->id;
+                $match['window_match'] .= " Found care person that contacted patient in the past without attempt note. ";
+                $nurseDisplayName      = $data->display_name;
+            } else if ($isPreviousCallNurseActive) {
                 //assign back to RN that first called patient
                 $match['nurse']        = $this->previousCall['outbound_cpm_id'];
                 $match['window_match'] .= " No previous care person without attempt note found, assigning to last contacted care person. ";
+                $nurseDisplayName      = $previousCallUser->display_name;
             } else {
-                $match['nurse']        = $data;
-                $match['window_match'] .= " Found care person that contacted patient in the past without attempt note. ";
+                return null;
             }
         }
 
@@ -113,7 +142,7 @@ class NurseFinder
         note: if there is no such RN (ex: first call ever has an attempt note), then assign next call to RN who made last call
          */
 
-        $match['window_match'] .= '(' . User::find($match['nurse'])->display_name . ')';
+        $match['window_match'] .= '(' . $nurseDisplayName . ')';
 
         return $match;
     }
@@ -372,18 +401,29 @@ class NurseFinder
                    ->count();
     }
 
+    /**
+     * Get last RN without attempt note.
+     *
+     * Edit (Pangratios) - also filters out nurses that are not active
+     *
+     * @param User $patient
+     * @param int $nurseToIgnore
+     *
+     * @return User|null
+     */
     public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
     {
 
-        $call = Call
-                    ::where('inbound_cpm_id', $patient->user_id)
-                    ->where('status', '!=', 'scheduled')
-                    ->where('called_date', '!=', '')
-                    ->where('outbound_cpm_id', '!=', $nurseToIgnore)
-                    ->where('attempt_note', '=', '')
-                    ->orderBy('called_date', 'desc')
-                    ->first()['outbound_cpm_id'];
+        $user = optional(Call
+            ::where('inbound_cpm_id', $patient->user_id)
+            ->where('status', '!=', 'scheduled')
+            ->where('called_date', '!=', '')
+            ->where('attempt_note', '=', '')
+            ->where('outbound_cpm_id', '!=', $nurseToIgnore)
+            ->where('outboundUser.nurseInfo.status', '=', 'active')
+            ->orderBy('called_date', 'desc')
+            ->first())->outboundUser;
 
-        return $call;
+        return $user;
     }
 }
