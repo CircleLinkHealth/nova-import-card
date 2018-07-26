@@ -128,7 +128,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'misc.read',
                     'observation.read',
                     'patientSummary.read',
-                    'pdf.create'
+                    'pdf.create',
+                    'pdf.read',
+                    'carePerson.read',
                 ],
             ],
             [
@@ -161,7 +163,11 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'provider.read',
                     'appointment.read',
                     'appointment.update',
-                    'pdf.create'
+                    'pdf.create',
+                    'pdf.read',
+                    'carePerson.read',
+                    'nurse.read',
+
                 ],
             ],
             [
@@ -229,7 +235,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'misc.update',
                     'patientSummary.read',
                     'patientSummary.update',
-                    'pdf.create'
+                    'pdf.create',
+                    'pdf.read',
+                    'pdf.update',
+                    'carePerson.read',
                 ],
             ],
             [
@@ -373,6 +382,12 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'practice.update',
                     'pdf.create',
+                    'pdf.read',
+                    'pdf.update',
+                    'carePerson.read',
+                    'carePerson.create',
+                    'carePerson.update',
+                    'carePerson.delete',
                 ],
             ],
             [
@@ -411,7 +426,12 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'appointment.create',
                     'appointment.read',
                     'appointment.update',
-                    'pdf.create'
+                    'pdf.create',
+                    'pdf.read',
+                    'pdf.update',
+                    'carePerson.read',
+                    'carePerson.create',
+                    'carePerson.update',
                 ],
             ],
             [
@@ -565,7 +585,11 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'provider.create',
                     'provider.read',
                     'provider.update',
+                    'provider.delete',
+                    'nurse.create',
                     'nurse.read',
+                    'nurse.update',
+                    'nurse.delete',
                     'note.create',
                     'note.read',
                     'note.update',
@@ -610,6 +634,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'practice.read',
                     'practice.update',
                     'pdf.create',
+                    'pdf.read',
+                    'pdf.update',
+                    'pdf.delete',
+                    'carePerson.read',
+                    'carePerson.create',
+                    'carePerson.update',
+                    'carePerson.delete',
                 ],
             ],
             [
@@ -667,7 +698,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseHoliday.read',
                     'nurseHoliday.update',
                     'nurseHoliday.delete',
-                    'pdf.create'
+                    'pdf.create',
+                    'pdf.read',
+                    'pdf.update',
+                    'carePerson.read',
+                    'carePerson.create',
+                    'carePerson.update',
+                    'carePerson.delete',
 
 
                 ],
