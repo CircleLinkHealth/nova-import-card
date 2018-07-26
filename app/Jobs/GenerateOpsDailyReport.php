@@ -92,7 +92,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         //log into media table
         DB::table('media')->insert([
             'model_id'        => 1,
-            'model_type'      => 'OpsDashboard Report',
+            'model_type'      => 'App\SaasAccount',
             'collection_name' => "ops-daily-report-{$date->toDateString()}.json",
             'name'            => "ops-daily-report-{$date->toDateString()}.json",
             'file_name'       => "ops-daily-report-{$date->toDateString()}.json",
