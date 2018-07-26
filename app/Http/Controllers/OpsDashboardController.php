@@ -53,15 +53,22 @@ class OpsDashboardController extends Controller
         }
 
 
-        $json = SaasAccount::whereSlug('circlelink-health')
+        $json = optional(SaasAccount::whereSlug('circlelink-health')
                            ->first()
                            ->getMedia("ops-daily-report-{$date->toDateString()}.json")
                            ->sortByDesc('id')
-                           ->first()
+                           ->first())
                            ->getFile();
+        //first check if we have a file
         if ( ! $json) {
             abort(404, 'There is no report for this specific date.');
         }
+
+        //then check if it's in json format
+        if (!is_json($json)){
+            throw new \Exception("File retrieved is not in json format.", 500);
+        }
+
 
 
         $data        = json_decode($json, true);
