@@ -89,12 +89,15 @@ class NurseFinder
         }
 
         $isPreviousCallNurseActive = false;
-        $previousCallUser          = User::find($this->previousCall['outbound_cpm_id'])
-                                         ->load('nurseInfo');
+        $previousCallUser          = User::ofType('care-center')
+                                         ->whereHas('nurseInfo', function ($q) {
+                                             $q->where('status', 'active');
+                                         })
+                                         ->with('nurseInfo')
+                                         ->find($this->previousCall['outbound_cpm_id'])
+                                         ->first();
 
-        if ($previousCallUser &&
-            $previousCallUser->hasRole('care-center') &&
-            $previousCallUser->nurseInfo()->where('status', '=', 'active')) {
+        if ($previousCallUser) {
             $isPreviousCallNurseActive = true;
         }
 
@@ -411,7 +414,7 @@ class NurseFinder
     public function getLastRNCallWithoutAttemptNote($patient, $nurseToIgnore)
     {
 
-        $user = Call
+        $user = optional(Call
             ::where('inbound_cpm_id', $patient->user_id)
             ->where('status', '!=', 'scheduled')
             ->where('called_date', '!=', '')
@@ -419,7 +422,7 @@ class NurseFinder
             ->where('outbound_cpm_id', '!=', $nurseToIgnore)
             ->where('outboundUser.nurseInfo.status', '=', 'active')
             ->orderBy('called_date', 'desc')
-            ->first()->outboundUser;
+            ->first())->outboundUser;
 
         return $user;
     }
