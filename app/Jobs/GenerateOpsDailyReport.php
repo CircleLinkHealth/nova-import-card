@@ -72,7 +72,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients,
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
                 $enrolledPatients->where('program_id', $practice->id), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
