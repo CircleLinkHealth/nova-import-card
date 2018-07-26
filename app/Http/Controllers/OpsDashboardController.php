@@ -53,14 +53,13 @@ class OpsDashboardController extends Controller
         }
 
 
-        try {
-            $json = SaasAccount::whereSlug('circlelink-health')
-                               ->first()
-                               ->getMedia("ops-daily-report-{$date->toDateString()}.json")
-                               ->sortByDesc('id')
-                               ->first()
-                               ->getFile();
-        } catch (\Exception $e) {
+        $json = SaasAccount::whereSlug('circlelink-health')
+                           ->first()
+                           ->getMedia("ops-daily-report-{$date->toDateString()}.json")
+                           ->sortByDesc('id')
+                           ->first()
+                           ->getFile();
+        if ( ! $json) {
             abort(404, 'There is no report for this specific date.');
         }
 
