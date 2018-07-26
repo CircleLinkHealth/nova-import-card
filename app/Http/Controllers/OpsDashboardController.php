@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Patient;
-use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\SaasAccount;
@@ -13,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Storage;
 
 class OpsDashboardController extends Controller
 {
@@ -55,25 +53,21 @@ class OpsDashboardController extends Controller
         }
 
 
-        try{
+        try {
             $json = SaasAccount::whereSlug('circlelink-health')
                                ->first()
                                ->getMedia("ops-daily-report-{$date->toDateString()}.json")
-                ->sortByDesc('id')
-
+                               ->sortByDesc('id')
                                ->first()
                                ->getFile();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             abort(404, 'There is no report for this specific date.');
         }
 
 
-        $data = json_decode($json, true);
+        $data        = json_decode($json, true);
         $hoursBehind = $data['hoursBehind'];
-        $rows =  $data['rows'];
-
-
-
+        $rows        = $data['rows'];
 
 
         return view('admin.opsDashboard.daily', compact([
@@ -334,13 +328,13 @@ class OpsDashboardController extends Controller
                                      ]);
                                  },
                              ])->get()
-            ->sortBy('display_name');
+                             ->sortBy('display_name');
 
 
         foreach ($practices as $practice) {
 
 
-            $summaries = $practice->patients->map(function ($p){
+            $summaries                     = $practice->patients->map(function ($p) {
                 return $p->patientSummaries;
             })->filter()->flatten();
             $rows[$practice->display_name] = $this->service->billingChurnRow($summaries, $months);

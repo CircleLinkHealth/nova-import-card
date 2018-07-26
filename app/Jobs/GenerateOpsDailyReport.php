@@ -13,8 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class GenerateOpsDailyReport implements ShouldQueue
 {
@@ -91,7 +89,7 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         $saved = file_put_contents($path, json_encode($data));
 
-        if (!$saved) {
+        if ( ! $saved) {
             if (app()->environment('worker')) {
                 sendSlackMessage('#callcenter_ops',
                     "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
@@ -99,9 +97,9 @@ class GenerateOpsDailyReport implements ShouldQueue
         }
 
         SaasAccount::whereSlug('circlelink-health')
-            ->first()
-                       ->addMedia($path)
-                       ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
+                   ->first()
+                   ->addMedia($path)
+                   ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
 
         if (app()->environment('worker')) {
             sendSlackMessage('#callcenter_ops',
