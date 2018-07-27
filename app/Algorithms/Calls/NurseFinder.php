@@ -41,7 +41,7 @@ class NurseFinder
         Carbon $date,
         $windowStart,
         $windowEnd,
-        Call $previousCall
+        Call $previousCall = null
     ) {
 
         $this->patient          = $patient;
