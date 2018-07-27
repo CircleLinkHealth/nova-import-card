@@ -128,7 +128,6 @@ class RequiredPermissionsTableSeeder extends Seeder
             "ccda",
             "medication",
             "patientProblem",
-            "instruction",
             "patient",
             "careplan",
             "instruction",
