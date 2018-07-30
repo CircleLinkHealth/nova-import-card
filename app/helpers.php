@@ -199,37 +199,15 @@ if ( ! function_exists('parseCsvToArray')) {
      *
      * @return array
      */
-    function parseCsvToArray($file, $length = 0, $delimiter = null)
+    function parseCsvToArray($file)
     {
-        $csvArray  = $fields = [];
-        $i         = 0;
-        $handle    = @fopen($file, "r");
-        $delimiter = $delimiter ?? detectDelimiter($handle, $length = 0);
+        $result = Excel::load($file, function ($reader) {
+            $row = $reader->toArray();
 
-        if ($handle) {
-            while (($row = fgetcsv($handle, $length, $delimiter)) !== false) {
-                if (empty($fields)) {
-                    $row = array_map('strtolower', $row);
+            return $row;
+        });
 
-                    $row = array_map(function ($string) {
-                        return str_replace(' ', '_', $string);
-                    }, $row);
-
-                    $fields = array_map('trim', $row);
-                    continue;
-                }
-                foreach ($row as $k => $value) {
-                    $csvArray[$i][$fields[$k]] = trim($value);
-                }
-                $i++;
-            }
-            if ( ! feof($handle)) {
-                echo "Error: unexpected fgets() fail\n";
-            }
-            fclose($handle);
-        }
-
-        return $csvArray;
+        return $result->toArray();
     }
 }
 
