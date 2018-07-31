@@ -499,7 +499,7 @@ class WelcomeCallListGenerator
      *
      * @return $this
      */
-    protected function createEnrollees()
+    public function createEnrollees()
     {
         if ( ! $this->createEnrollees) {
             return $this;
