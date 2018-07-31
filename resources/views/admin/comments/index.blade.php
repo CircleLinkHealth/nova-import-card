@@ -16,7 +16,7 @@
                     <div class="col-sm-8">
                         <h1>Comments</h1>
                     </div>
-                    @if(Cerberus::hasPermission('comments-create'))
+                    @if(Cerberus::hasPermission('comment.create'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.comments.create', array()) }}" class="btn btn-success" disabled="disabled">Input Comment</a>
@@ -50,10 +50,10 @@
                                     <td>{{ $comment->comment_type }}</td>
                                     <td><a href="{{ route('admin.programs.show', array('id' => $comment->program_id)) }}" class="btn btn-orange btn-xs">{{ $comment->program_id }}</a></td>
                                     <td>
-                                        @if(Cerberus::hasPermission('observations-edit'))
+                                        @if(Cerberus::hasPermission('observation.update'))
                                             <a href="{{ route('admin.comments.edit', array('id' => $comment->id)) }}" class="btn btn-primary">Edit</a>
                                         @endif
-                                        @if(Cerberus::hasPermission('observations-destroy'))
+                                        @if(Cerberus::hasPermission('observation.delete'))
                                             <a href="{{ route('admin.comments.destroy', array('id' => $comment->id)) }}" class="btn btn-warning">Remove</a>
                                         @endif
                                     </td>
