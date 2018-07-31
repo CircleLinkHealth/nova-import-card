@@ -366,11 +366,17 @@ class Patient extends \App\BaseModel
         $this->attributes['ccm_status'] = $value;
 
         if ($statusBefore !== $value) {
-            if ($value == 'paused') {
+            if ($value == Patient::ENROLLED) {
+                $this->attributes['registration_date'] = Carbon::now()->toDateTimeString();
+            };
+            if ($value == Patient::PAUSED) {
                 $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             };
-            if ($value == 'withdrawn') {
+            if ($value == Patient::WITHDRAWN) {
                 $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
+            };
+            if ($value == Patient::UNREACHABLE) {
+                $this->attributes['date_unreachable'] = Carbon::now()->toDateTimeString();
             };
         }
         $this->save();
