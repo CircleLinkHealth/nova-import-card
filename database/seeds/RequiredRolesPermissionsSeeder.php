@@ -167,6 +167,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'pdf.read',
                     'carePerson.read',
                     'nurse.read',
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
 
                 ],
             ],
@@ -239,6 +242,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'pdf.read',
                     'pdf.update',
                     'carePerson.read',
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
                 ],
             ],
             [
@@ -400,6 +406,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'lifestyle.read',
                     'lifestyle.update',
                     'lifestyle.delete',
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
+                    'comment.delete',
                 ],
             ],
             [
@@ -448,6 +458,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'lifestyle.read',
                     'lifestyle.update',
                     'lifestyle.delete',
+                    'comment.create',
+                    'comment.read',
+                    'comment.update'
                 ],
             ],
             [
@@ -679,8 +692,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'lifestyle.read',
                     'lifestyle.update',
                     'lifestyle.delete',
-
-
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
+                    'comment.delete',
 
                 ],
             ],
@@ -769,8 +784,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'lifestyle.read',
                     'lifestyle.update',
                     'lifestyle.delete',
-
-
+                    'comment.create',
+                    'comment.read',
+                    'comment.update',
                 ],
             ],
             [

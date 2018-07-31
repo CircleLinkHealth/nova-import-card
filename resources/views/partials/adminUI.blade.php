@@ -159,7 +159,7 @@
                             </ul>
                         </li>
 
-                        @if(Cerberus::hasPermission('roles-view'))
+                        @if(Cerberus::hasPermission('role.read'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -167,7 +167,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('roles.index') }}">Roles</a></li>
-                                    @if(Cerberus::hasPermission('roles-permissions-view'))
+                                    @if(Cerberus::hasPermission('permission.read'))
                                         <li><a href="{{ route('permissions.index') }}">Permissions</a>
                                         </li>
                                     @endif
@@ -175,7 +175,7 @@
                             </li>
                         @endif
 
-                        @if(Cerberus::hasPermission('practices-view'))
+                        @if(Cerberus::hasPermission('practice.read'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -183,7 +183,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('admin.practices.index') }}">Programs</a></li>
-                                    @if(Cerberus::hasPermission('locations-view'))
+                                    @if(Cerberus::hasPermission('location.read'))
                                         <li><a href="{{ route('locations.index') }}">Locations</a></li>
                                     @endif
                                 </ul>
