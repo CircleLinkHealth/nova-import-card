@@ -57,7 +57,7 @@ class CreateEnrolleesFromEligbleJobs extends Command
                               null,
                               null,
                               $job->batch,
-                              $this
+                              $job
                           );
 
                           $generator->createEnrollees();
