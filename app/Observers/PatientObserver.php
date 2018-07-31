@@ -92,6 +92,5 @@ class PatientObserver
         if ($patient->isDirty('mrn_number')) {
             $this->attachTargetPatient($patient);
         }
-
     }
 }
