@@ -4,15 +4,15 @@ namespace App\Jobs;
 
 use App\Patient;
 use App\Practice;
-use App\Services\OpsDashboardService;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
+use App\SaasAccount;
+use App\Services\OpsDashboardService;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class GenerateOpsDailyReport implements ShouldQueue
 {
@@ -52,12 +52,10 @@ class GenerateOpsDailyReport implements ShouldQueue
                                      ]);
                                  },
                              ])
-                             ->whereHas('patients', function ($p) {
-                                 $p->whereHas('patientInfo', function ($p) {
-                                     $p->where('ccm_status', Patient::ENROLLED)
-                                       ->orWhere('ccm_status', Patient::PAUSED)
-                                       ->orWhere('ccm_status', Patient::WITHDRAWN);
-                                 });
+                             ->whereHas('patients.patientInfo', function ($p) {
+                                 $p->where('ccm_status', Patient::ENROLLED)
+                                   ->orWhere('ccm_status', Patient::PAUSED)
+                                   ->orWhere('ccm_status', Patient::WITHDRAWN);
                              })
                              ->get()
                              ->sortBy('display_name');
@@ -68,12 +66,12 @@ class GenerateOpsDailyReport implements ShouldQueue
                     return $user;
                 }
             })->filter();
-        })->flatten();
+        })->flatten()->unique('id');
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients,
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
                 $enrolledPatients->where('program_id', $practice->id), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
@@ -84,11 +82,24 @@ class GenerateOpsDailyReport implements ShouldQueue
 
         $data = [
             'hoursBehind' => $hoursBehind,
-            'rows'        => $rows
+            'rows'        => $rows,
         ];
-        $json = json_encode($data);
 
-        Storage::disk('media')->put("ops-daily-report-{$date->toDateString()}.json", $json);
+        $path = storage_path("ops-daily-report-{$date->toDateString()}.json");
+
+        $saved = file_put_contents($path, json_encode($data));
+
+        if ( ! $saved) {
+            if (app()->environment('worker')) {
+                sendSlackMessage('#callcenter_ops',
+                    "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
+            }
+        }
+
+        SaasAccount::whereSlug('circlelink-health')
+                   ->first()
+                   ->addMedia($path)
+                   ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
 
         if (app()->environment('worker')) {
             sendSlackMessage('#callcenter_ops',
@@ -98,42 +109,42 @@ class GenerateOpsDailyReport implements ShouldQueue
 
 
     public function calculateDailyTotalRow($rows)
-{
+    {
 
-    foreach ($rows as $key => $value) {
+        foreach ($rows as $key => $value) {
 
-        $totalCounts['ccmCounts']['zero'][]                   = $value['ccmCounts']['zero'];
-        $totalCounts['ccmCounts']['0to5'][]                   = $value['ccmCounts']['0to5'];
-        $totalCounts['ccmCounts']['5to10'][]                  = $value['ccmCounts']['5to10'];
-        $totalCounts['ccmCounts']['10to15'][]                 = $value['ccmCounts']['10to15'];
-        $totalCounts['ccmCounts']['15to20'][]                 = $value['ccmCounts']['15to20'];
-        $totalCounts['ccmCounts']['20plus'][]                 = $value['ccmCounts']['20plus'];
-        $totalCounts['ccmCounts']['total'][]                  = $value['ccmCounts']['total'];
-        $totalCounts['ccmCounts']['priorDayTotals'][]         = $value['ccmCounts']['priorDayTotals'];
-        $totalCounts['countsByStatus']['enrolled'][]          = $value['countsByStatus']['enrolled'];
-        $totalCounts['countsByStatus']['pausedPatients'][]    = $value['countsByStatus']['pausedPatients'];
-        $totalCounts['countsByStatus']['withdrawnPatients'][] = $value['countsByStatus']['withdrawnPatients'];
-        $totalCounts['countsByStatus']['delta'][]             = $value['countsByStatus']['delta'];
-        $totalCounts['countsByStatus']['gCodeHold'][]         = $value['countsByStatus']['gCodeHold'];
+            $totalCounts['ccmCounts']['zero'][]                   = $value['ccmCounts']['zero'];
+            $totalCounts['ccmCounts']['0to5'][]                   = $value['ccmCounts']['0to5'];
+            $totalCounts['ccmCounts']['5to10'][]                  = $value['ccmCounts']['5to10'];
+            $totalCounts['ccmCounts']['10to15'][]                 = $value['ccmCounts']['10to15'];
+            $totalCounts['ccmCounts']['15to20'][]                 = $value['ccmCounts']['15to20'];
+            $totalCounts['ccmCounts']['20plus'][]                 = $value['ccmCounts']['20plus'];
+            $totalCounts['ccmCounts']['total'][]                  = $value['ccmCounts']['total'];
+            $totalCounts['ccmCounts']['priorDayTotals'][]         = $value['ccmCounts']['priorDayTotals'];
+            $totalCounts['countsByStatus']['enrolled'][]          = $value['countsByStatus']['enrolled'];
+            $totalCounts['countsByStatus']['pausedPatients'][]    = $value['countsByStatus']['pausedPatients'];
+            $totalCounts['countsByStatus']['withdrawnPatients'][] = $value['countsByStatus']['withdrawnPatients'];
+            $totalCounts['countsByStatus']['delta'][]             = $value['countsByStatus']['delta'];
+            $totalCounts['countsByStatus']['gCodeHold'][]         = $value['countsByStatus']['gCodeHold'];
 
+
+        }
+
+        $totalRow['ccmCounts']['zero']                   = array_sum($totalCounts['ccmCounts']['zero']);
+        $totalRow['ccmCounts']['0to5']                   = array_sum($totalCounts['ccmCounts']['0to5']);
+        $totalRow['ccmCounts']['5to10']                  = array_sum($totalCounts['ccmCounts']['5to10']);
+        $totalRow['ccmCounts']['10to15']                 = array_sum($totalCounts['ccmCounts']['10to15']);
+        $totalRow['ccmCounts']['15to20']                 = array_sum($totalCounts['ccmCounts']['15to20']);
+        $totalRow['ccmCounts']['20plus']                 = array_sum($totalCounts['ccmCounts']['20plus']);
+        $totalRow['ccmCounts']['total']                  = array_sum($totalCounts['ccmCounts']['total']);
+        $totalRow['ccmCounts']['priorDayTotals']         = array_sum($totalCounts['ccmCounts']['priorDayTotals']);
+        $totalRow['countsByStatus']['enrolled']          = array_sum($totalCounts['countsByStatus']['enrolled']);
+        $totalRow['countsByStatus']['pausedPatients']    = array_sum($totalCounts['countsByStatus']['pausedPatients']);
+        $totalRow['countsByStatus']['withdrawnPatients'] = array_sum($totalCounts['countsByStatus']['withdrawnPatients']);
+        $totalRow['countsByStatus']['delta']             = array_sum($totalCounts['countsByStatus']['delta']);
+        $totalRow['countsByStatus']['gCodeHold']         = array_sum($totalCounts['countsByStatus']['gCodeHold']);
+
+        return collect($totalRow);
 
     }
-
-    $totalRow['ccmCounts']['zero']                   = array_sum($totalCounts['ccmCounts']['zero']);
-    $totalRow['ccmCounts']['0to5']                   = array_sum($totalCounts['ccmCounts']['0to5']);
-    $totalRow['ccmCounts']['5to10']                  = array_sum($totalCounts['ccmCounts']['5to10']);
-    $totalRow['ccmCounts']['10to15']                 = array_sum($totalCounts['ccmCounts']['10to15']);
-    $totalRow['ccmCounts']['15to20']                 = array_sum($totalCounts['ccmCounts']['15to20']);
-    $totalRow['ccmCounts']['20plus']                 = array_sum($totalCounts['ccmCounts']['20plus']);
-    $totalRow['ccmCounts']['total']                  = array_sum($totalCounts['ccmCounts']['total']);
-    $totalRow['ccmCounts']['priorDayTotals']         = array_sum($totalCounts['ccmCounts']['priorDayTotals']);
-    $totalRow['countsByStatus']['enrolled']          = array_sum($totalCounts['countsByStatus']['enrolled']);
-    $totalRow['countsByStatus']['pausedPatients']    = array_sum($totalCounts['countsByStatus']['pausedPatients']);
-    $totalRow['countsByStatus']['withdrawnPatients'] = array_sum($totalCounts['countsByStatus']['withdrawnPatients']);
-    $totalRow['countsByStatus']['delta']             = array_sum($totalCounts['countsByStatus']['delta']);
-    $totalRow['countsByStatus']['gCodeHold']         = array_sum($totalCounts['countsByStatus']['gCodeHold']);
-
-    return collect($totalRow);
-
-}
 }

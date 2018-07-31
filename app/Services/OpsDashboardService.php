@@ -210,7 +210,7 @@ class OpsDashboardService
 
         foreach ($patients as $patient) {
             if (!$patient->patientInfo){
-                dd($patient);
+                continue;
             }
                 if ($patient->patientInfo->ccm_status == 'paused' && $patient->patientInfo->date_paused >= $fromDate && $patient->patientInfo->date_paused <= $toDate) {
                         $paused[] = $patient;
@@ -426,7 +426,7 @@ class OpsDashboardService
     }
 
     /**
-     * AvgMinT - AvgMinA)*TotActPt/60
+     * (AvgMinT - AvgMinA)*TotActPt/60
      *
      * @param $date
      *

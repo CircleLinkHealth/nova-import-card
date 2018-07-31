@@ -90,6 +90,7 @@ class ImportCsvPatientList implements ShouldQueue
      */
     public function replaceWithValuesFromCsv(ImportedMedicalRecord $importedMedicalRecord, array $row)
     {
+
         $demographics = $importedMedicalRecord->demographics;
 
         $demographics->primary_phone        = $row['primary_phone'] ?? '';
