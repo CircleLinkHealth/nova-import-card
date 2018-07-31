@@ -143,6 +143,10 @@
     .modal-button {
         float: right;
     }
+
+    .modal-cancel-button {
+        background: transparent;
+    }
     
     /*
     * The following styles are auto-applied to elements with
