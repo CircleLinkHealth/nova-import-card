@@ -499,7 +499,8 @@ class ReportsController extends Controller
         $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
-        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8) && !auth()->user()->hasRole('administrator')) {
+        //TODO what is the rule here?
+        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador', 'care-center'], 8) && !auth()->user()->hasRole('administrator')) {
             return abort(403);
         }
 
