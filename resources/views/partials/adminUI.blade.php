@@ -103,8 +103,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
 
-                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">
-                                            Manage (New)</a></li>
+                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">Manage</a></li>
                                     <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                     <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
