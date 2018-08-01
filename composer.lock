@@ -220,16 +220,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.63.6",
+          "version": "3.64.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "344df6facb5b78f6666a346874b5b2d23a1154b0"
+              "reference": "3bd2c9b52a4a27f6e914cc77e75144a2bb5b2aa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/344df6facb5b78f6666a346874b5b2d23a1154b0",
-                "reference": "344df6facb5b78f6666a346874b5b2d23a1154b0",
+              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3bd2c9b52a4a27f6e914cc77e75144a2bb5b2aa2",
+              "reference": "3bd2c9b52a4a27f6e914cc77e75144a2bb5b2aa2",
                 "shasum": ""
             },
             "require": {
@@ -296,7 +296,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-07-24T21:53:37+00:00"
+          "time": "2018-07-31T19:57:00+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1046,16 +1046,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.9.10",
+          "version": "8.9.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "9ac648a237e57ce1863b3f5a044a7a41e6fadf36"
+              "reference": "2a6b6661f42644941e4c8e895518f27c99587a68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/9ac648a237e57ce1863b3f5a044a7a41e6fadf36",
-                "reference": "9ac648a237e57ce1863b3f5a044a7a41e6fadf36",
+              "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/2a6b6661f42644941e4c8e895518f27c99587a68",
+              "reference": "2a6b6661f42644941e4c8e895518f27c99587a68",
                 "shasum": ""
             },
             "require": {
@@ -1110,7 +1110,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-07-11T10:20:19+00:00"
+          "time": "2018-07-26T10:50:48+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1781,16 +1781,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.65",
+          "version": "v1.2.66",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "1ea1c897018c93e3c2ac76e008519085b24e339e"
+              "reference": "55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/1ea1c897018c93e3c2ac76e008519085b24e339e",
-                "reference": "1ea1c897018c93e3c2ac76e008519085b24e339e",
+              "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1",
+              "reference": "55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1",
                 "shasum": ""
             },
             "require": {
@@ -1826,7 +1826,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-07-24T17:53:06+00:00"
+          "time": "2018-07-30T20:23:10+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -2600,16 +2600,16 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "3.2.2",
+          "version": "3.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "0b5930be73582369e10c4d4bb7a12bac927a203c"
+              "reference": "01da822b3c2982ca9f2a1234f802a3ec001527ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/0b5930be73582369e10c4d4bb7a12bac927a203c",
-                "reference": "0b5930be73582369e10c4d4bb7a12bac927a203c",
+              "url": "https://api.github.com/repos/lcobucci/jwt/zipball/01da822b3c2982ca9f2a1234f802a3ec001527ec",
+              "reference": "01da822b3c2982ca9f2a1234f802a3ec001527ec",
                 "shasum": ""
             },
             "require": {
@@ -2654,7 +2654,7 @@
                 "JWS",
                 "jwt"
             ],
-            "time": "2017-09-01T08:23:26+00:00"
+          "time": "2018-07-29T14:38:43+00:00"
         },
         {
             "name": "league/event",
@@ -3266,12 +3266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "a84a8a93a10e96b84ee5d2ef917b516fb191798e"
+              "reference": "61c4afbb1c283de50ae66789fcb7748740d2806f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/a84a8a93a10e96b84ee5d2ef917b516fb191798e",
-                "reference": "a84a8a93a10e96b84ee5d2ef917b516fb191798e",
+              "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/61c4afbb1c283de50ae66789fcb7748740d2806f",
+              "reference": "61c4afbb1c283de50ae66789fcb7748740d2806f",
                 "shasum": ""
             },
             "require": {
@@ -3341,7 +3341,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2017-12-27T18:00:07+00:00"
+          "time": "2018-08-01T12:34:52+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -7413,16 +7413,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v2.5.0",
+          "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "6ae3e2e6494bb5e58c2decadafc3de7f1453f70a"
+              "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/6ae3e2e6494bb5e58c2decadafc3de7f1453f70a",
-                "reference": "6ae3e2e6494bb5e58c2decadafc3de7f1453f70a",
+              "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
+              "reference": "8abb4f9aa89ddea9d52112c65bbe8d0125e2fa8e",
                 "shasum": ""
             },
             "require": {
@@ -7459,7 +7459,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2018-07-01T10:25:50+00:00"
+          "time": "2018-07-29T20:33:41+00:00"
         },
         {
             "name": "waavi/url-shortener",
@@ -8733,12 +8733,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/orangehill/iseed.git",
-                "reference": "c99a9f7bcc37dd853891acdc2e4d43bcf55a0404"
+              "reference": "e58d663cf3a9f0c3e94fb50d03931b9caa0033a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orangehill/iseed/zipball/c99a9f7bcc37dd853891acdc2e4d43bcf55a0404",
-                "reference": "c99a9f7bcc37dd853891acdc2e4d43bcf55a0404",
+              "url": "https://api.github.com/repos/orangehill/iseed/zipball/e58d663cf3a9f0c3e94fb50d03931b9caa0033a0",
+              "reference": "e58d663cf3a9f0c3e94fb50d03931b9caa0033a0",
                 "shasum": ""
             },
             "require": {
@@ -8784,7 +8784,7 @@
                 "laravel",
                 "seed"
             ],
-            "time": "2017-10-05T07:30:15+00:00"
+          "time": "2018-08-01T08:21:09+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -10167,16 +10167,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.17.5",
+          "version": "v3.17.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "0af67642ecf3ced6bae89599b8f86c0314610831"
+              "reference": "5431eed1cd2ec22101ade85d6d6163ea320dbe76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/0af67642ecf3ced6bae89599b8f86c0314610831",
-                "reference": "0af67642ecf3ced6bae89599b8f86c0314610831",
+              "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/5431eed1cd2ec22101ade85d6d6163ea320dbe76",
+              "reference": "5431eed1cd2ec22101ade85d6d6163ea320dbe76",
                 "shasum": ""
             },
             "type": "library",
@@ -10220,7 +10220,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-07-19T22:34:17+00:00"
+          "time": "2018-07-28T03:43:43+00:00"
         },
         {
             "name": "symfony/class-loader",
