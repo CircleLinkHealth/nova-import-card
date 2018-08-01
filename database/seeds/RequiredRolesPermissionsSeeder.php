@@ -131,6 +131,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan-pdf.create',
                     'careplan-pdf.read',
                     'carePerson.read',
+                    'careplanAssessment.read',
                 ],
             ],
             [
@@ -170,6 +171,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
+                    'careplanAssessment.read',
+                    'careplanAssessment.update',
+
 
                 ],
             ],
@@ -245,6 +249,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
+                    'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
                 ],
             ],
             [
@@ -410,6 +418,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.read',
                     'comment.update',
                     'comment.delete',
+                    'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
                 ],
             ],
             [
@@ -460,7 +472,9 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'lifestyle.delete',
                     'comment.create',
                     'comment.read',
-                    'comment.update'
+                    'comment.update',
+                    'careplanAssessment.read',
+                    'careplanAssessment.update',
                 ],
             ],
             [
@@ -495,6 +509,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientSummary.read',
                     'appointment.read',
                     'careplan-pdf.create',
+                    'careplanAssessment.read',
+                    'careplanAssessment.update',
 
                 ],
             ],
@@ -539,6 +555,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'careplan.read',
                     'careplan.update',
                     'careplanAssessment.read',
+                    'careplanAssessment.update',
                     'enrollee.read',
                     'enrollee.update',
                     'call.read',
@@ -595,6 +612,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'patientSummary.read',
                     'appointment.read',
                     'careplan-pdf.create',
+                    'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
                 ],
             ],
             [
