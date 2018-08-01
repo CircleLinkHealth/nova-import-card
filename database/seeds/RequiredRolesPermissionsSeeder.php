@@ -791,6 +791,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'comment.create',
                     'comment.read',
                     'comment.update',
+                    'careplanAssessment.read',
+                    'careplanAssessment.create',
+                    'careplanAssessment.update',
+                    'careplanAssessment.delete',
                 ],
             ],
             [
