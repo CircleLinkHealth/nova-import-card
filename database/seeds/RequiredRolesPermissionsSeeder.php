@@ -567,6 +567,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Medical Assistant',
                 'description'  => 'CCM Countable.',
                 'permissions'  => [
+                    'pdf.read',
                     'care-plan-approve',
                     'users-view-all',
                     'users-view-self',
