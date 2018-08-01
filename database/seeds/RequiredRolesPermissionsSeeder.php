@@ -704,6 +704,10 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Care Coach',
                 'description'  => 'CLH Nurses, the ones who make calls to patients. CCM countable.',
                 'permissions'  => [
+                    'allergy.create',
+                    'allergy.read',
+                    'allergy.update',
+                    'allergy.delete',
                     'care-plan-qa-approve',
                     'users-view-all',
                     'users-view-self',
