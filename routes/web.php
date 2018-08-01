@@ -420,14 +420,15 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'providers.search',
     ])->middleware('permission:provider.read');
 
-    Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf')->middleware('permission:pdf.delete');
+    Route::delete('pdf/{id}', 'API\PatientCarePlanController@deletePdf')->middleware('permission:careplan-pdf.delete');
 
-    Route::post('care-plans/{careplan_id}/pdfs', 'API\PatientCarePlanController@uploadPdfs')->middleware('permission:careplan.update,pdf.create');
+    Route::post('care-plans/{careplan_id}/pdfs',
+        'API\PatientCarePlanController@uploadPdfs')->middleware('permission:careplan.update,careplan-pdf.create');
 
     Route::get('download-pdf-careplan/{filePath}', [
         'uses' => 'API\PatientCarePlanController@downloadPdf',
         'as'   => 'download.pdf.careplan',
-    ])->middleware('permission:pdf.read');
+    ])->middleware('permission:careplan-pdf.read');
 
     Route::patch('work-hours/{id}', 'CareCenter\WorkScheduleController@updateDailyHours')->middleware('permission:workHours.update');
 // end API
@@ -569,7 +570,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('listing/pdf', [
             'uses' => 'Patient\PatientController@showPatientListingPdf',
             'as'   => 'patients.listing.pdf',
-        ])->middleware('permission:pdf.create');
+        ])->middleware('permission:careplan-pdf.create');
 
         Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
@@ -853,7 +854,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('make-pdf', [
                 'as'   => 'demo.note.make.pdf',
                 'uses' => 'Demo\SendSampleNoteController@makePdf',
-            ])->middleware('permission:practice.read,note.create,pdf.create');
+            ])->middleware('permission:practice.read,note.create,careplan-pdf.create');
 
             Route::post('send-efax', [
                 'as'   => 'demo.note.efax',
@@ -975,7 +976,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('patients/letters/paused/file', [
             'uses' => 'ReportsController@getPausedLettersFile',
             'as'   => 'get.paused.letters.file',
-        ])->middleware('permission:pdf.create,pdf.read,patient.read');
+        ])->middleware('permission:careplan-pdf.create,careplan-pdf.read,patient.read');
 
         /**
          * LOGGER
