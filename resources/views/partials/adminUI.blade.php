@@ -182,7 +182,7 @@
                                     Programs <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.practices.index') }}">Programs</a></li>
+                                    <li><a href="{{ route('admin.programs.index') }}">Programs</a></li>
                                     @if(Cerberus::hasPermission('location.read'))
                                         <li><a href="{{ route('locations.index') }}">Locations</a></li>
                                     @endif
