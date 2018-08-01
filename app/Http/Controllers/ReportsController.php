@@ -749,7 +749,7 @@ class ReportsController extends Controller
 
     public function excelReportT2()
     {
-        $users = $this->patientReadRepository->paused()->fetch();
+        $users = $this->patientReadRepository->unreachable()->fetch();
 
         $date = date('Y-m-d H:i:s');
 
@@ -794,6 +794,7 @@ class ReportsController extends Controller
                     'Date Registered',
                     'Date Paused',
                     'Date Withdrawn',
+                    'Date Unreachable',
                     'Site',
                     'Caller id',
                     'Location id',
@@ -852,6 +853,7 @@ class ReportsController extends Controller
                         $user->patientInfo->user_registered,
                         $user->patientInfo->date_paused,
                         $user->patientInfo->date_withdrawn,
+                        $user->patientInfo->date_unreachable,
                         $user->program_id,
                         'Caller id',
                         // provider_phone
