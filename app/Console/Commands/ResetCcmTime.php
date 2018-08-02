@@ -51,36 +51,43 @@ class ResetCcmTime extends Command
                ]);
 
         Patient::withTrashed()
-               ->chunk(200, function (Patient $patient) {
+               ->whereDoesntHave('user.patientSummaries', function ($q) {
+                   $q->where('month_year', '=', Carbon::now()->startOfMonth());
+               })
+               ->chunk(200, function ($patients) {
 
-                   $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
-                                                   ->orderBy('id', 'desc')->first();
+                   foreach ($patients as $patient) {
 
-                   //if we have already summary for this month, then we skip this
-                   if ($summary && Carbon::today()->isSameMonth($summary->month_year)) {
-                       return;
+                       $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
+                                                       ->orderBy('id', 'desc')->first();
+
+                       //if we have already summary for this month, then we skip this
+                       if ($summary && Carbon::today()->isSameMonth($summary->month_year)) {
+                           return;
+                       }
+
+                       if ($summary) {
+                           //clone record
+                           $newSummary = $summary->replicate();
+                       } else {
+                           $newSummary             = new PatientMonthlySummary();
+                           $newSummary->patient_id = $patient->user_id;
+                       }
+
+                       $newSummary->month_year             = Carbon::today();
+                       $newSummary->total_time             = 0;
+                       $newSummary->ccm_time               = 0;
+                       $newSummary->bhi_time               = 0;
+                       $newSummary->no_of_calls            = 0;
+                       $newSummary->no_of_successful_calls = 0;
+                       $newSummary->is_ccm_complex         = 0;
+                       $newSummary->approved               = 0;
+                       $newSummary->rejected               = 0;
+                       $newSummary->actor_id               = null;
+                       $newSummary->needs_qa               = null;
+                       $newSummary->save();
                    }
 
-                   if ($summary) {
-                       //clone record
-                       $newSummary = $summary->replicate();
-                   } else {
-                       $newSummary             = new PatientMonthlySummary();
-                       $newSummary->patient_id = $patient->user_id;
-                   }
-
-                   $newSummary->month_year             = Carbon::today();
-                   $newSummary->total_time             = 0;
-                   $newSummary->ccm_time               = 0;
-                   $newSummary->bhi_time               = 0;
-                   $newSummary->no_of_calls            = 0;
-                   $newSummary->no_of_successful_calls = 0;
-                   $newSummary->is_ccm_complex         = 0;
-                   $newSummary->approved               = 0;
-                   $newSummary->rejected               = 0;
-                   $newSummary->actor_id               = null;
-                   $newSummary->needs_qa               = null;
-                   $newSummary->save();
                });
 
         $lastReset->config_value = Carbon::now();
