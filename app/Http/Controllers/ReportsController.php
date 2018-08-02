@@ -499,11 +499,6 @@ class ReportsController extends Controller
         $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
-        //TODO what is the rule here?
-        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador', 'care-center'], 8) && !auth()->user()->hasRole('administrator')) {
-            return abort(403);
-        }
-
         if ( ! $patientId) {
             return "Patient Not Found..";
         }
