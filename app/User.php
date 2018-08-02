@@ -2402,13 +2402,24 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function getCcmTimeAttribute()
     {
-        return optional($this->patientSummaries()->select(['ccm_time', 'id'])->orderBy('id',
-                'desc')->whereMonthYear(Carbon::now()->startOfMonth())->first())->ccm_time ?? 0;
+        return optional(
+                   $this->patientSummaries()
+                        ->select(['ccm_time', 'id'])
+                        ->orderBy('id', 'desc')
+                        ->whereMonthYear(Carbon::now()->startOfMonth())
+                        ->first()
+               )->ccm_time ?? 0;
     }
 
     public function getBhiTimeAttribute()
     {
-        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->bhi_time;
+        return optional(
+                   $this->patientSummaries()
+                        ->select(['bhi_time', 'id'])
+                        ->orderBy('id', 'desc')
+                        ->whereMonthYear(Carbon::now()->startOfMonth())
+                        ->first()
+               )->bhi_time ?? 0;
     }
 
     public function patientInfo()
