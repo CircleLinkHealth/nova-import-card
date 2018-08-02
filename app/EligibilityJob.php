@@ -60,4 +60,19 @@ class EligibilityJob extends BaseModel
 
         return null;
     }
+
+    public function scopeEligible($builder)
+    {
+        return $builder->where('outcome', '=', self::ELIGIBLE);
+    }
+
+    public function enrollee()
+    {
+        return $this->hasOne(Enrollee::class);
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
 }

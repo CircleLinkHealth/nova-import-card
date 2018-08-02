@@ -208,7 +208,7 @@
                                         Conditions (export)</a>
                                 </li>
 
-                                <li><a href="{{ route('excel.report.t2') }}">Paused Patients (export)</a>
+                                <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
                                 </li>
 
                                 <li>
