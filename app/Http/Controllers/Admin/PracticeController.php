@@ -16,9 +16,7 @@ class PracticeController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->hasPermission('programs-view')) {
-            abort(403);
-        }
+
         // display view
         $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
 
@@ -32,9 +30,6 @@ class PracticeController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         $messages = \Session::get('messages');
 
@@ -52,9 +47,6 @@ class PracticeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         // get params
         $params = $request->input();
@@ -85,9 +77,6 @@ class PracticeController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-view')) {
-            abort(403);
-        }
         // display view
         $program = Practice::find($id);
 
@@ -105,9 +94,6 @@ class PracticeController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         $messages = \Session::get('messages');
 
@@ -126,9 +112,6 @@ class PracticeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // find program
         $program = Practice::find($id);
         if (!$program) {

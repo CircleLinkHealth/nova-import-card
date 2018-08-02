@@ -59,7 +59,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // care ambassador info
-        if ($user->hasRole('care-ambassador')) {
+        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
         }
 

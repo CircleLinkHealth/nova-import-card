@@ -16,6 +16,7 @@ class MigratePausedToUnreachable extends Migration
         Patient::query()
                ->orderBy('id')
                ->where('date_paused', '<', Carbon::createFromDate(2018, 5, 1))
+               ->where('ccm_status', Patient::PAUSED)
                ->chunk(500, function ($patients) {
                    foreach ($patients as $p) {
                        $p->ccm_status       = Patient::UNREACHABLE;

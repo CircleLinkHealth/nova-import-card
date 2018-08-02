@@ -15,7 +15,7 @@ class CreateCpmProblemsTable extends Migration {
 		Schema::create('cpm_problems', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('default_icd_10_code', 20);
+            $table->string('default_icd_10_code', 20)->nullable();
 			$table->string('name');
 			$table->string('icd10from');
 			$table->string('icd10to');

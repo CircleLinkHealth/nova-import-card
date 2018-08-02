@@ -12,7 +12,7 @@
                     <div class="col-sm-2">
                         <h1>Users</h1>
                     </div>
-                    @if(Cerberus::hasPermission('users-create'))
+                    @if(Cerberus::hasPermission('user.create'))
                         <div class="col-sm-10">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
@@ -62,7 +62,7 @@
 
 
                         {!! Form::open(array('url' => route('admin.users.doAction', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                        @if(Cerberus::hasPermission('users-edit-all'))
+                        @if(Cerberus::hasPermission('user.update'))
                             Selected User Actions:
                             <select name="action">
                                 <option value="scramble">Scramble</option>
@@ -101,7 +101,7 @@
                                             @endif
                                         </td>
                                         <td class="text-right">
-                                            @if(Cerberus::hasPermission('users-edit-all'))
+                                            @if(Cerberus::hasPermission('user.update'))
                                                 <a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                    class="btn btn-primary btn-xs"><i
                                                             class="glyphicon glyphicon-edit"></i> Edit</a>
@@ -113,7 +113,7 @@
                                                                 class="glyphicon glyphicon-eye-open"></i> UI</a>
                                                 @endif
                                             @endif
-                                            @if(Cerberus::hasPermission('users-edit-all'))
+                                            @if(Cerberus::hasPermission('user.update'))
                                                 <a href="{{ route('admin.users.destroy', array('id' => $wpUser->id)) }}"
                                                    onclick="var result = confirm('Are you sure you want to delete?');if (!result) {event.preventDefault();}"
                                                    class="btn btn-danger btn-xs" style="margin-left:10px;"><i

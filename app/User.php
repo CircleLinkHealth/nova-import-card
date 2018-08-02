@@ -606,8 +606,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function viewableProgramIds(): array
     {
         return $this->practices
-                ->pluck('id')
-                ->all();
+            ->pluck('id')
+            ->all();
     }
 
     public function viewableProviderIds()
@@ -1593,17 +1593,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         }
 
         return $this->patientInfo->consent_date;
-    }
-
-    public function setConsentDateAttribute($value)
-    {
-        if ( ! $this->patientInfo) {
-            return '';
-        }
-        $this->patientInfo->consent_date = $value;
-        $this->patientInfo->save();
-
-        return true;
     }
 
     public function getAgentNameAttribute()
@@ -2692,15 +2681,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     ->exists();
     }
 
-    public function isBehavioral()
-    {
-        return $this->ccdProblems()
-                    ->whereHas('cpmProblem', function ($cpm) {
-                        return $cpm->where('is_behavioral', 1);
-                    })
-                    ->exists();
-    }
-
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -2984,5 +2964,53 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function calls()
     {
         return $this->outboundCalls();
+    }
+
+    /**
+     * Scope for patients who can be charged for a BHI.
+     *
+     * Conditions are:
+     *      1. Patient is Enrolled
+     *      2. Patient's Primary Practice is chargeable for BHI
+     *      3. Patient has at least one BHI problem
+     *      4. Patient has consented for BHI
+     *
+     * @param $builder
+     *
+     * @return mixed
+     */
+    public function scopeIsBhiChargeable($builder)
+    {
+        return $builder
+            ->whereHas('primaryPractice', function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            })->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas('ccdProblems.cpmProblem', function ($q) {
+                $q->where('is_behavioral', true);
+            })
+            ->where(function ($q) {
+                $q->whereHas('patientInfo', function ($q) {
+                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                })->orWhereHas('notes', function ($q) {
+                    $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                });
+            });
+    }
+
+    /**
+     * Determine whether the User is BHI chargeable (ie. eligible and enrolled)
+     *
+     * @return bool
+     */
+    public function isBhi()
+    {
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi", 1, function (){
+        return User::isBhiChargeable()
+                   ->where('id', $this->id)
+                   ->exists();
+//        });
     }
 }

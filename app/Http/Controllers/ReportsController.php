@@ -499,10 +499,6 @@ class ReportsController extends Controller
         $patientId = false, $approverId = null,
         CcdInsurancePolicyService $insurances
     ) {
-        if ( ! auth()->user()->hasRoleForSite(['provider', 'care-ambassador'], 8) && !auth()->user()->hasRole('administrator')) {
-            return abort(403);
-        }
-
         if ( ! $patientId) {
             return "Patient Not Found..";
         }
