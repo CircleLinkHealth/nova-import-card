@@ -165,7 +165,8 @@ class RequiredPermissionsTableSeeder extends Seeder
             "nurseContactWindow",
             "nurseHoliday",
             "practiceSetting",
-            "medicationGroup"
+            "medicationGroup",
+            "nurseReport",
         ]);
     }
 }
