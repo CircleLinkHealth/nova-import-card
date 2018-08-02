@@ -40,17 +40,10 @@ class ResetCcmTime extends Command
      */
     public function handle()
     {
-        $appConfigs = AppConfig::all();
-
-        $lastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
-
         Patient::withTrashed()
             ->update([
                 'cur_month_activity_time' => '0',
             ]);
-
-        $lastReset->config_value = Carbon::now();
-        $lastReset->save();
 
         AppConfig::updateOrCreate([
             'config_key'   => 'reset_cur_month_activity_time',
