@@ -673,7 +673,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('approve-careplan/{viewNext?}', [
             'uses' => 'ProviderController@approveCarePlan',
             'as'   => 'patient.careplan.approve',
-        ])->middleware('permission:care-plan-approve');
+        ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
 
         Route::get('view-careplan/pdf', [
             'uses' => 'ReportsController@viewPdfCarePlan',
