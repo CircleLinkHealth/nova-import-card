@@ -3013,4 +3013,11 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                    ->exists();
 //        });
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function passwordsHistory() {
+        return $this->hasOne(UserPasswordsHistory::class, 'user_id');
+    }
 }
