@@ -499,7 +499,7 @@ class WelcomeCallListGenerator
      *
      * @return $this
      */
-    protected function createEnrollees()
+    public function createEnrollees()
     {
         if ( ! $this->createEnrollees) {
             return $this;
@@ -630,13 +630,11 @@ class WelcomeCallListGenerator
             if ( ! $enrolleeExists && ! $enrolledPatientExists) {
                 try {
                     $this->enrollees = Enrollee::create($args);
-                } catch (\Exception $e) {
-                    if ($e instanceof \Illuminate\Database\QueryException) {
-                        $errorCode = $e->errorInfo[1];
-                        if ($errorCode == 1062) {
-                            $duplicateMySqlError = true;
-                            $errorMsg            = $e->getMessage();
-                        }
+                } catch (\Illuminate\Database\QueryException $e) {
+                    $errorCode = $e->errorInfo[1];
+                    if ($errorCode == 1062) {
+                        $duplicateMySqlError = true;
+                        $errorMsg            = $e->getMessage();
                     }
                 }
 

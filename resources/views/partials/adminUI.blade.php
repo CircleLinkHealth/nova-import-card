@@ -103,10 +103,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
 
-                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">
-                                            Manage (New)</a></li>
-                                    <li><a href="{{ route('admin.patientCallManagement.old') }}">
-                                            Manage (Old)</a></li>
+                                    <li><a href="{{ route('admin.patientCallManagement.index') }}">Manage</a></li>
                                     <li><a href="{{ route('admin.families.index') }}">Families</a></li>
                                     <li><a href="{{ route('algo.mock.create') }}">
                                             Algo v{{\App\Algorithms\Calls\SuccessfulHandler::VERSION}} Simulator</a>
@@ -161,7 +158,7 @@
                             </ul>
                         </li>
 
-                        @if(Cerberus::hasPermission('roles-view'))
+                        @if(Cerberus::hasPermission('role.read'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
@@ -169,7 +166,7 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('roles.index') }}">Roles</a></li>
-                                    @if(Cerberus::hasPermission('roles-permissions-view'))
+                                    @if(Cerberus::hasPermission('permission.read'))
                                         <li><a href="{{ route('permissions.index') }}">Permissions</a>
                                         </li>
                                     @endif
@@ -177,15 +174,15 @@
                             </li>
                         @endif
 
-                        @if(Cerberus::hasPermission('practices-view'))
+                        @if(Cerberus::hasPermission('practice.read'))
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
                                     Programs <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.practices.index') }}">Programs</a></li>
-                                    @if(Cerberus::hasPermission('locations-view'))
+                                    <li><a href="{{ route('admin.programs.index') }}">Programs</a></li>
+                                    @if(Cerberus::hasPermission('location.read'))
                                         <li><a href="{{ route('locations.index') }}">Locations</a></li>
                                     @endif
                                 </ul>
@@ -211,7 +208,7 @@
                                         Conditions (export)</a>
                                 </li>
 
-                                <li><a href="{{ route('excel.report.t2') }}">Paused Patients (export)</a>
+                                <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
                                 </li>
 
                                 <li>

@@ -1,22 +1,31 @@
 <template>
     <div>
         <br/>
-        <span>
-            <b>Next Call</b>:
-            <loader v-if="loaders.nextCall"></loader>
-            <span v-if="!loaders.nextCall">
-                {{displayDate}}
-            </span>
-        </span>
 
-        <span v-if="!loaders.nextCall && isCareCenter"
-              @click="showEditCallModal"
-              class="glyphicon glyphicon-pencil"
-              style="cursor:pointer;">
-        </span>
+        <div class="pad-6 light-background">
+
+            <span>
+                <b>Next Call</b>:
+                <span v-if="!loaders.nextCall">
+                    {{displayDate}}
+                </span>
+            </span>
+
+            <span v-if="!loaders.nextCall && isCareCenter"
+                  @click="showEditCallModal"
+                  class="glyphicon glyphicon-pencil"
+                  style="cursor:pointer;">
+            </span>
+
+            <span class="loader-right">
+                <loader v-show="loaders.nextCall"></loader>
+            </span>
+
+        </div>
+
 
         <edit-call-modal :patient-preferences="patientPreferences"></edit-call-modal>
-        <br/>
+
     </div>
 </template>
 <script>
@@ -35,6 +44,7 @@
         scheduled_date: today(),
         inbound_cpm_id: null,
         outbound_cpm_id: null,
+        is_manual: 1
     };
 
     export default {
@@ -93,6 +103,7 @@
                 this.nextCall.window_start = call.window_start;
                 this.nextCall.window_end = call.window_end;
                 this.nextCall.attempt_note = call.attempt_note;
+                this.nextCall.is_manual = call.is_manual;
                 this.setDisplayDate();
             },
             isNextCallToday() {
@@ -120,13 +131,24 @@
                 else if (this.nextCall.id === null) {
                     //a.Schedule button will appear in case of care center
                     //b.None will be shown if not care center
-                    this.displayDate = 'None';                
-                    }
+                    this.displayDate = 'None';
+                }
                 else {
-                    this.displayDate = `${this.nextCall.scheduled_date} @ ${this.nextCall.window_start} - ${this.nextCall.window_end}`;
+                    const start = this.get12HrTime(this.nextCall.window_start);
+                    const end = this.get12HrTime(this.nextCall.window_end);
+                    this.displayDate = `${this.nextCall.scheduled_date} @ ${start} - ${end}`;
                 }
 
             },
+            get12HrTime(timeString) {
+                if (!timeString) {
+                    return '';
+                }
+                const H = +(timeString.substr(0, 2));
+                const h = (H % 12) || 12;
+                const amPm = H < 12 ? "AM" : "PM";
+                return h + timeString.substr(2, 3) + amPm;
+            }
         },
         mounted() {
 
@@ -151,3 +173,19 @@
         }
     }
 </script>
+<style>
+
+    .pad-6 {
+        padding: 6px;
+        margin-left: -6px;
+    }
+
+    .loader-right {
+        margin-top: -4px;
+        float: right;
+    }
+
+    .light-background {
+        background-color: rgba(71, 191, 171, 0.2);
+    }
+</style>

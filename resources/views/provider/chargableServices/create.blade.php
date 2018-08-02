@@ -25,13 +25,13 @@
                                     <div class="input-field col s8">
                                         <input name="chargeable_services[{{$service->id}}][is_on]" type="checkbox"
                                                id="service-{{$service->id}}"
-                                               value="1" @if($service->is_on){{'checked'}}@endif @if(!auth()->user()->hasPermission('create-practice-chargeable-service')){{'disabled'}}@endif>
+                                               value="1" @if($service->is_on){{'checked'}}@endif @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
                                         <label for="service-{{$service->id}}">Active</label>
                                     </div>
 
                                     <div class="input-field col s4">
                                         <input id="service-{{$service->id}}-amount" name="chargeable_services[{{$service->id}}][amount]" type="text" class="validate" value="{{$service->amount}}"
-                                               @if(!auth()->user()->hasPermission('create-practice-chargeable-service')){{'disabled'}}@endif>
+                                               @if(!auth()->user()->hasPermission('chargeableService.create')){{'disabled'}}@endif>
                                         <label for="service-{{$service->id}}-amount" data-error="required" data-success="">Amount ($)</label>
                                     </div>
                                 </div>
@@ -42,7 +42,7 @@
             </div>
 
 
-            @if(auth()->user()->hasPermission('create-practice-chargeable-service'))
+            @if(auth()->user()->hasPermission('chargeableService.create'))
                 <button type="submit"
                         form="practice-chargeable-services-form"
                         class="btn blue waves-effect waves-light col s4"

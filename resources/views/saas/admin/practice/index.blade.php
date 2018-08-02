@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-sm-8">
                     </div>
-                    @if(Cerberus::hasPermission('programs-manage'))
+                    @if(Cerberus::hasPermission('practice.read'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('saas-admin.practices.create')}}" class="btn btn-success">New
@@ -48,7 +48,7 @@
                                         </td>
                                         <td>{{ date('F d, Y g:i A', strtotime($practice->created_at)) }}</td>
                                         <td class="text-right">
-                                            @if(Cerberus::hasPermission('programs-manage'))
+                                            @if(Cerberus::hasPermission('practice.read'))
                                                 <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
                                                    class="btn btn-xs btn-success">
                                                     Edit Settings / Add Staff

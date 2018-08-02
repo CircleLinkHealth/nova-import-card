@@ -44,14 +44,14 @@ class SchedulerService
      *
      * @param $patient
      * @param $noteId
-     * @param $success
+     * @param $callStatus - 'reached', 'not reached', 'ignored'
      *
      * @return array
      */
     public function updateTodaysCallAndPredictNext(
         $patient,
         $noteId,
-        $success
+        $callStatus
     ) {
 
         $isComplex = $patient->isCCMComplex();
@@ -63,12 +63,12 @@ class SchedulerService
         $this->updateCallWithNote(
             $note,
             $scheduled_call,
-            $success
-                ? 'reached'
-                : 'not reached'
+            $callStatus
         );
 
-        $this->patientWriteRepository->updateCallLogs($patient->patientInfo, $success);
+        if ($callStatus != Call::IGNORED) {
+            $this->patientWriteRepository->updateCallLogs($patient->patientInfo, $callStatus == Call::REACHED);
+        }
 
         $nextCall = SchedulerService::getNextScheduledCall($patient->id, true);
         if ($nextCall) {
@@ -77,7 +77,7 @@ class SchedulerService
 
         $previousCall = $this->getPreviousCall($patient, $scheduled_call['id']);
 
-        if ($success) {
+        if ($callStatus == Call::REACHED) {
             $prediction = (new SuccessfulHandler($patient->patientInfo, Carbon::now(), $isComplex,
                 $previousCall))->handle();
         } else {
@@ -85,7 +85,7 @@ class SchedulerService
                 $previousCall))->handle();
         }
 
-        $prediction['successful'] = $success;
+        $prediction['successful'] = $callStatus == Call::REACHED;
         return $prediction;
     }
 
@@ -228,7 +228,8 @@ class SchedulerService
         $date,
         $scheduler,
         $nurse_id = null,
-        $attempt_note = ''
+        $attempt_note = '',
+        $is_manual = false
     ) {
 
         $patient = User::find($patientId);
@@ -248,6 +249,7 @@ class SchedulerService
             'attempt_note' => $attempt_note,
 
             'scheduler' => $scheduler,
+            'is_manual' => $is_manual,
 
             'inbound_phone_number' => $patient->patientInfo->phone
                 ? $patient->patientInfo->phone

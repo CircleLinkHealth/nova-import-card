@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 
+use App\Patient;
 use App\User;
 use App\PatientSearchModel;
 use App\Filters\PatientFilters;
@@ -62,6 +63,21 @@ class PatientReadRepository
         $this->user
             ->whereHas('patientInfo', function ($q) {
                 $q->ccmStatus('paused');
+            });
+
+        return $this;
+    }
+
+    /**
+     * Scope for unreachable patients()
+     *
+     * @return \Illuminate\Database\Eloquent\Builder|static
+     */
+    public function unreachable()
+    {
+        $this->user
+            ->whereHas('patientInfo', function ($q) {
+                $q->ccmStatus(Patient::UNREACHABLE);
             });
 
         return $this;

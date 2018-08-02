@@ -2,9 +2,8 @@
 
 namespace App\Services\CCD;
 
-use App\User;
-use App\Repositories\UserRepositoryEloquent;
 use App\Repositories\CcdAllergyRepository;
+use App\Repositories\UserRepositoryEloquent;
 
 class CcdAllergyService
 {
@@ -19,7 +18,7 @@ class CcdAllergyService
     public function repo() {
         return $this->allergyRepo;
     }
-    
+
     function setupAllergy($a) {
         if ($a) {
             $allergy = [
@@ -49,15 +48,18 @@ class CcdAllergyService
             return $this->setupAllergy($a);
         });;
     }
-    
+
     public function allergy($id) {
         $allergy = $this->repo()->model()->find($id);
         if ($allergy) return $this->setupAllergy($allergy);
         else return null;
     }
-    
+
     public function patientAllergies($userId) {
-        return $this->repo()->patientAllergies($userId)->map(function ($a) {
+        return $this->repo()->patientAllergies($userId)
+                    ->unique('allergen_name')
+                    ->values()
+                    ->map(function ($a) {
             return [
                 'id'    => $a->id,
                 'name'  => $a->allergen_name,
@@ -71,7 +73,7 @@ class CcdAllergyService
         if (!$this->repo()->patientAllergyExists($userId, $name)) return $this->setupAllergy($this->repo()->addPatientAllergy($userId, $name));
         return null;
     }
-    
+
     public function deletePatientAllergy($userId, $allergyId) {
         return $this->repo()->deletePatientAllergy($userId, $allergyId);
     }

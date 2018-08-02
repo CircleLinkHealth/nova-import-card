@@ -48,6 +48,7 @@ class Call extends Resource
             'called_date'           => $this->called_date,
             'attempt_note'          => $this->attempt_note,
             'scheduler'             => $schedulerName,
+            'is_manual'             => $this->is_manual,
             'sort_day'              => $this->sort_day ?? null,
 
             'inbound_user'  => User::make($this->whenLoaded('inboundUser')),

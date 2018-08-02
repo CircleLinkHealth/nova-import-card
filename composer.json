@@ -54,6 +54,7 @@
         "phaxio/phaxio": "^1.0",
         "php-pm/httpkernel-adapter": "1.*",
         "php-pm/php-pm": "1.*",
+        "pokitdok/pokitdok-php": "^1.1",
         "predis/predis": "^1.1",
         "prettus/l5-repository": "dev-master",
         "prettus/laravel-validation": "*",
@@ -136,6 +137,7 @@
         ]
     },
     "config": {
+        "discard-changes": true,
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true,

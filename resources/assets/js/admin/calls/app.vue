@@ -126,6 +126,20 @@
                         <loader class="relative" v-if="props.row.loaders.callTimeEnd"></loader>
                     </div>
                 </template>
+                <template slot="CCM Time" slot-scope="props">
+                    <div>
+                        <span :class="!isCcmEligible(props.row.id) ? 'disabled' : ''">
+                            {{props.row['CCM Time']}}
+                        </span>
+                    </div>
+                </template>
+                <template slot="BHI Time" slot-scope="props">
+                    <div>
+                        <span :class="!isBhiEligible(props.row.id) ? 'disabled' : ''">
+                            {{props.row['BHI Time']}}
+                        </span>
+                    </div>
+                </template>
             </v-client-table>
         </div>
         <div class="row">
@@ -199,7 +213,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler'],
+                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -237,7 +251,7 @@
                     columnsClasses: {
                         'selected': 'blank'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Scheduler'],
+                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Scheduler'],
                     filterable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
                     filterByColumn: true,
                     texts: {
@@ -255,6 +269,7 @@
                         'Last Call Status': (ascending) => (a, b) => 0,
                         'Last Call': (ascending) => (a, b) => 0,
                         'CCM Time': (ascending) => (a, b) => 0,
+                        'BHI Time': (ascending) => (a, b) => 0,
                         'Call Time Start': (ascending) => (a, b) => 0,
                         'Call Time End': (ascending) => (a, b) => 0,
                         'Patient Status': (ascending) => (a, b) => 0,
@@ -283,8 +298,6 @@
                     'Patient ID': 'patientId',
                     'Next Call': 'scheduledDate',
                     'Last Call': 'lastCall',
-                    'CCM Time': 'ccmTime',
-                    'Manual': 'is_from_care_center'
                 }
                 //to camel case
                 return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
@@ -436,6 +449,16 @@
                 }
             },
 
+            isBhiEligible(id) {
+                const row = this.tableData.find(row => row.id === id)
+                return row && row.isBhiEligible;
+            },
+
+            isCcmEligible(id) {
+                const row = this.tableData.find(row => row.id === id)
+                return row && row.isCcmEligible;
+            },
+
             setupCall(call) {
                 const $vm = this
                 if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
@@ -485,7 +508,9 @@
                 return ({
                     id: call.id,
                     selected: false,
-                    Manual: call['is_from_care_center'] || false,
+                    isBhiEligible: (call.getPatient().is_bhi || false),
+                    isCcmEligible: (call.getPatient().is_ccm || false),
+                    Manual: call['is_manual'] || false,
                     Nurse: (call.getNurse() || {}).full_name,
                     NurseId: (call.getNurse() || {}).id,
                     Patient: (call.getPatient() || {}).full_name,
@@ -497,7 +522,8 @@
                     Notes: [],
                     'Last Call Status': call.getPatient().getInfo().last_call_status,
                     'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
-                    'CCM Time': timeDisplay(call.getPatient().getInfo().cur_month_activity_time),
+                    'CCM Time': timeDisplay(call.getPatient().ccm_time || 0),
+                    'BHI Time': timeDisplay(call.getPatient().bhi_time || 0),
                     'Successful Calls': (((call.getPatient().patient_summaries || []).slice(-1)[0] || {}).no_of_successful_calls || 0),
                     'Time Zone': call.getPatient().timezone,
                     'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
@@ -672,5 +698,9 @@
 
     .table-bordered > tbody > tr > td {
         white-space: nowrap;
+    }
+
+    .disabled {
+        color: #cacaca;
     }
 </style>

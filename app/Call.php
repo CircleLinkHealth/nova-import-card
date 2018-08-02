@@ -4,6 +4,7 @@ namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * App\Call
@@ -27,6 +28,7 @@ use Carbon\Carbon;
  * @property string $attempt_note
  * @property string|null $scheduler
  * @property bool $is_from_care_center
+ * @property bool is_manual
  * @property-read \App\User|null $schedulerUser
  * @property-read \App\User $inboundUser
  * @property-read \App\Note|null $note
@@ -56,7 +58,14 @@ class Call extends \App\BaseModel
 {
 
     use Filterable,
-        \Venturecraft\Revisionable\RevisionableTrait;
+        RevisionableTrait;
+
+    /**
+     * Store a Revision when a call is created
+     *
+     * @var bool
+     */
+    protected $revisionCreationsEnabled = true;
 
     protected $table = 'calls';
 
@@ -68,6 +77,7 @@ class Call extends \App\BaseModel
         'status',
 
         'scheduler',
+        'is_manual',
 
         /*
         Mini-documentation for call statuses:
@@ -96,6 +106,16 @@ class Call extends \App\BaseModel
 
         'is_cpm_outbound',
     ];
+
+    //patient was reached
+    const REACHED = 'reached';
+
+    //patient was not reached
+    const NOT_REACHED = 'not reached';
+
+    //patient was reached/not reached but this call is to be ignored
+    //eg. patient was reached but was busy, so ignore call from reached/not reached reports
+    const IGNORED = 'ignored';
 
     public function getIsFromCareCenterAttribute() {
 
