@@ -374,7 +374,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'nurseContactWindow.read',
                     'nurseHoliday.read',
                     'practiceSetting.read',
-                    'medicationGroup.read'
+                    'medicationGroup.read',
+                    'nurseReport.read',
                 ],
             ],
             [
@@ -1094,6 +1095,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'medicationGroup.read',
                     'ccd-import',
                     'use-onboarding',
+                    'nurseReport.read',
                 ],
             ],
         ];
