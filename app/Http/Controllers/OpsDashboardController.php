@@ -603,42 +603,20 @@ class OpsDashboardController extends Controller
 
     public function calculateDailyTotalRow($rows)
     {
+        $totalCounts = [];
 
-        foreach ($rows as $key => $value) {
-
-            $totalCounts['ccmCounts']['zero'][]                   = $value['ccmCounts']['zero'];
-            $totalCounts['ccmCounts']['0to5'][]                   = $value['ccmCounts']['0to5'];
-            $totalCounts['ccmCounts']['5to10'][]                  = $value['ccmCounts']['5to10'];
-            $totalCounts['ccmCounts']['10to15'][]                 = $value['ccmCounts']['10to15'];
-            $totalCounts['ccmCounts']['15to20'][]                 = $value['ccmCounts']['15to20'];
-            $totalCounts['ccmCounts']['20plus'][]                 = $value['ccmCounts']['20plus'];
-            $totalCounts['ccmCounts']['total'][]                  = $value['ccmCounts']['total'];
-            $totalCounts['ccmCounts']['priorDayTotals'][]         = $value['ccmCounts']['priorDayTotals'];
-            $totalCounts['countsByStatus']['enrolled'][]          = $value['countsByStatus']['enrolled'];
-            $totalCounts['countsByStatus']['pausedPatients'][]    = $value['countsByStatus']['pausedPatients'];
-            $totalCounts['countsByStatus']['withdrawnPatients'][] = $value['countsByStatus']['withdrawnPatients'];
-            $totalCounts['countsByStatus']['delta'][]             = $value['countsByStatus']['delta'];
-            $totalCounts['countsByStatus']['gCodeHold'][]         = $value['countsByStatus']['gCodeHold'];
-
+        foreach ($rows as $row){
+            foreach ($row as $key => $value){
+                $totalCounts[$key][] = $value;
+            }
 
         }
+        foreach($totalCounts as $key => $value){
 
-        $totalRow['ccmCounts']['zero']                   = array_sum($totalCounts['ccmCounts']['zero']);
-        $totalRow['ccmCounts']['0to5']                   = array_sum($totalCounts['ccmCounts']['0to5']);
-        $totalRow['ccmCounts']['5to10']                  = array_sum($totalCounts['ccmCounts']['5to10']);
-        $totalRow['ccmCounts']['10to15']                 = array_sum($totalCounts['ccmCounts']['10to15']);
-        $totalRow['ccmCounts']['15to20']                 = array_sum($totalCounts['ccmCounts']['15to20']);
-        $totalRow['ccmCounts']['20plus']                 = array_sum($totalCounts['ccmCounts']['20plus']);
-        $totalRow['ccmCounts']['total']                  = array_sum($totalCounts['ccmCounts']['total']);
-        $totalRow['ccmCounts']['priorDayTotals']         = array_sum($totalCounts['ccmCounts']['priorDayTotals']);
-        $totalRow['countsByStatus']['enrolled']          = array_sum($totalCounts['countsByStatus']['enrolled']);
-        $totalRow['countsByStatus']['pausedPatients']    = array_sum($totalCounts['countsByStatus']['pausedPatients']);
-        $totalRow['countsByStatus']['withdrawnPatients'] = array_sum($totalCounts['countsByStatus']['withdrawnPatients']);
-        $totalRow['countsByStatus']['delta']             = array_sum($totalCounts['countsByStatus']['delta']);
-        $totalRow['countsByStatus']['gCodeHold']         = array_sum($totalCounts['countsByStatus']['gCodeHold']);
+            $totalCounts[$key] = array_sum($value);
+        }
 
-        return collect($totalRow);
-
+        return $totalCounts;
     }
 
     public function calculateBillingChurnTotalRow($rows, $months)

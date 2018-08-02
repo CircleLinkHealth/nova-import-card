@@ -37,26 +37,27 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function handle()
     {
-        $date = Carbon::now();
+        ini_set('memory_limit', '1024M');
+
+        $date = Carbon::now()->subMonth(2);
 
         $practices = Practice::activeBillable()
                              ->with([
                                  'patients' => function ($p) use ($date) {
                                      $p->with([
-                                         'activities' => function ($a) use ($date) {
+                                         'activities'      => function ($a) use ($date) {
                                              $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay())
-                                               ->where('performed_at', '<=', $date);
+                                                 $date->copy()->startOfMonth()->startOfDay());
+                                         },
+                                         'revisionHistory' => function ($r) use ($date) {
+                                             $r->where('key', 'ccm_status')
+                                               ->where('created_at', '>=', $date->copy()->subDay());
                                          },
                                          'patientInfo',
                                      ]);
                                  },
                              ])
-                             ->whereHas('patients.patientInfo', function ($p) {
-                                 $p->where('ccm_status', Patient::ENROLLED)
-                                   ->orWhere('ccm_status', Patient::PAUSED)
-                                   ->orWhere('ccm_status', Patient::WITHDRAWN);
-                             })
+                             ->whereHas('patients.patientInfo')
                              ->get()
                              ->sortBy('display_name');
 
@@ -71,8 +72,9 @@ class GenerateOpsDailyReport implements ShouldQueue
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
 
         foreach ($practices as $practice) {
+
             $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date);
+                $enrolledPatients->where('program_id', $practice->id), $date, $practice->display_name);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -110,41 +112,20 @@ class GenerateOpsDailyReport implements ShouldQueue
 
     public function calculateDailyTotalRow($rows)
     {
+        $totalCounts = [];
 
-        foreach ($rows as $key => $value) {
-
-            $totalCounts['ccmCounts']['zero'][]                   = $value['ccmCounts']['zero'];
-            $totalCounts['ccmCounts']['0to5'][]                   = $value['ccmCounts']['0to5'];
-            $totalCounts['ccmCounts']['5to10'][]                  = $value['ccmCounts']['5to10'];
-            $totalCounts['ccmCounts']['10to15'][]                 = $value['ccmCounts']['10to15'];
-            $totalCounts['ccmCounts']['15to20'][]                 = $value['ccmCounts']['15to20'];
-            $totalCounts['ccmCounts']['20plus'][]                 = $value['ccmCounts']['20plus'];
-            $totalCounts['ccmCounts']['total'][]                  = $value['ccmCounts']['total'];
-            $totalCounts['ccmCounts']['priorDayTotals'][]         = $value['ccmCounts']['priorDayTotals'];
-            $totalCounts['countsByStatus']['enrolled'][]          = $value['countsByStatus']['enrolled'];
-            $totalCounts['countsByStatus']['pausedPatients'][]    = $value['countsByStatus']['pausedPatients'];
-            $totalCounts['countsByStatus']['withdrawnPatients'][] = $value['countsByStatus']['withdrawnPatients'];
-            $totalCounts['countsByStatus']['delta'][]             = $value['countsByStatus']['delta'];
-            $totalCounts['countsByStatus']['gCodeHold'][]         = $value['countsByStatus']['gCodeHold'];
-
+        foreach ($rows as $row){
+            foreach ($row as $key => $value){
+                $totalCounts[$key][] = $value;
+            }
 
         }
+        foreach($totalCounts as $key => $value){
 
-        $totalRow['ccmCounts']['zero']                   = array_sum($totalCounts['ccmCounts']['zero']);
-        $totalRow['ccmCounts']['0to5']                   = array_sum($totalCounts['ccmCounts']['0to5']);
-        $totalRow['ccmCounts']['5to10']                  = array_sum($totalCounts['ccmCounts']['5to10']);
-        $totalRow['ccmCounts']['10to15']                 = array_sum($totalCounts['ccmCounts']['10to15']);
-        $totalRow['ccmCounts']['15to20']                 = array_sum($totalCounts['ccmCounts']['15to20']);
-        $totalRow['ccmCounts']['20plus']                 = array_sum($totalCounts['ccmCounts']['20plus']);
-        $totalRow['ccmCounts']['total']                  = array_sum($totalCounts['ccmCounts']['total']);
-        $totalRow['ccmCounts']['priorDayTotals']         = array_sum($totalCounts['ccmCounts']['priorDayTotals']);
-        $totalRow['countsByStatus']['enrolled']          = array_sum($totalCounts['countsByStatus']['enrolled']);
-        $totalRow['countsByStatus']['pausedPatients']    = array_sum($totalCounts['countsByStatus']['pausedPatients']);
-        $totalRow['countsByStatus']['withdrawnPatients'] = array_sum($totalCounts['countsByStatus']['withdrawnPatients']);
-        $totalRow['countsByStatus']['delta']             = array_sum($totalCounts['countsByStatus']['delta']);
-        $totalRow['countsByStatus']['gCodeHold']         = array_sum($totalCounts['countsByStatus']['gCodeHold']);
+            $totalCounts[$key] = array_sum($value);
+        }
 
-        return collect($totalRow);
+        return $totalCounts;
 
     }
 }

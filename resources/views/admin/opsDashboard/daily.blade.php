@@ -34,6 +34,20 @@
             }
 
             table { white-space: nowrap; }
+
+            .panel-body {
+                overflow-x: auto;
+            }
+
+            .table { white-space: nowrap; }
+
+            .color-green {
+                color: green;
+            }
+
+            .color-red {
+                color: red;
+            }
         </style>
     @endpush
 
@@ -77,10 +91,11 @@
                         <th>Total</th>
                         <th>Prior Day totals</th>
                         <th>Added</th>
+                        <th>Unreachable</th>
                         <th>Paused</th>
                         <th>Withdrawn</th>
                         <th>DELTA</th>
-                        <th>Backlog/Gcode Hold</th>
+                        <th>G0506 To Enroll</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -89,38 +104,40 @@
                             <div class="row vdivide">
                                 <tr class="table-info">
                                     <td><strong>{{$key}}</strong></td>
-                                    <td>{{$value['ccmCounts']['zero']}}</td>
-                                    <td>{{$value['ccmCounts']['0to5']}}</td>
-                                    <td>{{$value['ccmCounts']['5to10']}}</td>
-                                    <td>{{$value['ccmCounts']['10to15']}}</td>
-                                    <td>{{$value['ccmCounts']['15to20']}}</td>
-                                    <td>{{$value['ccmCounts']['20plus']}}</td>
-                                    <td>{{$value['ccmCounts']['total']}}</td>
-                                    <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
-                                    <td>{{$value['countsByStatus']['enrolled']}}</td>
-                                    <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
-                                    <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
-                                    <td>{{$value['countsByStatus']['delta']}}</td>
-                                    <td>{{$value['countsByStatus']['gCodeHold']}}</td>
+                                    <td>{{$value['0 mins']}}</td>
+                                    <td>{{$value['0-5']}}</td>
+                                    <td>{{$value['5-10']}}</td>
+                                    <td>{{$value['10-15']}}</td>
+                                    <td>{{$value['15-20']}}</td>
+                                    <td>{{$value['20+']}}</td>
+                                    <td>{{$value['Total']}}</td>
+                                    <td>{{$value['Prior Day totals']}}</td>
+                                    @if($value['Added'] != 0)<td class="color-green">{{$value['Added']}}</td>@else<td>{{$value['Added']}}</td>@endif
+                                    @if($value['Unreachable'] != 0)<td class="color-red">-{{$value['Unreachable']}}</td>@else<td>{{$value['Unreachable']}}</td>@endif
+                                    @if($value['Paused'] != 0)<td class="color-red">-{{$value['Paused']}}</td>@else<td>{{$value['Paused']}}</td>@endif
+                                    @if($value['Withdrawn'] != 0)<td class="color-red">-{{$value['Withdrawn']}}</td>@else<td>{{$value['Withdrawn']}}</td>@endif
+                                    <td>{{$value['Delta']}}</td>
+                                    <td>{{$value['G0506 To Enroll']}}</td>
                                 </tr>
                             </div>
                         @else
                             <div class="row vdivide">
                                 <tr>
                                     <th>{{$key}}</th>
-                                    <td>{{$value['ccmCounts']['zero']}}</td>
-                                    <td>{{$value['ccmCounts']['0to5']}}</td>
-                                    <td>{{$value['ccmCounts']['5to10']}}</td>
-                                    <td>{{$value['ccmCounts']['10to15']}}</td>
-                                    <td>{{$value['ccmCounts']['15to20']}}</td>
-                                    <td>{{$value['ccmCounts']['20plus']}}</td>
-                                    <td>{{$value['ccmCounts']['total']}}</td>
-                                    <td>{{$value['ccmCounts']['priorDayTotals']}}</td>
-                                    <td>{{$value['countsByStatus']['enrolled']}}</td>
-                                    <td>@if($value['countsByStatus']['pausedPatients'] != 0)- @endif{{$value['countsByStatus']['pausedPatients']}}</td>
-                                    <td>@if($value['countsByStatus']['withdrawnPatients'] != 0)- @endif{{$value['countsByStatus']['withdrawnPatients']}}</td>
-                                    <td>{{$value['countsByStatus']['delta']}}</td>
-                                    <td>{{$value['countsByStatus']['gCodeHold']}}</td>
+                                    <td>{{$value['0 mins']}}</td>
+                                    <td>{{$value['0-5']}}</td>
+                                    <td>{{$value['5-10']}}</td>
+                                    <td>{{$value['10-15']}}</td>
+                                    <td>{{$value['15-20']}}</td>
+                                    <td>{{$value['20+']}}</td>
+                                    <td>{{$value['Total']}}</td>
+                                    <td>{{$value['Prior Day totals']}}</td>
+                                    @if($value['Added'] != 0)<td class="color-green">{{$value['Added']}}</td>@else<td>{{$value['Added']}}</td>@endif
+                                    @if($value['Unreachable'] != 0)<td class="color-red">-{{$value['Unreachable']}}</td>@else<td>{{$value['Unreachable']}}</td>@endif
+                                    @if($value['Paused'] != 0)<td class="color-red">-{{$value['Paused']}}</td>@else<td>{{$value['Paused']}}</td>@endif
+                                    @if($value['Withdrawn'] != 0)<td class="color-red">-{{$value['Withdrawn']}}</td>@else<td>{{$value['Withdrawn']}}</td>@endif
+                                    <td>{{$value['Delta']}}</td>
+                                    <td>{{$value['G0506 To Enroll']}}</td>
                                 </tr>
                             </div>
                         @endif
