@@ -145,7 +145,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             "careplanAssessment",
             "patientSummary",
             "carePerson",
-            "pdf",
+            "careplan-pdf",
             "workHours",
             "emailSettings",
             "addendum",
