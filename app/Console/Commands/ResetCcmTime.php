@@ -45,17 +45,13 @@ class ResetCcmTime extends Command
 
         $lastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
 
-        /*
         Patient::withTrashed()
-            ->update([
-                'cur_month_activity_time' => '0',
-            ]);
-        */
+               ->update([
+                   'cur_month_activity_time' => '0',
+               ]);
 
         Patient::withTrashed()
                ->chunk(200, function (Patient $patient) {
-                   $patient->cur_month_activity_time = 0;
-                   $patient->save();
 
                    $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
                                                    ->orderBy('id', 'desc')->first();
