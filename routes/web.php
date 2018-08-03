@@ -1826,7 +1826,7 @@ Route::group(['middleware' => 'auth'], function () {
      *
      */
     Route::group([
-        'middleware' => ['role:care-center|administrator'],
+        'middleware' => ['role:care-center,administrator'],
         'prefix'     => 'care-center',
     ], function () {
 
@@ -1884,7 +1884,7 @@ Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator|saas-admin|saas-admin-view-only',
+        'providerDashboardACL:administrator,saas-admin,saas-admin-view-only',
     ],
 ], function () {
 
@@ -2105,7 +2105,7 @@ Route::group([
 
 Route::group([
     'prefix'     => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin|administrator|saas-admin-view-only'],
+    'middleware' => ['auth', 'role:saas-admin,administrator,saas-admin-view-only'],
 ], function () {
 
     Route::get('home', [
