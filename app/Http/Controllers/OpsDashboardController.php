@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardController extends Controller
 {
@@ -69,8 +70,6 @@ class OpsDashboardController extends Controller
             throw new \Exception("File retrieved is not in json format.", 500);
         }
 
-
-
         $data        = json_decode($json, true);
         $hoursBehind = $data['hoursBehind'];
         $rows        = $data['rows'];
@@ -82,6 +81,160 @@ class OpsDashboardController extends Controller
             'hoursBehind',
             'rows',
         ]));
+    }
+
+    public function dailyCsv(){
+        ini_set('memory_limit', '1024M');
+
+        $date = Carbon::now();
+
+        $practices = Practice::activeBillable()
+                             ->with([
+                                 'patients' => function ($p) use ($date) {
+                                     $p->with([
+                                         'activities'      => function ($a) use ($date) {
+                                             $a->where('performed_at', '>=',
+                                                 $date->copy()->startOfMonth()->startOfDay());
+                                         },
+                                         'revisionHistory' => function ($r) use ($date) {
+                                             $r->where('key', 'ccm_status')
+                                               ->where('created_at', '>=', $date->copy()->subDay());
+                                         },
+                                         'patientInfo',
+                                     ]);
+                                 },
+                             ])
+                             ->whereHas('patients.patientInfo')
+                             ->get()
+                             ->sortBy('display_name');
+
+        $enrolledPatients = $practices->map(function ($practice) {
+            return $practice->patients->map(function ($user) {
+                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
+                    return $user;
+                }
+            })->filter();
+        })->flatten()->unique('id');
+
+        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
+
+        foreach ($practices as $practice) {
+
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
+                $enrolledPatients->where('program_id', $practice->id), $date);
+            if ($row != null) {
+                $rows[$practice->display_name] = $row;
+            }
+        }
+        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
+        $rows                     = collect($rows);
+
+        Excel::create('CLH-Ops-Daily-Report-' . $date->toDateString(), function ($excel) use (
+            $rows,
+            $hoursBehind,
+            $date
+        ) {
+            // Set the title
+            $excel->setTitle('CLH Ops Daily Report');
+
+            // Chain the setters
+            $excel->setCreator('CLH System')
+                  ->setCompany('CircleLink Health');
+
+            // Call them separately
+            $excel->setDescription('CLH Ops Daily Report');
+
+            // Our first sheet
+            $excel->sheet('Sheet 1', function ($sheet) use (
+                $rows,
+                $hoursBehind,
+                $date
+            ) {
+                $sheet->cell('A1', function($cell) use ($date) {
+                    // manipulate the cell
+                    $cell->setValue("Ops Report from: {$date->copy()->startOfDay()->toDateTimeString()} to: {$date->toDateTimeString()}");
+
+                });
+                $sheet->cell('A2', function($cell) use ($hoursBehind) {
+                    // manipulate the cell
+                    $cell->setValue("HoursBehind: {$hoursBehind}");
+
+                });
+
+
+                $sheet->appendRow([
+                    'Active Accounts',
+                    '0 mins',
+                    '0-5',
+                    '5-10',
+                    '10-15',
+                    '15-20',
+                    '20+',
+                    'Total',
+                    'Prior Day Totals',
+                    'Added',
+                    'Unreachable',
+                    'Paused',
+                    'Withdrawn',
+                    'Delta',
+                    'G0506 To Enroll'
+                ]);
+                foreach ($rows as $key => $value) {
+                    $sheet->appendRow([
+                        $key,
+                        $value['0 mins'],
+                        $value['0-5'],
+                        $value['5-10'],
+                        $value['10-15'],
+                        $value['15-20'],
+                        $value['20+'],
+                        $value['Total'],
+                        $value['Prior Day totals'],
+                        $value['Added'],
+                        $value['Unreachable'],
+                        $value['Paused'],
+                        $value['Withdrawn'],
+                        $value['Delta'],
+                        $value['G0506 To Enroll']
+                    ]);}
+
+
+            });
+
+            /*
+            // Our second sheet
+            $excel->sheet('Second sheet', function($sheet) {
+
+            });
+            */
+        })->export('xls');
+
+
+//        $data = [
+//            'hoursBehind' => $hoursBehind,
+//            'rows'        => $rows,
+//        ];
+//
+//        $path = storage_path("ops-daily-report-{$date->toDateString()}.json");
+//
+//        $saved = file_put_contents($path, json_encode($data));
+//
+//
+//        //return exception
+//        if ( ! $saved) {
+//            if (app()->environment('worker')) {
+//                sendSlackMessage('#callcenter_ops',
+//                    "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
+//            }
+//        }
+//
+//        $report = SaasAccount::whereSlug('circlelink-health')
+//                   ->first()
+//                   ->addMedia($path)
+//                   ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
+//
+//        return $this->downloadMedia($report);
+
 
     }
 

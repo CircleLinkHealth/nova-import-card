@@ -7,6 +7,11 @@
                 background-color: #eee;
                 padding: 2rem;
             }
+
+            .hours-behind {
+                margin-top: 3px;
+                margin-bottom: 3px;
+            }
             .row.vdivide [class*='col-']:not(:last-child):after {
                 background: #e0e0e0;
                 width: 1px;
@@ -55,24 +60,47 @@
         <div class="col-md-12">
             @include('admin.opsDashboard.panel')
         </div>
-        <div class="input-group input-group-sm">
+        <div class="col-md-4">
             <form action="{{route('OpsDashboard.index')}}" method="GET">
                 <div class="form-group">
-                    <article>Active Patients as of 11pm ET on:</article>
-                    <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-info">
+                    <div class="col-md-12">
+                        <article>Active Patients as of 11pm ET on:</article>
+                    </div>
+                    <div class="col-md-8">
+                        <input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="submit" value="Submit" class="btn btn-info">
+                    </div>
                 </div>
             </form>
         </div>
         <div class="col-md-4">
-            <div>
-                <span>Hours Behind : </span>
-                <span class="label label-info">{{$hoursBehind}}</span>
+        </div>
+        <div class="col-md-4">
+            <form action="{{route('OpsDashboard.dailyCsv')}}" method="POST">
+                {{csrf_field()}}
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <article>Generate CSV Report (from live data)</article>
+                    </div>
+                    {{--<div class="col-md-8">--}}
+                        {{--<input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">--}}
+                    {{--</div>--}}
+                    <div class="col-md-4">
+                        <input type="submit" value="Submit" class="btn btn-info">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <div class="hours-behind">
+                    <span>Hours Behind : </span>
+                    <span class="label label-info">{{$hoursBehind}}</span>
+                </div>
             </div>
         </div>
-
     </div>
     <div class="container">
         <div class="panel panel-default">

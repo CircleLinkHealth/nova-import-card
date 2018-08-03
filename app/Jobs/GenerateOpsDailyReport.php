@@ -39,7 +39,7 @@ class GenerateOpsDailyReport implements ShouldQueue
     {
         ini_set('memory_limit', '1024M');
 
-        $date = Carbon::now()->subMonth(2);
+        $date = Carbon::now()->subDay();
 
         $practices = Practice::activeBillable()
                              ->with([
@@ -74,7 +74,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         foreach ($practices as $practice) {
 
             $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date, $practice->display_name);
+                $enrolledPatients->where('program_id', $practice->id), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }

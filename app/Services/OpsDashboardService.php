@@ -332,7 +332,7 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($patients, $enrolledPatients, Carbon $date, $displayName)
+    public function dailyReportRow($patients, $enrolledPatients, Carbon $date)
     {
         $fromDate = $date->copy()->subDay();
 
