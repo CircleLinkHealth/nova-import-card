@@ -1,6 +1,5 @@
 <?php namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -40,10 +39,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ProviderInfo extends \App\BaseModel
 {
-
     use SoftDeletes;
-
-    public $timestamps = false;
 
     /**
      * The database table used by the model.

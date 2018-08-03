@@ -420,7 +420,11 @@ class NurseFinder
             ->where('called_date', '!=', '')
             ->where('attempt_note', '=', '')
             ->where('outbound_cpm_id', '!=', $nurseToIgnore)
-            ->where('outboundUser.nurseInfo.status', '=', 'active')
+            ->whereHas('outboundUser', function ($q) {
+                $q->whereHas('nurseInfo', function ($q2) {
+                    $q2->where('status', '=', 'active');
+                });
+            })
             ->orderBy('called_date', 'desc')
             ->first())->outboundUser;
 
