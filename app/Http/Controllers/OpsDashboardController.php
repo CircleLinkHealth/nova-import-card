@@ -62,18 +62,19 @@ class OpsDashboardController extends Controller
                            ->getFile();
         //first check if we have a file
         if ( ! $json) {
-            abort(404, 'There is no report for this specific date.');
+//            abort(404, 'There is no report for this specific date.');
+            $hoursBehind = 'N/A';
+            $rows  = null;
+        }else{
+            //then check if it's in json format
+            if (!is_json($json)){
+                throw new \Exception("File retrieved is not in json format.", 500);
+            }
+
+            $data        = json_decode($json, true);
+            $hoursBehind = $data['hoursBehind'];
+            $rows        = $data['rows'];
         }
-
-        //then check if it's in json format
-        if (!is_json($json)){
-            throw new \Exception("File retrieved is not in json format.", 500);
-        }
-
-        $data        = json_decode($json, true);
-        $hoursBehind = $data['hoursBehind'];
-        $rows        = $data['rows'];
-
 
         return view('admin.opsDashboard.daily', compact([
             'date',
