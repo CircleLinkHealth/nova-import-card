@@ -84,7 +84,7 @@
                         }
                     },
                     "aaSorting":[6,'desc'],
-                    "iDisplayLength": 25,
+                    "iDisplayLength": 50,
                     "columnDefs": [
                         { "type": "date", targets: 'last_activity' }
                     ]
