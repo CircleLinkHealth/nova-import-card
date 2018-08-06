@@ -351,40 +351,8 @@ class OpsDashboardService
         }
         $row = array_merge($ccmCounts, $countsByStatus);
 
-        $x = 1;
         return $row;
 
-
-
-
-//        $json = optional(SaasAccount::whereSlug('circlelink-health')
-//                                    ->first()
-//                                    ->getMedia("ops-daily-report-{$fromDate->toDateString()}.json")
-//                                    ->sortByDesc('id')
-//                                    ->first())
-//            ->getFile();
-//
-//        //first check if we have a file
-//        if ( !$json || !is_json($json)) {
-//            $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'] . "(estimated)";
-//            $ccmTotal                    = collect($ccmCounts);
-//        }else{
-//            $data                        = json_decode($json, true);
-//            if (array_key_exists($displayName, $data['rows'])){
-//                $ccmCounts['priorDayTotals'] = $data['rows'][$displayName]['ccmCounts']['total'];
-//                $ccmTotal                    = collect($ccmCounts);
-//            }else{
-//                $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'] . "(estimated)";
-//                $ccmTotal                    = collect($ccmCounts);
-//            }
-//        }
-//
-//
-//
-//        return $row = collect([
-//            'ccmCounts'      => $ccmTotal,
-//            'countsByStatus' => $countsByStatus,
-//        ]);
 
     }
 
@@ -405,18 +373,10 @@ class OpsDashboardService
 
     }
 
-    public function lostAddedRow($patientsByPractice)
+    public function lostAddedRow($patientsByPractice, $fromDate)
     {
 
-        $countsByStatus = $this->countPatientsByStatus($patientsByPractice);
-
-
-        if ($countsByStatus['enrolled'] == 0 &&
-            $countsByStatus['pausedPatients'] == 0 &&
-            $countsByStatus['withdrawnPatients'] == 0 &&
-            $countsByStatus['gCodeHold'] == 0) {
-            return null;
-        }
+        $countsByStatus = $this->countPatientsByStatus($patientsByPractice, $fromDate);
 
         return collect($countsByStatus);
     }
