@@ -1,7 +1,5 @@
 <?php namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * App\UserMeta
  *
@@ -17,13 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\UserMeta whereUserId($value)
  * @mixin \Eloquent
  */
-class UserMeta extends \App\BaseModel
+class UserMeta extends BaseModel
 {
 
-    // for revisionable
-    use \Venturecraft\Revisionable\RevisionableTrait;
     public $timestamps = false;
-    protected $revisionCreationsEnabled = true;
 
     /**
      * The database table used by the model.
@@ -43,13 +38,6 @@ class UserMeta extends \App\BaseModel
      * @var array
      */
     protected $fillable = ['umeta_id', 'user_id', 'meta_key', 'meta_value'];
-
-    public static function boot()
-    {
-        parent::boot();
-    }
-
-    // for revisionable
 
     public function wpUser()
     {

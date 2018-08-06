@@ -1251,11 +1251,12 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index',
                 ])->middleware('permission:opsReport.read');
-
-                Route::get('/lost-added-index', [
-                    'uses' => 'OpsDashboardController@getLostAddedIndex',
-                    'as'   => 'OpsDashboard.lostAddedIndex',
+                Route::get('/index/csv', [
+                    'uses' => 'OpsDashboardController@dailyCsv',
+                    'as'   => 'OpsDashboard.dailyCsv',
                 ])->middleware('permission:opsReport.read');
+
+
                 Route::get('/lost-added', [
                     'uses' => 'OpsDashboardController@getLostAdded',
                     'as'   => 'OpsDashboard.lostAdded',
@@ -1826,7 +1827,7 @@ Route::group(['middleware' => 'auth'], function () {
      *
      */
     Route::group([
-        'middleware' => ['role:care-center|administrator'],
+        'middleware' => ['role:care-center,administrator'],
         'prefix'     => 'care-center',
     ], function () {
 
@@ -1884,7 +1885,7 @@ Route::group([
     'prefix'     => 'practices/{practiceSlug}',
     'middleware' => [
         'auth',
-        'providerDashboardACL:administrator|saas-admin|saas-admin-view-only',
+        'providerDashboardACL:administrator,saas-admin,saas-admin-view-only',
     ],
 ], function () {
 
@@ -2105,7 +2106,7 @@ Route::group([
 
 Route::group([
     'prefix'     => 'saas/admin',
-    'middleware' => ['auth', 'role:saas-admin|administrator|saas-admin-view-only'],
+    'middleware' => ['auth', 'role:saas-admin,administrator,saas-admin-view-only'],
 ], function () {
 
     Route::get('home', [

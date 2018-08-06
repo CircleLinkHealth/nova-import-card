@@ -116,11 +116,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
  * @mixin \Eloquent
  */
-class Patient extends \App\BaseModel
+class Patient extends BaseModel
 {
-
     use Filterable, SoftDeletes;
-    use \Venturecraft\Revisionable\RevisionableTrait;
 
     const UNREACHABLE = 'unreachable';
     const PAUSED = 'paused';
@@ -154,12 +152,6 @@ class Patient extends \App\BaseModel
      */
     protected $table = 'patient_info';
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
     protected $fillable = [
         'imported_medical_record_id',
         'user_id',
@@ -207,8 +199,6 @@ class Patient extends \App\BaseModel
         'family_id',
         'date_welcomed',
     ];
-
-    // START RELATIONSHIPS
 
     public static function numberToTextDaySwitcher($string)
     {
@@ -259,13 +249,6 @@ class Patient extends \App\BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
-    // END RELATIONSHIPS
-
-
-    // START ATTRIBUTES
-
-    // first_name
-
     public function family()
     {
 
@@ -276,8 +259,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->first_name;
     }
-
-    // last_name
 
     public function setFirstNameAttribute($value)
     {
@@ -292,8 +273,6 @@ class Patient extends \App\BaseModel
         return $this->user->last_name;
     }
 
-    // address
-
     public function setLastNameAttribute($value)
     {
         $this->user->last_name = $value;
@@ -306,8 +285,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->address;
     }
-
-    // city
 
     public function setAddressAttribute($value)
     {
@@ -322,8 +299,6 @@ class Patient extends \App\BaseModel
         return $this->user->city;
     }
 
-    // state
-
     public function setCityAttribute($value)
     {
         $this->user->city = $value;
@@ -336,8 +311,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->state;
     }
-
-    // zip
 
     public function setStateAttribute($value)
     {
@@ -382,9 +355,6 @@ class Patient extends \App\BaseModel
         $this->save();
     }
 
-
-    // Return s current months CCM time formatted for UI
-
     public function getFamilyMembers(Patient $patient)
     {
 
@@ -425,8 +395,6 @@ class Patient extends \App\BaseModel
 
         return 'Success';
     }
-
-    //Query Scopes:
 
     public function scopeEnrolled($query)
     {

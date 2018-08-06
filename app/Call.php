@@ -4,7 +4,6 @@ namespace App;
 
 use App\Filters\Filterable;
 use Carbon\Carbon;
-use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
  * App\Call
@@ -54,20 +53,9 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
  */
-class Call extends \App\BaseModel
+class Call extends BaseModel
 {
-
-    use Filterable,
-        RevisionableTrait;
-
-    /**
-     * Store a Revision when a call is created
-     *
-     * @var bool
-     */
-    protected $revisionCreationsEnabled = true;
-
-    protected $table = 'calls';
+    use Filterable;
 
     protected $appends = ['is_from_care_center'];
 
@@ -117,9 +105,10 @@ class Call extends \App\BaseModel
     //eg. patient was reached but was busy, so ignore call from reached/not reached reports
     const IGNORED = 'ignored';
 
-    public function getIsFromCareCenterAttribute() {
+    public function getIsFromCareCenterAttribute()
+    {
 
-        if (!is_a($this->schedulerUser, User::class)) {
+        if ( ! is_a($this->schedulerUser, User::class)) {
             //null in cases of scheduler = 'algorithm'
             return false;
         }
@@ -164,7 +153,8 @@ class Call extends \App\BaseModel
         return $calls->count();
     }
 
-    public function schedulerUser() {
+    public function schedulerUser()
+    {
         return $this->belongsTo(User::class, 'scheduler', 'id');
     }
 
@@ -182,7 +172,6 @@ class Call extends \App\BaseModel
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
-
 
 
     public function patientId()
