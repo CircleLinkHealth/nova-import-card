@@ -61,10 +61,10 @@
                     @foreach($rows as $key => $value)
                         <tr>
                             <th>{{$key}}</th>
-                            <td>{{$value['enrolled']}}</td>
-                            <td>{{$value['pausedPatients']}}</td>
-                            <td>{{$value['withdrawnPatients']}}</td>
-                            <td>{{$value['delta']}}</td>
+                            <td>{{$value['Added']}}</td>
+                            <td>{{$value['Paused']}}</td>
+                            <td>{{$value['Withdrawn']}}</td>
+                            <td>{{$value['Delta']}}</td>
                         </tr>
                     @endforeach
                 </table>

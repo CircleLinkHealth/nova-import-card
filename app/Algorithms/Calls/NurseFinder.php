@@ -94,8 +94,7 @@ class NurseFinder
                                              $q->where('status', 'active');
                                          })
                                          ->with('nurseInfo')
-                                         ->find($this->previousCall['outbound_cpm_id'])
-                                         ->first();
+                                         ->find($this->previousCall['outbound_cpm_id']);
 
         if ($previousCallUser) {
             $isPreviousCallNurseActive = true;
@@ -111,6 +110,7 @@ class NurseFinder
         }
 
         $nurseDisplayName = '';
+
         if ($isPreviousCallNurseActive && $this->previousCall['attempt_note'] == '') {
             $match['nurse']        = $this->previousCall['outbound_cpm_id'];
             $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
@@ -119,7 +119,9 @@ class NurseFinder
 
             $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
 
-            $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            if ($this->previousCall['attempt_note'] != '') {
+                $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            }
 
             if ($data != null) {
                 $match['nurse']        = $data->id;
@@ -420,7 +422,11 @@ class NurseFinder
             ->where('called_date', '!=', '')
             ->where('attempt_note', '=', '')
             ->where('outbound_cpm_id', '!=', $nurseToIgnore)
-            ->where('outboundUser.nurseInfo.status', '=', 'active')
+            ->whereHas('outboundUser', function ($q) {
+                $q->whereHas('nurseInfo', function ($q2) {
+                    $q2->where('status', '=', 'active');
+                });
+            })
             ->orderBy('called_date', 'desc')
             ->first())->outboundUser;
 
