@@ -20,6 +20,7 @@ use App\Observers\PatientMonthlySummaryObserver;
 use App\Observers\PatientObserver;
 use App\Observers\PracticeObserver;
 use App\Observers\ProblemCodeObserver;
+use App\Observers\RevisionObserver;
 use App\Observers\SaasAccountObserver;
 use App\Observers\UserObserver;
 use App\PageTimer;
@@ -29,6 +30,7 @@ use App\Practice;
 use App\SaasAccount;
 use App\User;
 use Illuminate\Support\ServiceProvider;
+use Venturecraft\Revisionable\Revision;
 
 class ObserversServiceProvider extends ServiceProvider
 {
@@ -49,6 +51,7 @@ class ObserversServiceProvider extends ServiceProvider
         PatientMonthlySummary::observe(PatientMonthlySummaryObserver::class);
         Practice::observe(PracticeObserver::class);
         ProblemCode::observe(ProblemCodeObserver::class);
+        Revision::observe(RevisionObserver::class);
         SaasAccount::observe(SaasAccountObserver::class);
         User::observe(UserObserver::class);
         Call::observe(CallObserver::class);

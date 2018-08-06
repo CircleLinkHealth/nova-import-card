@@ -152,6 +152,16 @@ class Patient extends BaseModel
      */
     protected $table = 'patient_info';
 
+    public $phi = [
+        'agent_name',
+        'agent_telephone',
+        'agent_email',
+        'birth_date',
+        'gender',
+        'mrn_number',
+        'general_comment',
+    ];
+
     protected $fillable = [
         'imported_medical_record_id',
         'user_id',

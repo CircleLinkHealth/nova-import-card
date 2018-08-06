@@ -17,4 +17,12 @@ class BaseModel extends Model
         RevisionableTrait;
 
     protected $revisionCreationsEnabled = true;
+
+    /**
+     * Add any attributes that are PHI here.
+     * [What is PHI](https://www.hipaa.com/hipaa-protected-health-information-what-does-phi-include/)
+     *
+     * @var array
+     */
+    public $phi = [];
 }

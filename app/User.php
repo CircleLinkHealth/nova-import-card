@@ -261,6 +261,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         ];
     }
 
+    public $phi = [
+        'username',
+        'email',
+        'display_name',
+        'first_name',
+        'last_name',
+        'suffix',
+        'address',
+        'address2',
+        'city',
+        'state',
+        'zip',
+    ];
+
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
         "daily_reminder_time"     => "required",
