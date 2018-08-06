@@ -2,19 +2,9 @@
 
 use App\Services\DatamonitorService;
 
-class Observation extends \App\BaseModel
+class Observation extends BaseModel
 {
-
-    // for revisionable
-    use \Venturecraft\Revisionable\RevisionableTrait;
-
-    public $timestamps = true;
-    protected $revisionCreationsEnabled = true;
-
-
     protected $table = 'lv_observations';
-
-    protected $primaryKey = 'id';
 
     protected $fillable = [
         'obs_date',
@@ -33,14 +23,6 @@ class Observation extends \App\BaseModel
 
     protected $dates = ['deleted_at'];
 
-
-    // for revisionable
-
-    public static function boot()
-    {
-        parent::boot();
-    }
-
     public static function getStartingObservation(
         $userId,
         $message_id
@@ -56,12 +38,12 @@ class Observation extends \App\BaseModel
         */
 
         $starting = Observation::where('user_id', $userId)
-            ->whereHas('meta', function ($q) use (
-                $message_id
-            ) {
-                $q->where('meta_key', 'starting_observation')
-                    ->where('message_id', $message_id);
-            })->first();
+                               ->whereHas('meta', function ($q) use (
+                                   $message_id
+                               ) {
+                                   $q->where('meta_key', 'starting_observation')
+                                     ->where('message_id', $message_id);
+                               })->first();
 
         if ($starting) {
             return $starting->obs_value;
@@ -89,9 +71,6 @@ class Observation extends \App\BaseModel
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
 
-
-    // START META ATTRIBUTES
-
     public function getAlertLevelAttribute()
     {
         if ($this->obs_value) {
@@ -100,39 +79,32 @@ class Observation extends \App\BaseModel
             if ($this->obs_key == 'Blood_Pressure') {
                 if ($value < 80 || $value >= 180) {
                     return 'danger';
-                }
-                else if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
+                } else if (($value >= 80 && $value < 100) || ($value >= 130 && $value < 180)) {
                     return 'warning';
-                }
-                else {
+                } else {
                     return 'success';
                 }
-            }
-            else if ($this->obs_key == 'Blood_Sugar') {
+            } else if ($this->obs_key == 'Blood_Sugar') {
                 if ($value < 60 || $value >= 350) {
                     return 'danger';
-                }
-                else if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
+                } else if (($value >= 60 && $value < 80) || ($value >= 140 && $value < 350)) {
                     return 'warning';
-                }
-                else {
+                } else {
                     return 'success';
                 }
-            }
-            else if ($this->obs_key == 'Cigarettes') {
+            } else if ($this->obs_key == 'Cigarettes') {
                 if ($value < 4) {
                     return 'success';
-                }
-                else {
+                } else {
                     return 'danger';
                 }
-            }
-            else {
+            } else {
                 $meta = $this->meta->where('meta_key', '=', 'dm_alert_level')->first();
                 if (isset($meta)) {
                     return $meta->meta_value;
                 }
             }
+
             return '';
         }
 
@@ -199,8 +171,6 @@ class Observation extends \App\BaseModel
         return $name;
     }
 
-    // END META ATTRIBUTES
-
     public function getStartingObservationAttribute()
     {
         $name = 'no';
@@ -236,26 +206,26 @@ class Observation extends \App\BaseModel
             return false;
         }
         $wpUser = User::find($this->user_id);
-        if (!$wpUser->program_id) {
+        if ( ! $wpUser->program_id) {
             return false;
         }
         $comment = Comment::find($this->comment_id);
         if ($comment) {
             $params['comment_id'] = $comment->legacy_comment_id;
         } else {
-            $this->comment_id = '0';
+            $this->comment_id     = '0';
             $params['comment_id'] = '0';
         }
-        $params['user_id'] = $this->user_id;
-        $params['obs_date'] = $this->obs_date;
-        $params['obs_date_gmt'] = $this->obs_date_gmt;
-        $params['sequence_id'] = $this->sequence_id;
+        $params['user_id']        = $this->user_id;
+        $params['obs_date']       = $this->obs_date;
+        $params['obs_date_gmt']   = $this->obs_date_gmt;
+        $params['sequence_id']    = $this->sequence_id;
         $params['obs_message_id'] = $this->obs_message_id;
-        $params['obs_method'] = $this->obs_method;
-        $params['obs_key'] = $this->obs_key;
-        $params['obs_value'] = $this->obs_value;
-        $params['obs_unit'] = $this->obs_unit;
-        $this->program_id = $wpUser->program_id;
+        $params['obs_method']     = $this->obs_method;
+        $params['obs_key']        = $this->obs_key;
+        $params['obs_value']      = $this->obs_value;
+        $params['obs_unit']       = $this->obs_unit;
+        $this->program_id         = $wpUser->program_id;
 
         // updating or inserting?
         $updating = false;
@@ -279,7 +249,7 @@ class Observation extends \App\BaseModel
         parent::save();
 
         // run datamonitor if new obs
-        if (!$updating) {
+        if ( ! $updating) {
             $dmService = app(DatamonitorService::class);
             $dmService->process_obs_alerts($this->id);
         }
