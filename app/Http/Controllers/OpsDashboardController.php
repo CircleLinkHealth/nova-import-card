@@ -62,7 +62,9 @@ class OpsDashboardController extends Controller
                            ->getFile();
         //first check if we have a file
         if ( ! $json) {
+
 //            abort(404, 'There is no report for this specific date.');
+
             $hoursBehind = 'N/A';
             $rows  = null;
         }else{
@@ -85,7 +87,6 @@ class OpsDashboardController extends Controller
     }
 
     public function dailyCsv(){
-        ini_set('memory_limit', '1024M');
 
         $date = Carbon::now();
 
@@ -130,7 +131,7 @@ class OpsDashboardController extends Controller
         $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                     = collect($rows);
 
-        Excel::create('CLH-Ops-Daily-Report-' . $date->toDateString(), function ($excel) use (
+        Excel::create('CLH-Ops-Daily-Report-' . $date->toDateTimeString(), function ($excel) use (
             $rows,
             $hoursBehind,
             $date
@@ -201,109 +202,16 @@ class OpsDashboardController extends Controller
 
 
             });
-
-            /*
-            // Our second sheet
-            $excel->sheet('Second sheet', function($sheet) {
-
-            });
-            */
         })->export('xls');
 
-
-//        $data = [
-//            'hoursBehind' => $hoursBehind,
-//            'rows'        => $rows,
-//        ];
-//
-//        $path = storage_path("ops-daily-report-{$date->toDateString()}.json");
-//
-//        $saved = file_put_contents($path, json_encode($data));
-//
-//
-//        //return exception
-//        if ( ! $saved) {
-//            if (app()->environment('worker')) {
-//                sendSlackMessage('#callcenter_ops',
-//                    "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
-//            }
-//        }
-//
-//        $report = SaasAccount::whereSlug('circlelink-health')
-//                   ->first()
-//                   ->addMedia($path)
-//                   ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
-//
-//        return $this->downloadMedia($report);
-
-
     }
 
-    /**
-     * To be removed.
-     *
-     * @param Request $request
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function getDailyReport(Request $request)
-    {
-        $today       = Carbon::today();
-        $maxDate     = $today->copy()->subDay(1);
-        $requestDate = new Carbon($request['date']);
-        $date        = $requestDate->copy()->setTime('23', '0', '0');
-
-        $enrolledPatients = User::ofType('participant')
-                                ->with([
-                                    'activities' => function ($activity) use ($date) {
-                                        $activity->where('performed_at', '>=',
-                                            $date->copy()->startOfMonth()->toDateTimeString())
-                                                 ->where('performed_at', '<=', $date->toDateTimeString());
-                                    },
-                                ])
-                                ->whereHas('patientInfo', function ($patient) {
-                                    $patient->where('ccm_status', Patient::ENROLLED);
-                                })->get();
-
-        $fromDate = $date->copy()->subDay();
-
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(),
-            $date->toDateTimeString());
 
 
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
-
-
-        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
-
-
-        $rows = [];
-        foreach ($allPractices as $practice) {
-            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-            $patientsByPractice       = $enrolledPatients->where('program_id', $practice->id);
-            $row                      = $this->service->dailyReportRow($date, $patientsByPractice,
-                $statusPatientsByPractice);
-            if ($row != null) {
-                $rows[$practice->display_name] = $row;
-            }
-        }
-
-        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
-        $rows                     = collect($rows);
-
-
-        return view('admin.opsDashboard.daily', compact([
-            'date',
-            'maxDate',
-            'hoursBehind',
-            'rows',
-        ]));
-
-    }
-
-    public function getLostAddedIndex()
+    public function getLostAdded(Request $request)
     {
 
+        if ($request[''])
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
@@ -330,46 +238,6 @@ class OpsDashboardController extends Controller
 
         $rows['Total'] = $this->calculateLostAddedRow($rows);
         $rows          = collect($rows);
-
-        return view('admin.opsDashboard.lost-added', compact([
-            'fromDate',
-            'toDate',
-            'maxDate',
-            'rows',
-        ]));
-
-    }
-
-    public function getLostAdded(Request $request)
-    {
-        $today   = Carbon::today();
-        $maxDate = $today->copy()->subDay(1);
-
-        $requestToDate = new Carbon($request['toDate']);
-        $toDate        = $requestToDate->copy()->setTimeFromTimeString('23:00');
-        $fromDate      = new Carbon($request['fromDate']);
-
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->toDateTimeString(),
-            $toDate->toDateTimeString());
-
-        $rows = [];
-
-
-        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
-
-
-        foreach ($allPractices as $practice) {
-            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-            $row                      = $this->service->lostAddedRow($statusPatientsByPractice);
-            if ($row != null) {
-                $rows[$practice->display_name] = $row;
-            }
-
-        }
-
-        $rows['Total'] = $this->calculateLostAddedRow($rows);
-        $rows          = collect($rows);
-
 
         return view('admin.opsDashboard.lost-added', compact([
             'fromDate',

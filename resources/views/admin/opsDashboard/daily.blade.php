@@ -12,6 +12,11 @@
                 margin-top: 3px;
                 margin-bottom: 3px;
             }
+            .ops-csv {
+                margin-top: 13px;
+                text-align: right;
+            }
+
             .row.vdivide [class*='col-']:not(:last-child):after {
                 background: #e0e0e0;
                 width: 1px;
@@ -78,20 +83,20 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
-            <form action="{{route('OpsDashboard.dailyCsv')}}" method="POST">
-                {{csrf_field()}}
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <article>Generate CSV Report (from live data)</article>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <span>&#8203;</span>
+                </div>
+                <div class="col-md-12">
+                    <div class="ops-csv">
+                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV Report (for today)</a>
                     </div>
+                </div>
+
                     {{--<div class="col-md-8">--}}
                         {{--<input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">--}}
                     {{--</div>--}}
-                    <div class="col-md-4">
-                        <input type="submit" value="Submit" class="btn btn-info">
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
         <div class="col-md-12">
             <div class="col-md-3">
