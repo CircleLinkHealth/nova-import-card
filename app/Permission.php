@@ -22,9 +22,6 @@ use Michalisantoniou6\Cerberus\CerberusPermission;
  */
 class Permission extends CerberusPermission
 {
-
-
-
     /**
      * The database table used by the model.
      *

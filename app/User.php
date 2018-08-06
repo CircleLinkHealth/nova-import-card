@@ -225,7 +225,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
+class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
@@ -233,7 +233,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
-    use Filterable, Authenticatable,
+    use Filterable,
+        Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
         HasApiTokens,
@@ -245,9 +246,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         SaasAccountable,
         SoftDeletes,
         TimezoneTrait;
-
-
-    use \Venturecraft\Revisionable\RevisionableTrait;
 
     public $rules = [];
 
@@ -283,7 +281,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     protected $attributes = [
         'timezone' => 'America/New_York',
     ];
-    protected $revisionCreationsEnabled = true;
 
     /**
      * The attributes that are mass assignable.
@@ -330,14 +327,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         parent::boot();
 
-        static::creating(function ($user) {
-        });
-
-        self::saved(function ($user) {
-
-//            $user->load('roles');
-        });
-
         static::deleting(function ($user) {
             $user->providerInfo()->delete();
             $user->patientInfo()->delete();
@@ -358,7 +347,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->email;
     }
-
 
     /*
      *
