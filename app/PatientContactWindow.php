@@ -22,9 +22,8 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientContactWindow whereWindowTimeStart($value)
  * @mixin \Eloquent
  */
-class PatientContactWindow extends \App\BaseModel
+class PatientContactWindow extends BaseModel
 {
-
     protected $table = 'patient_contact_window';
 
     protected $primaryKey = 'id';
