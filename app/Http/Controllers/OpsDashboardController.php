@@ -47,12 +47,13 @@ class OpsDashboardController extends Controller
 
         if ($request->has('date')) {
             $requestDate = new Carbon($request['date']);
-            $date        = $requestDate->copy()->setTime('23', '0', '0');
+            $date        = $requestDate->copy();
         } else {
             //if the admin loads the page today, we need to display last night's report
-            $date = $maxDate->copy()->setTimeFromTimeString('23:00');
+            $date = $maxDate->copy();
         }
-
+        //there are no compatible reports in the cloud before this day
+        $noReportDates = Carbon::parse('5 August 2018');
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                            ->first()
@@ -60,11 +61,9 @@ class OpsDashboardController extends Controller
                            ->sortByDesc('id')
                            ->first())
                            ->getFile();
-        //first check if we have a file
-        if ( ! $json) {
 
-//            abort(404, 'There is no report for this specific date.');
-
+        //first check if we have a valid file
+        if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
             $rows  = null;
         }else{
@@ -100,7 +99,7 @@ class OpsDashboardController extends Controller
                                          },
                                          'revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=', $date->copy()->subDay());
+                                               ->where('created_at', '>=', $date->copy()->startOfDay());
                                          },
                                          'patientInfo',
                                      ]);
@@ -111,11 +110,15 @@ class OpsDashboardController extends Controller
                              ->sortBy('display_name');
 
         $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->map(function ($user) {
-                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
-                    return $user;
+            return $practice->patients->filter(function ($user) {
+                if (!$user) {
+                    return false;
                 }
-            })->filter();
+                if(!$user->patientInfo) {
+                    return false;
+                }
+                return $user->patientInfo->ccm_status == Patient::ENROLLED;
+            });
         })->flatten()->unique('id');
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
@@ -210,30 +213,44 @@ class OpsDashboardController extends Controller
 
     public function getLostAdded(Request $request)
     {
-
-        if ($request[''])
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
-        $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
-        $fromDate = $toDate->copy()->subDay(1);
+        if ($request['fromDate'] && $request['toDate'] ){
+            $fromDate = $request['fromDate'];
+            $toDate   = $request['toDate'];
+        }else{
+            $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
+            $fromDate = $toDate->copy()->subDay(1);
+        }
 
-        $patientsByStatus = $this->repo->getPatientsByStatus($fromDate->copy()->toDateTimeString(),
-            $toDate->toDateTimeString());
+        $practices = Practice::activeBillable()
+                             ->with([
+                                 'patients' => function ($p) use ($fromDate) {
+                                     $p->with([
+                                         'activities'      => function ($a) use ($fromDate) {
+                                             $a->where('performed_at', '>=',
+                                                 $fromDate->copy()->startOfMonth()->startOfDay());
+                                         },
+                                         'revisionHistory' => function ($r) use ($fromDate) {
+                                             $r->where('key', 'ccm_status')
+                                               ->where('created_at', '>=', $fromDate->copy()->startOfDay());
+                                         },
+                                         'patientInfo',
+                                     ]);
+                                 },
+                             ])
+                             ->whereHas('patients.patientInfo')
+                             ->get()
+                             ->sortBy('display_name');
 
         $rows = [];
-
-
-        $allPractices = Practice::activeBillable()->get()->sortBy('display_name');
-
-
-        foreach ($allPractices as $practice) {
-            $statusPatientsByPractice = $patientsByStatus->where('program_id', $practice->id);
-            $row                      = $this->service->lostAddedRow($statusPatientsByPractice);
+        foreach ($practices as $practice) {
+            $patients = $practice->patients->where('program_id', $practice->id);
+            $row                      = $this->service->lostAddedRow($patients, $fromDate);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
-
         }
 
         $rows['Total'] = $this->calculateLostAddedRow($rows);
@@ -607,17 +624,19 @@ class OpsDashboardController extends Controller
 
     public function calculateLostAddedRow($rows)
     {
+        $total = [];
+        $totalRow = [];
         foreach ($rows as $key => $value) {
-            $total['enrolled'][]          = $value['enrolled'];
-            $total['pausedPatients'][]    = $value['pausedPatients'];
-            $total['withdrawnPatients'][] = $value['withdrawnPatients'];
-            $total['delta'][]             = $value['delta'];
+            $total['Added'][]          = $value['Added'];
+            $total['Paused'][]    = $value['Paused'];
+            $total['Withdrawn'][] = $value['Withdrawn'];
+            $total['Delta'][]             = $value['Delta'];
         }
 
-        $totalRow['enrolled']          = array_sum($total['enrolled']);
-        $totalRow['pausedPatients']    = array_sum($total['pausedPatients']);
-        $totalRow['withdrawnPatients'] = array_sum($total['withdrawnPatients']);
-        $totalRow['delta']             = array_sum($total['delta']);
+        $totalRow['Added']          = array_sum($total['Added']);
+        $totalRow['Paused']    = array_sum($total['Paused']);
+        $totalRow['Withdrawn'] = array_sum($total['Withdrawn']);
+        $totalRow['Delta']             = array_sum($total['Delta']);
 
         return collect($totalRow);
 

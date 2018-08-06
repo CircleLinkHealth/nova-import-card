@@ -37,9 +37,7 @@ class GenerateOpsDailyReport implements ShouldQueue
      */
     public function handle()
     {
-        ini_set('memory_limit', '1024M');
-
-        $date = Carbon::now()->subDay();
+        $date = Carbon::now();
 
         $practices = Practice::activeBillable()
                              ->with([
@@ -62,11 +60,15 @@ class GenerateOpsDailyReport implements ShouldQueue
                              ->sortBy('display_name');
 
         $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->map(function ($user) {
-                if ($user->patientInfo->ccm_status == Patient::ENROLLED) {
-                    return $user;
+            return $practice->patients->filter(function ($user) {
+                if (!$user) {
+                    return false;
                 }
-            })->filter();
+                if(!$user->patientInfo) {
+                    return false;
+                }
+                return $user->patientInfo->ccm_status == Patient::ENROLLED;
+            });
         })->flatten()->unique('id');
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
