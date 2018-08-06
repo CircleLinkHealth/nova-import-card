@@ -1257,10 +1257,6 @@ Route::group(['middleware' => 'auth'], function () {
                 ])->middleware('permission:opsReport.read');
 
 
-                Route::get('/lost-added-index', [
-                    'uses' => 'OpsDashboardController@getLostAddedIndex',
-                    'as'   => 'OpsDashboard.lostAddedIndex',
-                ])->middleware('permission:opsReport.read');
                 Route::get('/lost-added', [
                     'uses' => 'OpsDashboardController@getLostAdded',
                     'as'   => 'OpsDashboard.lostAdded',
