@@ -110,6 +110,7 @@ class NurseFinder
         }
 
         $nurseDisplayName = '';
+
         if ($isPreviousCallNurseActive && $this->previousCall['attempt_note'] == '') {
             $match['nurse']        = $this->previousCall['outbound_cpm_id'];
             $match['window_match'] = 'Attempt Note was empty, assigning to care person that last contacted patient. ';
@@ -118,7 +119,7 @@ class NurseFinder
 
             $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
 
-            if ($this->previousCall['attempt_note'] == '') {
+            if ($this->previousCall['attempt_note'] != '') {
                 $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
             }
 
