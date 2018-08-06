@@ -26,7 +26,8 @@
                             to_enroll: 'To Enroll',
                             patient_rejected: 'Patient Declined',
                             withdrawn: 'Withdrawn',
-                            paused: 'Paused'
+                            paused: 'Paused',
+                            unreachable: 'Unreachable',
                         })[props.row.ccmStatus] || props.row.ccmStatus) 
                     }}
                 </div>
@@ -147,6 +148,7 @@
                                         { id: 'paused', text: 'paused' }, 
                                         { id: 'withdrawn', text: 'withdrawn' },
                                         { id: 'to_enroll', text: 'to_enroll'},
+                                        { id: 'unreachable', text: 'unreachable'},
                                         { id: 'patient_rejected', text: 'patient_rejected'}
                                     ],
                         careplanStatus: [
@@ -421,7 +423,8 @@
                         to_enroll: 'To Enroll',
                         patient_rejected: 'Patient Declined',
                         withdrawn: 'Withdrawn',
-                        paused: 'Paused'
+                        paused: 'Paused',
+                        unreachable: 'Unreachable'
                     })[option.innerText] || option.innerText
                 });
 
