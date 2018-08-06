@@ -94,8 +94,7 @@ class NurseFinder
                                              $q->where('status', 'active');
                                          })
                                          ->with('nurseInfo')
-                                         ->find($this->previousCall['outbound_cpm_id'])
-                                         ->first();
+                                         ->find($this->previousCall['outbound_cpm_id']);
 
         if ($previousCallUser) {
             $isPreviousCallNurseActive = true;
@@ -119,7 +118,9 @@ class NurseFinder
 
             $data = $this->getLastRNCallWithoutAttemptNote($this->patient, $this->previousCall['outbound_cpm_id']);
 
-            $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            if ($this->previousCall['attempt_note'] == '') {
+                $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            }
 
             if ($data != null) {
                 $match['nurse']        = $data->id;
