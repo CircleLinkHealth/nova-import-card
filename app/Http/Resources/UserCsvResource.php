@@ -32,7 +32,7 @@ class UserCsvResource extends Resource
                 : 0) . '",' .
                '"' . $this->created_at . '",' .
                '"' . ($patient->cur_month_activity_time
-                ? gmdate('H:i:s', $patient->cur_month_activity_time)
-                : '') . '"';
+                ? gmdate('i:s', $patient->cur_month_activity_time)
+                : '00:00') . '"';
     }
 }
