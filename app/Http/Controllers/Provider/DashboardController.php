@@ -118,7 +118,7 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        $practice = $this->primaryPractice;
+        $practice = $this->primaryPractice->load('settings');
 
         if ( ! $practice) {
             return response('Practice not found', 404);
