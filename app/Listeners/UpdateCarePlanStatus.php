@@ -42,12 +42,13 @@ class UpdateCarePlanStatus
             return false;
         }
 
-        $practiceSettings = $user->carePlan->patient->primaryPractice->cpmSettings();
+        $practiceSettings = $event->practiceSettings;
 
+        //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
         if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
-            $user->carePlanStatus = CarePlan::PROVIDER_APPROVED; // careplan_status
-            $user->carePlanProviderApprover = auth()->user()->id; // careplan_provider_approver
-            $user->carePlanProviderApproverDate = date('Y-m-d H:i:s'); // careplan_provider_date
+            $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
+            $user->carePlanProviderApprover     = auth()->user()->id;
+            $user->carePlanProviderApproverDate = date('Y-m-d H:i:s');
 
             if ((boolean)$practiceSettings->efax_pdf_careplan) {
                 $location = $user->locations()->first();
@@ -57,13 +58,15 @@ class UpdateCarePlanStatus
             }
 
             event(new PdfableCreated($user->carePlan));
-        } elseif ($user->carePlanStatus == CarePlan::DRAFT && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
-            $user->carePlan->status = CarePlan::QA_APPROVED; // careplan_status
-            $user->carePlan->qa_approver_id = auth()->id(); // careplan_qa_approver
+        } //This CarePlan is being `QA approved` by CLH
+        elseif ($user->carePlanStatus == CarePlan::DRAFT
+                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
+            $user->carePlan->status         = CarePlan::QA_APPROVED;
+            $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();
 
             if ((boolean)$practiceSettings->auto_approve_careplans) {
-                $user->carePlan->status = CarePlan::PROVIDER_APPROVED;
+                $user->carePlan->status               = CarePlan::PROVIDER_APPROVED;
                 $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
                 $user->carePlan->save();
 
@@ -85,7 +88,7 @@ class UpdateCarePlanStatus
      */
     private function addPatientConsentedNote(User $user)
     {
-        if (!$user->notes->isEmpty()) {
+        if ( ! $user->notes->isEmpty()) {
             return;
         }
 
