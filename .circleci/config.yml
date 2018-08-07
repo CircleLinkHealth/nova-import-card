@@ -47,7 +47,7 @@ jobs:
 
     - run:
         name: Update composer to latest version
-        command: composer self-update
+        command: sudo composer self-update
 
     - restore_cache:
         keys:
