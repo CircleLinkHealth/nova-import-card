@@ -26,7 +26,7 @@ jobs:
 
     - run:
         name: Update npm version
-        command: npm install -g npm
+        command: sudo npm install -g npm
 
 
     # Leave this for future use if php-zip is ever required
