@@ -2,9 +2,11 @@
 
 namespace Tests\Unit;
 
+use App\ChargeableService;
+use App\Models\CPM\CpmProblem;
+use App\Patient;
 use App\Practice;
 use App\Role;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -19,6 +21,11 @@ class PageTimerControllerTest extends TestCase
 
     private $patient;
     private $provider;
+
+    /**
+     * @var Practice
+     */
+    private $practice;
 
     public function test_ccm_time_is_stored()
     {
@@ -68,7 +75,6 @@ class PageTimerControllerTest extends TestCase
                     'name'          => 'Test activity',
                     'title'         => 'some.route',
                     'is_behavioral' => true,
-
                 ],
             ],
         ]);
@@ -142,7 +148,31 @@ class PageTimerControllerTest extends TestCase
         parent::setUp();
         $this->practice = factory(Practice::class)->create();
         $this->provider = $this->createUser($this->practice->id, 'care-center');
-        $this->patient  = factory(User::class)->create();
+        $this->patient  = $this->createUser($this->practice->id, 'participant');
+
+        //fulfill conditions for patient to be BHI
+        Patient::whereUserId($this->patient->id)
+               ->update([
+                   'ccm_status'   => Patient::ENROLLED,
+                   'consent_date' => Carbon::now(),
+               ]);
+
+        $defaultServices = ChargeableService::defaultServices();
+        $this->practice->chargeableServices()->sync($defaultServices->pluck('id')->all());
+
+        $cpmProblem = CpmProblem::whereIsBehavioral(true)->firstOrFail();
+
+        $this->patient
+            ->ccdProblems()
+            ->create([
+                'name'             => $cpmProblem->name,
+                'is_monitored'     => true,
+                'billable'         => true,
+                'cpm_problem_id'   => $cpmProblem->id,
+                'code'             => '12345',
+                'code_system_name' => 'ICD-10',
+                'code_system_oid'  => '2.16.840.1.113883.6.3',
+            ]);
 
         //add provider role
         $role = Role::where('name', 'provider')->first();
