@@ -122,6 +122,9 @@ class NurseFinder
             if ($this->previousCall['attempt_note'] != '') {
                 $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
             }
+            else {
+                $match['window_match'] = '';
+            }
 
             if ($data != null) {
                 $match['nurse']        = $data->id;
