@@ -744,7 +744,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $firstName = ucwords(strtolower($this->first_name));
         $lastName  = ucwords(strtolower($this->last_name));
 
-        return "$firstName $lastName {$this->suffix}";
+        return trim("$firstName $lastName {$this->suffix}");
     }
 
     public function getFullNameWithIdAttribute()
