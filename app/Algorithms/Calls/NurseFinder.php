@@ -77,9 +77,17 @@ class NurseFinder
 //        }
 //        $match['nurse'] = current(array_keys($this->nursesForPatient));
 
+        $user = auth()->user();
+        $isCurrentUserNurse = $user->hasRole('care-center');
+
+        if ($isCurrentUserNurse) {
+            $match['nurse']        = auth()->id();
+            $match['window_match'] = "Assigning next call to current care coach.";
+            return $match;
+        }
+
         if ( ! $this->previousCall) {
-            $user = auth()->user();
-            if ($user->hasRole('care-center')) {
+            if ($isCurrentUserNurse) {
                 $match['nurse']        = auth()->id();
                 $match['window_match'] = "No previous call found, assigning to you.";
                 return $match;
@@ -101,8 +109,7 @@ class NurseFinder
         }
 
         if ( ! $isPreviousCallNurseActive) {
-            $user = auth()->user();
-            if ($user->hasRole('care-center')) {
+            if ($isCurrentUserNurse) {
                 $match['nurse']        = auth()->id();
                 $match['window_match'] = "No previous call with active nurse found, assigning to you.";
                 return $match;
@@ -121,6 +128,9 @@ class NurseFinder
 
             if ($this->previousCall['attempt_note'] != '') {
                 $match['window_match'] = 'Attempt Note present, looking for last care person that contacted patient without one..';
+            }
+            else {
+                $match['window_match'] = '';
             }
 
             if ($data != null) {
