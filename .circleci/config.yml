@@ -24,6 +24,10 @@ jobs:
         name: Install PHP sqlite and nodejs 6
         command: sudo apt-get install -y libsqlite3-dev nodejs
 
+    - run:
+    name: Update npm version
+    command: npm install -g npm
+
 
     # Leave this for future use if php-zip is ever required
     # If you remove the flag 'composer install --ignore-platform-reqs`
