@@ -13,6 +13,7 @@
 
 use App\Enrollee;
 use App\Entities\Invite;
+use App\Location;
 use App\Nurse;
 use App\Practice;
 use Carbon\Carbon;
@@ -195,5 +196,20 @@ $factory->define(Practice::class, function (Faker\Generator $faker) {
         'send_alerts'              => 1,
         'outgoing_phone_number'    => $faker->phoneNumber,
         'term_days'                => 30,
+    ];
+});
+
+$factory->define(Location::class, function (Faker\Generator $faker) {
+    $name = $faker->company;
+
+    return [
+        'is_primary'     => true,
+        'name'           => $faker->company,
+        'phone'          => formatPhoneNumberE164($faker->phoneNumber),
+        'fax'            => formatPhoneNumberE164($faker->phoneNumber),
+        'address_line_1' => $faker->streetAddress,
+        'city'           => $faker->city,
+        'state'          => 'NY',
+        'postal_code'    => 12345,
     ];
 });

@@ -2,9 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Appointment;
 use App\Services\AthenaAPI\Calls;
-use App\User;
 use App\ValueObjects\Athena\Patient;
 use App\ValueObjects\Athena\Problem;
 use Carbon\Carbon;
@@ -118,6 +116,8 @@ class AthenaApiCallsTest extends TestCase
     private function createAthenaApiPatient()
     {
         $patients = $this->api->createNewPatient($this->fakePatient);
+
+        $this->assertTrue(is_array($patients));
 
         if (array_key_exists(0, $patients)) {
             $this->assertTrue(true);

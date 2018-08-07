@@ -50,12 +50,7 @@ class UpdateCarePlanStatus
             $user->carePlanProviderApprover     = auth()->user()->id;
             $user->carePlanProviderApproverDate = date('Y-m-d H:i:s');
 
-            if ((boolean)$practiceSettings->efax_pdf_careplan) {
-                $location = $user->locations()->first();
-                if ($location && $location->fax) {
-                    $this->efax->send($location->fax, $user->carePlan->toPdf());
-                }
-            }
+            $user->carePlan->forward();
 
             event(new PdfableCreated($user->carePlan));
         } //This CarePlan is being `QA approved` by CLH
