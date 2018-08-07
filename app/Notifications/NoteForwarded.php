@@ -166,7 +166,9 @@ class NoteForwarded extends Notification
             'channels' => $this->channels,
 
             'sender_id'    => auth()->id(),
-            'sender_type'  => User::class,
+            'sender_type'  => auth()->check()
+                ? User::class
+                : null,
             'sender_email' => optional(auth()->user())->email,
 
             'receiver_type'  => $notifiable->id,
