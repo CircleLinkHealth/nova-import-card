@@ -4,24 +4,17 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "062d94229f849bba722f696883c76de8",
+  "content-hash": "a405a7fe8877b3185b24a3f3d2c9c1d5",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
-            "version": "v2.4.0",
+          "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/amnuts/opcache-gui.git",
-                "reference": "64247d6ffc02cf6588672a65eeb64a654ead0a74"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/amnuts/opcache-gui/zipball/64247d6ffc02cf6588672a65eeb64a654ead0a74",
-                "reference": "64247d6ffc02cf6588672a65eeb64a654ead0a74",
-                "shasum": ""
+              "url": "git@github.com:CircleLinkHealth/opcache-gui.git",
+              "reference": "dd5e151dc51eca7e6426c78991f9a64c5d53fb8f"
             },
             "require": {
-                "ext-zend-opcache": "*",
                 "php": ">=5.4"
             },
             "type": "library",
@@ -30,7 +23,6 @@
                     "OpcacheGui\\": "/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -48,13 +40,17 @@
             ],
             "description": "A clean, effective and responsive interface for Zend OPcache, with real(ish)-time monitoring, filtering and the ability to invalidate files",
             "keywords": [
-                "Opcache",
                 "cache",
                 "gui",
                 "interface",
+              "opcache",
                 "opcodes"
             ],
-            "time": "2017-12-28T19:37:52+00:00"
+          "support": {
+            "email": "andy@amnuts.com",
+            "issues": "https://github.com/amnuts/opcache-gui/issues"
+          },
+          "time": "2018-08-07T23:43:00+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -220,16 +216,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-          "version": "3.64.6",
+          "version": "3.64.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-              "reference": "b288aaf819a09feb529a73ba37ae2dbf0a0b6964"
+              "reference": "1fa00e20adc697ae996b778528254d3acff39eaa"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b288aaf819a09feb529a73ba37ae2dbf0a0b6964",
-              "reference": "b288aaf819a09feb529a73ba37ae2dbf0a0b6964",
+              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1fa00e20adc697ae996b778528254d3acff39eaa",
+              "reference": "1fa00e20adc697ae996b778528254d3acff39eaa",
                 "shasum": ""
             },
             "require": {
@@ -296,7 +292,7 @@
                 "s3",
                 "sdk"
             ],
-          "time": "2018-08-06T20:42:41+00:00"
+          "time": "2018-08-07T20:30:32+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -3776,16 +3772,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.32.0",
+          "version": "1.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "64563e2b9f69e4db1b82a60e81efa327a30ff343"
+              "reference": "55667c1007a99e82030874b1bb14d24d07108413"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/64563e2b9f69e4db1b82a60e81efa327a30ff343",
-                "reference": "64563e2b9f69e4db1b82a60e81efa327a30ff343",
+              "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/55667c1007a99e82030874b1bb14d24d07108413",
+              "reference": "55667c1007a99e82030874b1bb14d24d07108413",
                 "shasum": ""
             },
             "require": {
@@ -3827,7 +3823,7 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-07-05T06:59:26+00:00"
+          "time": "2018-08-07T08:39:47+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -9466,16 +9462,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "6.5.10",
+          "version": "6.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "5744955af9c0a2de74a5eb5287c50bf025100d39"
+              "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5744955af9c0a2de74a5eb5287c50bf025100d39",
-                "reference": "5744955af9c0a2de74a5eb5287c50bf025100d39",
+              "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7bab54cb366076023bbf457a2a0d513332cd40f2",
+              "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2",
                 "shasum": ""
             },
             "require": {
@@ -9493,7 +9489,7 @@
                 "phpunit/php-file-iterator": "^1.4.3",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^1.0.9",
-                "phpunit/phpunit-mock-objects": "^5.0.8",
+              "phpunit/phpunit-mock-objects": "^5.0.9",
                 "sebastian/comparator": "^2.1",
                 "sebastian/diff": "^2.0",
                 "sebastian/environment": "^3.1",
@@ -9546,20 +9542,20 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-08-03T05:27:14+00:00"
+          "time": "2018-08-07T07:05:35+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "5.0.8",
+          "version": "5.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "6f9a3c8bf34188a2b53ce2ae7a126089c53e0a9f"
+              "reference": "141129c578f58f38f55eccf15a1039bd413ea57c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/6f9a3c8bf34188a2b53ce2ae7a126089c53e0a9f",
-                "reference": "6f9a3c8bf34188a2b53ce2ae7a126089c53e0a9f",
+              "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/141129c578f58f38f55eccf15a1039bd413ea57c",
+              "reference": "141129c578f58f38f55eccf15a1039bd413ea57c",
                 "shasum": ""
             },
             "require": {
@@ -9605,7 +9601,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2018-07-13T03:27:23+00:00"
+          "time": "2018-08-07T07:02:44+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -10648,6 +10644,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+      "amnuts/opcache-gui": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,

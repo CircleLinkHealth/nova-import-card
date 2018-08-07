@@ -21,6 +21,10 @@
       "url": "git@github.com:michalisantoniou6/revisionable.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -30,7 +34,7 @@
   ],
   "require": {
     "php": ">=7.0.0",
-    "amnuts/opcache-gui": "^2.4",
+    "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
     "barryvdh/laravel-debugbar": "*",
