@@ -1000,7 +1000,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         return $this->phoneNumbers()->create([
             'number'     => StringManipulation::formatPhoneNumber($number),
-            'type'       => PhoneNumber::getTypes()[$type],
+            'type'       => PhoneNumber::getTypes()[$type] ?? null,
             'is_primary' => $isPrimary,
             'extension'  => $extension,
         ]);
