@@ -27,7 +27,6 @@ class ShowAllActivity extends Controller
         }
 
         //validate input
-
         $errors = collect();
         if ($endDate->lessThan($startDate)) {
             $errors->push('Invalid date range.');
@@ -36,10 +35,13 @@ class ShowAllActivity extends Controller
             $errors->push('Date range is too large. Please use smaller From and To dates.');
         }
 
+        $startDate->setTime(0, 0);
+        $endDate->setTime(23, 59, 59);
+
         $revisions = collect();
         if ($errors->isEmpty()) {
-            $revisions = Revision::where('updated_at', '>=', $startDate->toDateString())
-                                 ->where('updated_at', '<=', $endDate->toDateString())
+            $revisions = Revision::where('updated_at', '>=', $startDate->toDateTimeString())
+                                 ->where('updated_at', '<=', $endDate->toDateTimeString())
                                  ->orderBy('updated_at', 'desc')
                                  ->paginate(20);
         }
