@@ -59,7 +59,7 @@ class ActivityService
             if ($ccmTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
-                    'month_year' => $monthYear->toDateString(),
+                    'month_year' => $monthYear,
                 ], [
                     'ccm_time' => $ccmTime,
                 ]);
@@ -102,7 +102,7 @@ class ActivityService
             if ($bhiTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
-                    'month_year' => $monthYear->toDateString(),
+                    'month_year' => $monthYear,
                 ], [
                     'bhi_time' => $bhiTime,
                 ]);
