@@ -1257,11 +1257,12 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@index',
                     'as'   => 'OpsDashboard.index',
                 ])->middleware('permission:opsReport.read');
-
-                Route::get('/lost-added-index', [
-                    'uses' => 'OpsDashboardController@getLostAddedIndex',
-                    'as'   => 'OpsDashboard.lostAddedIndex',
+                Route::get('/index/csv', [
+                    'uses' => 'OpsDashboardController@dailyCsv',
+                    'as'   => 'OpsDashboard.dailyCsv',
                 ])->middleware('permission:opsReport.read');
+
+
                 Route::get('/lost-added', [
                     'uses' => 'OpsDashboardController@getLostAdded',
                     'as'   => 'OpsDashboard.lostAdded',

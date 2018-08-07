@@ -13,25 +13,16 @@ use App\Contracts\Importer\ImportedMedicalRecord\ImportedMedicalRecord;
 use App\Importer\Models\ImportedItems\ProblemImport;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Models\CPM\CpmProblem;
-use Venturecraft\Revisionable\RevisionableTrait;
 
 class Problems extends BaseImporter
 {
-    use ConsolidatesProblemInfo,
-        RevisionableTrait;
-
-    protected $revisionCreationsEnabled = true;
+    use ConsolidatesProblemInfo;
 
     private $cpmProblems;
 
     public function __construct()
     {
         $this->cpmProblems = CpmProblem::all();
-    }
-
-    public static function boot()
-    {
-        parent::boot();
     }
 
     public function import(

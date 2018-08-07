@@ -1,13 +1,10 @@
 <?php namespace App;
 
-use App\PageTimer;
 use App\Scopes\Universal\DateScopesTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
-use SoftDeletingTrait;
 
 /**
  * App\Activity
@@ -61,20 +58,13 @@ use SoftDeletingTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class Activity extends \App\BaseModel implements Transformable
+class Activity extends BaseModel implements Transformable
 {
-
     use DateScopesTrait, TransformableTrait;
-
-    // for revisionable
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    protected $revisionCreationsEnabled = true;
-
-
 
     /**
      * The database table used by the model.
-     * 
+     *
      * @var string
      */
     protected $table = 'lv_activities';
@@ -104,13 +94,6 @@ class Activity extends \App\BaseModel implements Transformable
     protected $dates = ['deleted_at'];
 
     protected $appends = ['performed_at_year_month'];
-
-    public static function boot()
-    {
-        parent::boot();
-    }
-
-    // for revisionable
 
     /**
      * Create a new activity and return its id
@@ -147,20 +130,19 @@ class Activity extends \App\BaseModel implements Transformable
             Carbon::createFromFormat('Y-n', $months[1])->endOfMonth(),
         ]);
 
-        !empty($patientIds)
+        ! empty($patientIds)
             ? $query->whereIn('patient_id', $patientIds)
             : '';
 
         $data = $query
-            ->whereIn('patient_id', function ($subQuery) use
-                (
+            ->whereIn('patient_id', function ($subQuery) use (
                 $timeLessThan
             ) {
                 $subQuery->select('patient_id')
-                    ->from(with(new Activity)->getTable())
-                    ->groupBy('patient_id')
+                         ->from(with(new Activity)->getTable())
+                         ->groupBy('patient_id')
                     //->having(DB::raw('SUM(duration)'), '<', $timeLessThan)
-                    ->get();
+                         ->get();
             })
             ->with('patient')
             ->orderBy('performed_at', 'asc')
@@ -178,7 +160,7 @@ class Activity extends \App\BaseModel implements Transformable
             $reportData[$patientAct[0]['patient_id']] = collect($patientAct)->groupBy('performed_at_year_month');
         }
 
-        if (!empty($reportData)) {
+        if ( ! empty($reportData)) {
             return $reportData;
         } else {
             return false;
@@ -207,7 +189,7 @@ class Activity extends \App\BaseModel implements Transformable
 
     public function getPerformedAtYearMonthAttribute()
     {
-        if (!empty($this->attributes['performed_at'])) {
+        if ( ! empty($this->attributes['performed_at'])) {
             return Carbon::parse($this->attributes['performed_at'])->format('Y-m');
         }
     }
@@ -279,7 +261,7 @@ class Activity extends \App\BaseModel implements Transformable
         User $user
     ) {
         $builder->where('provider_id', $user->id)
-            ->orWhere('logger_id', $user->id);
+                ->orWhere('logger_id', $user->id);
     }
 
     public static function totalTimeForPatientForMonth(
@@ -289,9 +271,9 @@ class Activity extends \App\BaseModel implements Transformable
     ) {
 
         $raw = Activity::where('patient_id', $p->user_id)
-            ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
-            ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
-        ->sum('duration');
+                       ->where('performed_at', '>', $month->firstOfMonth()->startOfMonth()->toDateTimeString())
+                       ->where('performed_at', '<', $month->lastOfMonth()->endOfDay()->toDateTimeString())
+                       ->sum('duration');
 
         if ($format) {
             return round($raw / 60, 2);
