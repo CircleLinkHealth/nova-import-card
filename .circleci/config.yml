@@ -24,10 +24,6 @@ jobs:
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
     - run: sudo docker-php-ext-install zip gd
 
-    - run:
-        name: Setup Laravel testing environment variables for CircleCI test
-        command: cp .env.circleci .env
-
     # Download and cache dependencies
 
     # composer cache
