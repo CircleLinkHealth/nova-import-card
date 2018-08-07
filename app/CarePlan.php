@@ -216,4 +216,16 @@ class CarePlan extends \App\BaseModel implements PdfReport
             'type'    => $this->type,
         ];
     }
+
+    /**
+     * Get the URL to view the CarePlan
+     *
+     * @return string
+     */
+    public function link()
+    {
+        return route('patient.careplan.print', [
+            'patientId' => $this->user_id,
+        ]);
+    }
 }
