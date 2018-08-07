@@ -92,7 +92,7 @@
                     </div>
                 </div>
 
-                <div v-show="formData.role_name == 'provider'">
+                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1">
                     <div class="row">
                         <h6 class="col s12">
                             Whom should we notify for clinical issues regarding provider’s patients?
@@ -187,6 +187,12 @@
                 default: () => {
                     return {}
                 }
+            },
+            practiceSettings: {
+                type: Object,
+                default: () => {
+                    return {}
+                }
             }
         },
 
@@ -196,6 +202,7 @@
         },
 
         created() {
+
             if (!_.isEmpty(this.editedStaffMember)) {
                 this.formData = JSON.parse(JSON.stringify(this.editedStaffMember))
             }
