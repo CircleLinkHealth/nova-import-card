@@ -1823,25 +1823,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         if ( ! $this->patientInfo) {
             return '';
         }
-        $statusBefore                  = $this->patientInfo->ccm_status;
+
         $this->patientInfo->ccm_status = $value;
-        $this->patientInfo->save();
-        // update date tracking
-        if ($statusBefore !== $value) {
-            if ($value == Patient::PAUSED) {
-                $this->datePaused = date("Y-m-d H:i:s");
-            }
-            if ($value == Patient::WITHDRAWN) {
-                $this->dateWithdrawn = date("Y-m-d H:i:s");
-            }
-            if ($value == Patient::UNREACHABLE) {
-                $this->dateUnreachable = date("Y-m-d H:i:s");
-            }
-        }
-
-        $this->load('patientInfo');
-
-        return true;
     }
 
     public function getDatePausedAttribute()
