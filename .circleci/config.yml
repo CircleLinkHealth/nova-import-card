@@ -28,6 +28,10 @@ jobs:
         name: Update npm version
         command: sudo npm install -g npm
 
+    #libpng-dev needed for npm install
+    - run:
+          name: Install PHP sqlite and nodejs 6
+          command: sudo apt-get install libpng-dev && npm install -g pngquant-bin
 
     # Leave this for future use if php-zip is ever required
     # If you remove the flag 'composer install --ignore-platform-reqs`
