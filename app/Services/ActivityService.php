@@ -64,7 +64,7 @@ class ActivityService
                     'ccm_time' => $ccmTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
                     $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
                     $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
                     $summary->save();
@@ -107,7 +107,7 @@ class ActivityService
                     'bhi_time' => $bhiTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
                     $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
                     $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
                     $summary->save();
