@@ -205,8 +205,9 @@ class SchedulerService
 
         $call = Call::where('inbound_cpm_id', $patient->id)
                     ->whereIn('status', ['reached', 'not reached'])
-                    ->where('scheduled_date', '<', Carbon::today()->format('Y-m-d'))
-                    ->orderBy('scheduled_date', 'desc')
+                    ->where('called_date', '!=', '')
+                    ->where('called_date', '<', Carbon::today()->startOfDay()->toDateTimeString())
+                    ->orderBy('called_date', 'desc')
                     ->first();
         /*
         $call = Call
@@ -392,7 +393,7 @@ class SchedulerService
             $patients = $family->patients()->get();
 
             //Then get their family's calls
-            $scheduledCalls  = [];
+            $scheduledCalls          = [];
             $scheduledCallsScheduler = collect();
 
             $designatedNurse = null;
@@ -423,7 +424,7 @@ class SchedulerService
                     if (Carbon::now()->toDateTimeString() < $date->toDateTimeString()) {
                         $scheduledCallsScheduler->push([
                             'scheduler' => $call->scheduler,
-                            'date' => $date->toDateTimeString()
+                            'date'      => $date->toDateTimeString(),
                         ]);
                     }
                 } else {
@@ -458,10 +459,10 @@ class SchedulerService
 
                 if ($scheduledCallsCollect->count() > 0) {
                     $candidateDates = $scheduledCallsCollect->pluck('date')->all();
-                    $minDate = Carbon::parse(min($candidateDates));
+                    $minDate        = Carbon::parse(min($candidateDates));
                 } else {
                     $candidateDates = $scheduledCallsScheduler->pluck('date')->all();
-                    $minDate = Carbon::parse(min($candidateDates));
+                    $minDate        = Carbon::parse(min($candidateDates));
                 }
 
                 //patientId => patientScheduledCall
