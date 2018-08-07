@@ -25,8 +25,8 @@ jobs:
         command: sudo apt-get install -y libsqlite3-dev nodejs
 
     - run:
-    name: Update npm version
-    command: npm install -g npm
+        name: Update npm version
+        command: npm install -g npm
 
 
     # Leave this for future use if php-zip is ever required
