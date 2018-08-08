@@ -8,6 +8,7 @@ use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
 use App\User;
+use Carbon\Carbon;
 
 class UpdateCarePlanStatus
 {
@@ -41,18 +42,42 @@ class UpdateCarePlanStatus
         if ($user->carePlanStatus == CarePlan::PROVIDER_APPROVED) {
             return false;
         }
-
         $practiceSettings = $event->practiceSettings;
-
         //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
         if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+
+            $date     = Carbon::now();
+            $approver = auth()->user();
+
             $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
-            $user->carePlanProviderApprover     = auth()->user()->id;
-            $user->carePlanProviderApproverDate = date('Y-m-d H:i:s');
-
+            $user->carePlanProviderApprover     = $approver->id;
+            $user->carePlanProviderApproverDate = $date->format('Y-m-d H:i:s');
             $user->carePlan->forward();
-
             event(new PdfableCreated($user->carePlan));
+
+            if (app()->environment('worker') || app()->environment('production')) {
+
+                $providers = [];
+                $careplans = CarePlan::with('providerApproverUser')
+                                     ->where('provider_date', '>=', $date->copy()->startOfDay())
+                                     ->get()->map(function ($careplan) {
+
+                        if ($careplan->providerApproverUser()) {
+                            $providers[] = $careplan->providerApproverUser()->full_name;
+                        }
+                        return $careplan;
+                    });
+                $doctors   = implode(',', $providers);
+
+                sendSlackMessage('#callcenter_ops',
+                    "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
+
+                sendSlackMessage('#callcenter_ops',
+                    "{$careplans->count()} Care Plans have been approved today by the following doctors: {$doctors}. \n
+                    {$careplans->where('first_printed', null)->count()} Approved Care Plans have not yet been printed.\n");
+            }
+
+
         } //This CarePlan is being `QA approved` by CLH
         elseif ($user->carePlanStatus == CarePlan::DRAFT
                 && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
