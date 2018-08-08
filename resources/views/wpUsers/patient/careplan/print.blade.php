@@ -6,11 +6,9 @@
 
 if (isset($patient) && ! empty($patient)) {
     $billing = null;
-    $lead    = null;
+
     if ( ! empty($patient->getBillingProviderIDAttribute()))
         $billing = App\User::find($patient->getBillingProviderIDAttribute());
-    if ( ! empty($patient->getLeadContactIDAttribute()))
-        $lead = App\User::find($patient->getLeadContactIDAttribute());
 
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 // $provider = App\User::find($patient->getLeadContactIDAttribute());
