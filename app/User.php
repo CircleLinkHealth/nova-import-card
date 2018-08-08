@@ -161,6 +161,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property mixed $work_phone_number
+ * @property UserPasswordsHistory|null $passwordsHistory
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Location[] $locations
