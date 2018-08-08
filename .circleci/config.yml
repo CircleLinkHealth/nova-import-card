@@ -54,9 +54,10 @@ jobs:
         - node_modules
         - ~/.yarn
 
+    #    - run: npm run prod
     # prepare the database
     - run: cp .env.circleci .env
-    - run: php artisan migrate --force
+    #    - run: php artisan migrate --force
 
     # run tests with phpunit or codecept
     #    - run: ./vendor/bin/phpunit --testsuite=Unit
