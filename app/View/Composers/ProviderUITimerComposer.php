@@ -108,15 +108,18 @@ class ProviderUITimerComposer extends ServiceProvider
 
                 $provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
 
+                $regularDoctor = optional($patient->regularDoctorUser())->fullName ?? '';
+
                 $location = empty($patient->getPreferredLocationName())
                     ? 'Not Set'
                     : $patient->getPreferredLocationName();
             } else {
-                $ccm_above = false;
-                $ccm_complex = false;
-                $location = 'N/A';
-                $monthlyTime = sprintf("%02d:%02d:%02d", 0, 0, 0);
-                $provider = 'N/A';
+                $ccm_above     = false;
+                $ccm_complex   = false;
+                $location      = 'N/A';
+                $monthlyTime   = sprintf("%02d:%02d:%02d", 0, 0, 0);
+                $provider      = 'N/A';
+                $regularDoctor = '';
             }
 
             $view->with(compact([
@@ -124,7 +127,8 @@ class ProviderUITimerComposer extends ServiceProvider
                 'ccm_complex',
                 'location',
                 'monthlyTime',
-                'provider'
+                'provider',
+                'regularDoctor',
             ]));
         });
     }

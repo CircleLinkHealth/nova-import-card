@@ -2318,7 +2318,29 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function billingProvider()
     {
-        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
+        return $this->careTeamMembers()->where('type', '=', CarePerson::BILLING_PROVIDER);
+    }
+
+    /**
+     * Get regular doctor User.
+     *
+     * @return User
+     */
+    public function regularDoctorUser(): User
+    {
+        return ($this->regularDoctor->isEmpty()
+                ? new User()
+                : $this->regularDoctor->first()->user) ?? new User();
+    }
+
+    /**
+     * Get the regular doctor.
+     *
+     * @return User
+     */
+    public function regularDoctor()
+    {
+        return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 
     public function scopeHasBillingProvider(

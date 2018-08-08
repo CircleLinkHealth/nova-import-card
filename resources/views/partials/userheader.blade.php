@@ -37,7 +37,10 @@
                         </li>
                         <li class="inline-block">{{formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
-                    <li><span> <b>Provider</b>: {{$provider}}  </span></li>
+                    <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
+                    @if($regularDoctor)
+                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor}}  </span></li>
+                    @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->agentName)
                         <li class="inline-block"><b>Alternate Contact</b>: <span
