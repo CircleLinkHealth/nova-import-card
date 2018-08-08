@@ -129,7 +129,7 @@
       "php artisan ide-helper:meta"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"
