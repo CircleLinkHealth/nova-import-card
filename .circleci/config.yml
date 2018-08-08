@@ -55,6 +55,7 @@ jobs:
         - ~/.yarn
 
     # prepare the database
+    - run: cp .env.circleci .env
     - run: php artisan migrate --force
 
     # run tests with phpunit or codecept

@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Spiritix\LadaCache\Database\LadaCacheTrait;
 use Venturecraft\Revisionable\RevisionableTrait;
 
 /**
@@ -13,7 +12,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  */
 class BaseModel extends Model
 {
-    use LadaCacheTrait,
+    use //LadaCacheTrait,
         RevisionableTrait;
 
     protected $revisionCreationsEnabled = true;
