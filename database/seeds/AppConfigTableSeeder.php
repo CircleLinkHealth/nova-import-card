@@ -13,11 +13,12 @@ class AppConfigTableSeeder extends Seeder
     public function run()
     {
         \DB::table('app_config')->delete();
-        
-        \DB::table('app_config')->insert($this->problems());
+
+        \DB::table('app_config')->insert($this->rows());
     }
 
-    public function problems() : array {
+    public function rows(): array
+    {
         return array (
             0 => 
             array (
