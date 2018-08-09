@@ -106,9 +106,10 @@ class ProviderUITimerComposer extends ServiceProvider
                     $ccm_above = true;
                 }
 
-                $provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
-
                 $regularDoctor = $patient->regularDoctorUser();
+                $billingDoctor = $patient->billingProviderUser();
+
+                $provider = optional($billingDoctor)->fullName ?? 'No Provider Selected';
 
                 $location = empty($patient->getPreferredLocationName())
                     ? 'Not Set'
@@ -119,6 +120,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 $location      = 'N/A';
                 $monthlyTime   = sprintf("%02d:%02d:%02d", 0, 0, 0);
                 $provider      = 'N/A';
+                $billingDoctor = '';
                 $regularDoctor = '';
             }
 
@@ -129,6 +131,7 @@ class ProviderUITimerComposer extends ServiceProvider
                 'monthlyTime',
                 'provider',
                 'regularDoctor',
+                'billingDoctor',
             ]));
         });
     }
