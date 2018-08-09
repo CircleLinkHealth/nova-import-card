@@ -206,7 +206,7 @@ class LoginController extends Controller
         }
 
         $diffInDays = 0;
-        $history    = $user->passwordsHistory()->first();
+        $history    = $user->passwordsHistory;
         if ($history) {
             $diffInDays = $history->updated_at->diffInDays(Carbon::today());
         }
