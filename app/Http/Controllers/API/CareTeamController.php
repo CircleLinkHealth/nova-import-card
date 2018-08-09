@@ -114,11 +114,14 @@ class CareTeamController extends Controller
                               ) {
                                   $type = $member->type;
 
-                                  if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-                                      $type = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
+                                  if ($member->user->practice($patient->primaryPractice->id) && ! in_array($member->type,
+                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR])) {
+                                      $formattedType = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
                                   }
 
-                                  $formattedType = snakeToSentenceCase($type);
+                                  if ( ! isset($formattedType)) {
+                                      $formattedType = snakeToSentenceCase($type);
+                                  }
 
                                   $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
 

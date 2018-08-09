@@ -743,8 +743,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $firstName = ucwords(strtolower($this->first_name));
         $lastName  = ucwords(strtolower($this->last_name));
+        $suffix    = $this->suffix;
 
-        return trim("$firstName $lastName {$this->suffix}");
+        return trim("$firstName $lastName $suffix");
+    }
+
+    public function getSuffixAttribute($suffix)
+    {
+        return $suffix ?? '';
     }
 
     public function getFullNameWithIdAttribute()
