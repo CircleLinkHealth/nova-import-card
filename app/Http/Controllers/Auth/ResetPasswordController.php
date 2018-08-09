@@ -142,7 +142,7 @@ class ResetPasswordController extends Controller
             return $isDiff;
         }
 
-        $history = $this->userToReset->passwordsHistory()->first();
+        $history = $this->userToReset->passwordsHistory;
         if ($history) {
             if ($history->old_password) {
                 $isDiff = ! \Hash::check($new_password, $history->old_password);
@@ -156,7 +156,7 @@ class ResetPasswordController extends Controller
 
     private function saveOldPasswordInHistory($old_password)
     {
-        $history = $this->userToReset->passwordsHistory()->first();
+        $history = $this->userToReset->passwordsHistory;
 
         if ( ! $history) {
             $history          = new UserPasswordsHistory();

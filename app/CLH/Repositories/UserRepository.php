@@ -363,7 +363,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $history = $user->passwordsHistory()->first();
+        $history = $user->passwordsHistory;
         $previousPassword = $params->get('old-password');
         if ($history) {
             if ($previousPassword) {
