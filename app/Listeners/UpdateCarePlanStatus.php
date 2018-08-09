@@ -69,9 +69,9 @@ class UpdateCarePlanStatus
                 }
                 $doctors   = implode(',', $providers);
 
-                sendSlackMessage('#dev-chat',
+                sendSlackMessage('#careplanprintstatus',
                     "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
-                sendSlackMessage('#dev-chat',
+                sendSlackMessage('#careplanprintstatus',
                     "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
                     {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n");
             }
