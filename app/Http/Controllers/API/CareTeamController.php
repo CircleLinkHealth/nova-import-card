@@ -381,6 +381,7 @@ class CareTeamController extends Controller
         return response()->json([
             'carePerson'         => $carePerson,
             'oldBillingProvider' => $oldBillingProvider ?? null,
+            'oldRegularDoctor'   => $oldRegularDoctor ?? null,
         ], 200);
     }
 
