@@ -34,7 +34,6 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
         <?php
         $patient = App\User::find($id);
         $billing = $patient->billingProviderUser();
-        $lead = $patient->leadContact();
         ?>
         @push('styles')
             <style type="text/css">
