@@ -10,6 +10,7 @@ use App\Practice;
 use App\ProviderInfo;
 use App\User;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class CareTeamController extends Controller
 {
@@ -23,8 +24,8 @@ class CareTeamController extends Controller
             'user.providerInfo',
             'user.primaryPractice',
         ])
-            ->whereId($carePersonId)
-            ->first();
+                            ->whereId($carePersonId)
+                            ->first();
 
         $type = $member->type;
 
@@ -105,79 +106,82 @@ class CareTeamController extends Controller
                 'user.primaryPractice',
             ]);
         })
-            ->whereUserId($patient->id)
-            ->orderBy('type')
-            ->get()
-            ->map(function ($member) use (
-                $patient
-            ) {
-                $type = $member->type;
+                              ->whereUserId($patient->id)
+                              ->orderBy('type')
+                              ->get()
+                              ->map(function ($member) use (
+                                  $patient
+                              ) {
+                                  $type = $member->type;
 
-                if ($member->user->practice($patient->primaryPractice->id) && $member->type != CarePerson::BILLING_PROVIDER) {
-                    $type = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
-                }
+                                  if ($member->user->practice($patient->primaryPractice->id) && ! in_array($member->type,
+                                          [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR])) {
+                                      $formattedType = $member->user->practiceOrGlobalRole()->display_name . " (Internal)";
+                                  }
 
-                $formattedType = snakeToSentenceCase($type);
+                                  if ( ! isset($formattedType)) {
+                                      $formattedType = snakeToSentenceCase($type);
+                                  }
 
-                $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
+                                  $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
 
-                return [
-                    'id'                  => $member->id,
-                    'formatted_type'      => $formattedType,
-                    'alert'               => $member->alert,
-                    'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
-                    'user_id'             => $member->user_id,
-                    'user'                => [
-                        'id'               => $member->user->id,
-                        'email'            => $member->user->email,
-                        'first_name'       => $member->user->first_name,
-                        'last_name'        => $member->user->last_name,
-                        'full_name'        => $member->user->full_name,
-                        'suffix'           => optional($member->user->providerInfo)->is_clinical
-                            ? $member->user->suffix
-                            : 'non-clinical',
-                        'address'          => $member->user->address,
-                        'address2'         => $member->user->address2,
-                        'city'             => $member->user->city,
-                        'state'            => $member->user->state,
-                        'zip'              => $member->user->zip,
-                        'phone_numbers'    => $phone
-                            ? [
-                                [
-                                    'id'     => $phone->id,
-                                    'number' => $phone->number,
-                                ],
-                            ]
-                            : [
-                                [
-                                    'id'     => '',
-                                    'number' => '',
-                                ],
-                            ],
-                        'primary_practice' => $member->user->primaryPractice
-                            ? [
-                                'id'           => $member->user->primaryPractice->id,
-                                'display_name' => $member->user->primaryPractice->display_name,
-                            ]
-                            : [
-                                'id'           => '',
-                                'display_name' => '',
-                            ],
-                        'provider_info'    => $member->user->providerInfo
-                            ? [
-                                'id'          => $member->user->providerInfo->id,
-                                'is_clinical' => $member->user->providerInfo->is_clinical,
-                                'specialty'   => $member->user->providerInfo->specialty,
-                            ]
-                            : [
-                                'id'          => '',
-                                'is_clinical' => '',
-                                'specialty'   => '',
-                            ]
-                        ,
-                    ],
-                ];
-            });
+                                  return [
+                                      'id'                  => $member->id,
+                                      'formatted_type'      => $formattedType,
+                                      'alert'               => $member->alert,
+                                      'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
+                                      'user_id'             => $member->user_id,
+                                      'user'                => [
+                                          'id'               => $member->user->id,
+                                          'email'            => $member->user->email,
+                                          'first_name'       => $member->user->first_name,
+                                          'last_name'        => $member->user->last_name,
+                                          'full_name'        => $member->user->full_name,
+                                          'suffix'           => optional($member->user->providerInfo)->is_clinical
+                                              ? $member->user->suffix
+                                              : 'non-clinical',
+                                          'address'          => $member->user->address,
+                                          'address2'         => $member->user->address2,
+                                          'city'             => $member->user->city,
+                                          'state'            => $member->user->state,
+                                          'zip'              => $member->user->zip,
+                                          'phone_numbers'    => $phone
+                                              ? [
+                                                  [
+                                                      'id'     => $phone->id,
+                                                      'number' => $phone->number,
+                                                  ],
+                                              ]
+                                              : [
+                                                  [
+                                                      'id'     => '',
+                                                      'number' => '',
+                                                  ],
+                                              ],
+                                          'primary_practice' => $member->user->primaryPractice
+                                              ? [
+                                                  'id'           => $member->user->primaryPractice->id,
+                                                  'display_name' => $member->user->primaryPractice->display_name,
+                                              ]
+                                              : [
+                                                  'id'           => '',
+                                                  'display_name' => '',
+                                              ],
+                                          'provider_info'    => $member->user->providerInfo
+                                              ? [
+                                                  'id'          => $member->user->providerInfo->id,
+                                                  'is_clinical' => $member->user->providerInfo->is_clinical,
+                                                  'specialty'   => $member->user->providerInfo->specialty,
+                                              ]
+                                              : [
+                                                  'id'          => '',
+                                                  'is_clinical' => '',
+                                                  'specialty'   => '',
+                                              ]
+                                          ,
+                                      ],
+                                  ];
+                              });
 
         return response()->json($careTeam);
     }
@@ -188,7 +192,7 @@ class CareTeamController extends Controller
         $memberId
     ) {
 
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
@@ -203,7 +207,7 @@ class CareTeamController extends Controller
     public function searchProviders(Request $request)
     {
         $firstNameTerm = $request->input('firstName');
-        $lastNameTerm = $request->input('lastName');
+        $lastNameTerm  = $request->input('lastName');
 
         $users = User::ofType([
             'med_assistant',
@@ -212,21 +216,21 @@ class CareTeamController extends Controller
             'registered-nurse',
             'specialist',
         ])
-            ->with('primaryPractice')
-            ->with('providerInfo')
-            ->with('phoneNumbers')
-            ->where('first_name', 'like', "$firstNameTerm%")
-            ->where('last_name', 'like', "$lastNameTerm%")
-            ->get()
-            ->map(function ($user) {
-                //Add an empty phone number if there are none so that the front end doesn't break
-                //v-model="newCarePerson.user.phone_numbers[0].number"
-                if ($user->phoneNumbers->isEmpty()) {
-                    $user->phoneNumbers->push(['id' => '', 'number' => '']);
-                }
+                     ->with('primaryPractice')
+                     ->with('providerInfo')
+                     ->with('phoneNumbers')
+                     ->where('first_name', 'like', "$firstNameTerm%")
+                     ->where('last_name', 'like', "$lastNameTerm%")
+                     ->get()
+                     ->map(function ($user) {
+                         //Add an empty phone number if there are none so that the front end doesn't break
+                         //v-model="newCarePerson.user.phone_numbers[0].number"
+                         if ($user->phoneNumbers->isEmpty()) {
+                             $user->phoneNumbers->push(['id' => '', 'number' => '']);
+                         }
 
-                return $user;
-            });
+                         return $user;
+                     });
 
 
         return response()->json(['results' => $users]);
@@ -237,11 +241,11 @@ class CareTeamController extends Controller
         $id
     ) {
 
-        if (!$request->ajax()) {
+        if ( ! $request->ajax()) {
             return abort('403', 'Care Team Members cannot be deleted using this method');
         }
 
-        $input = $request->input();
+        $input     = $request->input();
         $patientId = $request->input('user_id');
 
         $patient = User::find($patientId);
@@ -267,44 +271,39 @@ class CareTeamController extends Controller
         $type = snake_case($input['formatted_type']);
 
         if ($type == CarePerson::BILLING_PROVIDER) {
-            $billingProvider = CarePerson::where('user_id', '=', $patientId)
-                ->where('type', '=', CarePerson::BILLING_PROVIDER)
-                ->first();
+            $existingCarePersonsOfSameType = $this->clearExistingCarePeopleWithSameType($type, $patient);
 
-            //then get rid of other billing providers
-            $oldBillingProviders = CarePerson::where('user_id', '=', $patientId)
-                ->where('type', '=', CarePerson::BILLING_PROVIDER)
-                ->get();
+            $oldBillingProvider = $existingCarePersonsOfSameType->first();
 
-            foreach ($oldBillingProviders as $oldBillingProvider) {
-                $oldBillingProvider->type = 'external';
-
-                if ($oldBillingProvider->user && $oldBillingProvider->user->practice($patient->primaryPractice->id)) {
-                    // $role = optional($oldBillingProvider->user->practiceOrGlobalRole())->name ?? '';
-                    // if ($role == 'provider') {
-                    //     $role = 'billing_provider';
-                    // }
-                    // $oldBillingProvider->type = str_replace('-', '_', $role);
-                    $oldBillingProvider->type = 'internal';
+            if ($oldBillingProvider) {
+                //If the Billing Provider has changed, we want to reflect that change on the front end.
+                if ($oldBillingProvider->id != $providerUser->id) {
+                    $oldBillingProvider                 = $oldBillingProvider->fresh();
+                    $oldBillingProvider->formatted_type = snakeToSentenceCase($oldBillingProvider->type);
+                } else { //If it's the same, we'll return null
+                    $oldBillingProvider = null;
                 }
-
-                $oldBillingProvider->save();
             }
+        } elseif ($type == CarePerson::REGULAR_DOCTOR) {
+            $existingCarePersonsOfSameType = $this->clearExistingCarePeopleWithSameType($type, $patient);
 
-            $billingProvider = $oldBillingProviders->first();
+            $oldRegularDoctor = $existingCarePersonsOfSameType->first();
 
-            //If the Billing Provider has changed, we want to reflect that change on the front end.
-            //If it's the same, we'll return null
-            if ($billingProvider) {
-                $billingProvider = $billingProvider->id == $providerUser->id
-                    ? null
-                    : $billingProvider;
+
+            if ($oldRegularDoctor) {
+                //If the Regular Doctor has changed, we want to reflect that change on the front end.
+                if ($oldRegularDoctor->id != $providerUser->id) {
+                    $oldRegularDoctor                 = $oldRegularDoctor->fresh();
+                    $oldRegularDoctor->formatted_type = snakeToSentenceCase($oldRegularDoctor->type);
+                } else { //If it's the same, we'll return null
+                    $oldRegularDoctor = null;
+                }
             }
         }
 
         $alert = $input['alert'];
 
-        if (!$providerUser->email) {
+        if ( ! $providerUser->email) {
             $alert = false;
         }
 
@@ -315,9 +314,9 @@ class CareTeamController extends Controller
         $carePerson = CarePerson::updateOrCreate([
             'user_id'        => $patientId,
             'member_user_id' => $providerUser->id,
-        ],[
-            'alert'          => $alert,
-            'type'           => $type,
+        ], [
+            'alert' => $alert,
+            'type'  => $type,
         ]);
 
         if (isset($input['user']['phone_numbers'][0])) {
@@ -325,9 +324,9 @@ class CareTeamController extends Controller
 
             if (isset($phone['id'])) {
                 $phone = PhoneNumber::where('id', '=', $phone['id'])
-                    ->update([
-                        'number' => StringManipulation::formatPhoneNumber($phone['number']),
-                    ]);
+                                    ->update([
+                                        'number' => StringManipulation::formatPhoneNumber($phone['number']),
+                                    ]);
             } else {
                 $phone = PhoneNumber::updateOrCreate([
                     'user_id' => $providerUser->id,
@@ -358,7 +357,7 @@ class CareTeamController extends Controller
             $primaryPractice = $input['user']['primary_practice'];
 
             if ($primaryPractice['display_name']) {
-                if (!empty($primaryPractice['id'])) {
+                if ( ! empty($primaryPractice['id'])) {
                     $practice = Practice::updateOrCreate([
                         'id' => $primaryPractice['id'],
                     ], [
@@ -382,14 +381,43 @@ class CareTeamController extends Controller
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
         }
 
-        if (isset($billingProvider) && !empty($billingProvider)) {
-            $billingProvider = $billingProvider->fresh();
-            $billingProvider->formatted_type = snakeToSentenceCase($billingProvider->type);
-        }
-
         return response()->json([
             'carePerson'         => $carePerson,
-            'oldBillingProvider' => $billingProvider ?? null,
+            'oldBillingProvider' => $oldBillingProvider ?? null,
+            'oldRegularDoctor'   => $oldRegularDoctor ?? null,
         ], 200);
+    }
+
+    /**
+     * @param string $type
+     * @param User $patient
+     *
+     * @return \Illuminate\Support\Collection
+     * @throws \InvalidArgumentException
+     */
+    private function clearExistingCarePeopleWithSameType(string $type, User $patient)
+    {
+        $acceptedTypes = [CarePerson::REGULAR_DOCTOR, CarePerson::BILLING_PROVIDER];
+
+        if ( ! in_array($type, $acceptedTypes)) {
+            throw new InvalidArgumentException("`$type` is not an accepted type of CarePerson.");
+        }
+
+        //if other CarePersons with the same type exist, remove their type.
+        $existingProvidersOfSameType = CarePerson::where('user_id', '=', $patient->id)
+                                                 ->where('type', '=', $type)
+                                                 ->get();
+
+        foreach ($existingProvidersOfSameType as $existingProvider) {
+            $existingProvider->type = 'external';
+
+            if ($existingProvider->user && $existingProvider->user->practice($patient->primaryPractice->id)) {
+                $existingProvider->type = 'internal';
+            }
+
+            $existingProvider->save();
+        }
+
+        return $existingProvidersOfSameType;
     }
 }

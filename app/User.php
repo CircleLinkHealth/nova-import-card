@@ -744,8 +744,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         $firstName = ucwords(strtolower($this->first_name));
         $lastName  = ucwords(strtolower($this->last_name));
+        $suffix    = $this->suffix;
 
-        return trim("$firstName $lastName {$this->suffix}");
+        return trim("$firstName $lastName $suffix");
+    }
+
+    public function getSuffixAttribute($suffix)
+    {
+        return $suffix ?? '';
     }
 
     public function getFullNameWithIdAttribute()
@@ -2303,13 +2309,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Get billing provider User.
      *
-     * @return User
+     * @return User|null
      */
-    public function billingProviderUser(): User
+    public function billingProviderUser(): ?User
     {
-        return ($this->billingProvider->isEmpty()
-                ? new User()
-                : $this->billingProvider->first()->user) ?? new User();
+        return $this->billingProvider->isEmpty()
+            ? null
+            : optional($this->billingProvider->first())->user;
     }
 
     /**
@@ -2319,7 +2325,29 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function billingProvider()
     {
-        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
+        return $this->careTeamMembers()->where('type', '=', CarePerson::BILLING_PROVIDER);
+    }
+
+    /**
+     * Get regular doctor User.
+     *
+     * @return User|null
+     */
+    public function regularDoctorUser(): ?User
+    {
+        return $this->regularDoctor->isEmpty()
+            ? null
+            : $this->regularDoctor->first()->user;
+    }
+
+    /**
+     * Get the regular doctor.
+     *
+     * @return User
+     */
+    public function regularDoctor()
+    {
+        return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 
     public function scopeHasBillingProvider(
@@ -3015,7 +3043,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function passwordsHistory() {
+    public function passwordsHistory()
+    {
         return $this->hasOne(UserPasswordsHistory::class, 'user_id');
     }
 }

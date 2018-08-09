@@ -10,9 +10,7 @@
                                     <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                     <div class="col-xs-7 address">
                                         <div>
-                                            @if($patient->billingProviderUser())
-                                                {{$patient->billingProviderUser()->fullName}}
-                                            @endif
+                                            {{optional($patient->billingProviderUser())->fullName ?? ''}}
                                         </div>
                                         <div>
                                             {{$patient->primaryPractice->display_name}}
@@ -64,12 +62,13 @@
                         <div class="row gutter">
                         </div>
                         <div class="row gutter row">
-                            Welcome to Dr. {{$patient->billingProviderUser()->fullName}}'s Personalized Care
+                            Welcome to Dr. {{optional($patient->billingProviderUser())->fullName}}'s Personalized Care
                             Management program!
                         </div>
                         <br>
                         <div class="row gutter">
-                            As Dr. {{$patient->billingProviderUser()->last_name}} may have mentioned regarding this
+                            As Dr. {{optional($patient->billingProviderUser())->last_name}} may have mentioned regarding
+                            this
                             invite-only
                             program, personalized
                             care is an important part of staying healthy.
@@ -85,7 +84,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Connection with your provider through updates shared with
-                                    Dr. {{$patient->billingProviderUser()->last_name}}.
+                                    Dr. {{optional($patient->billingProviderUser())->last_name}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Access to your care team from the comfort of your home, to help avoid frequent

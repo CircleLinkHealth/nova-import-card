@@ -27,6 +27,7 @@ class CarePerson extends BaseModel
     const INSTEAD_OF_BILLING_PROVIDER = 'instead_of_billing_provider';
 
 
+    const REGULAR_DOCTOR = 'regular_doctor';
     const LEAD_CONTACT = 'lead_contact';
     const MEMBER = 'member';
     const SEND_ALERT_TO = 'send_alert_to';

@@ -393,7 +393,7 @@
                             $('#notify-careteam').prop("disabled", true);
 
                             @empty($notifies_text)
-                            $('#who-is-notified').text("{{$patient->billingProviderUser()->fullName}}");
+                            $('#who-is-notified').text("{{optional($patient->billingProviderUser())->fullName}}");
                             @endempty
                         }
                         else {
