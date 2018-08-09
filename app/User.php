@@ -2302,13 +2302,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Get billing provider User.
      *
-     * @return User
+     * @return User|null
      */
-    public function billingProviderUser(): User
+    public function billingProviderUser(): ?User
     {
-        return ($this->billingProvider->isEmpty()
-                ? new User()
-                : $this->billingProvider->first()->user) ?? new User();
+        return $this->billingProvider->isEmpty()
+            ? null
+            : optional($this->billingProvider->first())->user;
     }
 
     /**
@@ -2324,13 +2324,13 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * Get regular doctor User.
      *
-     * @return User
+     * @return User|null
      */
-    public function regularDoctorUser(): User
+    public function regularDoctorUser(): ?User
     {
-        return ($this->regularDoctor->isEmpty()
-                ? new User()
-                : $this->regularDoctor->first()->user) ?? new User();
+        return $this->regularDoctor->isEmpty()
+            ? null
+            : $this->regularDoctor->first()->user;
     }
 
     /**
@@ -3036,7 +3036,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function passwordsHistory() {
+    public function passwordsHistory()
+    {
         return $this->hasOne(UserPasswordsHistory::class, 'user_id');
     }
 }
