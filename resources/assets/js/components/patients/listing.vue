@@ -312,7 +312,6 @@
                             if (patient.patient_info.date_paused) patient.patient_info.date_paused = patient.patient_info.date_paused.split('T')[0]
                             if (patient.patient_info.date_withdrawn) patient.patient_info.date_withdrawn = patient.patient_info.date_withdrawn.split('T')[0]
                             if (patient.patient_info.date_unreachable) patient.patient_info.date_unreachable = patient.patient_info.date_unreachable.split('T')[0]
-                            if (patient.patient_info.registration_date) patient.patient_info.registration_date = patient.patient_info.registration_date.split('T')[0]
 
                             const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                             const seconds = patient.patient_info.cur_month_activity_time || 0
@@ -336,7 +335,7 @@
                         patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
                         patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
-                        patient.sort_ccmStatusDate = new Date(patient.patient_info.date_paused)
+                        patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
                         patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
                         patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
                         patient.sort_ccm = (patient.patient_info || {}).ccm
@@ -468,7 +467,7 @@
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
 
                 const ccmStatusDateInput = patientListElem.querySelector('input[name="vf__ccmStatusDate"]')
-                ccmStatusDateInput.setAttribute('placeholder', 'Filter by Ccm Status Date')
+                ccmStatusDateInput.setAttribute('placeholder', 'Filter by CCM Status Date')
 
                 const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
                 lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')

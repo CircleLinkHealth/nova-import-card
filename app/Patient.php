@@ -612,7 +612,6 @@ class Patient extends BaseModel
             'date_paused'             => optional($this->date_paused)->format('c'),
             'date_withdrawn'          => optional($this->date_withdrawn)->format('c'),
             'date_unreachable'        => optional($this->date_unreachable)->format('c'),
-            'registration_date'        => optional($this->registration_date)->format('c'),
             'created_at'              => optional($this->created_at)->format('c'),
             'updated_at'              => optional($this->updated_at)->format('c'),
             'cur_month_activity_time' => $this->cur_month_activity_time,
