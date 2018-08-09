@@ -57,24 +57,23 @@ class UpdateCarePlanStatus
 
             if (app()->environment('worker') || app()->environment('production')) {
 
-                $providers = [];
+
                 $careplans = CarePlan::with('providerApproverUser')
                                      ->where('provider_date', '>=', $date->copy()->startOfDay())
-                                     ->get()->map(function ($careplan) {
-
-                        if ($careplan->providerApproverUser()) {
-                            $providers[] = $careplan->providerApproverUser()->full_name;
-                        }
-                        return $careplan;
-                    });
+                                     ->get();
+                $providers = [];
+                foreach ($careplans as $careplan){
+                    if ($careplan->providerApproverUser) {
+                        $providers[] = $careplan->providerApproverUser->display_name;
+                    }
+                }
                 $doctors   = implode(',', $providers);
 
-                sendSlackMessage('#callcenter_ops',
+                sendSlackMessage('#dev-chat',
                     "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
-
-                sendSlackMessage('#callcenter_ops',
-                    "{$careplans->count()} Care Plans have been approved today by the following doctors: {$doctors}. \n
-                    {$careplans->where('first_printed', null)->count()} Approved Care Plans have not yet been printed.\n");
+                sendSlackMessage('#dev-chat',
+                    "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
+                    {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n");
             }
 
 
