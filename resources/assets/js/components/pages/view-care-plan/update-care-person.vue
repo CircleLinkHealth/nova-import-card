@@ -489,40 +489,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div>
-                                            <label class="col-md-9 control-label">Regular Dr.</label>
-
-                                            <div class="col-md-3">
-                                                <div class="row">
-                                                    <div class="form-group required-field col-md-12">
-                                                        <validate auto-label
-                                                                  :class="fieldClassName(formstate.is_regular_doctor)">
-                                                            <div class="col-md-12">
-
-                                                                <input v-model="formData.is_regular_doctor"
-                                                                       id="is_regular_doctor"
-                                                                       name="is_regular_doctor"
-                                                                       class="form-control input-md"
-                                                                       type="checkbox" @change="changeFormattedType"
-                                                                       style="display: inline;">
-                                                            </div>
-
-                                                            <div class="col-md-12">
-                                                                <field-messages name="is_regular_doctor"
-                                                                                show="$touched || $submitted">
-                                                                    <div></div>
-                                                                    <div class="validation-error has-errors text-right"
-                                                                         slot="required">
-                                                                        *required
-                                                                    </div>
-                                                                </field-messages>
-                                                            </div>
-                                                        </validate>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
