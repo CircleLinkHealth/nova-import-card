@@ -5,11 +5,6 @@
 <?php
 
 if (isset($patient) && ! empty($patient)) {
-    $billing = null;
-
-    if ( ! empty($patient->getBillingProviderIDAttribute()))
-        $billing = App\User::find($patient->getBillingProviderIDAttribute());
-
     $today = \Carbon\Carbon::now()->toFormattedDateString();
 
     $alreadyShown = [];
@@ -153,40 +148,41 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                        <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
-                        <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
+                        <div class="col-xs-4 print-row text-bold">{{$patient->fullName}}</div>
+                        <div class="col-xs-4 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
-                        <div class="row gutter">
-                            <div class="col-xs-4 col-md-4 print-row text-bold">
-                                @if($billing)
-                                    {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
-                                @else
-                                    <em>No Billing Provider Selected</em>
-                                @endif
-                            </div>
-                            <div class="col-xs-4 col-md-4 print-row">
-                                @if($billing)
-                                    {{$billing->phone}}
-                                @endif
-                            </div>
-                            <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
-                        </div>
+
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">
-                            @if($billing)
-                                {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
-                            @else
-                                <em>No Billing Provider Selected</em>
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row">
-                            @if($billing)
-                                {{$billing->phone}}
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        @if($billingDoctor)
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$billingDoctor->phone}}
+                            </div>
+                        @else
+                            <div class="col-xs-4 print-row text-bold">
+                                <em>No Billing Dr. Selected</em>
+                            </div>
+                            <div class="col-xs-4 print-row">
+                            </div>
+                        @endif
+                        <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
+
+
+                    @if($regularDoctor)
+                        <div class="row gutter">
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$regularDoctor->phone}}
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
                 <!-- CARE AREAS -->
                 <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
