@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-  "content-hash": "a405a7fe8877b3185b24a3f3d2c9c1d5",
+    "content-hash": "df86bfda687c557496476667493c384d",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
-          "version": "dev-master",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-              "url": "git@github.com:CircleLinkHealth/opcache-gui.git",
-              "reference": "dd5e151dc51eca7e6426c78991f9a64c5d53fb8f"
+                "url": "git@github.com:CircleLinkHealth/opcache-gui.git",
+                "reference": "dd5e151dc51eca7e6426c78991f9a64c5d53fb8f"
             },
             "require": {
                 "php": ">=5.4"
@@ -43,14 +43,14 @@
                 "cache",
                 "gui",
                 "interface",
-              "opcache",
+                "opcache",
                 "opcodes"
             ],
-          "support": {
-            "email": "andy@amnuts.com",
-            "issues": "https://github.com/amnuts/opcache-gui/issues"
-          },
-          "time": "2018-08-07T23:43:00+00:00"
+            "support": {
+                "email": "andy@amnuts.com",
+                "issues": "https://github.com/amnuts/opcache-gui/issues"
+            },
+            "time": "2018-08-07T23:43:00+00:00"
         },
         {
             "name": "appstract/laravel-opcache",
@@ -216,16 +216,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-          "version": "3.64.7",
+            "version": "3.64.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-              "reference": "1fa00e20adc697ae996b778528254d3acff39eaa"
+                "reference": "14a8d1499450a755d6c1f147ea76eabdc1666a9d"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1fa00e20adc697ae996b778528254d3acff39eaa",
-              "reference": "1fa00e20adc697ae996b778528254d3acff39eaa",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/14a8d1499450a755d6c1f147ea76eabdc1666a9d",
+                "reference": "14a8d1499450a755d6c1f147ea76eabdc1666a9d",
                 "shasum": ""
             },
             "require": {
@@ -292,7 +292,7 @@
                 "s3",
                 "sdk"
             ],
-          "time": "2018-08-07T20:30:32+00:00"
+            "time": "2018-08-08T20:28:00+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -2262,16 +2262,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.5.41",
+            "version": "v5.5.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "a2c54e6e69035111fa2709f9cdac55be811feb6b"
+                "reference": "6550ae917b0c49a5915a52cd7c7eafd16fc0b538"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/a2c54e6e69035111fa2709f9cdac55be811feb6b",
-                "reference": "a2c54e6e69035111fa2709f9cdac55be811feb6b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6550ae917b0c49a5915a52cd7c7eafd16fc0b538",
+                "reference": "6550ae917b0c49a5915a52cd7c7eafd16fc0b538",
                 "shasum": ""
             },
             "require": {
@@ -2392,7 +2392,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-08-01T13:48:57+00:00"
+            "time": "2018-08-08T18:22:44+00:00"
         },
         {
             "name": "laravel/passport",
@@ -3772,16 +3772,16 @@
         },
         {
             "name": "nesbot/carbon",
-          "version": "1.33.0",
+            "version": "1.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-              "reference": "55667c1007a99e82030874b1bb14d24d07108413"
+                "reference": "55667c1007a99e82030874b1bb14d24d07108413"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/55667c1007a99e82030874b1bb14d24d07108413",
-              "reference": "55667c1007a99e82030874b1bb14d24d07108413",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/55667c1007a99e82030874b1bb14d24d07108413",
+                "reference": "55667c1007a99e82030874b1bb14d24d07108413",
                 "shasum": ""
             },
             "require": {
@@ -3823,7 +3823,7 @@
                 "datetime",
                 "time"
             ],
-          "time": "2018-08-07T08:39:47+00:00"
+            "time": "2018-08-07T08:39:47+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -7368,7 +7368,7 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:michalisantoniou6/revisionable.git",
-              "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
+                "reference": "2f4340355b7ec02e8d9c07102c25edf7477c1188"
             },
             "require": {
                 "illuminate/support": "~4.0|~5.0|~5.1",
@@ -7406,7 +7406,7 @@
                 "source": "https://github.com/VentureCraft/revisionable"
             },
             "abandoned": true,
-          "time": "2018-08-06T23:22:33+00:00"
+            "time": "2018-08-06T23:22:33+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -9462,16 +9462,16 @@
         },
         {
             "name": "phpunit/phpunit",
-          "version": "6.5.11",
+            "version": "6.5.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-              "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2"
+                "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7bab54cb366076023bbf457a2a0d513332cd40f2",
-              "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7bab54cb366076023bbf457a2a0d513332cd40f2",
+                "reference": "7bab54cb366076023bbf457a2a0d513332cd40f2",
                 "shasum": ""
             },
             "require": {
@@ -9489,7 +9489,7 @@
                 "phpunit/php-file-iterator": "^1.4.3",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^1.0.9",
-              "phpunit/phpunit-mock-objects": "^5.0.9",
+                "phpunit/phpunit-mock-objects": "^5.0.9",
                 "sebastian/comparator": "^2.1",
                 "sebastian/diff": "^2.0",
                 "sebastian/environment": "^3.1",
@@ -9542,20 +9542,20 @@
                 "testing",
                 "xunit"
             ],
-          "time": "2018-08-07T07:05:35+00:00"
+            "time": "2018-08-07T07:05:35+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-          "version": "5.0.9",
+            "version": "5.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-              "reference": "141129c578f58f38f55eccf15a1039bd413ea57c"
+                "reference": "cd1cf05c553ecfec36b170070573e540b67d3f1f"
             },
             "dist": {
                 "type": "zip",
-              "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/141129c578f58f38f55eccf15a1039bd413ea57c",
-              "reference": "141129c578f58f38f55eccf15a1039bd413ea57c",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/cd1cf05c553ecfec36b170070573e540b67d3f1f",
+                "reference": "cd1cf05c553ecfec36b170070573e540b67d3f1f",
                 "shasum": ""
             },
             "require": {
@@ -9568,7 +9568,7 @@
                 "phpunit/phpunit": "<6.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.5"
+                "phpunit/phpunit": "^6.5.11"
             },
             "suggest": {
                 "ext-soap": "*"
@@ -9601,7 +9601,7 @@
                 "mock",
                 "xunit"
             ],
-          "time": "2018-08-07T07:02:44+00:00"
+            "time": "2018-08-09T05:50:03+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -10164,16 +10164,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.17.6",
+            "version": "v3.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "5431eed1cd2ec22101ade85d6d6163ea320dbe76"
+                "reference": "c9e8a67579abcf2b87224b0f058c02fa63561fba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/5431eed1cd2ec22101ade85d6d6163ea320dbe76",
-                "reference": "5431eed1cd2ec22101ade85d6d6163ea320dbe76",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/c9e8a67579abcf2b87224b0f058c02fa63561fba",
+                "reference": "c9e8a67579abcf2b87224b0f058c02fa63561fba",
                 "shasum": ""
             },
             "type": "library",
@@ -10217,7 +10217,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-07-28T03:43:43+00:00"
+            "time": "2018-08-04T09:20:54+00:00"
         },
         {
             "name": "symfony/class-loader",
@@ -10644,7 +10644,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-      "amnuts/opcache-gui": 20,
+        "amnuts/opcache-gui": 20,
         "michalisantoniou6/laravel-cerberus": 20,
         "prettus/l5-repository": 20,
         "venturecraft/revisionable": 20,
@@ -10655,7 +10655,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.0.0"
+        "php": ">=7.1.0"
     },
     "platform-dev": []
 }
