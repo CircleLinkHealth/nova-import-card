@@ -39,7 +39,7 @@
                     </b>
                     <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
                     @if($regularDoctor)
-                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor}}  </span></li>
+                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->full_name}}  </span></li>
                     @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->agentName)

@@ -481,12 +481,16 @@ class NoteService
 
     public function wasSeenByBillingProvider(Note $note)
     {
-        return $note->notifications()
-                    ->hasNotifiableType(User::class)
-                    ->where([
-                        ['notifiable_id', '=', $note->patient->billingProviderUser()->id],
-                    ])
-                    ->whereNotNull('read_at')
-                    ->exists();
+        $notifiableId = optional($note->patient->billingProviderUser())->id;
+
+        return $notifiableId
+            ? $note->notifications()
+                   ->hasNotifiableType(User::class)
+                   ->where([
+                       ['notifiable_id', '=', $notifiableId],
+                   ])
+                   ->whereNotNull('read_at')
+                   ->exists()
+            : null;
     }
 }

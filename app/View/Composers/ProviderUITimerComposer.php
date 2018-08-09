@@ -108,7 +108,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
                 $provider = optional($patient->billingProviderUser())->fullName ?? 'No Provider Selected';
 
-                $regularDoctor = optional($patient->regularDoctorUser())->fullName ?? '';
+                $regularDoctor = $patient->regularDoctorUser();
 
                 $location = empty($patient->getPreferredLocationName())
                     ? 'Not Set'

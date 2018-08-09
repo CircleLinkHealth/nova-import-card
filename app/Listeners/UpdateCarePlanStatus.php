@@ -62,7 +62,7 @@ class UpdateCarePlanStatus
 
             if ((boolean)$practiceSettings->auto_approve_careplans) {
                 $user->carePlan->status               = CarePlan::PROVIDER_APPROVED;
-                $user->carePlan->provider_approver_id = $user->billingProviderUser()->id ?? null;
+                $user->carePlan->provider_approver_id = optional($user->billingProviderUser())->id;
                 $user->carePlan->save();
 
                 event(new PdfableCreated($user->carePlan));
