@@ -307,7 +307,8 @@ class CareTeamController extends Controller
             $alert = false;
         }
 
-        if ($providerUser->practice($patient->primaryPractice->id) && $type != CarePerson::BILLING_PROVIDER) {
+        if ($providerUser->practice($patient->primaryPractice->id) && ! in_array($type,
+                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR])) {
             $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
