@@ -42,6 +42,7 @@ class CareTeamController extends Controller
             'formatted_type'      => $formattedType,
             'alert'               => $member->alert,
             'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
+            'type'                => $type,
             'user'                => [
                 'id'               => $member->user->id,
                 'email'            => $member->user->email,
@@ -130,6 +131,7 @@ class CareTeamController extends Controller
                                       'formatted_type'      => $formattedType,
                                       'alert'               => $member->alert,
                                       'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
+                                      'type'                => $type,
                                       'user_id'             => $member->user_id,
                                       'user'                => [
                                           'id'               => $member->user->id,
@@ -307,7 +309,8 @@ class CareTeamController extends Controller
             $alert = false;
         }
 
-        if ($providerUser->practice($patient->primaryPractice->id) && $type != CarePerson::BILLING_PROVIDER) {
+        if ($providerUser->practice($patient->primaryPractice->id) && ! in_array($type,
+                [CarePerson::BILLING_PROVIDER, CarePerson::REGULAR_DOCTOR])) {
             $type = $providerUser->practiceOrGlobalRole()->display_name . " (Internal)";
         }
 
@@ -379,6 +382,7 @@ class CareTeamController extends Controller
         if (is_object($carePerson)) {
             $carePerson->load('user');
             $carePerson->formatted_type = snakeToSentenceCase($carePerson->type);
+            $carePerson->is_billing_provider = $carePerson->type == CarePerson::BILLING_PROVIDER;
         }
 
         return response()->json([

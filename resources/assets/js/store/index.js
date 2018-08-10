@@ -31,6 +31,7 @@ const state = {
         name: null,
         props: {}
     },
+    patientCareTeamIsUpdating: false,
     patientCareTeam: [],
     patientCarePlan: {
         pdfs: []
