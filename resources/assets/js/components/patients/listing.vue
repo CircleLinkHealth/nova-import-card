@@ -410,7 +410,7 @@
                 return download().then(res => {
                     const link = document.createElement('a')
                     link.href = 'data:attachment/text,' + 
-                    encodeURI('name,provider,program,ccm status,careplan status,dob,phone,age,registered on,ccm\n'
+                    encodeURI('name,provider,program,ccm status, ccm status date,careplan status,dob,phone,age,registered on,ccm\n'
                                 + patients.join('\n'))
                     link.download = `patient-list-${Date.now()}.csv`
                     link.click()

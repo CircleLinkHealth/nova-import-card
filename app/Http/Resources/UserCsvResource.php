@@ -19,11 +19,22 @@ class UserCsvResource extends Resource
         $practice = optional($this->primaryPractice()->first());
         $patient  = optional($this->patientInfo()->first());
         $careplan = optional($this->carePlan()->first());
+        $ccmStatusDate = '';
+        if ($patient->ccm_status == 'paused'){
+            $ccmStatusDate = $patient->date_paused;
+        }
+        if ($patient->ccm_status == 'withdrawn'){
+            $ccmStatusDate = $patient->date_withdrawn;
+        }
+        if ($patient->ccm_status == 'unreachable'){
+            $ccmStatusDate = $patient->date_unreachable;
+        }
 
         return ('"' . $this->display_name ?? $this->name()) . '",' .
                '"' . $this->billing_provider_name . '",' .
                '"' . $practice->display_name . '",' .
                '"' . $patient->ccm_status . '",' .
+               '"' . $ccmStatusDate . '",' .
                '"' . $careplan->status . '",' .
                '"' . $patient->birth_date . '",' .
                '"' . $this->phone . '",' .
