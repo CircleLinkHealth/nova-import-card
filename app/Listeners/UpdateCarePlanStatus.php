@@ -55,25 +55,9 @@ class UpdateCarePlanStatus
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
-            if (app()->environment('worker') || app()->environment('production')) {
-
-
-                $careplans = CarePlan::with('providerApproverUser')
-                                     ->where('provider_date', '>=', $date->copy()->startOfDay())
-                                     ->get();
-                $providers = [];
-                foreach ($careplans as $careplan){
-                    if ($careplan->providerApproverUser) {
-                        $providers[] = $careplan->providerApproverUser->display_name;
-                    }
-                }
-                $doctors   = implode(',', $providers);
-
+            if (app()->environment(['worker', 'production','staging'])) {
                 sendSlackMessage('#careplanprintstatus',
                     "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
-                sendSlackMessage('#careplanprintstatus',
-                    "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
-                    {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n");
             }
 
 
