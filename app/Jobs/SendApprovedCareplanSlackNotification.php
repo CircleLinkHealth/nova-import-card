@@ -5,10 +5,10 @@ namespace App\Jobs;
 use App\CarePlan;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class SendApprovedCareplanSlackNotification implements ShouldQueue
 {
@@ -27,25 +27,36 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @return void
+     * @return bool|void
      */
     public function handle()
     {
-        $date = Carbon::now();
+        $date      = Carbon::now();
         $careplans = CarePlan::with('providerApproverUser')
                              ->where('provider_date', '>=', $date->copy()->startOfDay())
                              ->get();
 
-        $providers = [];
-        foreach ($careplans as $careplan){
-            if ($careplan->providerApproverUser) {
-                $providers[] = $careplan->providerApproverUser->display_name;
+        if ($careplans->isEmpty()) {
+            if (app()->environment(['worker', 'production'])) {
+                sendSlackMessage('#careplanprintstatus', "0 Care Plan(s) have been approved today.");
             }
-        }
-        $doctors   = implode(',', $providers);
+        } else {
+            $providers = [];
+            foreach ($careplans as $careplan) {
+                if ($careplan->providerApproverUser) {
+                    $providers[] = $careplan->providerApproverUser->display_name;
+                }
+            }
+            $doctors = implode(',', $providers);
 
-        sendSlackMessage('#careplanprintstatus',
-            "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
-                    {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n");
+            $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
+                    {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n";
+
+            if (app()->environment('staging')) {
+                $message = "(This is a test from staging) $message";
+            }
+
+            sendSlackMessage('#careplanprintstatus', $message);
+        }
     }
 }
