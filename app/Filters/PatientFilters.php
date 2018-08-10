@@ -198,9 +198,18 @@ class PatientFilters extends QueryFilters
     public function ccmStatusDate($date)
     {
         return $this->builder->whereHas('patientInfo', function ($query) use ($date) {
-            $query->where('date_paused', 'LIKE', "%$date%")
-                  ->orWhere('date_withdrawn', 'LIKE', "%$date%")
-                  ->orWhere('date_unreachable', 'LIKE', "%$date%");
+            $query->where(function ($subQuery) use ($date) {
+                $subQuery->where('ccm_status', Patient::PAUSED)
+                         ->where('date_paused', 'LIKE', "%$date%");
+            })
+                  ->orWhere(function ($subQuery) use ($date) {
+                      $subQuery->where('ccm_status', Patient::UNREACHABLE)
+                               ->where('date_unreachable', 'LIKE', "%$date%");
+                  })
+                  ->orWhere(function ($subQuery) use ($date) {
+                      $subQuery->where('ccm_status', Patient::WITHDRAWN)
+                               ->where('date_withdrawn', 'LIKE', "%$date%");}
+                               );
         });
     }
 
