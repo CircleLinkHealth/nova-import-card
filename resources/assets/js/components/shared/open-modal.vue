@@ -13,10 +13,20 @@
             }),
             {
                 name() {
-                    return _.isNull(this.openModal.name) ? false : this.openModal.name;
+
+                    const result = _.isNull(this.openModal.name) ? false : this.openModal.name;
+
+                    if (result) {
+                        $('body').css('overflow', 'hidden');
+                    }
+                    else {
+                        $('body').css('overflow', '');
+                    }
+
+                    return result;
                 },
-                props(){
-                    return _.isNil(this.openModal.props) ? {'show':true} : Object.assign(this.openModal.props, {'show':true})
+                props() {
+                    return _.isNil(this.openModal.props) ? {'show': true} : Object.assign(this.openModal.props, {'show': true})
                 }
             }
         ),

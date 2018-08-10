@@ -2,9 +2,16 @@ export const DESTROY_CARE_PERSON = (state, carePerson) => {
     state.patientCareTeam = state.patientCareTeam.filter(function (item) {
         return item.id !== carePerson.id;
     })
+};
+
+export const UPDATING_CARE_PERSON = (state, newCarePerson) => {
+    state.patientCareTeamIsUpdating = true;
 }
 
 export const UPDATE_CARE_PERSON = (state, newCarePerson) => {
+
+    state.patientCareTeamIsUpdating = false;
+
     let exists = false
 
     const team = (state.patientCareTeam || [])
