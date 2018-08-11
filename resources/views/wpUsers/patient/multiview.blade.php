@@ -2,13 +2,13 @@
 
 <?php
 /**
-* Could generate careplan in HTML or PDF
-* https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
-*/
+ * Could generate careplan in HTML or PDF
+ * https://cpm-web.dev/manage-patients/careplan-print-multi?letter&users={patientId}
+ */
 
 use Illuminate\Support\Collection;
 
-if (!function_exists('checkIfExists')) {
+if ( ! function_exists('checkIfExists')) {
     //check if exists
     function checkIfExists(
         $arr,
@@ -33,7 +33,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
     @foreach($careplans as $id => $careplan)
         <?php
         $patient = App\User::find($id);
-        $billing = $patient->billingProviderUser();
+        $billingDoctor = $patient->billingProviderUser();
+        $regularDoctor = $patient->regularDoctorUser();
         ?>
         @push('styles')
             <style type="text/css">
@@ -90,11 +91,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 .color-blue {
                     color: #109ace;
                 }
-            
+
                 .font-22 {
                     font-size: 22px;
                 }
-                
+
                 .font-18 {
                     font-size: 18px;
                 }
@@ -110,11 +111,11 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 li.list-square {
                     list-style-type: square;
                 }
-            
+
                 .label-primary {
                     background-color: #109ace;
                 }
-            
+
                 .label-secondary {
                     background-color: #47beab;
                 }
@@ -133,8 +134,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                 <div class="col-xs-12 address"><strong>On Behalf of</strong></div>
                                                 <div class="col-xs-7 address">
                                                     <div>
-                                                        @if($billing)
-                                                            @if($billing->fullName){{$billing->fullName}}@endif
+                                                        @if($billingDoctor)
+                                                            @if($billingDoctor->fullName){{$billingDoctor->fullName}}@endif
                                                         @endif
                                                     </div>
                                                     <div>
@@ -189,7 +190,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to Dr. {{$billing->fullName}}'s Personalized Care Management program!
+                                        Welcome to Dr. {{$billingDoctor->fullName}}'s Personalized Care Management
+                                        program!
                                     </div>
                                     <br>
                                     <div class="row gutter" style="line-height: 1.0em;">
@@ -198,14 +200,16 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     </div>
                                     <br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        As Dr. {{$billing->fullName}} mentioned, this program is an important part of
+                                        As Dr. {{$billingDoctor->fullName}} mentioned, this program is an important part
+                                        of
                                         better
                                         self-management of your health. By participating, you benefit in a number ways:
                                     </div>
                                     <div class="row gutter"><BR>
                                         <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
                                             <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
-                                                on behalf of Dr. {{$billing->fullName}}, so (s)he can help keep you
+                                                on behalf of Dr. {{$billingDoctor->fullName}}, so (s)he can help keep
+                                                you
                                                 healthy between visits
 
                                             </li>
@@ -275,59 +279,74 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
                     </div>
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">
-                            @if($billing)
-                                {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
-                            @else
-                                <em>No Billing Provider Selected</em>
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row">
-                            @if($billing)
-                                {{$billing->phone}}
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        @if($billingDoctor)
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$billingDoctor->phone}}
+                            </div>
+                        @else
+                            <div class="col-xs-4 print-row text-bold">
+                                <em>No Billing Dr. Selected</em>
+                            </div>
+                            <div class="col-xs-4 print-row">
+                            </div>
+                        @endif
+                        <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
+
+
+                    @if($regularDoctor)
+                        <div class="row gutter">
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$regularDoctor->phone}}
+                            </div>
+                        </div>
+                    @endif
                 </div>
-                <?php
-                    $allCpmProblems = new Collection($data['allCpmProblems']);
-                    $cpmProblems = new Collection($data['cpmProblems']);
-                    $ccdProblems = new Collection($data['ccdProblems']);
-                    $healthGoals = new Collection($data['healthGoals']);
-                    $baseGoals = new Collection($data['baseHealthGoals']);
-                    $healthNote = $data['healthGoalNote'];
-                ?>
-                <!-- CARE AREAS -->
+            <?php
+            $allCpmProblems = new Collection($data['allCpmProblems']);
+            $cpmProblems = new Collection($data['cpmProblems']);
+            $ccdProblems = new Collection($data['ccdProblems']);
+            $healthGoals = new Collection($data['healthGoals']);
+            $baseGoals = new Collection($data['baseHealthGoals']);
+            $healthNote = $data['healthGoalNote'];
+            ?>
+            <!-- CARE AREAS -->
                 <div class="patient-info__subareas">
                     <?php
-                        $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
-                            if (!$problem['instruction']) {
-                                $cpmProblem =  $allCpmProblems->first(function ($cpm) use ($problem) {
-                                    return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
-                                });
-                                if ($cpmProblem) {
-                                    $problem['instruction'] = $cpmProblem['instruction'];
-                                }
+                    $ccdProblems = $ccdProblems->map(function ($problem) use ($allCpmProblems) {
+                        if ( ! $problem['instruction']) {
+                            $cpmProblem = $allCpmProblems->first(function ($cpm) use ($problem) {
+                                return ($cpm['name'] == $problem['name']) || ($cpm['id'] == $problem['cpm_id']);
+                            });
+                            if ($cpmProblem) {
+                                $problem['instruction'] = $cpmProblem['instruction'];
                             }
-                            return $problem;
-                        });
+                        }
 
-                        $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
-                            return $ccd['instruction']['name'];
-                        });
+                        return $problem;
+                    });
 
-                        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
-                            return $problem['is_monitored'];
-                        })->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
-                        });
-                        
-                        $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
-                            return !$problem['is_monitored'];
-                        })->groupBy('name')->values()->map(function ($problems) {
-                            return $problems->first();
-                        });
+                    $problemsWithInstructions = $ccdProblems->filter(function ($ccd) {
+                        return $ccd['instruction']['name'];
+                    });
+
+                    $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+                        return $problem['is_monitored'];
+                    })->groupBy('name')->values()->map(function ($problems) {
+                        return $problems->first();
+                    });
+
+                    $ccdProblemsForListing = $ccdProblems->filter(function ($problem) {
+                        return ! $problem['is_monitored'];
+                    })->groupBy('name')->values()->map(function ($problems) {
+                        return $problems->first();
+                    });
                     ?>
                     <div class="row">
                         <div class="col-xs-12">
@@ -337,7 +356,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row gutter">
                         <div class="col-xs-12">
-                            @if (!$ccdMonitoredProblems->count()) 
+                            @if (!$ccdMonitoredProblems->count())
                                 <div class="text-center">No Monitored Problems at this time</div>
                             @else
                                 <ul class="row">
@@ -368,62 +387,67 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                 <!-- BIOMETRICS -->
                 <div class="patient-info__subareas">
                     <?php
-                        $healthGoalsForListing = $healthGoals->sortBy('id')->filter(function ($goal) {
-                            return $goal['enabled'];
-                        })->map(function ($goal) {
-                            $start = $goal['info']['starting'];
-                            $start = (int)($start ? explode('/', $start)[0] : 'N/A');
-                            $end = $goal['info']['target'];
-                            $end = (int)($end ? explode('/', $end)[0] : 0);
+                    $healthGoalsForListing = $healthGoals->sortBy('id')->filter(function ($goal) {
+                        return $goal['enabled'];
+                    })->map(function ($goal) {
+                        $start = $goal['info']['starting'];
+                        $start = (int)($start
+                            ? explode('/', $start)[0]
+                            : 'N/A');
+                        $end   = $goal['info']['target'];
+                        $end   = (int)($end
+                            ? explode('/', $end)[0]
+                            : 0);
 
-                            if ($goal['info']['starting'] == '') {
-                                $goal['info']['starting'] = 'N/A';
+                        if ($goal['info']['starting'] == '') {
+                            $goal['info']['starting'] = 'N/A';
+                        }
+
+                        if ($goal['name'] == 'Blood Sugar') {
+                            $goal['info']['target'] = $goal['info']['target'] ?? '120';
+                            if ($goal['info']['target'] == '0') {
+                                $goal['info']['target'] = '120';
+                            }
+                            if ($start > 130) {
+                                $goal['verb'] = 'Decrease';
+                            } else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
+                                $goal['verb'] = 'Regulate';
+                            } else {
+                                $goal['verb'] = 'Increase';
+                            }
+                        } else if ($goal['name'] == 'Blood Pressure') {
+                            $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
+                            if ($goal['info']['target'] == '0') {
+                                $goal['info']['target'] = '130/80';
                             }
 
-                            if ($goal['name'] == 'Blood Sugar') {
-                                $goal['info']['target'] = $goal['info']['target'] ?? '120';
-                                if ($goal['info']['target'] == '0') {
-                                    $goal['info']['target'] = '120';
-                                }
-                                if ($start > 130) {
-                                    $goal['verb'] = 'Decrease';
-                                }
-                                else if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start >= 80 && $start <= 130)) {
-                                    $goal['verb'] = 'Regulate';
-                                }
-                                else {
-                                    $goal['verb'] = 'Increase';
-                                }
+                            if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || ! $goal['info']['starting'] || ($start < 130)) {
+                                $goal['verb'] = 'Regulate';
+                            } else if ($start >= 130) {
+                                $goal['verb'] = 'Decrease';
                             }
-                            else if ($goal['name'] == 'Blood Pressure') {
-                                $goal['info']['target'] = $goal['info']['target'] ?? '130/80';
-                                if ($goal['info']['target'] == '0') {
-                                    $goal['info']['target'] = '130/80';
+                        } else {
+                            if ( ! $goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || ! $goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
+                                    $goal['info']['target'] = 'N/A';
                                 }
+                                $goal['verb'] = 'Regulate';
+                            } else {
+                                $goal['verb'] = ($start > $end)
+                                    ? 'Decrease'
+                                    :
+                                    (($start < $end)
+                                        ? 'Increase'
+                                        :
+                                        'Regulate');
+                            }
+                        }
+                        $goal['action'] = $goal['verb'] == 'Regulate'
+                            ? 'keep under'
+                            : 'to';
 
-                                if ($goal['info']['starting'] == 'N/A' || $goal['info']['target'] == 'TBD' || !$goal['info']['starting'] || ($start < 130)) {
-                                    $goal['verb'] = 'Regulate';
-                                }
-                                else if ($start >= 130) {
-                                    $goal['verb'] = 'Decrease';
-                                }
-                            }
-                            else {
-                                if (!$goal['info']['starting'] || $goal['info']['starting'] == 'N/A' || !$goal['info']['target'] || ($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
-                                    if (($goal['name'] == 'Weight' && $goal['info']['target'] == '0')) {
-                                        $goal['info']['target'] = 'N/A';
-                                    }
-                                    $goal['verb'] = 'Regulate';
-                                }
-                                else {
-                                    $goal['verb'] = ($start > $end) ? 'Decrease' : 
-                                    (($start < $end) ? 'Increase' :
-                                    'Regulate');
-                                }
-                            }
-                            $goal['action'] = $goal['verb'] == 'Regulate' ? 'keep under' : 'to';
-                            return $goal;
-                        });
+                        return $goal;
+                    });
                     ?>
                     <div class="row">
                         <div class="col-xs-12">
@@ -433,45 +457,47 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                     <div class="row">
                         <?php
-                            $noteIsAvailable = $healthNote && ($healthNote['body'] != '');
+                        $noteIsAvailable = $healthNote && ($healthNote['body'] != '');
                         ?>
                         @if ($noteIsAvailable)
                             <div class="col-xs-12 top-10">
                                 {{ $healthNote['body'] }}
                             </div>
                         @endif
-                        @if (!$healthGoalsForListing->count()) 
+                        @if (!$healthGoalsForListing->count())
                             <div class="col-sm-12 text-center top-20">No Health Goals at this time</div>
                         @else
-                            @if ($noteIsAvailable) 
+                            @if ($noteIsAvailable)
                                 <br><br>
                             @endif
-                                <ul class="col-sm-12 subareas__list top-20"
-                                    style="{{ $noteIsAvailable ? 'padding-top:10px !important;' : '' }}">
+                            <ul class="col-sm-12 subareas__list top-20"
+                                style="{{ $noteIsAvailable ? 'padding-top:10px !important;' : '' }}">
                                 <li class="subareas__item subareas__item--wide col-sm-12">
                                     @foreach($healthGoalsForListing as $goal)
                                         <div class="col-xs-5 print-row text-bold">{{ $goal['verb'] }} {{$goal['name']}}</div>
                                         <div class="col-xs-4 print-row text-bold">{{ $goal['action'] }} {{ $goal['info']['target'] }} {{$goal['unit']}}</div>
-                                        <div class="col-xs-3 print-row">from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
+                                        <div class="col-xs-3 print-row">
+                                            from {{ $goal['info']['starting'] }} {{$goal['unit']}}</div>
                                     @endforeach
                                 </li>
                             </ul>
                         @endif
                     </div>
                 </div>
-            <!-- /BIOMETRICS -->
+                <!-- /BIOMETRICS -->
 
                 <!-- MEDICATIONS -->
                 <?php
-                    $medications = new Collection($data['medications']);
-                    $medicationGroups = new Collection($data['medicationGroups']);
+                $medications = new Collection($data['medications']);
+                $medicationGroups = new Collection($data['medicationGroups']);
 
-                    $medications = $medications->map(function ($medication) use ($medicationGroups) {
-                        $medication['group'] = $medicationGroups->first(function ($group) use ($medication) {
-                            return $group['id'] == $medication['medication_group_id'];
-                        });
-                        return $medication;
+                $medications = $medications->map(function ($medication) use ($medicationGroups) {
+                    $medication['group'] = $medicationGroups->first(function ($group) use ($medication) {
+                        return $group['id'] == $medication['medication_group_id'];
                     });
+
+                    return $medication;
+                });
                 ?>
                 <div class="patient-info__subareas">
                     <div class="row">
@@ -480,26 +506,26 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         <div class="col-xs-12">
                             <ul v-if="medications.length">
-                                @foreach ($medications as $medication) 
+                                @foreach ($medications as $medication)
                                     <li class="top-10">
                                         @if ($medication['name'])
-                                        <h4>{{$medication['name']}} 
-                                            @if ($medication['group']['name'])
-                                                <label class="label label-secondary">{{$medication['group']['name']}}</label>
-                                            @endif
-                                        </h4>
+                                            <h4>{{$medication['name']}}
+                                                @if ($medication['group']['name'])
+                                                    <label class="label label-secondary">{{$medication['group']['name']}}</label>
+                                                @endif
+                                            </h4>
                                         @endif
                                         @if (!$medication['name'])
-                                        <h4>- {{$medication['sig']}}
-                                            @if ($medication['group']['name'])
-                                                <label class="label label-primary">{{$medication['group']['name']}}</label>
-                                            @endif
-                                        </h4>
+                                            <h4>- {{$medication['sig']}}
+                                                @if ($medication['group']['name'])
+                                                    <label class="label label-primary">{{$medication['group']['name']}}</label>
+                                                @endif
+                                            </h4>
                                         @endif
                                         @if ($medication['name'] && $medication['sig'])
                                             <ul class="font-18">
                                                 @foreach (explode('\n', $medication['sig']) as $sig)
-                                                <li class="list-square">{{$sig}}</li>
+                                                    <li class="list-square">{{$sig}}</li>
                                                 @endforeach
                                             </ul>
                                         @endif
@@ -513,7 +539,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                 <!-- SYMPTOMS -->
                 <?php
-                    $symptoms = (new Collection($data['symptoms']))->sortBy('name');
+                $symptoms = (new Collection($data['symptoms']))->sortBy('name');
                 ?>
                 <div class="patient-info__subareas">
                     <div class="row">
@@ -541,7 +567,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                 <!-- LIFESTYLES -->
                 <?php
-                    $lifestyles = $data['lifestyles'];
+                $lifestyles = $data['lifestyles'];
                 ?>
                 <div class="patient-info__subareas">
                     <div class="row">
@@ -562,7 +588,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
                 <!-- /LIFESTYLES -->
-                
+
 
                 <div class="patient-info__subareas pb-before">
                     <div class="row">
@@ -585,7 +611,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                 Plan
                                 Part 2</h1>
                         </div>
-                        
+
                         <div class="col-xs-12">
                             <h2 class="patient-summary__subtitles patient-summary--careplan-background">Follow these
                                 Instructions:</h2>
@@ -595,7 +621,8 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
                         @foreach ($problemsWithInstructions as $problem)
                             <div class="col-xs-12">
-                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">For {{$problem['name']}}:</h3>
+                                <h3 class="patient-summary__subtitles--subareas patient-summary--careplan">
+                                    For {{$problem['name']}}:</h3>
                                 @foreach (explode("\n", $problem['instruction']['name']) as $instruction)
                                     <p>{!! $instruction == '' ? "<br>" : $instruction !!}</p>
                                 @endforeach
@@ -604,7 +631,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     </div>
                 </div>
 
-            <!-- OTHER INFORMATION -->
+                <!-- OTHER INFORMATION -->
                 <div class="row pb-before">
                     <div class="col-xs-12 print-only">
                         <h1 class="patient-summary__title patient-summary__title_9  patient-summary--careplan">Care Plan
@@ -749,12 +776,12 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
             </section>
         </div>
         <div class="row pb-before"></div>
-        
+
         @push('styles')
             <script>
                 var careplan = (<?php
-                echo json_encode($data)
-            ?>) || {}
+                    echo json_encode($data)
+                    ?>) || {}
             </script>
         @endpush
     @endforeach
