@@ -43,9 +43,9 @@ class JsonListMedicationLogger implements Logger
     {
         $check = is_json($medicationsString);
 
-        if ($check === false) {
-            throw new \Exception("The string contains invalid json. String: `$medicationsString`");
-        }
+//        if ($check === false) {
+//            throw new \Exception("The string contains invalid json. String: `$medicationsString`");
+//        }
 
         return (boolean)$check;
     }

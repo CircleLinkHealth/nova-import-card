@@ -46,9 +46,9 @@ class JsonListProblemLogger implements Logger
     {
         $check = is_json($problemsString);
 
-        if ($check === false) {
-            throw new \Exception("The string contains invalid json. String: `$problemsString`");
-        }
+//        if ($check === false) {
+//            throw new \Exception("The string contains invalid json. String: `$problemsString`");
+//        }
 
         return (boolean)$check;
     }
