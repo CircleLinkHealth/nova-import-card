@@ -50,7 +50,7 @@
 
                             <div class="col-md-9">
                                 <div class="row">
-                                    <div class="form-group required-field col-md-6">
+                                    <div class="required-field col-md-6">
                                         <validate auto-label :class="fieldClassName(formstate.first_name)">
                                             <div class="col-md-12">
                                                 <input type="text"
@@ -75,7 +75,7 @@
                                         </validate>
                                     </div>
 
-                                    <div class="form-group required-field col-md-6">
+                                    <div class="required-field col-md-6">
                                         <validate auto-label :class="fieldClassName(formstate.last_name)">
                                             <div class="col-md-12">
                                                 <input type="text"
@@ -270,7 +270,7 @@
 
                             <div class="col-md-9">
                                 <div class="row">
-                                    <div class="form-group required-field col-md-12">
+                                    <div class="required-field col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.phone)">
                                             <div class="col-md-12">
                                                 <input type="text"
@@ -304,7 +304,7 @@
 
                             <div class="col-md-9">
                                 <div class="row">
-                                    <div class="form-group required-field col-md-12">
+                                    <div class="required-field col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.practice)">
                                             <div class="col-md-12">
                                                 <input type="text"
@@ -339,7 +339,7 @@
 
                             <div class="col-md-9">
                                 <div class="row">
-                                    <div class="form-group required-field col-md-6">
+                                    <div class="required-field col-md-6">
                                         <validate auto-label :class="fieldClassName(formstate.email)">
                                             <div class="col-md-12">
                                                 <input type="email"
@@ -364,13 +364,13 @@
                                     </div>
 
                                     <!--send alerts-->
-                                    <div class="form-group col-md-6">
+                                    <div class="col-md-6">
 
                                         <label class="col-md-3 control-label">Receives Alerts</label>
 
                                         <div class="col-md-9">
                                             <div class="row">
-                                                <div class="form-group required-field col-md-12">
+                                                <div class="required-field col-md-12">
                                                     <validate auto-label :class="fieldClassName(formstate.send_alerts)">
                                                         <div class="col-md-12">
 
@@ -392,11 +392,11 @@
                                                                     *required
                                                                 </div>
                                                             </field-messages>
-                                                            <div v-if="!formData.user.email || formstate.email && !formstate.email.$valid"
+                                                            <span v-if="!formData.user.email || formstate.email && !formstate.email.$valid"
                                                                  class="validation-error text-left"
                                                                  style="color: green;">
-                                                                Email needs to be filled out and valid.
-                                                            </div>
+                                                                A valid email is required.
+                                                            </span>
                                                         </div>
                                                     </validate>
                                                 </div>
@@ -416,7 +416,7 @@
                             <div class="col-md-9">
                                 <div class="row">
                                     <!--clinical type-->
-                                    <div class="form-group required-field col-md-6">
+                                    <div class="required-field col-md-6">
                                         <validate auto-label :class="fieldClassName(formstate.suffix)">
                                             <div class="col-md-12">
                                                 <select v-model="formData.user.suffix"
@@ -466,8 +466,8 @@
                                     <div class="col-md-12">
                                         <validate auto-label :class="fieldClassName(formstate.typeForDropdown)">
                                             <div class="col-md-12">
-                                                <select2 :options="relationToPatientOptions"
-                                                         name="specialty"
+                                                <select2 :settings="relationToPatientOptions"
+                                                         name="relation-to-patient"
                                                          v-model="formData.typeForDropdown"
                                                          style="width: 100%;">
                                                 </select2>
