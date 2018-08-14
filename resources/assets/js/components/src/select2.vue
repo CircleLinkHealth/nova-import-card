@@ -11,13 +11,24 @@
     export default {
         name: 'select2',
 
-        props: ['options', 'value'],
+        //wrong naming here, options is in fact data
+        //so i added settings, which basically is options
+        props: ['options', 'value', 'settings'],
 
         mounted: function () {
             const self = this
-            $(this.$el)
+
             // init select2
-                .select2({ data: this.options })
+            const el = $(this.$el);
+
+            if (this.settings) {
+                el.select2(this.settings);
+            }
+            else {
+                el.select2({data: this.options});
+            }
+
+            el
                 .val(this.value)
                 .trigger('change')
                 // emit event on change.
@@ -33,7 +44,10 @@
             },
             options: function (options) {
                 // update options
-                $(this.$el).select2({ data: options })
+                $(this.$el).select2({data: options})
+            },
+            settings: function (settings) {
+                $(this.$el).select2(settings);
             }
         },
         destroyed: function () {
