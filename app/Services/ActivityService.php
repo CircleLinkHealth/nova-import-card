@@ -59,12 +59,12 @@ class ActivityService
             if ($ccmTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
-                    'month_year' => $monthYear->toDateString(),
+                    'month_year' => $monthYear,
                 ], [
                     'ccm_time' => $ccmTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
                     $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
                     $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
                     $summary->save();
@@ -102,12 +102,12 @@ class ActivityService
             if ($bhiTime > 0) {
                 $summary = PatientMonthlySummary::updateOrCreate([
                     'patient_id' => $id,
-                    'month_year' => $monthYear->toDateString(),
+                    'month_year' => $monthYear,
                 ], [
                     'bhi_time' => $bhiTime,
                 ]);
 
-                if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
                     $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
                     $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
                     $summary->save();

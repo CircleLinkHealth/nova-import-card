@@ -97,10 +97,14 @@ class PatientSummaryEloquentRepository
         if ($this->lacksProblems($summary)) {
             $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary,
                 $patient->ccdProblems->where('billable', '=', true)->values());
+
+            $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         if ($this->lacksProblems($summary)) {
             $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
+
+            $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         if ( ! $skipValidation && $this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {

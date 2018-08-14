@@ -113,28 +113,16 @@ class PracticeInvoiceController extends Controller
     {
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         } else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
-        $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
+        $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
-        $summaries->getCollection()->transform(function ($summary) {
-            if ( ! $summary->actor_id) {
-                $summary = $this->patientSummaryDBRepository->attachChargeableServices($summary->patient, $summary);
-                $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
-            }
-
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        $isClosed = ! ! $summaries->getCollection()->every(function ($summary) {
-            return ! ! $summary->actor_id;
-        });
-
-        return response($summaries)->header('is-closed', (int)$isClosed);
+        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
     }
 
     /**

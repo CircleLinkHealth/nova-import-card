@@ -32,7 +32,7 @@ trait UserHelpers
      * @return User
      */
     public function createUser(
-        $practiceId = 9,
+        $practiceId = 8,
         $roleName = 'provider'
     ): User {
 

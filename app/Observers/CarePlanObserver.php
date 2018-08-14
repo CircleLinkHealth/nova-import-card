@@ -59,11 +59,11 @@ class CarePlanObserver
     {
         if ($carePlan->isDirty('first_printed')) {
             $carePlan->load('patient');
-            $this->sendCarePlanPrintedNote($carePlan);
+            $this->addCarePlanPrintedNote($carePlan);
         }
     }
 
-    public function sendCarePlanPrintedNote(CarePlan $carePlan)
+    public function addCarePlanPrintedNote(CarePlan $carePlan)
     {
         $date = $carePlan->first_printed->format('m/d/Y');
         $time = $carePlan->first_printed->setTimezone($carePlan->patient->timezone ?? 'America/New_York')->format('g:i A T');

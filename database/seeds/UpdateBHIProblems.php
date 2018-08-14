@@ -156,8 +156,8 @@ class UpdateBHIProblems extends Seeder
             2   =>
                 [
                     'id'                  => 36,
-                    'name'                => 'Panic disorder ºepisodic paroxysmal anxiety» without agoraphobia',
-                    'simple_name'         => 'Substance Abuse (ex-Alcoholism)',
+                    'name'                => 'Panic disorder episodic paroxysmal anxiety without agoraphobia',
+                    'simple_name'         => 'Anxiety and Stress',
                     'default_icd_10_code' => 'F41.0',
                 ],
             3   =>

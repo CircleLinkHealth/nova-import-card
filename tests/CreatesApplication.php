@@ -31,7 +31,7 @@ trait CreatesApplication
         Artisan::call('db:seed', [
             '--class' => 'TestSuiteSeeder'
         ]);
-        Artisan::call('lada:flush');
+//        Artisan::call('lada:flush');
 
         \Log::useFiles('php://stderr');
         \Log::useFiles('php://stdout');

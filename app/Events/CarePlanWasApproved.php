@@ -2,16 +2,15 @@
 
 namespace App\Events;
 
-use App\Events\Event;
 use App\User;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class CarePlanWasApproved extends Event
 {
     use SerializesModels;
 
     public $patient;
+    public $practiceSettings;
 
     /**
      * Create a new event instance.
@@ -20,7 +19,11 @@ class CarePlanWasApproved extends Event
      */
     public function __construct(User $patient)
     {
-        $this->patient = $patient;
+        $this->patient          = $patient;
+        $this->practiceSettings = $patient->carePlan
+            ->patient
+            ->primaryPractice
+            ->cpmSettings();
     }
 
     /**

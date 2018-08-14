@@ -10,9 +10,7 @@
                                     <div class="col-xs-12 address"><strong>En nombre del</strong></div>
                                     <div class="col-xs-7 address">
                                         <div>
-                                            @if($patient->billingProviderUser())
-                                                {{$patient->billingProviderUser()->fullName}}
-                                            @endif
+                                            {{optional($patient->billingProviderUser())->fullName}}
                                         </div>
                                         <div>
                                             {{$patient->primaryPractice->display_name}}
@@ -64,12 +62,14 @@
                         <div class="row gutter">
                         </div>
                         <div class="row gutter row">
-                            Dr. {{$patient->billingProviderUser()->fullName}}, ¡Bienvenido a la Gestión de Atención
+                            Dr. {{optional($patient->billingProviderUser())->fullName}}, ¡Bienvenido a la Gestión de
+                            Atención
                             Personalizada!
                         </div>
                         <br>
                         <div class="row gutter">
-                            Como quizás le mencionó el Dr. {{$patient->billingProviderUser()->last_name}} con respecto a
+                            Como quizás le mencionó el Dr. {{optional($patient->billingProviderUser())->last_name}} con
+                            respecto a
                             este
                             programa por invitación, la atención personalizada es una parte importante para mantenerse
                             saludable.
@@ -85,7 +85,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Conexión con su proveedor a través de actualizaciones compartidas con el
-                                    Dr. {{$patient->billingProviderUser()->last_name}}.
+                                    Dr. {{optional($patient->billingProviderUser())->last_name}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Acceso a su equipo de atención médica desde la comodidad de su hogar, para ayudarle

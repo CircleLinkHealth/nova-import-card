@@ -16,7 +16,9 @@ class CerberusSetupTables extends Migration
          * This method has been modified to only include adding timestamps to the table.
          */
         Schema::table('lv_permission_role', function (Blueprint $table) {
-            $table->timestamps();
+            if ( ! Schema::hasColumns('lv_permission_role', ['created_at', 'updated_at',])) {
+                $table->timestamps();
+            }
         });
     }
 
