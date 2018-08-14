@@ -10,6 +10,7 @@ namespace App\Importer\Loggers\Problem;
 
 
 use App\Contracts\Importer\MedicalRecord\Section\Logger;
+use App\Services\Eligibility\Entities\Problem;
 
 class CommaDelimitedListProblemLogger implements Logger
 {
@@ -18,24 +19,16 @@ class CommaDelimitedListProblemLogger implements Logger
     {
         $problems = explode(',', $problemsString);
 
+        $results = [];
+
         foreach ($problems as $problem) {
-//            @todo: implement once a use case comes up
-//            $problem = trim($problem);
-//
-//            if (ctype_alpha(str_replace([
-//                "\n",
-//                "\t",
-//                ' ',
-//            ], '', $problem))) {
-//                $problem = [
-//                    'name' => $problem,
-//                ];
-//            }
-//
-//            $problem = [
-//                'code' => $problem,
-//            ];
+            $results[] = Problem::create([
+                'name' => $problem,
+                'code' => $problem,
+            ]);
         }
+
+        return $results;
     }
 
     public function shouldHandle($problemsString): bool

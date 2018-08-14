@@ -42,8 +42,20 @@ class UserCsvResource extends Resource
                 ? Carbon::parse($patient->birth_date)->age
                 : 0) . '",' .
                '"' . $this->created_at . '",' .
-               '"' . ($patient->cur_month_activity_time
-                ? gmdate('i:s', $patient->cur_month_activity_time)
-                : '00:00') . '"';
+               '"' . $this->getTimeInDecimals($patient->cur_month_activity_time) . '"';
+    }
+
+    /**
+     * Get CCM time in minutes (decimal form) from seconds.
+     *
+     * @param String|null $ccmTime in seconds
+     *
+     * @return string CCM minutes in decimal
+     */
+    private function getTimeInDecimals(String $ccmTime = null) {
+        if (!$ccmTime) {
+            return '0.00';
+        }
+        return number_format($ccmTime / 60, 2, '.', '') ;
     }
 }
