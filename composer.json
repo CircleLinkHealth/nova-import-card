@@ -21,6 +21,10 @@
       "url": "git@github.com:michalisantoniou6/revisionable.git"
     },
     {
+      "type": "git",
+      "url": "git@github.com:CircleLinkHealth/opcache-gui.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -29,8 +33,8 @@
     }
   ],
   "require": {
-    "php": ">=7.0.0",
-    "amnuts/opcache-gui": "^2.4",
+    "php": ">=7.1.0",
+    "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
     "barryvdh/laravel-debugbar": "*",
@@ -125,7 +129,7 @@
       "php artisan ide-helper:meta"
     ],
     "test": [
-      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p8"
+      "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
     ],
     "integration": [
       "./vendor/bin/paratest ./tests/integration --stop-on-failure --colors --runner SqliteRunner"

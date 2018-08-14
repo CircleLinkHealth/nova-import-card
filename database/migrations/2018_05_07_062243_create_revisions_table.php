@@ -21,6 +21,8 @@ class CreateRevisionsTable extends Migration {
 			$table->string('key');
 			$table->text('old_value', 65535)->nullable();
 			$table->text('new_value', 65535)->nullable();
+            $table->string('ip')->nullable();
+            $table->boolean('is_phi')->default(false);
 			$table->timestamps();
 			$table->index(['revisionable_id','revisionable_type']);
 		});

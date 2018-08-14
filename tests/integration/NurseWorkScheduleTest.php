@@ -3,6 +3,7 @@
 namespace Tests\integration;
 
 use App\NurseContactWindow;
+use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Tests\DuskTestCase;
@@ -16,7 +17,9 @@ class NurseWorkScheduleTest extends DuskTestCase
 
     public function test_main()
     {
-        $nurse = $this->createUser(9, 'care-center');
+        $practice = factory(Practice::class)->create();
+
+        $nurse = $this->createUser($practice->id, 'care-center');
 
         $this->nurse_sees_account_button_and_schedule($nurse);
         $this->provider_does_not_see_work_schedule();

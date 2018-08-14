@@ -848,6 +848,12 @@ Route::group(['middleware' => 'auth'], function () {
         ],
         'prefix'     => 'admin',
     ], function () {
+
+        Route::get('all-activity', [
+            'uses' => 'ShowAllActivity',
+            'as'   => 'all.activity',
+        ]);
+
         Route::group(['prefix' => 'demo'], function () {
             Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
 

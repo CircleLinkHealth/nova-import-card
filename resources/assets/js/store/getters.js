@@ -1,3 +1,7 @@
+export const patientCareTeamIsUpdating = state => {
+    return state.patientCareTeamIsUpdating
+}
+
 export const patientCareTeam = state => {
     return state.patientCareTeam
 }

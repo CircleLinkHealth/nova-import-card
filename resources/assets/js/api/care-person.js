@@ -14,21 +14,8 @@ export default {
             (resp) => {
                 const createNewPerson = (newCarePerson) => {
                     if (newCarePerson.user) newCarePerson.user = Object.assign(newCarePerson.user, carePerson.user)
-                    if (newCarePerson.is_billing_provider && carePerson.is_billing_provider) {
-                        newCarePerson.formatted_type = 'External'
-                        newCarePerson.is_billing_provider = false
-                    }
-                    else {
-                        if (!carePerson.is_billing_provider) {
-                            newCarePerson.formatted_type = 'Provider (Internal)'
-                        }
-                        else {
-                            newCarePerson.is_billing_provider = carePerson.is_billing_provider
-                            newCarePerson.formatted_type = carePerson.formatted_type
-                        }
-                    }
                     return newCarePerson
-                }
+                };
                 const modOldBillingProvider = (oldCarePerson) => {
                     if (oldCarePerson) {
                         if (oldCarePerson.type == 'external') {
@@ -39,7 +26,7 @@ export default {
                         }
                     }
                     return oldCarePerson
-                }
+                };
                 cb(createNewPerson(resp.data.carePerson), modOldBillingProvider(resp.data.oldBillingProvider))
             },
             (resp) => {

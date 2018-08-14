@@ -40,4 +40,9 @@ class ChargeableService extends \App\BaseModel
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
                     ->withTimestamps();
     }
+
+    public static function defaultServices()
+    {
+        return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
+    }
 }

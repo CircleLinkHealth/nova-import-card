@@ -14,6 +14,7 @@ use App\Console\Commands\QueueEligibilityBatchForProcessing;
 use App\Console\Commands\QueueGenerateNurseDailyReport;
 use App\Console\Commands\QueueGenerateNurseInvoices;
 use App\Console\Commands\QueueGenerateOpsDailyReport;
+use App\Console\Commands\QueueSendApprovedCareplanSlackNotification;
 use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
@@ -77,6 +78,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(EmailRNDailyReport::class)
                  ->weekdays()
                  ->at('21:00');
+
+        $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
+                 ->dailyAt('23:40');
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
                  ->dailyAt('23:00');

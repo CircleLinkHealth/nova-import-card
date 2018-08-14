@@ -869,6 +869,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'addendum.update',
                     'addendum.delete',
                     'addendum.read',
+                    'note.send',
                 ],
             ],
             [
@@ -981,6 +982,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                     'workHours.update',
                     'workHours.delete',
                     'workHours.read',
+                    'note.send',
                 ],
             ],
             [

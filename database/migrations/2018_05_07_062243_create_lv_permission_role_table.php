@@ -17,6 +17,7 @@ class CreateLvPermissionRoleTable extends Migration {
 			$table->integer('permission_id')->unsigned();
 			$table->integer('role_id')->unsigned()->index('lv_permission_role_role_id_foreign');
 			$table->primary(['permission_id','role_id']);
+            $table->timestamps();
 		});
 	}
 

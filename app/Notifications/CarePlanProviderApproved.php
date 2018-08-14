@@ -2,17 +2,18 @@
 
 namespace App\Notifications;
 
+use App\CarePlan;
 use App\Note;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NoteForwarded extends Notification
+class CarePlanProviderApproved extends Notification
 {
     use Queueable;
 
-    public $note;
+    public $carePlan;
     public $channels = ['database'];
     public $pathToPdf;
     public $attachment;
@@ -20,14 +21,14 @@ class NoteForwarded extends Notification
     /**
      * Create a new notification instance.
      *
-     * @param Note $note
+     * @param Note $carePlan
      * @param array $channels
      */
     public function __construct(
-        Note $note,
-        $channels = ['mail']
+        CarePlan $carePlan,
+        $channels = []
     ) {
-        $this->attachment = $this->note = $note;
+        $this->attachment = $this->carePlan = $carePlan;
 
         $this->channels = array_merge($this->channels, $channels);
     }
@@ -59,8 +60,8 @@ class NoteForwarded extends Notification
         $mail = (new MailMessage())
             ->view('vendor.notifications.email', [
                 'greeting'        => $this->getBody(),
-                'actionText'      => 'View Note',
-                'actionUrl'       => $this->note->link(),
+                'actionText'      => 'View CarePlan',
+                'actionUrl'       => $this->carePlan->link(),
                 'introLines'      => [],
                 'outroLines'      => [],
                 'level'           => '',
@@ -87,11 +88,13 @@ class NoteForwarded extends Notification
      */
     public function getBody()
     {
-        $message = 'Please click below button to see a forwarded note regarding one of your patients, created on '
-                   . $this->note->performed_at->toFormattedDateString();
+        $message = 'Please click below button to see a Care Plan regarding one of your patients, which was approved on '
+                   . $this->carePlan->provider_date->toFormattedDateString();
 
-        if (auth()->check()) {
-            $message .= ' by ' . auth()->user()->full_name;
+        $approver = optional($this->carePlan->providerApproverUser);
+
+        if ($approver) {
+            $message .= ' by ' . $approver->full_name;
         }
 
         return $message;
@@ -104,11 +107,7 @@ class NoteForwarded extends Notification
      */
     public function getSubject()
     {
-        if ($this->note->isTCM) {
-            return 'Urgent Patient Note from ' . $this->note->patient->saasAccountName();
-        }
-
-        return 'You have been forwarded a note from CarePlanManager';
+        return 'A CarePlan has just been approved';
     }
 
     /**
@@ -135,7 +134,7 @@ class NoteForwarded extends Notification
     public function toPdf()
     {
         if ( ! file_exists($this->pathToPdf)) {
-            $this->pathToPdf = $this->note->toPdf();
+            $this->pathToPdf = $this->carePlan->toPdf();
         }
 
         return $this->pathToPdf;
@@ -180,10 +179,10 @@ class NoteForwarded extends Notification
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
-            'link'    => $this->note->link(),
+            'link'    => $this->carePlan->link(),
             'subject' => $this->getSubject(),
 
-            'note_id' => $this->note->id,
+            'careplan_id' => $this->carePlan->id,
 
             'pathToPdf' => $this->pathToPdf,
         ];

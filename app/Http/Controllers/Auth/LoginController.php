@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -58,15 +59,23 @@ class LoginController extends Controller
     /**
      * @param Request $request
      *
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
+
         $this->usernameOrEmail($request);
         $loginResponse = $this->traitLogin($request);
 
         if ( ! $this->validateBrowserCompatibility()) {
             $this->sendInvalidBrowserResponse();
+        }
+
+        if ( ! $this->validatePasswordAge()) {
+            auth()->logout();
+            $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+            return redirect('auth/password/reset')
+                ->withErrors(['old-password' => "You password has not been changed for the last $days days. Please reset it to continue."]);
         }
 
         return $loginResponse;
@@ -172,8 +181,37 @@ class LoginController extends Controller
             ->route('login')
             ->with([
                 'messages' => [
-                    'Our apologies. The page has expired due to inactivity or a user logout on a different browser tab.'
-                ]
+                    'Our apologies. The page has expired due to inactivity or a user logout on a different browser tab.',
+                ],
             ]);
     }
+
+    const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
+
+    /**
+     * Checks the last time the password was changed.
+     * Returns true (validation success) if it was changed in less than
+     * {@link LoginController::MIN_PASSWORD_CHANGE_IN_DAYS}, otherwise false.
+     *
+     * @return bool
+     */
+    protected function validatePasswordAge()
+    {
+
+        $user = auth()->user();
+
+        //nothing to validate if not auth
+        if ( ! $user) {
+            return true;
+        }
+
+        $diffInDays = 0;
+        $history    = $user->passwordsHistory;
+        if ($history) {
+            $diffInDays = $history->updated_at->diffInDays(Carbon::today());
+        }
+
+        return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+    }
+
 }
