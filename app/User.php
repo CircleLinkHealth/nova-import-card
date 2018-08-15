@@ -2993,7 +2993,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     }
 
     /**
-     * Scope for patients who can be charged for a BHI.
+     * Scope for patients who can be charged for BHI.
      *
      * Conditions are:
      *      1. Patient is Enrolled
@@ -3023,6 +3023,54 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
                 });
             });
+    }
+
+    /**
+     * Scope for patients who are eligible for BHI.
+     *
+     * Conditions are:
+     *      1. Patient is Enrolled
+     *      2. Patient's Primary Practice is chargeable for BHI
+     *      3. Patient has at least one BHI problem
+     *
+     * @param $builder
+     *
+     * @return mixed
+     */
+    public function scopeIsBhiEligible($builder)
+    {
+        return $builder
+            ->whereHas('primaryPractice', function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            })
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas('ccdProblems.cpmProblem', function ($q) {
+                $q->where('is_behavioral', true);
+            })
+            ->whereDoesntHave('notes', function ($q) {
+                $q->where('type', '=', Patient::BHI_REJECTION_NOTE_TYPE);
+            });
+    }
+
+    /**
+     * Determine whether the User is Legacy BHI eligible.
+     * "Legacy BHI Eligible" applies to a small number of patients who are BHI eligible, but consented before
+     * 7/23/2018.
+     * On 7/23/2018 we changed our Terms and Conditions to include BHI, so patients who consented before 7/23 need a
+     * separate consent for BHI.
+     *
+     * @return bool
+     */
+    public function isLegacyBhiEligible()
+    {
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi_eligible", 1, function (){
+        return User::isBhiEligible()
+                   ->where('id', $this->id)
+                   ->exists();
+//        });
     }
 
     /**
