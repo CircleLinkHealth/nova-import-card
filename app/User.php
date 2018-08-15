@@ -3051,6 +3051,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             })
             ->whereDoesntHave('notes', function ($q) {
                 $q->where('type', '=', Patient::BHI_REJECTION_NOTE_TYPE);
+            })
+            ->whereDoesntHave('notes', function ($q) {
+                $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
             });
     }
 
