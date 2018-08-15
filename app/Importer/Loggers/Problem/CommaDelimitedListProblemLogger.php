@@ -33,6 +33,6 @@ class CommaDelimitedListProblemLogger implements Logger
 
     public function shouldHandle($problemsString): bool
     {
-        return str_contains($problemsString, ',') && ! starts_with($problemsString, ['[', '{']);
+        return ! starts_with($problemsString, ['[', '{']);
     }
 }
