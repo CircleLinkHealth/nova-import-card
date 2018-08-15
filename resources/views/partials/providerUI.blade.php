@@ -86,25 +86,28 @@
     @yield('content')
 
     <?php
-        /**
-        * Sometimes, $patient is an instance of User::class, 
-        * other times, it is an instance of Patient::class
-        * We have to make sure that $user is always an instance of User::class by deriving it from $patient
-        */
+    /**
+     * Sometimes, $patient is an instance of User::class,
+     * other times, it is an instance of Patient::class
+     * We have to make sure that $user is always an instance of User::class by deriving it from $patient
+     */
     use App\Patient;
     $user = null;
-        if (isset($patient)) {
-            if (is_a($patient, Patient::class)) {
-                $user = $patient->user;
-            }
-            else {
-                $user = $patient;
-            }
+    if (isset($patient)) {
+        if (is_a($patient, Patient::class)) {
+            $user = $patient->user;
+        } else {
+            $user = $patient;
         }
+    }
     ?>
 
-    @if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))
-        @include('partials.providerUI.notification-banner')
+    {{--@if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))--}}
+    {{--@include('partials.providerUI.notification-banner')--}}
+    {{--@endif--}}
+
+    @if(isset($user) && auth()->user()->hasPermissionForSite('legacy-bhi-consent-decision.create', $user->program_id) && is_a($user, App\User::class) && $user->isLegacyBhiEligible() && $user->billingProviderUser() && !isset($isPdf))
+        @include('partials.providerUI.bhi-notification-banner')
     @endif
 
     <open-modal></open-modal>

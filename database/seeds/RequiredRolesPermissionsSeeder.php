@@ -877,6 +877,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
                 'display_name' => 'Care Coach',
                 'description'  => 'CLH Nurses, the ones who make calls to patients. CCM countable.',
                 'permissions'  => [
+                    'legacy-bhi-consent-decision.create',
                     'allergy.create',
                     'allergy.read',
                     'allergy.update',
