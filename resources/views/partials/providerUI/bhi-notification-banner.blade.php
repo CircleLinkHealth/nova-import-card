@@ -26,9 +26,11 @@
 
         <div class="row">
             <div class="col-md-12">
-                {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;']) }}
+                {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                 <input type="hidden" name="decision" value="1">
-                <input type="submit" value="Consented" class="alert-success alert" style="margin-left: 25px;">
+                <input type="submit" value="Consented" class="alert-success alert"
+                       style="margin-left: 25px;"
+                       onclick="return confirm('Please confirm that the patient has consented to receiving BHI services.')">
                 {{ Form::close() }}
 
                 <button id="close-legacy-bhi-banner"
@@ -37,9 +39,11 @@
                     Not Now
                 </button>
 
-                {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;']) }}
+                {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                 <input type="hidden" name="decision" value="0">
-                <input type="submit" value="Not Consented" class="alert-danger alert" style="margin-left: 25px;">
+                <input type="submit" value="Not Consented" class="alert-danger alert"
+                       style="margin-left: 25px;"
+                       onclick="return confirm('Please confirm that the patient has NOT consented to receiving BHI services.')">
                 {{ Form::close() }}
             </div>
         </div>
