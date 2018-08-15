@@ -3044,7 +3044,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                 $q->hasServiceCode('CPT 99484');
             })
             ->whereHas('patientInfo', function ($q) {
-                $q->enrolled();
+                $q->enrolled()
+                  ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
             })
             ->whereHas('ccdProblems.cpmProblem', function ($q) {
                 $q->where('is_behavioral', true);
