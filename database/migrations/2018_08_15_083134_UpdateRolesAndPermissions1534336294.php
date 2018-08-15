@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class DummyClass extends Migration
+class UpdateRolesAndPermissions1534336294 extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +11,9 @@ class DummyClass extends Migration
      */
     public function up()
     {
-        if (!app()->environment(['testing'])) {
-            Artisan::call('db:seed', [
-                '--class' => 'RequiredRolesPermissionsSeeder',
-            ]);
-        }
+        Artisan::call('db:seed', [
+            '--class' => 'RequiredRolesPermissionsSeeder',
+        ]);
     }
 
     /**

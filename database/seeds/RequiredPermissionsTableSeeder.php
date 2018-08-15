@@ -1,5 +1,6 @@
 <?php
 
+use App\Patient;
 use App\Permission;
 use Illuminate\Database\Seeder;
 
@@ -26,8 +27,8 @@ class RequiredPermissionsTableSeeder extends Seeder
     {
         $perms = [];
 
-        foreach($this->entityModels() as $entityModel){
-            $crud = $this->crudPermission($entityModel);
+        foreach ($this->entityModels() as $entityModel) {
+            $crud  = $this->crudPermission($entityModel);
             $perms = array_merge($perms, $crud);
         }
 
@@ -78,17 +79,20 @@ class RequiredPermissionsTableSeeder extends Seeder
             [
                 'name'         => 'note.send',
                 'display_name' => 'Note - Send',
-            ]
+            ],
+            [
+                'name'         => 'legacy-bhi-consent-decision.create',
+                'display_name' => 'BHI Eligible Patients who consented before ' . Patient::DATE_CONSENT_INCLUDES_BHI . ' to consent separately for BHI, as it was not listed in CLH Terms and Conditions before that date. Legacy BHI consent is stored as a note with type `' . Patient::BHI_CONSENT_NOTE_TYPE . '``. Legacy BHI rejection is stored as a note with type `' . Patient::BHI_REJECTION_NOTE_TYPE . '``. This permission allows to store a consent or rejection for BHI.',
+            ],
 
         ];
 
         return array_merge($perms, $old);
 
 
-
     }
 
-    private function crudPermission($entityModel) : array
+    private function crudPermission($entityModel): array
     {
         return [
             [
@@ -114,7 +118,8 @@ class RequiredPermissionsTableSeeder extends Seeder
         ];
     }
 
-    private function entityModels(){
+    private function entityModels()
+    {
         return collect([
             "note",
             "call",
