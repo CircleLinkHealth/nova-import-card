@@ -38,7 +38,6 @@ class ResetPatients extends Command
     public function handle()
     {
         $this->call('reset:ccm_time');
-        $this->call('reset:call_count');
 
         $this->info('Patients reset.');
     }
