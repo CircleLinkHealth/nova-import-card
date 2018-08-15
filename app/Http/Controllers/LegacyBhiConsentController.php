@@ -6,6 +6,7 @@ use App\Exceptions\InvalidArgumentException;
 use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use App\Patient;
+use Carbon\Carbon;
 
 class LegacyBhiConsentController extends Controller
 {
@@ -31,10 +32,11 @@ class LegacyBhiConsentController extends Controller
             : 'The patient did not consent to receiving BHI services.';
 
         return Note::create([
-            'patient_id' => $patientId,
-            'author_id'  => 948, //clh patient support
-            'body'       => $body,
-            'type'       => $type,
+            'patient_id'   => $patientId,
+            'author_id'    => 948, //clh patient support
+            'body'         => $body,
+            'type'         => $type,
+            'performed_at' => Carbon::now()->toDateTimeString(),
         ]);
     }
 }
