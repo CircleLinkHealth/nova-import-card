@@ -31,16 +31,23 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
         $this->reportData = NurseDailyReport::data()->map(function ($nurseReport) use ($date) {
 
+
             $fullName = explode(' ', $nurseReport['name']);
             $first    = $fullName[0];
             $last     = $fullName[1];
 
-            $nurse = User::with('nurseInfo.workhourables')
+            $nurse = User::ofType('care-center')
+                         ->with('nurseInfo.workhourables')
                          ->where([
-                             ['first_name','=', $first],
+                             ['first_name', '=', $first],
                              ['last_name', '=', $last],
                          ])
                          ->first();
+
+            if (! $nurse){
+                \Log::error("User not found: $fullName");
+                return;
+            }
 
             $pageTimers = PageTimer::where('provider_id', $nurse->id)
                                    ->select(['id', 'duration', 'created_at'])
@@ -61,16 +68,13 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                                          ->get()
                                          ->sum('duration');
 
-            $total             = $pageTimers + $offlineActivities;
-            $actualHours       = round($total / 3600, 1);
+            $total          = $pageTimers + $offlineActivities;
+            $actualHours    = round($total / 3600, 1);
+
             $hoursCommitted = 'N/A';
-            if ($nurse->nurseInfo){
-                if ($nurse->nurseInfo->workhourables->count() > 0) {
-                    $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($date->day)};
-                }
-
+            if ($nurse->nurseInfo->workhourables && $nurse->nurseInfo->workhourables->count() > 0 ) {
+                    $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($date->format('l'))};
             }
-
 
             return [
                 'name'                     => $nurseReport['name'],
@@ -81,7 +85,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 'CCM Mins Today'           => $nurseReport['CCM Mins Today'],
                 'last_activity'            => $nurseReport['last_activity'],
                 'Actual Hours worked'      => $actualHours ?: 'N/A',
-                'Hours Committed'          => $hoursCommitted,
+                'Hours Committed'          => $hoursCommitted  == 0 ? '0' : $hoursCommitted,
             ];
         });
     }
