@@ -50,7 +50,9 @@ class LegacyBhiConsentController extends Controller
      */
     private function storeNotNowResponse($patientId)
     {
-        $key = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
-        Cache::put($key, true, 60 * 24);
+        $key     = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
+        $minutes = intval(Carbon::now()->secondsUntilEndOfDay() / 60);
+
+        Cache::put($key, true, $minutes);
     }
 }

@@ -3118,6 +3118,14 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                    ->exists();
     }
 
+    /**
+     * Determines wheter to show the BHI banner to the logged in user, for a given patient
+     *
+     * @param User $patient
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function shouldShowLegacyBhiBannerFor(User $patient)
     {
         return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
