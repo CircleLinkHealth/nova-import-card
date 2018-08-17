@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -3098,5 +3099,31 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function passwordsHistory()
     {
         return $this->hasOne(UserPasswordsHistory::class, 'user_id');
+    }
+
+    public function getLegacyBhiNursePatientCacheKey($patientId)
+    {
+        if ( ! $this->id) {
+            throw new \Exception("User ID not found.");
+        }
+
+        return "hide_legacy_bhi_banner:" . $this->id . ":$patientId";
+    }
+
+    public function hasScheduledCallToday()
+    {
+        return Call::where('inbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
+                   ->exists();
+    }
+
+    public function shouldShowLegacyBhiBannerFor(User $patient)
+    {
+        return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
+               && is_a($patient, self::class)
+               && $patient->isLegacyBhiEligible()
+               && $patient->billingProviderUser()
+               && ($patient->hasScheduledCallToday() && ! Cache::has($this->getLegacyBhiNursePatientCacheKey($patient->id)));
     }
 }

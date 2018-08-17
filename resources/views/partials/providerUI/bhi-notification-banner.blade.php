@@ -31,11 +31,12 @@
                        onclick="return confirm('Please confirm that the patient has consented to receiving BHI services.')">
                 {{ Form::close() }}
 
-                <button id="close-legacy-bhi-banner"
-                        class="alert alert-warning legacy-bhi-consent-not-now-button close"
-                        style="display: inline-block;">
-                    Not Now
-                </button>
+                {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
+                <input type="hidden" name="decision" value="2">
+                <input type="submit" value="Not Now" class="alert-warning alert legacy-bhi-consent-not-now-button"
+                       style="margin-left: 25px;"
+                       onclick="return confirm('Clicking OK will hide the BHI notice until the next day this patient has a scheduled call.')">
+                {{ Form::close() }}
 
                 {{ Form::open(['url' => route('legacy-bhi.store', [$user->program_id, $user->id]), 'style' => 'display: inline-block;', 'class' => 'legacy-bhi-decision-form']) }}
                 <input type="hidden" name="decision" value="0">
