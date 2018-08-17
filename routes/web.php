@@ -1876,9 +1876,16 @@ Route::group([], function () {
         'uses' => 'CallController@update',
         'as'   => 'api.callupdate',
     ]);
+    /*
+     * Deprecated, in favor of callcreate-multi
     Route::post('callcreate', [
         'uses' => 'CallController@create',
         'as'   => 'api.callcreate',
+    ]);
+    */
+    Route::post('callcreate-multi', [
+        'uses' => 'CallController@createMulti',
+        'as'   => 'api.callcreate-multi',
     ]);
 });
 

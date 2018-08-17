@@ -26,8 +26,8 @@
                         </div>
 
                         <div class="modal-footer close-footer" v-if="!noButtons">
-                            <input type="button" v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()" :value="cancelText || 'Cancel'">
-                            <input type="button" class="modal-button modal-ok-button" @click="ok()" :value="okText || 'OK'">
+                            <input type="button" v-if="!noCancel" class="modal-button modal-cancel-button btn btn-danger btn-xs" @click="cancel()" :value="cancelText || 'Cancel'">
+                            <input type="button" class="modal-button modal-ok-button btn btn-primary btn-xs" @click="ok()" :value="okText || 'OK'">
                         </div>
                     </div>
                 </div>
@@ -90,10 +90,14 @@
         },
         mounted() {
             Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (opts) => {
+                //disable scrolling∑
+                $('body').css('overflow', 'hidden');
                 this.show(opts)
             })
 
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
+                //enable scroll
+                $('body').css('overflow', '');
                 this.close()
             })
         }
@@ -144,9 +148,13 @@
         float: right;
     }
 
-    .modal-cancel-button {
-        background: transparent;
+    .modal-button {
+        margin-left: 3px;
     }
+
+    /*.modal-cancel-button {*/
+        /*background: transparent;*/
+    /*}*/
     
     /*
     * The following styles are auto-applied to elements with
