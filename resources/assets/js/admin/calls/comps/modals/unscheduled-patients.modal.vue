@@ -1,5 +1,5 @@
 <template>
-    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo">
+    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo" class-name="modal-show-unscheduled">
       <template slot-scope="props" slot="title">
         <div class="row">
             <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
@@ -128,6 +128,11 @@
 </script>
 
 <style>
+
+    .modal-show-unscheduled .modal-container {
+        width: 600px;
+    }
+
     div.loader {
         position: absolute;
         right: -25px;
