@@ -13,7 +13,7 @@
             </div>
         </template>
         <template slot-scope="props">
-            <form action="/callcreate" @submit="submitForm">
+            <form action="/callcreate-multi" @submit="submitForm">
 
                 <div class="row">
                     <table class="add-calls">
@@ -301,7 +301,7 @@
             setPractice(actionIndex, practiceId) {
                 if (practiceId) {
                     this.actions[actionIndex].call.practiceId = practiceId;
-                    const practice = this.actions[actionIndex].practices.find(practice => practice.id === this.actions[actionIndex].call.practiceId)
+                    const practice = this.practices.find(practice => practice.id === this.actions[actionIndex].call.practiceId)
                     if (practice) {
                         if (!this.actions[actionIndex].selectedPracticeData || this.actions[actionIndex].selectedPracticeData.value !== practice.id) {
                             this.actions[actionIndex].selectedPracticeData = {

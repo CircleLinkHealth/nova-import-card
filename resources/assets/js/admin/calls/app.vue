@@ -202,7 +202,6 @@
             'select-editable': SelectEditable,
             'time-editable': TimeEditable,
             'modal': Modal,
-            'add-call-modal': AddCallModal,
             'add-call-v2-modal': AddCallV2Modal,
             'select-nurse-modal': SelectNurseModal,
             'select-times-modal': SelectTimesModel,
