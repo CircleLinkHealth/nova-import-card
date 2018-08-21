@@ -106,7 +106,7 @@
     {{--@include('partials.providerUI.notification-banner')--}}
     {{--@endif--}}
 
-    @if(isset($user) && auth()->user()->hasPermissionForSite('legacy-bhi-consent-decision.create', $user->program_id) && is_a($user, App\User::class) && $user->isLegacyBhiEligible() && $user->billingProviderUser() && !isset($isPdf))
+    @if(isset($user) && auth()->user()->shouldShowLegacyBhiBannerFor($user) && !isset($isPdf))
         @include('partials.providerUI.bhi-notification-banner')
     @endif
 

@@ -29,7 +29,7 @@ class CreateLegacyBhiConsentDecision extends FormRequest
         return [
             'decision' => [
                 'required',
-                Rule::in(['0', '1']),
+                Rule::in([0, 1, 2]),
             ],
         ];
     }

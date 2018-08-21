@@ -7,15 +7,18 @@ use App\Http\Requests\CreateLegacyBhiConsentDecision;
 use App\Note;
 use App\Patient;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class LegacyBhiConsentController extends Controller
 {
     public function store(CreateLegacyBhiConsentDecision $request, $practiceId, $patientId)
     {
-        if ( ! ! $request->input('decision')) {
+        if ((int)$request->input('decision') === 1) {
             $note = $this->createNote($patientId, Patient::BHI_CONSENT_NOTE_TYPE);
-        } elseif ( ! ! ! $request->input('decision')) {
+        } elseif ((int)$request->input('decision') === 0) {
             $note = $this->createNote($patientId, Patient::BHI_REJECTION_NOTE_TYPE);
+        } elseif ((int)$request->input('decision') === 2) {
+            $this->storeNotNowResponse($patientId);
         }
 
         return redirect()->back();
@@ -38,5 +41,18 @@ class LegacyBhiConsentController extends Controller
             'type'         => $type,
             'performed_at' => Carbon::now()->toDateTimeString(),
         ]);
+    }
+
+    /**
+     * When the User clicks `Not Now` we want to hide the banner for 24 hours.
+     *
+     * @param $patientId
+     */
+    private function storeNotNowResponse($patientId)
+    {
+        $key     = auth()->user()->getLegacyBhiNursePatientCacheKey($patientId);
+        $minutes = intval(Carbon::now()->secondsUntilEndOfDay() / 60);
+
+        Cache::put($key, true, $minutes);
     }
 }

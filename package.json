@@ -35,8 +35,8 @@
     ]
   },
   "dependencies": {
-    "@fortawesome/free-solid-svg-icons": "^5.1.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.0",
+    "@fortawesome/free-solid-svg-icons": "^5.1.0",
     "@fortawesome/vue-fontawesome": "^0.1.0",
     "autocomplete-vue": "^1.0.3",
     "axios": "^0.16.2",
@@ -61,7 +61,7 @@
     "vue-axios": "^2.0.2",
     "vue-form": "^4.4.1",
     "vue-mdl": "^1.1.1",
-    "vue-select": "github:CircleLinkHealth/vue-select",
+    "vue-select": "^2.4.0",
     "vue-tables-2": "^0.6.99",
     "vue2-dropzone": "^2.3.6",
     "vuejs-datepicker": "github:CircleLinkHealth/vuejs-datepicker#dist",
