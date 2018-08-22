@@ -3,7 +3,7 @@
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Call
+                    Add New Action(s)
                 </div>
                 <div class="col-sm-6 text-right">
                     <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">
@@ -26,23 +26,34 @@
                             <th class="patients">
                                 Patient
                                 <span class="required">*</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   title="Tick to show only unscheduled">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
                                 <loader v-show="loaders.patients"></loader>
                             </th>
                             <th class="nurses">
-                                Nurse <span class="required">*</span>
+                                Nurse
+                                <span class="required">*</span>
                                 <loader v-show="loaders.nurses"></loader>
                             </th>
                             <th class="date">
-                                Date <span class="required">*</span>
+                                Date
+                                <span class="required">*</span>
                             </th>
                             <th class="start-time">
                                 Start Time <span class="required">*</span>
                             </th>
                             <th class="end-time">
-                                End Time <span class="required">*</span>
+                                End Time
+                                <span class="required">*</span>
+                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
+                                   title="Tick if patient requested call time">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
                             </th>
                             <th class="notes">
-                                Call notes <span class="required">*</span>
+                                Call notes
                             </th>
                             <th class="remove">
                                 &nbsp;
@@ -71,7 +82,6 @@
                                 <div class="width-10 padding-left-5 padding-top-7">
                                     <input :disabled="action.disabled"
                                            type="checkbox" v-model="action.filters.showUnscheduledPatients"
-                                           title="check to show only unscheduled"
                                            @change="function (e) { changeUnscheduledPatients(index, e); }"/>
                                 </div>
 
@@ -96,20 +106,20 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-90">
+                                <div class="width-82">
                                     <input class="form-control" type="time" name="window_end"
                                            v-model="action.call.endTime"
                                            :disabled="action.disabled" required/>
                                 </div>
-                                <div class="width-10 padding-left-5 padding-top-7">
-                                    <input title="check if patient requested call time" type="checkbox" id="is_manual"
+                                <div class="width-18 padding-left-5 padding-top-7">
+                                    <input type="checkbox" id="is_manual"
                                            name="is_manual" v-model="action.call.isManual"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
                                 <input class="form-control" type="text" name="attempt_note" v-model="action.call.text"
-                                       :disabled="action.disabled" required/>
+                                       :disabled="action.disabled"/>
                             </td>
                             <td>
                                 <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
@@ -177,6 +187,9 @@
         isManual: 0
     };
 
+    //need in cancelHandler.
+    let self;
+
     export default {
         name: 'add-call-v2-modal',
         mixins: [VueCache],
@@ -196,6 +209,7 @@
                         form.querySelector('button.submit.hidden').click()
                     },
                     cancelHandler() {
+                        self.resetForm();
                         this.errors().submit = null
                         Event.$emit("modal-add-call-v2:hide")
                     },
@@ -595,18 +609,25 @@
 
                         let msg = err.message;
                         if (err.response && err.response.data && err.response.data.errors) {
-                            // {is_manual: ['error message']}
-                            const errors = err.response.data.errors;
-                            if (Array.isArray(errors)) {
-                                msg += `: ${errors.join(', ')}`;
+
+                            if (err.response.data.errors) {
+                                // {is_manual: ['error message']}
+                                const errors = err.response.data.errors;
+                                if (Array.isArray(errors)) {
+                                    msg += `: ${errors.join(', ')}`;
+                                }
+                                else {
+                                    const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
+                                    msg += `: ${errorsMessages}`;
+                                }
                             }
-                            else {
-                                const errorsMessages = Object.values(errors).map(x => x[0]).join(', ');
-                                msg += `: ${errorsMessages}`;
+                            else if (err.response.data.message) {
+                                msg += `: ${err.response.data.message}`;
                             }
+
                         }
 
-                        Event.$emit('notifications-add-call-modal:create', {text: msg, type: 'error'})
+                        Event.$emit('notifications-add-call-v2-modal:create', {text: msg, type: 'error'})
                     });
 
             },
@@ -619,6 +640,8 @@
             return Promise.all([this.getPractices(0), this.getPatients(0)])
         },
         mounted() {
+
+            self = this;
 
             const waitForEl = function (selector, callback) {
                 if (!$(selector).length) {
@@ -638,6 +661,13 @@
                 waitForEl(el, () => {
                     $(el).css('width', document.body.offsetWidth * 0.95);
                 });
+
+                const el2 = "a.my-tool-tip";
+                waitForEl(el2, () => {
+                    //initialize tooltips
+                    $(el2).tooltip();
+                });
+
             });
 
             Event.$on('add-call-modals:set', (data) => {
@@ -740,6 +770,16 @@
         width: 90%;
     }
 
+    .width-82 {
+        float: left;
+        width: 82%;
+    }
+
+    .width-18 {
+        float: left;
+        width: 18%;
+    }
+
     .width-10 {
         float: left;
         width: 10%;
@@ -783,6 +823,11 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
+    }
+
+    a.my-tool-tip {
+        float:right;
+        margin-right: 4px;
     }
 
 
