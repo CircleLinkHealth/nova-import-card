@@ -187,7 +187,7 @@
                         return !!this.nurses.find(nurse => nurse.id == this.selectedNurseId)
                     }
                 }))
-                console.log('select-nurse:patients', this.patients)
+                //console.log('select-nurse:patients', this.patients)
                 this.getNurses()
                 return this.patients
             }

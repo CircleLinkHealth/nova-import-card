@@ -105,7 +105,7 @@
                 this.cache().get(this.patientUrl).then(patients => {
                     this.loaders.patients = false
                     this.patients = (patients || [])
-                    console.log('unscheduled-patients-get-patients', patients)
+                    //console.log('unscheduled-patients-get-patients', patients)
                 }).catch(err => {
                     this.loaders.patients = false
                     this.errors.patients = err.message
