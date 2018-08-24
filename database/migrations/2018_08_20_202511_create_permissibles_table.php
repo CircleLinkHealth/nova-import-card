@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePermissiblesTable extends Migration
 {
@@ -23,6 +23,8 @@ class CreatePermissiblesTable extends Migration
             $table->string('permissible_type');
             $table->boolean('is_active')->default(1);
             $table->timestamps();
+
+            $table->unique(['permission_id', 'permissible_id', 'permissible_type'], 'p_id_pble_id_pt_id' );
         });
     }
 

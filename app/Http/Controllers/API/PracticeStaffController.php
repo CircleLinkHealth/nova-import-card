@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeStaff;
+use App\Permission;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
@@ -109,6 +110,7 @@ class PracticeStaffController extends Controller
                                                      ) ?? '',
             'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
             'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
+            'canApproveAllCareplans'              => $user->hasPermission('care-plan-approve'),
             'role_name'                           => $roles[$roleId]->name,
             'role_display_name'                   => $roles[$roleId]->display_name,
             'locations'                           => $user->locations->pluck('id'),
@@ -166,6 +168,15 @@ class PracticeStaffController extends Controller
         $sendBillingReports = false;
         if ($formData['sendBillingReports']) {
             $sendBillingReports = true;
+        }
+
+        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
+        if ($formData['canApproveAllCareplans']) {
+            $user->attachPermission($careplanApprove->id);
+        }else{
+            if ($user->hasPermission('care-plan-approve')){
+                $user->detachPermission($careplanApprove->id);
+            }
         }
 
         //Attach the locations
