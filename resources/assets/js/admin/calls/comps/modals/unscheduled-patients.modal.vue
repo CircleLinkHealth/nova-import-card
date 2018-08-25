@@ -1,5 +1,5 @@
 <template>
-    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo">
+    <modal name="unscheduled-patients" :no-footer="true" :info="unscheduledPatientsModalInfo" class-name="modal-show-unscheduled">
       <template slot-scope="props" slot="title">
         <div class="row">
             <div :class="{ 'col-sm-12': !loaders.patients, 'col-sm-11': loaders.patients }">
@@ -105,7 +105,7 @@
                 this.cache().get(this.patientUrl).then(patients => {
                     this.loaders.patients = false
                     this.patients = (patients || [])
-                    console.log('unscheduled-patients-get-patients', patients)
+                    //console.log('unscheduled-patients-get-patients', patients)
                 }).catch(err => {
                     this.loaders.patients = false
                     this.errors.patients = err.message
@@ -128,6 +128,11 @@
 </script>
 
 <style>
+
+    .modal-show-unscheduled .modal-container {
+        width: 600px;
+    }
+
     div.loader {
         position: absolute;
         right: -25px;

@@ -149,7 +149,7 @@
         </div>
         <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
         <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
-        <add-call-modal ref="addCallModal"></add-call-modal>
+        <add-call-v2-modal ref="addCallV2Modal"></add-call-v2-modal>
         <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
     </div>
 </template>
@@ -163,7 +163,7 @@
     import SelectEditable from './comps/select-editable'
     import TimeEditable from './comps/time-editable'
     import Modal from '../common/modal'
-    import AddCallModal from './comps/modals/add-call.modal'
+    import AddCallV2Modal from './comps/modals/add-call-v2.modal'
     import SelectNurseModal from './comps/modals/select-nurse.modal'
     import SelectTimesModel from './comps/modals/select-times.modal'
     import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
@@ -202,7 +202,7 @@
             'select-editable': SelectEditable,
             'time-editable': TimeEditable,
             'modal': Modal,
-            'add-call-modal': AddCallModal,
+            'add-call-v2-modal': AddCallV2Modal,
             'select-nurse-modal': SelectNurseModal,
             'select-times-modal': SelectTimesModel,
             'unscheduled-patients-modal': UnscheduledPatientsModal,
@@ -412,7 +412,7 @@
                 }
             },
             addCall() {
-                Event.$emit("modal-add-call:show")
+                Event.$emit("modal-add-call-v2:show")
             },
             showUnscheduledPatientsModal() {
                 Event.$emit('modal-unscheduled-patients:show')
@@ -431,7 +431,7 @@
                             practices: (nurse.practices || [])
                         }
                     })
-                    console.log('calls:nurses', pagination)
+                    //console.log('calls:nurses', pagination)
                     this.loaders.nurses = false
                     return this.nurses
                 }).catch(err => {
@@ -494,7 +494,7 @@
                     })
                 }
                 if (patient.id) {
-                    console.log('calls:patient', patient)
+                    //console.log('calls:patient', patient)
                     this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
                         call.Notes = ((pagination || {}).data || []).map(note => ({
                             created_at: note.created_at,
@@ -502,7 +502,7 @@
                             category: note.type,
                             message: note.body
                         }))
-                    })
+                    });
                 }
 
                 return ({
@@ -577,7 +577,7 @@
                         $vm.tokens.calls = c
                     })
                 }).then((result) => result).then(result => {
-                    console.log('calls:response', this.nextPageUrl())
+                    //console.log('calls:response', this.nextPageUrl())
                     result = result.data;
                     this.pagination = {
                         current_page: result.meta.current_page,
