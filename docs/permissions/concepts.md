@@ -10,11 +10,6 @@ The package we use for our User Permissions is:  https://github.com/michalisanto
 We have **Roles** and **Permissions**, both of which are currently used to determine which parts of the web application a `User` can see.
 There are currently 21 Roles in the system.
 
-- Users can have **one** Role per Practice. 
-- All Roles have the **same** Permissions for **all** Practices.
-- Roles have **many** permissions.
-
-
 ##### Important Roles
 - `admin` 
 - `care-center` (display_name => 'Care Coach')
@@ -25,6 +20,17 @@ There are currently 21 Roles in the system.
 - `administrator-view-only` 
 - `care-ambassador-view-only` 
 - `saas-admin-view-only`
+
+#### User - Role - Permission Relationship
+Users, Roles and Permissions share a Many to Many Polymorphic Relationship. The `permissibles` table also contains the pivot column: `is_active`.
+- Users can have **one** Role per Practice. 
+- All Roles have the **same** Permissions for **all** Practices.
+- Roles have **many** permissions.
+- Users may have permissions associated **directly** to them. 
+These are permissions that do not belong to the User's Roles, or permissions that do belong to the User's Roles but have been set to inactive (`is_active` = 0).
+
+
+
 
 #### Permissions:
 The current Permission system uses `Entities` and custom Permissions. 
@@ -52,7 +58,10 @@ There are also some limited cases of Roles and/or Permissions checks in some con
 #### Creating, Updating, and Deleting Permissions
 To **create/delete/update Roles/Permissions**, make changes to `RequiredRolesPermissionsSeeder` and `RequiredPermissionsTableSeeder`.
 
+Permissions directly related to Users must be added again.
+
 After making changes run `php artisan make:rpm`. This will create a new migration to run the seeder again when we deploy.
+
 
 
 ####  Tips
