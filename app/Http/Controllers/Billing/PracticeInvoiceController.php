@@ -122,6 +122,7 @@ class PracticeInvoiceController extends Controller
 
         $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
+
         return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
     }
 
@@ -248,15 +249,18 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
-            return $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth());
+        $summaries = PatientMonthlySummary::with('patient.patientInfo')->whereHas('patient', function ($q) use ($practice_id) {
+            $q->where('program_id', $practice_id);
+        })->where('month_year', $date->startOfMonth())->get();
 
-        $summaries->update([
-            'actor_id' => null,
-        ]);
+        foreach ($summaries as $summary){
 
-        return response()->json($summaries->get());
+            $summary->actor_id = null;
+            $summary->closed_ccm_status = null;
+            $summary->save();
+        }
+
+        return response()->json($summaries);
     }
 
     /** open patient-monthly-summaries in a practice */
@@ -270,16 +274,24 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
-            return $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth());
+        $summaries = PatientMonthlySummary::with('patient.patientInfo')->whereHas('patient', function ($q) use ($practice_id) {
+            $q->where('program_id', $practice_id);
+        })->where('month_year', $date->startOfMonth())->get();
 
-        $summaries->update([
-            'actor_id' => $user->id,
-            'needs_qa' => false,
-        ]);
 
-        return response()->json($summaries->get());
+        foreach ($summaries as $summary){
+            $summary->actor_id = $user->id;
+            $summary->needs_qa = false;
+            if ($summary->patient){
+                if ($summary->patient->patientInfo){
+                    $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+                }
+            }
+            $summary->save();
+        }
+
+
+        return response()->json($summaries);
     }
 
     public function getCounts(
