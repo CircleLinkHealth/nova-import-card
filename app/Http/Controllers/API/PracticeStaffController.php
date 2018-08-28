@@ -94,7 +94,6 @@ class PracticeStaffController extends Controller
                                                        ?? null;
 
 
-
         return [
             'id'                                  => $user->id,
             'practice_id'                         => $primaryPractice->id,
@@ -173,11 +172,10 @@ class PracticeStaffController extends Controller
         $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
         if ($formData['canApproveAllCareplans']) {
             $user->attachPermission($careplanApprove->id);
-        }else{
-            if ($user->hasPermission('care-plan-approve')){
-                $user->detachPermission($careplanApprove->id);
-            }
+        } elseif ($user->hasPermission('care-plan-approve')) {
+            $user->detachPermission($careplanApprove->id);
         }
+
 
         //Attach the locations
         $user->locations()->sync([]);
