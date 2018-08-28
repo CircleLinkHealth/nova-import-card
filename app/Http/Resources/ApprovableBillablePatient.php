@@ -44,6 +44,11 @@ class ApprovableBillablePatient extends Resource
             }
         }
 
+        $status = $this->closed_ccm_status;
+        if ($status == null){
+            $status = $this->patient->patientInfo->ccm_status;
+        }
+
         $problems['problem1']      = $this->billable_problem1;
         $problems['problem1_code'] = $this->billable_problem1_code;
         $problems['problem2']      = $this->billable_problem2;
@@ -66,7 +71,7 @@ class ApprovableBillablePatient extends Resource
             'ccm_time'               => $this->ccm_time,
             'problems'               => $this->allCcdProblems($this->patient),
             'no_of_successful_calls' => $this->no_of_successful_calls,
-            'status'                 => $this->patient->patientInfo->ccm_status,
+            'status'                 => $status,
             'approve'                => $this->approved,
             'reject'                 => $this->rejected,
             'report_id'              => $this->id,
