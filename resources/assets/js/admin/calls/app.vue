@@ -431,7 +431,7 @@
                             practices: (nurse.practices || [])
                         }
                     })
-                    console.log('calls:nurses', pagination)
+                    //console.log('calls:nurses', pagination)
                     this.loaders.nurses = false
                     return this.nurses
                 }).catch(err => {
@@ -494,7 +494,7 @@
                     })
                 }
                 if (patient.id) {
-                    console.log('calls:patient', patient)
+                    //console.log('calls:patient', patient)
                     this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
                         call.Notes = ((pagination || {}).data || []).map(note => ({
                             created_at: note.created_at,
@@ -502,7 +502,7 @@
                             category: note.type,
                             message: note.body
                         }))
-                    })
+                    });
                 }
 
                 return ({
@@ -577,7 +577,7 @@
                         $vm.tokens.calls = c
                     })
                 }).then((result) => result).then(result => {
-                    console.log('calls:response', this.nextPageUrl())
+                    //console.log('calls:response', this.nextPageUrl())
                     result = result.data;
                     this.pagination = {
                         current_page: result.meta.current_page,
