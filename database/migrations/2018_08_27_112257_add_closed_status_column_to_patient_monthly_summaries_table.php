@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddClosedStatusColumnToPatientMonthlySummariesTable extends Migration
 {
@@ -14,7 +14,9 @@ class AddClosedStatusColumnToPatientMonthlySummariesTable extends Migration
     public function up()
     {
         Schema::table('patient_monthly_summaries', function (Blueprint $table) {
-            $table->string('closed_ccm_status')->nullable();
+            $table->string('closed_ccm_status')
+                  ->after('patient_id')
+                  ->nullable();
         });
     }
 
