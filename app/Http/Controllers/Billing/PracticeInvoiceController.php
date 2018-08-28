@@ -249,16 +249,14 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::with('patient.patientInfo')->whereHas('patient', function ($q) use ($practice_id) {
-            $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth())->get();
+        $query = $this->getCurrentMonthSummariesQuery($practice_id, $date);
 
-        foreach ($summaries as $summary){
+        $query->update([
+            'actor_id'          => null,
+            'closed_ccm_status' => null,
+        ]);
 
-            $summary->actor_id = null;
-            $summary->closed_ccm_status = null;
-            $summary->save();
-        }
+        $summaries = $query->get();
 
         return response()->json($summaries);
     }
@@ -274,16 +272,14 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::with('patient.patientInfo')->whereHas('patient', function ($q) use ($practice_id) {
-            $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth())->get();
+        $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
+                          ->get();
 
-
-        foreach ($summaries as $summary){
+        foreach ($summaries as $summary) {
             $summary->actor_id = $user->id;
             $summary->needs_qa = false;
-            if ($summary->patient){
-                if ($summary->patient->patientInfo){
+            if ($summary->patient) {
+                if ($summary->patient->patientInfo) {
                     $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
                 }
             }
@@ -551,5 +547,20 @@ class PracticeInvoiceController extends Controller
         return response()->download(storage_path('/download/' . $name), $name, [
             'Content-Length: ' . filesize(storage_path('/download/' . $name)),
         ]);
+    }
+
+    /**
+     * @param $practice_id
+     * @param Carbon $date
+     *
+     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
+     */
+    private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
+    {
+        return PatientMonthlySummary::with('patient.patientInfo')
+                                    ->whereHas('patient', function ($q) use ($practice_id) {
+                                        $q->ofPractice($practice_id);
+                                    })
+                                    ->where('month_year', $date->startOfMonth());
     }
 }
