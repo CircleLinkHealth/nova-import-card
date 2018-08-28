@@ -192,8 +192,12 @@ class CallController extends Controller
         $data = $request->only(
             'callId',
             'columnName',
-            'value'
+            'value',
+            'familyOverride'
         );
+
+        $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
+        $isFamilyOverride          = ! empty($data['familyOverride']);
 
         // VALIDATION
         if (empty($data['callId'])) {
@@ -211,6 +215,46 @@ class CallController extends Controller
 
         $col   = $data['columnName'];
         $value = $data['value'];
+
+        if (in_array($col, $columnsToCheckForOverride)
+            && ! $isFamilyOverride
+            && $call->inboundUser
+            && $call->inboundUser->patientInfo
+            && $call->inboundUser->patientInfo->hasFamily()) {
+
+            $mustConfirm = false;
+
+            //now find if a another call is scheduled for any of the members of the family
+            $familyMembers = $call->inboundUser->patientInfo->getFamilyMembers($call->inboundUser->patientInfo);
+            if ( ! empty($familyMembers)) {
+                foreach ($familyMembers as $familyMember) {
+                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember);
+                    if ( ! $callForMember) {
+                        continue;
+                    }
+
+                    if ($callForMember->is_manual) {
+                        continue;
+                    }
+
+                    if ($callForMember->$col != $value) {
+                        $mustConfirm = true;
+                    }
+
+                }
+            }
+
+            if ($mustConfirm) {
+                return response(
+                    'patient belongs to family and the family has a call at different time',
+                    418);
+            }
+        }
+
+
+        if ($isFamilyOverride) {
+            $call->is_manual = true;
+        }
 
         // for null outbound_cpm_id
         if ($col == 'outbound_cpm_id' && (empty($value) || strtolower($value) == 'unassigned')) {

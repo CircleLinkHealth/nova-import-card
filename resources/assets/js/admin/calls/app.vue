@@ -172,15 +172,7 @@
     import Loader from '../../components/loader'
     import VueCache from '../../util/vue-cache'
     import {today} from '../../util/today'
-    import {
-        onNextCallUpdate,
-        onNurseUpdate,
-        onCallTimeStartUpdate,
-        onCallTimeEndUpdate,
-        onGeneralCommentUpdate,
-        onAttemptNoteUpdate,
-        updateMultiValues
-    } from './utils/call-update.fn'
+    import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
 
     import {library} from '@fortawesome/fontawesome-svg-core'
@@ -192,6 +184,9 @@
 
     const editCallDateTimeMessageForCall = "Warning: The selected call has been manually set by a Care Coach. Rescheduling may frustrate the patient expecting the call. Are you sure you want to reschedule this call?\nNote: Be sure to check with $CARE_COACH$ if you must reschedule this call.";
     const editCallDateTimeMessageForCalls = "Warning: The selected calls have at least one of them manually set by a Care Coach. Rescheduling may frustrate the patients expecting the calls. Are you sure you want to reschedule these calls?\nNote: Be sure to check with the Care Coaches if you must reschedule these calls.";
+
+    const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
+    const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call.";
 
     export default {
         name: 'CallMgmtApp',
@@ -459,6 +454,16 @@
                 return row && row.isCcmEligible;
             },
 
+            showOverrideConfirmationIfNeeded: (err, successCallback) => {
+                if (err && err.response
+                    && err.response.status
+                    && err.response.status === CALL_MUST_OVERRIDE_STATUS_CODE
+                    && confirm(CALL_MUST_OVERRIDE_WARNING)) {
+
+                    successCallback();
+                }
+            },
+
             setupCall(call) {
                 const $vm = this
                 if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
@@ -557,13 +562,69 @@
                         callTimeStart: false,
                         callTimeEnd: false
                     },
-                    onNextCallUpdate,
-                    onNurseUpdate,
-                    onCallTimeStartUpdate,
-                    onCallTimeEndUpdate,
-                    onGeneralCommentUpdate,
-                    onAttemptNoteUpdate,
-                    updateMultiValues
+                    onNextCallUpdate: function (date) {
+                        callUpdateFunctions.onNextCallUpdate(this, date)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true)
+                                )
+                            );
+                    },
+                    onNurseUpdate: function (nurseId) {
+                        callUpdateFunctions.onNurseUpdate(this, nurseId)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true)
+                                )
+                            );
+                    },
+                    onCallTimeStartUpdate: function (time) {
+                        callUpdateFunctions.onCallTimeStartUpdate(this, time)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true)
+                                )
+                            );
+                    },
+                    onCallTimeEndUpdate: function (time) {
+                        callUpdateFunctions.onCallTimeEndUpdate(this, time)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true)
+                                )
+                            );
+                    },
+                    onGeneralCommentUpdate: (comment) => {
+                        callUpdateFunctions.onGeneralCommentUpdate(this, comment)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true)
+                                )
+                            );
+                    },
+                    onAttemptNoteUpdate: function (note) {
+                        callUpdateFunctions.onAttemptNoteUpdate(this, note)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true)
+                                )
+                            );
+                    },
+                    updateMultiValues: function (obj) {
+                        callUpdateFunctions.updateMultiValues(this, obj)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.updateMultiValues(this, obj, true)
+                                )
+                            );
+                    }
                 });
             },
             next() {
