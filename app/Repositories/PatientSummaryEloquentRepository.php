@@ -15,10 +15,12 @@ use Illuminate\Support\Collection;
 class PatientSummaryEloquentRepository
 {
     public $patientRepo;
+    public $callRepo;
 
-    public function __construct(PatientWriteRepository $patientRepo)
+    public function __construct(PatientWriteRepository $patientRepo, CallRepository $callRepo)
     {
         $this->patientRepo = $patientRepo;
+        $this->callRepo    = $callRepo;
     }
 
     /**
@@ -520,6 +522,23 @@ class PatientSummaryEloquentRepository
                 return false;
             });
 
+
+        return $summary;
+    }
+
+    /**
+     * Save the most updated sum of calls and sum of successful calls to the given PatientMonthlySummary
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return PatientMonthlySummary
+     */
+    public function syncCallCounts(PatientMonthlySummary $summary)
+    {
+        $summary->no_of_calls            = $this->callRepo->numberOfCalls($summary->patient_id, $summary->month_year);
+        $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($summary->patient_id,
+            $summary->month_year);
+        $summary->save();
 
         return $summary;
     }
