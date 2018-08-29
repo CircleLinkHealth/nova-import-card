@@ -33,7 +33,7 @@ class CallController extends Controller
     {
         $input = $request->all();
         $call  = $this->createCall($input);
-        if (isset($call['errors'])) {
+        if (!isset($call['errors'])) {
             return response()
                 ->json($call, 201);
         } else {
