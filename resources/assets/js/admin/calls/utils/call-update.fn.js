@@ -1,7 +1,7 @@
 import {rootUrl} from '../../../app.config'
 import {Event} from 'vue-tables-2'
 
-export const onNextCallUpdate = function (call, date, isFamilyOverride) {
+export const onNextCallUpdate = function (call, date, isFamilyOverride, oldValue) {
     /** update the next call column */
     call.loaders.nextCall = true
     return axios.post(rootUrl('callupdate'), {
@@ -15,13 +15,14 @@ export const onNextCallUpdate = function (call, date, isFamilyOverride) {
         call.loaders.nextCall = false
         return response.data
     }).catch(err => {
-        console.error('calls:row:update', err)
+        console.error('calls:row:update', err);
+        call['Next Call'] = oldValue;
         call.loaders.nextCall = false;
         throw err;
-    })
-}
+    });
+};
 
-export const onNurseUpdate = function (call, nurseId, isFamilyOverride) {
+export const onNurseUpdate = function (call, nurseId, isFamilyOverride, oldValue) {
     /** update the next call column */
     call.loaders.nurse = true
     return axios.post(rootUrl('callupdate'), {
@@ -39,12 +40,15 @@ export const onNurseUpdate = function (call, nurseId, isFamilyOverride) {
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        const nurse = (call.nurses().find(nurse => nurse.value == oldValue) || {})
+        call.NurseId = nurse.value
+        call.Nurse = (nurse.text || 'unassigned')
         call.loaders.nurse = false;
         throw err;
-    })
-}
+    });
+};
 
-export const onCallTimeStartUpdate = function (call, time, isFamilyOverride) {
+export const onCallTimeStartUpdate = function (call, time, isFamilyOverride, oldValue) {
     /** update the call_time_start column */
     call.loaders.callTimeStart = true
     return axios.post(rootUrl('callupdate'), {
@@ -53,18 +57,19 @@ export const onCallTimeStartUpdate = function (call, time, isFamilyOverride) {
         value: time,
         isFamilyOverride
     }).then(response => {
-        call['Call Time Start'] = time
-        call.loaders.callTimeStart = false
-        if (response) console.log('calls:row:update', call)
-        return response.data
+        call['Call Time Start'] = time;
+        call.loaders.callTimeStart = false;
+        if (response) console.log('calls:row:update', call);
+        return response.data;
     }).catch(err => {
         console.error('calls:row:update', err);
+        call['Call Time Start'] = oldValue;
         call.loaders.callTimeStart = false;
         throw err;
-    })
-}
+    });
+};
 
-export const onCallTimeEndUpdate = function (call, time, isFamilyOverride) {
+export const onCallTimeEndUpdate = function (call, time, isFamilyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.callEndStart = true
     return axios.post(rootUrl('callupdate'), {
@@ -73,18 +78,19 @@ export const onCallTimeEndUpdate = function (call, time, isFamilyOverride) {
         value: time,
         isFamilyOverride
     }).then(response => {
-        call['Call Time End'] = time
-        call.loaders.callEndStart = false
-        if (response) console.log('calls:row:update', call)
+        call['Call Time End'] = time;
+        call.loaders.callEndStart = false;
+        if (response) console.log('calls:row:update', call);
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        call['Call Time End'] = oldValue;
         call.loaders.callEndStart = false;
         throw err;
-    })
-}
+    });
+};
 
-export const onGeneralCommentUpdate = function (call, comment, isFamilyOverride) {
+export const onGeneralCommentUpdate = function (call, comment, isFamilyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.generalComment = true
     return axios.post(rootUrl('callupdate'), {
@@ -93,18 +99,19 @@ export const onGeneralCommentUpdate = function (call, comment, isFamilyOverride)
         value: comment,
         isFamilyOverride
     }).then(response => {
-        call.Comment = comment
-        call.loaders.generalComment = false
-        if (response) console.log('calls:row:update', call)
+        call.Comment = comment;
+        call.loaders.generalComment = false;
+        if (response) console.log('calls:row:update', call);
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        call.Comment = oldValue;
         call.loaders.generalComment = false;
         throw err;
-    })
-}
+    });
+};
 
-export const onAttemptNoteUpdate = function (call, note, isFamilyOverride) {
+export const onAttemptNoteUpdate = function (call, note, isFamilyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.attemptNote = true
     return axios.post(rootUrl('callupdate'), {
@@ -113,24 +120,25 @@ export const onAttemptNoteUpdate = function (call, note, isFamilyOverride) {
         value: note,
         isFamilyOverride
     }).then(response => {
-        call.AttemptNote = note
-        call.loaders.attemptNote = false
-        if (response) console.log('calls:row:update', call)
-        return response.data
+        call.AttemptNote = note;
+        call.loaders.attemptNote = false;
+        if (response) console.log('calls:row:update', call);
+        return response.data;
     }).catch(err => {
         console.error('calls:row:update', err);
+        call.AttemptNote = oldValue;
         call.loaders.attemptNote = false;
         throw err;
-    })
-}
+    });
+};
 
-export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, isFamilyOverride) {
+export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, isFamilyOverride, oldValue) {
     if (nextCall, callTimeStart, callTimeEnd) {
         return Promise.all([
             onNextCallUpdate.call(call, nextCall, isFamilyOverride)
             // onCallTimeStartUpdate.call(this, callTimeStart),
             // onCallTimeEndUpdate.call(this, callTimeEnd)
-        ])
+        ]);
     }
-    else Promise.resolve({})
-}
+    else Promise.resolve({});
+};

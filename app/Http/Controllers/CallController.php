@@ -70,6 +70,7 @@ class CallController extends Controller
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
             'is_manual'       => 'required|boolean',
+            'family_override' => '',
         ]);
 
         if ($validation->fails()) {
@@ -101,6 +102,17 @@ class CallController extends Controller
             }
         }
 
+        $isFamilyOverride = ! empty($input['family_override']);
+        if ( ! $isFamilyOverride
+             && $this->hasAlreadyFamilyCallAtDifferentTime($patient->patientInfo, $input['scheduled_date'],
+                $input['window_start'], $input['window_end'])) {
+
+            return [
+                'errors' => ['patient belongs to family and the family has a call at different time'],
+                'code'   => 418,
+            ];
+        }
+
         $call                 = new Call;
         $call->inbound_cpm_id = $input['inbound_cpm_id'];
         if (empty($input['outbound_cpm_id'])) {
@@ -117,7 +129,7 @@ class CallController extends Controller
         $call->service         = 'phone';
         $call->status          = 'scheduled';
         $call->scheduler       = auth()->user()->id;
-        $call->is_manual       = boolval($input['is_manual']);
+        $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
         $call->save();
         return CallResource::make($call);
     }
@@ -188,7 +200,6 @@ class CallController extends Controller
 
     public function update(Request $request)
     {
-
         $data = $request->only(
             'callId',
             'columnName',
@@ -219,29 +230,22 @@ class CallController extends Controller
         if (in_array($col, $columnsToCheckForOverride)
             && ! $isFamilyOverride
             && $call->inboundUser
-            && $call->inboundUser->patientInfo
-            && $call->inboundUser->patientInfo->hasFamily()) {
+            && $call->inboundUser->patientInfo) {
 
             $mustConfirm = false;
-
-            //now find if a another call is scheduled for any of the members of the family
-            $familyMembers = $call->inboundUser->patientInfo->getFamilyMembers($call->inboundUser->patientInfo);
-            if ( ! empty($familyMembers)) {
-                foreach ($familyMembers as $familyMember) {
-                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember);
-                    if ( ! $callForMember) {
-                        continue;
-                    }
-
-                    if ($callForMember->is_manual) {
-                        continue;
-                    }
-
-                    if ($callForMember->$col != $value) {
-                        $mustConfirm = true;
-                    }
-
-                }
+            switch ($col) {
+                case 'scheduled_date':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo, $value,
+                        $call->window_start, $call->window_end);
+                    break;
+                case 'window_start':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
+                        $call->scheduled_date, $value, $call->window_end);
+                    break;
+                case 'window_end':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
+                        $call->scheduled_date, $call->window_start, $value);
+                    break;
             }
 
             if ($mustConfirm) {
@@ -287,6 +291,42 @@ class CallController extends Controller
             "successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
             201
         );
+    }
+
+    private function hasAlreadyFamilyCallAtDifferentTime(Patient $patient, $scheduledDate, $windowStart, $windowEnd)
+    {
+        $mustConfirm = false;
+
+        if ($patient->hasFamily()) {
+
+            //now find if a another call is scheduled for any of the members of the family
+            $familyMembers = $patient->getFamilyMembers($patient);
+            if ( ! empty($familyMembers)) {
+                foreach ($familyMembers as $familyMember) {
+                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember);
+                    if ( ! $callForMember) {
+                        continue;
+                    }
+
+                    //ignore manual calls
+                    if ($callForMember->is_manual) {
+                        continue;
+                    }
+
+                    if ($callForMember->scheduled_date != $scheduledDate
+                        || $callForMember->window_start != $windowStart
+                        || $callForMember->window_end != $windowEnd) {
+
+                        $mustConfirm = true;
+                        //no need to check other calls, so we break
+                        break;
+                    }
+
+                }
+            }
+        }
+
+        return $mustConfirm;
     }
 
     public function import(Request $request)

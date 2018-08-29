@@ -19,6 +19,13 @@
                     <table class="add-calls">
                         <thead>
                         <tr>
+                            <th class="family-override">
+                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="Tick to confirm family call override">
+                                    <i class='glyphicon glyphicon-info-sign'></i>
+                                </a>
+                            </th>
                             <th class="practices">
                                 Practice
                                 <loader v-show="loaders.practices"></loader>
@@ -62,6 +69,13 @@
                         </thead>
                         <tbody>
                         <tr v-for="(action, index) in actions">
+                            <td>
+                                <div v-show="action.showFamilyOverride">
+                                    <input type="checkbox" id="family_override"
+                                           name="family_override" v-model="action.call.familyOverride"
+                                           :disabled="action.disabled"/>
+                                </div>
+                            </td>
                             <td>
                                 <v-select :disabled="action.disabled"
                                           max-height="200px" class="form-control" v-model="action.selectedPracticeData"
@@ -125,7 +139,6 @@
                                 <span class="btn btn-xs" @click="removeAction(index)" v-show="actions.length > 1">
                                     <i class="glyphicon glyphicon-remove"></i>
                                 </span>
-
                             </td>
                         </tr>
                         </tbody>
@@ -176,6 +189,9 @@
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};
 
+    const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
+    const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call by checking the box.";
+
     const defaultFormData = {
         practiceId: null,
         patientId: null,
@@ -184,7 +200,8 @@
         startTime: '09:00',
         endTime: '17:00',
         text: null,
-        isManual: 0
+        isManual: 0,
+        familyOverride: 0
     };
 
     //need in cancelHandler.
@@ -233,6 +250,7 @@
 
                 actions: [{
                     disabled: false,
+                    showFamilyOverride: false,
                     call: Object.assign({}, defaultFormData),
                     filters: {
                         showUnscheduledPatients: false
@@ -255,6 +273,9 @@
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
+            },
+            hasToConfirmFamilyOverrides() {
+                return this.actions.filter(x => x.showFamilyOverride).length > 0;
             }
         },
         methods: {
@@ -292,6 +313,7 @@
             addNewAction() {
                 this.actions.push({
                     disabled: false,
+                    showFamilyOverride: false,
                     call: Object.assign({}, defaultFormData),
                     filters: {
                         showUnscheduledPatients: false
@@ -514,7 +536,8 @@
                             window_start: call.startTime,
                             window_end: call.endTime,
                             attempt_note: call.text,
-                            is_manual: call.isManual
+                            is_manual: call.isManual,
+                            family_override: call.familyOverride
                         };
                     });
 
@@ -559,8 +582,15 @@
                                         //enable this action so it can be edited
                                         this.actions[index].disabled = false;
 
+                                        const familyOverrideError = call.code === CALL_MUST_OVERRIDE_STATUS_CODE;
+                                        this.actions[index].showFamilyOverride = familyOverrideError;
+
                                         let msg = `Call[${index + 1}]: `;
-                                        if (Array.isArray(call.errors)) {
+
+                                        if (familyOverrideError) {
+                                            msg += CALL_MUST_OVERRIDE_WARNING;
+                                        }
+                                        else if (Array.isArray(call.errors)) {
                                             msg += call.errors.join(', ');
                                         }
                                         else {
@@ -722,11 +752,11 @@
     }
 
     .modal-add-call table.add-calls th.patients {
-        width: 18%;
+        width: 17%;
     }
 
     .modal-add-call table.add-calls th.nurses {
-        width: 18%;
+        width: 17%;
     }
 
     .modal-add-call table.add-calls th.date {
@@ -747,6 +777,10 @@
 
     .modal-add-call table.add-calls th.remove {
         width: 3%;
+    }
+
+    .modal-add-call table.add-calls th.family-override {
+        width: 2%;
     }
 
     .modal-add-call .loader {
@@ -826,7 +860,7 @@
     }
 
     a.my-tool-tip {
-        float:right;
+        float: right;
         margin-right: 4px;
     }
 

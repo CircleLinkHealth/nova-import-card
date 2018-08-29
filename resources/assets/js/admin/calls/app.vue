@@ -562,66 +562,66 @@
                         callTimeStart: false,
                         callTimeEnd: false
                     },
-                    onNextCallUpdate: function (date) {
-                        callUpdateFunctions.onNextCallUpdate(this, date)
+                    onNextCallUpdate: function (date, old) {
+                        callUpdateFunctions.onNextCallUpdate(this, date, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true)
+                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true, old)
                                 )
                             );
                     },
-                    onNurseUpdate: function (nurseId) {
-                        callUpdateFunctions.onNurseUpdate(this, nurseId)
+                    onNurseUpdate: function (nurseId, old) {
+                        callUpdateFunctions.onNurseUpdate(this, nurseId, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true)
+                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old)
                                 )
                             );
                     },
-                    onCallTimeStartUpdate: function (time) {
-                        callUpdateFunctions.onCallTimeStartUpdate(this, time)
+                    onCallTimeStartUpdate: function (time, old) {
+                        callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true)
+                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true, old)
                                 )
                             );
                     },
-                    onCallTimeEndUpdate: function (time) {
-                        callUpdateFunctions.onCallTimeEndUpdate(this, time)
+                    onCallTimeEndUpdate: function (time, old) {
+                        callUpdateFunctions.onCallTimeEndUpdate(this, time, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true)
+                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old)
                                 )
                             );
                     },
-                    onGeneralCommentUpdate: (comment) => {
-                        callUpdateFunctions.onGeneralCommentUpdate(this, comment)
+                    onGeneralCommentUpdate: (comment, old) => {
+                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true)
+                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old)
                                 )
                             );
                     },
-                    onAttemptNoteUpdate: function (note) {
-                        callUpdateFunctions.onAttemptNoteUpdate(this, note)
+                    onAttemptNoteUpdate: function (note, old) {
+                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true)
+                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old)
                                 )
                             );
                     },
-                    updateMultiValues: function (obj) {
-                        callUpdateFunctions.updateMultiValues(this, obj)
+                    updateMultiValues: function (obj, old) {
+                        callUpdateFunctions.updateMultiValues(this, obj, false, old)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.updateMultiValues(this, obj, true)
+                                    () => callUpdateFunctions.updateMultiValues(this, obj, true, old)
                                 )
                             );
                     }
