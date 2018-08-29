@@ -113,8 +113,37 @@ class CallController extends Controller
             ];
         }
 
+        $call = $this->storeNewCall($patient, $input);
+
+        if ($patient->patientInfo->family_id != null) {
+            $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
+            if ( ! empty($familyMembers)) {
+                foreach ($familyMembers as $familyMember) {
+                    $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
+                    //be extra safe here. if we have a call just skip this patient
+                    if ($familyMemberCall) {
+                        continue;
+                    }
+                    $this->storeNewCall($familyMember->user, $input);
+                }
+            }
+        }
+
+        return CallResource::make($call);
+    }
+
+    /**
+     * @param User $user
+     * @param $input
+     *
+     * @return Call
+     */
+    private function storeNewCall(User $user, $input)
+    {
+        $isFamilyOverride = ! empty($input['family_override']);
+
         $call                 = new Call;
-        $call->inbound_cpm_id = $input['inbound_cpm_id'];
+        $call->inbound_cpm_id = $user->id;
         if (empty($input['outbound_cpm_id'])) {
             $call->outbound_cpm_id = null;
         } else {
@@ -131,7 +160,7 @@ class CallController extends Controller
         $call->scheduler       = auth()->user()->id;
         $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
         $call->save();
-        return CallResource::make($call);
+        return $call;
     }
 
     /**
@@ -297,19 +326,14 @@ class CallController extends Controller
     {
         $mustConfirm = false;
 
-        if ($patient->hasFamily()) {
+        if ($patient->family_id != null) {
 
             //now find if a another call is scheduled for any of the members of the family
             $familyMembers = $patient->getFamilyMembers($patient);
             if ( ! empty($familyMembers)) {
                 foreach ($familyMembers as $familyMember) {
-                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember);
+                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
                     if ( ! $callForMember) {
-                        continue;
-                    }
-
-                    //ignore manual calls
-                    if ($callForMember->is_manual) {
                         continue;
                     }
 
