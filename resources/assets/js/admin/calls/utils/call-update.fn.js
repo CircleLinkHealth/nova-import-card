@@ -1,14 +1,14 @@
 import {rootUrl} from '../../../app.config'
 import {Event} from 'vue-tables-2'
 
-export const onNextCallUpdate = function (call, date, isFamilyOverride, oldValue) {
+export const onNextCallUpdate = function (call, date, familyOverride, oldValue) {
     /** update the next call column */
     call.loaders.nextCall = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'scheduled_date',
         value: date,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         console.log('calls:row:update', response.data)
         call['Next Call'] = date
@@ -22,14 +22,14 @@ export const onNextCallUpdate = function (call, date, isFamilyOverride, oldValue
     });
 };
 
-export const onNurseUpdate = function (call, nurseId, isFamilyOverride, oldValue) {
+export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue) {
     /** update the next call column */
     call.loaders.nurse = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'outbound_cpm_id',
         value: nurseId,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         const nurse = (call.nurses().find(nurse => nurse.value == nurseId) || {})
         call.NurseId = nurse.value
@@ -48,14 +48,14 @@ export const onNurseUpdate = function (call, nurseId, isFamilyOverride, oldValue
     });
 };
 
-export const onCallTimeStartUpdate = function (call, time, isFamilyOverride, oldValue) {
+export const onCallTimeStartUpdate = function (call, time, familyOverride, oldValue) {
     /** update the call_time_start column */
     call.loaders.callTimeStart = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'window_start',
         value: time,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         call['Call Time Start'] = time;
         call.loaders.callTimeStart = false;
@@ -69,14 +69,14 @@ export const onCallTimeStartUpdate = function (call, time, isFamilyOverride, old
     });
 };
 
-export const onCallTimeEndUpdate = function (call, time, isFamilyOverride, oldValue) {
+export const onCallTimeEndUpdate = function (call, time, familyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.callEndStart = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'window_end',
         value: time,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         call['Call Time End'] = time;
         call.loaders.callEndStart = false;
@@ -90,14 +90,14 @@ export const onCallTimeEndUpdate = function (call, time, isFamilyOverride, oldVa
     });
 };
 
-export const onGeneralCommentUpdate = function (call, comment, isFamilyOverride, oldValue) {
+export const onGeneralCommentUpdate = function (call, comment, familyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.generalComment = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'general_comment',
         value: comment,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         call.Comment = comment;
         call.loaders.generalComment = false;
@@ -111,14 +111,14 @@ export const onGeneralCommentUpdate = function (call, comment, isFamilyOverride,
     });
 };
 
-export const onAttemptNoteUpdate = function (call, note, isFamilyOverride, oldValue) {
+export const onAttemptNoteUpdate = function (call, note, familyOverride, oldValue) {
     /** update the call_time_end column */
     call.loaders.attemptNote = true
     return axios.post(rootUrl('callupdate'), {
         callId: call.id,
         columnName: 'attempt_note',
         value: note,
-        isFamilyOverride
+        familyOverride
     }).then(response => {
         call.AttemptNote = note;
         call.loaders.attemptNote = false;
@@ -132,10 +132,10 @@ export const onAttemptNoteUpdate = function (call, note, isFamilyOverride, oldVa
     });
 };
 
-export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, isFamilyOverride, oldValue) {
+export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, familyOverride, oldValue) {
     if (nextCall, callTimeStart, callTimeEnd) {
         return Promise.all([
-            onNextCallUpdate.call(call, nextCall, isFamilyOverride)
+            onNextCallUpdate.call(call, nextCall, familyOverride, oldValue)
             // onCallTimeStartUpdate.call(this, callTimeStart),
             // onCallTimeEndUpdate.call(this, callTimeEnd)
         ]);

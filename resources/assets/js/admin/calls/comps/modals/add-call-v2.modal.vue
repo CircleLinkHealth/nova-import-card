@@ -509,6 +509,8 @@
             submitForm(e) {
                 e.preventDefault();
 
+                Event.$emit('notifications-add-call-v2-modal:dismissAll');
+
                 const patientIds = [];
                 const patients = [];
                 const formData = this.actions
@@ -631,7 +633,11 @@
                         }
                     }).catch(err => {
 
-                        //should we re-enable the actions?
+                        //we assume this is a generic error
+                        //eg. error 500, 504
+                        this.actions.forEach(x => {
+                            x.disabled = false;
+                        });
 
                         this.errors.submit = err.message
                         this.loaders.submit = false
