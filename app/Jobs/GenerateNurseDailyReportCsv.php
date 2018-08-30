@@ -45,7 +45,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                          ->first();
 
             if (! $nurse){
-                \Log::error("User not found: $fullName");
+                \Log::error("User not found: {$nurseReport['name']}");
                 return;
             }
 
