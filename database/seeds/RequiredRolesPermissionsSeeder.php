@@ -9,16 +9,13 @@ class RequiredRolesPermissionsSeeder extends Seeder
     /**
      * Run the database seeds.
      *
+     * Seeds only default permissions for roles
+     *
      * @return void
      */
     public function run()
     {
         $this->call(RequiredPermissionsTableSeeder::class);
-
-        $mdally = Role::where('name', 'mdally')->first();
-        if ($mdally){
-            $mdally->delete();
-        }
 
         foreach ($this->roles() as $role) {
             $permissionsArr = $role['permissions'];

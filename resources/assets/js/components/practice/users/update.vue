@@ -63,7 +63,14 @@
                                v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
+                    <div class="input-field col s6"></div>
+                    <div class="input-field col s6">
+                        <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
+                               v-model="formData.canApproveAllCareplans" :checked="formData.canApproveAllCareplans"/>
+                        <label for="canApproveAllCareplans">Grant Rights to approve all CarePlans</label>
+                    </div>
                 </div>
+
 
                 <div class="row">
                     <div class="input-field col s3">
@@ -271,6 +278,7 @@
                     'phone_type': 1,
                     'grantAdminRights': '',
                     'sendBillingReports': '',
+                    'canApproveAllCareplans': '',
                     'role': {},
                     'role_name': 'med_assistant',
                     'locations': [],
