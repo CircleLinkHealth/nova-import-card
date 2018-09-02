@@ -14,8 +14,15 @@
     ?>
 
     @push('styles')
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+              integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+              crossorigin="anonymous">
         <style>
+
+            .modal-body {
+                font-size: large;
+            }
+
             .edit_button {
                 -webkit-appearance: none;
                 outline: none;
@@ -34,6 +41,18 @@
                 padding-left: 6px;
                 border: 1px solid #ccc;
                 border-radius: 4px;
+            }
+
+            .btn-grey {
+                color: #fff;
+                background-color: #868686;
+                border-color: #5d5d5d;
+            }
+
+            .btn-grey:hover, .btn-grey:active, .btn-grey:focus {
+                color: #fff;
+                background-color: #5b5b5b;
+                border-color: #353535;
             }
 
         </style>
@@ -343,23 +362,25 @@
     </form>
 
     <!-- Modal - CPM-182 -->
-    <div class="modal fade" id="confirm-note-create" tabindex="-1" role="dialog" aria-labelledby="confirm-note-create-label" aria-hidden="true">
+    <div class="modal fade" id="confirm-note-create" tabindex="-1" role="dialog"
+         aria-labelledby="confirm-note-create-label" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="confirm-note-create-label">Confirm Note Creation</h5>
+                    <h3 class="modal-title" id="confirm-note-create-label">Successful Call?</h3>
                 </div>
                 <div class="modal-body">
                     <p>
-                        We noticed you spent some time on this note, did you forget to click "Patient Phone Session" or "Successful Clinical Call"?
+                        We noticed you spent some time on this note, did you forget to click "Patient Phone Session" or
+                        "Successful Clinical Call"?
                         <i class="far fa-smile"></i>
                     </p>
 
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Yes</button>
-                    <button id="confirm-note-submit" type="button" class="btn btn-primary">No</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+                    <button id="confirm-note-submit" type="button" class="btn btn-grey">No</button>
                 </div>
             </div>
         </div>
@@ -456,7 +477,7 @@
                         //radio buttons
                         callHasStatus = form['call_status'] && form['call_status'].value && form['call_status'].value.length;
                     }
-                    else  {
+                    else {
                         //checkbox
                         callHasStatus = form['welcome_call'].checked || form['other_call'].checked;
                     }
