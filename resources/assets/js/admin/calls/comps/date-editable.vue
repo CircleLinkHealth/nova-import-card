@@ -22,6 +22,15 @@
      * is-edit: A boolean indicating whether or not the component is in EDIT mode
      * class-name: A string containing class names to pass to the component DIV
      * on-change: To contain a reference to a function that the date value will be passed to when changed
+     *
+     * EDIT: pangratios
+     * I added a prevValue property in data.
+     * I could not make the component update from outside.
+     * eg. Passing as v-model="call['Next Call']" and then
+     *     updating call["Next Call"] would not update this component.
+     * So, I created a revertCallback for my needs.
+     * Basically, if there is an error after changing the value,
+     * I needed a way to revert the data shown from this component.
      */
 
     import moment from 'moment';
@@ -43,6 +52,7 @@
         ],
         data() {
             return {
+                prevValue: moment(this.value, this.format).format(INPUT_DATE_FORMAT),
                 date: moment(this.value, this.format).format(INPUT_DATE_FORMAT),
                 isEditMode: this.isEdit
             }
@@ -59,6 +69,11 @@
             toggleEdit(e) {
                 e.preventDefault();
 
+                //when switching to edit mode, we want to store the original value
+                if (!this.isEditMode) {
+                    this.prevValue = this.text;
+                }
+
                 if (!this.isEditMode && this.showConfirm && !confirm(this.confirmMessage || defaultConfirmMessage)) {
                     return;
                 }
@@ -66,9 +81,13 @@
                 this.isEditMode = !this.isEditMode;
                 if (!this.isEditMode && typeof(this.onChange) === 'function') {
                     /**this.onChange is a function to be passed in as a prop */
-                    this.onChange(this.text, this.moment)
+                    this.onChange(this.text, this.moment, this.prevValue, this.revertCallback)
                 }
+            },
+            revertCallback() {
+                this.date = this.prevValue;
             }
+
         },
         watch: {
             value(newVal, oldVal) {

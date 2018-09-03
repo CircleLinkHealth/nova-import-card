@@ -95,13 +95,13 @@
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Nurse" slot-scope="props">
-                    <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse"
+                    <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
                                      :values="props.row.nurses()" :class-name="'blue'"
                                      :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                 </template>
                 <template slot="Next Call" slot-scope="props">
                     <div>
-                        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"
+                        <date-editable v-model="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
@@ -562,66 +562,66 @@
                         callTimeStart: false,
                         callTimeEnd: false
                     },
-                    onNextCallUpdate: function (date, old) {
-                        callUpdateFunctions.onNextCallUpdate(this, date, false, old)
+                    onNextCallUpdate: function (date, moment, old, revertCallback) {
+                        callUpdateFunctions.onNextCallUpdate(this, date, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true, old)
+                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true, old, revertCallback)
                                 )
                             );
                     },
-                    onNurseUpdate: function (nurseId, old) {
-                        callUpdateFunctions.onNurseUpdate(this, nurseId, false, old)
+                    onNurseUpdate: function (nurseId, old, revertCallback) {
+                        callUpdateFunctions.onNurseUpdate(this, nurseId, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old)
+                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old, revertCallback)
                                 )
                             );
                     },
-                    onCallTimeStartUpdate: function (time, old) {
-                        callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old)
+                    onCallTimeStartUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true, old)
+                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true, old, revertCallback)
                                 )
                             );
                     },
-                    onCallTimeEndUpdate: function (time, old) {
-                        callUpdateFunctions.onCallTimeEndUpdate(this, time, false, old)
+                    onCallTimeEndUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeEndUpdate(this, time, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old)
+                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old, revertCallback)
                                 )
                             );
                     },
-                    onGeneralCommentUpdate: (comment, old) => {
-                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old)
+                    onGeneralCommentUpdate: (comment, old, revertCallback) => {
+                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old)
+                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old, revertCallback)
                                 )
                             );
                     },
-                    onAttemptNoteUpdate: function (note, old) {
-                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old)
+                    onAttemptNoteUpdate: function (note, old, revertCallback) {
+                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old)
+                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old, revertCallback)
                                 )
                             );
                     },
-                    updateMultiValues: function (obj, old) {
-                        callUpdateFunctions.updateMultiValues(this, obj, false, old)
+                    updateMultiValues: function (obj, old, revertCallback) {
+                        callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
-                                    () => callUpdateFunctions.updateMultiValues(this, obj, true, old)
+                                    () => callUpdateFunctions.updateMultiValues(this, obj, true, old, revertCallback)
                                 )
                             );
                     }

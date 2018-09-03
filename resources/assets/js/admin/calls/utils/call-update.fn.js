@@ -1,7 +1,7 @@
 import {rootUrl} from '../../../app.config'
 import {Event} from 'vue-tables-2'
 
-export const onNextCallUpdate = function (call, date, familyOverride, oldValue) {
+export const onNextCallUpdate = function (call, date, familyOverride, oldValue, revertCallback) {
     /** update the next call column */
     call.loaders.nextCall = true
     return axios.post(rootUrl('callupdate'), {
@@ -16,13 +16,14 @@ export const onNextCallUpdate = function (call, date, familyOverride, oldValue) 
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         call['Next Call'] = oldValue;
         call.loaders.nextCall = false;
         throw err;
     });
 };
 
-export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue) {
+export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue, revertCallback) {
     /** update the next call column */
     call.loaders.nurse = true
     return axios.post(rootUrl('callupdate'), {
@@ -40,6 +41,7 @@ export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue) 
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         const nurse = (call.nurses().find(nurse => nurse.value == oldValue) || {})
         call.NurseId = nurse.value
         call.Nurse = (nurse.text || 'unassigned')
@@ -48,7 +50,7 @@ export const onNurseUpdate = function (call, nurseId, familyOverride, oldValue) 
     });
 };
 
-export const onCallTimeStartUpdate = function (call, time, familyOverride, oldValue) {
+export const onCallTimeStartUpdate = function (call, time, familyOverride, oldValue, revertCallback) {
     /** update the call_time_start column */
     call.loaders.callTimeStart = true
     return axios.post(rootUrl('callupdate'), {
@@ -63,13 +65,14 @@ export const onCallTimeStartUpdate = function (call, time, familyOverride, oldVa
         return response.data;
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         call['Call Time Start'] = oldValue;
         call.loaders.callTimeStart = false;
         throw err;
     });
 };
 
-export const onCallTimeEndUpdate = function (call, time, familyOverride, oldValue) {
+export const onCallTimeEndUpdate = function (call, time, familyOverride, oldValue, revertCallback) {
     /** update the call_time_end column */
     call.loaders.callEndStart = true
     return axios.post(rootUrl('callupdate'), {
@@ -84,13 +87,14 @@ export const onCallTimeEndUpdate = function (call, time, familyOverride, oldValu
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         call['Call Time End'] = oldValue;
         call.loaders.callEndStart = false;
         throw err;
     });
 };
 
-export const onGeneralCommentUpdate = function (call, comment, familyOverride, oldValue) {
+export const onGeneralCommentUpdate = function (call, comment, familyOverride, oldValue, revertCallback) {
     /** update the call_time_end column */
     call.loaders.generalComment = true
     return axios.post(rootUrl('callupdate'), {
@@ -105,13 +109,14 @@ export const onGeneralCommentUpdate = function (call, comment, familyOverride, o
         return response.data
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         call.Comment = oldValue;
         call.loaders.generalComment = false;
         throw err;
     });
 };
 
-export const onAttemptNoteUpdate = function (call, note, familyOverride, oldValue) {
+export const onAttemptNoteUpdate = function (call, note, familyOverride, oldValue, revertCallback) {
     /** update the call_time_end column */
     call.loaders.attemptNote = true
     return axios.post(rootUrl('callupdate'), {
@@ -126,16 +131,17 @@ export const onAttemptNoteUpdate = function (call, note, familyOverride, oldValu
         return response.data;
     }).catch(err => {
         console.error('calls:row:update', err);
+        revertCallback();
         call.AttemptNote = oldValue;
         call.loaders.attemptNote = false;
         throw err;
     });
 };
 
-export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, familyOverride, oldValue) {
+export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, familyOverride, oldValue, revertCallback) {
     if (nextCall, callTimeStart, callTimeEnd) {
         return Promise.all([
-            onNextCallUpdate.call(call, nextCall, familyOverride, oldValue)
+            onNextCallUpdate.call(call, nextCall, familyOverride, oldValue, revertCallback)
             // onCallTimeStartUpdate.call(this, callTimeStart),
             // onCallTimeEndUpdate.call(this, callTimeEnd)
         ]);
