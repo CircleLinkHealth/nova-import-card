@@ -95,13 +95,13 @@
                     <a :href="props.row.notesLink">{{ props.row['Patient ID'] }}</a>
                 </template>
                 <template slot="Nurse" slot-scope="props">
-                    <select-editable :value="props.row.NurseId" :display-text="props.row.Nurse"
+                    <select-editable v-model="props.row.NurseId" :display-text="props.row.Nurse"
                                      :values="props.row.nurses()" :class-name="'blue'"
                                      :on-change="props.row.onNurseUpdate.bind(props.row)"></select-editable>
                 </template>
                 <template slot="Next Call" slot-scope="props">
                     <div>
-                        <date-editable :value="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"
+                        <date-editable v-model="props.row['Next Call']" :format="'YYYY-mm-DD'" :class-name="'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
@@ -172,15 +172,7 @@
     import Loader from '../../components/loader'
     import VueCache from '../../util/vue-cache'
     import {today} from '../../util/today'
-    import {
-        onNextCallUpdate,
-        onNurseUpdate,
-        onCallTimeStartUpdate,
-        onCallTimeEndUpdate,
-        onGeneralCommentUpdate,
-        onAttemptNoteUpdate,
-        updateMultiValues
-    } from './utils/call-update.fn'
+    import * as callUpdateFunctions from './utils/call-update.fn'
     import timeDisplay from '../../util/time-display'
 
     import {library} from '@fortawesome/fontawesome-svg-core'
@@ -192,6 +184,9 @@
 
     const editCallDateTimeMessageForCall = "Warning: The selected call has been manually set by a Care Coach. Rescheduling may frustrate the patient expecting the call. Are you sure you want to reschedule this call?\nNote: Be sure to check with $CARE_COACH$ if you must reschedule this call.";
     const editCallDateTimeMessageForCalls = "Warning: The selected calls have at least one of them manually set by a Care Coach. Rescheduling may frustrate the patients expecting the calls. Are you sure you want to reschedule these calls?\nNote: Be sure to check with the Care Coaches if you must reschedule these calls.";
+
+    const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
+    const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call.";
 
     export default {
         name: 'CallMgmtApp',
@@ -459,6 +454,16 @@
                 return row && row.isCcmEligible;
             },
 
+            showOverrideConfirmationIfNeeded: (err, successCallback) => {
+                if (err && err.response
+                    && err.response.status
+                    && err.response.status === CALL_MUST_OVERRIDE_STATUS_CODE
+                    && confirm(CALL_MUST_OVERRIDE_WARNING)) {
+
+                    successCallback();
+                }
+            },
+
             setupCall(call) {
                 const $vm = this
                 if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
@@ -557,13 +562,69 @@
                         callTimeStart: false,
                         callTimeEnd: false
                     },
-                    onNextCallUpdate,
-                    onNurseUpdate,
-                    onCallTimeStartUpdate,
-                    onCallTimeEndUpdate,
-                    onGeneralCommentUpdate,
-                    onAttemptNoteUpdate,
-                    updateMultiValues
+                    onNextCallUpdate: function (date, moment, old, revertCallback) {
+                        callUpdateFunctions.onNextCallUpdate(this, date, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onNurseUpdate: function (nurseId, old, revertCallback) {
+                        callUpdateFunctions.onNurseUpdate(this, nurseId, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onCallTimeStartUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onCallTimeEndUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeEndUpdate(this, time, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onGeneralCommentUpdate: (comment, old, revertCallback) => {
+                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onAttemptNoteUpdate: function (note, old, revertCallback) {
+                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    updateMultiValues: function (obj, old, revertCallback) {
+                        callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.updateMultiValues(this, obj, true, old, revertCallback)
+                                )
+                            );
+                    }
                 });
             },
             next() {
