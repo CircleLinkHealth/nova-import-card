@@ -417,14 +417,23 @@
                 })
             });
 
-            $('#newNote').submit(function (e) {
-                e.preventDefault();
-                const form = this;
+            let submitted = false;
 
+            $('#newNote').submit(function (e) {
+
+                e.preventDefault();
+
+                if (submitted) {
+                    return;
+                }
+
+                const form = this;
                 if (userIsCCMCountable && $('#phone').is(':checked') && (!form['call_status'] || !form['call_status'].value || !form['call_status'].value.length)) {
                     alert('Please select whether patient was reached or not.');
                     return;
                 }
+
+                submitted = true;
 
                 $.get('/api/test').always(function (response) {
                     if (response.status == 200 || response.message == 'clh') {
