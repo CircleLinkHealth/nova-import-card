@@ -114,22 +114,29 @@ class CallController extends Controller
         }
 
         $call = $this->storeNewCall($patient, $input);
-
-        if ($patient->patientInfo->family_id != null) {
-            $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
-            if ( ! empty($familyMembers)) {
-                foreach ($familyMembers as $familyMember) {
-                    $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                    //be extra safe here. if we have a call just skip this patient
-                    if ($familyMemberCall) {
-                        continue;
-                    }
-                    $this->storeNewCall($familyMember->user, $input);
-                }
-            }
-        }
+        $this->storeNewCallForFamilyMembers($patient, $input);
 
         return CallResource::make($call);
+    }
+
+    private function storeNewCallForFamilyMembers(User $patient, $input)
+    {
+
+        if ( ! $patient->patientInfo->hasFamilyId()) {
+            return;
+        }
+
+        $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
+        if ( ! empty($familyMembers)) {
+            foreach ($familyMembers as $familyMember) {
+                $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
+                //be extra safe here. if we have a call just skip this patient
+                if ($familyMemberCall) {
+                    continue;
+                }
+                $this->storeNewCall($familyMember->user, $input);
+            }
+        }
     }
 
     /**
@@ -326,27 +333,28 @@ class CallController extends Controller
     {
         $mustConfirm = false;
 
-        if ($patient->family_id != null) {
+        if ( ! $patient->hasFamilyId()) {
+            return $mustConfirm;
+        }
 
-            //now find if a another call is scheduled for any of the members of the family
-            $familyMembers = $patient->getFamilyMembers($patient);
-            if ( ! empty($familyMembers)) {
-                foreach ($familyMembers as $familyMember) {
-                    $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                    if ( ! $callForMember) {
-                        continue;
-                    }
-
-                    if ($callForMember->scheduled_date != $scheduledDate
-                        || $callForMember->window_start != $windowStart
-                        || $callForMember->window_end != $windowEnd) {
-
-                        $mustConfirm = true;
-                        //no need to check other calls, so we break
-                        break;
-                    }
-
+        //now find if a another call is scheduled for any of the members of the family
+        $familyMembers = $patient->getFamilyMembers($patient);
+        if ( ! empty($familyMembers)) {
+            foreach ($familyMembers as $familyMember) {
+                $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
+                if ( ! $callForMember) {
+                    continue;
                 }
+
+                if ($callForMember->scheduled_date != $scheduledDate
+                    || $callForMember->window_start != $windowStart
+                    || $callForMember->window_end != $windowEnd) {
+
+                    $mustConfirm = true;
+                    //no need to check other calls, so we break
+                    break;
+                }
+
             }
         }
 

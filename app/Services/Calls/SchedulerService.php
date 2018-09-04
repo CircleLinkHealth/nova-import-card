@@ -416,7 +416,7 @@ class SchedulerService
 
                 $call = $this->getScheduledCallForPatient($familyUsers[$patient->user_id]);
 
-                if (is_object($call)) {
+                if (is_a($call, Call::class)) {
                     //If the patient has a call and is not manual,
                     if (!$call->is_manual) {
                         $window_start = $call->window_start;

@@ -494,6 +494,10 @@ class Patient extends BaseModel
         );
     }
 
+    public function hasFamilyId() {
+        return $this->family_id != null;
+    }
+
     public function scopeHasFamily($query)
     {
 
