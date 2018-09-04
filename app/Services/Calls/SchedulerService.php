@@ -375,6 +375,14 @@ class SchedulerService
         return $failed;
     }
 
+    /**
+     * Assuming that the scheduler service has scheduled calls for all patients:
+     * 1. Sync their calls so they are at same time.
+     * 2. If there is a manual call, it should be skipped and not taken into account.
+     * 3. If all are manual, nothing should be done.
+     *
+     * @return array
+     */
     public function syncFamilialCalls()
     {
 
@@ -408,24 +416,25 @@ class SchedulerService
 
                 $call = $this->getScheduledCallForPatient($familyUsers[$patient->user_id]);
 
-                if (is_object($call)) {
-                    //If the patient has a call,
+                if (is_a($call, Call::class)) {
+                    //If the patient has a call and is not manual,
+                    if (!$call->is_manual) {
+                        $window_start = $call->window_start;
+                        $window_end   = $call->window_end;
 
-                    $window_start = $call->window_start;
-                    $window_end   = $call->window_end;
+                        $date = Carbon::parse($call->scheduled_date);
+                        $date->setTimeFromTimeString(Carbon::parse($call->window_start)->toTimeString());
 
-                    $date = Carbon::parse($call->scheduled_date);
-                    $date->setTimeFromTimeString(Carbon::parse($call->window_start)->toTimeString());
+                        //Set one of the nurses as the designated nurse
+                        $designatedNurse = $call->outbound_cpm_id;
 
-                    //Set one of the nurses as the designated nurse
-                    $designatedNurse = $call->outbound_cpm_id;
-
-                    //ignore if past call
-                    if (Carbon::now()->toDateTimeString() < $date->toDateTimeString()) {
-                        $scheduledCallsScheduler->push([
-                            'scheduler' => $call->scheduler,
-                            'date'      => $date->toDateTimeString(),
-                        ]);
+                        //get calls that are in the future
+                        if ($date->isFuture()) {
+                            $scheduledCallsScheduler->push([
+                                'scheduler' => $call->scheduler,
+                                'date'      => $date->toDateTimeString(),
+                            ]);
+                        }
                     }
                 } else {
                     //fill in some call info:
@@ -467,6 +476,11 @@ class SchedulerService
 
                 //patientId => patientScheduledCall
                 foreach ($scheduledCalls as $key => $value) {
+
+                    //this is a manual call, do not touch
+                    if ($value->is_manual) {
+                        continue;
+                    }
 
                     $callPatient = $familyUsers[$key];
 

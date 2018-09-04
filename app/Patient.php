@@ -366,6 +366,14 @@ class Patient extends BaseModel
         $this->save();
     }
 
+    /**
+     * Get family members of a patient.
+     * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
+     *
+     * @param Patient $patient
+     *
+     * @return array|static
+     */
     public function getFamilyMembers(Patient $patient)
     {
 
@@ -484,6 +492,10 @@ class Patient extends BaseModel
             $timeFrom,
             $timeTo
         );
+    }
+
+    public function hasFamilyId() {
+        return $this->family_id != null;
     }
 
     public function scopeHasFamily($query)

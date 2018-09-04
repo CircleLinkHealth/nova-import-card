@@ -89,11 +89,16 @@
                 if (note) {
                     note.close()
                 }
+            },
+            removeAll() {
+                this.notes.length = 0;
             }
         },
         mounted() {
-            EventBus.$on(`${this.componentName}:create`, this.create)
-            Event.$on(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args))
+            EventBus.$on(`${this.componentName}:create`, this.create);
+            EventBus.$on(`${this.componentName}:dismissAll`, this.removeAll);
+            Event.$on(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args));
+            Event.$on(`${this.componentName}:dismissAll`, (...args) => EventBus.$emit(`${this.componentName}:dismissAll`, ...args));
         }
     }
 </script>

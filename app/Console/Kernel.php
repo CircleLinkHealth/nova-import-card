@@ -53,7 +53,8 @@ class Kernel extends ConsoleKernel
 //            (new EnrollmentSMSSender())->exec();
 //        })->dailyAt('13:00');
 
-        $schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
+        //family calls will be scheduled in RescheduleMissedCalls
+        //$schedule->command(SyncFamilialCalls::class)->dailyAt('00:30');
 
         //Removes All Scheduled Calls for patients that are withdrawn
         $schedule->command(RemoveScheduledCallsForWithdrawnAndPausedPatients::class)->everyFiveMinutes()->withoutOverlapping();
