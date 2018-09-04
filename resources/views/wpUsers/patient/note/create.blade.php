@@ -505,7 +505,6 @@
                         else if (noteBody.length > CHARACTERS_THRESHOLD) {
                             showModal = true;
                         }
-
                     }
 
                     if (showModal) {

@@ -128,7 +128,7 @@ return [
     | between permissions and roles to the database.
     |
     */
-    'permission_role_table'  => 'lv_permission_role',
+    'permissibles'           => 'permissibles',
 
     /*
     |--------------------------------------------------------------------------

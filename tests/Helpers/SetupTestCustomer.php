@@ -14,6 +14,7 @@ use App\Models\CPM\CpmProblem;
 use App\Patient;
 use App\Practice;
 use App\Role;
+use App\SaasAccount;
 use Carbon\Carbon;
 use Faker\Factory;
 
@@ -80,6 +81,14 @@ trait SetupTestCustomer
             'term_days'                => 30,
         ]);
 
+        $saas = SaasAccount::firstOrCreate([
+            'name' => 'CircleLink Health',
+            'slug' => 'circlelink-health'
+        ]);
+
+        $practice->saasAccount()->associate($saas);
+        $practice->save();
+
         return $practice;
     }
 
@@ -120,7 +129,8 @@ trait SetupTestCustomer
         $patient->carePlan()->create([
             'mode'                  => CarePlan::WEB,
             'care_plan_template_id' => 1,
-            'status'                => CarePlan::DRAFT,
+            'status'                => CarePlan::PROVIDER_APPROVED,
+            'provider_date'         => Carbon::now()
         ]);
 
         //activities
