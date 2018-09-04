@@ -56,6 +56,8 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $this->batch->save();
         }
 
+        $phxPractice = Practice::whereName('phoenix-heart')->firstOrFail();
+
         $patientList = $names->map(function ($patient) {
             //format problems list
             $problems = PhoenixHeartProblem::where('patient_id', '=', $patient->patient_id)->get();
@@ -117,9 +119,9 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $patient->put('insurances', $insurances);
 
             return $patient;
-        })->map(function ($p) {
+        })->map(function ($p) use ($phxPractice) {
             $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
-                Practice::whereName('phoenix-heart')->firstOrFail(), null, null, $this->batch));
+                $phxPractice, null, null, $this->batch));
 
             if ($list->patientList->count() > 0) {
                 $attr = [
