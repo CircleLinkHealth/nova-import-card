@@ -35,6 +35,20 @@ class LoginController extends Controller
 
     protected $username = 'email';
 
+    /**
+     * Throttle login on this many unsuccessful attempts.
+     *
+     * @var int
+     */
+    protected $maxAttempts = 3;
+
+    /**
+     * Throttle logon for this many minutes after $maxAttempts failed login attempts.
+     *
+     * @var int
+     */
+    protected $decayMinutes = 5;
+
 
     /**
      * Create a new controller instance.
