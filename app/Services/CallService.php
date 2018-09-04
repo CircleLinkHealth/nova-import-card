@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Call;
 use App\Repositories\CallRepository;
 
 class CallService

@@ -1,47 +1,53 @@
 <template>
     <modal name="select-nurse" :no-title="true" :no-footer="true" :info="selectNursesModalInfo">
-      <template slot-scope="props">
-        <div class="row">
-            <div class="col-sm-12 text-right">
-                <loader v-if="loaders.nurses"></loader>
-            </div>
-            <div class="col-sm-12 text-right" v-if="filterPatients.length">
-                <label>
-                    <input type="checkbox" v-model="showOnlyPatientsWithNurses" > Show only patients with nurses
-                </label>
-            </div>
-            <div class="col-sm-12">
-                <div class="text-center" v-if="!filterPatients.length">
-                    No available Nurses for select patients
+        <template slot-scope="props">
+            <div class="row">
+                <div class="col-sm-12 text-right">
+                    <loader v-if="loaders.nurses"></loader>
                 </div>
-                <div class="row" v-for="patient in filterPatients" :key="patient.id">
-                    <div class="col-sm-6">
-                        <h5>
-                            {{patient.name}} [id:{{patient.id}}] ({{patient.nurses ? patient.nurses.length : 0}})
-                        </h5>
+                <div class="col-sm-12 text-right" v-if="filterPatients.length">
+                    <label>
+                        <input type="checkbox" v-model="showOnlyPatientsWithNurses"> Show only patients with nurses
+                    </label>
+                </div>
+                <div class="col-sm-12">
+                    <div class="text-center" v-if="!filterPatients.length">
+                        No available Nurses for select patients
                     </div>
-                    <div class="col-sm-6">
-                        <select class="form-control" name="nurse_id" v-if="patient.nurses" @change="props.info.onChange($event, patient)" required>
-                            <option :value="patient.nurse.id" :disabled="patient.nurse.disabled" selected>{{patient.nurse.name}}</option>
-                            <option v-for="nurse in patient.nurses" :key="nurse.id" :value="nurse.id">{{nurse.name}}</option>
-                        </select>
-                        <span class="is-valid" :class="{ valid: patient.isValidSelection(), invalid: !patient.isValidSelection() }"><span></span></span>
-                        <loader v-if="!patient.nurses || patient.loaders.update"></loader>
+                    <div class="row" v-for="patient in filterPatients" :key="patient.id">
+                        <div class="col-sm-6">
+                            <h5>
+                                {{patient.name}} [id:{{patient.id}}] ({{patient.nurses ? patient.nurses.length : 0}})
+                            </h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <select class="form-control" name="nurse_id" v-if="patient.nurses"
+                                    @change="props.info.onChange($event, patient)" required>
+                                <option :value="patient.nurse.id" :disabled="patient.nurse.disabled" selected>
+                                    {{patient.nurse.name}}
+                                </option>
+                                <option v-for="nurse in patient.nurses" :key="nurse.id" :value="nurse.id">
+                                    {{nurse.name}}
+                                </option>
+                            </select>
+                            <span class="is-valid"
+                                  :class="{ valid: patient.isValidSelection(), invalid: !patient.isValidSelection() }"><span></span></span>
+                            <loader v-if="!patient.nurses || patient.loaders.update"></loader>
+                        </div>
                     </div>
                 </div>
+                <div class="col-sm-12 top-20">
+                    <notifications name="select-nurse"></notifications>
+                </div>
             </div>
-            <div class="col-sm-12 top-20">
-                <notifications name="select-nurse"></notifications>
-            </div>
-        </div>
-      </template>
+        </template>
     </modal>
 </template>
 
 <script>
     import Modal from '../../../common/modal'
-    import { Event } from 'vue-tables-2'
-    import { rootUrl } from '../../../../app.config'
+    import {Event} from 'vue-tables-2'
+    import {rootUrl} from '../../../../app.config'
     import Notifications from '../../../../components/notifications'
     import Loader from '../../../../components/loader'
     import VueCache from '../../../../util/vue-cache'
@@ -165,7 +171,7 @@
                     console.error("error: get-available-nurses", err)
                 })
             },
-            setPatients (patients = []) {
+            setPatients(patients = []) {
                 this.patients = patients.filter(patient => patient.name).map(patient => ({
                     id: patient.id,
                     name: patient.name,
@@ -181,13 +187,13 @@
                         return !!this.nurses.find(nurse => nurse.id == this.selectedNurseId)
                     }
                 }))
-                console.log('select-nurse:patients', this.patients)
+                //console.log('select-nurse:patients', this.patients)
                 this.getNurses()
                 return this.patients
             }
         },
         watch: {
-            selectedPatients (patients) {
+            selectedPatients(patients) {
                 return this.setPatients(patients)
             }
         },
@@ -196,6 +202,12 @@
         }
     }
 </script>
+
+<style scoped>
+    div.modal-container {
+        width: 600px !important;
+    }
+</style>
 
 <style>
     .loader {
@@ -209,12 +221,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    div.modal-container {
-        width: 600px !important;
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     span.is-valid {

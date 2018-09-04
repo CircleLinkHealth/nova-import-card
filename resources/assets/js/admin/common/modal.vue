@@ -4,19 +4,19 @@
             <div class="modal-mask">
                 <div class="modal-wrapper" @click="close">
                     <div class="modal-container">
-                        
+
                         <div class="modal-header" v-if="!noTitle">
                             <slot name="title" :info="info">
                                 <div>{{title}}</div>
                             </slot>
                         </div>
-            
+
                         <div class="modal-body">
                             <slot :info="info">
                                 <div v-html="body"></div>
                             </slot>
                         </div>
-            
+
                         <div class="modal-footer only" v-if="!noFooter">
                             <div>
                                 <slot name="footer" :info="info">
@@ -26,8 +26,11 @@
                         </div>
 
                         <div class="modal-footer close-footer" v-if="!noButtons">
-                            <input type="button" v-if="!noCancel" class="modal-button modal-cancel-button" @click="cancel()" :value="cancelText || 'Cancel'">
-                            <input type="button" class="modal-button modal-ok-button" @click="ok()" :value="okText || 'OK'">
+                            <input type="button" v-if="!noCancel"
+                                   class="modal-button modal-cancel-button btn btn-danger btn-xs" @click="cancel()"
+                                   :value="cancelText || 'Cancel'">
+                            <input type="button" class="modal-button modal-ok-button btn btn-primary btn-xs"
+                                   @click="ok()" :value="okText || 'OK'">
                         </div>
                     </div>
                 </div>
@@ -40,8 +43,8 @@
     /**
      See README.md for docs
      */
-    import { Event } from 'vue-tables-2'
-    
+    import {Event} from 'vue-tables-2'
+
     export default {
         name: 'modal',
         props: {
@@ -66,6 +69,15 @@
                 visible: this.isVisible || false
             }
         },
+        watch: {
+            visible: function (val) {
+                if (val) {
+                    $('body').css('overflow', 'hidden');
+                } else {
+                    $('body').css('overflow', '');
+                }
+            }
+        },
         methods: {
             close(e) {
                 if (!e || (e.target && (!this.noWrapperClose && e.target.classList.contains('modal-wrapper')))) {
@@ -81,7 +93,7 @@
                 if (this.info && typeof(this.info.okHandler) === 'function') this.info.okHandler();
                 else this.close();
             },
-            show (opts = {}) {
+            show(opts = {}) {
                 this.title = opts.title || ''
                 this.body = opts.body || ''
                 this.footer = opts.footer || ''
@@ -89,13 +101,15 @@
             }
         },
         mounted() {
+
             Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (opts) => {
-                this.show(opts)
-            })
+                this.show(opts);
+            });
 
             Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
-                this.close()
-            })
+                this.close();
+            });
+
         }
     }
 </script>
@@ -112,12 +126,12 @@
         display: table;
         transition: opacity .3s ease;
     }
-    
+
     .modal-wrapper {
         display: table-cell;
         vertical-align: middle;
     }
-    
+
     .modal-container {
         width: 300px;
         margin: 0px auto;
@@ -130,24 +144,28 @@
         max-height: 100vh;
         overflow-y: auto;
     }
-    
+
     .modal-header h3 {
         margin-top: 0;
         color: #42b983;
     }
-    
+
     .modal-body {
         margin: 20px 0;
     }
-    
+
     .modal-button {
         float: right;
     }
 
-    .modal-cancel-button {
-        background: transparent;
+    .modal-button {
+        margin-left: 3px;
     }
-    
+
+    /*.modal-cancel-button {*/
+    /*background: transparent;*/
+    /*}*/
+
     /*
     * The following styles are auto-applied to elements with
     * transition="modal" when their visibility is toggled
@@ -156,15 +174,15 @@
     * You can easily play with the modal transition by editing
     * these styles.
     */
-    
+
     .modal-enter {
         opacity: 0;
     }
-    
+
     .modal-leave-active {
         opacity: 0;
     }
-    
+
     .modal-enter .modal-container,
     .modal-leave-active .modal-container {
         -webkit-transform: scale(1.1);

@@ -64,7 +64,7 @@ jobs:
     #- run: ./vendor/bin/codecept build
     #        - run: ./vendor/bin/codecept run --xml result.xml
     - run: composer test
-    - store_test_results:
-        path: tests/_output
-    - store_artifacts:
-        path: tests/_output
+#    - store_test_results:
+#        path: tests/_output
+#    - store_artifacts:
+#        path: tests/_output
