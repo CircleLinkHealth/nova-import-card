@@ -195,7 +195,8 @@
 
 
                                                         @if(auth()->user()->isCCMCountable())
-                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                            <div class="multi-input-wrapper"
+                                                                 style="padding-bottom: 3px">
                                                                 <div class="radio">
                                                                     <input type="radio"
                                                                            name="call_status"
@@ -227,7 +228,8 @@
                                                             </div>
                                                         @else
 
-                                                            <div class="multi-input-wrapper" style="padding-bottom: 3px">
+                                                            <div class="multi-input-wrapper"
+                                                                 style="padding-bottom: 3px">
                                                                 <div>
                                                                     <div class="radio">
                                                                         <input type="checkbox"
