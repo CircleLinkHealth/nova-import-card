@@ -38,7 +38,7 @@
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
     "barryvdh/laravel-debugbar": "*",
-    "barryvdh/laravel-snappy": "*",
+    "barryvdh/laravel-snappy": "0.4.1",
     "fideloper/proxy": "~3.3",
     "gemorroj/archive7z": "^3.0",
     "genealabs/laravel-caffeine": "^0.5.0",
@@ -124,9 +124,7 @@
       "@php artisan package:discover"
     ],
     "post-update-cmd": [
-      "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-      "php artisan ide-helper:generate",
-      "php artisan ide-helper:meta"
+      "Illuminate\\Foundation\\ComposerScripts::postUpdate"
     ],
     "test": [
       "./vendor/bin/paratest ./tests/Unit --stop-on-failure --colors --runner SqliteRunner -p4"
