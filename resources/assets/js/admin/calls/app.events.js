@@ -1,37 +1,56 @@
 export default (App, Event) => {
-    const $table = App.$refs.tblCalls;
+
+    const getUnscheduledPatientsModalRef = () => {
+        //get the component and we assume first child is the modal
+        const compChildren = App.$refs.unscheduledPatientsModal.$children;
+        return compChildren.find(x => x.$vnode.componentOptions.tag === "modal");
+    };
+
+    const isMainTableVisible = () => {
+        // Scenario: Unscheduled Patients Modal is visible.
+        //           We assume that the pagination event is triggered from the modal.
+        //           So, there is nothing to do for the main calls table.
+        const modal = getUnscheduledPatientsModalRef();
+        if (modal) {
+            return !modal.$data.visible;
+        }
+        return true;
+    };
 
     const nextPageHandler = (page) => {
+        if (!isMainTableVisible()) {
+            return;
+        }
         App.next();
-    }
+    };
 
     Event.$on('vue-tables.pagination', nextPageHandler)
 
     Event.$on('vue-tables.filter::Nurse', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Patient', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Patient ID', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Next Call', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Last Call', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Patient Status', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Practice', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Billing Provider', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::Scheduler', App.activateFilters)
-    
+
     Event.$on('vue-tables.filter::DOB', App.activateFilters)
-    
+
     Event.$on('vue-tables.sorted', App.activateFilters)
-    
+
     Event.$on('vue-tables.limit', App.activateFilters)
 
-    function unscheduledPatientsModalFilterHandler (data) {
+    function unscheduledPatientsModalFilterHandler(data) {
         Event.$emit('modal-unscheduled-patients:hide')
         Event.$emit('modal-add-call:show')
         return new Promise((resolve, reject) => {
@@ -44,28 +63,28 @@ export default (App, Event) => {
 
     Event.$on('unscheduled-patients-modal:filter', unscheduledPatientsModalFilterHandler)
 
-    function selectNurseUpdateHandler ({ callId, nurseId }) {
+    function selectNurseUpdateHandler({callId, nurseId}) {
         const call = App.tableData.find(row => row.id == callId)
         const nurse = App.nurses.find(nurse => nurse.id == nurseId)
         if (call) {
             call.NurseId = nurseId
             call.Nurse = (nurse || {}).display_name
-            console.log('calls:row-update', { callId, nurseId }, call.Nurse)
+            console.log('calls:row-update', {callId, nurseId}, call.Nurse)
         }
     }
 
     Event.$on('select-nurse:update', selectNurseUpdateHandler)
 
-    function selectTimesChangeHandler ({ callIDs, nextCall, callTimeStart, callTimeEnd }) {
+    function selectTimesChangeHandler({callIDs, nextCall, callTimeStart, callTimeEnd}) {
         console.log('select-times-change-handler', ...arguments)
         if (callIDs && Array.isArray(callIDs)) {
             const id = callIDs[0]
             const $row = App.tableData.find(row => row.id == id)
             console.log(id, $row)
             if ($row && nextCall && callTimeStart && callTimeEnd) {
-                return $row.updateMultiValues({ nextCall, callTimeStart, callTimeEnd }).then(() => {
+                return $row.updateMultiValues({nextCall, callTimeStart, callTimeEnd}).then(() => {
                     callIDs.splice(0, 1)
-                    return selectTimesChangeHandler({ callIDs, nextCall, callTimeStart, callTimeEnd })
+                    return selectTimesChangeHandler({callIDs, nextCall, callTimeStart, callTimeEnd})
                 })
             }
             else {

@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Activity;
+use App\PageTimer;
 use App\Reports\NurseDailyReport;
 use App\Services\Cache\NotificationService;
 use App\User;
@@ -25,7 +27,55 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
      */
     public function __construct()
     {
-        $this->reportData = NurseDailyReport::data()->map(function ($nurseReport) {
+        $date = Carbon::now();
+
+        $this->reportData = NurseDailyReport::data()->map(function ($nurseReport) use ($date) {
+
+
+            $fullName = explode(' ', $nurseReport['name']);
+            $first    = $fullName[0];
+            $last     = $fullName[1];
+
+            $nurse = User::ofType('care-center')
+                         ->with('nurseInfo.workhourables')
+                         ->where([
+                             ['first_name', '=', $first],
+                             ['last_name', '=', $last],
+                         ])
+                         ->first();
+
+            if (! $nurse){
+                \Log::error("User not found: {$nurseReport['name']}");
+                return;
+            }
+
+            $pageTimers = PageTimer::where('provider_id', $nurse->id)
+                                   ->select(['id', 'duration', 'created_at'])
+                                   ->where(function ($q) use ($date) {
+                                       $q->where('created_at', '>=', $date->copy()->startOfDay())
+                                         ->where('created_at', '<=', $date->copy()->endOfDay());
+                                   })
+                                   ->get()
+                                   ->sum('duration');
+
+            $offlineActivities = Activity::where('provider_id', $nurse->id)
+                                         ->select(['id', 'duration', 'created_at'])
+                                         ->where(function ($q) use ($date) {
+                                             $q->where('created_at', '>=', $date->copy()->startOfDay())
+                                               ->where('created_at', '<=', $date->copy()->endOfDay());
+                                         })
+                                         ->where('logged_from', 'manual_input')
+                                         ->get()
+                                         ->sum('duration');
+
+            $total          = $pageTimers + $offlineActivities;
+            $actualHours    = round($total / 3600, 1);
+
+            $hoursCommitted = 'N/A';
+            if ($nurse->nurseInfo->workhourables && $nurse->nurseInfo->workhourables->count() > 0 ) {
+                    $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($date->format('l'))};
+            }
+
             return [
                 'name'                     => $nurseReport['name'],
                 'Time Since Last Activity' => $nurseReport['Time Since Last Activity'],
@@ -34,6 +84,8 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 '# Completed Calls Today'  => $nurseReport['# Completed Calls Today'],
                 'CCM Mins Today'           => $nurseReport['CCM Mins Today'],
                 'last_activity'            => $nurseReport['last_activity'],
+                'Actual Hours worked'      => $actualHours ?: 'N/A',
+                'Hours Committed'          => $hoursCommitted  == 0 ? '0' : $hoursCommitted,
             ];
         });
     }

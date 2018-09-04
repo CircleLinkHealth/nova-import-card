@@ -4,17 +4,27 @@ use App\Patient;
 use App\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
+use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 
 class ActivityService
 {
     protected $callRepo;
     protected $repo;
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
+    private $patientSummaryEloquentRepository;
 
-    public function __construct(ActivityRepository $repo, CallRepository $callRepo)
+    public function __construct(
+        ActivityRepository $repo,
+        CallRepository $callRepo,
+        PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+    )
     {
-        $this->repo     = $repo;
-        $this->callRepo = $callRepo;
+        $this->repo                             = $repo;
+        $this->callRepo                         = $callRepo;
+        $this->patientSummaryEloquentRepository = $patientSummaryEloquentRepository;
     }
 
     /**
@@ -65,9 +75,7 @@ class ActivityService
                 ]);
 
                 if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
-                    $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
-                    $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
-                    $summary->save();
+                    $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
                 }
 
                 $total_time_per_user[$id] += $ccmTime;
@@ -108,9 +116,7 @@ class ActivityService
                 ]);
 
                 if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
-                    $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
-                    $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
-                    $summary->save();
+                    $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
                 }
 
                 $total_time_per_user[$id] += $bhiTime;

@@ -31,7 +31,38 @@ class CallController extends Controller
 
     public function create(Request $request)
     {
-        $validation = \Validator::make($request->all(), [
+        $input = $request->all();
+        $call  = $this->createCall($input);
+        if (!isset($call['errors'])) {
+            return response()
+                ->json($call, 201);
+        } else {
+            return response()
+                ->json($call, $call['code']);
+        }
+    }
+
+    public function createMulti(Request $request)
+    {
+        //input should be an array of calls to be created
+        $input = $request->all();
+
+        $result = [];
+        foreach ($input as $item) {
+            $result[] = $this->createCall($item);
+        }
+        return response()
+            ->json($result, 201);
+    }
+
+    /**
+     * @param $input
+     *
+     * @return array|static
+     */
+    private function createCall($input)
+    {
+        $validation = \Validator::make($input, [
             'inbound_cpm_id'  => 'required',
             'outbound_cpm_id' => '',
             'scheduled_date'  => 'required|date',
@@ -42,29 +73,19 @@ class CallController extends Controller
         ]);
 
         if ($validation->fails()) {
-            return response(json_encode([
+            return [
                 'errors' => $validation->errors()->getMessages(),
                 'code'   => 422,
-            ]), 422);
+            ];
         }
-
-        $input = $request->only(
-            'inbound_cpm_id',
-            'outbound_cpm_id',
-            'scheduled_date',
-            'window_start',
-            'window_end',
-            'attempt_note',
-            'is_manual'
-        );
 
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
         if ( ! $patient) {
-            return response([
+            return [
                 'errors' => ['could not find patient'],
                 'code'   => 406,
-            ], 406);
+            ];
         }
 
         if ($patient->inboundCalls) {
@@ -73,10 +94,10 @@ class CallController extends Controller
                                      ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                                      ->first();
             if ($scheduledCall) {
-                return response([
+                return [
                     'errors' => ['patient already has a scheduled call'],
                     'code'   => 406,
-                ], 406);
+                ];
             }
         }
 
@@ -98,9 +119,7 @@ class CallController extends Controller
         $call->scheduler       = auth()->user()->id;
         $call->is_manual       = boolval($input['is_manual']);
         $call->save();
-
-        return response()->json(CallResource::make($call), 201);
-        //return view('wpUsers.patient.calls.create');
+        return CallResource::make($call);
     }
 
     /**

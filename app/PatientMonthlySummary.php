@@ -48,7 +48,7 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class PatientMonthlySummary extends \App\BaseModel
+class PatientMonthlySummary extends BaseModel
 {
     use HasChargeableServices;
 

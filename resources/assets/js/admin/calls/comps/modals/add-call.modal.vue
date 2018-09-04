@@ -1,3 +1,4 @@
+<!-- DEPRECATED. In favor of add-call-v2.modal -->
 <template>
     <modal name="add-call" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
         <template slot="title">
