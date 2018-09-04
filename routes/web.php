@@ -957,7 +957,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.last.import.logs',
                 ])->middleware('permission:batch.read');
 
-                Route::get('/batch-logs-scv', [
+                Route::get('/batch-logs-csv', [
                     'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
                     'as'   => 'eligibility.download.logs.csv',
                 ])->middleware('permission:batch.read');
