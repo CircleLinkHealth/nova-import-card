@@ -40,7 +40,7 @@ class LoginController extends Controller
      *
      * @var int
      */
-    protected $maxAttempts = 3;
+    protected $maxAttempts = 4;
 
     /**
      * Throttle logon for this many minutes after $maxAttempts failed login attempts.
