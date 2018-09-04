@@ -29,7 +29,7 @@ class CreateLvPermissionRoleTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('lv_permission_role');
+		Schema::dropIfExists('lv_permission_role');
 	}
 
 }
