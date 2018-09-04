@@ -493,15 +493,15 @@ class PatientSummaryEloquentRepository
                 return $patient->primaryPractice->chargeableServices->keyBy('code');
             });
 
-        $attach = [];
-
-        if ($chargeableServices->has('CPT 99484') && $summary->bhi_time >= 1200) {
-            $attach[] = $chargeableServices['CPT 99484']->id;
-        }
-
-        if ($chargeableServices->has('CPT 99490') && $summary->ccm_time >= 1200) {
-            $attach[] = $chargeableServices['CPT 99490']->id;
-        }
+        $attach = $chargeableServices
+            ->map(function ($service) use ($summary) {
+                if ($this->shouldAttachChargeableService($service, $summary)) {
+                    return $service->id;
+                }
+            })
+            ->filter()
+            ->values()
+            ->all();
 
         return $this->attachChargeableService($summary, $attach);
     }
@@ -541,5 +541,20 @@ class PatientSummaryEloquentRepository
         $summary->save();
 
         return $summary;
+    }
+
+    /**
+     * Decide wheter or not to attach a chargeable service to a patient summary.
+     *
+     * @param ChargeableService $service
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
+    {
+        return $service->code == 'CPT 99484' && $summary->bhi_time >= 1200
+               || $service->code == 'CPT 99490' && $summary->ccm_time >= 1200
+               || in_array($service->code, ChargeableService::DEFAULT_CHARGEABLE_SERVICE_CODES);
     }
 }
