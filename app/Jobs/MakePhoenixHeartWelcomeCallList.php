@@ -124,7 +124,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $job = $this->firstOrCreateEligibilityJob($p, $phxPractice);
 
             $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
-                $phxPractice, null, null, $this->batch));
+                $phxPractice, null, null, $this->batch, $job));
 
             if ($list->patientList->count() > 0) {
                 $attr = [
