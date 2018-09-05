@@ -41,7 +41,6 @@
                             </th>
                             <th class="nurses">
                                 Nurse
-                                <span class="required">*</span>
                                 <loader v-show="loaders.nurses"></loader>
                             </th>
                             <th class="date">
@@ -522,7 +521,9 @@
                         }
 
                         const call = action.call;
-                        if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
+                        //CPM-291 - allow unassigned nurse
+                        //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
+                        if (call.patientId === null || call.practiceId === null) {
                             return false;
                         }
                         return true;

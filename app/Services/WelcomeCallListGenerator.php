@@ -87,7 +87,10 @@ class WelcomeCallListGenerator
      * @param Practice|null $practice
      * @param null $medicalRecordType
      * @param null $medicalRecordId
-     * @param null $batch
+     * @param EligibilityBatch $batch
+     * @param EligibilityJob|null $eligibilityJob
+     *
+     * @throws \Exception
      */
     public function __construct(
         Collection $patientList,
