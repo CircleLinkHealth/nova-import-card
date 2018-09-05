@@ -494,17 +494,12 @@
                     let showModal = false;
                     const noteBody = form['body'].value;
                     //CPM-182 - show modal if time spend on this form is more than 90 seconds
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD) {
+                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD && noteBody.length > CHARACTERS_THRESHOLD) {
 
-                        if (!isPhoneSession) {
+                        if (!isPhoneSession || (isPhoneSession && !callHasStatus)) {
                             showModal = true;
                         }
-                        else if (isPhoneSession && !callHasStatus) {
-                            showModal = true;
-                        }
-                        else if (noteBody.length > CHARACTERS_THRESHOLD) {
-                            showModal = true;
-                        }
+                        
                     }
 
                     if (showModal) {
