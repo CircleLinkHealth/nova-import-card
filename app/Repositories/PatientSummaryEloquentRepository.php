@@ -544,7 +544,7 @@ class PatientSummaryEloquentRepository
     }
 
     /**
-     * Decide wheter or not to attach a chargeable service to a patient summary.
+     * Decide whether or not to attach a chargeable service to a patient summary.
      *
      * @param ChargeableService $service
      * @param PatientMonthlySummary $summary
@@ -555,6 +555,6 @@ class PatientSummaryEloquentRepository
     {
         return $service->code == 'CPT 99484' && $summary->bhi_time >= 1200
                || $service->code == 'CPT 99490' && $summary->ccm_time >= 1200
-               || in_array($service->code, ChargeableService::DEFAULT_CHARGEABLE_SERVICE_CODES);
+               || $service->code == 'G0511' && $summary->ccm_time >= 1200;
     }
 }
