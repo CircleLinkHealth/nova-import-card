@@ -480,8 +480,10 @@ class PatientSummaryEloquentRepository
         return $summary;
     }
 
-    public function attachChargeableServices(User $patient, PatientMonthlySummary $summary)
+    public function attachChargeableServices(PatientMonthlySummary $summary)
     {
+        $patient = $summary->patient;
+
         if ($summary->actor_id) {
             return $summary;
         }
