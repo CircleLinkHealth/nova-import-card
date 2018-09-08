@@ -53,7 +53,7 @@ if (!function_exists('buildProviderInfoContainers')) {
 @section('activity', 'Edit/Modify Care Plan')
 
 @section('content')
-    <script type="text/javascript" src="{{ asset('/js/patient/careteam.js') }}"></script>
+    <script type="text/javascript" src="{{ mix('/js/patient/careteam.js') }}"></script>
     <script>
         $(document).ready(function () {
             // CARE TEAM JS

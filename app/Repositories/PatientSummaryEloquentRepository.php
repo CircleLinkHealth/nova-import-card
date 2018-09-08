@@ -7,16 +7,20 @@ use App\ChargeableService;
 use App\Exceptions\InvalidArgumentException;
 use App\Models\CCD\Problem;
 use App\PatientMonthlySummary;
+use App\Practice;
 use App\User;
+use Cache;
 use Illuminate\Support\Collection;
 
 class PatientSummaryEloquentRepository
 {
     public $patientRepo;
+    public $callRepo;
 
-    public function __construct(PatientWriteRepository $patientRepo)
+    public function __construct(PatientWriteRepository $patientRepo, CallRepository $callRepo)
     {
         $this->patientRepo = $patientRepo;
+        $this->callRepo    = $callRepo;
     }
 
     /**
@@ -95,10 +99,14 @@ class PatientSummaryEloquentRepository
         if ($this->lacksProblems($summary)) {
             $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary,
                 $patient->ccdProblems->where('billable', '=', true)->values());
+
+            $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         if ($this->lacksProblems($summary)) {
             $summary = $this->TO_DEPRECATE_fillProblems($patient, $summary, $this->getValidCcdProblems($patient));
+
+            $summary = $this->fillBillableProblemsNameAndCode($summary);
         }
 
         if ( ! $skipValidation && $this->shouldGoThroughAttachProblemsAgain($summary, $patient)) {
@@ -377,12 +385,12 @@ class PatientSummaryEloquentRepository
      * Attach the practice's default chargeable service to the given patient summary.
      *
      * @param $summary
-     * @param null $chargeableServiceId | The Chargeable Service Code to attach
+     * @param array|ChargeableService|null $chargeableServiceId | The Chargeable Service Code to attach
      * @param bool $detach | Whether to detach existing chargeable services, when using the sync function
      *
      * @return mixed
      */
-    public function attachDefaultChargeableService($summary, $chargeableServiceId = null, $detach = false)
+    public function attachChargeableService($summary, $chargeableServiceId = null, $detach = false)
     {
         if ( ! $chargeableServiceId) {
             return $summary;
@@ -394,20 +402,30 @@ class PatientSummaryEloquentRepository
 //                ->updateSummaryChargeableServices;
         }
 
+        if (is_a($chargeableServiceId, ChargeableService::class)) {
+            $chargeableServiceId = $chargeableServiceId->id;
+        }
+
+        if ( ! is_array($chargeableServiceId)) {
+            $chargeableServiceId = [$chargeableServiceId];
+        }
+
         $sync = $summary->chargeableServices()
                         ->sync($chargeableServiceId, $detach);
 
         if ($sync['attached'] || $sync['detached'] || $sync['updated']) {
+            $class = PatientMonthlySummary::class;
+            Cache::forget("$class:{$summary->id}:chargeableServices");
             $summary->load('chargeableServices');
         }
 
         return $summary;
     }
 
-    public function detachDefaultChargeableService($summary, $defaultCodeId)
+    public function detachChargeableService($summary, $chargeableServiceId)
     {
         $detached = $summary->chargeableServices()
-                            ->detach($defaultCodeId);
+                            ->detach($chargeableServiceId);
 
         $summary->load('chargeableServices');
 
@@ -468,28 +486,24 @@ class PatientSummaryEloquentRepository
             return $summary;
         }
 
-        $chargeableServices       = null;
-        $attachChargeableServices = false;
+        $class = Practice::class;
 
-        if ($patient->primaryPractice->hasServiceCode('CPT 99484')) {
-            $chargeableServices       = ChargeableService::get()->keyBy('code');
-            $attachChargeableServices = true;
-        }
+        $chargeableServices = Cache::remember("$class:{$patient->primaryPractice->id}:chargeableServices", 2,
+            function () use ($patient) {
+                return $patient->primaryPractice->chargeableServices->keyBy('code');
+            });
 
-        if ($attachChargeableServices) {
-            $totalTime = $summary->bhi_time + $summary->ccm_time;
+        $attach = $chargeableServices
+            ->map(function ($service) use ($summary) {
+                if ($this->shouldAttachChargeableService($service, $summary)) {
+                    return $service->id;
+                }
+            })
+            ->filter()
+            ->values()
+            ->all();
 
-            if ($summary->ccm_time >= 1200 && $summary->bhi_time >= 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490']);
-            } elseif ($summary->ccm_time >= 1200 && $summary->bhi_time < 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99490'], true);
-            } elseif ($summary->ccm_time < 1200 && $summary->bhi_time >= 1200) {
-                $summary = $this->attachDefaultChargeableService($summary, $chargeableServices['CPT 99484'], true);
-            }
-        }
-
-        return $summary;
+        return $this->attachChargeableService($summary, $attach);
     }
 
     private function attachBhiProblem($summary)
@@ -510,5 +524,37 @@ class PatientSummaryEloquentRepository
 
 
         return $summary;
+    }
+
+    /**
+     * Save the most updated sum of calls and sum of successful calls to the given PatientMonthlySummary
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return PatientMonthlySummary
+     */
+    public function syncCallCounts(PatientMonthlySummary $summary)
+    {
+        $summary->no_of_calls            = $this->callRepo->numberOfCalls($summary->patient_id, $summary->month_year);
+        $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($summary->patient_id,
+            $summary->month_year);
+        $summary->save();
+
+        return $summary;
+    }
+
+    /**
+     * Decide wheter or not to attach a chargeable service to a patient summary.
+     *
+     * @param ChargeableService $service
+     * @param PatientMonthlySummary $summary
+     *
+     * @return bool
+     */
+    private function shouldAttachChargeableService(ChargeableService $service, PatientMonthlySummary $summary)
+    {
+        return $service->code == 'CPT 99484' && $summary->bhi_time >= 1200
+               || $service->code == 'CPT 99490' && $summary->ccm_time >= 1200
+               || in_array($service->code, ChargeableService::DEFAULT_CHARGEABLE_SERVICE_CODES);
     }
 }

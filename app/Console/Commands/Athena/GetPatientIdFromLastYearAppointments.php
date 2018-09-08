@@ -33,7 +33,7 @@ class GetPatientIdFromLastYearAppointments extends Command
     /**
      * Create a new command instance.
      *
-     * @return void
+     * @param DetermineEnrollmentEligibility $athenaApi
      */
     public function __construct(DetermineEnrollmentEligibility $athenaApi)
     {

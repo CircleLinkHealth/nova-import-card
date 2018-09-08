@@ -132,7 +132,6 @@
     <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
     <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-    <script src="{{ asset('js/browser-calls.js', app()->environment() != 'local') }}"></script>
 
     <script>
 

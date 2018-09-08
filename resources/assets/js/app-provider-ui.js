@@ -68,6 +68,8 @@ const AppointmentsComponent = () => import(/* webpackChunkName: "chunk-careplan"
 const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */ './components/patients/listing')
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
+const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call.vue');
+
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -107,7 +109,7 @@ Vue.component('appointments', AppointmentsComponent)
 Vue.component('patient-list', PatientList)
 Vue.component('v-datepicker', DatepickerComponent)
 Vue.component('importer-trainer', ImporterTrainerComponent)
-
+Vue.component('patient-next-call', PatientNextCallComponent);
 
 const App = new Vue({
     el: '#app',

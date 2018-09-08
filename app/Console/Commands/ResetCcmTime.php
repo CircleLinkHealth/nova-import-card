@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\AppConfig;
 use App\Patient;
+use App\PatientMonthlySummary;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -14,7 +15,7 @@ class ResetCcmTime extends Command
      *
      * @var string
      */
-    protected $signature = 'ccm_time:reset';
+    protected $signature = 'reset:ccm_time';
 
     /**
      * The console command description.
@@ -40,17 +41,55 @@ class ResetCcmTime extends Command
      */
     public function handle()
     {
-        $appConfigs = AppConfig::all();
-
-        $lastReset = $appConfigs->where('config_key', 'cur_month_ccm_time_last_reset')->first();
+        Patient::withTrashed()
+               ->update([
+                   'cur_month_activity_time' => '0',
+               ]);
 
         Patient::withTrashed()
-            ->update([
-                'cur_month_activity_time' => '0',
-            ]);
+               ->whereDoesntHave('user.patientSummaries', function ($q) {
+                   $q->where('month_year', '=', Carbon::now()->startOfMonth());
+               })
+               ->chunk(200, function ($patients) {
 
-        $lastReset->config_value = Carbon::now();
-        $lastReset->save();
+                   foreach ($patients as $patient) {
+
+                       $summary = PatientMonthlySummary::where('patient_id', '=', $patient->user_id)
+                                                       ->orderBy('id', 'desc')->first();
+
+                       //if we have already summary for this month, then we skip this
+                       if ($summary && Carbon::today()->isSameMonth($summary->month_year)) {
+                           return;
+                       }
+
+                       if ($summary) {
+                           //clone record
+                           $newSummary = $summary->replicate();
+                       } else {
+                           $newSummary             = new PatientMonthlySummary();
+                           $newSummary->patient_id = $patient->user_id;
+                       }
+
+                       $newSummary->month_year             = Carbon::today();
+                       $newSummary->total_time             = 0;
+                       $newSummary->ccm_time               = 0;
+                       $newSummary->bhi_time               = 0;
+                       $newSummary->no_of_calls            = 0;
+                       $newSummary->no_of_successful_calls = 0;
+                       $newSummary->is_ccm_complex         = 0;
+                       $newSummary->approved               = 0;
+                       $newSummary->rejected               = 0;
+                       $newSummary->actor_id               = null;
+                       $newSummary->needs_qa               = null;
+                       $newSummary->save();
+                   }
+
+               });
+
+        AppConfig::updateOrCreate([
+            'config_key'   => 'reset_cur_month_activity_time',
+            'config_value' => Carbon::now(),
+        ]);
 
         $this->info('CCM Time reset.');
     }

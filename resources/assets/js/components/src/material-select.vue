@@ -30,7 +30,7 @@
                 default: 'Choose your option'
             },
             value: {
-                default: null,
+                default: '',
                 required: false
             },
             textField: {

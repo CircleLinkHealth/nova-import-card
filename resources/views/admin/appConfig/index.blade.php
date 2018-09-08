@@ -14,7 +14,7 @@
                     <div class="col-sm-8">
                         <h1>App Configs</h1>
                     </div>
-                    @if(Cerberus::hasPermission('app-config-manage'))
+                    @if(Cerberus::hasPermission('appConfig.update'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
                                 <a href="{{ route('admin.appConfig.create', array()) }}" class="btn btn-success">New App Config</a>
@@ -46,7 +46,7 @@
                                 <td>{{ date('F d, Y g:i A', strtotime($appConfig->created_at)) }}</td>
                                 <td>{{ date('F d, Y g:i A', strtotime($appConfig->updated_at)) }}</td>
                                 <td>
-                                    @if(Cerberus::hasPermission('app-config-manage'))
+                                    @if(Cerberus::hasPermission('appConfig.update'))
                                         <a href="{{ route('admin.appConfig.edit', array('id' => $appConfig->id)) }}" class="btn btn-primary">Edit</a>
                                         <a href="{{ route('admin.appConfig.destroy', array('id' => $appConfig->id)) }}" class="btn btn-danger">Delete</a>
                                     @endif

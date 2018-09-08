@@ -1,20 +1,17 @@
 <?php namespace App\Services;
 
-use App\CarePlan;
-use App\Services\CPM\CpmProblemService;
-use App\Services\CCD\CcdProblemService;
-use App\Services\CPM\CpmProblemUserService;
-use App\Services\CPM\CpmMedicationService;
-use App\Services\CPM\CpmMedicationGroupService;
-use App\Services\CPM\CpmBiometricService;
-use App\Services\CPM\CpmSymptomService;
-use App\Services\CPM\CpmLifestyleService;
-use App\Services\CCD\CcdAllergyService;
-use App\Services\CPM\CpmMiscService;
-use App\Services\NoteService;
-use App\Services\AppointmentService;
 use App\Repositories\CareplanRepository;
-use Illuminate\Support\Collection;
+use App\Services\CCD\CcdAllergyService;
+use App\Services\CCD\CcdProblemService;
+use App\Services\CPM\CpmBiometricService;
+use App\Services\CPM\CpmLifestyleService;
+use App\Services\CPM\CpmMedicationGroupService;
+use App\Services\CPM\CpmMedicationService;
+use App\Services\CPM\CpmMiscService;
+use App\Services\CPM\CpmProblemService;
+use App\Services\CPM\CpmProblemUserService;
+use App\Services\CPM\CpmSymptomService;
+use App\User;
 
 class CareplanService
 {
@@ -65,16 +62,22 @@ class CareplanService
     }
 
     public function careplan($userId) {
+        $user = is_a($userId, User::class)
+            ? $userId
+            : User::findOrFail($userId);
+
+        $user->loadMissing(['ccdProblems.cpmInstruction', 'ccdProblems.codes']);
+
         return [
-            'allCpmProblems'    => $this->cpmService->all(),
-            'cpmProblems'       => $this->cpmUserService->getPatientProblems($userId),
-            'ccdProblems'       => $this->ccdUserService->getPatientProblems($userId),
-            'medications'       => $this->medicationService->repo()->patientMedication($userId)->getCollection(),
-            'medicationGroups'  => $this->medicationGroupService->repo()->groups(),
-            'healthGoals'       => $this->biometricService->patientBiometrics($userId),
-            'baseHealthGoals'   => $this->biometricService->biometrics(),
-            'symptoms'          => $this->symptomService->repo()->patientSymptoms($userId),
-            'allSymptoms'       => $this->symptomService->repo()->symptoms()->getCollection(),
+            'allCpmProblems'   => $this->cpmService->all(),
+            'cpmProblems'      => $this->cpmUserService->getPatientProblems($userId),
+            'ccdProblems'      => $this->ccdUserService->getPatientProblems($user),
+            'medications'      => $this->medicationService->repo()->patientMedication($userId)->getCollection(),
+            'medicationGroups' => $this->medicationGroupService->repo()->groups(),
+            'healthGoals'      => $this->biometricService->patientBiometrics($userId),
+            'baseHealthGoals'  => $this->biometricService->biometrics(),
+            'symptoms'         => $this->symptomService->repo()->patientSymptoms($userId),
+            'allSymptoms'      => $this->symptomService->repo()->symptoms()->getCollection(),
             'lifestyles'        => $this->lifestyleService->patientLifestyles($userId),
             'allLifestyles'     => $this->lifestyleService->repo()->lifestyles()->getCollection(),
             'allergies'         => $this->allergyService->patientAllergies($userId),

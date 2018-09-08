@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Request;
 use App\Practice;
 use Spatie\MediaLibrary\Media;
 
@@ -38,6 +39,10 @@ class DownloadController extends Controller
         }
 
         if ( ! file_exists($path)) {
+            $path = base64_decode($filePath);
+        }
+
+        if ( ! file_exists($path)) {
             return "Could not locate file with name: $filePath";
         }
 
@@ -46,6 +51,11 @@ class DownloadController extends Controller
         return response()->download($path, $fileName, [
             'Content-Length: ' . filesize($path),
         ]);
+    }
+
+    public function postDownloadfile(Request $request)
+    {
+        return $this->file($request->input('filePath'));
     }
 
     public function mediaFileExists($filePath)
@@ -77,6 +87,6 @@ class DownloadController extends Controller
 
         $practiceId = $media->model_id;
 
-       return auth()->user()->practice((int)$practiceId) || auth()->user()->hasRole('administrator');
+        return auth()->user()->practice((int)$practiceId) || auth()->user()->hasRole('administrator');
     }
 }

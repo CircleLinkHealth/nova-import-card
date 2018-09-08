@@ -57,7 +57,9 @@ class PatientCareplanController extends Controller
         $carePlans = CarePlan::with('providerApproverUser')
                              ->whereNull('first_printed')
                              ->whereNull('last_printed')
-                             ->has('patient')
+                             ->whereHas('patient', function ($q) {
+                                 $q->intersectPracticesWith(auth()->user());
+                             })
                              ->with([
                                  'patient' => function ($q) {
                                      $q
@@ -65,6 +67,7 @@ class PatientCareplanController extends Controller
                                              'primaryPractice',
                                              'patientInfo',
                                          ])
+                                         ->intersectPracticesWith(auth()->user())
                                          ->withCareTeamOfType('billing_provider');
                                  },
                              ])
@@ -118,7 +121,10 @@ class PatientCareplanController extends Controller
                                      }
                                  }
 
-                                 if ($cp->patient->patientInfo && ! empty($cp->patient->fullName) && ! empty($cp->patient->first_name) && ! empty($cp->patient->last_name)) {
+                                 if ($cp->patient->patientInfo
+                                     && ! empty($cp->patient->fullName)
+                                     && ! empty($cp->patient->first_name)
+                                     && ! empty($cp->patient->last_name)) {
                                      return [
                                          'key'                        => $cp->patient->id,
                                          'id'                         => $cp->patient->id,
@@ -185,7 +191,7 @@ class PatientCareplanController extends Controller
         // create pdf for each user
         $p = 1;
         foreach ($users as $user_id) {
-            $user           = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
+            $user = User::with(['careTeamMembers', 'carePlan'])->find($user_id);
 
             $careplan = $this->formatter->formatDataForViewPrintCareplanReport([$user]);
             $careplan = $careplan[$user_id];
@@ -193,7 +199,7 @@ class PatientCareplanController extends Controller
                 return false;
             }
 
-            $pageCount        = 0;
+            $pageCount = 0;
 
             if ($request->filled('render') && $request->input('render') == 'html') {
                 return view('wpUsers.patient.multiview', [

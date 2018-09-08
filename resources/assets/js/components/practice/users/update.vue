@@ -63,7 +63,14 @@
                                v-model="formData.sendBillingReports" :checked="formData.sendBillingReports"/>
                         <label for="sendBillingReports">Send Billing Reports</label>
                     </div>
+                    <div class="input-field col s6"></div>
+                    <div class="input-field col s6">
+                        <input type="checkbox" class="filled-in" id="canApproveAllCareplans"
+                               v-model="formData.canApproveAllCareplans" :checked="formData.canApproveAllCareplans"/>
+                        <label for="canApproveAllCareplans">Grant Rights to approve all CarePlans</label>
+                    </div>
                 </div>
+
 
                 <div class="row">
                     <div class="input-field col s3">
@@ -92,7 +99,7 @@
                     </div>
                 </div>
 
-                <div v-show="formData.role_name == 'provider'">
+                <div v-if="formData.role_name == 'provider' && practiceSettings.email_careplan_approval_reminders == 1">
                     <div class="row">
                         <h6 class="col s12">
                             Whom should we notify for clinical issues regarding provider’s patients?
@@ -107,8 +114,8 @@
                         </div>
 
                         <div v-show="formData.forward_alerts_to.who !== 'billing_provider'" class="input-field col s6">
-                            <material-select v-model="formData.forward_alerts_to.user_id" class="input-field"
-                                             name="forward_alerts_to.user_id">
+                            <material-select v-model="formData.forward_alerts_to.user_ids" class="input-field"
+                                             name="forward_alerts_to.user_ids" :multiple="true">
                                 <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
                                         v-text="user.full_name"></option>
                             </material-select>
@@ -131,9 +138,9 @@
 
                         <div v-show="formData.forward_careplan_approval_emails_to.who !== 'billing_provider'"
                              class="input-field col s6">
-                            <material-select v-model="formData.forward_careplan_approval_emails_to.user_id"
+                            <material-select v-model="formData.forward_careplan_approval_emails_to.user_ids"
                                              class="input-field"
-                                             name="forward_careplan_approval_emails_to.user_id">
+                                             name="forward_careplan_approval_emails_to.user_ids" :multiple="true">
                                 <option v-for="user in staff" :value="user.id" v-if="user.id !== formData.id"
                                         v-text="user.full_name"></option>
                             </material-select>
@@ -187,6 +194,12 @@
                 default: () => {
                     return {}
                 }
+            },
+            practiceSettings: {
+                type: Object,
+                default: () => {
+                    return {}
+                }
             }
         },
 
@@ -196,6 +209,7 @@
         },
 
         created() {
+
             if (!_.isEmpty(this.editedStaffMember)) {
                 this.formData = JSON.parse(JSON.stringify(this.editedStaffMember))
             }
@@ -264,17 +278,18 @@
                     'phone_type': 1,
                     'grantAdminRights': '',
                     'sendBillingReports': '',
+                    'canApproveAllCareplans': '',
                     'role': {},
                     'role_name': 'med_assistant',
                     'locations': [],
                     'emr_direct_address': '',
                     'forward_alerts_to': {
                         'who': 'billing_provider',
-                        'user_id': '',
+                        'user_ids': [],
                     },
                     'forward_careplan_approval_emails_to': {
                         'who': 'billing_provider',
-                        'user_id': '',
+                        'user_ids': [],
                     },
                 },
                 formState: {},

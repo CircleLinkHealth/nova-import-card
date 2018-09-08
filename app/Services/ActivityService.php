@@ -4,17 +4,27 @@ use App\Patient;
 use App\PatientMonthlySummary;
 use App\Repositories\CallRepository;
 use App\Repositories\Eloquent\ActivityRepository;
+use App\Repositories\PatientSummaryEloquentRepository;
 use Carbon\Carbon;
 
 class ActivityService
 {
     protected $callRepo;
     protected $repo;
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
+    private $patientSummaryEloquentRepository;
 
-    public function __construct(ActivityRepository $repo, CallRepository $callRepo)
+    public function __construct(
+        ActivityRepository $repo,
+        CallRepository $callRepo,
+        PatientSummaryEloquentRepository $patientSummaryEloquentRepository
+    )
     {
-        $this->repo     = $repo;
-        $this->callRepo = $callRepo;
+        $this->repo                             = $repo;
+        $this->callRepo                         = $callRepo;
+        $this->patientSummaryEloquentRepository = $patientSummaryEloquentRepository;
     }
 
     /**
@@ -37,70 +47,91 @@ class ActivityService
             $userIds = [$userIds];
         }
 
-        $total_time = 0;
+
+        $total_time_per_user = [];
+        foreach ($userIds as $userId) {
+            $total_time_per_user[$userId] = 0;
+        }
 
         $acts = $this->repo->totalCCMTime($userIds, $monthYear)
                            ->get()
                            ->pluck('total_time', 'patient_id');
 
-        foreach ($acts as $id => $ccmTime) {
-            $summary = PatientMonthlySummary::updateOrCreate([
-                'patient_id' => $id,
-                'month_year' => $monthYear->toDateString(),
-            ], [
-                'ccm_time' => $ccmTime,
-            ]);
+        //add 0 for the ones not found in this monthYear
+        foreach ($userIds as $userId) {
+            if ( ! isset($acts[$userId])) {
+                $acts[$userId] = 0;
+            }
+        }
 
-            if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
-                $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
-                $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
+        foreach ($acts as $id => $ccmTime) {
+
+            if ($ccmTime > 0) {
+                $summary = PatientMonthlySummary::updateOrCreate([
+                    'patient_id' => $id,
+                    'month_year' => $monthYear,
+                ], [
+                    'ccm_time' => $ccmTime,
+                ]);
+
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
+                    $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
+                }
+
+                $total_time_per_user[$id] += $ccmTime;
+
+                $summary->total_time = (int)$total_time_per_user[$id];
                 $summary->save();
             }
-
-            $total_time += $ccmTime;
 
             if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
                 $info = Patient::updateOrCreate([
                     'user_id' => $id,
                 ], [
-                    'cur_month_activity_time' => (int)$total_time,
+                    'cur_month_activity_time' => (int)$total_time_per_user[$id],
                 ]);
             }
 
-            $summary->total_time = (int)$total_time;
-            $summary->save();
         }
 
         $bhi_acts = $this->repo->totalBHITime($userIds, $monthYear)
                                ->get()
                                ->pluck('total_time', 'patient_id');
 
-        foreach ($bhi_acts as $id => $bhiTime) {
-            $summary = PatientMonthlySummary::updateOrCreate([
-                'patient_id' => $id,
-                'month_year' => $monthYear->toDateString(),
-            ], [
-                'bhi_time' => $bhiTime,
-            ]);
+        //add 0 for the ones not found in this monthYear
+        foreach ($userIds as $userId) {
+            if ( ! isset($bhi_acts[$userId])) {
+                $bhi_acts[$userId] = 0;
+            }
+        }
 
-            if ($summary->no_of_calls == 0 && $summary->no_of_successful_calls == 0) {
-                $summary->no_of_calls            = $this->callRepo->numberOfCalls($id, $monthYear);
-                $summary->no_of_successful_calls = $this->callRepo->numberOfSuccessfulCalls($id, $monthYear);
+        foreach ($bhi_acts as $id => $bhiTime) {
+
+            if ($bhiTime > 0) {
+                $summary = PatientMonthlySummary::updateOrCreate([
+                    'patient_id' => $id,
+                    'month_year' => $monthYear,
+                ], [
+                    'bhi_time' => $bhiTime,
+                ]);
+
+                if ($summary->no_of_calls == 0 || $summary->no_of_successful_calls == 0) {
+                    $summary = $this->patientSummaryEloquentRepository->syncCallCounts($summary);
+                }
+
+                $total_time_per_user[$id] += $bhiTime;
+
+                $summary->total_time = (int)$total_time_per_user[$id];
                 $summary->save();
             }
-
-            $total_time += $bhiTime;
 
             if ($monthYear->toDateString() == Carbon::now()->startOfMonth()->toDateString()) {
                 $info = Patient::updateOrCreate([
                     'user_id' => $id,
                 ], [
-                    'cur_month_activity_time' => (int)$total_time,
+                    'cur_month_activity_time' => (int)$total_time_per_user[$id],
                 ]);
             }
-
-            $summary->total_time = (int)$total_time;
-            $summary->save();
         }
 
 

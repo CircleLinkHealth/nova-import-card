@@ -354,6 +354,7 @@ class ProcessEligibilityService
     /**
      * @param EligibilityBatch $batch
      *
+     * @return array|bool
      * @throws \Exception
      */
     public function processCsvForEligibility(EligibilityBatch $batch)

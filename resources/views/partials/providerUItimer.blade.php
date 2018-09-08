@@ -37,13 +37,13 @@ use App\Patient;
                 $patientId = $user->id;
                 $patientFamilyId = $patient->family_id;
 
-                $patientIsCcm = $user->isCcm();
-                $patientIsBehavioral = $user->isBehavioral();
+                $patientIsCcm        = $user->isCcm();
+                $patientIsBehavioral = $user->isBhi();
             }
             else {
-                $patientFamilyId = optional($patient->patientInfo()->first())->family_id;
-                $patientIsCcm = $patient->isCcm();
-                $patientIsBehavioral = $patient->isBehavioral();
+                $patientFamilyId     = optional($patient->patientInfo()->first())->family_id;
+                $patientIsCcm        = $patient->isCcm();
+                $patientIsBehavioral = $patient->isBhi();
             }
         }
         else {
@@ -70,7 +70,7 @@ use App\Patient;
                                 return 0;
                             })(document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null),
                 "monthlyTime": document.querySelector('[data-monthly-time]') ? document.querySelector('[data-monthly-time]').getAttribute('data-monthly-time') : null,
-                "wsUrl": "{{ env('WS_URL') }}",
+                "wsUrl": "{{ config('services.ws.url') }}",
                 "programId": '{{$patientProgramId}}',
                 "urlFull": '{{Request::url()}}',
                 "urlShort": '{{$urlShort}}',
@@ -80,7 +80,7 @@ use App\Patient;
                 "submitUrl": '{{route("api.pagetracking")}}',
                 "startTime": '{{Carbon\Carbon::now()->subSeconds(8)->toDateTimeString()}}',
                 "noLiveCount": ('{{$noLiveCountTimeTracking}}' == '1') ? 1 : 0,
-                "noCallMode": "{{ !((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging')) }}",
+                "noCallMode": "{{ config('services.no-call-mode.env') }}",
                 "patientFamilyId": "{{ $patientFamilyId ?? 0 }}",
                 "isCcm": ('{{ $patientIsCcm }}' == '1') ? true : false,
                 "isBehavioral": ('{{ $patientIsBehavioral }}' == '1') ? true : false,

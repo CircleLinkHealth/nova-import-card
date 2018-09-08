@@ -37,9 +37,9 @@ class JsonListAllergyLogger implements Logger
     {
         $check = is_json($allergiesString);
 
-        if ($check === false) {
-            throw new \Exception("The string contains invalid json. String: `$allergiesString`");
-        }
+//        if ($check === false) {
+//            throw new \Exception("The string contains invalid json. String: `$allergiesString`");
+//        }
 
         return (boolean)$check;
     }

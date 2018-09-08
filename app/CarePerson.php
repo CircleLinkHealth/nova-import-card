@@ -1,8 +1,5 @@
 <?php namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Venturecraft\Revisionable\RevisionableTrait;
-
 /**
  * App\CarePerson
  *
@@ -23,15 +20,14 @@ use Venturecraft\Revisionable\RevisionableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePerson whereUserId($value)
  * @mixin \Eloquent
  */
-class CarePerson extends \App\BaseModel
+class CarePerson extends BaseModel
 {
-    use RevisionableTrait;
-
     const BILLING_PROVIDER = 'billing_provider';
     const IN_ADDITION_TO_BILLING_PROVIDER = 'in_addition_to_billing_provider';
     const INSTEAD_OF_BILLING_PROVIDER = 'instead_of_billing_provider';
 
 
+    const REGULAR_DOCTOR = 'regular_doctor';
     const LEAD_CONTACT = 'lead_contact';
     const MEMBER = 'member';
     const SEND_ALERT_TO = 'send_alert_to';
@@ -64,15 +60,8 @@ class CarePerson extends \App\BaseModel
         'alert',
     ];
 
-    public static function boot()
-    {
-        parent::boot();
-    }
-
-    // START RELATIONSHIPS
     public function user()
     {
         return $this->belongsTo(User::class, 'member_user_id', 'id');
     }
-    // END RELATIONSHIPS
 }

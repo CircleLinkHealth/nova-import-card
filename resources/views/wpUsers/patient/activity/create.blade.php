@@ -21,16 +21,20 @@
     @endpush
 
     <div class="row" style="margin-top:60px;">
-        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1">
+        <div class="main-form-container col-lg-6 col-lg-offset-3 col-md-10 col-md-offset-1"
+             style="border-bottom: 3px solid #50b2e2;">
             <div class="row">
                 <div class="main-form-title col-lg-12">
                     Record New Activity
                 </div>
                 {!! Form::open(array('url' => route('patient.activity.store', ['patientId' => $patient]), 'class' => 'form-horizontal')) !!}
 
-                @include('partials.userheader')
+                <div>
+                    @include('partials.userheader')
+                    <div class="row"></div>
+                </div>
 
-                <div class="main-form-block main-form-horizontal main-form-primary-horizontal row">
+                <div class="main-form-block">
                     <div class="form-block col-md-6">
                         <div class="row">
                             <div class="col-sm-12">
@@ -77,7 +81,8 @@
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <select id="performedBy" name="provider_id"
-                                            class="selectpickerX provider dropdown Valid form-control" data-size="10" required>
+                                            class="selectpickerX provider dropdown Valid form-control" data-size="10"
+                                            required style="width: 100%;">
                                         <option value=""> Select Provider</option>
                                         @foreach ($provider_info as $id => $name)
                                             <option value="{{$id}}"> {{($name && (trim($name) == '')) ? 'Me' : $name}} </option>
@@ -106,7 +111,7 @@
                         </div>
                     </div>
 
-                    @if ($patient->isCcm() && $patient->isBehavioral()) 
+                    @if ($patient->isCcm() && $patient->isBhi())
                         <div class="form-block col-md-6">
                             <div class="row">
                                 <div class="col-sm-6">
@@ -163,18 +168,13 @@
                                         </div>
                                     </div>
 
-
-                                    @push('scripts')
-                                        <script>
-                
-                                        </script>
-                                    @endpush
                                     {!! Form::close() !!}
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <div class="row"></div>
                 </div>
 
             </div>

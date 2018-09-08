@@ -1,11 +1,26 @@
-let mix = require('laravel-mix')
-const path = require('path')
-const WorkboxPlugin = require('workbox-webpack-plugin')
-const DIST_DIR = 'public'
-const SRC_DIR = 'resources/assets'
+const mix = require('laravel-mix');
+const path = require('path');
+const fs = require('fs');
+//
+// NOTE:
+//
+// We use webpack in combination with Laravel Mix.
+//
+// We use chunks from webpack (see app-clh-admin-ui.js)
+// For the chunk we use webpack output property to define a filename with a hash for them.
+//
+// For the rest of the files, we use Laravel Mix
+// We use Mix's version() method + mix() in blade.php files to add version on the url.
+//
 
 const webpackConfig = {
-    devtool: "#source-map",
+    // devtool: 'source-map', // .vue is off by a line or 2. <template>, <style> sections are visible. file structure is clean
+// devtool: 'cheap-eval-source-map', // .vue lines are accurate. <template>, <style> are not visible. Lots of weird duplicate files, with ?ffcc, ?ddaa, etc. in the suffix.
+    devtool: 'cheap-module-eval-sourcemap', // .vue lines are accurate, <template>, <style> sections are visible. But file structure is messed up, the actual debuggable js is in root directory, not in its subfolder where it is in actual source.
+    output: {
+        publicPath: "/",
+        chunkFilename: '[name].[chunkhash].js'
+    },
     node: {
         fs: 'empty' //to help webpack resolve 'fs'
     },
@@ -14,17 +29,10 @@ const webpackConfig = {
             './cptable': 'var cptable'
         }
     ],
-    plugins: [
-        new WorkboxPlugin({
-            globDirectory: DIST_DIR,
-            globPatterns: ['chunk-*.js', 'compiled/**/!(sw|workbox)*.{js,css}', 'css/app.css', 'css/admin.css', 'css/wpstyle.css'],
-            swDest: path.join(DIST_DIR, 'sw.js'),
-            swSrc: path.join(SRC_DIR, 'js/sw.js')
-        }),
-    ]
-}
+    plugins: []
+};
 
-mix.webpackConfig(webpackConfig)
+mix.webpackConfig(webpackConfig);
 
 /*
  |--------------------------------------------------------------------------
@@ -42,19 +50,19 @@ mix.webpackConfig(webpackConfig)
  * CSS
  *
  */
-mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css')
+mix.less('resources/assets/less/css/app.less', 'public/compiled/css/app-compiled.css');
 
 mix.combine([
     'public/compiled/css/app-compiled.css',
     'resources/assets/less/css/animate.min.css'
-], 'public/compiled/css/stylesheet.css')
+], 'public/compiled/css/stylesheet.css');
 
-mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css')
+mix.sass('resources/assets/sass/css/provider/dashboard.scss', 'public/compiled/css/provider-dashboard.css');
 
 mix.combine([
     'public/compiled/css/provider-dashboard.css',
     'resources/assets/less/css/animate.min.css'
-], 'public/compiled/css/provider-dashboard.css')
+], 'public/compiled/css/provider-dashboard.css');
 
 
 /**
@@ -75,7 +83,7 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'public/js/typeahead.bundle.js',
     'public/js/DateTimePicker.min.js',
-], 'public/compiled/js/issue-688.js')
+], 'public/compiled/js/issue-688.js');
 /** end fixing issue 688 */
 
 /** start fixing admin-ui */
@@ -89,19 +97,52 @@ mix.combine([
     'bower_components/bootstrap-select/dist/js/bootstrap-select.js',
     'bower_components/select2/dist/js/select2.js',
     'bower_components/bootstrap/dist/js/bootstrap.js'
-], 'public/compiled/js/admin-ui.js')
+], 'public/compiled/js/admin-ui.js');
 /** end fixing admin-ui */
 
 //apps
-mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps()
+mix.js('resources/assets/js/app.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-provider-admin-panel-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps();
+mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps();
 
-if (mix.inProduction) {
-    mix.options({
-        uglify: false,
-      })
-}
+const walkSync = function (dir, fileList) {
+    const files = fs.readdirSync(dir);
+    fileList = fileList || [];
+    files.forEach(function (file) {
+        if (fs.statSync(path.join(dir, file)).isDirectory()) {
+            fileList = walkSync(path.join(dir, file), fileList);
+        }
+        else {
+            fileList.push(path.join(dir, file));
+        }
+    });
+    return fileList;
+};
+const allPublicFiles = walkSync('public');
+const toVersion = [];
+allPublicFiles.forEach((fullPath) => {
 
-mix.js('resources/assets/js/app-clh-admin-ui.js', 'public/compiled/js').sourceMaps()
-mix.js('resources/assets/js/app-ccd-importer.js', 'public/compiled/js').sourceMaps()
+    const dirName = path.dirname(fullPath);
+
+    //looking for compiled folder
+    if (dirName.indexOf('compiled') > -1) {
+        //we assume this file is already processed and ignore
+        return;
+    }
+
+    const fileName = path.basename(fullPath);
+
+    if (fileName.indexOf('chunk-') > -1) {
+        //we assume this file is already processed and ignore
+        return;
+    }
+
+
+    if ([".css", ".img", ".jpg", "jpeg", ".js", ".png", ".ico", ".svg"].includes(path.extname(fullPath))) {
+        toVersion.push(fullPath);
+    }
+
+});
+mix.version(toVersion);

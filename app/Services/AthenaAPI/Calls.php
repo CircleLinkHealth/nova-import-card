@@ -14,9 +14,9 @@ class Calls
 
     public function __construct()
     {
-        $this->key     = env('ATHENA_KEY');
-        $this->secret  = env('ATHENA_SECRET');
-        $this->version = env('ATHENA_VERSION');
+        $this->key     = config('services.athena.key');
+        $this->secret  = config('services.athena.secret');
+        $this->version = config('services.athena.version');
 
         $this->api = new Connection($this->version, $this->key, $this->secret);
     }
@@ -404,7 +404,7 @@ class Calls
 //            'Content-type' => 'multipart/form-data',
 //        ]);
 
-        $version = env('ATHENA_VERSION');
+        $version = $this->version;
 
         /*
          * HACK

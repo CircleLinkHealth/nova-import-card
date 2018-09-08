@@ -91,4 +91,17 @@ class EligibilityBatch extends BaseModel
     {
         return $this->belongsTo(Practice::class);
     }
+
+    public function eligibilityJobs()
+    {
+        return $this->hasMany(EligibilityJob::class, 'batch_id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasJobs(): bool
+    {
+        return $this->eligibilityJobs()->count() > 0;
+    }
 }

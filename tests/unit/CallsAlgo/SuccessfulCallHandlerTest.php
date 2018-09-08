@@ -2,20 +2,20 @@
 
 namespace Tests\Unit\CallsAlgo;
 
-use App\Practice;
 use App\Algorithms\Calls\SuccessfulHandler;
+use App\Practice;
+use App\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Helpers\UserHelpers;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SuccessfulCallHandlerTest extends TestCase
 {
-    use DatabaseTransactions,
-        UserHelpers;
+    use UserHelpers;
 
+    /**
+     * @var User
+     */
     private $nurse;
     private $practice;
 
@@ -25,6 +25,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $this->practice = factory(Practice::class)->create();
         $this->nurse = $this->createUser($this->practice->id, 'care-center');
+        auth()->login($this->nurse);
     }
 
     public function fakePatient(Carbon $called) {

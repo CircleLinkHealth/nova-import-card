@@ -138,7 +138,7 @@
                         name: 'skip-assessment'
                     }).then(function (obj) {
                         if (obj.action) {
-                            location.href = "{{asset('manage-patients/' . $patient->id . '/view-careplan?skippedAssessment')}}"
+                            location.href = "{{url('manage-patients/' . $patient->id . '/view-careplan?skippedAssessment')}}"
                         }
                         console.log(obj)
                     })

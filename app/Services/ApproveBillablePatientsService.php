@@ -48,7 +48,7 @@ class ApproveBillablePatientsService
             ->paginate();
         $summaries->getCollection()->transform(function ($summary) {
             $summary = $this->patientSummaryRepo
-                ->attachDefaultChargeableService($summary);
+                ->attachChargeableService($summary);
 
             return $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
         });
@@ -74,10 +74,45 @@ class ApproveBillablePatientsService
     }
 
     public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false) {
-        return $this->patientSummaryRepo->attachDefaultChargeableService($summary, $defaultCodeId, $detach);
+        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
     }
     
     public function detachDefaultChargeableService($summary, $defaultCodeId) {
-        return $this->patientSummaryRepo->detachDefaultChargeableService($summary, $defaultCodeId);
+        return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
+    }
+
+    /**
+     * Returns a collection containing information about billable patients for a practice for a month.
+     *
+     * The elements of the collection are:
+     *  summaries LengthAwarePaginator
+     *  is_closed Boolean
+     *
+     * @param $practiceId
+     * @param Carbon $date
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getBillablePatientsForMonth($practiceId, Carbon $date)
+    {
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
+
+        $summaries->getCollection()->transform(function ($summary) {
+            if ( ! $summary->actor_id) {
+                $summary = $this->patientSummaryRepo->attachChargeableServices($summary->patient, $summary);
+                $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
+            }
+
+            return ApprovableBillablePatient::make($summary);
+        });
+
+        $isClosed = ! ! $summaries->getCollection()->every(function ($summary) {
+            return ! ! $summary->actor_id;
+        });
+
+        return collect([
+            'summaries' => $summaries,
+            'is_closed' => $isClosed,
+        ]);
     }
 }

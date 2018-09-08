@@ -4,7 +4,6 @@ use App\Activity;
 use App\Nurse;
 use App\NurseCareRateLog;
 use App\NurseMonthlySummary;
-use App\PatientMonthlySummary;
 use Carbon\Carbon;
 
 /**
@@ -85,9 +84,11 @@ class AlternativeCareTimePayableCalculator
         $toAddToAccuredTowardsCCM = 0;
         $toAddToAccuredAfterCCM   = 0;
         $user                     = $activity->patient;
-        $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth()->toDateString();
+        $monthYear                = Carbon::parse($activity->performed_at)->firstOfMonth();
 
-        $summary = PatientMonthlySummary::whereMonthYear($monthYear)->first();
+        $summary = $user->patientSummaries()
+                        ->whereMonthYear($monthYear)
+                        ->first();
 
         $patient = $user->patientInfo;
 

@@ -139,6 +139,7 @@
     .modal-button {
         display: inline-block;
         margin-bottom: 0;
+        margin-left: 5px;
         font-weight: normal;
         text-align: center;
         vertical-align: middle;

@@ -21,26 +21,31 @@ class AthenaAPIAdapter
     private $eligibilityJob;
     private $eligibilityBatch;
 
-    public function __construct(ProblemsAndInsurances $problemsAndInsurances, EligibilityJob $job = null, EligibilityBatch $batch = null)
-    {
+    public function __construct(
+        ProblemsAndInsurances $problemsAndInsurances,
+        EligibilityJob $job = null,
+        EligibilityBatch $batch = null
+    ) {
         $this->problemsAndInsurances = $problemsAndInsurances;
-        $this->eligibilityJob = $job;
-        $this->eligibilityBatch = $batch;
+        $this->eligibilityJob        = $job;
+        $this->eligibilityBatch      = $batch;
     }
 
-    public function isEligible() {
+    public function isEligible()
+    {
         $patientList = collect();
 
         $patient = collect([
-            'problems' => $this->problemsAndInsurances->getProblemCodes(),
+            'problems'   => $this->problemsAndInsurances->getProblemCodes(),
             'insurances' => $this->problemsAndInsurances->getInsurancesForEligibilityCheck(),
         ]);
 
         $patientList->push($patient);
 
-        $check = new WelcomeCallListGenerator($patientList, false, true, true, false, null, null, null, $this->eligibilityBatch, $this->eligibilityJob);
+        $check = new WelcomeCallListGenerator($patientList, false, true, true, false, null, null, null,
+            $this->eligibilityBatch, $this->eligibilityJob);
 
-        $this->eligibilityJob = $check->getEligibilityJob();
+        $this->eligibilityJob      = $check->getEligibilityJob();
         $this->eligiblePatientList = $check->getPatientList();
 
         return $this->eligiblePatientList->count() > 0;
@@ -54,7 +59,8 @@ class AthenaAPIAdapter
         return $this->eligiblePatientList;
     }
 
-    public function getEligibilityJob(){
+    public function getEligibilityJob()
+    {
         return $this->eligibilityJob;
     }
 }

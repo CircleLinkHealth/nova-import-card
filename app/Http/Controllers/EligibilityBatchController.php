@@ -123,7 +123,7 @@ class EligibilityBatchController extends Controller
             'p2.name as ccm_condition_2',
         ])
                             ->join('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
-                            ->join('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
+                            ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
                             ->whereBatchId($batch->id)
                             ->whereNull('user_id')
                             ->get()

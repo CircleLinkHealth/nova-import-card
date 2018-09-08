@@ -17,18 +17,45 @@ class UserCsvResource extends Resource
     public function toArray($request)
     {
         $practice = optional($this->primaryPractice()->first());
-        $patient = optional($this->patientInfo()->first());
+        $patient  = optional($this->patientInfo()->first());
         $careplan = optional($this->carePlan()->first());
+        $ccmStatusDate = '';
+        if ($patient->ccm_status == 'paused'){
+            $ccmStatusDate = $patient->date_paused;
+        }
+        if ($patient->ccm_status == 'withdrawn'){
+            $ccmStatusDate = $patient->date_withdrawn;
+        }
+        if ($patient->ccm_status == 'unreachable'){
+            $ccmStatusDate = $patient->date_unreachable;
+        }
 
-        return ($this->display_name ?? $this->name()) . ',' .
-                $this->billing_provider_name . ',' .
-                $practice->display_name . ',' .
-                $patient->ccm_status . ',' .
-                $careplan->status . ',' .
-                $patient->birth_date . ',' .
-                $this->phone . ',' .
-                ($patient->birth_date ? Carbon::parse($patient->birth_date)->age : 0) . ',' .
-                $this->created_at . ',' .
-                ($patient->cur_month_activity_time ? gmdate('H:i:s', $patient->cur_month_activity_time) : '');
+        return ('"' . $this->display_name ?? $this->name()) . '",' .
+               '"' . $this->billing_provider_name . '",' .
+               '"' . $practice->display_name . '",' .
+               '"' . $patient->ccm_status . '",' .
+               '"' . $ccmStatusDate . '",' .
+               '"' . $careplan->status . '",' .
+               '"' . $patient->birth_date . '",' .
+               '"' . $this->phone . '",' .
+               '"' . ($patient->birth_date
+                ? Carbon::parse($patient->birth_date)->age
+                : 0) . '",' .
+               '"' . $this->created_at . '",' .
+               '"' . $this->getTimeInDecimals($patient->cur_month_activity_time) . '"';
+    }
+
+    /**
+     * Get CCM time in minutes (decimal form) from seconds.
+     *
+     * @param String|null $ccmTime in seconds
+     *
+     * @return string CCM minutes in decimal
+     */
+    private function getTimeInDecimals(String $ccmTime = null) {
+        if (!$ccmTime) {
+            return '0.00';
+        }
+        return number_format($ccmTime / 60, 2, '.', '') ;
     }
 }

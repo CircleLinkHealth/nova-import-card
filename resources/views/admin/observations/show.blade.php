@@ -47,7 +47,7 @@
                                 <td>{{ $observation->obs_unit }}</td>
                                 <td>{{ $observation->program_id }}</td>
                                 <td>
-                                    @if(Cerberus::hasPermission('observations-edit'))
+                                    @if(Cerberus::hasPermission('observation.update'))
                                         <a href="{{ route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
                                     @endif
                                 </td>

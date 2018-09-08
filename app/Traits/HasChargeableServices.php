@@ -10,6 +10,7 @@ namespace App\Traits;
 
 
 use App\ChargeableService;
+use Cache;
 
 trait HasChargeableServices
 {
@@ -22,6 +23,20 @@ trait HasChargeableServices
 
     public function hasServiceCode($code)
     {
-        return $this->chargeableServices()->whereCode($code)->exists();
+        $class = get_called_class();
+
+        $chargeableServices = Cache::remember("$class:{$this->id}:chargeableServices", 2,
+            function () {
+                return $this->chargeableServices->keyBy('code');
+            });
+
+        return $chargeableServices->has($code);
+    }
+
+    public function scopeHasServiceCode($builder, $code)
+    {
+        return $builder->whereHas('chargeableServices', function ($q) use ($code) {
+            $q->whereCode($code);
+        });
     }
 }

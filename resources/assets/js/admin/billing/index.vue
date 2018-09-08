@@ -504,14 +504,14 @@
             },
 
             showCcmModal(patient, type) {
-                if (!patient.isCcmEligible()) {
-                    Event.$emit('notifications-billing:create', {
-                        text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
-                        type: 'warning',
-                        interval: 5000
-                    });
-                    return;
-                }
+                // if (!patient.isCcmEligible()) {
+                //     Event.$emit('notifications-billing:create', {
+                //         text: `Cannot edit CCM Problem. Check that both Practice and Patient are chargeable for ${SERVICES.CPT_99490}.`,
+                //         type: 'warning',
+                //         interval: 5000
+                //     });
+                //     return;
+                // }
 
                 if (!patient.hasOver20MinutesCCMTime()) {
                     Event.$emit('notifications-billing:create', {

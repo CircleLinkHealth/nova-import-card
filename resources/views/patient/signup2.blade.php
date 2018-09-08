@@ -1,7 +1,7 @@
 @extends('provider.layouts.default')
 
 @section('title', 'Signup for Wellness Management')
-@section('meta-image-url', "{{asset('/img/landing-pages/coordination-with-family.png')}}")
+@section('meta-image-url', "{{mix('/img/landing-pages/coordination-with-family.png')}}")
 
 @section('head')
     <style>
@@ -41,14 +41,14 @@
 
     <meta property="og:url" content="{{url('sign-up/')}}"/>
     <meta property="og:title" content="Do you or a loved one need a hand managing chronic conditions?"/>
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
     <meta property="og:type" content="image.other"/>
 
-    <meta property="og:image" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
-    <meta property="og:image:secure_url" content="{{asset('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
+    <meta property="og:image:secure_url" content="{{mix('/img/landing-pages/coordination-with-family.png')}}"/>
     <meta property="og:image:type" content="image/jpeg"/>
     <meta property="og:image:width" content="1050"/>
     <meta property="og:image:height" content="550"/>
@@ -61,7 +61,7 @@
         <div class="navbar-fixed">
             <nav class="white">
                 <div class="header nav-wrapper">
-                    <a href="#" class="col s2"><img class="logo" src="{{asset('/img/clh_logo.svg')}}" alt=""></a>
+                    <a href="#" class="col s2"><img class="logo" src="{{mix('/img/clh_logo.svg')}}" alt=""></a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         <a class="waves-effect waves-light btn-large scroll-to-form blue">Get a free consultation</a>
                     </ul>
@@ -96,7 +96,7 @@
             <div class="row">
                 <div class="col s12 m4 center">
                     <div class="center promo promo-picture">
-                        <img class="col s12" src="{{asset('/img/landing-pages/registered-nurse.png')}}"
+                        <img class="col s12" src="{{mix('/img/landing-pages/registered-nurse.png')}}"
                              alt="">
                         <p class="col s12 promo-caption">Fully Registered Nurse Care Coach</p>
                         <p class="col s12 light center promo-paragraph">Our trained nurses guide you or a loved one to
@@ -107,7 +107,7 @@
                 </div>
                 <div class="col s12 m4 center">
                     <div class="center promo promo-picture">
-                        <img class="col s12" src="{{asset('/img/landing-pages/careplan.png')}}" alt="">
+                        <img class="col s12" src="{{mix('/img/landing-pages/careplan.png')}}" alt="">
                         <p class="col s12 promo-caption">Care Plan/Unlimited Educational Info</p>
                         <p class="col s12 light center promo-paragraph">Our nurses formulate a care plan based on
                             doctor’s orders
@@ -119,7 +119,7 @@
                 <div class="col s12 m4 center">
                     <div class="center promo promo-picture">
                         <img class="col s12"
-                             src="{{asset('/img/landing-pages/coordination-with-family.png')}}"
+                             src="{{mix('/img/landing-pages/coordination-with-family.png')}}"
                              alt="">
                         <p class="col s12 promo-caption">Coordination with Family and Doctors</p>
                         <p class="col s12 light center promo-paragraph">Family members can stay at ease with real-time

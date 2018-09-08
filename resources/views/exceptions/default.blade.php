@@ -15,10 +15,10 @@ if ($user) {
 //Exception
 echo get_class($exception) . ":{$exception->getFile()}:{$exception->getLine()}" . PHP_EOL . PHP_EOL;
 
-//Input
-if (!empty($input)) {
-    echo "Data: " . json_encode($input) . PHP_EOL . PHP_EOL;
-}
+//Input. Commented out for HIPAA compliance. Input may contain PHI
+//if (!empty($input)) {
+//    echo "Data: " . json_encode($input) . PHP_EOL . PHP_EOL;
+//}
 
 //Trace
 echo PHP_EOL . "Trace: {$exception->getTraceAsString()}";

@@ -4,7 +4,10 @@ use App\Http\Controllers\Controller;
 use App\Permission;
 use App\Role;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermissionController extends Controller
 {
@@ -59,7 +62,8 @@ class PermissionController extends Controller
             $permission->roles()->sync($params['roles']);
         }
         $permission->save();
-        redirect()->route('admin.permissions.edit', [$permission->id])->with('messages', ['successfully added new permission - '.$params['name']])->send();
+        redirect()->route('admin.permissions.edit', [$permission->id])->with('messages',
+            ['successfully added new permission - ' . $params['name']]);
     }
 
     /**
@@ -115,7 +119,8 @@ class PermissionController extends Controller
             $permission->roles()->sync($params['roles']);
         }
         $permission->save();
-        return redirect()->back()->with('messages', ['successfully updated permission'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated permission']);
     }
 
     /**
@@ -130,5 +135,94 @@ class PermissionController extends Controller
             abort(403);
         }
         //
+    }
+
+
+    /**
+     * Creates Excel file that shows which roles have which permissions.
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function makeRoleExcel(){
+
+        $today = Carbon::now();
+        $perms = Permission::with('roles')->get();
+        $roles = Role::get();
+
+        $columns = [];
+        foreach ($roles as $role){
+            $columns[] = $role->display_name;
+        }
+        $roles = collect($columns);
+
+
+        $rows = [];
+        foreach ($perms as $perm) {
+            $row = [];
+            $row['Permission'] = $perm->display_name;
+            foreach ($roles as $role){
+                $input = ' ';
+                if ($perm->roles->where('display_name', $role)->count() > 0){
+                    $input = 'X';
+                }
+                $row[$role] = $input;
+            }
+            $rows[] = $row;
+        }
+
+
+
+        $report = Excel::create("Roles-Permissions Chart for {$today->toDateString()}", function ($excel) use ($rows) {
+            $excel->sheet('Rules-Permissions', function ($sheet) use ($rows) {
+                $sheet->fromArray($rows);
+            });
+        })
+                       ->store('xls', false, true);
+        $excel = auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("excel_report_for_roles_permissions{$today->toDateString()}");
+
+
+
+        return $this->downloadMedia($excel);
+    }
+
+
+    /**
+     * Creates Excel file that shows all middleware(permissions included)
+     * that each route in the system uses.
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function makeRouteExcel(){
+        $today = Carbon::now();
+        $collection = Route::getRoutes();
+        $allRoutes = collect($collection->getRoutesByName());
+
+        $routes = [];
+
+        foreach($allRoutes as $route) {
+
+            $middleware = implode(", ", $route->gatherMiddleware());
+            $routes[] = [
+                'Route(uri)' => $route->uri(),
+                'Middleware' => $middleware,
+            ];
+        }
+
+        $report = Excel::create("Route-Permissions Chart for {$today->toDateString()}", function ($excel) use ($routes) {
+            $excel->sheet('Routes-Permissions', function ($sheet) use ($routes) {
+                $sheet->fromArray($routes);
+            });
+        })
+                       ->store('xls', false, true);
+        $excel = auth()->user()
+            ->saasAccount
+            ->addMedia($report['full'])
+            ->toMediaCollection("excel_report_for_routes_permissions{$today->toDateString()}");
+
+        return $this->downloadMedia($excel);
+
     }
 }

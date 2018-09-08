@@ -26,7 +26,7 @@ class ProviderDashboardACL
 
 
         //CLH Admins can see everything
-        if (auth()->user()->hasRole(['administrator', 'saas-admin'])) {
+        if (auth()->user()->hasRole(['administrator', 'saas-admin', 'saas-admin-view-only'])) {
             return $next($request);
         }
 

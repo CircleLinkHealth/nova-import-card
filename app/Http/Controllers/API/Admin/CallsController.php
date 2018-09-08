@@ -356,10 +356,12 @@ class CallsController extends ApiController
                 $q->where('ccm_status', Patient::ENROLLED);
             });
         })
+                     ->with('schedulerUser.roles')
                      ->filter($filters)
                      ->paginate($rows ?? 15);
 
-        return CallResource::collection($calls);
+        $result = CallResource::collection($calls);
+        return $result;
     }
 
     public function show($id)
