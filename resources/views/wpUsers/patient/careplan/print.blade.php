@@ -5,15 +5,8 @@
 <?php
 
 if (isset($patient) && ! empty($patient)) {
-    $billing = null;
-    $lead    = null;
-    if ( ! empty($patient->getBillingProviderIDAttribute()))
-        $billing = App\User::find($patient->getBillingProviderIDAttribute());
-    if ( ! empty($patient->getLeadContactIDAttribute()))
-        $lead = App\User::find($patient->getLeadContactIDAttribute());
-
     $today = \Carbon\Carbon::now()->toFormattedDateString();
-// $provider = App\User::find($patient->getLeadContactIDAttribute());
+
     $alreadyShown = [];
 }
 ?>
@@ -49,7 +42,7 @@ if (isset($patient) && ! empty($patient)) {
                                               data-href="{{ empty($patient->id) ? route('patients.search') : route('patient.activity.providerUIIndex', array('patient' => $patient->id)) }}">
                                             <time-tracker ref="TimeTrackerApp" :info="timeTrackerInfo"
                                                           :hide-tracker="true"
-                                                          :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                         </span>
                                     </span>
                                 </div>
@@ -155,25 +148,41 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                        <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
-                        <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
+                        <div class="col-xs-4 print-row text-bold">{{$patient->fullName}}</div>
+                        <div class="col-xs-4 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
+
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">
-                            @if($billing)
-                                {{$billing->fullName}} {!! ($billing->getSpecialtyAttribute() == '')? '' :  "<br> {$billing->getSpecialtyAttribute()}"!!}
-                            @else
-                                <em>No Billing Provider Selected</em>
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row">
-                            @if($billing)
-                                {{$billing->phone}}
-                            @endif
-                        </div>
-                        <div class="col-xs-4 col-md-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
+                        @if($billingDoctor)
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$billingDoctor->phone}}
+                            </div>
+                        @else
+                            <div class="col-xs-4 print-row text-bold">
+                                <em>No Billing Dr. Selected</em>
+                            </div>
+                            <div class="col-xs-4 print-row">
+                            </div>
+                        @endif
+                        <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
                     </div>
+
+
+                    @if($regularDoctor)
+                        <div class="row gutter">
+                            <div class="col-xs-4 print-row text-bold">
+                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                            </div>
+                            <div class="col-xs-4 print-row">
+                                {{$regularDoctor->phone}}
+                            </div>
+                        </div>
+                    @endif
+
                 </div>
                 <!-- CARE AREAS -->
                 <care-areas ref="careAreasComponent" patient-id="{{$patient->id}}">
@@ -394,7 +403,12 @@ if (isset($patient) && ! empty($patient)) {
                 <script>
                     var careplan = (<?php
                         echo json_encode($careplan)
-                        ?>) || {}
+                        ?>) || {};
+
+                    if (careplan.ccdProblems && !(careplan.ccdProblems instanceof Array)) {
+                        careplan.ccdProblems = Object.values(careplan.ccdProblems);
+                    }
+
                 </script>
             @endpush
         @endif

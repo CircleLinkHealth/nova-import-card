@@ -161,7 +161,8 @@ class CarePlanHelper
             if ($this->validatePhoneNumber($homeNumber)) {
                 $number = $this->str->formatPhoneNumberE164($homeNumber);
 
-                $makePrimary = $primaryPhone == PhoneNumber::HOME || $primaryPhone == $number || ! $primaryPhone;
+                $makePrimary = strcasecmp($primaryPhone,
+                        PhoneNumber::HOME) == 0 || $primaryPhone == $number || ! $primaryPhone;
 
                 $homePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,
@@ -169,6 +170,15 @@ class CarePlanHelper
                     'type'       => PhoneNumber::HOME,
                     'is_primary' => $makePrimary,
                 ]);
+
+                /**
+                 * Band-aid solution to avoid making all phones primary, if there is no primary phone.
+                 * In `$makePrimary = strcasecmp($primaryPhone, PhoneNumber::HOME) == 0 || $primaryPhone == $number || ! $primaryPhone;`, `! $primaryPhone`
+                 * would make all phones primary, if `! $primaryPhone`
+                 */
+                if ($makePrimary) {
+                    $primaryPhone = $number;
+                }
             }
         }
 
@@ -177,7 +187,8 @@ class CarePlanHelper
             if ($this->validatePhoneNumber($mobileNumber)) {
                 $number = $this->str->formatPhoneNumberE164($mobileNumber);
 
-                $makePrimary = $primaryPhone == PhoneNumber::MOBILE || $primaryPhone == $number || ! $primaryPhone;
+                $makePrimary = strcasecmp($primaryPhone, PhoneNumber::MOBILE) == 0 || strcasecmp($primaryPhone,
+                        'cell') == 0 || $primaryPhone == $number || ! $primaryPhone;
 
                 $mobilePhone = PhoneNumber::create([
                     'user_id'    => $this->user->id,

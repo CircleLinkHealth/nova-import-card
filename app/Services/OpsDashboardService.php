@@ -12,6 +12,7 @@ namespace App\Services;
 use App\Activity;
 use App\Patient;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
+use App\SaasAccount;
 use App\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
@@ -199,44 +200,66 @@ class OpsDashboardService
      *
      * @param $patients
      *
-     * @return \Illuminate\Support\Collection
+     *
      */
-    public function countPatientsByStatus($patients, $fromDate, $toDate)
+    public function countPatientsByStatus($patients, $fromDate)
     {
         $paused    = [];
         $withdrawn = [];
         $enrolled  = [];
-        $gCodeHold = [];
+        $unreachable = [];
+        $to_enroll = [];
 
         foreach ($patients as $patient) {
-            if (!$patient->patientInfo){
-                dd($patient);
+            if ( ! $patient->patientInfo) {
+                continue;
             }
-                if ($patient->patientInfo->ccm_status == 'paused' && $patient->patientInfo->date_paused >= $fromDate && $patient->patientInfo->date_paused <= $toDate) {
-                        $paused[] = $patient;
+            //It's assumed that a patient that had it's ccm_status change in the last day, will also have an entry in the revisions table
+            if ($patient->revisionHistory->isNotEmpty()){
+                if ($patient->patientInfo->ccm_status == Patient::UNREACHABLE &&
+                    $patient->patientInfo->date_unreachable >= $fromDate &&
+                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
+                {
+                    $unreachable[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'withdrawn' && $patient->patientInfo->date_withdrawn >= $fromDate && $patient->patientInfo->date_withdrawn <= $toDate) {
+                if ($patient->patientInfo->ccm_status == Patient::PAUSED &&
+                    $patient->patientInfo->date_paused >= $fromDate &&
+                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
+                {
+                    $paused[] = $patient;
+                }
+                if ($patient->patientInfo->ccm_status == Patient::WITHDRAWN &&
+                    $patient->patientInfo->date_withdrawn >= $fromDate &&
+                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
                     $withdrawn[] = $patient;
                 }
-                if ($patient->patientInfo->ccm_status == 'enrolled' && $patient->patientInfo->registration_date >= $fromDate && $patient->patientInfo->registration_date <= $toDate) {
-                    $enrolled[] = $patient;
-                }
+            }
+
+            if ($patient->patientInfo->ccm_status == Patient::ENROLLED &&
+                $patient->patientInfo->registration_date >= $fromDate) {
+                $enrolled[] = $patient;
+            }
+            if ($patient->patientInfo->ccm_status == Patient::TO_ENROLL) {
+                $to_enroll[] = $patient;
+            }
         }
 
         $pausedCount    = count($paused);
         $withdrawnCount = count($withdrawn);
         $enrolledCount  = count($enrolled);
-        $gCodeHoldCount = count($gCodeHold);
-        $delta          = $this->calculateDelta($enrolledCount, $pausedCount, $withdrawnCount);
+        $unreachableCount = count($unreachable);
+        $toEnrollCount = count($to_enroll);
+        $delta          = $this->calculateDelta($enrolledCount, $pausedCount, $withdrawnCount, $unreachableCount);
 
 
-        return collect([
-            'pausedPatients'    => $pausedCount,
-            'withdrawnPatients' => $withdrawnCount,
-            'enrolled'          => $enrolledCount,
-            'gCodeHold'         => $gCodeHoldCount,
-            'delta'             => $delta,
-        ]);
+        return [
+            'Added'          => $enrolledCount,
+            'Paused'    => $pausedCount,
+            'Unreachable'       => $unreachableCount,
+            'Withdrawn' => $withdrawnCount,
+            'Delta'             => $delta,
+            'G0506 To Enroll' =>$toEnrollCount,
+        ];
 
 
     }
@@ -254,13 +277,12 @@ class OpsDashboardService
     public function countPatientsByCcmTime($patients, $toDate)
     {
 
-        $count['zero']   = 0;
-        $count['0to5']   = 0;
-        $count['5to10']  = 0;
-        $count['10to15'] = 0;
-        $count['15to20'] = 0;
-        $count['20plus'] = 0;
-        $count['total']  = 0;
+        $count['0 mins']   = 0;
+        $count['0-5']   = 0;
+        $count['5-10']  = 0;
+        $count['10-15'] = 0;
+        $count['15-20'] = 0;
+        $count['20+'] = 0;
 
         foreach ($patients as $patient) {
 
@@ -271,30 +293,32 @@ class OpsDashboardService
                 $ccmTime = $activities->sum('duration');
 
                 if ($ccmTime === 0) {
-                    $count['zero'] += 1;
+                    $count['0 mins'] += 1;
                 }
                 if ($ccmTime > 0 and $ccmTime <= 300) {
-                    $count['0to5'] += 1;
+                    $count['0-5'] += 1;
                 }
                 if ($ccmTime > 300 and $ccmTime <= 600) {
-                    $count['5to10'] += 1;
+                    $count['5-10'] += 1;
                 }
                 if ($ccmTime > 600 and $ccmTime <= 900) {
-                    $count['10to15'] += 1;
+                    $count['10-15'] += 1;
                 }
                 if ($ccmTime > 900 and $ccmTime <= 1200) {
-                    $count['15to20'] += 1;
+                    $count['15-20'] += 1;
                 }
                 if ($ccmTime > 1200) {
-                    $count['20plus'] += 1;
+                    $count['20+'] += 1;
                 }
-            }else{
-                if ($patient->patientInfo->ccm_status == Patient::ENROLLED){
-                    $count['zero'] += 1;
+            } else {
+                //remove?
+                if ($patient->patientInfo->ccm_status == Patient::ENROLLED) {
+                    $count['0 mins'] += 1;
                 }
             }
         }
-        $count['total'] = $count['zero'] + $count['0to5'] + $count['5to10'] + $count['10to15'] + $count['15to20'] + $count['20plus'];
+        $count['Total'] = $count['0 mins'] + $count['0-5'] + $count['5-10'] + $count['10-15'] + $count['15-20'] + $count['20+'];
+        $count['Prior Day totals'] = 0;
 
         return $count;
     }
@@ -308,29 +332,27 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($patients,  $enrolledPatients, Carbon $date)
+    public function dailyReportRow($patients, $enrolledPatients, Carbon $date)
     {
-        $fromDate         = $date->copy()->subDay();
+        $fromDate = $date->copy()->subDay();
 
 
-        $ccmCounts = $this->countPatientsByCcmTime($enrolledPatients, $date);
-        $countsByStatus = $this->countPatientsByStatus($patients, $fromDate, $date);
-        $ccmCounts['priorDayTotals'] = $ccmCounts['total'] - $countsByStatus['delta'];
-        $ccmTotal                    = collect($ccmCounts);
+        $ccmCounts      = $this->countPatientsByCcmTime($enrolledPatients, $date);
+        $countsByStatus = $this->countPatientsByStatus($patients, $fromDate);
+        $ccmCounts['Prior Day totals'] = $ccmCounts['Total'] - $countsByStatus['Delta'];
 
-
-        if ($ccmCounts['total'] == 0 && $ccmCounts['priorDayTotals'] == 0 &&
-            $countsByStatus['enrolled'] == 0 &&
-            $countsByStatus['pausedPatients'] == 0 &&
-            $countsByStatus['withdrawnPatients'] == 0 &&
-            $countsByStatus['gCodeHold'] == 0) {
+        if ($ccmCounts['Total'] == 0 &&
+            $countsByStatus['Added'] == 0 &&
+            $countsByStatus['Paused'] == 0 &&
+            $countsByStatus['Withdrawn'] == 0 &&
+            $countsByStatus['G0506 To Enroll'] == 0 &&
+            $countsByStatus['Unreachable'] == 0) {
             return null;
         }
+        $row = array_merge($ccmCounts, $countsByStatus);
 
-        return $row = collect([
-            'ccmCounts'      => $ccmTotal,
-            'countsByStatus' => $countsByStatus,
-        ]);
+        return $row;
+
 
     }
 
@@ -351,18 +373,10 @@ class OpsDashboardService
 
     }
 
-    public function lostAddedRow($patientsByPractice)
+    public function lostAddedRow($patientsByPractice, $fromDate)
     {
 
-        $countsByStatus = $this->countPatientsByStatus($patientsByPractice);
-
-
-        if ($countsByStatus['enrolled'] == 0 &&
-            $countsByStatus['pausedPatients'] == 0 &&
-            $countsByStatus['withdrawnPatients'] == 0 &&
-            $countsByStatus['gCodeHold'] == 0) {
-            return null;
-        }
+        $countsByStatus = $this->countPatientsByStatus($patientsByPractice, $fromDate);
 
         return collect($countsByStatus);
     }
@@ -372,7 +386,7 @@ class OpsDashboardService
     {
 
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                        ->where('month_year','<=', $month->copy()->endOfMonth());
+                                       ->where('month_year', '<=', $month->copy()->endOfMonth());
 
         return $filteredSummaries->count();
     }
@@ -383,12 +397,12 @@ class OpsDashboardService
         $added = 0;
 
         $filteredSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                         ->where('month_year','<=', $month->copy()->endOfMonth());
+                                       ->where('month_year', '<=', $month->copy()->endOfMonth());
 
-        if ($filteredSummaries->count() > 0){
+        if ($filteredSummaries->count() > 0) {
             foreach ($filteredSummaries as $summary) {
                 $priorMonthSummary = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
-                                                ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
+                                               ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth())
                                                ->where('patient_id', $summary->patient_id);
                 if ($priorMonthSummary->count() == 0) {
                     $added += 1;
@@ -411,22 +425,23 @@ class OpsDashboardService
         $pastMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->subMonth()->startOfMonth())
                                         ->where('month_year', '<=', $month->copy()->subMonth()->endOfMonth());
 
-        if ($pastMonthSummaries->count() > 0){
+        if ($pastMonthSummaries->count() > 0) {
             foreach ($pastMonthSummaries as $summary) {
                 $thisMonthSummaries = $summaries->where('month_year', '>=', $month->copy()->startOfMonth())
-                                                ->where('month_year','<=', $month->copy()->endOfMonth())
+                                                ->where('month_year', '<=', $month->copy()->endOfMonth())
                                                 ->where('patient_id', $summary->patient_id);
                 if ($thisMonthSummaries->count() == 0) {
                     $lost += 1;
                 }
             }
         }
+
         return $lost;
 
     }
 
     /**
-     * AvgMinT - AvgMinA)*TotActPt/60
+     * (AvgMinT - AvgMinA)*TotActPt/60
      *
      * @param $date
      *
@@ -441,15 +456,16 @@ class OpsDashboardService
         $startOfMonth       = $date->copy()->startOfMonth();
         $endOfMonth         = $date->copy()->endOfMonth();
         $workingDaysElapsed = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $date->toDateTimeString());
-        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(), $endOfMonth->toDateTimeString());
+        $workingDaysMonth   = $this->calculateWeekdays($startOfMonth->toDateTimeString(),
+            $endOfMonth->toDateTimeString());
         $avgMinT            = ($workingDaysElapsed / $workingDaysMonth) * $targetMinutesPerPatient;
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
-        $sum     = Activity::whereIn('patient_id', $allPatients)
-                           ->where('performed_at', '>=', $startOfMonth)
-                           ->where('performed_at', '<=', $date)
-                           ->sum('duration');
+        $sum = Activity::whereIn('patient_id', $allPatients)
+                       ->where('performed_at', '>=', $startOfMonth)
+                       ->where('performed_at', '<=', $date)
+                       ->sum('duration');
 
         $avg = $sum / count($allPatients);
 
@@ -469,10 +485,10 @@ class OpsDashboardService
      *
      * @return mixed
      */
-    public function calculateDelta($enrolled, $paused, $withdrawn)
+    public function calculateDelta($enrolled, $paused, $withdrawn, $unreachable)
     {
 
-        $delta = $enrolled - $paused - $withdrawn;
+        $delta = $enrolled - $paused - $withdrawn - $unreachable;
 
         return $delta;
     }

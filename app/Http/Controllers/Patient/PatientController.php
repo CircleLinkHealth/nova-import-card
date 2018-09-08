@@ -40,7 +40,7 @@ class PatientController extends Controller
             $nurse->workhourables()->firstOrCreate([]);
         }
 
-        if (auth()->user()->providerInfo && auth()->user()->hasRole(['provider'])) {
+        if (auth()->user()->hasPermission('care-plan-approve')) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
                                                     return $user->careplanStatus == CarePlan::QA_APPROVED;
@@ -387,6 +387,7 @@ class PatientController extends Controller
             }
         }
 
+        //route not found
         return redirect()->route('patient.dashboard', [$params['findUser']]);
     }
 
@@ -492,8 +493,9 @@ class PatientController extends Controller
             }
         }
 
+        //leave it here?
         // security
-        if ( ! Auth::user()->hasPermissionForSite('observations-create', $patient->primary_practice_id)) {
+        if ( ! Auth::user()->hasPermissionForSite('observation.create', $patient->primary_practice_id)) {
             abort(403);
         }
 

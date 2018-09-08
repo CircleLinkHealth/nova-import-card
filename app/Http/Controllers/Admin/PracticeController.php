@@ -3,7 +3,6 @@
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\Practice;
-use App\User;
 use Auth;
 use Illuminate\Http\Request;
 
@@ -17,9 +16,7 @@ class PracticeController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->hasPermission('programs-view')) {
-            abort(403);
-        }
+
         // display view
         $wpBlogs = Practice::orderBy('id', 'desc')->whereActive(1)->get();
 
@@ -33,9 +30,6 @@ class PracticeController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         $messages = \Session::get('messages');
 
@@ -53,9 +47,6 @@ class PracticeController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         // get params
         $params = $request->input();
@@ -74,7 +65,8 @@ class PracticeController extends Controller
 
         $program->save();
 
-        return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages', ['successfully created new program'])->send();
+        return redirect()->route('admin.programs.edit', ['program' => $program])->with('messages',
+            ['successfully created new program']);
     }
 
     /**
@@ -85,9 +77,6 @@ class PracticeController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-view')) {
-            abort(403);
-        }
         // display view
         $program = Practice::find($id);
 
@@ -105,9 +94,6 @@ class PracticeController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
 
         $messages = \Session::get('messages');
 
@@ -126,9 +112,6 @@ class PracticeController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // find program
         $program = Practice::find($id);
         if (!$program) {
@@ -167,6 +150,7 @@ class PracticeController extends Controller
         }
 
         $program->delete();
-        return redirect()->back()->with('messages', ['successfully removed program'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed program']);
     }
 }

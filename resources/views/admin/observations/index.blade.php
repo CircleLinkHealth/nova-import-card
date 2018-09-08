@@ -5,7 +5,7 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     @endpush
     @push('scripts')
-        <script type="text/javascript" src="{{ asset('/js/admin/observations.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/admin/observations.js') }}"></script>
     @endpush
     <div class="container-fluid">
         <div class="row">
@@ -19,7 +19,7 @@
                     <div class="col-sm-8">
                         <h1>Observations</h1>
                     </div>
-                    @if(Cerberus::hasPermission('observations-create'))
+                    @if(Cerberus::hasPermission('observation.create'))
                         <div class="col-sm-4">
                             <div class="pull-right" style="margin:20px;">
 {{--                                <a href="{{ route('observations.create') }}" class="btn btn-success" disabled="disabled">Input Observation</a>--}}
@@ -90,10 +90,10 @@
                                     <td>{{ $observation->obs_unit }}</td>
                                     <td><a href="{{ route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
                                     <td>
-                                        @if(Cerberus::hasPermission('observations-edit'))
+                                        @if(Cerberus::hasPermission('observation.update'))
                                             <a href="{{ route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>
                                         @endif
-                                        @if(Cerberus::hasPermission('observations-destroy'))
+                                        @if(Cerberus::hasPermission('observation.delete'))
                                             <a href="{{ route('admin.observations.destroy', array('id' => $observation->id)) }}" class="btn btn-warning">Remove</a></td>
                                         @endif
                                 </tr>

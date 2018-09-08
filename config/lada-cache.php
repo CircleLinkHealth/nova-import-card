@@ -22,7 +22,7 @@ return [
     | Do not change this value in production, it will cause unexpected behavior.
     |
     */
-    'prefix'          => 'lada:',
+    'prefix' => 'lada:',
 
     /*
     |--------------------------------------------------------------------------
@@ -83,6 +83,9 @@ return [
     | will not be cached.
     |
     */
-    'exclude-tables' => [],
+    'exclude-tables' => [
+//        (new PageTimer())->getTable(),
+//        (new Activity())->getTable(),
+    ],
 
 ];

@@ -28,7 +28,7 @@
                     </div>
 
                     <div class="panel-body">
-                        @if($batch->type == App\EligibilityBatch::TYPE_ONE_CSV)
+                        @if($batch->hasJobs())
                             <div class="pull-right" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.logs.csv', [$batch->id])}}"
                                    class="btn btn-warning">Download Batch Processing Logs</a>

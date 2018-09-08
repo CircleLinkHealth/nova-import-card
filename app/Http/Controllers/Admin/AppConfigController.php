@@ -15,9 +15,6 @@ class AppConfigController extends Controller
      */
     public function index()
     {
-        if (!Auth::user()->hasPermission('app-config-view')) {
-            abort(403);
-        }
         // display view
         $appConfigs = AppConfig::OrderBy('config_key', 'asc')->paginate(10);
         return view('admin.appConfig.index', [ 'appConfigs' => $appConfigs ]);
@@ -30,9 +27,6 @@ class AppConfigController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('roles-manage')) {
-            abort(403);
-        }
         // display view
         return view('admin.appConfig.create', [ 'errors' => [], 'messages' => [] ]);
     }
@@ -44,15 +38,14 @@ class AppConfigController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('app-config-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $appConfig = new AppConfig;
         $appConfig->config_key = $params['config_key'];
         $appConfig->config_value = $params['config_value'];
         $appConfig->save();
-        return redirect()->route('admin.appConfig.edit', [$appConfig->id])->with('messages', ['successfully added new app config - '.$params['config_key']])->send();
+
+        return redirect()->route('admin.appConfig.edit', [$appConfig->id])->with('messages',
+            ['successfully added new app config - ' . $params['config_key']]);
     }
 
     /**
@@ -63,9 +56,6 @@ class AppConfigController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('app-config-view')) {
-            abort(403);
-        }
         // display view
         $appConfig = AppConfig::find($id);
         return view('admin.appConfig.show', [ 'appConfig' => $appConfig, 'errors' => [], 'messages' => [] ]);
@@ -79,9 +69,6 @@ class AppConfigController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('app-config-manage')) {
-            abort(403);
-        }
         $appConfig = AppConfig::find($id);
         return view('admin.appConfig.edit', [ 'appConfig' => $appConfig, 'messages' => \Session::get('messages') ]);
     }
@@ -94,15 +81,13 @@ class AppConfigController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('app-config-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $appConfig = AppConfig::find($id);
         $appConfig->config_key = $params['config_key'];
         $appConfig->config_value = $params['config_value'];
         $appConfig->save();
-        return redirect()->back()->with('messages', ['successfully updated app config'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated app config']);
     }
 
     /**
@@ -113,9 +98,6 @@ class AppConfigController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('app-config-manage')) {
-            abort(403);
-        }
         $appConfig = AppConfig::find($id);
         if (!$appConfig) {
             return response("User not found", 401);

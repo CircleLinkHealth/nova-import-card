@@ -20,9 +20,9 @@ class EnrollmentSMSSender
     public function __construct()
     {
         $this->twilio = new Twilio(
-            env('TWILIO_SID'),
-            env('TWILIO_TOKEN'),
-            env('TWILIO_FROM')
+            config('services.twilio.sid'),
+            config('services.twilio.token'),
+            config('services.twilio.from')
         );
     }
 

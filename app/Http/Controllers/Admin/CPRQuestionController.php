@@ -16,9 +16,6 @@ class CPRQuestionController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $questions = CPRulesQuestions::orderBy('qid', 'desc')->paginate(10);
         return view('admin.questions.index', ['questions' => $questions]);
@@ -31,9 +28,6 @@ class CPRQuestionController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         return view('admin.questions.create', []);
     }
@@ -45,9 +39,6 @@ class CPRQuestionController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $question = new CPRulesQuestions;
         $question->msg_id = $params['msg_id'];
@@ -57,7 +48,9 @@ class CPRQuestionController extends Controller
         $question->icon = $params['icon'];
         $question->category = $params['category'];
         $question->save();
-        return redirect()->route('admin.questions.edit', [$question->qid])->with('messages', ['successfully added new question - ' . $params['msg_id']])->send();
+
+        return redirect()->route('admin.questions.edit', [$question->qid])->with('messages',
+            ['successfully added new question - ' . $params['msg_id']]);
     }
 
     /**
@@ -68,9 +61,6 @@ class CPRQuestionController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $question = CPRulesQuestions::find($id);
         return view('admin.questions.show', ['question' => $question, 'errors' => [], 'messages' => []]);
@@ -84,9 +74,7 @@ class CPRQuestionController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
+
         $question = CPRulesQuestions::find($id);
         $programs = Practice::get();
         if (!empty($question->rulesItems)) {
@@ -107,9 +95,6 @@ class CPRQuestionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $question = CPRulesQuestions::find($id);
         $question->msg_id = $params['msg_id'];
@@ -119,7 +104,8 @@ class CPRQuestionController extends Controller
         $question->icon = $params['icon'];
         $question->category = $params['category'];
         $question->save();
-        return redirect()->back()->with('messages', ['successfully updated question'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated question']);
     }
 
     /**
@@ -130,10 +116,8 @@ class CPRQuestionController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         CPRulesQuestions::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed question'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed question']);
     }
 }

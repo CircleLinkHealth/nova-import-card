@@ -42,6 +42,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
@@ -161,6 +162,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property mixed $send_alert_to
  * @property mixed $specialty
  * @property mixed $work_phone_number
+ * @property UserPasswordsHistory|null $passwordsHistory
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Call[] $inboundCalls
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Message[] $inboundMessages
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Location[] $locations
@@ -225,7 +227,7 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @method static \Illuminate\Database\Query\Builder|\App\User withoutTrashed()
  * @mixin \Eloquent
  */
-class User extends \App\BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
+class User extends BaseModel implements AuthenticatableContract, CanResetPasswordContract, HasMedia, Serviceable
 {
     const FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER = 'forward_alerts_in_addition_to_provider';
     const FORWARD_ALERTS_INSTEAD_OF_PROVIDER = 'forward_alerts_instead_of_provider';
@@ -233,7 +235,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER = 'forward_careplan_approval_emails_in_addition_to_provider';
     const FORWARD_CAREPLAN_APPROVAL_EMAILS_INSTEAD_OF_PROVIDER = 'forward_careplan_approval_emails_instead_of_provider';
 
-    use Filterable, Authenticatable,
+    use Filterable,
+        Authenticatable,
         CanResetPassword,
         CerberusSiteUserTrait,
         HasApiTokens,
@@ -245,9 +248,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         SaasAccountable,
         SoftDeletes,
         TimezoneTrait;
-
-
-    use \Venturecraft\Revisionable\RevisionableTrait;
 
     public $rules = [];
 
@@ -262,6 +262,20 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             'password_confirmation' => 'required|same:password',
         ];
     }
+
+    public $phi = [
+        'username',
+        'email',
+        'display_name',
+        'first_name',
+        'last_name',
+        'suffix',
+        'address',
+        'address2',
+        'city',
+        'state',
+        'zip',
+    ];
 
     public $patient_rules = [
         "daily_reminder_optin"    => "required",
@@ -283,7 +297,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     protected $attributes = [
         'timezone' => 'America/New_York',
     ];
-    protected $revisionCreationsEnabled = true;
 
     /**
      * The attributes that are mass assignable.
@@ -330,14 +343,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         parent::boot();
 
-        static::creating(function ($user) {
-        });
-
-        self::saved(function ($user) {
-
-//            $user->load('roles');
-        });
-
         static::deleting(function ($user) {
             $user->providerInfo()->delete();
             $user->patientInfo()->delete();
@@ -358,7 +363,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         return $this->email;
     }
-
 
     /*
      *
@@ -606,8 +610,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function viewableProgramIds(): array
     {
         return $this->practices
-                ->pluck('id')
-                ->all();
+            ->pluck('id')
+            ->all();
     }
 
     public function viewableProviderIds()
@@ -717,7 +721,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function primaryProgramName()
     {
-        return Practice::find($this->primaryProgramId())->display_name;
+        return $this->primaryPractice->display_name;
     }
 
     public function setFirstNameAttribute($value)
@@ -741,8 +745,14 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     {
         $firstName = ucwords(strtolower($this->first_name));
         $lastName  = ucwords(strtolower($this->last_name));
+        $suffix    = $this->suffix;
 
-        return "$firstName $lastName {$this->suffix}";
+        return trim("$firstName $lastName $suffix");
+    }
+
+    public function getSuffixAttribute($suffix)
+    {
+        return $suffix ?? '';
     }
 
     public function getFullNameWithIdAttribute()
@@ -998,7 +1008,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
         return $this->phoneNumbers()->create([
             'number'     => StringManipulation::formatPhoneNumber($number),
-            'type'       => PhoneNumber::getTypes()[$type],
+            'type'       => PhoneNumber::getTypes()[$type] ?? null,
             'is_primary' => $isPrimary,
             'extension'  => $extension,
         ]);
@@ -1595,17 +1605,6 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         return $this->patientInfo->consent_date;
     }
 
-    public function setConsentDateAttribute($value)
-    {
-        if ( ! $this->patientInfo) {
-            return '';
-        }
-        $this->patientInfo->consent_date = $value;
-        $this->patientInfo->save();
-
-        return true;
-    }
-
     public function getAgentNameAttribute()
     {
         if ( ! $this->patientInfo) {
@@ -1832,22 +1831,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
         if ( ! $this->patientInfo) {
             return '';
         }
-        $statusBefore                  = $this->patientInfo->ccm_status;
+
         $this->patientInfo->ccm_status = $value;
-        $this->patientInfo->save();
-        // update date tracking
-        if ($statusBefore !== $value) {
-            if ($value == 'paused') {
-                $this->datePaused = date("Y-m-d H:i:s");
-            };
-            if ($value == 'withdrawn') {
-                $this->dateWithdrawn = date("Y-m-d H:i:s");
-            };
-        }
-
-        $this->load('patientInfo');
-
-        return true;
     }
 
     public function getDatePausedAttribute()
@@ -1885,6 +1870,26 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
             return '';
         }
         $this->patientInfo->date_withdrawn = $value;
+        $this->patientInfo->save();
+
+        return true;
+    }
+
+    public function getDateUnreachableAttribute()
+    {
+        if ( ! $this->patientInfo) {
+            return '';
+        }
+
+        return $this->patientInfo->date_unreachable;
+    }
+
+    public function setDateUnreachableAttribute($value)
+    {
+        if ( ! $this->patientInfo) {
+            return '';
+        }
+        $this->patientInfo->date_unreachable = $value;
         $this->patientInfo->save();
 
         return true;
@@ -2273,6 +2278,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                     : ', ') . ($i == $last && $i > 1
                     ? 'and '
                     : '') . $carePerson->fullName;
+
+            $i++;
         }
 
         return $output;
@@ -2293,6 +2300,8 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                        . ($i == $last && $i > 1
                     ? 'and '
                     : '') . $channel;
+
+            $i++;
         }
 
         return $output;
@@ -2301,13 +2310,13 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     /**
      * Get billing provider User.
      *
-     * @return User
+     * @return User|null
      */
-    public function billingProviderUser(): User
+    public function billingProviderUser(): ?User
     {
-        return ($this->billingProvider->isEmpty()
-                ? new User()
-                : $this->billingProvider->first()->user) ?? new User();
+        return $this->billingProvider->isEmpty()
+            ? null
+            : optional($this->billingProvider->first())->user;
     }
 
     /**
@@ -2317,7 +2326,29 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
      */
     public function billingProvider()
     {
-        return $this->careTeamMembers()->where('type', '=', 'billing_provider');
+        return $this->careTeamMembers()->where('type', '=', CarePerson::BILLING_PROVIDER);
+    }
+
+    /**
+     * Get regular doctor User.
+     *
+     * @return User|null
+     */
+    public function regularDoctorUser(): ?User
+    {
+        return $this->regularDoctor->isEmpty()
+            ? null
+            : $this->regularDoctor->first()->user;
+    }
+
+    /**
+     * Get the regular doctor.
+     *
+     * @return User
+     */
+    public function regularDoctor()
+    {
+        return $this->careTeamMembers()->where('type', '=', CarePerson::REGULAR_DOCTOR);
     }
 
     public function scopeHasBillingProvider(
@@ -2386,12 +2417,24 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function getCcmTimeAttribute()
     {
-        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->ccm_time;
+        return optional(
+                   $this->patientSummaries()
+                        ->select(['ccm_time', 'id'])
+                        ->orderBy('id', 'desc')
+                        ->whereMonthYear(Carbon::now()->startOfMonth())
+                        ->first()
+               )->ccm_time ?? 0;
     }
 
     public function getBhiTimeAttribute()
     {
-        return optional($this->patientSummaries()->orderBy('id', 'desc')->first())->bhi_time;
+        return optional(
+                   $this->patientSummaries()
+                        ->select(['bhi_time', 'id'])
+                        ->orderBy('id', 'desc')
+                        ->whereMonthYear(Carbon::now()->startOfMonth())
+                        ->first()
+               )->bhi_time ?? 0;
     }
 
     public function patientInfo()
@@ -2609,7 +2652,15 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
                        $q->where([
                            ['type', '=', CarePerson::BILLING_PROVIDER],
                            ['member_user_id', '=', $this->id],
-                       ]);
+                       ])
+                       ->orWhere(function ($q){
+                           $q->whereHas('user', function ($q){
+                               $q->whereHas('forwardAlertsTo', function ($q){
+                                   $q->where('contactable_id', $this->id)
+                                   ->orWhereIn('name', ['forward_careplan_approval_emails_instead_of_provider', 'forward_careplan_approval_emails_in_addition_to_provider']);
+                               });
+                           });
+                       });
                    })
                    ->with('primaryPractice')
                    ->with([
@@ -2657,16 +2708,12 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function isCcm()
     {
-        return ($this->ccdProblems()->where('is_monitored', 1)->whereHas('cpmProblem', function ($cpm) {
-                return $cpm->where('is_behavioral', 0);
-            })->count() > 0);
-    }
-
-    public function isBehavioral()
-    {
-        return $this->ccdProblems()->whereHas('cpmProblem', function ($cpm) {
-                return $cpm->where('is_behavioral', 1);
-            })->count() > 0;
+        return $this->ccdProblems()
+                    ->where('is_monitored', 1)
+                    ->whereHas('cpmProblem', function ($cpm) {
+                        return $cpm->where('is_behavioral', 0);
+                    })
+                    ->exists();
     }
 
     /**
@@ -2694,7 +2741,7 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
 
     public function cachedNotificationsList()
     {
-        if (in_array(env('CACHE_DRIVER'), ['redis'])) {
+        if (in_array(config('cache.default'), ['redis'])) {
             return new UserNotificationList($this->id);
         }
 
@@ -2900,17 +2947,16 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     /**
      * Send a CarePlan Approval reminder, if there are CarePlans pending approval
      *
+     * @param $numberOfCareplans
      * @param bool $force
      *
      * @return bool
      */
-    public function sendCarePlanApprovalReminderEmail($force = false)
+    public function sendCarePlanApprovalReminderEmail($numberOfCareplans, $force = false)
     {
         if ( ! $this->shouldSendCarePlanApprovalReminderEmail() && ! $force) {
             return false;
         }
-
-        $numberOfCareplans = CarePlan::getNumberOfCareplansPendingApproval($this);
 
         if ($numberOfCareplans < 1) {
             return false;
@@ -2953,5 +2999,147 @@ class User extends \App\BaseModel implements AuthenticatableContract, CanResetPa
     public function calls()
     {
         return $this->outboundCalls();
+    }
+
+    /**
+     * Scope for patients who can be charged for BHI.
+     *
+     * Conditions are:
+     *      1. Patient is Enrolled
+     *      2. Patient's Primary Practice is chargeable for BHI
+     *      3. Patient has at least one BHI problem
+     *      4. Patient has consented for BHI
+     *
+     * @param $builder
+     *
+     * @return mixed
+     */
+    public function scopeIsBhiChargeable($builder)
+    {
+        return $builder
+            ->whereHas('primaryPractice', function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            })->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereHas('ccdProblems.cpmProblem', function ($q) {
+                $q->where('is_behavioral', true);
+            })
+            ->where(function ($q) {
+                $q->whereHas('patientInfo', function ($q) {
+                    $q->where('consent_date', '>=', Patient::DATE_CONSENT_INCLUDES_BHI);
+                })->orWhereHas('notes', function ($q) {
+                    $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+                });
+            });
+    }
+
+    /**
+     * Scope for patients who are eligible for BHI.
+     *
+     * Conditions are:
+     *      1. Patient is Enrolled
+     *      2. Patient's Primary Practice is chargeable for BHI
+     *      3. Patient has at least one BHI problem
+     *
+     * @param $builder
+     *
+     * @return mixed
+     */
+    public function scopeIsBhiEligible($builder)
+    {
+        return $builder
+            ->whereHas('primaryPractice', function ($q) {
+                $q->hasServiceCode('CPT 99484');
+            })
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled()
+                  ->where('consent_date', '<', Patient::DATE_CONSENT_INCLUDES_BHI);
+            })
+            ->whereHas('ccdProblems.cpmProblem', function ($q) {
+                $q->where('is_behavioral', true);
+            })
+            ->whereDoesntHave('notes', function ($q) {
+                $q->where('type', '=', Patient::BHI_REJECTION_NOTE_TYPE);
+            })
+            ->whereDoesntHave('notes', function ($q) {
+                $q->where('type', '=', Patient::BHI_CONSENT_NOTE_TYPE);
+            });
+    }
+
+    /**
+     * Determine whether the User is Legacy BHI eligible.
+     * "Legacy BHI Eligible" applies to a small number of patients who are BHI eligible, but consented before
+     * 7/23/2018.
+     * On 7/23/2018 we changed our Terms and Conditions to include BHI, so patients who consented before 7/23 need a
+     * separate consent for BHI.
+     *
+     * @return bool
+     */
+    public function isLegacyBhiEligible()
+    {
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi_eligible", 1, function (){
+        return User::isBhiEligible()
+                   ->where('id', $this->id)
+                   ->exists();
+//        });
+    }
+
+    /**
+     * Determine whether the User is BHI chargeable (ie. eligible and enrolled)
+     *
+     * @return bool
+     */
+    public function isBhi()
+    {
+        //Do we wanna cache this for a minute maybe?
+//        return \Cache::remember("user:$this->id:is_bhi", 1, function (){
+        return User::isBhiChargeable()
+                   ->where('id', $this->id)
+                   ->exists();
+//        });
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function passwordsHistory()
+    {
+        return $this->hasOne(UserPasswordsHistory::class, 'user_id');
+    }
+
+    public function getLegacyBhiNursePatientCacheKey($patientId)
+    {
+        if ( ! $this->id) {
+            throw new \Exception("User ID not found.");
+        }
+
+        return "hide_legacy_bhi_banner:" . $this->id . ":$patientId";
+    }
+
+    public function hasScheduledCallToday()
+    {
+        return Call::where('inbound_cpm_id', $this->id)
+                   ->where('status', 'scheduled')
+                   ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
+                   ->exists();
+    }
+
+    /**
+     * Determines wheter to show the BHI banner to the logged in user, for a given patient
+     *
+     * @param User $patient
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public function shouldShowLegacyBhiBannerFor(User $patient)
+    {
+        return $this->hasPermissionForSite('legacy-bhi-consent-decision.create', $patient->program_id)
+               && is_a($patient, self::class)
+               && $patient->isLegacyBhiEligible()
+               && $patient->billingProviderUser()
+               && ($patient->hasScheduledCallToday() && ! Cache::has($this->getLegacyBhiNursePatientCacheKey($patient->id)));
     }
 }

@@ -11,16 +11,16 @@
                           style="background-color: #ec683e;font-size: 15px; position: relative; top: -7px;"
                           class="label label-warning"> Complex CCM</span>
                     @push('scripts')
-                    <script>
-                        (function () {
-                            // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
-                            var $complexSpan = $("#complex_tag");
-                            $(document).on("complex-ccm-form-submit", function (e, status) {
-                                if (status) $complexSpan.show();
-                                else $complexSpan.hide();
-                            })
-                        })()
-                    </script>
+                        <script>
+                            (function () {
+                                // subscribe to jQuery event to know whether the complex-cscm checkbox value has been changed or not
+                                var $complexSpan = $("#complex_tag");
+                                $(document).on("complex-ccm-form-submit", function (e, status) {
+                                    if (status) $complexSpan.show();
+                                    else $complexSpan.hide();
+                                })
+                            })()
+                        </script>
                     @endpush
                 @endif
                 <a
@@ -35,9 +35,12 @@
                         </li>
                         <li class="inline-block">{{$patient->age ?? 'N/A'}} yrs <span style="color: #4390b5">•</span>
                         </li>
-                        <li class="inline-block">{{(new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
+                        <li class="inline-block">{{formatPhoneNumber($patient->phone) ?? 'N/A'}} </li>
                     </b>
-                    <li><span> <b>Provider</b>: {{$provider}}  </span></li>
+                    <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
+                    @if($regularDoctor)
+                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->full_name}}  </span></li>
+                    @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->agentName)
                         <li class="inline-block"><b>Alternate Contact</b>: <span
@@ -45,6 +48,13 @@
                                 ) {{$patient->agentName}} {{$patient->agentPhone}}</span></li>
                         <li class="inline-block"></li>
                     @endif
+                    <li>
+                        <patient-next-call
+                                :patient-id="{{json_encode($patient->id, JSON_HEX_QUOT)}}"
+                                :patient-preferences="{{json_encode($patient->patientInfo()->exists() ? $patient->patientInfo->getPreferences() : new stdClass,JSON_HEX_QUOT)}}"
+                                :is-care-center="{{json_encode(Auth::user()->hasRole('care-center')), JSON_HEX_QUOT}}">
+                        </patient-next-call>
+                    </li>
                 </ul>
 
             </div>
@@ -55,34 +65,41 @@
                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                             <div class="color-grey">
                                 <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                    <server-time-display url="{{env('WS_SERVER_URL')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                    <server-time-display url="{{config('services.ws.server-url')}}"
+                                                         patient-id="{{$patient->id}}"
+                                                         provider-id="{{auth()->id()}}"
+                                                         value="{{$monthlyTime}}"></server-time-display>
                                 </a>
                             </div>
                         @else
                             <?php
-                                $noLiveCountTimeTracking = $useOldTimeTracker ? true : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
-                                $ccmCountableUser = auth()->user()->isCCMCountable();
-                             ?>
-                             @if ($noLiveCountTimeTracking)
+                            $noLiveCountTimeTracking = $useOldTimeTracker
+                                ? true
+                                : (isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking);
+                            $ccmCountableUser = auth()->user()->isCCMCountable();
+                            ?>
+                            @if ($noLiveCountTimeTracking)
                                 <div class="color-grey">
                                     <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
                                         {{$monthlyTime}}
                                     </a>
                                     <span style="display:none">
-                                        <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                            :info="timeTrackerInfo" 
-                                            :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                            :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}"></time-tracker>
+                                        <time-tracker ref="TimeTrackerApp"
+                                                      class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                                      :info="timeTrackerInfo"
+                                                      :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                                      :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                     </span>
                                 </div>
                             @else
-                                <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                    :info="timeTrackerInfo" 
-                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                    :override-timeout="{{(((env('APP_ENV') == 'local') || (env('APP_ENV') == 'staging'))) ? 'true' : 'false'}}">
+                                <time-tracker ref="TimeTrackerApp"
+                                              class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                              :info="timeTrackerInfo"
+                                              :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                              :override-timeout="{{config('services.time-tracker.override-timeout')}}">
                                         @include('partials.tt-loader')
                                 </time-tracker>
-                             @endif
+                            @endif
                         @endif
                     </span>
                 </span>
@@ -120,22 +137,21 @@
 
         </div>
         <?php
-            use App\Services\CPM\CpmProblemUserService;
-            use App\Services\CCD\CcdProblemService;
-        
-            $cpmProblemService = app(CpmProblemUserService::class);
-            $ccdProblemService = app(CcdProblemService::class);
-        
-            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
-            $ccdProblems = $ccdProblemService->getPatientProblems($patient->id);
-    
-            $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
-                return $problem['is_monitored'];
-            })->groupBy('name')->values()->map(function ($problems) {
-                return $problems->first();
-            });
+        use App\Services\CCD\CcdProblemService;
+
+        //            $cpmProblemService = app(CpmProblemUserService::class);
+        $ccdProblemService = app(CcdProblemService::class);
+
+        //            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
+        $ccdProblems = $ccdProblemService->getPatientProblems($patient);
+
+        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
+            return $problem['is_monitored'];
+        })->groupBy('name')->values()->map(function ($problems) {
+            return $problems->first();
+        });
         ?>
-        @if(!empty($cpmProblemsForListing) || !empty($ccdMonitoredProblems))
+        @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
@@ -155,18 +171,18 @@
 <meta name="is_ccm_complex" content="{{$ccm_complex}}">
 
 @push('scripts')
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
 
-        if ($('meta[name="is_ccm_complex"]').attr('content')) {
-            $("#complex_tag").show();
-        } else {
-            $("#complex_tag").hide();
-        }
+            if ($('meta[name="is_ccm_complex"]').attr('content')) {
+                $("#complex_tag").show();
+            } else {
+                $("#complex_tag").hide();
+            }
 
-    });
+        });
 
-</script>
+    </script>
 @endpush
 
 @push('styles')

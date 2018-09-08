@@ -35,7 +35,7 @@ class WelcomeController extends Controller
         $user = auth()->user();
 
         if ( ! $user) {
-            return redirect()->route('login', [])->send();
+            return redirect()->route('login', []);
         }
 
         if ($user->roles->isEmpty()) {
@@ -45,17 +45,17 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('administrator')) {
-            return redirect()->route('admin.dashboard', [])->send();
+            return redirect()->route('admin.dashboard', []);
         }
 
         if ($user->hasRole('saas-admin')) {
-            return redirect()->route('saas-admin.home', [])->send();
+            return redirect()->route('saas-admin.home', []);
         }
 
-        if ($user->hasRole('care-ambassador')) {
-            return redirect()->route('enrollment-center.dashboard', [])->send();
+        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
+            return redirect()->route('enrollment-center.dashboard', []);
         }
 
-        return redirect()->route('patients.dashboard', [])->send();
+        return redirect()->route('patients.dashboard', []);
     }
 }

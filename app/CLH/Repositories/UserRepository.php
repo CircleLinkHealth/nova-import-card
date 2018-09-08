@@ -8,8 +8,8 @@ use App\PatientMonthlySummary;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
-use App\Role;
 use App\User;
+use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -17,12 +17,14 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 {
-    public function model() {
+    public function model()
+    {
         return app(User::class);
     }
 
-    public function exists($id) {
-        return !!$this->model()->find($id);
+    public function exists($id)
+    {
+        return ! ! $this->model()->find($id);
     }
 
     public function createNewUser(
@@ -30,6 +32,8 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         ParameterBag $params
     ) {
         $user = $user->createNewUser($params->get('email'), $params->get('password'));
+
+        $this->saveOrUpdatePasswordsHistory($user, $params);
 
         // set registration date field on users
         $user->user_registered = date('Y-m-d H:i:s');
@@ -60,7 +64,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         }
 
         // care ambassador info
-        if ($user->hasRole('care-ambassador')) {
+        if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
         }
 
@@ -78,7 +82,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $user->username = $params->get('username');
+        $user->username    = $params->get('username');
         $user->user_status = $params->get('user_status');
 
         if ($params->get('email')) {
@@ -129,15 +133,15 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $practices = $this->saveAndGetPractice($user, $params);
 
         foreach ($practices as $practiceId) {
-            if (!empty($params->get('role'))) {
+            if ( ! empty($params->get('role'))) {
                 $user->detachRolesForSite([], $practiceId);
                 $user->attachRoleForSite($params->get('role'), $practiceId);
             }
 
-            if (!empty($params->get('roles'))) {
+            if ( ! empty($params->get('roles'))) {
                 $user->detachRolesForSite([], $practiceId);
                 // support if one role is passed in as a string
-                if (!is_array($params->get('roles'))) {
+                if ( ! is_array($params->get('roles'))) {
                     $user->attachRoleForSite($params->get('roles'), $practiceId);
                 } else {
                     $user->attachRolesForSite($params->get('roles'), $practiceId);
@@ -145,25 +149,30 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             }
         }
 
+        DB::table('practice_role_user')
+          ->where('user_id', $user->id)
+          ->whereNotIn('program_id', $practices)
+          ->delete();
+
         // add patient info
-        if ($user->hasRole('participant') && !$user->patientInfo) {
-            $patientInfo = new Patient;
+        if ($user->hasRole('participant') && ! $user->patientInfo) {
+            $patientInfo          = new Patient;
             $patientInfo->user_id = $user->id;
             $patientInfo->save();
             $user->load('patientInfo');
         }
 
         // add provider info
-        if ($user->hasRole('provider') && !$user->providerInfo) {
-            $providerInfo = new ProviderInfo;
+        if ($user->hasRole('provider') && ! $user->providerInfo) {
+            $providerInfo          = new ProviderInfo;
             $providerInfo->user_id = $user->id;
             $providerInfo->save();
             $user->load('providerInfo');
         }
 
         // add nurse info
-        if ($user->hasRole('care-center') && !$user->nurseInfo) {
-            $nurseInfo = new Nurse;
+        if ($user->hasRole('care-center') && ! $user->nurseInfo) {
+            $nurseInfo          = new Nurse;
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
@@ -178,25 +187,19 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $userPrograms = [];
         if ($params->get('programs')) {
             $userPrograms = $params->get('programs');
-            $user->practices()->sync($userPrograms);
         }
 
         if ($params->get('program_id')) {
-            if (!in_array($params->get('program_id'), $userPrograms)) {
+            if ( ! in_array($params->get('program_id'), $userPrograms)) {
                 $userPrograms[] = $params->get('program_id');
             }
-        }
-
-        // if still empty at this point, no program_id or program param
-        if (empty($userPrograms)) {
-            return false;
         }
 
         // set primary program
         $user->program_id = $params->get('program_id');
         $user->save();
 
-        return $userPrograms;
+        return array_unique($userPrograms);
     }
 
     public function saveOrUpdatePhoneNumbers(
@@ -206,45 +209,45 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // phone numbers
         if ($params->has('study_phone_number')) { // add study as home
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->id;
-            $phoneNumber->number = $params->get('study_phone_number');
-            $phoneNumber->type = 'home';
+            $phoneNumber->user_id    = $user->id;
+            $phoneNumber->number     = $params->get('study_phone_number');
+            $phoneNumber->type       = 'home';
             $phoneNumber->save();
         }
         if ($params->has('home_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'home')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->is_primary = 1;
-            $phoneNumber->user_id = $user->id;
-            $phoneNumber->number = $params->get('home_phone_number');
-            $phoneNumber->type = 'home';
+            $phoneNumber->user_id    = $user->id;
+            $phoneNumber->number     = $params->get('home_phone_number');
+            $phoneNumber->type       = 'home';
             $phoneNumber->save();
         }
         if ($params->has('work_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'work')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->user_id = $user->id;
-            $phoneNumber->number = $params->get('work_phone_number');
-            $phoneNumber->type = 'work';
+            $phoneNumber->number  = $params->get('work_phone_number');
+            $phoneNumber->type    = 'work';
             $phoneNumber->save();
         }
 
         if ($params->has('mobile_phone_number')) {
             $phoneNumber = $user->phoneNumbers()->where('type', 'mobile')->first();
-            if (!$phoneNumber) {
+            if ( ! $phoneNumber) {
                 $phoneNumber = new PhoneNumber;
             }
             $phoneNumber->user_id = $user->id;
-            $phoneNumber->number = $params->get('mobile_phone_number');
-            $phoneNumber->type = 'mobile';
+            $phoneNumber->number  = $params->get('mobile_phone_number');
+            $phoneNumber->type    = 'mobile';
             $phoneNumber->save();
         }
     }
@@ -259,7 +262,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 
         // contact days checkbox formatting, @todo this is not normalized properly?
         if (is_array($params->get('contact_days'))) {
-            $contactDays = $params->get('contact_days');
+            $contactDays         = $params->get('contact_days');
             $contactDaysDelmited = '';
             for ($i = 0; $i < count($contactDays); $i++) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
@@ -274,7 +277,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
                 'user_id' => $user->id,
             ], [
                 'status' => $params->get('careplan_status'),
-                'mode' => $params->get('careplan_mode', CarePlan::WEB),
+                'mode'   => $params->get('careplan_mode', CarePlan::WEB),
             ]);
 
             $params->remove('careplan_status');
@@ -329,7 +332,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
     ) {
 
         if ($user->careAmbassador != null) {
-            $user->careAmbassador->hourly_rate = $params->get('hourly_rate');
+            $user->careAmbassador->hourly_rate    = $params->get('hourly_rate');
             $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
                 ? 1
                 : 0;
@@ -342,6 +345,37 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
             $ambassador->save();
 
             $user->careAmbassador()->save($ambassador);
+        }
+    }
+
+    /**
+     * For now, only used in createUser.
+     * Since password is a crucial property, it cannot be updated in
+     * editUser method.
+     * We could implement a change password page and we could use this method
+     * to also populate password history.
+     * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/
+     *
+     * @param User $user
+     * @param ParameterBag $params
+     */
+    public function saveOrUpdatePasswordsHistory(
+        User $user,
+        ParameterBag $params
+    ) {
+        $history = $user->passwordsHistory;
+        $previousPassword = $params->get('old-password');
+        if ($history) {
+            if ($previousPassword) {
+                $history->older_password = $history->old_password;
+                $history->old_password = bcrypt($previousPassword);
+                $history->save();
+            }
+        }
+        else {
+            $history = new UserPasswordsHistory();
+            $history->user_id = $user->id;
+            $history->save();
         }
     }
 
@@ -359,15 +393,15 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
 //New user registration on Dr Daniel A Miller, MD: Username: WHITE, MELDA JEAN [834] E-mail: test@gmail.com
 
         $email_view = 'emails.newpatientnotify';
-        $program = Practice::find($user->primaryProgramId());
+        $program    = Practice::find($user->primaryProgramId());
 
-        if (!$program) {
+        if ( ! $program) {
             return;
         }
 
-        $program_name = $program->display_name;
+        $program_name  = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
-        $data = [
+        $data          = [
             'patient_name'  => $user->getFullNameAttribute(),
             'patient_id'    => $user->id,
             'patient_email' => $user->getEmailForPasswordReset(),
@@ -424,11 +458,11 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         $select = '*'
     ) {
         return User::select(DB::raw($select))
-            ->whereHas('roles', function ($q) use (
-                $role
-            ) {
-                $q->where('name', '=', $role);
-            })->get();
+                   ->whereHas('roles', function ($q) use (
+                       $role
+                   ) {
+                       $q->where('name', '=', $role);
+                   })->get();
     }
 
     public function saveOrUpdatePatientMonthlySummary($user)

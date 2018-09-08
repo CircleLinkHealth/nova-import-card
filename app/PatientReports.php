@@ -1,6 +1,5 @@
 <?php namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -33,9 +32,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\PatientReports withoutTrashed()
  * @mixin \Eloquent
  */
-class PatientReports extends \App\BaseModel
+class PatientReports extends BaseModel
 {
-
     use SoftDeletes;
 
     protected $guarded = [];

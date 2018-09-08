@@ -17,9 +17,6 @@ class CPRQuestionSetController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         $questionSets = CPRulesQuestionSets::orderBy('qsid', 'desc');
 
@@ -79,9 +76,6 @@ class CPRQuestionSetController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         // display view
         return view('admin.questionSets.create', []);
     }
@@ -93,9 +87,6 @@ class CPRQuestionSetController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $questionSet = new CPRulesQuestionSets;
         $questionSet->provider_id = $params['provider_id'];
@@ -108,7 +99,9 @@ class CPRQuestionSetController extends Controller
         $questionSet->high = $params['high'];
         $questionSet->action = $params['action'];
         $questionSet->save();
-        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages', ['successfully added new question set'])->send();
+
+        return redirect()->route('admin.questionSets.edit', [$questionSet->qsid])->with('messages',
+            ['successfully added new question set']);
     }
 
     /**
@@ -119,9 +112,7 @@ class CPRQuestionSetController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
+
         // display view
         $questionSet = CPRulesQuestionSets::find($id);
         return view('admin.questionSets.show', ['questionSet' => $questionSet, 'errors' => [], 'messages' => []]);
@@ -135,9 +126,6 @@ class CPRQuestionSetController extends Controller
      */
     public function edit($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $questionSet = CPRulesQuestionSets::find($id);
         $programs = Practice::get();
         if (!empty($questionSet->rulesItems)) {
@@ -158,13 +146,10 @@ class CPRQuestionSetController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         $params = $request->input();
         $questionSet = CPRulesQuestionSets::find($id);
         if (!$questionSet) {
-            return redirect()->back()->with('messages', ['could not find question set'.$id])->send();
+            return redirect()->back()->with('messages', ['could not find question set' . $id]);
         }
         $questionSet->provider_id = $params['provider_id'];
         $questionSet->qs_type = $params['qs_type'];
@@ -182,7 +167,8 @@ class CPRQuestionSetController extends Controller
         $questionSet->high = $params['high'];
         $questionSet->action = $params['action'];
         $questionSet->save();
-        return redirect()->back()->with('messages', ['successfully updated question set'])->send();
+
+        return redirect()->back()->with('messages', ['successfully updated question set']);
     }
 
     /**
@@ -193,10 +179,8 @@ class CPRQuestionSetController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::user()->hasPermission('programs-manage')) {
-            abort(403);
-        }
         CPRulesQuestionSets::destroy($id);
-        return redirect()->back()->with('messages', ['successfully removed questionSet'])->send();
+
+        return redirect()->back()->with('messages', ['successfully removed questionSet']);
     }
 }

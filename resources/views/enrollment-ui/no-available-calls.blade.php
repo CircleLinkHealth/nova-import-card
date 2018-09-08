@@ -9,7 +9,7 @@
             <div class="col">
                 <div class="card horizontal">
                     <div class="card-image">
-                        <img src="/img/cookie.png">
+                        <img src="{{mix('/img/cookie.png')}}">
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">

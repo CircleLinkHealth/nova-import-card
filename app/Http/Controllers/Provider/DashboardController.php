@@ -9,8 +9,8 @@ use App\Contracts\Repositories\PracticeRepository;
 use App\Contracts\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
-use App\Location;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
+use App\Location;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
@@ -118,7 +118,7 @@ class DashboardController extends Controller
 
     public function getCreateStaff()
     {
-        $practice = $this->primaryPractice;
+        $practice = $this->primaryPractice->load('settings');
 
         if ( ! $practice) {
             return response('Practice not found', 404);
@@ -207,8 +207,13 @@ class DashboardController extends Controller
                 $errors->push("Locations: <strong>$locs</strong> are missing a <strong>Fax Number</strong>. Go to the Locations (left) to correct that.");
             }
         }
+
         if (!isset($settingsInput['api_auto_pull'])) {
             $settingsInput['api_auto_pull'] = 0;
+        }
+
+        if (empty($settingsInput['note_font_size'])) {
+            unset($settingsInput['note_font_size']);
         }
 
         $this->primaryPractice->syncSettings(new Settings($settingsInput ?? []));

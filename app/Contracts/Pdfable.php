@@ -15,5 +15,5 @@ interface Pdfable
      *
      * @return string
      */
-    public function toPdf() : string;
+    public function toPdf($scale = null): string;
 }

@@ -2,8 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\ChargeableService;
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Models\CCD\Problem;
+use App\Models\CPM\CpmProblem;
 use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
@@ -26,8 +28,16 @@ class BillablePatientsServiceTest extends TestCase
 
     private $practice;
     private $patient;
+
+    /**
+     * @var ApproveBillablePatientsService
+     */
     private $service;
     private $summary;
+
+    /**
+     * @var PatientSummaryEloquentRepository
+     */
     private $repo;
 
     /**
@@ -86,8 +96,15 @@ class BillablePatientsServiceTest extends TestCase
      */
     private function createProblem($billable = null, $cpmProblemId = null)
     {
+        if ($cpmProblemId) {
+            $cpmProblem = CpmProblem::find($cpmProblemId);
+        }
+
         return $this->service->patientSummaryRepo->storeCcdProblem($this->patient, [
-            'name'             => $this->faker->name,
+            'name'             => isset($cpmProblem)
+                ? $cpmProblem->name
+                : $this->faker->name,
+            'is_monitored'     => true,
             'billable'         => $billable,
             'cpm_problem_id'   => $cpmProblemId,
             'code'             => $this->faker->bankAccountNumber,
@@ -111,6 +128,7 @@ class BillablePatientsServiceTest extends TestCase
             'month_year' => $monthYear->startOfMonth(),
         ], [
             'ccm_time'               => $ccmTime,
+            'total_time'             => $ccmTime,
             'no_of_successful_calls' => 2,
         ]);
     }
@@ -119,39 +137,60 @@ class BillablePatientsServiceTest extends TestCase
      * Assert patient monthly summary
      *
      * @param PatientMonthlySummary $summary
-     * @param Problem $problem1
-     * @param Problem $problem2
+     * @param Problem $ccmProblem1
+     * @param Problem $ccmProblem2
      * @param Collection $list
      */
     private function assertMonthlySummary(
         PatientMonthlySummary $summary,
-        Problem $problem1,
-        Problem $problem2,
-        Collection $list
+        Problem $ccmProblem1,
+        Problem $ccmProblem2,
+        Collection $list,
+        Problem $bhiProblem = null
     ) {
-        $summary  = $summary->fresh();
-        $problem1 = $problem1->fresh();
-        $problem2 = $problem2->fresh();
+        $summary     = $summary->fresh();
+        $ccmProblem1 = $ccmProblem1->fresh();
+        $ccmProblem2 = $ccmProblem2->fresh();
+        $bhiProblem  = optional($bhiProblem)->fresh();
 
-        $this->assertEquals($list->count(), 1);
+        if ($list->has('summaries')) {
+            $summariesList = $list['summaries'];
+            $this->assertEquals(1, $summariesList->getCollection()->count());
+        } else {
+            $summariesList = $list;
+            $this->assertEquals(1, $summariesList->count());
+        }
 
-        $this->assertTrue($list->count() == 1);
-
-        $row = (new ApprovableBillablePatient($list->first()))->resolve();
+        $row = (new ApprovableBillablePatient($summariesList->first()))->resolve();
 
         $this->assertEquals($row['report_id'], $summary->id);
         $this->assertEquals($row['practice_id'], $this->practice->id);
         $this->assertEquals($row['practice'], $this->practice->display_name);
         $this->assertEquals($row['ccm'], round($summary->ccm_time / 60, 2));
-        $this->assertEquals($row['problem1'], $problem1->name);
-        $this->assertEquals($row['problem1_code'], $problem1->icd10Code());
-        $this->assertEquals($row['problem2'], $problem2->name);
-        $this->assertEquals($row['problem2_code'], $problem2->icd10Code());
 
-        $this->assertTrue((boolean)$problem1->billable);
-        $this->assertTrue((boolean)$problem2->billable);
+        //CCM
+        if ($summary->hasServiceCode('CPT 99490')) {
+            $this->assertEquals($ccmProblem1->name, $row['problem1']);
+            $this->assertEquals($ccmProblem1->icd10Code(), $row['problem1_code']);
+            $this->assertEquals($ccmProblem2->name, $row['problem2']);
+            $this->assertEquals($ccmProblem2->icd10Code(), $row['problem2_code']);
 
-        $this->assertTrue($this->patient->ccdProblems()->whereBillable(true)->count() == 2);
+            $this->assertTrue((boolean)$ccmProblem1->billable);
+            $this->assertTrue((boolean)$ccmProblem2->billable);
+            $this->assertTrue(! ! $summary->approved, "PatientSummary was not approved.");
+
+            $this->assertTrue($this->patient->ccdProblems()->whereBillable(true)->count() == 2);
+        }
+
+        //BHI
+        if ($summary->hasServiceCode('CPT 99484')) {
+            $this->assertEquals(optional($bhiProblem)->name, $row['bhi_problem']);
+            $this->assertEquals(optional($bhiProblem)->icd10Code(), $row['bhi_problem_code']);
+
+
+            $this->assertTrue(Problem::find($summary->billableBhiProblems()->first()->id)->isBehavioral());
+            $this->assertTrue(! ! $summary->approved, "PatientSummary was not approved.");
+        }
     }
 
     /**
@@ -251,14 +290,21 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
-        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem4, $list);
     }
 
     public function test_it_selects_bhi_problems()
     {
+        $defaultServices = ChargeableService::defaultServices();
+
+        $this->practice->chargeableServices()->sync($defaultServices->pluck('id')->all());
+        $this->summary->bhi_time   = 1300; //over 20 mins
+        $this->summary->total_time = $this->summary->bhi_time + $this->summary->ccm_time; //over 20 mins
+        $this->summary->save();
+
         //Set up
         $problem1 = $this->createProblem(true, 33);
         $problem2 = $this->createProblem(true, 2);
@@ -270,11 +316,14 @@ class BillablePatientsServiceTest extends TestCase
         $summary->save();
 
         //Run
-        $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-                              ->getCollection();
+        $list = $this->service->getBillablePatientsForMonth($this->practice->id, $summary->month_year);
 
         //Assert
-        $this->assertMonthlySummary($this->summary, $problem1, $problem5, $list);
+        $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list, $problem5);
+
+        $freshSummary = $this->summary->fresh();
+        $this->assertTrue($this->summary->chargeableServices()->where('code', 'CPT 99484')->exists());
+        $this->assertTrue($this->summary->chargeableServices()->where('code', 'CPT 99490')->exists());
     }
 
     public function test_it_stores_ccd_problem_with_cpm_id()
@@ -293,6 +342,22 @@ class BillablePatientsServiceTest extends TestCase
         $response = $this->call('POST', $uri, $params);
 
         $response->assertStatus(200);
+    }
+
+    public function test_it_selects_g0511_code()
+    {
+        //Set up
+        $g0511 = ChargeableService::whereCode('G0511')->firstOrFail();
+        $this->practice->chargeableServices()->sync($g0511->pluck('id')->all());
+        $problem1 = $this->createProblem(true, 33);
+        $problem2 = $this->createProblem(true, 2);
+
+        //act
+        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary->save();
+
+        //assert
+        $this->assertTrue($this->summary->chargeableServices()->where('code', 'G0511')->exists());
     }
 
     protected function setUp()

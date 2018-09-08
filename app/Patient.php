@@ -62,6 +62,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\PatientContactWindow[] $contactWindows
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @property-read \App\User $user
+ * @property mixed location
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient enrolled()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Patient hasFamily()
@@ -115,21 +116,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Query\Builder|\App\Patient withoutTrashed()
  * @mixin \Eloquent
  */
-class Patient extends \App\BaseModel
+class Patient extends BaseModel
 {
-
     use Filterable, SoftDeletes;
-    use \Venturecraft\Revisionable\RevisionableTrait;
 
+    const UNREACHABLE = 'unreachable';
     const PAUSED = 'paused';
     const ENROLLED = 'enrolled';
     const WITHDRAWN = 'withdrawn';
     const TO_ENROLL = 'to_enroll';
     const PATIENT_REJECTED = 'patient_rejected';
 
+    /**
+     * Starting on this date, when a patients consents for CCM, they also consent for BHI.
+     *
+     * Patients who consented before this date need to have a separate BHI consent. Separate BHI consent is denoted by
+     * the patient having a Note with type "BHI Consent". This affects only Patients who consent to receiving BHI
+     * services. As of 07/23/2018, there exist ~200 BHI eligible patients who have consented before 07/23/2018.
+     */
+    const DATE_CONSENT_INCLUDES_BHI = '2018-07-23 00:00:00';
+    const BHI_CONSENT_NOTE_TYPE = 'Consented to BHI';
+    const BHI_REJECTION_NOTE_TYPE = 'Did Not Consent to BHI';
+
     protected $dates = [
+        'consent_date',
         'date_withdrawn',
         'date_paused',
+        'date_unreachable',
         'paused_letter_printed_at',
     ];
 
@@ -140,12 +153,16 @@ class Patient extends \App\BaseModel
      */
     protected $table = 'patient_info';
 
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
+    public $phi = [
+        'agent_name',
+        'agent_telephone',
+        'agent_email',
+        'birth_date',
+        'gender',
+        'mrn_number',
+        'general_comment',
+    ];
+
     protected $fillable = [
         'imported_medical_record_id',
         'user_id',
@@ -164,6 +181,7 @@ class Patient extends \App\BaseModel
         'gender',
         'date_paused',
         'date_withdrawn',
+        'date_unreachable',
         'mrn_number',
         'preferred_cc_contact_days',
         'preferred_contact_language',
@@ -192,8 +210,6 @@ class Patient extends \App\BaseModel
         'family_id',
         'date_welcomed',
     ];
-
-    // START RELATIONSHIPS
 
     public static function numberToTextDaySwitcher($string)
     {
@@ -244,13 +260,6 @@ class Patient extends \App\BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
-    // END RELATIONSHIPS
-
-
-    // START ATTRIBUTES
-
-    // first_name
-
     public function family()
     {
 
@@ -261,8 +270,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->first_name;
     }
-
-    // last_name
 
     public function setFirstNameAttribute($value)
     {
@@ -277,8 +284,6 @@ class Patient extends \App\BaseModel
         return $this->user->last_name;
     }
 
-    // address
-
     public function setLastNameAttribute($value)
     {
         $this->user->last_name = $value;
@@ -291,8 +296,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->address;
     }
-
-    // city
 
     public function setAddressAttribute($value)
     {
@@ -307,8 +310,6 @@ class Patient extends \App\BaseModel
         return $this->user->city;
     }
 
-    // state
-
     public function setCityAttribute($value)
     {
         $this->user->city = $value;
@@ -321,8 +322,6 @@ class Patient extends \App\BaseModel
     {
         return $this->user->state;
     }
-
-    // zip
 
     public function setStateAttribute($value)
     {
@@ -351,19 +350,30 @@ class Patient extends \App\BaseModel
         $this->attributes['ccm_status'] = $value;
 
         if ($statusBefore !== $value) {
-            if ($value == 'paused') {
+            if ($value == Patient::ENROLLED) {
+                $this->attributes['registration_date'] = Carbon::now()->toDateTimeString();
+            };
+            if ($value == Patient::PAUSED) {
                 $this->attributes['date_paused'] = Carbon::now()->toDateTimeString();
             };
-            if ($value == 'withdrawn') {
+            if ($value == Patient::WITHDRAWN) {
                 $this->attributes['date_withdrawn'] = Carbon::now()->toDateTimeString();
+            };
+            if ($value == Patient::UNREACHABLE) {
+                $this->attributes['date_unreachable'] = Carbon::now()->toDateTimeString();
             };
         }
         $this->save();
     }
 
-
-    // Return s current months CCM time formatted for UI
-
+    /**
+     * Get family members of a patient.
+     * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
+     *
+     * @param Patient $patient
+     *
+     * @return array|static
+     */
     public function getFamilyMembers(Patient $patient)
     {
 
@@ -405,15 +415,14 @@ class Patient extends \App\BaseModel
         return 'Success';
     }
 
-    //Query Scopes:
-
     public function scopeEnrolled($query)
     {
 
         return $query->where('ccm_status', 'enrolled');
     }
 
-    public function scopeByStatus($query, $fromDate, $toDate) {
+    public function scopeByStatus($query, $fromDate, $toDate)
+    {
 
         return $query->where(function ($query) use ($fromDate, $toDate) {
             $query->where(function ($subQuery) use ($fromDate, $toDate) {
@@ -485,6 +494,10 @@ class Patient extends \App\BaseModel
         );
     }
 
+    public function hasFamilyId() {
+        return $this->family_id != null;
+    }
+
     public function scopeHasFamily($query)
     {
 
@@ -520,7 +533,8 @@ class Patient extends \App\BaseModel
      * @param $status
      * @param string $operator
      */
-    public function scopeCcmStatus($builder, $status, $operator = '=') {
+    public function scopeCcmStatus($builder, $status, $operator = '=')
+    {
         $builder->where('ccm_status', $operator, $status);
     }
 
@@ -573,17 +587,47 @@ class Patient extends \App\BaseModel
         return $this->belongsTo(Location::class, 'preferred_contact_location');
     }
 
-    public function safe() {
+    public function getPreferences()
+    {
+        $patientTimezone = $this->user->timezone;
+        if ( ! isset($patientTimezone)) {
+            $patientTimezone = 'America/New_York';
+        }
+        $tzAbbr = Carbon::now()->setTimezone($patientTimezone)->format('T');
+
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'ccm_status' => $this->ccm_status,
-            'birth_date' => $this->birth_date,
-            'age' => $this->birth_date ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year): 0,
-            'gender' => $this->gender,
-            'created_at' => $this->created_at->format('c'),
-            'updated_at' => $this->updated_at->format('c'),
-            'cur_month_activity_time' => $this->cur_month_activity_time
+            'calls_per_month'  => $this->preferred_calls_per_month,
+            //found in contact_window
+            //'contact_days' => $this->preferred_cc_contact_days,
+            //'contact_time' => $this->preferred_contact_time,
+
+            //'contact_timezone' => $this->preferred_contact_timezone,
+            'contact_timezone' => $tzAbbr,
+
+            'contact_language' => $this->preferred_contact_language,
+            'contact_method'   => $this->preferred_contact_method,
+            'contact_window'   => $this->contactWindows,
+            'contact_location' => $this->location,
+        ];
+    }
+
+    public function safe()
+    {
+        return [
+            'id'                      => $this->id,
+            'user_id'                 => $this->user_id,
+            'ccm_status'              => $this->ccm_status,
+            'birth_date'              => $this->birth_date,
+            'age'                     => $this->birth_date
+                ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
+                : 0,
+            'gender'                  => $this->gender,
+            'date_paused'             => optional($this->date_paused)->format('c'),
+            'date_withdrawn'          => optional($this->date_withdrawn)->format('c'),
+            'date_unreachable'        => optional($this->date_unreachable)->format('c'),
+            'created_at'              => optional($this->created_at)->format('c'),
+            'updated_at'              => optional($this->updated_at)->format('c'),
+            'cur_month_activity_time' => $this->cur_month_activity_time,
         ];
     }
 }

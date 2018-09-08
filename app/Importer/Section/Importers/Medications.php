@@ -29,8 +29,8 @@ class Medications extends BaseImporter
         $medicalRecordType,
         ImportedMedicalRecord $importedMedicalRecord
     ) {
-        $this->medicalRecordId = $medicalRecordId;
-        $this->medicalRecordType = $medicalRecordType;
+        $this->medicalRecordId       = $medicalRecordId;
+        $this->medicalRecordType     = $medicalRecordType;
         $this->importedMedicalRecord = $importedMedicalRecord;
     }
 
@@ -40,8 +40,8 @@ class Medications extends BaseImporter
         ImportedMedicalRecord $importedMedicalRecord
     ) {
         $itemLogs = MedicationLog::where('medical_record_type', '=', $medicalRecordType)
-            ->where('medical_record_id', '=', $medicalRecordId)
-            ->get();
+                                 ->where('medical_record_id', '=', $medicalRecordId)
+                                 ->get();
 
         $this->processLogs($itemLogs);
 
@@ -63,7 +63,7 @@ class Medications extends BaseImporter
         $importAll = false
     ) {
         foreach ($itemLogs as $itemLog) {
-            if (!$this->validate($itemLog) && !$importAll) {
+            if ( ! $this->validate($itemLog) && ! $importAll) {
                 continue;
             }
 
@@ -72,7 +72,9 @@ class Medications extends BaseImporter
 
             $consMed = $this->consolidateMedicationInfo($itemLog);
 
-            $this->importMedication($itemLog, $consMed);
+            if ( ! $this->containsSigKeywords($consMed->cons_name)) {
+                $this->importMedication($itemLog, $consMed);
+            }
         }
     }
 
@@ -95,15 +97,15 @@ class Medications extends BaseImporter
             'vendor_id'                  => $itemLog->vendor_id,
             'name'                       => ucfirst($consolidatedMed->cons_name),
         ], [
-            'ccd_medication_log_id'      => $itemLog->id,
-            'medication_group_id'        => $medicationGroupId,
-            'sig'                        => ucfirst(StringManipulation::stringDiff(
+            'ccd_medication_log_id' => $itemLog->id,
+            'medication_group_id'   => $medicationGroupId,
+            'sig'                   => ucfirst(StringManipulation::stringDiff(
                 $consolidatedMed->cons_name,
                 $consolidatedMed->cons_text
             )),
-            'code'                       => $consolidatedMed->cons_code,
-            'code_system'                => $consolidatedMed->cons_code_system,
-            'code_system_name'           => $consolidatedMed->cons_code_system_name,
+            'code'                  => $consolidatedMed->cons_code,
+            'code_system'           => $consolidatedMed->cons_code_system,
+            'code_system_name'      => $consolidatedMed->cons_code_system_name,
         ]);
     }
 

@@ -113,28 +113,17 @@ class PracticeInvoiceController extends Controller
     {
         $practice_id = $request->input('practice_id');
         $date        = $request->input('date');
+
         if ($date) {
             $date = Carbon::createFromFormat('M, Y', $date);
         } else {
             return $this->badRequest('Invalid [date] parameter. Must have a value like "Jan, 2017"');
         }
 
-        $summaries = $this->service->billablePatientSummaries($practice_id, $date)->paginate(100);
+        $month = $this->service->getBillablePatientsForMonth($practice_id, $date);
 
-        $summaries->getCollection()->transform(function ($summary) {
-            if ( ! $summary->actor_id) {
-                $summary = $this->patientSummaryDBRepository->attachChargeableServices($summary->patient, $summary);
-                $summary = $this->patientSummaryDBRepository->attachBillableProblems($summary->patient, $summary);
-            }
 
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        $isClosed = ! ! $summaries->getCollection()->every(function ($summary) {
-            return ! ! $summary->actor_id;
-        });
-
-        return response($summaries)->header('is-closed', (int)$isClosed);
+        return response($month['summaries'])->header('is-closed', (int)$month['is_closed']);
     }
 
     /**
@@ -260,15 +249,16 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
-            return $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth());
+        $query = $this->getCurrentMonthSummariesQuery($practice_id, $date);
 
-        $summaries->update([
-            'actor_id' => null,
+        $query->update([
+            'actor_id'          => null,
+            'closed_ccm_status' => null,
         ]);
 
-        return response()->json($summaries->get());
+        $summaries = $query->get();
+
+        return response()->json($summaries);
     }
 
     /** open patient-monthly-summaries in a practice */
@@ -282,16 +272,22 @@ class PracticeInvoiceController extends Controller
             $date = Carbon::createFromFormat('M, Y', $date);
         }
 
-        $summaries = PatientMonthlySummary::whereHas('patient', function ($q) use ($practice_id) {
-            return $q->where('program_id', $practice_id);
-        })->where('month_year', $date->startOfMonth());
+        $summaries = $this->getCurrentMonthSummariesQuery($practice_id, $date)
+                          ->get();
 
-        $summaries->update([
-            'actor_id' => $user->id,
-            'needs_qa' => false,
-        ]);
+        foreach ($summaries as $summary) {
+            $summary->actor_id = $user->id;
+            $summary->needs_qa = false;
+            if ($summary->patient) {
+                if ($summary->patient->patientInfo) {
+                    $summary->closed_ccm_status = $summary->patient->patientInfo->ccm_status;
+                }
+            }
+            $summary->save();
+        }
 
-        return response()->json($summaries->get());
+
+        return response()->json($summaries);
     }
 
     public function getCounts(
@@ -551,5 +547,20 @@ class PracticeInvoiceController extends Controller
         return response()->download(storage_path('/download/' . $name), $name, [
             'Content-Length: ' . filesize(storage_path('/download/' . $name)),
         ]);
+    }
+
+    /**
+     * @param $practice_id
+     * @param Carbon $date
+     *
+     * @return PatientMonthlySummary|\Illuminate\Database\Eloquent\Builder
+     */
+    private function getCurrentMonthSummariesQuery($practice_id, Carbon $date)
+    {
+        return PatientMonthlySummary::with('patient.patientInfo')
+                                    ->whereHas('patient', function ($q) use ($practice_id) {
+                                        $q->ofPractice($practice_id);
+                                    })
+                                    ->where('month_year', $date->startOfMonth());
     }
 }

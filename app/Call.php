@@ -26,6 +26,9 @@ use Carbon\Carbon;
  * @property string|null $called_date
  * @property string $attempt_note
  * @property string|null $scheduler
+ * @property bool $is_from_care_center
+ * @property bool is_manual
+ * @property-read \App\User|null $schedulerUser
  * @property-read \App\User $inboundUser
  * @property-read \App\Note|null $note
  * @property-read \App\User|null $outboundUser
@@ -50,13 +53,11 @@ use Carbon\Carbon;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Call whereWindowStart($value)
  * @mixin \Eloquent
  */
-class Call extends \App\BaseModel
+class Call extends BaseModel
 {
+    use Filterable;
 
-    use Filterable,
-        \Venturecraft\Revisionable\RevisionableTrait;
-
-    protected $table = 'calls';
+    protected $appends = ['is_from_care_center'];
 
     protected $fillable = [
         'note_id',
@@ -64,6 +65,7 @@ class Call extends \App\BaseModel
         'status',
 
         'scheduler',
+        'is_manual',
 
         /*
         Mini-documentation for call statuses:
@@ -92,6 +94,27 @@ class Call extends \App\BaseModel
 
         'is_cpm_outbound',
     ];
+
+    //patient was reached
+    const REACHED = 'reached';
+
+    //patient was not reached
+    const NOT_REACHED = 'not reached';
+
+    //patient was reached/not reached but this call is to be ignored
+    //eg. patient was reached but was busy, so ignore call from reached/not reached reports
+    const IGNORED = 'ignored';
+
+    public function getIsFromCareCenterAttribute()
+    {
+
+        if ( ! is_a($this->schedulerUser, User::class)) {
+            //null in cases of scheduler = 'algorithm'
+            return false;
+        }
+
+        return $this->schedulerUser->hasRole('care-center');
+    }
 
     public static function numberOfCallsForPatientForMonth(User $user, $date)
     {
@@ -130,6 +153,11 @@ class Call extends \App\BaseModel
         return $calls->count();
     }
 
+    public function schedulerUser()
+    {
+        return $this->belongsTo(User::class, 'scheduler', 'id');
+    }
+
     public function note()
     {
         return $this->belongsTo(Note::class, 'note_id', 'id');
@@ -144,6 +172,7 @@ class Call extends \App\BaseModel
     {
         return $this->belongsTo(User::class, 'inbound_cpm_id', 'id');
     }
+
 
     public function patientId()
     {

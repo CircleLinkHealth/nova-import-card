@@ -2,7 +2,7 @@
 
 @section('content')
     @push('scripts')
-        <script type="text/javascript" src="{{ asset('/js/rules/rules.js') }}"></script>
+        <script type="text/javascript" src="{{ mix('/js/rules/rules.js') }}"></script>
     @endpush
     {!! Form::open(array('url' => route('roles.update', array('id' => $role->id)), 'class' => 'form-horizontal')) !!}
     <div class="container-fluid">

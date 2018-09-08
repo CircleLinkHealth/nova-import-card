@@ -26,10 +26,14 @@
                             to_enroll: 'To Enroll',
                             patient_rejected: 'Patient Declined',
                             withdrawn: 'Withdrawn',
-                            paused: 'Paused'
+                            paused: 'Paused',
+                            unreachable: 'Unreachable',
                         })[props.row.ccmStatus] || props.row.ccmStatus) 
                     }}
                 </div>
+            </template>
+            <template slot="h__ccmStatusDate" slot-scope="props">
+                CCM Status Date
             </template>
             <template slot="careplanStatus" slot-scope="props">
                 <a :href="props.row.careplanStatus === 'qa_approved' ? rootUrl('manage-patients/' + props.row.id + '/view-careplan') : null">
@@ -120,7 +124,7 @@
                 practices: [],
                 providersForSelect: [],
                 nameDisplayType: NameDisplayType.FirstName,
-                columns: ['name', 'provider', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
+                columns: ['name', 'provider', 'ccmStatus', 'ccmStatusDate','careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading', 'ccm'],
                 loaders: {
                     next: false,
                     practices: null,
@@ -138,8 +142,8 @@
             options() {
                 return {
                     filterByColumn: true,
-                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
-                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
+                    sortable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'age', 'registeredOn', 'ccm'],
+                    filterable: ['name', 'provider', 'program', 'ccmStatus', 'ccmStatusDate', 'careplanStatus', 'dob', 'phone', 'age', 'registeredOn', 'lastReading'],
                     listColumns: {
                         provider: this.providersForSelect,
                         ccmStatus: [ 
@@ -147,6 +151,7 @@
                                         { id: 'paused', text: 'paused' }, 
                                         { id: 'withdrawn', text: 'withdrawn' },
                                         { id: 'to_enroll', text: 'to_enroll'},
+                                        { id: 'unreachable', text: 'unreachable'},
                                         { id: 'patient_rejected', text: 'patient_rejected'}
                                     ],
                         careplanStatus: [
@@ -166,6 +171,7 @@
                         name: (ascending) => iSort,
                         provider: (ascending) => iSort,
                         ccmStatus: (ascending) => iSort,
+                        ccmStatusDate: (ascending) => iSort,
                         careplanStatus: (ascending) => iSort,
                         dob: (ascending) => iSort,
                         phone: (ascending) => iSort,
@@ -263,6 +269,14 @@
                     this.loaders.providers = false
                 })
             },
+            getStatusDate(patient) {
+                if (patient.patient_info.ccm_status === 'paused'){
+                    return moment(patient.patient_info.date_paused).format('YYYY-MM-DD')}
+                if (patient.patient_info.ccm_status === 'withdrawn'){
+                    return moment(patient.patient_info.date_withdrawn).format('YYYY-MM-DD')}
+                if (patient.patient_info.ccm_status === 'unreachable') {
+                    return moment(patient.patient_info.date_unreachable).format('YYYY-MM-DD')}
+            },
             getPatients () {
                 const self = this
                 this.loaders.next = true
@@ -295,7 +309,10 @@
                         if (patient.patient_info) {
                             if (patient.patient_info.created_at) patient.patient_info.created_at = patient.patient_info.created_at.split('T')[0]
                             // patient.patient_info.age = (patient.patient_info.birth_date && (patient.patient_info.birth_date != '0000-00-00')) ? ((new Date()).getFullYear() - (new Date(patient.patient_info.birth_date)).getFullYear()) : (new Date()).getFullYear()
-                            
+                            if (patient.patient_info.date_paused) patient.patient_info.date_paused = patient.patient_info.date_paused.split('T')[0]
+                            if (patient.patient_info.date_withdrawn) patient.patient_info.date_withdrawn = patient.patient_info.date_withdrawn.split('T')[0]
+                            if (patient.patient_info.date_unreachable) patient.patient_info.date_unreachable = patient.patient_info.date_unreachable.split('T')[0]
+
                             const pad = (num, count = 2) => '0'.repeat(count - num.toString().length) + num
                             const seconds = patient.patient_info.cur_month_activity_time || 0
                             patient.patient_info.ccm = seconds
@@ -316,7 +333,9 @@
                         patient.program_name = (this.practices.find(practice => practice.id == patient.program_id) || {}).display_name || ''
                         patient.age = (patient.patient_info || {}).age || ''
                         patient.registeredOn = moment(patient.created_at || '').format('YYYY-MM-DD')
+                        patient.ccmStatusDate = (this.getStatusDate(patient) || '')
                         patient.sort_registeredOn = new Date(patient.created_at)
+                        patient.sort_ccmStatusDate = new Date(patient.ccmStatusDate)
                         patient.lastReading = (patient.last_read || '').split(' ')[0] || 'No Readings'
                         patient.ccm = (patient.patient_info || {}).cur_month_activity_time || 0
                         patient.sort_ccm = (patient.patient_info || {}).ccm
@@ -391,7 +410,7 @@
                 return download().then(res => {
                     const link = document.createElement('a')
                     link.href = 'data:attachment/text,' + 
-                    encodeURI('name,provider,program,ccm status,careplan status,dob,phone,age,registered on,ccm\n'
+                    encodeURI('name,provider,program,ccm status, ccm status date,careplan status,dob,phone,age,registered on,ccm\n'
                                 + patients.join('\n'))
                     link.download = `patient-list-${Date.now()}.csv`
                     link.click()
@@ -421,7 +440,8 @@
                         to_enroll: 'To Enroll',
                         patient_rejected: 'Patient Declined',
                         withdrawn: 'Withdrawn',
-                        paused: 'Paused'
+                        paused: 'Paused',
+                        unreachable: 'Unreachable'
                     })[option.innerText] || option.innerText
                 });
 
@@ -445,6 +465,9 @@
 
                 const registeredOnInput = patientListElem.querySelector('input[name="vf__registeredOn"]')
                 registeredOnInput.setAttribute('placeholder', 'Filter by Registered On')
+
+                const ccmStatusDateInput = patientListElem.querySelector('input[name="vf__ccmStatusDate"]')
+                ccmStatusDateInput.setAttribute('placeholder', 'Filter by CCM Status Date')
 
                 const lastReadingInput = patientListElem.querySelector('input[name="vf__lastReading"]')
                 lastReadingInput.setAttribute('placeholder', 'Filter by Last Reading')
@@ -496,6 +519,8 @@
             Event.$on('vue-tables.filter::age', this.activateFilters)
 
             Event.$on('vue-tables.filter::registeredOn', this.activateFilters)
+
+            Event.$on('vue-tables.filter::ccmStatusDate', this.activateFilters)
 
             Event.$on('vue-tables.filter::lastReading', this.activateFilters)
     

@@ -53,7 +53,7 @@ class NoteForwarded extends Notification
      */
     public function toMail($notifiable)
     {
-        $saasAccountName = $notifiable->saasAccountName();
+        $saasAccountName     = $notifiable->saasAccountName();
         $slugSaasAccountName = strtolower(str_slug($saasAccountName, ''));
 
         $mail = (new MailMessage())
@@ -87,10 +87,14 @@ class NoteForwarded extends Notification
      */
     public function getBody()
     {
-        return 'Please click below button to see a forwarded note regarding one of your patients, created on '
-               . $this->note->performed_at->toFormattedDateString()
-               . ' by '
-               . optional(auth()->user())->fullName;
+        $message = 'Please click below button to see a forwarded note regarding one of your patients, created on '
+                   . $this->note->performed_at->toFormattedDateString();
+
+        if (auth()->check()) {
+            $message .= ' by ' . auth()->user()->full_name;
+        }
+
+        return $message;
     }
 
     /**
@@ -166,7 +170,9 @@ class NoteForwarded extends Notification
             'channels' => $this->channels,
 
             'sender_id'    => auth()->id(),
-            'sender_type'  => User::class,
+            'sender_type'  => auth()->check()
+                ? User::class
+                : null,
             'sender_email' => optional(auth()->user())->email,
 
             'receiver_type'  => $notifiable->id,
@@ -174,6 +180,7 @@ class NoteForwarded extends Notification
             'receiver_email' => $notifiable->email,
 
             'body'    => $this->getBody(),
+            'link'    => $this->note->link(),
             'subject' => $this->getSubject(),
 
             'note_id' => $this->note->id,

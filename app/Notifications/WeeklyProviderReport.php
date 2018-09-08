@@ -48,7 +48,8 @@ class WeeklyProviderReport extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage())->view('sales.by-provider.report', ['data' => $this->data])
-                                  ->from('notifications@careplanmanager.com', 'CircleLink Health')
+                                  ->from('notifications@careplanmanager.com',
+                                      optional($notifiable)->saasAccountName() ?? 'CircleLink Health')
                                   ->subject('Dr. ' . $this->data['name'] . '\'s CCM Weekly Summary');
     }
 
