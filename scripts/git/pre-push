@@ -3,7 +3,7 @@
 # composer test
 # COMPOSER_TEST_EC=$?
 
-npm test -- --silent
+# npm test -- --silent
 NPM_TEST_EC=$?
 
 # let "ERROR = $COMPOSER_TEST_EC + $NPM_TEST_EC"

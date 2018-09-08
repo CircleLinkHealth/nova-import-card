@@ -1,4 +1,9 @@
-#!/bin/bash
+#!/bin/sh
+
+SCRIPTS_DIR=./scripts/git/
+GIT_HOOKS_DIR=./.git/hooks/
 
 # copy git hooks to ./.git/hooks/ folder
-yes | cp -Rf ./scripts/git/ ./.git/hooks/
+for file in $SCRIPTS_DIR/*;do
+    install -m 755 "$file" $GIT_HOOKS_DIR
+done
