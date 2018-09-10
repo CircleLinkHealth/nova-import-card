@@ -160,9 +160,11 @@ class PatientFilters extends QueryFilters
     {
         $patientTable = (new Patient())->getTable();
 
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=',
-            "$patientTable.user_id")
-                             ->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
+        return $this->builder->select('users.*')
+                             ->with('patientInfo')
+                             ->join($patientTable, 'users.id', '=', "$patientTable.user_id")
+                             ->orderBy("$patientTable.cur_month_activity_time", $type)
+                             ->groupBy('users.id');
     }
 
     public function excel()
@@ -208,8 +210,9 @@ class PatientFilters extends QueryFilters
                   })
                   ->orWhere(function ($subQuery) use ($date) {
                       $subQuery->where('ccm_status', Patient::WITHDRAWN)
-                               ->where('date_withdrawn', 'LIKE', "%$date%");}
-                               );
+                               ->where('date_withdrawn', 'LIKE', "%$date%");
+                  }
+                  );
         });
     }
 

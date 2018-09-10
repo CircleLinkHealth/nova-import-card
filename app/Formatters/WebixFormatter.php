@@ -604,9 +604,9 @@ class WebixFormatter implements ReportFormatter
                     //date("m/d/Y", strtotime($user_config[$part->id]["registration_date"])) ,
                     'last_read'                  => $lastObservationDate,
                     //date("m/d/Y", strtotime($last_read)),
-                    'ccm_time'                   => $patient->patientInfo->cur_month_activity_time,
+                    'ccm_time'                   => $patient->ccm_time,
                     //$ccm_time[0],
-                    'ccm_seconds'                => $patient->patientInfo->cur_month_activity_time,
+                    'ccm_seconds'                => $patient->ccm_time,
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider'                   => $bpName,
                     'site'                       => $programName,

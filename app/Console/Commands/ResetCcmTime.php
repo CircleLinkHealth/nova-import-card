@@ -42,11 +42,6 @@ class ResetCcmTime extends Command
     public function handle()
     {
         Patient::withTrashed()
-               ->update([
-                   'cur_month_activity_time' => '0',
-               ]);
-
-        Patient::withTrashed()
                ->whereDoesntHave('user.patientSummaries', function ($q) {
                    $q->where('month_year', '=', Carbon::now()->startOfMonth());
                })
@@ -87,7 +82,7 @@ class ResetCcmTime extends Command
                });
 
         AppConfig::updateOrCreate([
-            'config_key'   => 'reset_cur_month_activity_time',
+            'config_key'   => 'add_new_patient_monthly_summary_record',
             'config_value' => Carbon::now(),
         ]);
 
