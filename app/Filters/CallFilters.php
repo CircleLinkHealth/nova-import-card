@@ -355,12 +355,20 @@ class CallFilters extends QueryFilters
 
     public function sort_ccmTime($term = null)
     {
-        $patientInfoTable = (new Patient())->getTable();
+        $joinTable = (new PatientMonthlySummary())->getTable();
+        $date      = Carbon::now()->startOfMonth();
 
         return $this->builder
-            ->with('inboundUser.patientInfo')
-            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
-            ->orderBy("$patientInfoTable.cur_month_activity_time", $term)
+            ->with([
+                'inboundUser.patientSummaries' => function ($q) use ($date) {
+                    return $q->where('month_year', '=', $date);
+                },
+            ])
+            ->join($joinTable, function ($join) use ($joinTable, $date) {
+                $join->on('calls.inbound_cpm_id', '=', "$joinTable.patient_id")
+                     ->where("$joinTable.month_year", '=', $date);
+            })
+            ->orderBy("$joinTable.ccm_time", $term)
             ->groupBy('calls.inbound_cpm_id')
             ->select(['calls.*']);
     }
