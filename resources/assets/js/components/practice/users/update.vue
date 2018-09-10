@@ -182,9 +182,9 @@
 
 <script>
     import modal from '../../shared/materialize/modal.vue';
-    import {mapGetters, mapActions} from 'vuex'
-    import {clearOpenModal, addNotification, updatePracticeStaff, clearErrors} from '../../../store/actions'
-    import {errors, practiceStaff, practiceLocations} from '../../../store/getters'
+    import {mapActions, mapGetters} from 'vuex'
+    import {addNotification, clearErrors, clearOpenModal, updatePracticeStaff} from '../../../store/actions'
+    import {practiceLocations, practiceStaff} from '../../../store/getters'
     import MaterialSelect from '../../src/material-select.vue'
 
     export default {
@@ -329,11 +329,11 @@
                         value: 'billing_provider',
                     },
                     {
-                        name: 'Someone else in addition to provider',
+                        name: 'Notify others in addition to provider',
                         value: 'forward_alerts_in_addition_to_provider',
                     },
                     {
-                        name: 'Someone else instead of provider',
+                        name: 'Notify others instead of provider',
                         value: 'forward_alerts_instead_of_provider',
                     },
                 ],
@@ -343,11 +343,11 @@
                         value: 'billing_provider',
                     },
                     {
-                        name: 'Someone else in addition to provider',
+                        name: 'Notify others in addition to provider',
                         value: 'forward_careplan_approval_emails_in_addition_to_provider',
                     },
                     {
-                        name: 'Someone else instead of provider',
+                        name: 'Notify others instead of provider',
                         value: 'forward_careplan_approval_emails_instead_of_provider',
                     },
                 ]
