@@ -342,18 +342,7 @@ class PatientSummaryEloquentRepository
 
         $summary = $this->approveIfShouldApprove($summary->patient, $summary);
 
-        $summary->needs_qa = ( ! $summary->approved && ! $summary->rejected)
-                             || $this->lacksProblems($summary)
-                             || $summary->no_of_successful_calls == 0
-                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
-
-        if ($summary->rejected || $summary->approved || $summary->actor_id) {
-            $summary->needs_qa = false;
-        }
-
-        if ($summary->needs_qa) {
-            $summary->approved = $summary->rejected = false;
-        }
+        $summary = $this->setApprovalStatusAndNeedsQA($summary);
 
         if (($summary->approved && ! $summary->isDirty('approved')) || ($summary->rejected && ! $summary->isDirty('rejected')) || ($summary->needs_qa && ! $summary->isDirty('needs_qa'))) {
             return $summary;
@@ -480,8 +469,10 @@ class PatientSummaryEloquentRepository
         return $summary;
     }
 
-    public function attachChargeableServices(User $patient, PatientMonthlySummary $summary)
+    public function attachChargeableServices(PatientMonthlySummary $summary)
     {
+        $patient = $summary->patient;
+
         if ($summary->actor_id) {
             return $summary;
         }
@@ -544,7 +535,7 @@ class PatientSummaryEloquentRepository
     }
 
     /**
-     * Decide wheter or not to attach a chargeable service to a patient summary.
+     * Decide whether or not to attach a chargeable service to a patient summary.
      *
      * @param ChargeableService $service
      * @param PatientMonthlySummary $summary
@@ -555,6 +546,32 @@ class PatientSummaryEloquentRepository
     {
         return $service->code == 'CPT 99484' && $summary->bhi_time >= 1200
                || $service->code == 'CPT 99490' && $summary->ccm_time >= 1200
-               || in_array($service->code, ChargeableService::DEFAULT_CHARGEABLE_SERVICE_CODES);
+               || $service->code == 'G0511' && $summary->ccm_time >= 1200;
+    }
+
+    /**
+     * This function will set field `needs_qa` on the $summary.
+     * If the $summary needs to be QA'ed by a human, approved and rejected will be set to false.
+     *
+     * @param PatientMonthlySummary $summary
+     *
+     * @return PatientMonthlySummary
+     */
+    public function setApprovalStatusAndNeedsQA(PatientMonthlySummary $summary)
+    {
+        $summary->needs_qa = ( ! $summary->approved && ! $summary->rejected)
+                             || $this->lacksProblems($summary)
+                             || $summary->no_of_successful_calls == 0
+                             || in_array($summary->patient->patientInfo->ccm_status, ['withdrawn', 'paused']);
+
+        if ($summary->rejected || $summary->approved || $summary->actor_id) {
+            $summary->needs_qa = false;
+        }
+
+        if ($summary->needs_qa) {
+            $summary->approved = $summary->rejected = false;
+        }
+
+        return $summary;
     }
 }

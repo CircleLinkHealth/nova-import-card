@@ -355,14 +355,12 @@ class CallFilters extends QueryFilters
 
     public function sort_ccmTime($term = null)
     {
-        $patientInfoTable = (new Patient())->getTable();
+        return $this->sort_by_patient_summaries_column('ccm_time', $term);
+    }
 
-        return $this->builder
-            ->with('inboundUser.patientInfo')
-            ->join($patientInfoTable, 'calls.inbound_cpm_id', '=', "$patientInfoTable.user_id")
-            ->orderBy("$patientInfoTable.cur_month_activity_time", $term)
-            ->groupBy('calls.inbound_cpm_id')
-            ->select(['calls.*']);
+    public function sort_bhiTime($term = null)
+    {
+        return $this->sort_by_patient_summaries_column('bhi_time', $term);
     }
 
     public function sort_preferredCallDays($term = null)
@@ -394,5 +392,25 @@ class CallFilters extends QueryFilters
     public function globalFilters(): array
     {
         return [];
+    }
+
+    private function sort_by_patient_summaries_column($column, $term)
+    {
+        $joinTable = (new PatientMonthlySummary())->getTable();
+        $date      = Carbon::now()->startOfMonth();
+
+        return $this->builder
+            ->with([
+                'inboundUser.patientSummaries' => function ($q) use ($date) {
+                    return $q->where('month_year', '=', $date);
+                },
+            ])
+            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
+                $join->on('calls.inbound_cpm_id', '=', "$joinTable.patient_id")
+                     ->where("$joinTable.month_year", '=', $date);
+            })
+            ->orderBy("$joinTable.$column", $term)
+            ->groupBy('calls.inbound_cpm_id')
+            ->select(['calls.*']);
     }
 }
