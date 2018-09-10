@@ -15,7 +15,6 @@ echo 'Checking PHP code style...'
 phpcs -h . --standard=PSR2
 PHPCS_EC=$?
 
-
 # composer test
 # COMPOSER_TEST_EC=$?
 
