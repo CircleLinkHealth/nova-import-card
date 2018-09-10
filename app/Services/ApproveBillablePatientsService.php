@@ -103,6 +103,8 @@ class ApproveBillablePatientsService
                 $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
             }
 
+            $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($summary);
+
             return ApprovableBillablePatient::make($summary);
         });
 
