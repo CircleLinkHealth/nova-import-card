@@ -23,6 +23,8 @@ use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Spatie\Backup\Commands\BackupCommand;
+use Spatie\Backup\Commands\CleanupCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -136,6 +138,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(DeleteProcessedFiles::class)
                  ->everyThirtyMinutes()
                  ->withoutOverlapping();
+
+        $schedule->command(CleanupCommand::class)->daily()->at('01:00');
+        $schedule->command(BackupCommand::class)->daily()->at('02:00');
     }
 
     /**
