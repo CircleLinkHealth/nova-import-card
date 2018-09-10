@@ -312,7 +312,7 @@ class BillablePatientsServiceTest extends TestCase
         $problem4 = $this->createProblem(false, 2);
         $problem5 = $this->createProblem(null, 9);
 
-        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary = $this->repo->attachChargeableServices($this->summary);
         $summary->save();
 
         //Run
@@ -353,7 +353,7 @@ class BillablePatientsServiceTest extends TestCase
         $problem2 = $this->createProblem(true, 2);
 
         //act
-        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary = $this->repo->attachChargeableServices($this->summary);
         $summary->save();
 
         //assert
