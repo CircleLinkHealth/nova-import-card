@@ -8,8 +8,6 @@ COMPOSER_DUMP_AUTOLOAD_EC=$?
 echo 'Checking Javascript code quality...'
 jscs ./js
 JSCS_EC=$?
-eshint .
-ESHINT_EC=$?
 
 echo 'Checking PHP code style...'
 phpcs -h . --standard=PSR2
@@ -21,7 +19,7 @@ PHPCS_EC=$?
 # npm test -- --silent
 NPM_TEST_EC=$?
 
-let "ERROR = $NPM_TEST_EC + $JSCS_EC + $ESHINT_EC + PHPCS_EC + $COMPOSER_DUMP_AUTOLOAD_EC"
+let "ERROR = $NPM_TEST_EC + $JSCS_EC + PHPCS_EC + $COMPOSER_DUMP_AUTOLOAD_EC"
 # ERROR=$NPM_TEST_EC
 
 if [ ${ERROR} -eq "0" ]
