@@ -139,8 +139,10 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes()
                  ->withoutOverlapping();
 
-        $schedule->command(CleanupCommand::class)->daily()->at('01:00');
-        $schedule->command(BackupCommand::class)->daily()->at('02:00');
+        if (app()->environment('worker')) {
+            $schedule->command(CleanupCommand::class)->daily()->at('01:00');
+            $schedule->command(BackupCommand::class)->daily()->at('02:00');
+        }
     }
 
     /**
