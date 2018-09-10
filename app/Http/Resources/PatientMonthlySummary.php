@@ -18,6 +18,8 @@ class PatientMonthlySummary extends Resource
         return [
             'id'                     => $this->id,
             'month_year'             => $this->month_year,
+            'total_time'             => $this->total_time,
+            'bhi_time'               => $this->bhi_time,
             'ccm_time'               => $this->ccm_time,
             'no_of_calls'            => $this->no_of_calls,
             'no_of_successful_calls' => $this->no_of_successful_calls,
