@@ -405,7 +405,7 @@ class CallFilters extends QueryFilters
                     return $q->where('month_year', '=', $date);
                 },
             ])
-            ->join($joinTable, function ($join) use ($joinTable, $date) {
+            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
                 $join->on('calls.inbound_cpm_id', '=', "$joinTable.patient_id")
                      ->where("$joinTable.month_year", '=', $date);
             })
