@@ -42,14 +42,18 @@ class SendApprovedCareplanSlackNotification implements ShouldQueue
             }
         } else {
             $providers = [];
+
             foreach ($careplans as $careplan) {
                 if ($careplan->providerApproverUser) {
-                    $providers[] = $careplan->providerApproverUser->display_name;
+                    $providers[$careplan->providerApproverUser->display_name][] = '';
                 }
             }
-            $doctors = implode(',', $providers);
 
-            $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$doctors}. \n
+            $providers = collect($providers)->map(function ($item, $key){
+                return $key . " => number of careplans:" . count($item);
+            });
+
+            $message = "{$careplans->count()} Care Plan(s) have been approved today by the following doctor(s): {$providers->implode(', ')}. \n
                     {$careplans->where('first_printed', null)->count()} Approved Care Plan(s) have not yet been printed.\n";
 
             if (app()->environment('staging')) {
