@@ -9,6 +9,7 @@ use App\Events\PdfableCreated;
 use App\Observers\PatientObserver;
 use App\User;
 use Carbon\Carbon;
+use Log;
 
 class UpdateCarePlanStatus
 {
@@ -40,11 +41,14 @@ class UpdateCarePlanStatus
 
         //Stop the propagation to other Listeners if the CarePlan is already approved.
         if ($user->carePlanStatus == CarePlan::PROVIDER_APPROVED) {
-            return false;
+            Log::debug('UpdateCarePlanStatus: Called but care plan is already approved. Exiting.');
+            return;
         }
         $practiceSettings = $event->practiceSettings;
         //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
         if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+
+            Log::debug("UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED");
 
             $date     = Carbon::now();
             $approver = auth()->user();
