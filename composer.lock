@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "e4b36153874ba65190a7a026f2a5d079",
@@ -216,16 +216,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.67.4",
+            "version": "3.67.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "df94a9ad78c9e817a9887bedf0e5b269c4f25810"
+                "reference": "b74a9e68b44f25215093b3fd480ee6cf3657e9df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/df94a9ad78c9e817a9887bedf0e5b269c4f25810",
-                "reference": "df94a9ad78c9e817a9887bedf0e5b269c4f25810",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b74a9e68b44f25215093b3fd480ee6cf3657e9df",
+                "reference": "b74a9e68b44f25215093b3fd480ee6cf3657e9df",
                 "shasum": ""
             },
             "require": {
@@ -292,7 +292,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-08-31T21:53:42+00:00"
+            "time": "2018-09-07T20:09:11+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1777,16 +1777,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.66",
+            "version": "v1.2.67",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1"
+                "reference": "618b74b6fb1bc11737aecb9e7d5f4903dd75a9d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1",
-                "reference": "55ad4b140d821c19dbaf1a6ea9d9e5ca6444ecc1",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/618b74b6fb1bc11737aecb9e7d5f4903dd75a9d1",
+                "reference": "618b74b6fb1bc11737aecb9e7d5f4903dd75a9d1",
                 "shasum": ""
             },
             "require": {
@@ -1822,7 +1822,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-07-30T20:23:10+00:00"
+            "time": "2018-09-04T19:04:44+00:00"
         },
         {
             "name": "jenssegers/agent",
@@ -3119,23 +3119,23 @@
         },
         {
             "name": "maatwebsite/excel",
-            "version": "2.1.29",
+            "version": "2.1.30",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Maatwebsite/Laravel-Excel.git",
-                "reference": "e1e1e1a9f69ba98ce6946e4f150e5531a5250d08"
+                "reference": "f5540c4ba3ac50cebd98b09ca42e61f926ef299f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/e1e1e1a9f69ba98ce6946e4f150e5531a5250d08",
-                "reference": "e1e1e1a9f69ba98ce6946e4f150e5531a5250d08",
+                "url": "https://api.github.com/repos/Maatwebsite/Laravel-Excel/zipball/f5540c4ba3ac50cebd98b09ca42e61f926ef299f",
+                "reference": "f5540c4ba3ac50cebd98b09ca42e61f926ef299f",
                 "shasum": ""
             },
             "require": {
-                "illuminate/cache": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/config": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/filesystem": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/support": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
+                "illuminate/cache": "^5.0",
+                "illuminate/config": "^5.0",
+                "illuminate/filesystem": "^5.0",
+                "illuminate/support": "^5.0",
                 "jeremeamia/superclosure": "^2.3",
                 "nesbot/carbon": "~1.0",
                 "php": ">=5.5",
@@ -3149,10 +3149,10 @@
                 "phpunit/phpunit": "~4.0"
             },
             "suggest": {
-                "illuminate/http": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/queue": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/routing": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*",
-                "illuminate/view": "5.0.*|5.1.*|5.2.*|5.3.*|5.4.*|5.5.*|5.6.*"
+                "illuminate/http": "^5.0",
+                "illuminate/queue": "^5.0",
+                "illuminate/routing": "^5.0",
+                "illuminate/view": "^5.0"
             },
             "type": "library",
             "extra": {
@@ -3183,7 +3183,7 @@
                     "email": "patrick@maatwebsite.nl"
                 }
             ],
-            "description": "An eloquent way of importing and exporting Excel and CSV in Laravel 4 with the power of PHPExcel",
+            "description": "Supercharged Excel exports in Laravel",
             "keywords": [
                 "PHPExcel",
                 "batch",
@@ -3193,7 +3193,7 @@
                 "import",
                 "laravel"
             ],
-            "time": "2018-08-29T06:46:16+00:00"
+            "time": "2018-09-04T19:00:09+00:00"
         },
         {
             "name": "maximebf/debugbar",
@@ -4775,16 +4775,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.9.7",
+            "version": "v0.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "4f5b6c090948773a8bfeea6a0f07ab7d0b24e932"
+                "reference": "ed3c32c4304e1a678a6e0f9dc11dd2d927d89555"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/4f5b6c090948773a8bfeea6a0f07ab7d0b24e932",
-                "reference": "4f5b6c090948773a8bfeea6a0f07ab7d0b24e932",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/ed3c32c4304e1a678a6e0f9dc11dd2d927d89555",
+                "reference": "ed3c32c4304e1a678a6e0f9dc11dd2d927d89555",
                 "shasum": ""
             },
             "require": {
@@ -4845,7 +4845,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2018-08-11T15:54:43+00:00"
+            "time": "2018-09-05T11:40:09+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -7576,16 +7576,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.8.5",
+            "version": "1.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "3e4edb822c942f37ade0d09579cfbab11e2fee87"
+                "reference": "20da13beba0dde8fb648be3cc19765732790f46e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/3e4edb822c942f37ade0d09579cfbab11e2fee87",
-                "reference": "3e4edb822c942f37ade0d09579cfbab11e2fee87",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/20da13beba0dde8fb648be3cc19765732790f46e",
+                "reference": "20da13beba0dde8fb648be3cc19765732790f46e",
                 "shasum": ""
             },
             "require": {
@@ -7598,6 +7598,7 @@
             "require-dev": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
+                "php-http/psr7-integration-tests": "dev-master",
                 "phpunit/phpunit": "^5.7.16 || ^6.0.8 || ^7.2.7",
                 "zendframework/zend-coding-standard": "~1.0"
             },
@@ -7635,22 +7636,22 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-08-10T14:16:32+00:00"
+            "time": "2018-09-05T19:29:37+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "barryvdh/laravel-ide-helper",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-ide-helper.git",
-                "reference": "09db8c9a76711e98c61af0795934fb15955223fb"
+                "reference": "7db1843473e1562d8e0490b51db847d3a1415140"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/09db8c9a76711e98c61af0795934fb15955223fb",
-                "reference": "09db8c9a76711e98c61af0795934fb15955223fb",
+                "url": "https://api.github.com/repos/barryvdh/laravel-ide-helper/zipball/7db1843473e1562d8e0490b51db847d3a1415140",
+                "reference": "7db1843473e1562d8e0490b51db847d3a1415140",
                 "shasum": ""
             },
             "require": {
@@ -7711,7 +7712,7 @@
                 "phpstorm",
                 "sublime"
             ],
-            "time": "2018-08-31T13:28:09+00:00"
+            "time": "2018-09-06T18:41:09+00:00"
         },
         {
             "name": "barryvdh/reflection-docblock",
@@ -8170,16 +8171,16 @@
         },
         {
             "name": "darkaonline/l5-swagger",
-            "version": "5.5.8",
+            "version": "5.5.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DarkaOnLine/L5-Swagger.git",
-                "reference": "9703f14c3bfab00a164830fe466b8210abd0dd08"
+                "reference": "ac8b7d197415344a75749016c84522fe56c24874"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DarkaOnLine/L5-Swagger/zipball/9703f14c3bfab00a164830fe466b8210abd0dd08",
-                "reference": "9703f14c3bfab00a164830fe466b8210abd0dd08",
+                "url": "https://api.github.com/repos/DarkaOnLine/L5-Swagger/zipball/ac8b7d197415344a75749016c84522fe56c24874",
+                "reference": "ac8b7d197415344a75749016c84522fe56c24874",
                 "shasum": ""
             },
             "require": {
@@ -8226,7 +8227,7 @@
                 "laravel",
                 "swagger"
             ],
-            "time": "2018-03-02T11:30:24+00:00"
+            "time": "2018-09-07T16:06:47+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -9374,7 +9375,8 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton"
+                    "homepage": "http://github.com/chrisboulton",
+                    "role": "Original developer"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
@@ -10567,16 +10569,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.18.2",
+            "version": "v3.18.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "00432fc07ccffdd1304a920e610edb14478b7553"
+                "reference": "1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/00432fc07ccffdd1304a920e610edb14478b7553",
-                "reference": "00432fc07ccffdd1304a920e610edb14478b7553",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f",
+                "reference": "1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f",
                 "shasum": ""
             },
             "type": "library",
@@ -10620,7 +10622,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-08-23T22:24:32+00:00"
+            "time": "2018-09-08T04:06:27+00:00"
         },
         {
             "name": "symfony/dom-crawler",

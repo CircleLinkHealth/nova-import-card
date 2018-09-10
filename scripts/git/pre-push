@@ -1,4 +1,20 @@
-#!/bin/bash
+#!/bin/sh
+
+
+composer dumpautoload
+
+COMPOSER_DUMP_AUTOLOAD_EC=$?
+
+echo 'Checking Javascript code quality...'
+jscs ./js
+JSCS_EC=$?
+eshint .
+ESHINT_EC=$?
+
+echo 'Checking PHP code style...'
+phpcs -h . --standard=PSR2
+PHPCS_EC=$?
+
 
 # composer test
 # COMPOSER_TEST_EC=$?
@@ -6,8 +22,8 @@
 # npm test -- --silent
 NPM_TEST_EC=$?
 
-# let "ERROR = $COMPOSER_TEST_EC + $NPM_TEST_EC"
-ERROR=$NPM_TEST_EC
+let "ERROR = $NPM_TEST_EC + $JSCS_EC + $ESHINT_EC + PHPCS_EC + $COMPOSER_DUMP_AUTOLOAD_EC"
+# ERROR=$NPM_TEST_EC
 
 if [ ${ERROR} -eq "0" ]
 then
