@@ -7,18 +7,18 @@
 $today = \Carbon\Carbon::now()->toFormattedDateString();
 $provider = App\User::find($patient->getBillingProviderIDAttribute());
 
-function trim_bp($bp){
+function trim_bp($bp)
+{
     $bp_ = explode('/', $bp);
     echo $bp_[0];
 }
 if (isset($patient)) {
-    $seconds = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
-    $H = floor($seconds / 3600);
-    $i = ($seconds / 60) % 60;
-    $s = $seconds % 60;
+    $seconds     = $patient->ccm_time;
+    $H           = floor($seconds / 3600);
+    $i           = ($seconds / 60) % 60;
+    $s           = $seconds % 60;
     $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-}
-else {
+} else {
     $monthlyTime = "";
 }
 ?>
@@ -42,25 +42,30 @@ else {
                                         @if (isset($disableTimeTracking) && $disableTimeTracking)
                                             <div class="color-grey">
                                                 <a href="{{ empty($patient->id) ?: route('patient.activity.providerUIIndex', ['patient' => $patient->id]) }}">
-                                                    <server-time-display url="{{config('services.ws.server-url')}}" patient-id="{{$patient->id}}" provider-id="{{Auth::user()->id}}" value="{{$monthlyTime}}"></server-time-display>
+                                                    <server-time-display url="{{config('services.ws.server-url')}}"
+                                                                         patient-id="{{$patient->id}}"
+                                                                         provider-id="{{Auth::user()->id}}"
+                                                                         value="{{$monthlyTime}}"></server-time-display>
                                                 </a>
                                             </div>
                                         @else
                                             <?php
-                                                $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
-                                                $ccmCountableUser = auth()->user()->isCCMCountable();
+                                            $noLiveCountTimeTracking = isset($noLiveCountTimeTracking) && $noLiveCountTimeTracking;
+                                            $ccmCountableUser = auth()->user()->isCCMCountable();
                                             ?>
-                                            <time-tracker ref="TimeTrackerApp" class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
-                                                    :info="timeTrackerInfo" 
-                                                    :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
-                                                    :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
+                                            <time-tracker ref="TimeTrackerApp"
+                                                          class-name="{{$noLiveCountTimeTracking ? 'color-grey' : ($ccmCountableUser ? '' : 'color-grey')}}"
+                                                          :info="timeTrackerInfo"
+                                                          :no-live-count="{{($noLiveCountTimeTracking ? true : ($ccmCountableUser ? false : true)) ? 1 : 0}}"
+                                                          :override-timeout="{{config('services.time-tracker.override-timeout')}}"></time-tracker>
                                         @endif
                                     </span>
                                 </span>
                             </div>
                             <div class="col-xs-12 text-right hidden-print">
                                 <span class="btn btn-group text-right">
-                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button" href="javascript:window.print()">Print This Page</a>
+                                    <a class="btn btn-info btn-sm inline-block" aria-label="..." role="button"
+                                       href="javascript:window.print()">Print This Page</a>
                                 </span>
                             </div>
                         </div>
@@ -135,12 +140,12 @@ else {
                     $yaxis_step = 'step:10,';
                     if ($key == 'Blood_Sugar') {
                         $yaxis_start = 'start:40,';
-                        $yaxis_step = 'step:20,';
+                        $yaxis_step  = 'step:20,';
                     } else if ($key == 'Blood_Pressure') {
                         $yaxis_start = 'start:80,';
                     } else if ($key == 'Weight') {
                         $yaxis_start = 'start:80,';
-                        $yaxis_step = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
+                        $yaxis_step  = 'step: ' . round(($value['max'] - 80) / 4, -1) . ',';
                     }
                     ?>
 

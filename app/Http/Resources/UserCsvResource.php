@@ -42,7 +42,7 @@ class UserCsvResource extends Resource
                 ? Carbon::parse($patient->birth_date)->age
                 : 0) . '",' .
                '"' . $this->created_at . '",' .
-               '"' . $this->getTimeInDecimals($patient->cur_month_activity_time) . '"';
+               '"' . $this->getTimeInDecimals($this->ccm_time) . '"';
     }
 
     /**

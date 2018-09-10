@@ -49,7 +49,7 @@ class CallReportController extends Controller
                     'calls.note_id',
                     'calls.scheduler AS scheduler',
                     'scheduler_user.display_name AS scheduler_user_name',
-                    'patient_info.cur_month_activity_time',
+                    'patient_monthly_summaries.ccm_time',
                     'patient_info.last_successful_contact_time',
                     \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
                     \DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),

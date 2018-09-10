@@ -1,6 +1,6 @@
 <?php
 if (isset($patient)) {
-    $seconds     = optional($patient->patientInfo)->cur_month_activity_time ?? 0;
+    $seconds     = $patient->ccm_time;
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
