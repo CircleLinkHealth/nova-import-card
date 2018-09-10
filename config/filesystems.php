@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'cloud'   => env('FILESYSTEM_CLOUD', 's3'),
+    'cloud' => env('FILESYSTEM_CLOUD', 's3'),
 
     /*
 	|--------------------------------------------------------------------------
@@ -42,15 +42,15 @@ return [
     'disks' => [
 
         'google' => [
-            'driver' => 'google',
-            'clientId' => env('GOOGLE_DRIVE_CLIENT_ID'),
+            'driver'       => 'google',
+            'clientId'     => env('GOOGLE_DRIVE_CLIENT_ID'),
             'clientSecret' => env('GOOGLE_DRIVE_CLIENT_SECRET'),
             'refreshToken' => env('GOOGLE_DRIVE_REFRESH_TOKEN'),
-            'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
+            'folderId'     => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
 
         //The directory where Practices deposit CCDAs on the Worker environment
-        'ccdas' => [
+        'ccdas'  => [
             'driver' => 'local',
             'root'   => env('CCDA_DROPBOX_PATH') ?? null,
         ],
@@ -104,6 +104,15 @@ return [
             'secret' => env('S3_CPM_STORAGE_SECRET'),
             'region' => env('S3_CPM_STORAGE_REGION'),
             'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+        ],
+
+        'backup' => [
+            'driver' => 's3',
+            'key'    => env('S3_CPM_STORAGE_KEY'),
+            'secret' => env('S3_CPM_STORAGE_SECRET'),
+            'region' => env('S3_CPM_STORAGE_REGION'),
+            'bucket' => env('S3_CPM_STORAGE_BUCKET_NAME'),
+            'root'   => 'backup',
         ],
     ],
 
