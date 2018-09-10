@@ -70,7 +70,7 @@ class ResetCcmTime extends Command
                            $newSummary->patient_id = $patient->user_id;
                        }
 
-                       $newSummary->month_year             = Carbon::today();
+                       $newSummary->month_year             = Carbon::today()->startOfMonth();
                        $newSummary->total_time             = 0;
                        $newSummary->ccm_time               = 0;
                        $newSummary->bhi_time               = 0;
