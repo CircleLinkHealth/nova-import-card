@@ -328,7 +328,7 @@ class CarePlan extends BaseModel implements PdfReport
             'dob'             => $patient->patientInfo->birth_date,
             'mrn'             => $patient->patientInfo->mrn_number,
             'name'            => $patient->fullName,
-            'billingProvider' => $this->providerApproverUser()->first(),
+            'billingProvider' => $patient->billingProviderUser(),
         ];
 
         //Validator instance
