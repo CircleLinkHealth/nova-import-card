@@ -33,18 +33,6 @@ class CarePlanConditions implements Rule
         $cpmProblems = $value->count();
         $bhiProblems = $value->where('cpmProblem.is_behavioral', true)->count();
 
-//        $cpmProblemx = $value->where('cpmProblem', function ($p){
-//            $p->where('id', '!=', 23);
-//        });
-//
-//        foreach ($value as $ccdProblem){
-//            if ($ccdProblem->isBehavioral()){
-//                $bhiProblems += 1;
-//                continue;
-//            }elseif ($ccdProblem->cpmProblem()->first()){
-//                $cpmProblems += 1;
-//            }
-//        }
         return $cpmProblems >= 2 || $bhiProblems >= 1;
 
     }

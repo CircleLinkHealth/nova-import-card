@@ -91,6 +91,9 @@ class CarePlan extends BaseModel implements PdfReport
         'mode' => self::WEB,
     ];
 
+    //will contain validation errors
+    private $errors;
+
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
         $pendingApprovals = 0;
@@ -306,11 +309,6 @@ class CarePlan extends BaseModel implements PdfReport
 
     public function validateCarePlan()
     {
-        //not here->enforce this check only when user is administrator
-//        if ( ! auth()->user()->hasRole('administrator')) {
-//            return false;
-//        }
-
         $patient = $this->patient->load([
             'patientInfo',
             'phoneNumbers',
@@ -338,11 +336,14 @@ class CarePlan extends BaseModel implements PdfReport
             'dob'             => 'required|date',
             'mrn'             => 'required|numeric',
             'name'            => 'required',
-            'billingProvider' => 'required',
+            'billingProvider' => 'required|numeric',
         ]);
 
-        //add error handling
+        return $validator;
+    }
 
-        return $validator->passes();
+    public function errors()
+    {
+        return $this->errors;
     }
 }

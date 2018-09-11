@@ -610,7 +610,8 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
                 'recentSubmission'        => $recentSubmission,
-                'careplan'                => $careplanService->careplan($patientId)
+                'careplan'                => $careplanService->careplan($patientId),
+                'errors'                  => $patient->carePlan()->first()->validateCarePlan()->errors()
             ]
         );
     }

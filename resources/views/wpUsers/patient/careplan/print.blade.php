@@ -35,7 +35,6 @@ if (isset($patient) && ! empty($patient)) {
                     @if(!isset($isPdf))
                         <div class="row">
                             <div class="col-xs-12 text-right hidden-print">
-
                                 <div class="text-center">
                                     <span style="font-size: 27px;{{$ccm_above ? 'color: #47beab;' : ''}}">
                                         <span data-monthly-time="{{$monthlyTime}}" style="color: inherit"
@@ -46,6 +45,21 @@ if (isset($patient) && ! empty($patient)) {
                                         </span>
                                     </span>
                                 </div>
+                                @if(! empty($errors->messages()))
+                                <div>
+                                    <div class="alert alert-danger text-left" style="line-height: 2">
+                                        <h4>CarePlan cannot be approved because:</h4>
+                                        <ul class="list-group">
+                                            @foreach ($errors->all() as $error)
+                                                <li><span class="glyphicon glyphicon-exclamation-sign"></span> {!! $error !!}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <div class="row" style="margin-bottom: 5%;">
+                                        @include('errors.incompatibleBrowser')
+                                    </div>
+                                </div>
+                                @endif
 
                                 @if($showInsuranceReviewFlag)
                                     <div class="alert alert-danger text-left" role="alert">
