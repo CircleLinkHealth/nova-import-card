@@ -18,6 +18,12 @@
 
                     <br>
 
+                    <label for="file">Filename as appears in Drive (eg `CircleLink.json`). Only fill in if input is in
+                        json format.</label>
+                    <input class="" type="text" name="file" id="file">
+
+                    <br>
+
                     <input class="" type="checkbox" name="filterLastEncounter" id="filterLastEncounter">
                     <label for="">filterLastEncounter</label>
 
