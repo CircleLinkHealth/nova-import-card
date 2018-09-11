@@ -59,7 +59,7 @@ class CallsController extends ApiController
                              'calls.note_id',
                              'calls.scheduler AS scheduler',
                              'scheduler_user.display_name AS scheduler_user_name',
-                             'patient_info.cur_month_activity_time',
+                             'patient_monthly_summaries.ccm_time',
                              'patient_info.last_successful_contact_time',
                              \DB::raw('DATE_FORMAT(patient_info.last_contact_time, "%Y-%m-%d") as last_contact_time'),
                              \DB::raw('coalesce(patient_info.no_call_attempts_since_last_success, "n/a") as no_call_attempts_since_last_success'),
@@ -164,9 +164,14 @@ class CallsController extends ApiController
                          ->editColumn('nurse_name', function ($call) {
                              return '<a href="#"><span class="cpm-editable-icon" call-id="' . $call->call_id . '" column-name="outbound_cpm_id" column-value="' . $call->outbound_cpm_id . '">' . $call->nurse_name . '</span>';
                          })
-                         ->editColumn('cur_month_activity_time', function ($call) {
-                             if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                                 return substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
+                         ->editColumn('ccm_time', function ($call) {
+                             if ($call->inboundUser) {
+                                 $seconds     = $call->inboundUser->ccm_time;
+                                 $H           = floor($seconds / 3600);
+                                 $i           = ($seconds / 60) % 60;
+                                 $s           = $seconds % 60;
+                                 $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+                                 return substr($monthlyTime, 1);
                              } else {
                                  return 'n/a';
                              }

@@ -9,21 +9,9 @@ $user_info = array();
 @section('activity', 'Edit/Modify Care Plan')
 
 @section('content')
-    {!! Form::open(array('url' => route('patients.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
+    {!! Form::open(array('url' => route('patient.demographics.store', array('patientId' => $patient->id)), 'class' => 'form-horizontal', 'id' => 'ucpForm')) !!}
     <div class="row" style="margin-top:20px;margin-bottom:20px;">
         <div class="col-lg-10 col-lg-offset-1">
-            @if ($patient->careplan_mode == App\CarePlan::WEB)
-                <div class="icon-container col-lg-12">
-                    {{--  @if(isset($patient))
-                        @include('wpUsers.patient.careplan.nav')
-                    @endif  --}}
-                </div>
-            @endif
-            {{-- {!! Form::select('patient_id', array($patient), null, ['class' => 'patient2 form-control']) !!}
-            @if(!isset($patient->id) )
-                <div class=" col-lg-8 col-lg-offset-2 alert alert-info">NOTE: Adding a new patient</div>
-            @endif
-            --}}
             <div class="main-form-container-last col-lg-8 col-lg-offset-2" style="margin-top:20px;margin-bottom:20px;">
                 <div class="row"><!-- no-overflow-->
                     @if(isset($patient->id) )

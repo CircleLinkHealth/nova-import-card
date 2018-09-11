@@ -322,9 +322,11 @@ class NoteService
                                               ->first();
 
         if (empty($patientRecord)) {
+            //should not need to do that, because there is a command on start of every month
+            //that sets a monthly summary to 0 for each patient
             $patientRecord = PatientMonthlySummary::updateCCMInfoForPatient(
                 $patient->user_id,
-                $patient->cur_month_activity_time
+                0
             );
         } else {
             $patientRecord->is_ccm_complex = 0;
@@ -335,7 +337,7 @@ class NoteService
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
-            if ($patient->cur_month_activity_time > 3600 && auth()->user()->nurseInfo) {
+            if ($patient->user->ccm_time > 3600 && auth()->user()->nurseInfo) {
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
             }
         }

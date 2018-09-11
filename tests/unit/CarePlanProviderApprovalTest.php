@@ -79,11 +79,10 @@ class CarePlanProviderApprovalTest extends TestCase
 
     public function test_provider_cannot_qa_approve()
     {
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertDontSee('Approve/Next');
+                         ->assertDontSee('Approve');
     }
 
     public function test_provider_can_approve()
@@ -91,11 +90,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertSee('Approve/Next');
+                         ->assertSee('Approve');
     }
 
     public function test_medical_assistant_can_approve()
@@ -106,11 +104,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertSee('Approve/Next');
+                         ->assertSee('Approve');
     }
 
     public function test_r_n_can_approve()
@@ -124,11 +121,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertSee('Approve/Next');
+                         ->assertSee('Approve');
     }
 
     public function test_care_center_cannot_approve()
@@ -139,11 +135,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;
         $this->patient->carePlan->save();
 
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertDontSee('Approve/Next');
+                         ->assertDontSee('Approve');
     }
 
     public function test_care_center_can_qa_approve()
@@ -151,11 +146,10 @@ class CarePlanProviderApprovalTest extends TestCase
         $careCenter = $this->createUser($this->practice->id, 'care-center');
         auth()->login($careCenter);
 
-        $response = $this->get(route('patient.careplan.show', [
+        $response = $this->get(route('patient.careplan.print', [
             'patientId' => $this->patient->id,
-            'page'      => 3,
         ]))
-                         ->assertSee('Approve/Next');
+                         ->assertSee('Approve');
     }
 
     /**

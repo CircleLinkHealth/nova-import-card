@@ -46,7 +46,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
             if (! $nurse){
                 \Log::error("User not found: {$nurseReport['name']}");
-                return;
+                return [];
             }
 
             $pageTimers = PageTimer::where('provider_id', $nurse->id)
@@ -87,7 +87,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 'Actual Hours worked'      => $actualHours ?: 'N/A',
                 'Hours Committed'          => $hoursCommitted  == 0 ? '0' : $hoursCommitted,
             ];
-        });
+        })->filter()->values();
     }
 
     /**

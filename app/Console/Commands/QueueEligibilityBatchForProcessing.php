@@ -11,7 +11,11 @@ use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
+use App\Services\GoogleDrive;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Storage;
 
 class QueueEligibilityBatchForProcessing extends Command
 {
@@ -79,6 +83,16 @@ class QueueEligibilityBatchForProcessing extends Command
 
         if ($batch) {
             $this->queuePHXJobs($batch);
+
+            return true;
+        }
+
+        $batch = EligibilityBatch::where('status', '<', 2)
+                                 ->whereType(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                                 ->first();
+
+        if ($batch) {
+            $this->queueClhMedicalRecordTemplateJobs($batch);
 
             return true;
         }
@@ -167,5 +181,128 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queuePHXJobs($batch)
     {
         MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
+    }
+
+    private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch)
+    {
+        if ( ! ! ! $batch->options['finishedReadingFile']) {
+            $created = $this->createEligibilityJobsFromJsonFile($batch);
+        }
+
+        $unprocessed = EligibilityJob::whereBatchId($batch->id)
+                                     ->where('status', '<', 2)
+                                     ->take(10)
+                                     ->get();
+
+        if ($unprocessed->isNotEmpty()) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
+        } else {
+            $batch->status = EligibilityBatch::STATUSES['complete'];
+        }
+
+        $unprocessed->each(function ($job) use ($batch) {
+            ProcessSinglePatientEligibility::dispatch(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            );
+        });
+
+        $batch->save();
+
+        return $batch;
+    }
+
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
+    {
+        $driveFolder   = $batch->options['folder'];
+        $driveFileName = $batch->options['fileName'];
+
+        $driveHandler = new GoogleDrive();
+        $stream       = $driveHandler
+            ->getFileStream($driveFileName, $driveFolder);
+
+        $localDisk = Storage::disk('local');
+
+        $date = Carbon::now()->toAtomString();
+
+        $fileName   = "temp_{$date}_{$driveFileName}";
+        $pathToFile = storage_path("app/$fileName");
+
+        $savedLocally = $localDisk->put($fileName, $stream);
+
+        if ( ! $savedLocally) {
+            throw new \Exception("Failed saving $pathToFile");
+        }
+
+        try {
+            \Log::debug("BEGIN creating eligibility jobs from json file in google drive: [`folder => $driveFolder`, `filename => $driveFileName`]");
+
+            //Reading the file using a generator is expected to consume less memory.
+            //implemented both to experiment
+//            $this->readWithoutUsingGenerator($pathToFile, $batch);
+            $this->readUsingGenerator($pathToFile, $batch);
+
+            \Log::debug("FINISH creating eligibility jobs from json file in google drive: [`folder => $driveFolder`, `filename => $driveFileName`]");
+
+            $mem = format_bytes(memory_get_peak_usage());
+
+            \Log::debug("BEGIN deleting `$fileName`");
+            $deleted = $localDisk->delete($fileName);
+            \Log::debug("FINISH deleting `$fileName`");
+
+
+            \Log::debug("memory_get_peak_usage: $mem");
+
+            $options                        = $batch->options;
+            $options['finishedReadingFile'] = true;
+            $batch->options                 = $options;
+            $batch->save();
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+
+            \Log::debug("BEGIN deleting `$fileName`");
+            $deleted = $localDisk->delete($fileName);
+            \Log::debug("FINISH deleting `$fileName`");
+
+            throw $e;
+        }
+    }
+
+    private function readWithoutUsingGenerator($pathToFile, $batch)
+    {
+        $handle = @fopen($pathToFile, "r");
+        if ($handle) {
+            while ( ! feof($handle)) {
+                if (($buffer = fgets($handle)) !== false) {
+                    $mr = new JsonMedicalRecordAdapter($buffer);
+                    $mr->firstOrCreateEligibilityJob($batch);
+                }
+            }
+            fclose($handle);
+        }
+    }
+
+    private function readUsingGenerator(string $pathToFile, EligibilityBatch $batch)
+    {
+        $iterator = read_file_using_generator($pathToFile);
+
+        foreach ($iterator as $iteration) {
+            if ( ! $iteration) {
+                continue;
+            }
+
+            $mr = new JsonMedicalRecordAdapter($iteration);
+            $mr->firstOrCreateEligibilityJob($batch);
+        }
     }
 }

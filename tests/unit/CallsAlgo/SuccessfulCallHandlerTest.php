@@ -31,8 +31,6 @@ class SuccessfulCallHandlerTest extends TestCase
     public function fakePatient(Carbon $called) {
         $patient = $this->createUser($this->practice->id, 'participant');
 
-        $patient->cur_month_activity_time = 1300;
-
         $patient->patientSummaries()->updateOrCreate([
             'month_year' => $called->toDateString(),
             'ccm_time' => 1300,
