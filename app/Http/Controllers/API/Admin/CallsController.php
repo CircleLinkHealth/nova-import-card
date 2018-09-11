@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
+use App\CallView;
 use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
+use App\Http\Resources\CallView as CallViewResource;
 use App\Http\Resources\User as UserResource;
 use App\Patient;
 use App\Services\Calls\ManagementService;
@@ -354,6 +356,7 @@ class CallsController extends ApiController
     public function index(Request $request, CallFilters $filters)
     {
         $rows  = $request->input('rows');
+        /*
         $calls = Call::whereHas('inboundUser', function ($q) {
             $q->whereHas('primaryPractice', function ($q) {
                 $q->where('active', 1);
@@ -366,6 +369,10 @@ class CallsController extends ApiController
                      ->paginate($rows ?? 15);
 
         $result = CallResource::collection($calls);
+        */
+
+        $calls = CallView::paginate($rows ?? 15);
+        $result = CallViewResource::collection($calls);
         return $result;
     }
 

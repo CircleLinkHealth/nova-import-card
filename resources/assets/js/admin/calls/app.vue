@@ -464,6 +464,121 @@
                 }
             },
 
+            setupCallNew(call) {
+                const $vm = this;
+
+                return ({
+                    id: call.id,
+                    selected: false,
+                    isBhiEligible: false,
+                    isCcmEligible: false,
+                    Manual: call.is_manual,
+                    Nurse: call.nurse,
+                    NurseId: call.nurse_id,
+                    Patient: call.patient,
+                    Practice: call.practice,
+                    Scheduler: call.scheduler,
+                    CallWindows: call.preferred_call_days,
+                    Comment: call.general_comment,
+                    AttemptNote: call.attempt_note,
+                    Notes: [],
+                    'Last Call Status': call.last_call_status,
+                    'Last Call': call.last_call,
+                    'CCM Time': timeDisplay(call.ccm_time),
+                    'BHI Time': timeDisplay(call.bhi_time),
+                    'Successful Calls': call.no_of_successful_calls,
+                    'Time Zone': call.timezone,
+                    'Preferred Call Days': call.preferred_call_days,
+                    'DOB': call.dob,
+                    'Billing Provider': call.provider,
+                    'Patient ID': call.patient_id,
+                    notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
+                    'Next Call': call.scheduled_date,
+                    'Call Time Start': call.call_time_start,
+                    'Call Time End': call.call_time_end,
+                    practiceId: call.practice_id,
+                    nurses() {
+                        return [...$vm.nurses.filter(Boolean)
+                            .filter(nurse => nurse.practices.includes(call.practice_id))
+                            .filter(n => !!n.display_name)
+                            .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})), {
+                            text: 'unassigned',
+                            value: null
+                        }]
+                    },
+                    loaders: {
+                        nextCall: false,
+                        nurse: false,
+                        callTimeStart: false,
+                        callTimeEnd: false
+                    },
+                    onNextCallUpdate: function (date, moment, old, revertCallback) {
+                        callUpdateFunctions.onNextCallUpdate(this, date, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNextCallUpdate(this, date, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onNurseUpdate: function (nurseId, old, revertCallback) {
+                        callUpdateFunctions.onNurseUpdate(this, nurseId, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onNurseUpdate(this, nurseId, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onCallTimeStartUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeStartUpdate(this, time, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeStartUpdate(this, time, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onCallTimeEndUpdate: function (time, old, revertCallback) {
+                        callUpdateFunctions.onCallTimeEndUpdate(this, time, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onGeneralCommentUpdate: (comment, old, revertCallback) => {
+                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    onAttemptNoteUpdate: function (note, old, revertCallback) {
+                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old, revertCallback)
+                                )
+                            );
+                    },
+                    updateMultiValues: function (obj, old, revertCallback) {
+                        callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
+                            .catch(err =>
+                                $vm.showOverrideConfirmationIfNeeded(
+                                    err,
+                                    () => callUpdateFunctions.updateMultiValues(this, obj, true, old, revertCallback)
+                                )
+                            );
+                    }
+                });
+
+
+            },
             setupCall(call) {
                 const $vm = this
                 if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
@@ -654,7 +769,7 @@
                     if (result) {
                         const calls = result.data || [];
                         if (calls && Array.isArray(calls)) {
-                            const tableCalls = calls.map(this.setupCall)
+                            const tableCalls = calls.map(this.setupCallNew)
                             if (!this.tableData.length) {
                                 const arr = this.tableData.concat(tableCalls)
                                 const total = ((this.pagination || {}).total || 0)
