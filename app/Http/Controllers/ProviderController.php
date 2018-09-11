@@ -30,6 +30,14 @@ class ProviderController extends Controller
 
     public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
+        $validator = User::find($patientId)->carePlan()->first()->validateCarePlan();
+        if ($validator->fails()){
+            return redirect()->to(route('patient.careplan.print', [
+                'patientId' => $patientId,
+                'clearSession' => $viewNext,
+            ]));
+        }
+
         event(new CarePlanWasApproved(User::find($patientId)));
         $viewNext = (boolean) $viewNext;
 
