@@ -312,6 +312,7 @@ class CarePlan extends BaseModel implements PdfReport
         $patient = $this->patient->load([
             'patientInfo',
             'phoneNumbers',
+            'billingProvider.user',
             'ccdProblems' => function ($q) {
                     return $q->has('cpmProblem')->with('cpmProblem');
                     },
@@ -326,7 +327,7 @@ class CarePlan extends BaseModel implements PdfReport
             'dob'             => $patient->patientInfo->birth_date,
             'mrn'             => $patient->patientInfo->mrn_number,
             'name'            => $patient->fullName,
-            'billingProvider' => $patient->billingProviderUser(),
+            'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
 
         //Validator instance
@@ -336,7 +337,7 @@ class CarePlan extends BaseModel implements PdfReport
             'dob'             => 'required|date',
             'mrn'             => 'required|numeric',
             'name'            => 'required',
-            'billingProvider' => 'required',
+            'billingProvider' => 'required|numeric',
         ]);
 
         return $validator;

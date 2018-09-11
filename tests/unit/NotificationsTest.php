@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\CareplanAssessment;
 use App\Notifications\CarePlanApprovalReminder;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DatabaseChannel;
@@ -13,20 +12,14 @@ use App\Notifications\ResetPassword;
 use App\Notifications\WeeklyPracticeReport;
 use App\Notifications\WeeklyProviderReport;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Notification;
-use test\Mockery\TestWithVariadicArguments;
 use Tests\Helpers\CarePlanHelpers;
 use Tests\Helpers\SetupTestCustomer;
 use Tests\TestCase;
-use Faker\Factory;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class NotificationsTest extends TestCase
 {
     use CarePlanHelpers,
-        DatabaseTransactions,
         SetupTestCustomer;
 
     protected $patient;

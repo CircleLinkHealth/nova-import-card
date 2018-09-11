@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Tests\Helpers\UserHelpers;
 
-class PatientMonthlySummariesSeeder extends Seeder
+class PatientSeeder extends Seeder
 {
     use UserHelpers;
 
@@ -39,10 +39,11 @@ class PatientMonthlySummariesSeeder extends Seeder
                 'approved'   => 1,
                 'actor_id'   => 1,
             ]);
-            $u->chargeableServices()->attach(1);
-            $u->cpmProblems()->attach($problemIds->random(5)->all());
+            $u->ccdProblems()->createMany([
+                ['name' => 'test' . str_random(5)],
+                ['name' => 'test' . str_random(5)],
+            ]);
         });
-
-
     }
+
 }
