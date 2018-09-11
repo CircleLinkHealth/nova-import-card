@@ -8,6 +8,7 @@ class EligibilityBatch extends BaseModel
     const TYPE_PHX_DB_TABLES = 'phoenix_heart_db_tables';
     const TYPE_ONE_CSV = 'one_csv';
     const ATHENA_API = 'athena_csv';
+    const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
     const STATUSES = [
         'not_started' => 0,
