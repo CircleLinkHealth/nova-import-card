@@ -5,12 +5,14 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Rules\CarePlanConditions;
 use App\Services\ReportsService;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\App;
 use Log;
+use Validator;
 
 /**
  * App\CarePlan
@@ -274,8 +276,9 @@ class CarePlan extends BaseModel implements PdfReport
 
         if (empty($channels)) {
             $patientId = $this->patient->id;
-            $practice = $this->patient->primaryPractice->name;
+            $practice  = $this->patient->primaryPractice->name;
             Log::debug("CarePlan: Will not be forwarded because primary practice[$practice] for patient[$patientId] does not have any enabled channels.");
+
             return;
         }
 
@@ -283,6 +286,7 @@ class CarePlan extends BaseModel implements PdfReport
         if ($location == null) {
             $patientId = $this->patient->id;
             Log::debug("CarePlan: Will not be forwarded because patient[$patientId] does not have a preferred contact location.");
+
             return;
         }
 
@@ -298,5 +302,47 @@ class CarePlan extends BaseModel implements PdfReport
     {
         return $this->morphMany(DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
+    }
+
+    public function validateCarePlan()
+    {
+        //not here->enforce this check only when user is administrator
+//        if ( ! auth()->user()->hasRole('administrator')) {
+//            return false;
+//        }
+
+        $patient = $this->patient->load([
+            'patientInfo',
+            'phoneNumbers',
+            'ccdProblems' => function ($q) {
+                    return $q->has('cpmProblem')->with('cpmProblem');
+                    },
+            'ccdInsurancePolicies'
+        ]);
+
+        $data = [
+            'conditions'      => $patient->ccdProblems,
+            //we do not know if all patients have insurances
+            //            'insurances' => $patient->ccdInsurancePolicies,
+            'phoneNumber'     => $patient->phoneNumbers->first(),
+            'dob'             => $patient->patientInfo->birth_date,
+            'mrn'             => $patient->patientInfo->mrn_number,
+            'name'            => $patient->fullName,
+            'billingProvider' => $this->providerApproverUser()->first(),
+        ];
+
+        //Validator instance
+        $validator = Validator::make($data, [
+            'conditions'      => [new CarePlanConditions()],
+            'phoneNumber'     => 'required',
+            'dob'             => 'required|date',
+            'mrn'             => 'required|numeric',
+            'name'            => 'required',
+            'billingProvider' => 'required',
+        ]);
+
+        //add error handling
+
+        return $validator->passes();
     }
 }
