@@ -992,3 +992,44 @@ if ( ! function_exists('is_json')) {
         return true;
     }
 }
+
+if ( ! function_exists('read_file_using_generator')) {
+    function read_file_using_generator($path)
+    {
+        if ( ! file_exists($path)) {
+            return false;
+        }
+
+        $handle = fopen($path, "r");
+
+        while ( ! feof($handle)) {
+            yield fgets($handle);
+        }
+
+        fclose($handle);
+    }
+}
+
+if ( ! function_exists('format_bytes')) {
+    function format_bytes($bytes, $precision = 2)
+    {
+        $units = ["b", "kb", "mb", "gb", "tb"];
+
+        $bytes = max($bytes, 0);
+        $pow   = floor(($bytes
+                ? log($bytes)
+                : 0) / log(1024));
+        $pow   = min($pow, count($units) - 1);
+
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . " " . $units[$pow];
+    }
+}
+
+if ( ! function_exists('array_keys_exist')) {
+    function array_keys_exist(array $keys, array $arr)
+    {
+        return ! array_diff_key(array_flip($keys), $arr);
+    }
+}
