@@ -314,9 +314,9 @@ class CarePlan extends BaseModel implements PdfReport
             'phoneNumbers',
             'billingProvider.user',
             'ccdProblems' => function ($q) {
-                    return $q->has('cpmProblem')->with('cpmProblem');
-                    },
-            'ccdInsurancePolicies'
+                return $q->has('cpmProblem')->with('cpmProblem');
+            },
+            'ccdInsurancePolicies',
         ]);
 
         $data = [

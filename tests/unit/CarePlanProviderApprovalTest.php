@@ -5,7 +5,6 @@ namespace Tests\unit;
 use App\CarePerson;
 use App\CarePlan;
 use App\Location;
-use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
 use App\Practice;
@@ -42,10 +41,12 @@ class CarePlanProviderApprovalTest extends TestCase
      */
     protected $location;
 
-    public function test_careplan_validation(){
+    public function test_careplan_validation()
+    {
         $validator = $this->carePlan->validateCarePlan();
         $this->assertTrue($validator->fails());
-        $this->assertEquals('The Care Plan must have two CPM problems, or one BHI problem.', $validator->errors()->first('conditions'));
+        $this->assertEquals('The Care Plan must have two CPM problems, or one BHI problem.',
+            $validator->errors()->first('conditions'));
         $this->assertEquals('The dob field is required.', $validator->errors()->first('dob'));
         $this->assertEquals('The mrn field is required.', $validator->errors()->first('mrn'));
         $this->assertEquals('The billing provider field is required.', $validator->errors()->first('billingProvider'));
@@ -57,18 +58,18 @@ class CarePlanProviderApprovalTest extends TestCase
             ['name' => 'test' . str_random(5)],
             ['name' => 'test' . str_random(5)],
         ]);
-        foreach ($ccdProblems as $problem){
+        foreach ($ccdProblems as $problem) {
             $problem->cpmProblem()->associate($cpmProblems->random());
             $problem->save();
         }
         //add each one individually and check for error messages
-        $this->patient->birthDate         = Carbon::now()->subYear(20);
-        $this->patient->MRN               = rand();
+        $this->patient->birthDate = Carbon::now()->subYear(20);
+        $this->patient->MRN       = rand();
         $this->patient->careTeamMembers()->create([
             'member_user_id' => $this->provider->id,
             'type'           => CarePerson::BILLING_PROVIDER,
         ]);
-        $this->patient->phone             = '111-234-5678';
+        $this->patient->phone = '111-234-5678';
         $this->patient->save();
 
 
