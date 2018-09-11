@@ -3127,4 +3127,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                && $patient->billingProviderUser()
                && ($patient->hasScheduledCallToday() && ! Cache::has($this->getLegacyBhiNursePatientCacheKey($patient->id)));
     }
+
+    /**
+     * Get the User's Problems to populate the User header
+     *
+     * @return array
+     */
+    public function getProblemsToMonitor()
+    {
+        return $this->ccdProblems
+            ->sortBy('cpmProblem.name')
+            ->pluck('cpmProblem.name', 'cpmProblem.id')
+            ->all();
+    }
 }

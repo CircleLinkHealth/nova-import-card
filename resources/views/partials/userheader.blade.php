@@ -139,24 +139,21 @@
         <?php
         use App\Services\CCD\CcdProblemService;
 
-        //            $cpmProblemService = app(CpmProblemUserService::class);
         $ccdProblemService = app(CcdProblemService::class);
 
-        //            $cpmProblems = $cpmProblemService->getPatientProblems($patient->id);
         $ccdProblems = $ccdProblemService->getPatientProblems($patient);
 
-        $ccdMonitoredProblems = $ccdProblems->filter(function ($problem) {
-            return $problem['is_monitored'];
-        })->groupBy('name')->values()->map(function ($problems) {
-            return $problems->first();
-        });
+        $ccdMonitoredProblems = $ccdProblems
+            ->where('is_monitored', 1)
+            ->unique('name')
+            ->values();
         ?>
         @if(!empty($ccdMonitoredProblems))
             <div style="clear:both"></div>
             <ul id="user-header-problems-checkboxes" class="person-conditions-list inline-block text-medium"
                 style="margin-top: -10px">
                 @foreach($ccdMonitoredProblems as $problem)
-                    @if($problem['name'] != App\Models\CPM\CpmMisc::OTHER_CONDITIONS && $problem['name'] != 'Diabetes')
+                    @if($problem['name'] != 'Diabetes')
                         <li class="inline-block"><input type="checkbox" id="item27" name="condition27" value="Active"
                                                         checked="checked" disabled="disabled">
                             <label for="condition27"><span> </span>{{$problem['name']}}</label>
