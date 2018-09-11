@@ -336,7 +336,7 @@ class CarePlan extends BaseModel implements PdfReport
             'dob'             => 'required|date',
             'mrn'             => 'required|numeric',
             'name'            => 'required',
-            'billingProvider' => 'required|numeric',
+            'billingProvider' => 'required',
         ]);
 
         return $validator;
