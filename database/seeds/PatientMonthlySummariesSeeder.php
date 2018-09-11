@@ -42,7 +42,5 @@ class PatientMonthlySummariesSeeder extends Seeder
             $u->chargeableServices()->attach(1);
             $u->cpmProblems()->attach($problemIds->random(5)->all());
         });
-
-
     }
 }
