@@ -597,6 +597,15 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/',
         'middleware' => ['patientProgramSecurity'],
     ], function () {
+        Route::get('demographics/create', [
+            'uses' => 'Patient\PatientCareplanController@createPatientDemographics',
+            'as'   => 'patient.demographics.create',
+        ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
+
+        Route::post('demographics', [
+            'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
+            'as'   => 'patient.demographics.store',
+        ])->middleware('permission:patient.create,patient.update,careplan.update');
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
@@ -684,8 +693,6 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/{patientId}',
         'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
     ], function () {
-        // base
-        //Route::get('/', ['uses' => 'Patient\PatientController@showSelectProgram', 'as' => 'patient.selectprogram']);
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
@@ -740,14 +747,14 @@ Route::group(['middleware' => 'auth'], function () {
 
         // careplan
         Route::group(['prefix' => 'careplan'], function () {
-            // careplan user
             Route::get('demographics', [
                 'uses' => 'Patient\PatientCareplanController@showPatientDemographics',
                 'as'   => 'patient.demographics.show',
             ])->middleware('permission:patient.create,patient.update,location.read,practice.read');
-            Route::post('demographics', [
-                'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
-                'as'   => 'patient.demographics.store',
+
+            Route::patch('demographics', [
+                'uses' => 'Patient\PatientCareplanController@updatePatientDemographics',
+                'as'   => 'patient.demographics.update',
             ])->middleware('permission:patient.create,patient.update,careplan.update');
         });
 

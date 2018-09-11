@@ -19,7 +19,6 @@ use Auth;
 use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
-use Response;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PatientCareplanController extends Controller
@@ -239,18 +238,64 @@ class PatientCareplanController extends Controller
         return response()->file($mergedFileNameWithPath);
     }
 
-
-    /**
-     * Display patient add/edit
-     *
-     * @param  int $patientId
-     *
-     * @return Response
-     */
     public function showPatientDemographics(
         Request $request,
-        $patientId = false
+        $patientId
     ) {
+        return $this->editOrCreateDemographics($request, $patientId);
+    }
+
+    public function createPatientDemographics(Request $request)
+    {
+        return $this->editOrCreateDemographics($request);
+    }
+
+    public function storePatientDemographics(CreateNewPatientRequest $request)
+    {
+        return $this->storeOrUpdateDemographics($request);
+    }
+
+    public function updatePatientDemographics(Request $request)
+    {
+        return $this->storeOrUpdateDemographics($request);
+    }
+
+    /**
+     * Change CarePlan Mode to Web
+     *
+     * @param $carePlanId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function switchToWebMode($carePlanId)
+    {
+        $cp = CarePlan::find($carePlanId);
+
+        $cp->mode = CarePlan::WEB;
+        $cp->save();
+
+        return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
+    }
+
+    /**
+     * Change CarePlan Mode to Pdf
+     *
+     * @param $carePlanId
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function switchToPdfMode($carePlanId)
+    {
+        $cp = CarePlan::find($carePlanId);
+
+        $cp->mode = CarePlan::PDF;
+        $cp->save();
+
+        return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
+    }
+
+    private function editOrCreateDemographics(Request $request, $patientId = null)
+    {
         $messages = \Session::get('messages');
 
         // determine if existing user or new user
@@ -384,16 +429,8 @@ class PatientCareplanController extends Controller
         ]));
     }
 
-    /**
-     * Save patient add/edit
-     *
-     * @param  int $patientId
-     *
-     * @return Response
-     */
-    public function storePatientDemographics(CreateNewPatientRequest $request)
+    private function storeOrUpdateDemographics(Request $request)
     {
-        // input
         $params    = new ParameterBag($request->input());
         $patientId = false;
         if ($params->get('user_id')) {
@@ -521,39 +558,5 @@ class PatientCareplanController extends Controller
                 ['Successfully created new patient with demographics.']
             );
         }
-    }
-
-    /**
-     * Change CarePlan Mode to Web
-     *
-     * @param $carePlanId
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function switchToWebMode($carePlanId)
-    {
-        $cp = CarePlan::find($carePlanId);
-
-        $cp->mode = CarePlan::WEB;
-        $cp->save();
-
-        return redirect()->route('patient.careplan.print', ['patientId' => $cp->user_id]);
-    }
-
-    /**
-     * Change CarePlan Mode to Pdf
-     *
-     * @param $carePlanId
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function switchToPdfMode($carePlanId)
-    {
-        $cp = CarePlan::find($carePlanId);
-
-        $cp->mode = CarePlan::PDF;
-        $cp->save();
-
-        return redirect()->route('patient.pdf.careplan.print', ['patientId' => $cp->user_id]);
     }
 }
