@@ -647,14 +647,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientController@showPatientAlerts',
             'as'   => 'patients.alerts',
         ])->middleware('permission:patient.read');
-        Route::get('careplan/demographics', [
-            'uses' => 'Patient\PatientCareplanController@showPatientDemographics',
-            'as'   => 'patients.demographics.show',
-        ])->middleware('permission:patient.read,location.read,practice.read');
-        Route::post('careplan/demographics', [
-            'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
-            'as'   => 'patients.demographics.store',
-        ])->middleware('permission:patient.update,patient.create');
         Route::get('u20', [
             'uses' => 'ReportsController@u20',
             'as'   => 'patient.reports.u20',
@@ -757,27 +749,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
                 'as'   => 'patient.demographics.store',
             ])->middleware('permission:patient.create,patient.update,careplan.update');
-            // careplan team
-            Route::get('team', [
-                'uses' => 'Patient\PatientCareplanController@showPatientCareteam',
-                'as'   => 'patient.careteam.show',
-            ])->middleware('permission:patient.read,provider.read,careplan.read');
-            Route::post('team', [
-                'uses' => 'Patient\PatientCareplanController@storePatientCareteam',
-                'as'   => 'patient.careteam.store',
-            ])->middleware('permission:patient.update');
-
-            Route::group(['middleware' => 'check.careplan.mode'], function () {
-                // careplan sections
-                Route::get('sections/{page}', [
-                    'uses' => 'Patient\PatientCareplanController@showPatientCareplan',
-                    'as'   => 'patient.careplan.show',
-                ])->middleware('permission:patient.read,patientProblem.read,careplan.read');
-                Route::post('sections', [
-                    'uses' => 'Patient\PatientCareplanController@storePatientCareplan',
-                    'as'   => 'patient.careplan.store',
-                ])->middleware('permission:patient.update,biometric.update,careplan.update');
-            });
         });
 
 

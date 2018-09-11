@@ -12,20 +12,6 @@
                    role="button">Patient Overview</a>
             </li>
 
-            {{--  @if ($patient->careplan_mode == App\CarePlan::WEB)
-                <li class="inline-block">
-                    <a href="{{ empty($patient->id) ? route('patients.search') : route('patient.careplan.show', array('patient' => $patient->id, 'page' => '1')) }}"
-                       role="button">Edit Care Plan</a>
-                </li>
-            @endif
-
-            @if ($patient->careplan_mode == App\CarePlan::PDF)
-                <li class="inline-block">
-                    <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
-                       role="button">Patient Profile</a>
-                </li>
-            @endif  --}}
-
             <li class="inline-block">
                 <a href="{{ route('patient.demographics.show', array('patientId' => $patient->id)) }}"
                     role="button">Patient Profile</a>
