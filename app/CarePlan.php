@@ -283,7 +283,7 @@ class CarePlan extends BaseModel implements PdfReport
     }
 
     /**
-     * Returns the notifications that included this note as an attachment
+     * Returns the notifications that included this resource as an attachment
      *
      * @return MorphMany
      */
