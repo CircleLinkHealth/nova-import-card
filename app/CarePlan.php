@@ -1,15 +1,15 @@
 <?php namespace App;
 
 use App\Contracts\PdfReport;
+use App\Contracts\ReportFormatter;
 use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
-use App\Services\ReportsService;
+use App\Services\CareplanService;
+use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\App;
 use Log;
 
 /**
@@ -166,33 +166,27 @@ class CarePlan extends BaseModel implements PdfReport
             return public_path('assets/pdf/sample-note.pdf');
         }
 
-        $user = $this->patient;
+        $pdfService      = app(PdfService::class);
+        $reportFormatter = app(ReportFormatter::class);
+        $careplanService = app(CareplanService::class);
 
-        $careplan = (new ReportsService())->carePlanGenerator([$user]);
+        $careplan = $reportFormatter->formatDataForViewPrintCareplanReport([$this->patient]);
+        $careplan = $careplan[$this->patient->id];
 
-        $pdf = App::make('snappy.pdf.wrapper');
+        if (empty($careplan)) {
+            throw new \Exception("Could not get CarePlan info for CarePlan with ID: $this->id");
+        }
 
-        $pdf->loadView('wpUsers.patient.careplan.print', [
-            'patient'             => $user,
-            'problems'            => $careplan[$user->id]['problems'],
-            'problemNames'        => $user->cpmProblems()->get()->sortBy('name')->pluck('name')->all(),
-            'biometrics'          => $careplan[$user->id]['bio_data'],
-            'symptoms'            => $careplan[$user->id]['symptoms'],
-            'lifestyle'           => $careplan[$user->id]['lifestyle'],
-            'medications_monitor' => $careplan[$user->id]['medications'],
-            'taking_medications'  => $careplan[$user->id]['taking_meds'],
-            'allergies'           => $careplan[$user->id]['allergies'],
-            'social'              => $careplan[$user->id]['social'],
-            'appointments'        => $careplan[$user->id]['appointments'],
-            'other'               => $careplan[$user->id]['other'],
-            'isPdf'               => true,
-            'recentSubmission'    => false,
+        return $pdfService->createPdfFromView('wpUsers.patient.multiview', [
+            'careplans'    => [$this->patient->id => $careplan],
+            'isPdf'        => true,
+            'letter'       => false,
+            'problemNames' => $careplan['problem'],
+            'careTeam'     => $this->patient->careTeamMembers,
+            'data'         => $careplanService->careplan($this->patient->id),
+        ], [
+            'disable-javascript' => true,
         ]);
-
-        $file_name = base_path('storage/pdfs/careplans/' . Carbon::now()->toDateString() . '-' . $user->fullName . '.pdf');
-        $pdf->save($file_name, true);
-
-        return $file_name;
     }
 
     public function isProviderApproved()
@@ -250,7 +244,6 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function forward()
     {
-
         Log::debug("CarePlan: Ready to forward");
 
         $this->load([

@@ -50,7 +50,7 @@ class EligibilityBatchController extends Controller
                 null)->count();
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
-        } elseif ($batch->type == EligibilityBatch::TYPE_ONE_CSV || $batch->type == EligibilityBatch::ATHENA_API) {
+        } elseif ($batch->type != EligibilityBatch::TYPE_PHX_DB_TABLES) {
             $jobs = EligibilityJob::whereBatchId($batch->id)->get();
 
             $unprocessed = $jobs->where('status', '<', 2)->count();
