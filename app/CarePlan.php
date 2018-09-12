@@ -324,7 +324,7 @@ class CarePlan extends BaseModel implements PdfReport
         //Validator instance
         $validator = Validator::make($data, [
             'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
-            'phoneNumber'     => 'required|phone:US',
+            'phoneNumber'     => 'required|phone:AUTO,US',
             'dob'             => 'required|date',
             'mrn'             => 'required|numeric',
             'name'            => 'required',
