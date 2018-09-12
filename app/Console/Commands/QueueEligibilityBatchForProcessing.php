@@ -13,7 +13,6 @@ use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Storage;
 
@@ -231,9 +230,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $localDisk = Storage::disk('local');
 
-        $date = Carbon::now()->toAtomString();
-
-        $fileName   = "temp_{$date}_{$driveFileName}";
+        $fileName   = "eligibl_{$driveFileName}";
         $pathToFile = storage_path("app/$fileName");
 
         $savedLocally = $localDisk->put($fileName, $stream);
