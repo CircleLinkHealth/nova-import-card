@@ -246,7 +246,7 @@
                     columnsClasses: {
                         'selected': 'blank'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Patient Status', 'Practice', 'Scheduler'],
+                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
                     filterable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
                     filterByColumn: true,
                     texts: {
