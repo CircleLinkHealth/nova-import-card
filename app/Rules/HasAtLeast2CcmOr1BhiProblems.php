@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class CarePlanConditions implements Rule
+class HasAtLeast2CcmOr1BhiProblems implements Rule
 {
     /**
      * Create a new rule instance.
@@ -18,6 +18,7 @@ class CarePlanConditions implements Rule
 
     /**
      * Determine if the validation rule passes.
+     * $value is a collection of ccdProblems
      *
      * @param  string  $attribute
      * @param  mixed  $value
@@ -25,7 +26,6 @@ class CarePlanConditions implements Rule
      */
     public function passes($attribute, $value)
     {
-        //value is a collection of the ccdProblems relationship
         if ($value->isEmpty()){
             return false;
         }

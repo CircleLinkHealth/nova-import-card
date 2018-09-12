@@ -69,7 +69,7 @@ class CarePlanProviderApprovalTest extends TestCase
             'member_user_id' => $this->provider->id,
             'type'           => CarePerson::BILLING_PROVIDER,
         ]);
-        $this->patient->phone = '111-234-5678';
+        $this->patient->phone = '+1-541-754-3010';
         $this->patient->save();
 
 

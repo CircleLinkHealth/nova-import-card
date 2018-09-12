@@ -5,7 +5,7 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
-use App\Rules\CarePlanConditions;
+use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Services\ReportsService;
 use App\Traits\PdfReportTrait;
 use Carbon\Carbon;
@@ -90,9 +90,6 @@ class CarePlan extends BaseModel implements PdfReport
     protected $attributes = [
         'mode' => self::WEB,
     ];
-
-    //will contain validation errors
-    private $errors;
 
     public static function getNumberOfCareplansPendingApproval(User $user)
     {
@@ -323,7 +320,7 @@ class CarePlan extends BaseModel implements PdfReport
             'conditions'      => $patient->ccdProblems,
             //we do not know if all patients have insurances
             //            'insurances' => $patient->ccdInsurancePolicies,
-            'phoneNumber'     => $patient->phoneNumbers->first(),
+            'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
             'dob'             => $patient->patientInfo->birth_date,
             'mrn'             => $patient->patientInfo->mrn_number,
             'name'            => $patient->fullName,
@@ -332,8 +329,8 @@ class CarePlan extends BaseModel implements PdfReport
 
         //Validator instance
         $validator = Validator::make($data, [
-            'conditions'      => [new CarePlanConditions()],
-            'phoneNumber'     => 'required',
+            'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+            'phoneNumber'     => 'required|phone:US',
             'dob'             => 'required|date',
             'mrn'             => 'required|numeric',
             'name'            => 'required',
