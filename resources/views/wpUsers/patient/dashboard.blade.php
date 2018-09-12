@@ -36,7 +36,7 @@
                     </li>
 
                     <li class="menu-item">
-                        <a dusk="add-patient-btn" href="{{ route('patient.demographics.show', array()) }}">
+                        <a dusk="add-patient-btn" href="{{ route('patient.demographics.create') }}">
                             <div class="icon-container column-centered">
                                 <i class="icon--add-patient--big icon--menu"></i>
                             </div>
