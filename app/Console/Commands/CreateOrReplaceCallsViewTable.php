@@ -50,7 +50,7 @@ class CreateOrReplaceCallsViewTable extends Command
             u1.patient_id, 
             u1.patient, 
             c.scheduled_date, 
-            u4.last_call_status, 
+            u4.no_call_attempts_since_last_success, 
             u4.last_call, 
             u5.ccm_time, 
             u5.bhi_time,
@@ -63,7 +63,6 @@ class CreateOrReplaceCallsViewTable extends Command
             u6.preferred_call_days,
             u6.patient_status,
             u8.provider,
-            u4.dob, 
             if(u3.scheduler is not null, u3.scheduler, c.scheduler) as `scheduler`
         FROM 
             calls c,
@@ -74,7 +73,7 @@ class CreateOrReplaceCallsViewTable extends Command
             
             (select u.display_name as `scheduler`, c.id as call_id from users u right join calls c on u.id = c.scheduler where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u3,
             
-            (select c.id as call_id, pi.birth_date as dob, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success as last_call_status from patient_info pi join calls c on c.inbound_cpm_id = pi.user_id where pi.ccm_status = 'enrolled' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u4,
+            (select c.id as call_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi join calls c on c.inbound_cpm_id = pi.user_id where pi.ccm_status = 'enrolled' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u4,
             
             (select c.id as call_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls from calls c right join patient_monthly_summaries pms on pms.patient_id = c.inbound_cpm_id where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u5,
             

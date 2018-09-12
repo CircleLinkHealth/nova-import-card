@@ -356,7 +356,6 @@ class CallsController extends ApiController
     public function index(Request $request, CallFilters $filters)
     {
         $rows  = $request->input('rows');
-        /*
         $calls = Call::whereHas('inboundUser', function ($q) {
             $q->whereHas('primaryPractice', function ($q) {
                 $q->where('active', 1);
@@ -369,10 +368,6 @@ class CallsController extends ApiController
                      ->paginate($rows ?? 15);
 
         $result = CallResource::collection($calls);
-        */
-
-        $calls = CallView::paginate($rows ?? 15);
-        $result = CallViewResource::collection($calls);
         return $result;
     }
 

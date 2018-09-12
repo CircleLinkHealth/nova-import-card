@@ -189,7 +189,7 @@
     const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call.";
 
     export default {
-        name: 'CallMgmtApp',
+        name: 'CallMgmtAppV2',
         mixins: [VueCache],
         components: {
             'text-editable': TextEditable,
@@ -208,7 +208,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'DOB', 'Scheduler'],
+                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -246,7 +246,7 @@
                     columnsClasses: {
                         'selected': 'blank'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Patient Status', 'Practice', 'Scheduler'],
+                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Patient Status', 'Practice', 'Scheduler'],
                     filterable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
                     filterByColumn: true,
                     texts: {
@@ -255,25 +255,7 @@
                     perPage: 100,
                     perPageValues: [
                         10, 25, 50, 100, 150, 200
-                    ],
-                    customSorting: {
-                        Nurse: (ascending) => (a, b) => 0,
-                        'Patient ID': (ascending) => (a, b) => 0,
-                        Patient: (ascending) => (a, b) => 0,
-                        'Next Call': (ascending) => (a, b) => 0,
-                        'Last Call Status': (ascending) => (a, b) => 0,
-                        'Last Call': (ascending) => (a, b) => 0,
-                        'CCM Time': (ascending) => (a, b) => 0,
-                        'BHI Time': (ascending) => (a, b) => 0,
-                        'Call Time Start': (ascending) => (a, b) => 0,
-                        'Call Time End': (ascending) => (a, b) => 0,
-                        'Patient Status': (ascending) => (a, b) => 0,
-                        Practice: (ascending) => (a, b) => 0,
-                        'Billing Provider': (ascending) => (a, b) => 0,
-                        'Last Call Status': (ascending) => (a, b) => 0,
-                        'Preferred Call Days': (ascending) => (a, b) => 0,
-                        Scheduler: (ascending) => (a, b) => 0
-                    }
+                    ]
                 }
             },
             nursesForSelect() {
@@ -290,12 +272,26 @@
             },
             columnMapping(name) {
                 const columns = {
-                    'Patient ID': 'patientId',
-                    'Next Call': 'scheduledDate',
-                    'Last Call': 'lastCall',
-                }
-                //to camel case
-                return columns[name] ? columns[name] : (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '')
+                    'Manual': 'is_manual',
+                    'Nurse': 'nurse',
+                    'Patient': 'patient',
+                    'Patient ID': 'patient_id',
+                    'Next Call': 'scheduled_date',
+                    'Last Call': 'last_call',
+                    'CCM Time': 'ccm_time',
+                    'BHI Time': 'bhi_time',
+                    'Successful Calls': 'no_of_successful_calls',
+                    'Practice': 'practice',
+                    'Call Time Start': 'call_time_start',
+                    'Call Time End': 'call_time_end',
+                    'Preferred Call Days': 'preferred_call_days',
+                    'Patient Status': 'patient_status',
+                    'Billing Provider': 'billing_provider',
+                    'Scheduler': 'scheduler'
+                };
+                return columns[name] ?
+                    columns[name] :
+                    (name || '').replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index == 0 ? letter.toLowerCase() : letter.toUpperCase())).replace(/\s+/g, '');
             },
             clearFilters() {
                 Object.keys(this.$refs.tblCalls.query).forEach((key) => {
@@ -331,12 +327,12 @@
                 return ''
             },
             nextPageUrl() {
-                const rowsFilterSuffix = this.$refs.tblCalls.limit ? `&rows=${this.$refs.tblCalls.limit}` : ''
+                const rowsFilterSuffix = this.$refs.tblCalls.limit ? `rows=${this.$refs.tblCalls.limit}` : ''
                 if (this.pagination) {
-                    return rootUrl(`api/admin/calls?scheduled&page=${this.$refs.tblCalls.page}${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                    return rootUrl(`api/admin/calls-v2?page=${this.$refs.tblCalls.page}&${rowsFilterSuffix}${this.urlFilterSuffix()}`)
                 }
                 else {
-                    return rootUrl(`api/admin/calls?scheduled${rowsFilterSuffix}${this.urlFilterSuffix()}&minScheduledDate=${this.today()}`)
+                    return rootUrl(`api/admin/calls-v2?${rowsFilterSuffix}${this.urlFilterSuffix()}`)
                 }
             },
             activateFilters() {
@@ -464,92 +460,42 @@
                 }
             },
 
-            setupCall(call) {
-                const $vm = this
-                if (call.inbound_user) call.inbound_user.id = call.inbound_cpm_id;
-                if (call.outbound_user) call.outbound_user.id = call.outbound_cpm_id;
-                call.getNurse = () => ((call.inbound_user && call.inbound_user.nurse_info) ?
-                    call.inbound_user :
-                    (call.outbound_user && call.outbound_user.nurse_info) ?
-                        call.outbound_user :
-                        null)
-                call.getPatient = () => ((call.inbound_user && call.inbound_user.patient_info) ?
-                    call.inbound_user :
-                    (call.outbound_user && call.outbound_user.patient_info) ?
-                        call.outbound_user :
-                        {
-                            getPractice: () => ({}),
-                            getInfo: () => ({}),
-                            getBillingProvider: () => ({getUser: () => ({})})
-                        });
-
-                const patient = call.getPatient();
-                if (patient) {
-                    const emptyObject = {}
-                    patient.getBillingProvider = () => ((patient.billing_provider || [])[0] || {getUser: () => ({})});
-                    patient.getPractice = () => (patient.primary_practice || {});
-                    patient.getInfo = () => (patient.patient_info || {});
-
-                    const billingProvider = patient.getBillingProvider();
-                    billingProvider.getUser = () => (billingProvider.user || {});
-
-                    (patient.getInfo().contact_windows || []).forEach(time_window => {
-                        time_window.dayOfWeek = DayOfWeek[time_window.day_of_week];
-                        time_window.shortDayOfWeek = ShortDayOfWeek(time_window.day_of_week);
-                    })
-                }
-                if (patient.id) {
-                    //console.log('calls:patient', patient)
-                    this.cache().get(rootUrl(`api/patients/${patient.id}/notes?sort_id=desc&rows=3`)).then(pagination => {
-                        call.Notes = ((pagination || {}).data || []).map(note => ({
-                            created_at: note.created_at,
-                            type: 'out',
-                            category: note.type,
-                            message: note.body
-                        }))
-                    });
-                }
+            setupCallNew(call) {
+                const $vm = this;
 
                 return ({
                     id: call.id,
                     selected: false,
-                    isBhiEligible: (call.getPatient().is_bhi || false),
-                    isCcmEligible: (call.getPatient().is_ccm || false),
-                    Manual: call['is_manual'] || false,
-                    Nurse: (call.getNurse() || {}).full_name,
-                    NurseId: (call.getNurse() || {}).id,
-                    Patient: (call.getPatient() || {}).full_name,
-                    Practice: (call.getPatient() || {}).getPractice().display_name,
+                    isBhiEligible: false,
+                    isCcmEligible: false,
+                    Manual: call.is_manual,
+                    Nurse: call.nurse,
+                    NurseId: call.nurse_id,
+                    Patient: call.patient,
+                    Practice: call.practice,
                     Scheduler: call.scheduler,
-                    CallWindows: call.getPatient().getInfo().contact_windows,
-                    Comment: call.getPatient().getInfo().general_comment,
+                    CallWindows: call.preferred_call_days,
+                    Comment: call.general_comment,
                     AttemptNote: call.attempt_note,
                     Notes: [],
-                    'Last Call Status': call.getPatient().getInfo().last_call_status,
-                    'Last Call': (call.getPatient().getInfo().last_contact_time || '').split(' ')[0],
-                    'CCM Time': timeDisplay(call.getPatient().ccm_time || 0),
-                    'BHI Time': timeDisplay(call.getPatient().bhi_time || 0),
-                    'Successful Calls': (((call.getPatient().patient_summaries || []).slice(-1)[0] || {}).no_of_successful_calls || 0),
-                    'Time Zone': call.getPatient().timezone,
-                    'Preferred Call Days': Object.values((call.getPatient().getInfo().contact_windows || [])
-                        .map(time_window => time_window.shortDayOfWeek)
-                        .reduce((obj, key) => {
-                            obj[key] = key;
-                            return obj;
-                        }, {})).join(','),
-                    'Patient Status': call.getPatient().getInfo().ccm_status,
-                    'DOB': call.getPatient().getInfo().birth_date,
-                    'Billing Provider': call.getPatient().getBillingProvider().getUser().display_name,
-                    'Patient ID': call.getPatient().id,
-                    notesLink: rootUrl(`manage-patients/${call.getPatient().id}/notes`),
+                    'Last Call Status': call.last_call_status,
+                    'Last Call': call.last_call,
+                    'CCM Time': timeDisplay(call.ccm_time),
+                    'BHI Time': timeDisplay(call.bhi_time),
+                    'Successful Calls': call.no_of_successful_calls,
+                    'Time Zone': call.timezone,
+                    'Preferred Call Days': call.preferred_call_days,
+                    'Billing Provider': call.provider,
+                    'Patient ID': call.patient_id,
+                    notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
                     'Next Call': call.scheduled_date,
-                    'Call Time Start': call.window_start,
-                    'Call Time End': call.window_end,
-                    state: call.getPatient().state,
-                    practiceId: (call.getPatient() || {}).getPractice().id,
+                    'Call Time Start': call.call_time_start,
+                    'Call Time End': call.call_time_end,
+                    'Patient Status': call.patient_status,
+                    practiceId: call.practice_id,
                     nurses() {
                         return [...$vm.nurses.filter(Boolean)
-                            .filter(nurse => nurse.practices.includes((call.getPatient() || {}).getPractice().id))
+                            .filter(nurse => nurse.practices.includes(call.practice_id))
                             .filter(n => !!n.display_name)
                             .map(nurse => ({text: nurse.display_name, value: nurse.id, nurse})), {
                             text: 'unassigned',
@@ -626,6 +572,8 @@
                             );
                     }
                 });
+
+
             },
             next() {
                 const $vm = this
@@ -654,37 +602,8 @@
                     if (result) {
                         const calls = result.data || [];
                         if (calls && Array.isArray(calls)) {
-                            const tableCalls = calls.map(this.setupCall)
-                            if (!this.tableData.length) {
-                                const arr = this.tableData.concat(tableCalls)
-                                const total = ((this.pagination || {}).total || 0)
-                                this.tableData = [...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({
-                                    id: arr.length + index + 1,
-                                    nurses() {
-                                        return ([])
-                                    },
-                                    onNurseUpdate() {
-                                    },
-                                    onAttemptNoteUpdate() {
-                                    },
-                                    onGeneralCommentUpdate() {
-                                    },
-                                    onCallTimeStartUpdate() {
-                                    },
-                                    onCallTimeEndUpdate() {
-                                    },
-                                    onNextCallUpdate() {
-                                    },
-                                    loaders: {}
-                                }))]
-                            }
-                            else {
-                                const from = ((this.pagination || {}).from || 0)
-                                const to = ((this.pagination || {}).to || 0)
-                                for (let i = from - 1; i < to; i++) {
-                                    this.tableData[i] = tableCalls[i - from + 1]
-                                }
-                            }
+                            const tableCalls = calls.map(this.setupCallNew);
+                            this.tableData = tableCalls;
                             setTimeout(() => {
                                 $vm.$refs.tblCalls.count = $vm.pagination.total
                                 $vm.loaders.calls = false
