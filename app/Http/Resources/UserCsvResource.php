@@ -34,7 +34,6 @@ class UserCsvResource extends Resource
                '"' . $this->billing_provider_name . '",' .
                '"' . $practice->display_name . '",' .
                '"' . $patient->ccm_status . '",' .
-               '"' . $ccmStatusDate . '",' .
                '"' . $careplan->status . '",' .
                '"' . $patient->birth_date . '",' .
                '"' . $this->phone . '",' .
@@ -42,7 +41,8 @@ class UserCsvResource extends Resource
                 ? Carbon::parse($patient->birth_date)->age
                 : 0) . '",' .
                '"' . $this->created_at . '",' .
-               '"' . $this->getTimeInDecimals($this->ccm_time) . '"';
+               '"' . $this->getTimeInDecimals($this->ccm_time) . '",' .
+               '"' . $ccmStatusDate . '"' ;
     }
 
     /**
