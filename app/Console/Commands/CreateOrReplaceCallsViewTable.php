@@ -57,8 +57,8 @@ class CreateOrReplaceCallsViewTable extends Command
             u5.no_of_successful_calls,
             u7.practice_id, 
             u7.practice, 
-            u6.call_time_start, 
-            u6.call_time_end,
+            c.window_start as call_time_start, 
+            c.window_end as call_time_end,
             u1.patient_created_at,
             u6.preferred_call_days,
             u6.patient_status,
@@ -79,7 +79,7 @@ class CreateOrReplaceCallsViewTable extends Command
             
             (select c.id as call_id, if(pms.ccm_time is null, 0, pms.ccm_time) as ccm_time, if(pms.bhi_time is null, 0, pms.bhi_time) as bhi_time, if(pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as no_of_successful_calls from calls c left join (select * from patient_monthly_summaries where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) pms on pms.patient_id = c.inbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u5,
             
-            (select c.id as call_id, pi.user_id, pi.ccm_status as patient_status, pcw.patient_info_id, MIN(pcw.window_time_start) as call_time_start, MAX(pcw.window_time_end) as call_time_end, GROUP_CONCAT(pcw.day_of_week SEPARATOR ',') as preferred_call_days
+            (select c.id as call_id, pi.user_id, pi.ccm_status as patient_status, pcw.patient_info_id, GROUP_CONCAT(pcw.day_of_week SEPARATOR ',') as preferred_call_days
             from patient_contact_window pcw
             join patient_info pi on pcw.patient_info_id = pi.id
             join calls c on pi.user_id = c.inbound_cpm_id
