@@ -41,6 +41,8 @@ class CallView extends Resource
             'patient_status'         => $this->patient_status,
             'provider'               => $this->provider,
             'scheduler'              => $this->scheduler,
+            'is_ccm'                 => $this->is_ccm,
+            'is_bhi'                 => $this->is_bhi,
         ];
     }
 }

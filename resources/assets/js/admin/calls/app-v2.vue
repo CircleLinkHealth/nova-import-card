@@ -466,8 +466,8 @@
                 return ({
                     id: call.id,
                     selected: false,
-                    isBhiEligible: false,
-                    isCcmEligible: false,
+                    isBhiEligible: call.is_bhi,
+                    isCcmEligible: call.is_ccm,
                     Manual: call.is_manual,
                     Nurse: call.nurse,
                     NurseId: call.nurse_id,

@@ -18,7 +18,7 @@ class CreateOrReplaceCallsViewTable extends Command
      *
      * @var string
      */
-    protected $description = 'Create or Replace Calls View Table (calls_v)';
+    protected $description = 'Create or Replace Calls View Table (calls_view)';
 
     /**
      * Create a new command instance.
@@ -63,7 +63,9 @@ class CreateOrReplaceCallsViewTable extends Command
             u6.preferred_call_days,
             u6.patient_status,
             u8.provider,
-            if(u3.scheduler is not null, u3.scheduler, c.scheduler) as `scheduler`
+            if(u3.scheduler is not null, u3.scheduler, c.scheduler) as `scheduler`,
+            u9.is_bhi,
+            u10.is_ccm
         FROM 
             calls c,
             
@@ -75,7 +77,7 @@ class CreateOrReplaceCallsViewTable extends Command
             
             (select c.id as call_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi join calls c on c.inbound_cpm_id = pi.user_id where pi.ccm_status = 'enrolled' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u4,
             
-            (select c.id as call_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls from calls c right join patient_monthly_summaries pms on pms.patient_id = c.inbound_cpm_id where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH) and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u5,
+            (select c.id as call_id, if(pms.ccm_time is null, 0, pms.ccm_time) as ccm_time, if(pms.bhi_time is null, 0, pms.bhi_time) as bhi_time, if(pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as no_of_successful_calls from calls c left join (select * from patient_monthly_summaries where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) pms on pms.patient_id = c.inbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u5,
             
             (select c.id as call_id, pi.user_id, pi.ccm_status as patient_status, pcw.patient_info_id, MIN(pcw.window_time_start) as call_time_start, MAX(pcw.window_time_end) as call_time_end, GROUP_CONCAT(pcw.day_of_week SEPARATOR ',') as preferred_call_days
             from patient_contact_window pcw
@@ -91,12 +93,23 @@ class CreateOrReplaceCallsViewTable extends Command
             where p.active = 1 and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u7,
             
             (select c.id as call_id, u.display_name as provider
-            from patient_care_team_members pctm
-            join users u on u.id = pctm.member_user_id
-            join calls c on c.inbound_cpm_id = pctm.user_id
-            where type = 'billing_provider' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u8
+            from calls c
+            left join (select * from patient_care_team_members where type = 'billing_provider') pctm on c.inbound_cpm_id = pctm.user_id
+            left join users u on u.id = pctm.member_user_id
+            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u8,
+            
+            (select c.id as call_id, if(pbhi.id is null, false, true) as is_bhi
+            from calls c
+            left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
+            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u9,
+            
+            (select c.id as call_id, if(pccm.id is null, false, true) as is_ccm
+            from calls c
+            left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
+            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u10
+             
         WHERE
-            c.status = 'scheduled' and c.scheduled_date >= CURDATE() and u1.call_id = c.id and u2.call_id = c.id and u3.call_id = c.id and u4.call_id = c.id and u5.call_id = c.id and u6.call_id = c.id and u7.call_id = c.id and u8.call_id = c.id
+            c.status = 'scheduled' and c.scheduled_date >= CURDATE() and u1.call_id = c.id and u2.call_id = c.id and u3.call_id = c.id and u4.call_id = c.id and u5.call_id = c.id and u6.call_id = c.id and u7.call_id = c.id and u8.call_id = c.id and u9.call_id = c.id and u10.call_id = c.id
         ");
     }
 }
