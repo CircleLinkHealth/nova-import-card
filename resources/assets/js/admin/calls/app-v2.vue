@@ -22,58 +22,6 @@
         </div>
         <div>
             <v-client-table ref="tblCalls" :data="tableData" :columns="columns" :options="options">
-                <template slot="child_row" slot-scope="props">
-                    <div class="row row-info">
-                        <div class="col-sm-12">
-                            <div class="row">
-                                <div class="col-lg-2">
-                                    General Comment:
-                                </div>
-                                <div class="col-lg-10">
-                                    <text-editable :value="props.row.Comment" :multi="true"
-                                                   :class-name="'blue big-text-edit'"
-                                                   :on-change="props.row.onGeneralCommentUpdate.bind(props.row)"></text-editable>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-lg-2">Attempt Note:</div>
-                                <div class="col-lg-10">
-                                    <text-editable :value="props.row.AttemptNote || 'Add Text'" :multi="true"
-                                                   :class-name="'blue big-text-edit'"
-                                                   :on-change="props.row.onAttemptNoteUpdate.bind(props.row)"></text-editable>
-                                </div>
-                            </div>
-                            <div class="row" v-if="props.row.Notes.length > 0">
-                                <div class="col-lg-2"><a
-                                        :href="rootUrl('manage-patients/' + props.row['Patient ID'] + '/notes')"
-                                        target="_blank">Last 3 Notes:</a></div>
-                                <div class="col-lg-10">
-                                    <ul>
-                                        <li v-for="(note, index) in props.row.Notes.slice(0, 3)" :key="index">
-                                            Note {{note.created_at}}:
-                                            <div class="label label-info"
-                                                 :class="{ inbound: note.type === 'in', outbound: note.type === 'out' }"
-                                                 style="margin:5px;">{{note.type === 'in' ? 'In' : 'Out'}}bound Call
-                                            </div>
-                                            <span style="font-weight:bold;">{{note.category}}</span>
-                                            {{note.message}}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-2">Call Windows:</div>
-                                <div class="col-sm-10">
-                                    <ul class="info-list">
-                                        <li v-for="(time_window, index) in props.row.CallWindows" :key="index">
-                                            {{time_window.shortDayOfWeek}}: {{time_window.window_time_start}} - {{time_window.window_time_end}}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
                 <template slot="selected" slot-scope="props">
                     <input class="row-select" v-model="props.row.selected" @change="toggleSelect(props.row.id)"
                            type="checkbox"/>
@@ -208,7 +156,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call Status', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Time Zone', 'Preferred Call Days', 'Patient Status', 'Billing Provider', 'Scheduler'],
+                columns: ['selected', 'Manual', 'Nurse', 'Patient ID', 'Next Call', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Call Time Start', 'Call Time End', 'Preferred Call Days', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -246,8 +194,8 @@
                     columnsClasses: {
                         'selected': 'blank'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Last Call Status', 'CCM Time', 'BHI Time', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
-                    filterable: ['Nurse', 'Patient ID', 'Patient', 'Next Call', 'Last Call', 'Patient Status', 'Practice', 'Billing Provider', 'Scheduler'],
+                    sortable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
+                    filterable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'Practice', 'Scheduler'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -474,24 +422,16 @@
                     Patient: call.patient,
                     Practice: call.practice,
                     Scheduler: call.scheduler,
-                    CallWindows: call.preferred_call_days,
-                    Comment: call.general_comment,
-                    AttemptNote: call.attempt_note,
-                    Notes: [],
-                    'Last Call Status': call.last_call_status,
                     'Last Call': call.last_call,
                     'CCM Time': timeDisplay(call.ccm_time),
                     'BHI Time': timeDisplay(call.bhi_time),
                     'Successful Calls': call.no_of_successful_calls,
-                    'Time Zone': call.timezone,
                     'Preferred Call Days': call.preferred_call_days,
-                    'Billing Provider': call.provider,
                     'Patient ID': call.patient_id,
                     notesLink: rootUrl(`manage-patients/${call.patient_id}/notes`),
                     'Next Call': call.scheduled_date,
                     'Call Time Start': call.call_time_start,
                     'Call Time End': call.call_time_end,
-                    'Patient Status': call.patient_status,
                     practiceId: call.practice_id,
                     nurses() {
                         return [...$vm.nurses.filter(Boolean)
@@ -541,24 +481,6 @@
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,
                                     () => callUpdateFunctions.onCallTimeEndUpdate(this, time, true, old, revertCallback)
-                                )
-                            );
-                    },
-                    onGeneralCommentUpdate: (comment, old, revertCallback) => {
-                        callUpdateFunctions.onGeneralCommentUpdate(this, comment, false, old, revertCallback)
-                            .catch(err =>
-                                $vm.showOverrideConfirmationIfNeeded(
-                                    err,
-                                    () => callUpdateFunctions.onGeneralCommentUpdate(this, comment, true, old, revertCallback)
-                                )
-                            );
-                    },
-                    onAttemptNoteUpdate: function (note, old, revertCallback) {
-                        callUpdateFunctions.onAttemptNoteUpdate(this, note, false, old, revertCallback)
-                            .catch(err =>
-                                $vm.showOverrideConfirmationIfNeeded(
-                                    err,
-                                    () => callUpdateFunctions.onAttemptNoteUpdate(this, comment, true, old, revertCallback)
                                 )
                             );
                     },

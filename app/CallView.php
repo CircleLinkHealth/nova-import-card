@@ -17,18 +17,6 @@ class CallView extends Model
 
     protected $table = 'calls_view';
 
-    public function lastCallStatus() {
-        if (is_null($this->no_call_attempts_since_last_success)) {
-            return 'n/a';
-        }
-
-        if ($this->no_call_attempts_since_last_success > 0) {
-            return $this->no_call_attempts_since_last_success . 'x Attempts';
-        }
-
-        return 'Success';
-    }
-
     public function preferredCallDaysToString()
     {
         $days   = explode(',', $this->preferred_call_days);

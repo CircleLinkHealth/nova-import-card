@@ -43,14 +43,11 @@ class CreateOrReplaceCallsViewTable extends Command
         SELECT
             c.id,
             c.is_manual,
-            c.note_id,
-            c.attempt_note,
             u2.nurse_id,
             u2.nurse,
             u1.patient_id, 
             u1.patient, 
             c.scheduled_date, 
-            u4.no_call_attempts_since_last_success, 
             u4.last_call, 
             u5.ccm_time, 
             u5.bhi_time,
@@ -59,10 +56,7 @@ class CreateOrReplaceCallsViewTable extends Command
             u7.practice, 
             c.window_start as call_time_start, 
             c.window_end as call_time_end,
-            u1.patient_created_at,
             u6.preferred_call_days,
-            u6.patient_status,
-            u8.provider,
             if(u3.scheduler is not null, u3.scheduler, c.scheduler) as `scheduler`,
             u9.is_bhi,
             u10.is_ccm
@@ -92,12 +86,6 @@ class CreateOrReplaceCallsViewTable extends Command
             join calls c on u.id = c.inbound_cpm_id
             where p.active = 1 and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u7,
             
-            (select c.id as call_id, u.display_name as provider
-            from calls c
-            left join (select * from patient_care_team_members where type = 'billing_provider') pctm on c.inbound_cpm_id = pctm.user_id
-            left join users u on u.id = pctm.member_user_id
-            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u8,
-            
             (select c.id as call_id, if(pbhi.id is null, false, true) as is_bhi
             from calls c
             left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
@@ -109,7 +97,7 @@ class CreateOrReplaceCallsViewTable extends Command
             where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u10
              
         WHERE
-            c.status = 'scheduled' and c.scheduled_date >= CURDATE() and u1.call_id = c.id and u2.call_id = c.id and u3.call_id = c.id and u4.call_id = c.id and u5.call_id = c.id and u6.call_id = c.id and u7.call_id = c.id and u8.call_id = c.id and u9.call_id = c.id and u10.call_id = c.id
+            c.status = 'scheduled' and c.scheduled_date >= CURDATE() and u1.call_id = c.id and u2.call_id = c.id and u3.call_id = c.id and u4.call_id = c.id and u5.call_id = c.id and u6.call_id = c.id and u7.call_id = c.id and u9.call_id = c.id and u10.call_id = c.id
         ");
     }
 }
