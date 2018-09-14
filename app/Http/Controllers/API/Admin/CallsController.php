@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Call;
+use App\CallView;
 use App\Filters\CallFilters;
 use App\Filters\PatientFilters;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Resources\Call as CallResource;
+use App\Http\Resources\CallView as CallViewResource;
 use App\Http\Resources\User as UserResource;
 use App\Patient;
 use App\Services\Calls\ManagementService;

@@ -89,6 +89,13 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => 'admin'], function () {
+
+            //the new calls route that uses calls-view table
+            Route::get('calls-v2', [
+                'uses' => 'API\Admin\CallsViewController@index',
+                'as'   => 'calls.v2.index',
+            ])->middleware('permission:call.read');
+
             Route::group(['prefix' => 'calls'], function () {
                 Route::get('', [
                     'uses' => 'API\Admin\CallsController@index',
@@ -1514,10 +1521,17 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'UserController@showMsgCenter',
                 'as'   => 'admin.users.msgCenterUpdate',
             ]);
+
+            Route::get('calls-v2', [
+                'uses' => 'Admin\PatientCallManagementController@remixV2',
+                'as'   => 'admin.patientCallManagement.v2.index',
+            ]);
+
             Route::get('calls', [
                 'uses' => 'Admin\PatientCallManagementController@remix',
                 'as'   => 'admin.patientCallManagement.index',
             ]);
+
             Route::get('calls/{id}/edit', [
                 'uses' => 'Admin\PatientCallManagementController@edit',
                 'as'   => 'admin.patientCallManagement.edit',
