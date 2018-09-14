@@ -5,7 +5,7 @@ We maintain and use [Laravel Cerberus](https://github.com/circlelinkhealth/larav
 
 
 ## General Concepts
-- Key models are **Roles** and **Permissions**.
+- Key models are **Role** and **Permission**.
 - `Permissions` can be **directly related** to any model. (see [Many to Many Polymorphic Relationship](https://laravel.com/docs/5.5/eloquent-relationships#many-to-many-polymorphic-relations), and `permissibles` table).
 At the time this doc is written, we're associating `Permissions` with `Roles` and `Users`. 
 - `Roles` have the **same** `Permissions` for **all** `Practices`.
