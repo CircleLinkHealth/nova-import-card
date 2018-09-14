@@ -65,9 +65,9 @@ class CreateOrReplaceCallsViewTable extends Command
             
             (select u.id as patient_id, CONCAT(u.first_name, ' ', u.last_name) as patient, u.created_at as patient_created_at, c.id as call_id from users u join calls c on u.id = c.inbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u1,
             
-            (select u.id as nurse_id, u.display_name as nurse, c.id as call_id from users u join calls c on u.id = c.outbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u2,
+            (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as nurse, c.id as call_id from users u join calls c on u.id = c.outbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u2,
             
-            (select u.display_name as `scheduler`, c.id as call_id from users u right join calls c on u.id = c.scheduler where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u3,
+            (select CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as `scheduler`, c.id as call_id from users u right join calls c on u.id = c.scheduler where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u3,
             
             (select c.id as call_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi join calls c on c.inbound_cpm_id = pi.user_id where pi.ccm_status = 'enrolled' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u4,
             
