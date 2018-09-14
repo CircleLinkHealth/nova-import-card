@@ -1,14 +1,14 @@
 # Roles/Permissions
 
 #### Package
-We maintain and use [Laravel Cerberus](https://github.com/michalisantoniou6/laravel-cerberus).
+We maintain and use [Laravel Cerberus](https://github.com/circlelinkhealth/laravel-cerberus).
 
 
 ## General Concepts
-- There are 2 models **Roles** and **Permissions**.
-- `Roles` have the **same** `Permissions` for **all** `Practices`.
+- Key models are **Roles** and **Permissions**.
 - `Permissions` can be **directly related** to any model. (see [Many to Many Polymorphic Relationship](https://laravel.com/docs/5.5/eloquent-relationships#many-to-many-polymorphic-relations), and `permissibles` table).
 At the time this doc is written, we're associating `Permissions` with `Roles` and `Users`. 
+- `Roles` have the **same** `Permissions` for **all** `Practices`.
 - A `User` can have many `Roles` for a `Practice`, and that is stored in table `practice_role_user`.
 - The `User` will have all `Permissions` from all `Roles` assigned to them for a `Practice`.
 - Column `permissibles.is_active` can be used to enable/disable `Permissions` for a `Model`, depending on whether it's set to true or false.
