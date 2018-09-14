@@ -168,6 +168,7 @@ class UserRepository
         // add nurse info
         if ($user->hasRole('care-center') && ! $user->nurseInfo) {
             $nurseInfo          = new Nurse;
+            $nurseInfo->status  = 'active';
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
