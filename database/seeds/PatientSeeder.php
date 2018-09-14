@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Tests\Helpers\UserHelpers;
 
-class PatientMonthlySummariesSeeder extends Seeder
+class PatientSeeder extends Seeder
 {
     use UserHelpers;
 
@@ -29,18 +29,24 @@ class PatientMonthlySummariesSeeder extends Seeder
             $u->attachPractice($practiceId, null, null, 2);
             $u->program_id = $practiceId;
             $u->save();
+
             $patientInfo = new \App\Patient();
             $patientInfo->user_id = $u->id;
             //patient info is saved
             $patientInfo->ccm_status = \App\Patient::ENROLLED;
+
             $u->patientSummaries()->create([
                 'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
                 'ccm_time'   => 1400,
                 'approved'   => 1,
                 'actor_id'   => 1,
             ]);
-            $u->chargeableServices()->attach(1);
-            $u->cpmProblems()->attach($problemIds->random(5)->all());
+
+            $u->ccdProblems()->createMany([
+                ['name' => 'test' . str_random(5)],
+                ['name' => 'test' . str_random(5)],
+            ]);
         });
     }
+
 }

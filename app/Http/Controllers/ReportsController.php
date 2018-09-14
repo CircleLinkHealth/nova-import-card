@@ -574,7 +574,7 @@ class ReportsController extends Controller
             return "Patient Not Found..";
         }
 
-        $patient = User::find($patientId);
+        $patient = User::with('carePlan')->find($patientId);
 
         if ($patient->careplan_mode == CarePlan::PDF) {
             return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
@@ -610,7 +610,8 @@ class ReportsController extends Controller
                 'showInsuranceReviewFlag' => $showInsuranceReviewFlag,
                 'skippedAssessment'       => $skippedAssessment,
                 'recentSubmission'        => $recentSubmission,
-                'careplan'                => $careplanService->careplan($patientId)
+                'careplan'                => $careplanService->careplan($patientId),
+                'errors'                  => $patient->carePlan->validator()->errors(),
             ]
         );
     }
