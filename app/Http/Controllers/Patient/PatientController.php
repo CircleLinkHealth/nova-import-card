@@ -40,7 +40,7 @@ class PatientController extends Controller
             $nurse->workhourables()->firstOrCreate([]);
         }
 
-        if (auth()->user()->hasPermission('care-plan-approve')) {
+        if (auth()->user()->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
                                                     return $user->careplanStatus == CarePlan::QA_APPROVED;

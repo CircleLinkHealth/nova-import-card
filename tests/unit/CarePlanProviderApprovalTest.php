@@ -5,6 +5,7 @@ namespace Tests\unit;
 use App\CarePlan;
 use App\Location;
 use App\Notifications\CarePlanProviderApproved;
+use App\Permission;
 use App\Practice;
 use App\User;
 use Carbon\Carbon;
@@ -74,10 +75,11 @@ class CarePlanProviderApprovalTest extends TestCase
 
     public function test_r_n_can_approve()
     {
-        Practice::find($this->practice->id)->cpmSettings()->update([
-            'rn_can_approve_careplans' => true,
-        ]);
         $rn = $this->createUser($this->practice->id, 'registered-nurse');
+
+        $careplanApprove = Permission::where('name', 'care-plan-approve')->first();
+        $rn->attachPermission($careplanApprove->id);
+
         auth()->login($rn);
 
         $this->patient->carePlan->status = CarePlan::QA_APPROVED;

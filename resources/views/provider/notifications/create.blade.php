@@ -36,12 +36,6 @@
                     <label for="auto_approve_careplans">Auto Approve Care Plans</label>
                 </div>
 
-                <div class="input-field col s6">
-                    <input name="settings[rn_can_approve_careplans]" type="checkbox" id="rn_can_approve_careplans"
-                           value="1" @if($practiceSettings->rn_can_approve_careplans){{'checked'}}@endif>
-                    <label for="rn_can_approve_careplans">RNs Can Approve Care Plans</label>
-                </div>
-
                 @if($practice->external_id !== null)
                 <div class="input-field col s12">
                     <input name="settings[api_auto_pull]" type="checkbox" id="api_auto_pull"

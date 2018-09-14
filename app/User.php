@@ -2572,9 +2572,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function canApproveCarePlans()
     {
-        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
-               || ($this->hasRoleForSite('registered-nurse',
-                    $this->primary_practice_id) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id);
     }
 
     public function canQAApproveCarePlans()
