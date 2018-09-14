@@ -2,8 +2,10 @@
 
 namespace Tests\unit;
 
+use App\CarePerson;
 use App\CarePlan;
 use App\Location;
+use App\Models\CPM\CpmProblem;
 use App\Notifications\CarePlanProviderApproved;
 use App\Permission;
 use App\Practice;
@@ -39,6 +41,50 @@ class CarePlanProviderApprovalTest extends TestCase
      * @var Location
      */
     protected $location;
+
+    public function test_careplan_validation()
+    {
+        $validator   = $this->carePlan->validator();
+
+        $this->assertTrue($validator->fails());
+        $this->assertEquals('The Care Plan must have two CPM problems, or one BHI problem.',
+            $validator->errors()->first('conditions'));
+        $this->assertEquals('The dob field is required.', $validator->errors()->first('dob'));
+        $this->assertEquals('The mrn field is required.', $validator->errors()->first('mrn'));
+        $this->assertEquals('The billing provider field is required.', $validator->errors()->first('billingProvider'));
+
+        $cpmProblems = CpmProblem::get();
+        $ccdProblems = $this->patient->ccdProblems()->createMany([
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
+            ['name' => 'test' . str_random(5)],
+        ]);
+
+        foreach ($ccdProblems as $problem) {
+            $problem->cpmProblem()->associate($cpmProblems->random());
+            $problem->save();
+        }
+
+        //add each one individually and check for error messages
+        $this->patient->birthDate = Carbon::now()->subYear(20);
+
+        $this->patient->mrn = rand();
+
+        $this->patient->careTeamMembers()->create([
+            'member_user_id' => $this->provider->id,
+            'type'           => CarePerson::BILLING_PROVIDER,
+        ]);
+
+        $this->patient->phone = '+1-541-754-3010';
+
+        $this->patient->save();
+
+
+        $validator = $this->carePlan->validator();
+
+        $this->assertTrue($validator->passes());
+
+    }
 
     public function test_provider_cannot_qa_approve()
     {

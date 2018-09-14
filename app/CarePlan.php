@@ -6,11 +6,13 @@ use App\Models\Pdf;
 use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
+use App\Rules\HasAtLeast2CcmOr1BhiProblems;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Log;
+use Validator;
 
 /**
  * App\CarePlan
@@ -52,13 +54,12 @@ class CarePlan extends BaseModel implements PdfReport
 {
     use PdfReportTrait;
 
-    // statuses
+    // status options
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
 
-
-    // modes
+    // mode options
     const WEB = 'web';
     const PDF = 'pdf';
 
@@ -267,8 +268,9 @@ class CarePlan extends BaseModel implements PdfReport
 
         if (empty($channels)) {
             $patientId = $this->patient->id;
-            $practice = $this->patient->primaryPractice->name;
+            $practice  = $this->patient->primaryPractice->name;
             Log::debug("CarePlan: Will not be forwarded because primary practice[$practice] for patient[$patientId] does not have any enabled channels.");
+
             return;
         }
 
@@ -276,6 +278,7 @@ class CarePlan extends BaseModel implements PdfReport
         if ($location == null) {
             $patientId = $this->patient->id;
             Log::debug("CarePlan: Will not be forwarded because patient[$patientId] does not have a preferred contact location.");
+
             return;
         }
 
@@ -291,5 +294,50 @@ class CarePlan extends BaseModel implements PdfReport
     {
         return $this->morphMany(DatabaseNotification::class, 'attachment')
                     ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
+     *
+     * @return \Illuminate\Validation\Validator
+     */
+    public function validator()
+    {
+        $patient = $this->patient->loadMissing([
+            'patientInfo',
+            'phoneNumbers',
+            'billingProvider.user',
+            'ccdProblems' => function ($q) {
+                return $q->has('cpmProblem')
+                         ->with('cpmProblem');
+            },
+            //before enabling insurance validation, we have to store all insurance info in CPM
+            //            'ccdInsurancePolicies',
+        ]);
+
+        $data = [
+            'conditions'      => $patient->ccdProblems,
+            //before enabling insurance validation, we have to store all insurance info in CPM
+            //            'insurances' => $patient->ccdInsurancePolicies,
+            'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
+            'dob'             => $patient->patientInfo->birth_date,
+            'mrn'             => $patient->patientInfo->mrn_number,
+            'name'            => $patient->full_name,
+            'billingProvider' => optional($patient->billingProviderUser())->id,
+        ];
+
+        return Validator::make($data, [
+            'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
+            'phoneNumber'     => 'required|phone:AUTO,US',
+            'dob'             => 'required|date',
+            'mrn'             => 'required',
+            'name'            => 'required',
+            'billingProvider' => 'required|numeric',
+        ]);
+    }
+
+    public function errors()
+    {
+        return $this->errors;
     }
 }
