@@ -33,8 +33,8 @@ class RequiredRolesPermissionsSeeder extends Seeder
             $this->command->info("role $name created");
         }
 
-        $this->giveAdminsAllPermissions('administrator');
-        $this->giveAdminsAllPermissions('saas-admin');
+        $this->grantSuperAdminPermissionsToRole('administrator');
+        $this->grantSuperAdminPermissionsToRole('saas-admin');
 
         $this->command->info('all roles and permissions created');
     }
@@ -1105,13 +1105,30 @@ class RequiredRolesPermissionsSeeder extends Seeder
         ];
     }
 
-    public function giveAdminsAllPermissions($roleName)
+    /**
+     * Grant CLH Super Admin permissions to a Role, after you make sure you know what you are doing :)
+     *
+     * @param $roleName
+     */
+    public function grantSuperAdminPermissionsToRole($roleName)
     {
         $adminRole = Role::whereName($roleName)->first();
 
-        $permissions = Permission::where('name', '!=', 'care-plan-approve')
+        $permissions = Permission::whereNotIn('name', $this->doNotGrantThesePermissionsToSuperAdmins())
                                  ->get();
 
         $adminRole->perms()->sync($permissions->pluck('id')->all());
+    }
+
+    /**
+     * These are the only permissions tha will not be granted to Users with Role `administrator` (CLH Super Admin).
+     *
+     * @return array
+     */
+    private function doNotGrantThesePermissionsToSuperAdmins()
+    {
+        return [
+            'care-plan-approve',
+        ];
     }
 }
