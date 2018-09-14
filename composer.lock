@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48929b56fe68af4c5898da5666bbf16b",
+    "content-hash": "0c922915878a6a81000e09fcafce8048",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -216,16 +216,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.67.8",
+            "version": "3.67.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b74a9e68b44f25215093b3fd480ee6cf3657e9df"
+                "reference": "cdc7180ae87b23d8b34eb8eb8176002081b32c3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b74a9e68b44f25215093b3fd480ee6cf3657e9df",
-                "reference": "b74a9e68b44f25215093b3fd480ee6cf3657e9df",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cdc7180ae87b23d8b34eb8eb8176002081b32c3d",
+                "reference": "cdc7180ae87b23d8b34eb8eb8176002081b32c3d",
                 "shasum": ""
             },
             "require": {
@@ -292,7 +292,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-09-07T20:09:11+00:00"
+            "time": "2018-09-13T18:34:42+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1162,12 +1162,12 @@
             "version": "v2.2.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client.git",
+                "url": "https://github.com/googleapis/google-api-php-client.git",
                 "reference": "4e0fd83510e579043e10e565528b323b7c2b3c81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client/zipball/4e0fd83510e579043e10e565528b323b7c2b3c81",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/4e0fd83510e579043e10e565528b323b7c2b3c81",
                 "reference": "4e0fd83510e579043e10e565528b323b7c2b3c81",
                 "shasum": ""
             },
@@ -1221,12 +1221,12 @@
             "version": "v0.69",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-api-php-client-services.git",
+                "url": "https://github.com/googleapis/google-api-php-client-services.git",
                 "reference": "6e2507a5bb39d970ae98cc2f1421012e7b38248f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-api-php-client-services/zipball/6e2507a5bb39d970ae98cc2f1421012e7b38248f",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/6e2507a5bb39d970ae98cc2f1421012e7b38248f",
                 "reference": "6e2507a5bb39d970ae98cc2f1421012e7b38248f",
                 "shasum": ""
             },
@@ -1258,12 +1258,12 @@
             "version": "v1.3.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/google/google-auth-library-php.git",
+                "url": "https://github.com/googleapis/google-auth-library-php.git",
                 "reference": "af72b3f50420c801dc35cc07b1fa429ae027b847"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/google/google-auth-library-php/zipball/af72b3f50420c801dc35cc07b1fa429ae027b847",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/af72b3f50420c801dc35cc07b1fa429ae027b847",
                 "reference": "af72b3f50420c801dc35cc07b1fa429ae027b847",
                 "shasum": ""
             },
@@ -2704,26 +2704,26 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.46",
+            "version": "1.0.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2"
+                "reference": "a11e4a75f256bdacf99d20780ce42d3b8272975c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a11e4a75f256bdacf99d20780ce42d3b8272975c",
+                "reference": "a11e4a75f256bdacf99d20780ce42d3b8272975c",
                 "shasum": ""
             },
             "require": {
+                "ext-fileinfo": "*",
                 "php": ">=5.5.9"
             },
             "conflict": {
                 "league/flysystem-sftp": "<1.0.6"
             },
             "require-dev": {
-                "ext-fileinfo": "*",
                 "phpspec/phpspec": "^3.4",
                 "phpunit/phpunit": "^5.7.10"
             },
@@ -2784,7 +2784,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2018-08-22T07:45:22+00:00"
+            "time": "2018-09-14T15:30:29+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -3261,14 +3261,8 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/michalisantoniou6/laravel-cerberus.git",
-                "reference": "a35c7821026529304c0ca5768386f204c2045347"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michalisantoniou6/laravel-cerberus/zipball/a35c7821026529304c0ca5768386f204c2045347",
-                "reference": "a35c7821026529304c0ca5768386f204c2045347",
-                "shasum": ""
+                "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git",
+                "reference": "89179535b8247c446829db94fefc7167f85126fe"
             },
             "require": {
                 "illuminate/cache": "~5.0",
@@ -3301,18 +3295,22 @@
                     "Michalisantoniou6\\Cerberus\\": "src/Cerberus/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/Middleware/MiddlewareTest.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Andrew Elkins",
-                    "homepage": "http://andrewelkins.com"
-                },
-                {
                     "name": "Zizaco Zizuini",
                     "email": "zizaco@gmail.com"
+                },
+                {
+                    "name": "Andrew Elkins",
+                    "homepage": "http://andrewelkins.com"
                 },
                 {
                     "name": "Ben Batschelet",
@@ -3337,7 +3335,7 @@
                 "permission",
                 "roles"
             ],
-            "time": "2018-08-03T09:03:19+00:00"
+            "time": "2018-08-28T19:00:58+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -6022,16 +6020,16 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v6.1.2",
+            "version": "v6.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "7d760881d266d63c5e7a1155cbcf2ac656a31ca8"
+                "reference": "8ddcb66ac10c392d3beb54829eef8ac1438595f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/7d760881d266d63c5e7a1155cbcf2ac656a31ca8",
-                "reference": "7d760881d266d63c5e7a1155cbcf2ac656a31ca8",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/8ddcb66ac10c392d3beb54829eef8ac1438595f4",
+                "reference": "8ddcb66ac10c392d3beb54829eef8ac1438595f4",
                 "shasum": ""
             },
             "require": {
@@ -6077,7 +6075,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2018-07-13T07:04:35+00:00"
+            "time": "2018-09-11T07:12:52+00:00"
         },
         {
             "name": "symfony/console",
@@ -10688,16 +10686,16 @@
         },
         {
             "name": "swagger-api/swagger-ui",
-            "version": "v3.18.3",
+            "version": "v3.18.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swagger-api/swagger-ui.git",
-                "reference": "1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f"
+                "reference": "987a609fdc2a157ee8b4860c8167a71020bbc8bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f",
-                "reference": "1c52a9c77bc927ab3f1ab20c04929ab8d2efd70f",
+                "url": "https://api.github.com/repos/swagger-api/swagger-ui/zipball/987a609fdc2a157ee8b4860c8167a71020bbc8bd",
+                "reference": "987a609fdc2a157ee8b4860c8167a71020bbc8bd",
                 "shasum": ""
             },
             "type": "library",
@@ -10741,7 +10739,7 @@
                 "swagger",
                 "ui"
             ],
-            "time": "2018-09-08T04:06:27+00:00"
+            "time": "2018-09-13T21:39:07+00:00"
         },
         {
             "name": "symfony/dom-crawler",
