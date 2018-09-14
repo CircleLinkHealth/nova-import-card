@@ -44,14 +44,14 @@ class RequiredRolesPermissionsSeeder extends Seeder
         return [
             [
                 'name'         => 'administrator',
-                'display_name' => 'Administrator',
-                'description'  => 'Administrator',
+                'display_name' => 'CLH Super Admin',
+                'description'  => 'Admins can see and do it all. Only CLH employees can have this Role.',
                 'permissions'  => [],
             ],
             [
                 'name'         => 'participant',
                 'display_name' => 'Participant',
-                'description'  => 'Participant',
+                'description'  => 'A patient at a practice.',
                 'permissions'  => [
                     'users-view-self',
                     'patient.read',
@@ -133,7 +133,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'office_admin',
                 'display_name' => 'Office Admin',
-                'description'  => 'Not CCM countable.',
+                'description'  => 'Non medical staff that work at a Practice. Not CCM countable.',
                 'permissions'  => [
                     'medication.create',
                     'medication.read',
@@ -620,7 +620,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'care-ambassador',
                 'display_name' => 'Care Ambassador',
-                'description'  => 'Makes calls to enroll patients.',
+                'description'  => 'People hired by CLH to call patients and enroll them to CarePlan Manager.',
                 'permissions'  => [
                     'careplan.read',
                     'careplan.update',
@@ -667,7 +667,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'med_assistant',
                 'display_name' => 'Medical Assistant',
-                'description'  => 'CCM Countable.',
+                'description'  => 'Medical staff that work at a Practice, and are not Doctors or Registered Nurses. CCM Countable.',
                 'permissions'  => [
                     'carePerson.read',
                     'carePerson.create',
@@ -758,7 +758,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'provider',
                 'display_name' => 'Provider',
-                'description'  => 'Provider',
+                'description'  => 'Doctors at a Practice.',
                 'permissions'  => [
                     'allergy.create',
                     'allergy.read',
@@ -874,7 +874,7 @@ class RequiredRolesPermissionsSeeder extends Seeder
             [
                 'name'         => 'care-center',
                 'display_name' => 'Care Coach',
-                'description'  => 'CLH Nurses, the ones who make calls to patients. CCM countable.',
+                'description'  => 'Care Coaches (Nurses) who work for CLH. They place calls to patients (participants) regularly. CCM countable.',
                 'permissions'  => [
                     'legacy-bhi-consent-decision.create',
                     'allergy.create',
