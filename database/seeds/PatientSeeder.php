@@ -29,16 +29,19 @@ class PatientSeeder extends Seeder
             $u->attachPractice($practiceId, null, null, 2);
             $u->program_id = $practiceId;
             $u->save();
+
             $patientInfo = new \App\Patient();
             $patientInfo->user_id = $u->id;
             //patient info is saved
             $patientInfo->ccm_status = \App\Patient::ENROLLED;
+
             $u->patientSummaries()->create([
                 'month_year' => Carbon::now()->copy()->subMonth($months->random())->startOfMonth()->toDateString(),
                 'ccm_time'   => 1400,
                 'approved'   => 1,
                 'actor_id'   => 1,
             ]);
+
             $u->ccdProblems()->createMany([
                 ['name' => 'test' . str_random(5)],
                 ['name' => 'test' . str_random(5)],

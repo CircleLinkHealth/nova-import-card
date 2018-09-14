@@ -611,7 +611,7 @@ class ReportsController extends Controller
                 'skippedAssessment'       => $skippedAssessment,
                 'recentSubmission'        => $recentSubmission,
                 'careplan'                => $careplanService->careplan($patientId),
-                'errors'                  => $patient->carePlan->validateCarePlan()->errors()
+                'errors'                  => $patient->carePlan->validator()->errors(),
             ]
         );
     }

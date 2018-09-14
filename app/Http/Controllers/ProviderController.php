@@ -34,9 +34,13 @@ class ProviderController extends Controller
 
     public function approveCarePlan(Request $request, $patientId, $viewNext = false)
     {
-        $validator = CarePlan::where('user_id', $patientId)->first()->validateCarePlan();
-        if ($validator->fails()) {
-            return redirect()->back()->with(['errors' => $validator->errors()]);
+        if (auth()->user()->canQAApproveCarePlans()) {
+            $carePlan = CarePlan::where('user_id', $patientId)
+                                ->firstOrFail();
+
+            if ($carePlan->status == CarePlan::DRAFT && $carePlan->validator()->fails()) {
+                return redirect()->back()->with(['errors' => $carePlan->errors()]);
+            }
         }
 
         event(new CarePlanWasApproved(User::find($patientId)));

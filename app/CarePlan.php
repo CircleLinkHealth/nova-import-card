@@ -7,7 +7,6 @@ use App\Notifications\CarePlanProviderApproved;
 use App\Notifications\Channels\DirectMailChannel;
 use App\Notifications\Channels\FaxChannel;
 use App\Rules\HasAtLeast2CcmOr1BhiProblems;
-use App\Services\ReportsService;
 use App\Services\CareplanService;
 use App\Services\PdfService;
 use App\Traits\PdfReportTrait;
@@ -55,13 +54,12 @@ class CarePlan extends BaseModel implements PdfReport
 {
     use PdfReportTrait;
 
-    // statuses
+    // status options
     const DRAFT = 'draft';
     const QA_APPROVED = 'qa_approved';
     const PROVIDER_APPROVED = 'provider_approved';
 
-
-    // modes
+    // mode options
     const WEB = 'web';
     const PDF = 'pdf';
 
@@ -298,40 +296,44 @@ class CarePlan extends BaseModel implements PdfReport
                     ->orderBy('created_at', 'desc');
     }
 
-    public function validateCarePlan()
+    /**
+     * Validate that the recently created CarePlan has all the data CLH needs to provide services to a patient.
+     *
+     * @return \Illuminate\Validation\Validator
+     */
+    public function validator()
     {
-        $patient = $this->patient->load([
+        $patient = $this->patient->loadMissing([
             'patientInfo',
             'phoneNumbers',
             'billingProvider.user',
             'ccdProblems' => function ($q) {
-                return $q->has('cpmProblem')->with('cpmProblem');
+                return $q->has('cpmProblem')
+                         ->with('cpmProblem');
             },
-            'ccdInsurancePolicies',
+            //before enabling insurance validation, we have to store all insurance info in CPM
+            //            'ccdInsurancePolicies',
         ]);
 
         $data = [
             'conditions'      => $patient->ccdProblems,
-            //we do not know if all patients have insurances
+            //before enabling insurance validation, we have to store all insurance info in CPM
             //            'insurances' => $patient->ccdInsurancePolicies,
             'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
             'dob'             => $patient->patientInfo->birth_date,
             'mrn'             => $patient->patientInfo->mrn_number,
-            'name'            => $patient->fullName,
+            'name'            => $patient->full_name,
             'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
 
-        //Validator instance
-        $validator = Validator::make($data, [
+        return Validator::make($data, [
             'conditions'      => [new HasAtLeast2CcmOr1BhiProblems()],
             'phoneNumber'     => 'required|phone:AUTO,US',
             'dob'             => 'required|date',
-            'mrn'             => 'required|numeric',
+            'mrn'             => 'required',
             'name'            => 'required',
             'billingProvider' => 'required|numeric',
         ]);
-
-        return $validator;
     }
 
     public function errors()
