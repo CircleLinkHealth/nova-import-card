@@ -498,7 +498,7 @@ class WelcomeCallListGenerator
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3,
-                    ['last_encounter' => 'Patient last encounter is more than a year ago.'],
+                    ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
                     EligibilityJob::INELIGIBLE);
 
                 return true;
