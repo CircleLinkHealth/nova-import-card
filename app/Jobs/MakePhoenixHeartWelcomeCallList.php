@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\EligibilityBatch;
+use App\EligibilityJob;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
@@ -55,6 +56,8 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $this->batch->status = EligibilityBatch::STATUSES['processing'];
             $this->batch->save();
         }
+
+        $phxPractice = Practice::whereName('phoenix-heart')->firstOrFail();
 
         $patientList = $names->map(function ($patient) {
             //format problems list
@@ -117,9 +120,11 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             $patient->put('insurances', $insurances);
 
             return $patient;
-        })->map(function ($p) {
+        })->map(function ($p) use ($phxPractice) {
+            $job = $this->firstOrCreateEligibilityJob($p, $phxPractice);
+
             $list = (new WelcomeCallListGenerator(collect([0 => $p]), false, true, true, true,
-                Practice::whereName('phoenix-heart')->firstOrFail(), null, null, $this->batch));
+                $phxPractice, null, null, $this->batch, $job));
 
             if ($list->patientList->count() > 0) {
                 $attr = [
@@ -138,5 +143,28 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
         });
 
 
+    }
+
+    /**
+     * @param $p
+     * @param $phxPractice
+     *
+     * @return EligibilityJob|\Illuminate\Database\Eloquent\Model
+     */
+    private function firstOrCreateEligibilityJob($p, $phxPractice)
+    {
+        $hash = $phxPractice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['zip'];
+
+        $job = EligibilityJob::whereHash($hash)->first();
+
+        if ( ! $job) {
+            $job = EligibilityJob::create([
+                'batch_id' => $this->batch->id,
+                'hash'     => $hash,
+                'data'     => $p,
+            ]);
+        }
+
+        return $job;
     }
 }

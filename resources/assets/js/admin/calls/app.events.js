@@ -3,18 +3,18 @@ export default (App, Event) => {
     const getUnscheduledPatientsModalRef = () => {
         //get the component and we assume first child is the modal
         const compChildren = App.$refs.unscheduledPatientsModal.$children;
-        return compChildren.find(x=> x.$vnode.componentOptions.tag === "modal");
+        return compChildren.find(x => x.$vnode.componentOptions.tag === "modal");
     };
 
     const isMainTableVisible = () => {
-
         // Scenario: Unscheduled Patients Modal is visible.
         //           We assume that the pagination event is triggered from the modal.
         //           So, there is nothing to do for the main calls table.
-        if (getUnscheduledPatientsModalRef().$data.visible) {
-            return false;
+        const modal = getUnscheduledPatientsModalRef();
+        if (modal) {
+            return !modal.$data.visible;
         }
-
+        return true;
     };
 
     const nextPageHandler = (page) => {

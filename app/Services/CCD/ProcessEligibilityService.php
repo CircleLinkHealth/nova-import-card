@@ -32,7 +32,7 @@ class ProcessEligibilityService
         $filterInsurance     = (boolean)$batch->options['filterInsurance'];
         $filterProblems      = (boolean)$batch->options['filterProblems'];
 
-        $cloudDisk = Storage::cloud();
+        $cloudDisk = Storage::disk('google');
 
         $practice  = Practice::findOrFail($batch->practice_id);
         $recursive = false; // Get subdirectories also?
@@ -205,7 +205,7 @@ class ProcessEligibilityService
         $filterInsurance,
         $filterProblems
     ) {
-        $cloudDisk = Storage::cloud();
+        $cloudDisk = Storage::disk('google');
 
         $practice  = Practice::whereName($practiceName)->firstOrFail();
         $recursive = false; // Get subdirectories also?
@@ -436,5 +436,23 @@ class ProcessEligibilityService
         }
 
         return $patient;
+    }
+
+    public function createClhMedicalRecordTemplateBatch(
+        $folder,
+        $fileName,
+        int $practiceId,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems
+    ) {
+        return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
+            'folder'              => $folder,
+            'fileName'            => $fileName,
+            'filterLastEncounter' => $filterLastEncounter,
+            'filterInsurance'     => $filterInsurance,
+            'filterProblems'      => $filterProblems,
+            'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
+        ]);
     }
 }

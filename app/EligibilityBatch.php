@@ -8,6 +8,7 @@ class EligibilityBatch extends BaseModel
     const TYPE_PHX_DB_TABLES = 'phoenix_heart_db_tables';
     const TYPE_ONE_CSV = 'one_csv';
     const ATHENA_API = 'athena_csv';
+    const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
     const STATUSES = [
         'not_started' => 0,
@@ -90,5 +91,18 @@ class EligibilityBatch extends BaseModel
     public function practice()
     {
         return $this->belongsTo(Practice::class);
+    }
+
+    public function eligibilityJobs()
+    {
+        return $this->hasMany(EligibilityJob::class, 'batch_id');
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasJobs(): bool
+    {
+        return $this->eligibilityJobs()->count() > 0;
     }
 }

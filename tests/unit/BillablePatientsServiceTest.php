@@ -54,7 +54,7 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problem1, $problem2, $list);
@@ -68,7 +68,7 @@ class BillablePatientsServiceTest extends TestCase
     {
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
         $this->summary = $this->summary->fresh();
@@ -271,7 +271,7 @@ class BillablePatientsServiceTest extends TestCase
 
         //Run
         $list = $this->service->patientsToApprove($this->practice->id, Carbon::now())
-            ->getCollection();
+                              ->getCollection();
 
         //Assert
         $this->assertMonthlySummary($this->summary, $problems[0], $problems[2], $list);
@@ -312,7 +312,7 @@ class BillablePatientsServiceTest extends TestCase
         $problem4 = $this->createProblem(false, 2);
         $problem5 = $this->createProblem(null, 9);
 
-        $summary = $this->repo->attachChargeableServices($this->patient, $this->summary);
+        $summary = $this->repo->attachChargeableServices($this->summary);
         $summary->save();
 
         //Run
@@ -342,6 +342,22 @@ class BillablePatientsServiceTest extends TestCase
         $response = $this->call('POST', $uri, $params);
 
         $response->assertStatus(200);
+    }
+
+    public function test_it_selects_g0511_code()
+    {
+        //Set up
+        $g0511 = ChargeableService::whereCode('G0511')->firstOrFail();
+        $this->practice->chargeableServices()->sync($g0511->pluck('id')->all());
+        $problem1 = $this->createProblem(true, 33);
+        $problem2 = $this->createProblem(true, 2);
+
+        //act
+        $summary = $this->repo->attachChargeableServices($this->summary);
+        $summary->save();
+
+        //assert
+        $this->assertTrue($this->summary->chargeableServices()->where('code', 'G0511')->exists());
     }
 
     protected function setUp()

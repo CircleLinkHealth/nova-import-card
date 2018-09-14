@@ -11,6 +11,7 @@
 |
 */
 
+use App\EligibilityBatch;
 use App\Enrollee;
 use App\Entities\Invite;
 use App\Location;
@@ -211,5 +212,15 @@ $factory->define(Location::class, function (Faker\Generator $faker) {
         'city'           => $faker->city,
         'state'          => 'NY',
         'postal_code'    => 12345,
+    ];
+});
+
+$factory->define(EligibilityBatch::class, function (Faker\Generator $faker) {
+    $practice = factory(Practice::class)->create();
+
+    return [
+        'practice_id' => $practice->id,
+        'type'        => EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE,
+        'options'     => [],
     ];
 });

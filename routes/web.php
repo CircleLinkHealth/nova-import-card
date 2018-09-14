@@ -807,16 +807,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'uses' => 'NotesController@create',
                 'as'   => 'patient.note.create',
             ])->middleware('permission:patient.read');
-
-            Route::get('create-v2', [
-                'uses' => 'NotesController@create',
-                'as'   => 'patient.note.create-v2',
-            ]);
-            Route::get('create-v3', [
-                'uses' => 'NotesController@create',
-                'as'   => 'patient.note.create-v3',
-            ]);
-
             Route::post('store', [
                 'uses' => 'NotesController@store',
                 'as'   => 'patient.note.store',
@@ -967,7 +957,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.last.import.logs',
                 ])->middleware('permission:batch.read');
 
-                Route::get('/batch-logs-scv', [
+                Route::get('/batch-logs-csv', [
                     'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
                     'as'   => 'eligibility.download.logs.csv',
                 ])->middleware('permission:batch.read');

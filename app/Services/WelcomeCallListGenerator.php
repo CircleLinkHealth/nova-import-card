@@ -87,7 +87,10 @@ class WelcomeCallListGenerator
      * @param Practice|null $practice
      * @param null $medicalRecordType
      * @param null $medicalRecordId
-     * @param null $batch
+     * @param EligibilityBatch $batch
+     * @param EligibilityJob|null $eligibilityJob
+     *
+     * @throws \Exception
      */
     public function __construct(
         Collection $patientList,
@@ -456,7 +459,20 @@ class WelcomeCallListGenerator
             //Anything past this date is valid
             $minEligibleDate = Carbon::now()->subYear();
 
-            if ( ! isset($row['last_encounter'])) {
+            $lastEncounter = null;
+
+            $possibleNames = [
+                'last_encounter',
+                'last_visit',
+            ];
+
+            foreach ($possibleNames as $n) {
+                if (isset($row[$n])) {
+                    $lastEncounter = $row[$n];
+                }
+            }
+
+            if ( ! isset($lastEncounter)) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
@@ -465,7 +481,7 @@ class WelcomeCallListGenerator
                 return true;
             }
 
-            if ( ! $row['last_encounter']) {
+            if ( ! $lastEncounter) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
@@ -474,15 +490,15 @@ class WelcomeCallListGenerator
                 return true;
             }
 
-            $lastEncounterDate = is_a($row['last_encounter'], Carbon::class)
-                ? $row['last_encounter']
-                : new Carbon($row['last_encounter']);
+            $lastEncounterDate = is_a($lastEncounter, Carbon::class)
+                ? $lastEncounter
+                : new Carbon($lastEncounter);
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3,
-                    ['last_encounter' => 'Patient last encounter is more than a year ago.'],
+                    ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
                     EligibilityJob::INELIGIBLE);
 
                 return true;
@@ -530,6 +546,10 @@ class WelcomeCallListGenerator
                 $args['problems'] = $args['problems_string'];
             }
 
+            if (is_array($args['problems'])) {
+                $args['problems'] = json_encode($args['problems']);
+            }
+
             if (array_key_exists('insurances', $args) && ! array_key_exists('primary_insurance', $args)) {
                 $insurances = is_array($args['insurances'])
                     ? collect($args['insurances'])
@@ -551,8 +571,8 @@ class WelcomeCallListGenerator
                 $args['email'] = 'noEmail@noEmail.com';
             }
 
-            $args['address']   = $args['street'];
-            $args['address_2'] = $args['street2'] ?? '';
+            $args['address']   = $args['street'] ?? $args['address_line_1'] ?? '';
+            $args['address_2'] = $args['street2'] ?? $args['address_line_2'] ?? '';
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
@@ -560,7 +580,9 @@ class WelcomeCallListGenerator
                 ? Carbon::parse($args['last_encounter'])
                 : null;
             $args['batch_id']            = $this->batch->id;
-            $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'];
+            $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
+
+            $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
 
             $enrolleeExists = Enrollee::where([
                 [
