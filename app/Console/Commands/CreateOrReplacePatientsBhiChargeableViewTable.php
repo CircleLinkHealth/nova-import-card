@@ -37,8 +37,10 @@ class CreateOrReplacePatientsBhiChargeableViewTable extends Command
      */
     public function handle()
     {
+        $viewName = "patients_bhi_chargeable_view";
+        \DB::statement("DROP VIEW IF EXISTS $viewName");
         \DB::statement("
-        CREATE OR REPLACE VIEW patients_bhi_chargeable_view
+        CREATE VIEW $viewName
         AS
         SELECT 
             u.id

@@ -37,8 +37,10 @@ class CreateOrReplaceCallsViewTable extends Command
      */
     public function handle()
     {
+        $viewName = "calls_view";
+        \DB::statement("DROP VIEW IF EXISTS $viewName");
         \DB::statement("
-        CREATE OR REPLACE VIEW calls_view
+        CREATE VIEW $viewName
         AS
         SELECT
             c.id,

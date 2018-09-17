@@ -37,8 +37,10 @@ class CreateOrReplacePatientsCcmViewTable extends Command
      */
     public function handle()
     {
+        $viewName = "patients_ccm_view";
+        \DB::statement("DROP VIEW IF EXISTS $viewName");
         \DB::statement("
-        CREATE OR REPLACE VIEW patients_ccm_view
+        CREATE VIEW $viewName
         AS
         SELECT DISTINCT u.id
         FROM users u 
