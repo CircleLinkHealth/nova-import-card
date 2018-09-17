@@ -19,7 +19,6 @@ use App\Console\Commands\QueueSendAuditReports;
 use App\Console\Commands\RemoveScheduledCallsForWithdrawnAndPausedPatients;
 use App\Console\Commands\RescheduleMissedCalls;
 use App\Console\Commands\ResetPatients;
-use App\Console\Commands\SyncFamilialCalls;
 use App\Console\Commands\TuneScheduledCalls;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -153,10 +152,6 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        if ( ! \Schema::hasTable('practices')) {
-            return;
-        }
-
         $this->load(__DIR__ . '/Commands');
         require base_path('routes/console.php');
     }
