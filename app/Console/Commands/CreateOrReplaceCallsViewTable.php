@@ -45,59 +45,43 @@ class CreateOrReplaceCallsViewTable extends Command
             c.is_manual,
             u2.nurse_id,
             u2.nurse,
-            u1.patient_id, 
-            u1.patient, 
+            u1.patient_id,
+            u1.patient,
             c.scheduled_date, 
-            u4.last_call, 
-            u5.ccm_time, 
-            u5.bhi_time,
-            u5.no_of_successful_calls,
-            u7.practice_id, 
-            u7.practice, 
+            u4.last_call,
+            if (u5.ccm_time is null, 0, u5.ccm_time) as ccm_time,
+            if (u5.bhi_time is null, 0, u5.bhi_time) as bhi_time,
+            if (u5.no_of_successful_calls is null, 0, u5.no_of_successful_calls) as no_of_successful_calls,
+            u7.practice_id,
+            u7.practice,
             c.window_start as call_time_start, 
             c.window_end as call_time_end,
             u6.preferred_call_days,
-            if(u3.scheduler is not null, u3.scheduler, c.scheduler) as `scheduler`,
-            u9.is_bhi,
-            u10.is_ccm
+            if(pccm.id is null, false, true) as is_ccm,
+            if(pbhi.id is null, false, true) as is_bhi,
+            if(u3.scheduler is null, c.scheduler, u3.scheduler) as scheduler
         FROM 
-            calls c,
+            calls c
+            left join (select u.id as patient_id, CONCAT(u.first_name, ' ', u.last_name) as patient from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
+
+            left join (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as nurse from users u where u.deleted_at is null) as u2 on c.outbound_cpm_id = u2.nurse_id
+
+            left join (select u.id as scheduler_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as `scheduler` from users u where u.deleted_at is null) as u3 on c.scheduler = u3.scheduler_id
             
-            (select u.id as patient_id, CONCAT(u.first_name, ' ', u.last_name) as patient, u.created_at as patient_created_at, c.id as call_id from users u join calls c on u.id = c.inbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u1,
+            left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi where pi.deleted_at is null and pi.ccm_status = 'enrolled') as u4 on c.inbound_cpm_id = u4.patient_id
             
-            (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as nurse, c.id as call_id from users u join calls c on u.id = c.outbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u2,
+            left join (select pms.patient_id, pms.ccm_time, pms.bhi_time, pms.no_of_successful_calls from patient_monthly_summaries pms where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) u5 on c.inbound_cpm_id = u5.patient_id
             
-            (select CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as `scheduler`, c.id as call_id from users u right join calls c on u.id = c.scheduler where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u3,
-            
-            (select c.id as call_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi join calls c on c.inbound_cpm_id = pi.user_id where pi.ccm_status = 'enrolled' and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u4,
-            
-            (select c.id as call_id, if(pms.ccm_time is null, 0, pms.ccm_time) as ccm_time, if(pms.bhi_time is null, 0, pms.bhi_time) as bhi_time, if(pms.no_of_successful_calls is null, 0, pms.no_of_successful_calls) as no_of_successful_calls from calls c left join (select * from patient_monthly_summaries where month_year = DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) pms on pms.patient_id = c.inbound_cpm_id where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u5,
-            
-            (select c.id as call_id, pi.user_id, pi.ccm_status as patient_status, pcw.patient_info_id, GROUP_CONCAT(pcw.day_of_week SEPARATOR ',') as preferred_call_days
-            from patient_contact_window pcw
-            join patient_info pi on pcw.patient_info_id = pi.id
-            join calls c on pi.user_id = c.inbound_cpm_id
-            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()
-            group by pcw.patient_info_id, pi.user_id, c.id) as u6,
-            
-            (select c.id as call_id, p.id as practice_id, p.display_name as practice
-            from users u
-            join practices p on u.program_id = p.id 
-            join calls c on u.id = c.inbound_cpm_id
-            where p.active = 1 and c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u7,
-            
-            (select c.id as call_id, if(pbhi.id is null, false, true) as is_bhi
-            from calls c
+			left join (select pi.user_id, GROUP_CONCAT(pcw.day_of_week SEPARATOR ',') as preferred_call_days from patient_info pi left join patient_contact_window pcw on pi.id = pcw.patient_info_id where pi.deleted_at is null group by pi.user_id) as u6 on c.inbound_cpm_id = u6.user_id
+			
+			left join (select u.id as user_id, p.id as practice_id, p.display_name as practice from practices p join users u on u.program_id = p.id where p.active = 1) u7 on c.inbound_cpm_id = u7.user_id
+			       
             left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
-            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u9,
             
-            (select c.id as call_id, if(pccm.id is null, false, true) as is_ccm
-            from calls c
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
-            where c.status = 'scheduled' and c.scheduled_date >= CURDATE()) as u10
-             
+           
         WHERE
-            c.status = 'scheduled' and c.scheduled_date >= CURDATE() and u1.call_id = c.id and u2.call_id = c.id and u3.call_id = c.id and u4.call_id = c.id and u5.call_id = c.id and u6.call_id = c.id and u7.call_id = c.id and u9.call_id = c.id and u10.call_id = c.id
-        ");
+            c.status = 'scheduled' and c.scheduled_date >= CURDATE()
+      ");
     }
 }
