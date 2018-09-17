@@ -472,14 +472,16 @@
                     e.preventDefault();
                     form = this;
 
-                    let callHasStatus;
+                    let callIsSuccess = false;
+                    let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
-                        callHasStatus = form['call_status'] && form['call_status'].value && form['call_status'].value.length;
+                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].length > 0;
+                        callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                     }
                     else {
                         //checkbox
-                        callHasStatus = form['welcome_call'].checked || form['other_call'].checked;
+                        callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
 
                     const isPhoneSession = $('#phone').is(':checked');
@@ -493,13 +495,17 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
-                    //CPM-182 - show modal if time spend on this form is more than 90 seconds
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD && noteBody.length > CHARACTERS_THRESHOLD) {
 
-                        if (!isPhoneSession || (isPhoneSession && !callHasStatus)) {
+                    //CPM-182:
+                    // if time more than 90 seconds
+                    // and (is not phone session, or phone session but not success)
+
+                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBody.length > CHARACTERS_THRESHOLD) {
+
+                        if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;
                         }
-                        
+
                     }
 
                     if (showModal) {
