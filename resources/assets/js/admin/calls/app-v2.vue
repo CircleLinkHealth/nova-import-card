@@ -195,7 +195,7 @@
                         'selected': 'blank'
                     },
                     sortable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'Practice', 'Scheduler'],
+                    filterable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'Practice'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
