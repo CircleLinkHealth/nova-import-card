@@ -101,7 +101,7 @@ class StatsHelper
             $data['added'][$index] = 0;
 
             foreach ($patients as $patient) {
-                if ($patient->created_at->gte($start) && $patient->created_at->lte($end)) {
+                if (optional($patient->created_at)->gte($start) && optional($patient->created_at)->lte($end)) {
                     $data['added'][$index]++;
                 }
 
