@@ -130,9 +130,17 @@ class CallController extends Controller
         if ( ! empty($familyMembers)) {
             foreach ($familyMembers as $familyMember) {
                 $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
-                //be extra safe here. if we have a call just skip this patient
                 if ($familyMemberCall) {
-                    continue;
+
+                    //be extra safe here. if we have a manual call just skip this patient
+                    if ($familyMemberCall->is_manual) {
+                        continue;
+                    }
+
+                    //cancel this call
+                    $familyMemberCall->status = 'rescheduled/family';
+                    $familyMemberCall->save();
+
                 }
                 $this->storeNewCall($familyMember->user, $input);
             }
