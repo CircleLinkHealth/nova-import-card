@@ -47,6 +47,10 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('practice', 'like', '%'. $practice . '%');
     }
 
+    public function sort_is_manual($term) {
+        return $this->builder->orderBy('is_manual', $term);
+    }
+
     public function sort_nurse($term) {
         return $this->builder->orderBy('nurse', $term);
     }
