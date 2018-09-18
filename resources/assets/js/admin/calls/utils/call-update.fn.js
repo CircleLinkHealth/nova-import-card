@@ -141,7 +141,7 @@ export const onAttemptNoteUpdate = function (call, note, familyOverride, oldValu
 export const updateMultiValues = function (call, {nextCall, callTimeStart, callTimeEnd}, familyOverride, oldValue, revertCallback) {
     if (nextCall, callTimeStart, callTimeEnd) {
         return Promise.all([
-            onNextCallUpdate.call(call, nextCall, familyOverride, oldValue, revertCallback)
+            onNextCallUpdate(call, nextCall, familyOverride, oldValue, revertCallback)
             // onCallTimeStartUpdate.call(this, callTimeStart),
             // onCallTimeEndUpdate.call(this, callTimeEnd)
         ]);

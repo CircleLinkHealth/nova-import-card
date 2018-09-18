@@ -339,8 +339,10 @@
                 if (manualCalls.length === 0) {
                     showModal = true;
                 }
-                else if (selectedCalls.length === 1 && manualCalls.length === 1 && confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
-                    showModal = true;
+                else if (selectedCalls.length === 1 && manualCalls.length === 1) {
+                    if (confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
+                        showModal = true;
+                    }
                 }
                 else if (confirm(editCallDateTimeMessageForCalls)) {
                     showModal = true;
@@ -485,7 +487,8 @@
                             );
                     },
                     updateMultiValues: function (obj, old, revertCallback) {
-                        callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
+                        //need to return the promise, because its used in app.events.js: selectTimesChangeHandler
+                        return callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,

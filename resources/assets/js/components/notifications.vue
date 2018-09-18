@@ -101,10 +101,10 @@
             Event.$on(`${this.componentName}:dismissAll`, (...args) => EventBus.$emit(`${this.componentName}:dismissAll`, ...args));
         },
         beforeDestroy() {
-            EventBus.$off(`${this.componentName}:create`, this.create);
-            EventBus.$off(`${this.componentName}:dismissAll`, this.removeAll);
-            Event.$off(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args));
-            Event.$off(`${this.componentName}:dismissAll`, (...args) => EventBus.$emit(`${this.componentName}:dismissAll`, ...args));
+            EventBus.$off(`${this.componentName}:create`);
+            EventBus.$off(`${this.componentName}:dismissAll`);
+            Event.$off(`${this.componentName}:create`);
+            Event.$off(`${this.componentName}:dismissAll`);
         }
     }
 </script>

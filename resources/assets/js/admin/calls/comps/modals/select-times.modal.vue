@@ -1,5 +1,5 @@
 <template>
-    <modal name="select-times" :no-title="true" :no-footer="true" :info="selectTimesModalInfo">
+    <modal name="select-times" :no-title="true" :no-footer="true" :info="selectTimesModalInfo" class-name="modal-select-times">
       <template slot-scope="props">
         <div class="row">
             <div class="col-sm-12">
@@ -38,8 +38,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-12" v-for="patient in selectedPatients" :key="patient.id">
-                        <div class="row">
+                    <div class="col-sm-12 patients-table">
+                        <div class="row" v-for="patient in selectedPatients" :key="patient.id">
                             <div class="col-sm-4">
                                 <h5>
                                     {{patient.name}} [id:{{patient.id}}]
@@ -125,6 +125,15 @@
 </script>
 
 <style>
+
+    .modal-select-times .modal-container {
+        width: 500px;
+    }
+
+    .modal-select-times .patients-table {
+        min-height: 300px;
+    }
+
     .vdp-datepicker.form-control input[type='text'] {
         width: 100%;
     }
