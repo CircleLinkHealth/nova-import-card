@@ -8,8 +8,8 @@ Inline CSS prevents loss of table borders in emails
     <span style="font-size: 17px">
         <u><span style="text-align: left">TOTALS</span></u>
         <br/>Enrolled <span style="color: green"> {{$data[$enrollmentSection]['enrolled'] ?? 'N/A'}} </span>
-        <br/>Withdrawn <span style="color: darkred"> {{$data[$enrollmentSection]['withdrawn'] ?? 'N/A'}} </span>
-        <br/>Paused<span style="color: darkorange"> {{$data[$enrollmentSection]['paused'] ?? 'N/A'}} </span>
+        {{--<br/>Withdrawn <span style="color: darkred"> {{$data[$enrollmentSection]['withdrawn'] ?? 'N/A'}} </span>--}}
+        {{--<br/>Paused<span style="color: darkorange"> {{$data[$enrollmentSection]['paused'] ?? 'N/A'}} </span>--}}
     </span>
 
     <table class="table tab table-bordered myTable" style="border-collapse: collapse;border: 1px solid black; padding: 2px">
