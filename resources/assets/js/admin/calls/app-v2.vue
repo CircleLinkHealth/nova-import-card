@@ -194,7 +194,7 @@
                     columnsClasses: {
                         'selected': 'blank'
                     },
-                    sortable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
+                    sortable: ['Manual', 'Nurse', 'Patient ID', 'Next Call', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
                     filterable: ['Nurse', 'Patient ID', 'Next Call', 'Last Call', 'Practice'],
                     filterByColumn: true,
                     texts: {
