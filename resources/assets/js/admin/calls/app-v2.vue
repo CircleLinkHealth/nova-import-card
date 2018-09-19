@@ -96,7 +96,7 @@
             </div>
         </div>
         <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
-        <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
+        <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatientsNew"></select-times-modal>
         <add-call-v2-modal ref="addCallV2Modal"></add-call-v2-modal>
         <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
     </div>
@@ -188,6 +188,9 @@
                     callTimeEnd: row['Call Time End'],
                     loaders: row.loaders
                 }))
+            },
+            selectedPatientsNew() {
+                return this.tableData.filter(row => row.selected && row.Patient);
             },
             options() {
                 return {
