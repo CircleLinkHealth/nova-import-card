@@ -303,7 +303,7 @@ class CarePlan extends BaseModel implements PdfReport
      */
     public function validator()
     {
-        $patient = $this->patient->loadMissing([
+        $patient = $this->patient->load([
             'patientInfo',
             'phoneNumbers',
             'billingProvider.user',
