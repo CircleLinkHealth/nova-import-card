@@ -96,7 +96,7 @@
             </div>
         </div>
         <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
-        <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatients"></select-times-modal>
+        <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatientsNew"></select-times-modal>
         <add-call-v2-modal ref="addCallV2Modal"></add-call-v2-modal>
         <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
     </div>
@@ -188,6 +188,9 @@
                     callTimeEnd: row['Call Time End'],
                     loaders: row.loaders
                 }))
+            },
+            selectedPatientsNew() {
+                return this.tableData.filter(row => row.selected && row.Patient);
             },
             options() {
                 return {
@@ -339,8 +342,10 @@
                 if (manualCalls.length === 0) {
                     showModal = true;
                 }
-                else if (selectedCalls.length === 1 && manualCalls.length === 1 && confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
-                    showModal = true;
+                else if (selectedCalls.length === 1 && manualCalls.length === 1) {
+                    if (confirm(this.getEditDateTimeConfirmMessage(manualCalls[0]))) {
+                        showModal = true;
+                    }
                 }
                 else if (confirm(editCallDateTimeMessageForCalls)) {
                     showModal = true;
@@ -485,7 +490,8 @@
                             );
                     },
                     updateMultiValues: function (obj, old, revertCallback) {
-                        callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
+                        //need to return the promise, because its used in app.events.js: selectTimesChangeHandler
+                        return callUpdateFunctions.updateMultiValues(this, obj, false, old, revertCallback)
                             .catch(err =>
                                 $vm.showOverrideConfirmationIfNeeded(
                                     err,

@@ -10,7 +10,7 @@
                 <slot :note="note">
                     {{note.text}}
                 </slot>
-                
+
                 <span class="close" @click="note.close()">x</span>
             </div>
         </div>
@@ -19,7 +19,7 @@
 
 <script>
     import EventBus from '../admin/time-tracker/comps/event-bus'
-    import { Event } from 'vue-tables-2'
+    import {Event} from 'vue-tables-2'
 
     export default {
         props: {
@@ -36,7 +36,7 @@
                     success: ['success'],
                     warning: ['warning', 'warn'],
                     error: ['danger', 'error'],
-                    all () {
+                    all() {
                         return [
                             ...this.success,
                             ...this.warning,
@@ -47,7 +47,7 @@
             }
         },
         computed: {
-            componentName () {
+            componentName() {
                 return `notifications${this.name ? '-' + this.name : ''}`;
             }
         },
@@ -76,7 +76,7 @@
                             newNote.close()
                         }, note.interval || 15000)
                     }
-                    
+
                     if (!this.reverse) this.notes.push(newNote)
                     else this.notes.unshift(newNote)
 
@@ -84,7 +84,7 @@
                 }
                 throw new Error('no note provided')
             },
-            remove (id) {
+            remove(id) {
                 const note = this.notes.find(n => n.id === id)
                 if (note) {
                     note.close()
@@ -94,11 +94,17 @@
                 this.notes.length = 0;
             }
         },
-        mounted() {
+        created() {
             EventBus.$on(`${this.componentName}:create`, this.create);
             EventBus.$on(`${this.componentName}:dismissAll`, this.removeAll);
             Event.$on(`${this.componentName}:create`, (...args) => EventBus.$emit(`${this.componentName}:create`, ...args));
             Event.$on(`${this.componentName}:dismissAll`, (...args) => EventBus.$emit(`${this.componentName}:dismissAll`, ...args));
+        },
+        beforeDestroy() {
+            EventBus.$off(`${this.componentName}:create`);
+            EventBus.$off(`${this.componentName}:dismissAll`);
+            Event.$off(`${this.componentName}:create`);
+            Event.$off(`${this.componentName}:dismissAll`);
         }
     }
 </script>

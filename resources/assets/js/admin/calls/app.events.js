@@ -94,6 +94,7 @@ export default (App, Event) => {
         return new Promise((resolve, reject) => resolve(null))
     }
 
+    //not used anymore.
     Event.$on('select-times-modal:change', selectTimesChangeHandler)
 
     Event.$on('calls:add', App.activateFilters)

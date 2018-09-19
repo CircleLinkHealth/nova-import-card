@@ -92,7 +92,6 @@ class SchedulerService
     //Get scheduled call
     public function getScheduledCallForPatient($patient)
     {
-
         $call = Call::where(function ($q) use (
             $patient
         ) {
@@ -100,6 +99,7 @@ class SchedulerService
               ->orWhere('inbound_cpm_id', $patient->id);
         })
                     ->where('status', '=', 'scheduled')
+                    ->where('scheduled_date', '>=', Carbon::today()->format('Y-m-d'))
                     ->first();
 
         return $call;
@@ -418,7 +418,7 @@ class SchedulerService
 
                 if (is_a($call, Call::class)) {
                     //If the patient has a call and is not manual,
-                    if (!$call->is_manual) {
+                    if ( ! $call->is_manual) {
                         $window_start = $call->window_start;
                         $window_end   = $call->window_end;
 
