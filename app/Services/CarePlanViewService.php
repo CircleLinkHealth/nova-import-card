@@ -195,31 +195,6 @@ class CarePlanViewService
         return compact('sections');
     }
 
-    /**
-     * Get the User's Problems to populate the User header
-     *
-     * @param User $patient
-     *
-     * @return array
-     */
-    public function getProblemsToMonitor(User $patient)
-    {
-        $problems = $patient->cpmProblems
-            ->sortBy('name')
-            ->values()
-            ->pluck('name', 'id')
-            ->all();
-
-        $otherConditions = $patient->cpmMiscs
-            ->where('name', CpmMisc::OTHER_CONDITIONS)
-            ->pluck('name', 'cpm_misc_id')
-            ->all();
-
-        return $otherConditions
-            ? array_merge($problems, $otherConditions)
-            : $problems;
-    }
-
     function convert_state_to_abbreviation($state_name)
     {
         switch ($state_name) {

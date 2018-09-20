@@ -70,6 +70,7 @@ class CallController extends Controller
             'window_end'      => 'required|date_format:H:i',
             'attempt_note'    => '',
             'is_manual'       => 'required|boolean',
+            'family_override' => '',
         ]);
 
         if ($validation->fails()) {
@@ -101,8 +102,63 @@ class CallController extends Controller
             }
         }
 
+        $isFamilyOverride = ! empty($input['family_override']);
+        if ( ! $isFamilyOverride
+             && $this->hasAlreadyFamilyCallAtDifferentTime($patient->patientInfo, $input['scheduled_date'],
+                $input['window_start'], $input['window_end'])) {
+
+            return [
+                'errors' => ['patient belongs to family and the family has a call at different time'],
+                'code'   => 418,
+            ];
+        }
+
+        $call = $this->storeNewCall($patient, $input);
+        $this->storeNewCallForFamilyMembers($patient, $input);
+
+        return CallResource::make($call);
+    }
+
+    private function storeNewCallForFamilyMembers(User $patient, $input)
+    {
+
+        if ( ! $patient->patientInfo->hasFamilyId()) {
+            return;
+        }
+
+        $familyMembers = $patient->patientInfo->getFamilyMembers($patient->patientInfo);
+        if ( ! empty($familyMembers)) {
+            foreach ($familyMembers as $familyMember) {
+                $familyMemberCall = $this->scheduler->getScheduledCallForPatient($familyMember->user);
+                if ($familyMemberCall) {
+
+                    //be extra safe here. if we have a manual call just skip this patient
+                    if ($familyMemberCall->is_manual) {
+                        continue;
+                    }
+
+                    //cancel this call
+                    $familyMemberCall->status = 'rescheduled/family';
+                    $familyMemberCall->save();
+
+                }
+                $this->storeNewCall($familyMember->user, $input);
+            }
+        }
+    }
+
+    /**
+     * @param User $user
+     * @param $input
+     *
+     * @return Call
+     */
+    private function storeNewCall(User $user, $input)
+    {
+        $isFamilyOverride = ! empty($input['family_override']);
+
         $call                 = new Call;
-        $call->inbound_cpm_id = $input['inbound_cpm_id'];
+        $call->inbound_cpm_id = $user->id;
         if (empty($input['outbound_cpm_id'])) {
             $call->outbound_cpm_id = null;
         } else {
@@ -117,9 +173,9 @@ class CallController extends Controller
         $call->service         = 'phone';
         $call->status          = 'scheduled';
         $call->scheduler       = auth()->user()->id;
-        $call->is_manual       = boolval($input['is_manual']);
+        $call->is_manual       = boolval($input['is_manual']) || $isFamilyOverride;
         $call->save();
-        return CallResource::make($call);
+        return $call;
     }
 
     /**
@@ -188,12 +244,15 @@ class CallController extends Controller
 
     public function update(Request $request)
     {
-
         $data = $request->only(
             'callId',
             'columnName',
-            'value'
+            'value',
+            'familyOverride'
         );
+
+        $columnsToCheckForOverride = ['scheduled_date', 'window_start', 'window_end'];
+        $isFamilyOverride          = ! empty($data['familyOverride']);
 
         // VALIDATION
         if (empty($data['callId'])) {
@@ -211,6 +270,39 @@ class CallController extends Controller
 
         $col   = $data['columnName'];
         $value = $data['value'];
+
+        if (in_array($col, $columnsToCheckForOverride)
+            && ! $isFamilyOverride
+            && $call->inboundUser
+            && $call->inboundUser->patientInfo) {
+
+            $mustConfirm = false;
+            switch ($col) {
+                case 'scheduled_date':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo, $value,
+                        $call->window_start, $call->window_end);
+                    break;
+                case 'window_start':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
+                        $call->scheduled_date, $value, $call->window_end);
+                    break;
+                case 'window_end':
+                    $mustConfirm = $this->hasAlreadyFamilyCallAtDifferentTime($call->inboundUser->patientInfo,
+                        $call->scheduled_date, $call->window_start, $value);
+                    break;
+            }
+
+            if ($mustConfirm) {
+                return response(
+                    'patient belongs to family and the family has a call at different time',
+                    418);
+            }
+        }
+
+
+        if ($isFamilyOverride) {
+            $call->is_manual = true;
+        }
 
         // for null outbound_cpm_id
         if ($col == 'outbound_cpm_id' && (empty($value) || strtolower($value) == 'unassigned')) {
@@ -243,6 +335,38 @@ class CallController extends Controller
             "successfully updated call " . $data['columnName'] . "=" . $data['value'] . " - CallId=" . $data['callId'],
             201
         );
+    }
+
+    private function hasAlreadyFamilyCallAtDifferentTime(Patient $patient, $scheduledDate, $windowStart, $windowEnd)
+    {
+        $mustConfirm = false;
+
+        if ( ! $patient->hasFamilyId()) {
+            return $mustConfirm;
+        }
+
+        //now find if a another call is scheduled for any of the members of the family
+        $familyMembers = $patient->getFamilyMembers($patient);
+        if ( ! empty($familyMembers)) {
+            foreach ($familyMembers as $familyMember) {
+                $callForMember = $this->scheduler->getScheduledCallForPatient($familyMember->user);
+                if ( ! $callForMember) {
+                    continue;
+                }
+
+                if ($callForMember->scheduled_date != $scheduledDate
+                    || $callForMember->window_start != $windowStart
+                    || $callForMember->window_end != $windowEnd) {
+
+                    $mustConfirm = true;
+                    //no need to check other calls, so we break
+                    break;
+                }
+
+            }
+        }
+
+        return $mustConfirm;
     }
 
     public function import(Request $request)

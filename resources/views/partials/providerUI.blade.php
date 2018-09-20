@@ -102,10 +102,6 @@
     }
     ?>
 
-    {{--@if(isset($patient) && is_object($patient) && showDiabetesBanner($patient, Auth::user()->hasRole(['administrator', 'provider']) && $user->isCcmEligible()) && !isset($isPdf))--}}
-    {{--@include('partials.providerUI.notification-banner')--}}
-    {{--@endif--}}
-
     @if(isset($user) && auth()->user()->shouldShowLegacyBhiBannerFor($user) && !isset($isPdf))
         @include('partials.providerUI.bhi-notification-banner')
     @endif

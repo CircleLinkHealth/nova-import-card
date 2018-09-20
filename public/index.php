@@ -24,6 +24,29 @@ define('LARAVEL_START', microtime(true));
 require __DIR__.'/../vendor/autoload.php';
 
 /*
+ |--------------------------------------------------------------------------
+ | Blackfire SDK integration
+ |--------------------------------------------------------------------------
+ |
+ | Enable if you want to run blackfire using
+ | an API testing tool (eg. Postman / JMeter).
+ | Then, make sure you set Black_Fire_Trigger in headers.
+ |
+ */
+//if (isset($_SERVER['HTTP_BLACK_FIRE_TRIGGER'])) {
+//    // let's create a client
+//    $blackfire = new \Blackfire\Client();
+//    // then start the probe
+//    $probe = $blackfire->createProbe();
+//
+//    // When runtime shuts down, let's finish the profiling session
+//    register_shutdown_function(function () use ($blackfire, $probe) {
+//        // See the PHP SDK documentation for using the $profile object
+//        $profile = $blackfire->endProbe($probe);
+//    });
+//}
+
+/*
 |--------------------------------------------------------------------------
 | Turn On The Lights
 |--------------------------------------------------------------------------

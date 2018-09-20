@@ -40,7 +40,7 @@ class PatientController extends Controller
             $nurse->workhourables()->firstOrCreate([]);
         }
 
-        if (auth()->user()->hasPermission('care-plan-approve')) {
+        if (auth()->user()->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
                                                     return $user->careplanStatus == CarePlan::QA_APPROVED;
@@ -78,8 +78,10 @@ class PatientController extends Controller
 
         $wpUser = User::with([
             'primaryPractice',
-            'cpmProblems.cpmInstructions',
-            'cpmMiscs',
+            'ccdProblems'  => function ($q) {
+                $q->with('cpmProblem.cpmInstructions')
+                  ->whereNotNull('cpm_problem_id');
+            },
             'observations' => function ($q) {
                 $q->where('obs_unit', '!=', "invalid")
                   ->where('obs_unit', '!=', "scheduled")
@@ -103,7 +105,7 @@ class PatientController extends Controller
         // program
         $program = $wpUser->primaryPractice;
 
-        $problems = $carePlanViewService->getProblemsToMonitor($wpUser);
+        $problems = $wpUser->getProblemsToMonitor();
 
         $params        = $request->all();
         $detailSection = '';

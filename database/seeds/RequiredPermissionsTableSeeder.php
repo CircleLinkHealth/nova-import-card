@@ -6,9 +6,8 @@ use Illuminate\Database\Seeder;
 
 class RequiredPermissionsTableSeeder extends Seeder
 {
-
     /**
-     * Auto generated seed file
+     * Populate the Permissions table.
      *
      * @return void
      */
@@ -16,18 +15,23 @@ class RequiredPermissionsTableSeeder extends Seeder
     {
         Permission::truncate();
 
-        foreach ($this->perms() as $perm) {
+        foreach ($this->domainPermissions() as $perm) {
             Permission::updateOrCreate([
                 'name' => $perm['name'],
             ], $perm);
         }
     }
 
-    public function perms()
+    /**
+     * Permissions used for specific business logic related actions.
+     *
+     * @return array
+     */
+    public function domainPermissions()
     {
         $perms = [];
 
-        foreach ($this->entityModels() as $entityModel) {
+        foreach ($this->resources() as $entityModel) {
             $crud  = $this->crudPermission($entityModel);
             $perms = array_merge($perms, $crud);
         }
@@ -64,7 +68,7 @@ class RequiredPermissionsTableSeeder extends Seeder
             ],
             [
                 'name'         => 'care-plan-approve',
-                'display_name' => 'Approve Careplans',
+                'display_name' => 'Approve all Careplans for a given Practice.',
                 'description'  => 'Can approve CarePlans with status qa_approved. Changes the CarePlan status to provider_approved.',
             ],
             [
@@ -92,86 +96,98 @@ class RequiredPermissionsTableSeeder extends Seeder
 
     }
 
-    private function crudPermission($entityModel): array
+    /**
+     * Create CRUD permissions for a Resource.
+     *
+     * @param $resource
+     *
+     * @return array
+     */
+    private function crudPermission($resource): array
     {
         return [
             [
-                'name'         => "$entityModel.create",
-                'display_name' => ucfirst($entityModel) . " - " . "Create",
-                'description'  => "Create a $entityModel.",
+                'name'         => "$resource.create",
+                'display_name' => ucfirst($resource) . " - " . "Create",
+                'description'  => "Create a $resource.",
             ],
             [
-                'name'         => "$entityModel.read",
-                'display_name' => ucfirst($entityModel) . " - " . "Read",
-                'description'  => "Read a $entityModel.",
+                'name'         => "$resource.read",
+                'display_name' => ucfirst($resource) . " - " . "Read",
+                'description'  => "Read a $resource.",
             ],
             [
-                'name'         => "$entityModel.update",
-                'display_name' => ucfirst($entityModel) . " - " . "Update",
-                'description'  => "Update a $entityModel.",
+                'name'         => "$resource.update",
+                'display_name' => ucfirst($resource) . " - " . "Update",
+                'description'  => "Update a $resource.",
             ],
             [
-                'name'         => "$entityModel.delete",
-                'display_name' => ucfirst($entityModel) . " - " . "Delete",
-                'description'  => "Delete a $entityModel.",
+                'name'         => "$resource.delete",
+                'display_name' => ucfirst($resource) . " - " . "Delete",
+                'description'  => "Delete a $resource.",
             ],
         ];
     }
 
-    private function entityModels()
+    /**
+     * The Resources (Models) we are creating CRUD permissions for.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function resources()
     {
         return collect([
-            "note",
-            "call",
-            "activity",
-            "biometric",
-            "allergy",
-            "symptom",
-            "lifestyle",
-            "misc",
-            "appointment",
-            "provider",
-            "ccda",
-            "medication",
-            "patientProblem",
-            "patient",
-            "careplan",
-            "instruction",
-            "observation",
-            "user",
-            "location",
-            "practice",
-            "nurse",
-            "role",
-            "practiceStaff",
-            "chargeableService",
-            "invite",
-            "enrollee",
-            "careplanAssessment",
-            "patientSummary",
-            "carePerson",
-            "careplan-pdf",
-            "workHours",
-            "emailSettings",
-            "addendum",
-            "batch",
-            "saas",
-            "ambassador",
-            "salesReport",
-            "ethnicityReport",
-            "opsReport",
-            "practiceInvoice",
-            "excelReport",
-            "appConfig",
-            "family",
-            "permission",
-            "nurseInvoice",
-            "comment",
-            "nurseContactWindow",
-            "nurseHoliday",
-            "practiceSetting",
-            "medicationGroup",
-            "nurseReport",
+            'note',
+            'call',
+            'activity',
+            'biometric',
+            'allergy',
+            'symptom',
+            'lifestyle',
+            'misc',
+            'appointment',
+            'provider',
+            'ccda',
+            'medication',
+            'patientProblem',
+            'patient',
+            'careplan',
+            'instruction',
+            'observation',
+            'user',
+            'location',
+            'practice',
+            'nurse',
+            'role',
+            'practiceStaff',
+            'chargeableService',
+            'invite',
+            'enrollee',
+            'careplanAssessment',
+            'patientSummary',
+            'carePerson',
+            'careplan-pdf',
+            'workHours',
+            'emailSettings',
+            'addendum',
+            'batch',
+            'saas',
+            'ambassador',
+            'salesReport',
+            'ethnicityReport',
+            'opsReport',
+            'practiceInvoice',
+            'excelReport',
+            'appConfig',
+            'family',
+            'permission',
+            'nurseInvoice',
+            'comment',
+            'nurseContactWindow',
+            'nurseHoliday',
+            'practiceSetting',
+            'medicationGroup',
+            'nurseReport',
         ]);
     }
 }

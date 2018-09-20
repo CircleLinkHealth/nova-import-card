@@ -9,6 +9,7 @@
 namespace App\Algorithms\Calls;
 
 use App\Call;
+use App\Patient;
 use App\PatientContactWindow;
 use App\Services\Calls\SchedulerService;
 use Carbon\Carbon;
@@ -73,7 +74,7 @@ class ReschedulerHandler
         foreach ($calls as $call) {
             $end_carbon = Carbon::parse($call->scheduled_date);
 
-            $carbon_hour_end = Carbon::parse($call->window_end)->format('H');
+            $carbon_hour_end    = Carbon::parse($call->window_end)->format('H');
             $carbon_minutes_end = Carbon::parse($call->window_end)->format('i');
 
             $end_time = $end_carbon->setTime($carbon_hour_end, $carbon_minutes_end)->toDateTimeString();
@@ -101,7 +102,16 @@ class ReschedulerHandler
                 $patient = $call->inboundUser
                     ->patientInfo;
 
-                if (is_object($patient)) {
+                if (is_a($patient, Patient::class)) {
+                    if ($patient->hasFamilyId()) {
+                        //a call might have already been scheduled for this patient, since its family
+                        //so just skip this patient
+                        $familyCall = $this->schedulerService->getScheduledCallForPatient($patient->user);
+                        if ($familyCall) {
+                            continue;
+                        }
+                    }
+
                     //this will give us the first available call window from the date the logic offsets, per the patient's preferred times.
                     $next_predicted_contact_window = (new PatientContactWindow)->getEarliestWindowForPatientFromDate(
                         $patient,
@@ -112,18 +122,9 @@ class ReschedulerHandler
                     $window_end   = Carbon::parse($next_predicted_contact_window['window_end'])->format('H:i');
                     $day          = Carbon::parse($next_predicted_contact_window['day'])->toDateString();
 
-                    $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
-                        $patient->user->id,
-                        $window_start,
-                        $window_end,
-                        $day,
-                        'rescheduler algorithm',
-                        $call->outbound_cpm_id
-                            ? $call->outbound_cpm_id
-                            : null,
-                        '',
-                        false
-                    );
+                    $this->storeNewCallForPatient($patient, $call, $window_start, $window_end, $day);
+                    $this->storeNewCallForFamilyMembers($patient, $call, $window_start, $window_end, $day);
+
                 }
             } catch (\Exception $exception) {
                 \Log::critical($exception);
@@ -131,5 +132,40 @@ class ReschedulerHandler
                 continue;
             }
         }
+    }
+
+    private function storeNewCallForFamilyMembers(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    {
+        if ( ! $patient->hasFamilyId()) {
+            return;
+        }
+
+        $familyMembers = $patient->getFamilyMembers($patient);
+        if ( ! empty($familyMembers)) {
+            foreach ($familyMembers as $familyMember) {
+                $familyMemberCall = $this->schedulerService->getScheduledCallForPatient($familyMember->user);
+                //if manually scheduled by nurse or admin, do not do anything
+                if ($familyMemberCall && $familyMemberCall->is_manual) {
+                    continue;
+                }
+                $this->storeNewCallForPatient($familyMember, $oldCall, $window_start, $window_end, $day);
+            }
+        }
+    }
+
+    private function storeNewCallForPatient(Patient $patient, $oldCall, $window_start, $window_end, $day)
+    {
+        $this->rescheduledCalls[] = $this->schedulerService->storeScheduledCall(
+            $patient->user->id,
+            $window_start,
+            $window_end,
+            $day,
+            'rescheduler algorithm',
+            $oldCall->outbound_cpm_id
+                ? $oldCall->outbound_cpm_id
+                : null,
+            '',
+            false
+        );
     }
 }

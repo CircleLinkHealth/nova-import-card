@@ -5,6 +5,7 @@ namespace App\Filters;
 use App\CarePerson;
 use App\CarePlan;
 use App\Patient;
+use App\PatientMonthlySummary;
 use App\Practice;
 use App\Repositories\PatientReadRepository;
 use Carbon\Carbon;
@@ -158,11 +159,22 @@ class PatientFilters extends QueryFilters
 
     public function sort_ccm($type = null)
     {
-        $patientTable = (new Patient())->getTable();
+        $joinTable = (new PatientMonthlySummary())->getTable();
+        $date      = Carbon::now()->startOfMonth();
 
-        return $this->builder->select('users.*')->with('patientInfo')->join($patientTable, 'users.id', '=',
-            "$patientTable.user_id")
-                             ->orderBy("$patientTable.cur_month_activity_time", $type)->groupBy('users.id');
+        return $this->builder
+            ->select('users.*')
+            ->with([
+                'patientSummaries' => function ($q) use ($date) {
+                    return $q->where('month_year', '=', $date);
+                },
+            ])
+            ->leftJoin($joinTable, function ($join) use ($joinTable, $date) {
+                $join->on('users.id', '=', "$joinTable.patient_id")
+                     ->where("$joinTable.month_year", '=', $date);
+            })
+            ->orderBy("$joinTable.ccm_time", $type)
+            ->groupBy('users.id');
     }
 
     public function excel()
@@ -208,8 +220,9 @@ class PatientFilters extends QueryFilters
                   })
                   ->orWhere(function ($subQuery) use ($date) {
                       $subQuery->where('ccm_status', Patient::WITHDRAWN)
-                               ->where('date_withdrawn', 'LIKE', "%$date%");}
-                               );
+                               ->where('date_withdrawn', 'LIKE', "%$date%");
+                  }
+                  );
         });
     }
 

@@ -400,7 +400,7 @@ class NotesController extends Controller
                     );
                 }
 
-                $seconds = $patient->patientInfo()->first()->cur_month_activity_time;
+                $seconds = $patient->ccm_time;
 
                 $ccm_complex = $patient->isCCMComplex() ?? false;
 
