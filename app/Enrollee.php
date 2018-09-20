@@ -453,4 +453,9 @@ class Enrollee extends \App\BaseModel
     {
         return $this->hasOne(TargetPatient::class);
     }
+
+    public function eligibilityJob()
+    {
+        return $this->belongsTo(EligibilityJob::class);
+    }
 }

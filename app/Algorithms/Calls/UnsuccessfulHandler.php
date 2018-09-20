@@ -59,7 +59,7 @@ class UnsuccessfulHandler implements CallHandler
     ) {
         $this->week         = $initTime->weekOfMonth;
         $this->patient      = $calledPatient;
-        $this->ccmTime      = $calledPatient->cur_month_activity_time;
+        $this->ccmTime      = $calledPatient->user->ccm_time;
         $this->nextCallDate = $initTime;
         $this->logic        = '';
         $this->attemptNote  = '';

@@ -102,19 +102,19 @@ class PracticeStaffController extends Controller
             'first_name'                          => $user->first_name,
             'full_name'                           => $user->display_name,
             'phone_number'                        => $phone->number ?? '',
-            'phone_extension'                     => $phone->extension ?? '',
-            'phone_type'                          => array_search(
+            'phone_extension'        => $phone->extension ?? '',
+            'phone_type'             => array_search(
                                                          $phone->type ?? '',
                                                          PhoneNumber::getTypes()
                                                      ) ?? '',
-            'grantAdminRights'                    => $permissions->pivot->has_admin_rights ?? false,
-            'sendBillingReports'                  => $permissions->pivot->send_billing_reports ?? false,
-            'canApproveAllCareplans'              => $user->hasPermission('care-plan-approve'),
-            'role_name'                           => $roles[$roleId]->name,
-            'role_display_name'                   => $roles[$roleId]->display_name,
-            'locations'                           => $user->locations->pluck('id'),
-            'emr_direct_address'                  => $user->emr_direct_address,
-            'forward_alerts_to'                   => [
+            'grantAdminRights'       => $permissions->pivot->has_admin_rights ?? false,
+            'sendBillingReports'     => $permissions->pivot->send_billing_reports ?? false,
+            'canApproveAllCareplans' => $user->canApproveCarePlans(),
+            'role_name'              => $roles[$roleId]->name,
+            'role_display_name'      => $roles[$roleId]->display_name,
+            'locations'              => $user->locations->pluck('id'),
+            'emr_direct_address'     => $user->emr_direct_address,
+            'forward_alerts_to'      => [
                 'who'      => $forwardAlertsToContactUsers->keys()->first() ?? 'billing_provider',
                 'user_ids' => $forwardAlertsToContactUsers->values()->first() ?? [],
             ],

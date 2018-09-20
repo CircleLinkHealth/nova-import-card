@@ -244,4 +244,14 @@ class PatientCallManagementController extends Controller
     {
         return view('admin.patientCallManagement.remix');
     }
+
+    /**
+     * Newer Calls page with lazy-loading and view table.
+     *
+     * @return Response
+     */
+    public function remixV2(Request $request)
+    {
+        return view('admin.patientCallManagement.remixV2');
+    }
 }

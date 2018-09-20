@@ -253,7 +253,7 @@
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'in-addition-@{{index}}',
-                                    'label' => 'Someone else in addition to provider.',
+                                    'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_alerts_to][who]',
                                     'value' => App\User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [
@@ -331,7 +331,7 @@
                             <div>
                                 @include('provider.partials.mdl.form.radio', [
                                     'id' => 'cp-emails-in-addition-@{{index}}',
-                                    'label' => 'Someone else in addition to provider.',
+                                    'label' => 'Notify others in addition to provider.',
                                     'name' => 'users[@{{index}}][forward_careplan_approval_emails_to][who]',
                                     'value' => App\User::FORWARD_CAREPLAN_APPROVAL_EMAILS_IN_ADDITION_TO_PROVIDER,
                                     'attributes' => [

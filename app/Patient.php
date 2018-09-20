@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $birth_date
  * @property string|null $ccm_status
  * @property string|null $consent_date
- * @property string|null $cur_month_activity_time
  * @property string|null $gender
  * @property \Carbon\Carbon|null $date_paused
  * @property \Carbon\Carbon|null $date_withdrawn
@@ -54,7 +53,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\Family|null $family
  * @property mixed $address
  * @property mixed $city
- * @property-read mixed $current_month_c_c_m_time
  * @property mixed $first_name
  * @property mixed $last_name
  * @property mixed $state
@@ -177,7 +175,6 @@ class Patient extends BaseModel
         'ccm_status',
         'paused_letter_printed_at',
         'consent_date',
-        'cur_month_activity_time',
         'gender',
         'date_paused',
         'date_withdrawn',
@@ -366,6 +363,14 @@ class Patient extends BaseModel
         $this->save();
     }
 
+    /**
+     * Get family members of a patient.
+     * TODO: remove patient argument, since its a function of the Patient class. Or, make it a static function.
+     *
+     * @param Patient $patient
+     *
+     * @return array|static
+     */
     public function getFamilyMembers(Patient $patient)
     {
 
@@ -381,17 +386,6 @@ class Patient extends BaseModel
         }
 
         return [];
-    }
-
-    public function getCurrentMonthCCMTimeAttribute()
-    {
-        $seconds     = $this->cur_month_activity_time;
-        $H           = floor($seconds / 3600);
-        $i           = ($seconds / 60) % 60;
-        $s           = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-
-        return $monthlyTime;
     }
 
     public function getLastCallStatusAttribute()
@@ -484,6 +478,10 @@ class Patient extends BaseModel
             $timeFrom,
             $timeTo
         );
+    }
+
+    public function hasFamilyId() {
+        return $this->family_id != null;
     }
 
     public function scopeHasFamily($query)
@@ -614,8 +612,7 @@ class Patient extends BaseModel
             'date_withdrawn'          => optional($this->date_withdrawn)->format('c'),
             'date_unreachable'        => optional($this->date_unreachable)->format('c'),
             'created_at'              => optional($this->created_at)->format('c'),
-            'updated_at'              => optional($this->updated_at)->format('c'),
-            'cur_month_activity_time' => $this->cur_month_activity_time,
+            'updated_at'              => optional($this->updated_at)->format('c')
         ];
     }
 }

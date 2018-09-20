@@ -1,6 +1,9 @@
 {
   "private": true,
   "scripts": {
+    "build": "composer install && php artisan migrate && npm install && bower install",
+    "build-dev": "npm run build && npm run dev && php artisan ide-helper:generate && php artisan ide-helper:meta",
+    "build-prod": "npm run build && npm run prod",
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",

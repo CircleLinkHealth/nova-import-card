@@ -19,14 +19,12 @@ class PatientInfo extends Resource
             'id'                                  => $this->id,
             'birth_date'                          => $this->birth_date,
             'ccm_status'                          => $this->ccm_status,
-            'cur_month_activity_time'             => $this->cur_month_activity_time,
             'gender'                              => $this->gender,
             'general_comment'                     => $this->general_comment,
             'last_call_status'                    => $this->last_call_status,
             'last_contact_time'                   => $this->last_contact_time,
             'last_successful_contact_time'        => $this->last_successful_contact_time,
             'no_call_attempts_since_last_success' => $this->no_call_attempts_since_last_success,
-
             'contact_windows'   => PatientContactWindows::collection($this->whenLoaded('contactWindows')),
         ];
     }

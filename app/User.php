@@ -129,7 +129,6 @@ use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
  * @property-read mixed $ccm_time
  * @property-read mixed $bhi_time
  * @property mixed $consent_date
- * @property mixed $cur_month_activity_time
  * @property mixed $daily_reminder_areas
  * @property mixed $daily_reminder_optin
  * @property mixed $daily_reminder_time
@@ -1188,20 +1187,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $to   = new DateTime('today');
 
         return $from->diff($to)->y;
-    }
-
-    public function getCurMonthActivityTimeAttribute()
-    {
-        return $this->patientInfo->cur_month_activity_time;
-    }
-
-    public function setCurMonthActivityTimeAttribute($value)
-    {
-        if ( ! $this->patientInfo) {
-            return '';
-        }
-        $this->patientInfo->cur_month_activity_time = $value;
-        $this->patientInfo->save();
     }
 
     public function getPreferredContactTimeAttribute()
@@ -2587,9 +2572,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function canApproveCarePlans()
     {
-        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id)
-               || ($this->hasRoleForSite('registered-nurse',
-                    $this->primary_practice_id) && $this->primaryPractice->settings[0]->rn_can_approve_careplans);
+        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id);
     }
 
     public function canQAApproveCarePlans()
@@ -3141,5 +3124,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                && $patient->isLegacyBhiEligible()
                && $patient->billingProviderUser()
                && ($patient->hasScheduledCallToday() && ! Cache::has($this->getLegacyBhiNursePatientCacheKey($patient->id)));
+    }
+
+    /**
+     * Get the User's Problems to populate the User header
+     *
+     * @return array
+     */
+    public function getProblemsToMonitor()
+    {
+        return $this->ccdProblems
+            ->sortBy('cpmProblem.name')
+            ->pluck('cpmProblem.name', 'cpmProblem.id')
+            ->all();
     }
 }

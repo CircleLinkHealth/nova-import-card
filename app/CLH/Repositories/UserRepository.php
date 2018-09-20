@@ -15,16 +15,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
+class UserRepository
 {
-    public function model()
-    {
-        return app(User::class);
-    }
-
     public function exists($id)
     {
-        return ! ! $this->model()->find($id);
+        return User::where('id', $id)->exists();
     }
 
     public function createNewUser(
@@ -173,6 +168,7 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         // add nurse info
         if ($user->hasRole('care-center') && ! $user->nurseInfo) {
             $nurseInfo          = new Nurse;
+            $nurseInfo->status  = 'active';
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
@@ -363,17 +359,16 @@ class UserRepository implements \App\CLH\Contracts\Repositories\UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $history = $user->passwordsHistory;
+        $history          = $user->passwordsHistory;
         $previousPassword = $params->get('old-password');
         if ($history) {
             if ($previousPassword) {
                 $history->older_password = $history->old_password;
-                $history->old_password = bcrypt($previousPassword);
+                $history->old_password   = bcrypt($previousPassword);
                 $history->save();
             }
-        }
-        else {
-            $history = new UserPasswordsHistory();
+        } else {
+            $history          = new UserPasswordsHistory();
             $history->user_id = $user->id;
             $history->save();
         }

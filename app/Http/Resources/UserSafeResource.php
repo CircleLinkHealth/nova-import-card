@@ -38,6 +38,8 @@ class UserSafeResource extends Resource
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,
             'phone' => $this->phone ?? optional($phone)->number,
+            'ccm_time' => $this->ccm_time,
+            'bhi_time' => $this->bhi_time,
             'created_at' => optional($this->created_at)->format('c') ?? null,
             'updated_at' => optional($this->updated_at)->format('c') ?? null
         ];

@@ -14,6 +14,7 @@ use App\Models\CPM\CpmProblem;
 use App\Patient;
 use App\Practice;
 use App\Role;
+use App\SaasAccount;
 use Carbon\Carbon;
 use Faker\Factory;
 
@@ -80,6 +81,14 @@ trait SetupTestCustomer
             'term_days'                => 30,
         ]);
 
+        $saas = SaasAccount::firstOrCreate([
+            'name' => 'CircleLink Health',
+            'slug' => 'circlelink-health',
+        ]);
+
+        $practice->saasAccount()->associate($saas);
+        $practice->save();
+
         return $practice;
     }
 
@@ -104,7 +113,8 @@ trait SetupTestCustomer
 
 
         //attach problems, summaries, chargeable services
-        $problemIds = CpmProblem::get()->pluck('id');
+        $problems   = CpmProblem::get();
+        $problemIds = $problems->pluck('id');
         $months     = collect([1, 2, 3, 4, 5, 6]);
 
         $patient->patientSummaries()->create([
@@ -114,13 +124,25 @@ trait SetupTestCustomer
             'actor_id'   => 1,
         ]);
         $patient->chargeableServices()->attach(1);
-        $patient->cpmProblems()->attach($problemIds->random(5)->all());
+
+        $problems
+            ->random(5)
+            ->each(function ($p) use ($patient) {
+                $patient->ccdProblems()
+                        ->create([
+                            'is_monitored'   => true,
+                            'name'           => $p->name,
+                            'cpm_problem_id' => $p->id,
+                        ]);
+            });
+
 
         //careplan
         $patient->carePlan()->create([
             'mode'                  => CarePlan::WEB,
             'care_plan_template_id' => 1,
-            'status'                => CarePlan::DRAFT,
+            'status'                => CarePlan::PROVIDER_APPROVED,
+            'provider_date'         => Carbon::now(),
         ]);
 
         //activities
@@ -135,7 +157,7 @@ trait SetupTestCustomer
         $patient->activities()->createMany([
             [
                 'provider_id'   => $providerId,
-                'logger_id'   => 0,
+                'logger_id'     => 0,
                 'type'          => $activityType->random(),
                 'duration'      => $activityDuration->random(),
                 'duration_unit' => 'seconds',
@@ -143,7 +165,7 @@ trait SetupTestCustomer
             ],
             [
                 'provider_id'   => $providerId,
-                'logger_id'   => 0,
+                'logger_id'     => 0,
                 'type'          => $activityType->random(),
                 'duration'      => $activityDuration->random(),
                 'duration_unit' => 'seconds',
@@ -199,7 +221,6 @@ trait SetupTestCustomer
 
         return $admin;
     }
-
 
 
     /**
