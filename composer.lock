@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "f8d3da5dbe8a199477cc348060ac323c",
@@ -216,16 +216,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.67.12",
+            "version": "3.67.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cdc7180ae87b23d8b34eb8eb8176002081b32c3d"
+                "reference": "527f7e6105ccfc27fd6d27aacdcaa293e66a4a96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cdc7180ae87b23d8b34eb8eb8176002081b32c3d",
-                "reference": "cdc7180ae87b23d8b34eb8eb8176002081b32c3d",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/527f7e6105ccfc27fd6d27aacdcaa293e66a4a96",
+                "reference": "527f7e6105ccfc27fd6d27aacdcaa293e66a4a96",
                 "shasum": ""
             },
             "require": {
@@ -292,7 +292,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-09-13T18:34:42+00:00"
+            "time": "2018-09-19T18:53:48+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1153,16 +1153,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.9.13",
+            "version": "8.9.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "cb4e0cf25f742a838b9d53ed6a7088c4f24086f3"
+                "reference": "338f988183bee1e85ec7b4ef425a3e64a7604473"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/cb4e0cf25f742a838b9d53ed6a7088c4f24086f3",
-                "reference": "cb4e0cf25f742a838b9d53ed6a7088c4f24086f3",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/338f988183bee1e85ec7b4ef425a3e64a7604473",
+                "reference": "338f988183bee1e85ec7b4ef425a3e64a7604473",
                 "shasum": ""
             },
             "require": {
@@ -1176,7 +1176,7 @@
                 "pear/versioncontrol_git": "^0.5",
                 "phing/phing": "^2.7",
                 "php-coveralls/php-coveralls": "^1.0|^2.0",
-                "phpunit/phpunit": "^4.8|^5.0",
+                "phpunit/phpunit": "^4.8.36|^5.0",
                 "symfony/console": "^2.8|^3.0"
             },
             "type": "library",
@@ -1217,7 +1217,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2018-09-10T15:26:43+00:00"
+            "time": "2018-09-19T15:54:29+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -1366,16 +1366,16 @@
         },
         {
             "name": "google/auth",
-            "version": "v1.3.3",
+            "version": "v1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "af72b3f50420c801dc35cc07b1fa429ae027b847"
+                "reference": "196237248e636a3554a7d9e4dfddeb97f450ab5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/af72b3f50420c801dc35cc07b1fa429ae027b847",
-                "reference": "af72b3f50420c801dc35cc07b1fa429ae027b847",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/196237248e636a3554a7d9e4dfddeb97f450ab5c",
+                "reference": "196237248e636a3554a7d9e4dfddeb97f450ab5c",
                 "shasum": ""
             },
             "require": {
@@ -1409,7 +1409,7 @@
                 "google",
                 "oauth2"
             ],
-            "time": "2018-08-27T19:47:35+00:00"
+            "time": "2018-09-17T20:29:21+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3936,16 +3936,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.0.3",
+            "version": "v4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d"
+                "reference": "fa6ee28600d21d49b2b4e1006b48426cec8e579c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd088dc940a418f09cda079a9b5c7c478890fb8d",
-                "reference": "bd088dc940a418f09cda079a9b5c7c478890fb8d",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/fa6ee28600d21d49b2b4e1006b48426cec8e579c",
+                "reference": "fa6ee28600d21d49b2b4e1006b48426cec8e579c",
                 "shasum": ""
             },
             "require": {
@@ -3983,7 +3983,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2018-07-15T17:25:16+00:00"
+            "time": "2018-09-18T07:03:24+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -9550,8 +9550,7 @@
             "authors": [
                 {
                     "name": "Chris Boulton",
-                    "homepage": "http://github.com/chrisboulton",
-                    "role": "Original developer"
+                    "homepage": "http://github.com/chrisboulton"
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
