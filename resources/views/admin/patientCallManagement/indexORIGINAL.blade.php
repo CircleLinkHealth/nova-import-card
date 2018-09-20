@@ -146,7 +146,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}
+                                                {{ $call->inboundUser->ccm_time }}
                                             @else
                                                 <em style="color:red;">-</em>
                                             @endif

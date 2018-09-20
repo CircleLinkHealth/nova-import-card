@@ -164,8 +164,8 @@
                                                             @endif
                                                         </td>
                                                         <td>
-                                                            @if( $call->inboundUser && $call->inboundUser->patientInfo)
-                                                                {{ $call->inboundUser->patientInfo->currentMonthCCMTime }}
+                                                            @if( $call->inboundUser)
+                                                                {{ $call->inboundUser->ccm_time }}
                                                             @else
                                                                 <em style="color:red;">-</em>
                                                             @endif

@@ -1,11 +1,11 @@
 <?php namespace App\Http\Controllers\Admin\Reports;
 
 use App\Call;
+use App\Filters\CallFilters;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Excel;
 use Illuminate\Http\Request;
-use App\Filters\CallFilters;
 
 class CallReportController extends Controller
 {
@@ -130,7 +130,7 @@ class CallReportController extends Controller
 
                 foreach ($calls as $call) {
                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                        $ccmTime = substr($call->inboundUser->patientInfo->currentMonthCCMTime, 1);
+                        $ccmTime = substr($call->inboundUser->ccm_time, 1);
                     } else {
                         $ccmTime = 'n/a';
                     }
