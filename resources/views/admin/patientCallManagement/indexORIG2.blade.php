@@ -145,7 +145,7 @@
                                         </td>
                                         <td>
                                             @if($call->inboundUser)
-                                                {{ $call->inboundUser->ccm_time }}
+                                                {{ $call->inboundUser->formattedCcmTime() }}
                                             @else
                                                 <em style="color:red;">-</em>
                                             @endif
