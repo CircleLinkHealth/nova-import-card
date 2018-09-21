@@ -9,6 +9,7 @@ use App\Models\MedicalRecords\Ccda;
 use App\Services\AthenaAPI\Calls;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\MedicalRecords\ImportService;
+use App\ValueObjects\BlueButtonMedicalRecord\MedicalRecord;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -176,6 +177,22 @@ class ImportConsentedEnrollees implements ShouldQueue
     private function importFromEligibilityJob(Enrollee $enrollee, EligibilityJob $job)
     {
         $service = app(ImportService::class);
+
+        // Just another hack
+        // To import CLH JSON format
+        // @todo: Need to consolidate functionality from [Enrollees, EligibilityJobs, CCDAs, TabularMedicalRecords, _logs, _imports, phx tables]
+        if ($job->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
+            $mr = new MedicalRecord($job, $enrollee->practice);
+
+            $tmr = Ccda::create([
+                'practice_id' => $enrollee->practice->id,
+                'location_id' => $enrollee->practice->primary_location_id,
+                'mrn'         => $job->data['patient_id'],
+                'json'        => $mr->toJson(),
+            ]);
+
+            return $tmr->import();
+        }
 
         $imr = $service->createTabularMedicalRecordAndImport($job->data, $enrollee->practice);
 

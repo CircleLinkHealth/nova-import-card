@@ -2411,6 +2411,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                )->ccm_time ?? 0;
     }
 
+    public function formattedCcmTime()
+    {
+        $seconds     = $this->ccm_time;
+        $H           = floor($seconds / 3600);
+        $i           = ($seconds / 60) % 60;
+        $s           = $seconds % 60;
+        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+
+        return $monthlyTime;
+    }
+
     public function getBhiTimeAttribute()
     {
         return optional(

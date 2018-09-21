@@ -875,6 +875,23 @@ if ( ! function_exists('validProblemName')) {
     }
 }
 
+if ( ! function_exists('validAllergyName')) {
+    /**
+     * Is the allergy name valid
+     *
+     * @param $name
+     *
+     * @return boolean
+     */
+    function validAllergyName($name)
+    {
+        return ! str_contains(strtolower($name), [
+            'no known',
+            'none',
+        ]);
+    }
+}
+
 if ( ! function_exists('showDiabetesBanner')) {
     function showDiabetesBanner($patient, $noShow = null)
     {
