@@ -129,8 +129,8 @@ class CallReportController extends Controller
                 $sheet->appendRow($userColumns);
 
                 foreach ($calls as $call) {
-                    if ($call->inboundUser && $call->inboundUser->patientInfo) {
-                        $ccmTime = substr($call->inboundUser->ccm_time, 1);
+                    if ($call->inboundUser) {
+                        $ccmTime = $call->inboundUser->formattedCcmTime();
                     } else {
                         $ccmTime = 'n/a';
                     }
