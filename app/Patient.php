@@ -615,4 +615,9 @@ class Patient extends BaseModel
             'updated_at'              => optional($this->updated_at)->format('c')
         ];
     }
+
+    public function dob()
+    {
+        return Carbon::parse($this->birth_date)->format('m/d/Y');
+    }
 }
