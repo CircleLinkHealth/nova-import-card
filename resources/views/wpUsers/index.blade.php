@@ -181,7 +181,6 @@
                                 <td><strong>Role</strong></td>
                                 <td><strong>Email</strong></td>
                                 <td><strong>Program</strong></td>
-                                <td><strong>CCM Status</strong></td>
                                 <td><strong>Actions</strong></td>
                             </tr>
                             </thead>
@@ -203,11 +202,6 @@
                                             @if ($wpUser->primaryPractice)
                                                 <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if ($wpUser->patientInfo)
-                                                {{ $wpUser->patientInfo->ccm_status }}
                                             @endif
                                         </td>
                                         <td class="text-right">
