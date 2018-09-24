@@ -20,8 +20,7 @@ class CarePlanWasApproved extends Event
     public function __construct(User $patient)
     {
         $this->patient          = $patient;
-        $this->practiceSettings = $patient->carePlan
-            ->patient
+        $this->practiceSettings = $patient
             ->primaryPractice
             ->cpmSettings();
     }
