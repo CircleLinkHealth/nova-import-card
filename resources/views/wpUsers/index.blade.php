@@ -1,10 +1,78 @@
 @extends('partials.adminUI')
 
 @section('content')
+
+    @push('styles')
+
+        <style>
+            .hidden {
+                display: none;
+            }
+
+            #withdrawal-note {
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+        </style>
+
+    @endpush
+
     @push('scripts')
         <script type="text/javascript" src="{{ asset('/js/wpUsers/wpUsers.js') }}"></script>
+        <script>
+
+            function onActionChange(e) {
+
+                if (e.target.value === "withdraw") {
+                    $('#withdrawal-note').removeClass('hidden');
+                    $('#select-all-container').removeClass('hidden');
+                }
+                else {
+                    $('#withdrawal-note').addClass('hidden');
+                    $('#select-all-container').addClass('hidden');
+                }
+
+            }
+
+            function onActionSubmit(e) {
+                e.preventDefault();
+
+                const form = this.form;
+
+                const applyActionToAll = $('#apply-to-all-filters');
+                if (applyActionToAll.is(':checked')) {
+
+                    form['filterRole'].value = $('#filterRole').val();
+                    form['filterProgram'].value = $('#filterProgram').val();
+                }
+
+                if (form['action'].value !== "withdraw") {
+                    form.submit();
+                }
+                else {
+                    if (form['withdrawal-note-body'].value.length === 0) {
+                        alert('Please type a withdrawal note.')
+                    }
+                    else if (confirm('Are you sure?')) {
+                        form.submit();
+                    }
+                }
+            }
+
+            function selectAllUsers(e) {
+                $('.user-select-checkbox').prop('checked', e.target.checked);
+            }
+
+            $('document').ready(function () {
+                $('#perform-action-select').on('change', onActionChange);
+                $('#perform-action-submit').on('click', onActionSubmit);
+                $('#apply-to-all-filters').on('change', selectAllUsers);
+                $('a.my-tool-tip').tooltip();
+            });
+
+        </script>
     @endpush
-    
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -15,7 +83,8 @@
                     @if(Cerberus::hasPermission('user.create'))
                         <div class="col-sm-10">
                             <div class="pull-right" style="margin:20px;">
-                                <a href="{{ route('admin.users.create', array()) }}" class="btn btn-success">New User</a>
+                                <a href="{{ route('admin.users.create', array()) }}" class="btn btn-success">New
+                                    User</a>
                                 {{-- <a href="{{ route('admin.users.createQuickPatient', array('primaryProgramId' => '7')) }}" class="btn btn-success">Participant Quick Add (Program 7)</a> --}}
                             </div>
                         </div>
@@ -28,35 +97,40 @@
 
                         <div class="row">
                             {!! Form::open(array('url' => route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
-                                <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapseFilter">Toggle Filters</a><br /><br />
-                                <div id="collapseFilter" class="panel-collapse collapse">
-                                    <div class="row" style="margin:20px 0px 40px 0px;">
-                                        <div class="col-md-8 col-md-offset-2">
-                                            <div class="row">
-                                                <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
-                                                <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
+                            <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion"
+                               href="#collapseFilter">Toggle Filters</a><br/><br/>
+                            <div id="collapseFilter" class="panel-collapse collapse">
+                                <div class="row" style="margin:20px 0px 40px 0px;">
+                                    <div class="col-md-8 col-md-offset-2">
                                         <div class="row">
-                                            <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                            <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
-                                        </div>
-                                    </div>
-                                    <div class="row" style="margin-top:50px;">
-                                        <div class="col-sm-12">
-                                            <div class="" style="text-align:center;">
-                                                {!! Form::hidden('action', 'filter') !!}
-                                                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-sort"></i> Apply Filters</button>
-                                                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-refresh"></i> Reset Filters</button>
-                                                </form>
-                                            </div>
+                                            <div class="col-xs-4 text-right">{!! Form::label('filterUser', 'Find User:') !!}</div>
+                                            <div class="col-xs-8">{!! Form::select('filterUser', array('all' => 'All Users') + $users, $filterUser, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-xs-2 text-right">{!! Form::label('filterRole', 'Role:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('filterRole', array('all' => 'All Roles') + $roles, $filterRole, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                        <div class="col-xs-2 text-right">{!! Form::label('filterProgram', 'Program:') !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('filterProgram', array('all' => 'All Programs') + $programs, $filterProgram, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top:50px;">
+                                    <div class="col-sm-12">
+                                        <div class="" style="text-align:center;">
+                                            {!! Form::hidden('action', 'filter') !!}
+                                            <button type="submit" class="btn btn-primary"><i
+                                                        class="glyphicon glyphicon-sort"></i> Apply Filters
+                                            </button>
+                                            <button type="submit" class="btn btn-primary"><i
+                                                        class="glyphicon glyphicon-refresh"></i> Reset Filters
+                                            </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             </form>
                         </div>
 
@@ -64,11 +138,40 @@
                         {!! Form::open(array('url' => route('admin.users.doAction', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         @if(Cerberus::hasPermission('user.update'))
                             Selected User Actions:
-                            <select name="action">
-                                <option value="scramble">Scramble</option>
+                            <select id="perform-action-select" name="action">
+                                @if(app()->environment() != 'production')
+                                    <option value="scramble">Scramble</option>
+                                @endif
                                 <option value="delete">Delete</option>
+                                <option value="withdraw">Withdraw</option>
                             </select>
-                            <button type="submit" value="Submit" class="btn btn-primary btn-xs" style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i> Perform Action</button>
+                            <button id="perform-action-submit"
+                                    type="submit" value="Submit"
+                                    class="btn btn-primary btn-xs"
+                                    style="margin-left:10px;"><i class="glyphicon glyphicon-circle-arrow-right"></i>
+                                Perform Action
+                            </button>
+
+                            <div id="withdrawal-note" class="hidden">
+                                <textarea id="withdrawal-note-body" rows="7" cols="100"
+                                          placeholder="Enter Withdrawal Note..." name="withdrawal-note-body"
+                                          required="required" class="form-control"></textarea>
+                            </div>
+
+                            <div id="select-all-container" class="hidden">
+                                <input type="hidden" name="filterRole"/>
+                                <input type="hidden" name="filterProgram"/>
+                                <input type="checkbox" name="apply-to-all-filters" id="apply-to-all-filters"
+                                       value="true">
+                                <label for="apply-to-all-filters">
+                                    Select all
+                                    <a class='my-tool-tip' data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Ignores paging and applies to all users matching the filters">
+                                        <i class='glyphicon glyphicon-info-sign'></i>
+                                    </a>
+                                </label>
+                            </div>
                         @endif
                         <table class="table table-striped">
                             <thead>
@@ -78,6 +181,7 @@
                                 <td><strong>Role</strong></td>
                                 <td><strong>Email</strong></td>
                                 <td><strong>Program</strong></td>
+                                <td><strong>CCM Status</strong></td>
                                 <td><strong>Actions</strong></td>
                             </tr>
                             </thead>
@@ -85,7 +189,8 @@
                             @if (count($wpUsers) > 0)
                                 @foreach( $wpUsers as $wpUser )
                                     <tr>
-                                        <td><input type="checkbox" name="users[]" value="{{ $wpUser->id }}"></td>
+                                        <td><input class="user-select-checkbox" type="checkbox" name="users[]"
+                                                   value="{{ $wpUser->id }}"></td>
                                         <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
                                                class=""> {{ $wpUser->fullNameWithID }}</a></td>
                                         <td>
@@ -98,6 +203,11 @@
                                             @if ($wpUser->primaryPractice)
                                                 <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($wpUser->patientInfo)
+                                                {{ $wpUser->patientInfo->ccm_status }}
                                             @endif
                                         </td>
                                         <td class="text-right">
@@ -123,11 +233,13 @@
                                     </tr>
                                 @endforeach
                             @else
-                                <tr><td colspan="7">No users found</td></tr>
+                                <tr>
+                                    <td colspan="7">No users found</td>
+                                </tr>
                             @endif
                             </tbody>
                         </table>
-                        </form>
+                        {!! Form::close() !!}
 
                         @if (count($wpUsers) > 0)
                             {!! $wpUsers->appends(['action' => 'filter', 'filterUser' => $filterUser, 'filterRole' => $filterRole, 'filterProgram' => $filterProgram])->render() !!}
