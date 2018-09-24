@@ -39,7 +39,7 @@ class ProviderController extends Controller
                                 ->firstOrFail();
 
             if ($carePlan->status == CarePlan::DRAFT && $carePlan->validator()->fails()) {
-                return redirect()->back()->with(['errors' => $carePlan->errors()]);
+                return redirect()->back()->with(['errors' => $carePlan->validator()->errors()]);
             }
         }
 
