@@ -335,9 +335,4 @@ class CarePlan extends BaseModel implements PdfReport
             'billingProvider' => 'required|numeric',
         ]);
     }
-
-    public function errors()
-    {
-        return $this->errors;
-    }
 }
