@@ -583,12 +583,12 @@ class UserController extends Controller
         $action = $params->get('action');
 
         if ( ! $action) {
-            return redirect()->back()->withErrors(["form_error" => "missing action"]);
+            return redirect()->back()->withErrors(["form_error" => "There was an error: Missing 'action' parameter."]);
         }
 
         if ($action == 'scramble' || $action == 'withdraw') {
 
-            $selectAllFromFilters = !empty($params->get('filterRole')) || !empty($params->get('filterProgram'));
+            $selectAllFromFilters = ! empty($params->get('filterRole')) || ! empty($params->get('filterProgram'));
             if ($selectAllFromFilters) {
                 $users = $this->getUsersBasedOnFilters($params);
             } else {
@@ -596,18 +596,18 @@ class UserController extends Controller
             }
 
             if (empty($users)) {
-                return redirect()->back()->withErrors(["form_error" => "missing users"]);
+                return redirect()->back()->withErrors(["form_error" => "There was an error: Users array is empty."]);
             }
 
             if ($action == 'scramble') {
                 $this->scrambleUsers($users);
-                return redirect()->back()->with('messages', ['successfully scrambled users']);
+                return redirect()->back()->with('messages', ['Action [Scramble] was successful']);
             } else if ($action == 'withdraw') {
                 $this->withdrawUsers($users, $params->get('withdrawal-note-body'));
-                return redirect()->back()->with('messages', ['successfully withdrawn users']);
+                return redirect()->back()->with('messages', ['Action [Withdraw] was successful']);
             }
         } else {
-            return redirect()->back()->withErrors(["form_error" => "unhandled action: $action"]);
+            return redirect()->back()->withErrors(["form_error" => "Unhandled action: $action"]);
         }
 
         return redirect()->back();

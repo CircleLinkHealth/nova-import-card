@@ -105,6 +105,10 @@
 
     <div class="container-fluid">
         <div class="row">
+            @include('errors.errors')
+            @include('errors.messages')
+        </div>
+        <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="row">
                     <div class="col-sm-2">
@@ -123,8 +127,6 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Users</div>
                     <div class="panel-body">
-                        @include('errors.errors')
-
                         <div class="row">
                             {!! Form::open(array('url' => route('admin.users.index', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
                             <a class="btn btn-info panel-title" data-toggle="collapse" data-parent="#accordion"
