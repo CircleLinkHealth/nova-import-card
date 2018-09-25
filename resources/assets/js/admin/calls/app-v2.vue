@@ -504,45 +504,74 @@
 
             },
             next() {
-                const $vm = this
-                this.loaders.calls = true
-                return this.axios.get(this.nextPageUrl(), {
-                    cancelToken: new CancelToken((c) => {
-                        if ($vm.tokens.calls) {
-                            $vm.tokens.calls()
-                        }
-                        $vm.tokens.calls = c
+                const $vm = this;
+                $vm.loaders.calls = true;
+                return this.axios
+                    .get(this.nextPageUrl(), {
+                        cancelToken: new CancelToken((c) => {
+                            if ($vm.tokens.calls) {
+                                $vm.tokens.calls()
+                            }
+                            $vm.tokens.calls = c
+                        })
                     })
-                }).then((result) => result).then(result => {
-                    //console.log('calls:response', this.nextPageUrl())
-                    result = result.data;
-                    this.pagination = {
-                        current_page: result.meta.current_page,
-                        from: result.meta.from,
-                        last_page: result.meta.last_page,
-                        last_page_url: result.links.last,
-                        next_page_url: result.links.next,
-                        path: result.meta.path,
-                        per_page: result.meta.per_page,
-                        to: result.meta.to,
-                        total: result.meta.total
-                    }
-                    if (result) {
+                    .then(result => {
+                        //console.log('calls:response', this.nextPageUrl())
+                        result = result.data;
+                        $vm.pagination = {
+                            current_page: result.meta.current_page,
+                            from: result.meta.from,
+                            last_page: result.meta.last_page,
+                            last_page_url: result.links.last,
+                            next_page_url: result.links.next,
+                            path: result.meta.path,
+                            per_page: result.meta.per_page,
+                            to: result.meta.to,
+                            total: result.meta.total
+                        };
+
                         const calls = result.data || [];
-                        if (calls && Array.isArray(calls)) {
-                            const tableCalls = calls.map(this.setupCallNew);
-                            this.tableData = tableCalls;
-                            setTimeout(() => {
-                                $vm.$refs.tblCalls.count = $vm.pagination.total
-                                $vm.loaders.calls = false
-                            }, 1000)
-                            return tableCalls;
+                        const tableCalls = calls.map($vm.setupCallNew);
+                        if (!$vm.tableData.length) {
+                            const arr = $vm.tableData.concat(tableCalls)
+                            const total = (($vm.pagination || {}).total || 0)
+                            $vm.tableData = [...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({
+                                id: arr.length + index + 1,
+                                nurses() {
+                                    return ([])
+                                },
+                                onNurseUpdate() {
+                                },
+                                onAttemptNoteUpdate() {
+                                },
+                                onGeneralCommentUpdate() {
+                                },
+                                onCallTimeStartUpdate() {
+                                },
+                                onCallTimeEndUpdate() {
+                                },
+                                onNextCallUpdate() {
+                                },
+                                loaders: {}
+                            }))]
                         }
-                    }
-                }).catch((err) => {
-                    console.error('calls:response', err)
-                    $vm.loaders.calls = false
-                })
+                        else {
+                            const from = (($vm.pagination || {}).from || 0);
+                            const to = (($vm.pagination || {}).to || 0);
+                            for (let i = from - 1; i < to; i++) {
+                                $vm.tableData[i] = tableCalls[i - from + 1]
+                            }
+                        }
+                        setTimeout(() => {
+                            $vm.$refs.tblCalls.count = $vm.pagination.total;
+                            $vm.loaders.calls = false
+                        }, 1000);
+                        return tableCalls;
+                    })
+                    .catch((err) => {
+                        console.error('calls:response', err)
+                        $vm.loaders.calls = false
+                    })
             }
         },
         mounted() {

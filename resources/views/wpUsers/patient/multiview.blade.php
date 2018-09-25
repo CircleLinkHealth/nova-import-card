@@ -274,23 +274,25 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-4 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
-                        <div class="col-xs-4 col-md-4 print-row">{{$patient->phone}}</div>
-                        <div class="col-xs-4 col-md-4 print-row text-right">{{$today}}</div>
+                        <div class="col-xs-5 print-row text-bold">{{$patient->fullName}}
+                            (DOB: {{$patient->patientInfo->dob()}})
+                        </div>
+                        <div class="col-xs-3 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
                     <div class="row gutter">
                         @if($billingDoctor)
-                            <div class="col-xs-4 print-row text-bold">
+                            <div class="col-xs-5 print-row text-bold">
                                 {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
                             </div>
-                            <div class="col-xs-4 print-row">
+                            <div class="col-xs-3 print-row">
                                 {{$billingDoctor->phone}}
                             </div>
                         @else
-                            <div class="col-xs-4 print-row text-bold">
+                            <div class="col-xs-5 print-row text-bold">
                                 <em>No Billing Dr. Selected</em>
                             </div>
-                            <div class="col-xs-4 print-row">
+                            <div class="col-xs-3 print-row">
                             </div>
                         @endif
                         <div class="col-xs-4 print-row text-bold text-right">{{$patient->getPreferredLocationName()}}</div>
@@ -299,10 +301,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
 
                     @if($regularDoctor)
                         <div class="row gutter">
-                            <div class="col-xs-4 print-row text-bold">
+                            <div class="col-xs-5 print-row text-bold">
                                 {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
                             </div>
-                            <div class="col-xs-4 print-row">
+                            <div class="col-xs-3 print-row">
                                 {{$regularDoctor->phone}}
                             </div>
                         </div>
