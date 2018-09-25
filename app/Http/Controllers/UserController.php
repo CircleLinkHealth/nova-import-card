@@ -588,8 +588,8 @@ class UserController extends Controller
 
         if ($action == 'scramble' || $action == 'withdraw') {
 
-            $selectAll = $params->get('apply-to-all-filters');
-            if ( ! empty($selectAll) && $selectAll === "true") {
+            $selectAllFromFilters = !empty($params->get('filterRole')) || !empty($params->get('filterProgram'));
+            if ($selectAllFromFilters) {
                 $users = $this->getUsersBasedOnFilters($params);
             } else {
                 $users = $params->get('users');

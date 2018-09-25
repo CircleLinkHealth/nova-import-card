@@ -13,6 +13,10 @@
                 margin-top: 5px;
                 margin-bottom: 5px;
             }
+
+            a {
+                cursor: pointer;
+            }
         </style>
 
     @endpush
@@ -39,13 +43,6 @@
 
                 const form = this.form;
 
-                const applyActionToAll = $('#apply-to-all-filters');
-                if (applyActionToAll.is(':checked')) {
-
-                    form['filterRole'].value = $('#filterRole').val();
-                    form['filterProgram'].value = $('#filterProgram').val();
-                }
-
                 if (form['action'].value !== "withdraw") {
                     form.submit();
                 }
@@ -60,14 +57,47 @@
             }
 
             function selectAllUsers(e) {
-                $('.user-select-checkbox').prop('checked', e.target.checked);
+                const checked = e.target.checked;
+                const checkboxes = $('.user-select-checkbox');
+                checkboxes.prop('checked', checked);
+
+                removeFiltersFromForm();
+
+                if (checked) {
+                    $('#select-all-matching-filters').removeClass('hidden');
+                    $('#select-all-in-page-label').text(`${checkboxes.length} users selected.`);
+                }
+                else {
+                    $('#select-all-matching-filters').addClass('hidden');
+                    $('#select-all-in-page-label').text(`Select all`);
+                }
+
+            }
+
+            function selectAllMatchingFilters() {
+                applyFiltersToForm();
+                $('#select-all-matching-filters').addClass('hidden');
+                $('.user-select-checkbox').prop('checked', true);
+                $('#select-all-in-page-label').text(`All users matching the filters are selected`);
+            }
+
+            function applyFiltersToForm() {
+                const form = $('#form-do-action')[0];
+                form['filterRole'].value = $('#filterRole').val();
+                form['filterProgram'].value = $('#filterProgram').val();
+            }
+
+            function removeFiltersFromForm() {
+                const form = $('#form-do-action')[0];
+                form['filterRole'].value = "";
+                form['filterProgram'].value = "";
             }
 
             $('document').ready(function () {
                 $('#perform-action-select').on('change', onActionChange);
                 $('#perform-action-submit').on('click', onActionSubmit);
-                $('#apply-to-all-filters').on('change', selectAllUsers);
-                $('a.my-tool-tip').tooltip();
+                $('#select-all-in-page').on('change', selectAllUsers);
+                $('#select-all-matching-filters').on('click', selectAllMatchingFilters);
             });
 
         </script>
@@ -135,7 +165,7 @@
                         </div>
 
 
-                        {!! Form::open(array('url' => route('admin.users.doAction', array()), 'method' => 'get', 'class' => 'form-horizontal')) !!}
+                        {!! Form::open(array('url' => route('admin.users.doAction', array()), 'id' => 'form-do-action', 'method' => 'get', 'class' => 'form-horizontal')) !!}
                         @if(Cerberus::hasPermission('user.update'))
                             Selected User Actions:
                             <select id="perform-action-select" name="action">
@@ -159,18 +189,17 @@
                             </div>
 
                             <div id="select-all-container" class="hidden">
+
+                                <input type="checkbox" id="select-all-in-page"/>
+                                <label for="select-all-in-page" id="select-all-in-page-label">Select all</label>
+
                                 <input type="hidden" name="filterRole"/>
                                 <input type="hidden" name="filterProgram"/>
-                                <input type="checkbox" name="apply-to-all-filters" id="apply-to-all-filters"
-                                       value="true">
-                                <label for="apply-to-all-filters">
-                                    Select all
-                                    <a class='my-tool-tip' data-toggle="tooltip"
-                                       data-placement="top"
-                                       title="Ignores paging and applies to all users matching the filters">
-                                        <i class='glyphicon glyphicon-info-sign'></i>
-                                    </a>
-                                </label>
+
+                                <span id="select-all-matching-filters" class="hidden">
+                                <a>Select everything</a> matching the filters.
+                                </span>
+
                             </div>
                         @endif
                         <table class="table table-striped">
