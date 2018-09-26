@@ -126,4 +126,12 @@ class EligibilityBatch extends BaseModel
     {
         return $this->eligibilityJobs()->count() > 0;
     }
+
+    /**
+     * @return bool
+     */
+    public function shouldSafeReprocess()
+    {
+        return $this->options['reprocessingMethod'] ?? '' == self::REPROCESS_SAFE;
+    }
 }

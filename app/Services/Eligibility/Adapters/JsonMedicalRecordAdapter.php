@@ -82,7 +82,7 @@ class JsonMedicalRecordAdapter
                 'hash'     => $hash,
                 'data'     => $this->validatedData->all(),
             ]);
-        } elseif ($eligibilityBatch->options['reprocessingMethod'] ?? '' == EligibilityBatch::REPROCESS_SAFE) {
+        } elseif ($eligibilityBatch->shouldSafeReprocess()) {
             $job = EligibilityJob::updateOrCreate([
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
