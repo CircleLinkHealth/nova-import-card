@@ -540,6 +540,10 @@ class WelcomeCallListGenerator
                 $args['referring_provider_name'] = $args['preferred_provider'];
             }
 
+            if (array_key_exists('language', $args)) {
+                $args['lang'] = $args['language'];
+            }
+
 //            $args['status'] = Enrollee::TO_CALL;
 //
 //            if (isset($args['cell_phone'])) {
