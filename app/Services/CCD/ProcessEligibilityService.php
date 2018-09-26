@@ -10,6 +10,7 @@ namespace App\Services\CCD;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Enrollee;
 use App\Importer\Loggers\Allergy\NumberedAllergyFields;
 use App\Importer\Loggers\Medication\NumberedMedicationFields;
 use App\Importer\Loggers\Problem\NumberedProblemFields;
@@ -449,10 +450,82 @@ class ProcessEligibilityService
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
             'folder'              => $folder,
             'fileName'            => $fileName,
-            'filterLastEncounter' => $filterLastEncounter,
-            'filterInsurance'     => $filterInsurance,
-            'filterProblems'      => $filterProblems,
+            'filterLastEncounter' => (boolean)$filterLastEncounter,
+            'filterInsurance'     => (boolean)$filterInsurance,
+            'filterProblems'      => (boolean)$filterProblems,
             'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
         ]);
+    }
+
+    /**
+     * Store updated EligibilityBatch details for reprocessing. Delete existing EligibilityJobs if option `reprocess
+     * from scratch` was chosen.
+     *
+     * @param EligibilityBatch $batch
+     * @param $folder
+     * @param $fileName
+     * @param $filterLastEncounter
+     * @param $filterInsurance
+     * @param $filterProblems
+     * @param $reprocessingMethod
+     *
+     * @return EligibilityBatch
+     */
+    public function prepareClhMedicalRecordTemplateBatchForReprocessing(
+        EligibilityBatch $batch,
+        $folder,
+        $fileName,
+        $filterLastEncounter,
+        $filterInsurance,
+        $filterProblems,
+        $reprocessingMethod
+    ) {
+        $batch = $this->editBatch($batch, [
+            'folder'              => $folder,
+            'fileName'            => $fileName,
+            'filterLastEncounter' => (boolean)$filterLastEncounter,
+            'filterInsurance'     => (boolean)$filterInsurance,
+            'filterProblems'      => (boolean)$filterProblems,
+            //did the system read all lines from the file and create eligibility jobs?
+            //reset to false so that system will read the file again
+            'finishedReadingFile' => false,
+            'reprocessingMethod'  => $reprocessingMethod,
+        ]);
+
+        if ($reprocessingMethod == EligibilityBatch::REPROCESS_FROM_SCRATCH) {
+            $deletedJobs = EligibilityJob::whereBatchId($batch->id)
+                                         ->forceDelete();
+
+            $deletedEnrollees = Enrollee::whereBatchId($batch->id)
+                                        ->delete();
+        }
+
+        return $batch;
+    }
+
+    /**
+     * Edit the details of the eligibility batch
+     *
+     * @param EligibilityBatch $batch
+     * @param array $options
+     *
+     * @return EligibilityBatch
+     */
+    public function editBatch(EligibilityBatch $batch, $options = [])
+    {
+        $updated = $batch->update([
+            'status'  => EligibilityBatch::STATUSES['not_started'],
+            'options' => $options,
+        ]);
+
+        return $batch->fresh();
+    }
+
+    public function notifySlack($batch)
+    {
+        if (app()->environment('worker')) {
+            sendSlackMessage(' #parse_enroll_import',
+                "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}");
+        }
     }
 }

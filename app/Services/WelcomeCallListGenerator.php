@@ -361,13 +361,17 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $this->patientList = $this->patientList->reject(function ($record) {
-            if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
-                return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
-            }
-
+        $this->patientList = $this->patientList->reject(function (&$record) {
             if (isset($record['insurances'])) {
                 return ! $this->validateInsuranceWithCollection($record);
+            }
+
+            if (isset($record['insurance_plans'])) {
+                $record = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($record);
+            }
+
+            if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
+                return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
             }
         });
 
@@ -528,6 +532,18 @@ class WelcomeCallListGenerator
                 $args = $args->all();
             }
 
+            if (isset($args['insurance_plans'])) {
+                $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
+            }
+
+            if (array_key_exists('preferred_provider', $args)) {
+                $args['referring_provider_name'] = $args['preferred_provider'];
+            }
+
+            if (array_key_exists('language', $args)) {
+                $args['lang'] = $args['language'];
+            }
+
 //            $args['status'] = Enrollee::TO_CALL;
 //
 //            if (isset($args['cell_phone'])) {
@@ -540,6 +556,10 @@ class WelcomeCallListGenerator
 
             if ($this->eligibilityJob) {
                 $args['eligibility_job_id'] = $this->eligibilityJob->id;
+            }
+
+            if (array_key_exists('postal_code', $args) && ! array_key_exists('zip', $args)) {
+                $args['zip'] = $args['postal_code'];
             }
 
             if (array_key_exists('problems_string', $args)) {
@@ -576,11 +596,17 @@ class WelcomeCallListGenerator
 
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
-            $args['last_encounter']      = array_key_exists('last_encounter', $args)
-                ? Carbon::parse($args['last_encounter'])
-                : null;
-            $args['batch_id']            = $this->batch->id;
-            $args['mrn']                 = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
+
+            if (array_key_exists('last_encounter', $args)) {
+                $args['last_encounter'] = Carbon::parse($args['last_encounter']);
+            } elseif (array_key_exists('last_visit', $args)) {
+                $args['last_encounter'] = Carbon::parse($args['last_visit']);
+            } else {
+                $args['last_encounter'] = null;
+            }
+
+            $args['batch_id'] = $this->batch->id;
+            $args['mrn']      = $args['mrn'] ?? $args['mrn_number'] ?? $args['patient_id'];
 
             $args['dob'] = $args['dob'] ?? $args['date_of_birth'] ?? $args['birth_date'];
 
@@ -657,6 +683,8 @@ class WelcomeCallListGenerator
                     if ($errorCode == 1062) {
                         $duplicateMySqlError = true;
                         $errorMsg            = $e->getMessage();
+                    } else {
+                        throw $e;
                     }
                 }
 
@@ -665,6 +693,9 @@ class WelcomeCallListGenerator
 
                     return false;
                 }
+            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
+                $updated         = $enrolleeExists->update($args);
+                $this->enrollees = $enrolleeExists->fresh();
             }
 
             if ($enrolledPatientExists) {
@@ -681,7 +712,6 @@ class WelcomeCallListGenerator
                     ['duplicate' => "Seems like the Enrollee already exists. Error caused: $errorMsg."],
                     EligibilityJob::DUPLICATE);
             }
-
 
             return true;
         });
@@ -857,6 +887,27 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->status   = $status;
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
+    }
+
+    private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
+    {
+        collect($record['insurance_plans'])
+            ->each(function ($plan, $key) use (&$record) {
+                $concatString = null;
+
+                if ($plan['plan'] || $plan['group_number'] || $plan['policy_number'] || $plan['insurance_type']) {
+                    $concatString = "{$plan['plan']} - {$plan['group_number']} - {$plan['policy_number']} - {$plan['insurance_type']}";
+                }
+
+                if ($key == 'primary') {
+                    $record['primary_insurance'] = $concatString;
+                } elseif ($key == 'secondary') {
+                    $record['secondary_insurance'] = $concatString;
+                }
+            });
+
+
+        return $record;
     }
 
 

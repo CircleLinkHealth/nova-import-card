@@ -36,7 +36,7 @@ class JsonMedicalRecordAdapterTest extends TestCase
         $batch = factory(EligibilityBatch::class)->create();
 
         $adapter = new JsonMedicalRecordAdapter($data);
-        $job     = $adapter->firstOrCreateEligibilityJob($batch);
+        $job     = $adapter->firstOrUpdateOrCreateEligibilityJob($batch);
 
         $this->assertTrue(is_a($job, EligibilityJob::class));
     }

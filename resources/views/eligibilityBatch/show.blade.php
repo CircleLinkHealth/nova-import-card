@@ -24,42 +24,48 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Showing Batch {{$batch->id}}
+                        <b>{{ $practice->display_name }}</b> | Batch #{{$batch->id}}
+                        | Started: <em>{{ $batch->created_at->format('m-d-Y h:mA') }}</em> | Last Update:
+                        <em>{{ $batch->updated_at->format('m-d-Y h:mA')}}</em>
+                        <div class="pull-right" style="color: {{$batch->getStatusFontColor()}};">
+                            <b>{{ strtoupper($batch->getStatus()) }}</b></div>
                     </div>
 
                     <div class="panel-body">
                         @if($batch->hasJobs())
-                            <div class="pull-right" style="padding-left: 2%;">
+                            <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.logs.csv', [$batch->id])}}"
                                    class="btn btn-warning">Download Batch Processing Logs</a>
                             </div>
                         @endif
 
                         @if($eligible > 0)
-                            <div class="pull-right" style="padding-left: 2%;">
+                            <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('admin.enrollees.show.batch', [$batch->id])}}"
                                    class="btn btn-info">Import Patients</a>
                             </div>
 
                             @if(\Cache::has("batch:{$batch->id}:last_consented_enrollee_import"))
-                                <div class="pull-right" style="padding-left: 2%;">
+                                <div class="pull-left" style="padding-left: 2%;">
                                     <a href="{{route('eligibility.download.last.import.logs', [$batch->id])}}"
                                        class="btn btn-warning">Download Last Import Session Logs</a>
                                 </div>
                             @endif
 
-                            <div class="pull-right" style="padding-left: 2%;">
+                            <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('eligibility.download.eligible', [$batch->id])}}"
                                    class="btn btn-default">Download
                                     Eligible Patients CSV</a>
                             </div>
                         @endif
-                        <h4>Practice: {{ $practice->display_name }}</h4>
-                        <h4>Process Status: {{ $batch->getStatus() }}</h4>
-                        <br>
 
-                        The check was initiated at <b>{{ $batch->created_at }}</b> and the last update on it was at
-                        <b>{{ $batch->updated_at }}</b>
+                            @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                                <div class="pull-left" style="padding-left: 2%;">
+                                    <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
+                                       class="btn btn-danger">Reprocess</a>
+                                </div>
+                            @endif
+
 
                         <br><br>
 
@@ -84,19 +90,14 @@
 
                         <br><br>
 
-                        <h4>Batch Details</h4>
-                        @isset($batch->options['dir'])
-                            Drive Folder ID: {{ $batch->options['dir'] }}
-                            <br>
-                        @endisset
-                        Filtering for Last
-                        Encounter?: {{ (boolean) $batch->options['filterLastEncounter'] ? 'Yes' : 'No' }}
-                        <br>
-                        Filtering for Problems?: {{ (boolean) $batch->options['filterProblems'] ? 'Yes' : 'No' }}
-                        <br>
-                        Filtering for Insurance
-                        (Medicare)?: {{ (boolean) $batch->options['filterInsurance'] ? 'Yes' : 'No' }}
-                        <br>
+                        <h4>Processing Options</h4>
+
+                        @forelse($batch->options as $k => $option)
+                            <b>{{snakeToSentenceCase(snake_case($k))}}</b>
+                            : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                        @empty
+                            <p>No options found.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>

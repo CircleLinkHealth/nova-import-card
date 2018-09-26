@@ -10,6 +10,9 @@ class EligibilityBatch extends BaseModel
     const ATHENA_API = 'athena_csv';
     const CLH_MEDICAL_RECORD_TEMPLATE = 'clh_medical_record_template';
 
+    const REPROCESS_SAFE = 'safe';
+    const REPROCESS_FROM_SCRATCH = 'from_scratch';
+
     const STATUSES = [
         'not_started' => 0,
         'processing'  => 1,
@@ -88,6 +91,29 @@ class EligibilityBatch extends BaseModel
         return null;
     }
 
+    public function isCompleted()
+    {
+        return $this->getStatus() === 'complete';
+    }
+
+    public function getStatusFontColor()
+    {
+        switch ($this->status) {
+            case 0:
+                return 'grey';
+                break;
+            case 1:
+                return 'blue';
+                break;
+            case 2:
+                return 'red';
+                break;
+            case 3:
+                return 'green';
+                break;
+        }
+    }
+
     public function practice()
     {
         return $this->belongsTo(Practice::class);
@@ -104,5 +130,27 @@ class EligibilityBatch extends BaseModel
     public function hasJobs(): bool
     {
         return $this->eligibilityJobs()->count() > 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldSafeReprocess()
+    {
+        return $this->options['reprocessingMethod'] ?? '' == self::REPROCESS_SAFE;
+    }
+
+    /**
+     * Return a link to view this batch's status
+     *
+     * @return null|string
+     */
+    public function linkToView()
+    {
+        if ( ! $this->id) {
+            return null;
+        }
+
+        return route('eligibility.batch.show', [$this->id]);
     }
 }

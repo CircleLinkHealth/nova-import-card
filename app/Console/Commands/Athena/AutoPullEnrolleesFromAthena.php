@@ -110,13 +110,6 @@ class AutoPullEnrolleesFromAthena extends Command
             ]);
 
             Artisan::call('athena:DetermineTargetPatientEligibility', ['batchId' => $batch->id]);
-
-            if (app()->environment('worker')) {
-                sendSlackMessage(' #parse_enroll_import',
-                    "Eligibility Batch created for practice: $practice->display_name. Link: " . route('eligibility.batch.show',
-                        [$batch->id]));
-            }
-
         }
     }
 }

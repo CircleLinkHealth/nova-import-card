@@ -7,11 +7,23 @@ use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Services\CCD\ProcessEligibilityService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EligibilityBatchController extends Controller
 {
+    /**
+     * @var ProcessEligibilityService
+     */
+    private $processEligibilityService;
+
+    public function __construct(ProcessEligibilityService $processEligibilityService)
+    {
+        $this->processEligibilityService = $processEligibilityService;
+    }
+
     public function googleDriveCreate()
     {
         return view('eligibilityBatch.methods.google-drive');
@@ -24,14 +36,66 @@ class EligibilityBatchController extends Controller
 
     public function index()
     {
-        $batches = EligibilityBatch::orderByDesc('status')
-                                   ->orderByDesc('updated_at')
+        $batches = EligibilityBatch::orderByDesc('updated_at')
                                    ->with('practice')
                                    ->take(100)
                                    ->get();
 
         return view('eligibilityBatch.index',
             compact(['batches']));
+    }
+
+    /**
+     * Show the form to edit EligibilityBatch options for re-processing
+     *
+     * @param EligibilityBatch $batch
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getReprocess(EligibilityBatch $batch)
+    {
+        if (in_array($batch->type,
+            [EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS])) {
+            return view('eligibilityBatch.methods.google-drive')
+                ->with('batch', $batch)
+                ->with('action', 'edit');
+        } elseif ($batch->type == EligibilityBatch::TYPE_ONE_CSV) {
+            return view('eligibilityBatch.methods.single-csv');
+        }
+    }
+
+    /**
+     * Store updated EligibilityBatch options for re-processing
+     *
+     * @param Request $request
+     * @param EligibilityBatch $batch
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postReprocess(Request $request, EligibilityBatch $batch)
+    {
+        $folder              = $request->input('dir');
+        $fileName            = $request->input('file');
+        $filterLastEncounter = (boolean)$request->input('filterLastEncounter');
+        $filterInsurance     = (boolean)$request->input('filterInsurance');
+        $filterProblems      = (boolean)$request->input('filterProblems');
+        $reprocessingMethod  = $request->input('reprocessingMethod');
+
+        switch ($batch->type) {
+            case EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE:
+                $updatedBatch = $this->processEligibilityService->prepareClhMedicalRecordTemplateBatchForReprocessing(
+                    $batch,
+                    $folder,
+                    $fileName,
+                    $filterLastEncounter,
+                    $filterInsurance,
+                    $filterProblems,
+                    $reprocessingMethod
+                );
+                break;
+        }
+
+        return redirect()->route('eligibility.batch.show', [$updatedBatch->id]);
     }
 
     public function show(EligibilityBatch $batch)

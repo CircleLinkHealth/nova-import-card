@@ -36,7 +36,11 @@
                     <div class="panel-heading">Process Eligibility from Google Drive</div>
 
                     <div class="panel-body">
-                        @include('partials.makeWelcomeCallListGoogleDrivePanel')
+                        @if(isset($action) && $action == 'edit')
+                            @include('partials.editWelcomeCallListGoogleDrivePanel')
+                        @else
+                            @include('partials.makeWelcomeCallListGoogleDrivePanel')
+                        @endif
                     </div>
                 </div>
             </div>
