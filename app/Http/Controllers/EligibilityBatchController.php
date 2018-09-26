@@ -36,8 +36,7 @@ class EligibilityBatchController extends Controller
 
     public function index()
     {
-        $batches = EligibilityBatch::orderByDesc('status')
-                                   ->orderByDesc('updated_at')
+        $batches = EligibilityBatch::orderByDesc('updated_at')
                                    ->with('practice')
                                    ->take(100)
                                    ->get();

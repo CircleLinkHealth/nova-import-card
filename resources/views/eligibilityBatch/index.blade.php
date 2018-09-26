@@ -11,7 +11,7 @@
 @endpush
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
             @if(Session::has('message'))
                 <div class="col-md-12">
@@ -63,7 +63,7 @@
                     <div class="panel-body">
                         <div class="row">
                             @foreach($batches as $batch)
-                                <div class="col-md-8 col-md-offset-2">
+                                <div class="col-md-3">
                                     <div class="batch-body alert alert-{{$batch->cssClass}}">
                                         <div class="row">
                                             <h5 class="col-md-12">
@@ -77,7 +77,7 @@
                                             </h5>
                                         </div>
 
-                                        <p>Pricessing since <b>{{ $batch->created_at }}</b></p>
+                                        <p>Started <b>{{ $batch->created_at }}</b></p>
                                         <p>Last update <b>{{ $batch->updated_at }}</b>.</p>
 
                                         <br>
