@@ -282,7 +282,7 @@ class QueueEligibilityBatchForProcessing extends Command
             while ( ! feof($handle)) {
                 if (($buffer = fgets($handle)) !== false) {
                     $mr = new JsonMedicalRecordAdapter($buffer);
-                    $mr->firstOrCreateEligibilityJob($batch);
+                    $mr->firstOrUpdateOrCreateEligibilityJob($batch);
                 }
             }
             fclose($handle);
@@ -299,7 +299,7 @@ class QueueEligibilityBatchForProcessing extends Command
             }
 
             $mr = new JsonMedicalRecordAdapter($iteration);
-            $mr->firstOrCreateEligibilityJob($batch);
+            $mr->firstOrUpdateOrCreateEligibilityJob($batch);
         }
     }
 }

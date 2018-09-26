@@ -66,7 +66,7 @@ class JsonMedicalRecordAdapter
      *
      * @return EligibilityJob|null
      */
-    public function firstOrCreateEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
+    public function firstOrUpdateOrCreateEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
     {
         if ( ! $this->isValid()) {
             return null;
@@ -81,6 +81,16 @@ class JsonMedicalRecordAdapter
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
                 'data'     => $this->validatedData->all(),
+            ]);
+        } elseif ($eligibilityBatch->options['reprocessingMethod'] ?? '' == EligibilityBatch::REPROCESS_SAFE) {
+            $job = EligibilityJob::updateOrCreate([
+                'batch_id' => $eligibilityBatch->id,
+                'hash'     => $hash,
+            ], [
+                'data'     => $this->validatedData->all(),
+                'messages' => null, //reset since we are re-processing
+                'outcome'  => null, //reset since we are re-processing
+                'status'   => 0, //reset since we are re-processing
             ]);
         }
 
