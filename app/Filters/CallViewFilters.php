@@ -78,7 +78,10 @@ class CallViewFilters extends QueryFilters
     public function sort_scheduler($term) {
         return $this->builder->orderBy('scheduler', $term);
     }
-    
+
+    public function sort_last_call($term) {
+        return $this->builder->orderBy('last_call', $term);
+    }
 
     public function globalFilters(): array
     {
