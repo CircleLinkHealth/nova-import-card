@@ -153,12 +153,13 @@ class EligibilityBatchController extends Controller
 
     public function allJobsCount()
     {
-        return [
-            'not started' => EligibilityJob::where('status', '=', 0)->count(),
-            'processing'  => EligibilityJob::where('status', '=', 1)->count(),
-            'errors'      => EligibilityJob::where('status', '=', 2)->count(),
-            'processed'   => EligibilityJob::where('status', '=', 3)->count(),
-        ];
+        $statuses = array_flip(EligibilityJob::STATUSES);
+
+        return EligibilityJob::selectRaw('count(*) as total, status')->groupBy('status')->get()->mapWithKeys(function (
+            $result
+        ) use ($statuses) {
+            return [$statuses[$result['status']] => $result['total']];
+        });
     }
 
     public function downloadEligibleCsv(EligibilityBatch $batch)
