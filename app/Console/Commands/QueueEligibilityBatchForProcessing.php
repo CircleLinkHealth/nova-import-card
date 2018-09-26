@@ -76,7 +76,7 @@ class QueueEligibilityBatchForProcessing extends Command
                 break;
         }
 
-        return $this->afterProcessingHook($batch);
+        $this->afterProcessingHook($batch);
     }
 
     /**
