@@ -38,8 +38,10 @@ class CreateOrReplaceCallsViewTable extends Command
     public function handle()
     {
 
-        $startOfMonthQuery = env('DB_CONNECTION', 'mysql') === "mysql" ?
-            "DATE_ADD(DATE_ADD(LAST_DAY(NOW()), INTERVAL 1 DAY), INTERVAL - 1 MONTH)" :
+        $startOfMonthQuery = env('DB_CONNECTION', 'mysql') === "mysql"
+            ?
+            "DATE_ADD(DATE_ADD(LAST_DAY(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')), INTERVAL 1 DAY), INTERVAL - 1 MONTH)"
+            :
             "date('now','start of month')"; //sqlite
 
         $viewName = "calls_view";
@@ -88,7 +90,10 @@ class CreateOrReplaceCallsViewTable extends Command
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
            
         WHERE
-            c.status = 'scheduled' and c.scheduled_date >= CURDATE()
+            c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
       ");
+
+        // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
+        // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
     }
 }
