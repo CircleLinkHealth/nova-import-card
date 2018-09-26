@@ -206,7 +206,18 @@
                     perPage: 100,
                     perPageValues: [
                         10, 25, 50, 100, 150, 200
-                    ]
+                    ],
+                    customSorting: {
+                        Manual: (ascending) => (a, b) => 0,
+                        Nurse: (ascending) => (a, b) => 0,
+                        'Patient ID': (ascending) => (a, b) => 0,
+                        'Next Call': (ascending) => (a, b) => 0,
+                        'Last Call': (ascending) => (a, b) => 0,
+                        'CCM Time': (ascending) => (a, b) => 0,
+                        'BHI Time': (ascending) => (a, b) => 0,
+                        Practice: (ascending) => (a, b) => 0,
+                        Scheduler: (ascending) => (a, b) => 0
+                    }
                 }
             },
             nursesForSelect() {
@@ -504,74 +515,74 @@
 
             },
             next() {
-                const $vm = this;
-                $vm.loaders.calls = true;
-                return this.axios
-                    .get(this.nextPageUrl(), {
-                        cancelToken: new CancelToken((c) => {
-                            if ($vm.tokens.calls) {
-                                $vm.tokens.calls()
-                            }
-                            $vm.tokens.calls = c
-                        })
+                const $vm = this
+                this.loaders.calls = true
+                return this.axios.get(this.nextPageUrl(), {
+                    cancelToken: new CancelToken((c) => {
+                        if ($vm.tokens.calls) {
+                            $vm.tokens.calls()
+                        }
+                        $vm.tokens.calls = c
                     })
-                    .then(result => {
-                        //console.log('calls:response', this.nextPageUrl())
-                        result = result.data;
-                        $vm.pagination = {
-                            current_page: result.meta.current_page,
-                            from: result.meta.from,
-                            last_page: result.meta.last_page,
-                            last_page_url: result.links.last,
-                            next_page_url: result.links.next,
-                            path: result.meta.path,
-                            per_page: result.meta.per_page,
-                            to: result.meta.to,
-                            total: result.meta.total
-                        };
-
+                }).then((result) => result).then(result => {
+                    //console.log('calls:response', this.nextPageUrl())
+                    result = result.data;
+                    this.pagination = {
+                        current_page: result.meta.current_page,
+                        from: result.meta.from,
+                        last_page: result.meta.last_page,
+                        last_page_url: result.links.last,
+                        next_page_url: result.links.next,
+                        path: result.meta.path,
+                        per_page: result.meta.per_page,
+                        to: result.meta.to,
+                        total: result.meta.total
+                    }
+                    if (result) {
                         const calls = result.data || [];
-                        const tableCalls = calls.map($vm.setupCallNew);
-                        if (!$vm.tableData.length) {
-                            const arr = $vm.tableData.concat(tableCalls)
-                            const total = (($vm.pagination || {}).total || 0)
-                            $vm.tableData = [...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({
-                                id: arr.length + index + 1,
-                                nurses() {
-                                    return ([])
-                                },
-                                onNurseUpdate() {
-                                },
-                                onAttemptNoteUpdate() {
-                                },
-                                onGeneralCommentUpdate() {
-                                },
-                                onCallTimeStartUpdate() {
-                                },
-                                onCallTimeEndUpdate() {
-                                },
-                                onNextCallUpdate() {
-                                },
-                                loaders: {}
-                            }))]
-                        }
-                        else {
-                            const from = (($vm.pagination || {}).from || 0);
-                            const to = (($vm.pagination || {}).to || 0);
-                            for (let i = from - 1; i < to; i++) {
-                                $vm.tableData[i] = tableCalls[i - from + 1]
+                        if (calls && Array.isArray(calls)) {
+                            const tableCalls = calls.map(this.setupCallNew)
+                            if (!this.tableData.length) {
+                                const arr = this.tableData.concat(tableCalls)
+                                const total = ((this.pagination || {}).total || 0)
+                                this.tableData = [...arr, ...'0'.repeat(total - arr.length).split('').map((item, index) => ({
+                                    id: arr.length + index + 1,
+                                    nurses() {
+                                        return ([])
+                                    },
+                                    onNurseUpdate() {
+                                    },
+                                    onAttemptNoteUpdate() {
+                                    },
+                                    onGeneralCommentUpdate() {
+                                    },
+                                    onCallTimeStartUpdate() {
+                                    },
+                                    onCallTimeEndUpdate() {
+                                    },
+                                    onNextCallUpdate() {
+                                    },
+                                    loaders: {}
+                                }))]
                             }
+                            else {
+                                const from = ((this.pagination || {}).from || 0)
+                                const to = ((this.pagination || {}).to || 0)
+                                for (let i = from - 1; i < to; i++) {
+                                    this.tableData[i] = tableCalls[i - from + 1]
+                                }
+                            }
+                            setTimeout(() => {
+                                $vm.$refs.tblCalls.count = $vm.pagination.total
+                                $vm.loaders.calls = false
+                            }, 1000)
+                            return tableCalls;
                         }
-                        setTimeout(() => {
-                            $vm.$refs.tblCalls.count = $vm.pagination.total;
-                            $vm.loaders.calls = false
-                        }, 1000);
-                        return tableCalls;
-                    })
-                    .catch((err) => {
-                        console.error('calls:response', err)
-                        $vm.loaders.calls = false
-                    })
+                    }
+                }).catch((err) => {
+                    console.error('calls:response', err)
+                    $vm.loaders.calls = false
+                })
             }
         },
         mounted() {
