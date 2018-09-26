@@ -937,6 +937,17 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.eligible',
                 ])->middleware('permission:enrollee.read');
 
+                Route::get('/reprocess', [
+                    'uses' => 'EligibilityBatchController@getReprocess',
+                    'as'   => 'get.eligibility.reprocess',
+                ])->middleware('permission:enrollee.read');
+
+                Route::post('/reprocess', [
+                    'uses' => 'EligibilityBatchController@postReprocess',
+                    'as'   => 'post.eligibility.reprocess',
+                ])->middleware('permission:enrollee.read');
+
+
                 Route::get('/last-import-session-logs', [
                     'uses' => 'EligibilityBatchController@getLastImportLog',
                     'as'   => 'eligibility.download.last.import.logs',
