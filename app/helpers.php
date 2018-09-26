@@ -1011,6 +1011,14 @@ if ( ! function_exists('is_json')) {
 }
 
 if ( ! function_exists('read_file_using_generator')) {
+    /**
+     * Read a file using a generator.
+     * https://wiki.php.net/rfc/generators
+     *
+     * @param $path
+     *
+     * @return bool|Generator
+     */
     function read_file_using_generator($path)
     {
         if ( ! file_exists($path)) {
