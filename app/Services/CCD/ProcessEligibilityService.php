@@ -520,4 +520,12 @@ class ProcessEligibilityService
 
         return $batch->fresh();
     }
+
+    public function notifySlack($batch)
+    {
+        if (app()->environment('worker')) {
+            sendSlackMessage(' #parse_enroll_import',
+                "Hey I just processed this list, it's crazy. Here's some patients, call them maybe? {$batch->linkToView()}");
+        }
+    }
 }

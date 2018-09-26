@@ -55,49 +55,47 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     public function handle()
     {
-        $batch = EligibilityBatch::where('status', '<', 2)
-                                 ->whereType(EligibilityBatch::TYPE_ONE_CSV)
-                                 ->with('practice')
-                                 ->first();
+        $batch = $this->getBatch();
 
-        if ($batch) {
-            $this->queueSingleCsvJobs($batch);
-
-            return true;
+        if ( ! $batch) {
+            return null;
         }
 
-        $batch = EligibilityBatch::where('status', '<', 2)
-                                 ->whereType(EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS)
-                                 ->first();
-
-        if ($batch) {
-            $this->queueGoogleDriveJobs($batch);
-
-            return true;
+        switch ($batch->type) {
+            case EligibilityBatch::TYPE_ONE_CSV:
+                $batch = $this->queueSingleCsvJobs($batch);
+                break;
+            case EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS:
+                $batch = $this->queueGoogleDriveJobs($batch);
+                break;
+            case EligibilityBatch::TYPE_PHX_DB_TABLES:
+                $batch = $this->queuePHXJobs($batch);
+                break;
+            case EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE:
+                $batch = $this->queueClhMedicalRecordTemplateJobs($batch);
+                break;
         }
 
-        $batch = EligibilityBatch::where('status', '<', 2)
-                                 ->whereType(EligibilityBatch::TYPE_PHX_DB_TABLES)
-                                 ->first();
-
-        if ($batch) {
-            $this->queuePHXJobs($batch);
-
-            return true;
-        }
-
-        $batch = EligibilityBatch::where('status', '<', 2)
-                                 ->whereType(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
-                                 ->first();
-
-        if ($batch) {
-            $this->queueClhMedicalRecordTemplateJobs($batch);
-
-            return true;
-        }
+        return $this->afterProcessingHook($batch);
     }
 
-    private function queueSingleCsvJobs(EligibilityBatch $batch)
+    /**
+     * @return EligibilityBatch|null
+     */
+    private function getBatch(): ?EligibilityBatch
+    {
+        return EligibilityBatch::where('status', '<', 2)
+                               ->with('practice')
+                               ->first();
+    }
+
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityBatch
+     * @throws \Exception
+     */
+    private function queueSingleCsvJobs(EligibilityBatch $batch): EligibilityBatch
     {
         $result = $this->processEligibilityService->processCsvForEligibility($batch);
 
@@ -135,7 +133,12 @@ class QueueEligibilityBatchForProcessing extends Command
         return $batch;
     }
 
-    private function queueGoogleDriveJobs(EligibilityBatch $batch)
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityBatch
+     */
+    private function queueGoogleDriveJobs(EligibilityBatch $batch): EligibilityBatch
     {
         $result = $this->processEligibilityService->fromGoogleDrive($batch);
 
@@ -177,12 +180,25 @@ class QueueEligibilityBatchForProcessing extends Command
         return $batch;
     }
 
-    private function queuePHXJobs($batch)
+    /**
+     * @param $batch
+     *
+     * @return EligibilityBatch
+     */
+    private function queuePHXJobs($batch): EligibilityBatch
     {
         MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
+
+        return $batch->fresh();
     }
 
-    private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch)
+    /**
+     * @param EligibilityBatch $batch
+     *
+     * @return EligibilityBatch
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! ! ! $batch->options['finishedReadingFile']) {
             $created = $this->createEligibilityJobsFromJsonFile($batch);
@@ -216,10 +232,10 @@ class QueueEligibilityBatchForProcessing extends Command
     /**
      * @param EligibilityBatch $batch
      *
-     * @return bool
+     * @return EligibilityBatch
      * @throws \League\Flysystem\FileNotFoundException
      */
-    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch)
+    private function createEligibilityJobsFromJsonFile(EligibilityBatch $batch): EligibilityBatch
     {
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
@@ -263,7 +279,7 @@ class QueueEligibilityBatchForProcessing extends Command
             $batch->options                 = $options;
             $batch->save();
 
-            return true;
+            return $batch;
         } catch (\Exception $e) {
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
 
@@ -275,7 +291,13 @@ class QueueEligibilityBatchForProcessing extends Command
         }
     }
 
-    private function readWithoutUsingGenerator($pathToFile, $batch)
+    /**
+     * Read the file containing patient data for batch type `clh_medical_record_template`, using a fopen
+     *
+     * @param $pathToFile
+     * @param $batch
+     */
+    private function readUsingFopen($pathToFile, $batch)
     {
         $handle = @fopen($pathToFile, "r");
         if ($handle) {
@@ -289,6 +311,12 @@ class QueueEligibilityBatchForProcessing extends Command
         }
     }
 
+    /**
+     * Read the file containing patient data for batch type `clh_medical_record_template`, using a generator
+     *
+     * @param string $pathToFile
+     * @param EligibilityBatch $batch
+     */
     private function readUsingGenerator(string $pathToFile, EligibilityBatch $batch)
     {
         $iterator = read_file_using_generator($pathToFile);
@@ -300,6 +328,19 @@ class QueueEligibilityBatchForProcessing extends Command
 
             $mr = new JsonMedicalRecordAdapter($iteration);
             $mr->firstOrUpdateOrCreateEligibilityJob($batch);
+        }
+    }
+
+    /**
+     * Run this tasks after processing a batch
+     *
+     * @param $batch
+     */
+    private function afterProcessingHook($batch)
+    {
+        if ($batch->isCompleted()) {
+            $this->processEligibilityService
+                ->notifySlack($batch);
         }
     }
 }

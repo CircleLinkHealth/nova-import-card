@@ -91,6 +91,11 @@ class EligibilityBatch extends BaseModel
         return null;
     }
 
+    public function isCompleted()
+    {
+        return $this->getStatus() === 'complete';
+    }
+
     public function getStatusFontColor()
     {
         switch ($this->status) {
@@ -133,5 +138,19 @@ class EligibilityBatch extends BaseModel
     public function shouldSafeReprocess()
     {
         return $this->options['reprocessingMethod'] ?? '' == self::REPROCESS_SAFE;
+    }
+
+    /**
+     * Return a link to view this batch's status
+     *
+     * @return null|string
+     */
+    public function linkToView()
+    {
+        if ( ! $this->id) {
+            return null;
+        }
+
+        return route('eligibility.batch.show', [$this->id]);
     }
 }
