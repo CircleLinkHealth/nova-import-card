@@ -151,6 +151,16 @@ class EligibilityBatchController extends Controller
         ]);
     }
 
+    public function allJobsCount()
+    {
+        return [
+            'not started' => EligibilityJob::where('status', '=', 1)->count(),
+            'processing'  => EligibilityJob::where('status', '=', 1)->count(),
+            'errors'      => EligibilityJob::where('status', '=', 3)->count(),
+            'processed'   => EligibilityJob::where('status', '=', 3)->count(),
+        ];
+    }
+
     public function downloadEligibleCsv(EligibilityBatch $batch)
     {
         $practice = Practice::findOrFail($batch->practice_id);

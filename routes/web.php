@@ -906,6 +906,11 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::group(['prefix' => 'eligibility-batches'], function () {
 
+            Route::get('pending-jobs/count', [
+                'uses' => 'EligibilityBatchController@allJobsCount',
+                'as'   => 'all.eligibility.jobs.count',
+            ])->middleware('permission:batch.read');
+
             Route::get('', [
                 'uses' => 'EligibilityBatchController@index',
                 'as'   => 'eligibility.batches.index',

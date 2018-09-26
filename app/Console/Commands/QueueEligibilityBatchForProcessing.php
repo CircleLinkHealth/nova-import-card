@@ -74,6 +74,9 @@ class QueueEligibilityBatchForProcessing extends Command
             case EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE:
                 $batch = $this->queueClhMedicalRecordTemplateJobs($batch);
                 break;
+            case EligibilityBatch::ATHENA_API:
+                $batch = $this->queueAthenaJobs($batch);
+                break;
         }
 
         $this->afterProcessingHook($batch);
@@ -206,7 +209,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<', 2)
-                                     ->take(10)
+                                     ->take(50)
                                      ->get();
 
         if ($unprocessed->isNotEmpty()) {
@@ -342,5 +345,12 @@ class QueueEligibilityBatchForProcessing extends Command
             $this->processEligibilityService
                 ->notifySlack($batch);
         }
+    }
+
+    private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
+    {
+        //@todo
+
+        return $batch;
     }
 }

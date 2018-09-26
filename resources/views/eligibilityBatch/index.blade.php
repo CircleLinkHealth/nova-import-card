@@ -3,6 +3,7 @@
 @push('styles')
     <style>
         .batch-body {
+            min-height: 30rem;
             padding: 20px;
             border: 5px solid #eee;
             margin-bottom: 30px;
