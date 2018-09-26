@@ -154,9 +154,9 @@ class EligibilityBatchController extends Controller
     public function allJobsCount()
     {
         return [
-            'not started' => EligibilityJob::where('status', '=', 1)->count(),
+            'not started' => EligibilityJob::where('status', '=', 0)->count(),
             'processing'  => EligibilityJob::where('status', '=', 1)->count(),
-            'errors'      => EligibilityJob::where('status', '=', 3)->count(),
+            'errors'      => EligibilityJob::where('status', '=', 2)->count(),
             'processed'   => EligibilityJob::where('status', '=', 3)->count(),
         ];
     }
