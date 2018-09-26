@@ -68,7 +68,7 @@
                                         <div class="row">
                                             <h5 class="col-md-12">
                                                 <div class="pull-left">
-                                                    <h3>{{ $batch->practice->display_name }}</h3>
+                                                    <h4>{{ $batch->practice->display_name }}</h4>
                                                 </div>
 
                                                 <div class="pull-right">
