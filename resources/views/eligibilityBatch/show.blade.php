@@ -59,10 +59,12 @@
                             </div>
                         @endif
 
-                        <div class="pull-left" style="padding-left: 2%;">
-                            <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
-                               class="btn btn-danger">Reprocess</a>
-                        </div>
+                            @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                                <div class="pull-left" style="padding-left: 2%;">
+                                    <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
+                                       class="btn btn-danger">Reprocess</a>
+                                </div>
+                            @endif
 
 
                         <br><br>

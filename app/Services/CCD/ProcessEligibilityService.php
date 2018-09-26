@@ -10,6 +10,7 @@ namespace App\Services\CCD;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Enrollee;
 use App\Importer\Loggers\Allergy\NumberedAllergyFields;
 use App\Importer\Loggers\Medication\NumberedMedicationFields;
 use App\Importer\Loggers\Problem\NumberedProblemFields;
@@ -492,8 +493,11 @@ class ProcessEligibilityService
         ]);
 
         if ($reprocessingMethod == EligibilityBatch::REPROCESS_FROM_SCRATCH) {
-            $deleted = EligibilityJob::whereBatchId($batch->id)
-                                     ->delete();
+            $deletedJobs = EligibilityJob::whereBatchId($batch->id)
+                                         ->forceDelete();
+
+            $deletedEnrollees = Enrollee::whereBatchId($batch->id)
+                                        ->delete();
         }
 
         return $batch;
