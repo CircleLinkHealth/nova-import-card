@@ -485,7 +485,7 @@ class WelcomeCallListGenerator
             }
 
             $validator = Validator::make([
-                'last_encounter' => 'null',
+                'last_encounter' => $lastEncounter,
             ], [
                 'last_encounter' => 'required|filled|date',
             ]);
@@ -495,7 +495,7 @@ class WelcomeCallListGenerator
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, [
-                    'last_encounter' => implode(',', $validator->messages()->all()),
+                    'last_encounter' => implode(',', $validator->messages()->all()) . " value: `$lastEncounter`",
                 ], EligibilityJob::INELIGIBLE);
 
                 return true;
