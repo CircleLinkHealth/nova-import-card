@@ -9,7 +9,7 @@ return [
             //When true it will collect GET, POST, DELETE, PUT, etc...
             'method'      => true,
             //When true it will collect Input data
-            'data'        => false,
+            'data'        => true,
             'status_code' => true,
             'user_id'     => true,
             'url'         => true,
