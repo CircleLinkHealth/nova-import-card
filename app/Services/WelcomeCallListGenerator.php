@@ -20,6 +20,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
+use Validator;
 
 /**
  * @property null medicalRecordType
@@ -463,8 +464,6 @@ class WelcomeCallListGenerator
             //Anything past this date is valid
             $minEligibleDate = Carbon::now()->subYear();
 
-            $lastEncounter = null;
-
             $possibleNames = [
                 'last_encounter',
                 'last_visit',
@@ -485,11 +484,19 @@ class WelcomeCallListGenerator
                 return true;
             }
 
-            if ( ! $lastEncounter) {
+            $validator = Validator::make([
+                'last_encounter' => 'null',
+            ], [
+                'last_encounter' => 'required|filled|date',
+            ]);
+
+
+            if ($validator->fails()) {
                 $this->ineligiblePatients->push($row);
 
-                $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
-                    EligibilityJob::INELIGIBLE);
+                $this->setEligibilityJobStatus(3, [
+                    'last_encounter' => implode(',', $validator->messages()->all()),
+                ], EligibilityJob::INELIGIBLE);
 
                 return true;
             }
