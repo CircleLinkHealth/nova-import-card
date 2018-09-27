@@ -27,6 +27,10 @@ class CallViewFilters extends QueryFilters
         parent::__construct($request);
     }
 
+    public function unassigned() {
+        return $this->builder->whereNull('nurse_id');
+    }
+
     public function nurse($nurse) {
         return $this->builder->where('nurse', 'like', '%'. $nurse . '%');
     }
