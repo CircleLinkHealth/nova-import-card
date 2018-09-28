@@ -71,21 +71,20 @@
 
                         <h4>Counts</h4>
                         Eligible: <span id="eligible">{{ $eligible }}</span>
+                            <br>
 
                         @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
-                            <br>
                             Ineligible & Duplicates: <span
                                     id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
                             <br>
                             Not processed: <span
                                     id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
                         @else
-                            <br>
-                            Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                            <br>
-                            Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                            <br>
-                            Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
+                                @forelse($stats as $key => $value)
+                                    <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
+                                @empty
+                                    <p>No stats found</p>
+                                @endforelse
                         @endif
 
                         <br><br>

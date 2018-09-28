@@ -153,4 +153,15 @@ class EligibilityBatch extends BaseModel
 
         return route('eligibility.batch.show', [$this->id]);
     }
+
+    public function getOutcomes()
+    {
+        return EligibilityJob::selectRaw('count(*) as total, outcome')
+                             ->where('batch_id', $this->id)
+                             ->groupBy('outcome')
+                             ->get()
+                             ->mapWithKeys(function ($result) {
+                                 return [$result['outcome'] => $result['total']];
+                             });
+    }
 }

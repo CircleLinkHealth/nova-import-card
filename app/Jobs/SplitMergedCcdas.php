@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MedicalRecords\Ccda;
-use App\ProcessedFiles;
+use App\ProcessedFile;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -43,7 +43,7 @@ class SplitMergedCcdas implements ShouldQueue
 
         $path = config('filesystems.disks.ccdas.root') . '/' . $this->fileName;
 
-        $exists = ProcessedFiles::wherePath($path)->first();
+        $exists = ProcessedFile::wherePath($path)->first();
 
         if ($exists) {
             \Log::info("Already processed $path");
@@ -70,7 +70,7 @@ class SplitMergedCcdas implements ShouldQueue
             }
         }
 
-        ProcessedFiles::create([
+        ProcessedFile::create([
             'path' => $path,
         ]);
 

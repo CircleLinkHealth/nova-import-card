@@ -47,11 +47,10 @@ class GenerateOpsDailyReport implements ShouldQueue
                                              $a->where('performed_at', '>=',
                                                  $date->copy()->startOfMonth()->startOfDay());
                                          },
-                                         'revisionHistory' => function ($r) use ($date) {
+                                         'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
                                                ->where('created_at', '>=', $date->copy()->subDay());
                                          },
-                                         'patientInfo',
                                      ]);
                                  },
                              ])

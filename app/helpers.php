@@ -1058,3 +1058,10 @@ if ( ! function_exists('array_keys_exist')) {
         return ! array_diff_key(array_flip($keys), $arr);
     }
 }
+
+if ( ! function_exists('is_falsey')) {
+    function is_falsey($value)
+    {
+        return is_null($value) || empty($value) || strcasecmp($value, 'null') === 0;
+    }
+}

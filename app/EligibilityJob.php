@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Services\WelcomeCallListGenerator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EligibilityJob extends BaseModel
@@ -74,5 +75,33 @@ class EligibilityJob extends BaseModel
     public function batch()
     {
         return $this->belongsTo(EligibilityBatch::class, 'batch_id');
+    }
+
+    /**
+     * Putting this here for conveniece.
+     * It is NOT safe to use as $batch may not exist. Should we make processing without a batch possible?
+     * @todo: figure out above, buy beer
+     *
+     * @param $filterLastEncounter
+     * @param $filterInsurance
+     * @param $filterProblems
+     *
+     * @return WelcomeCallListGenerator
+     * @throws \Exception
+     */
+    public function process($filterLastEncounter, $filterInsurance, $filterProblems)
+    {
+        return new WelcomeCallListGenerator(
+            collect([$this->data]),
+            $filterLastEncounter,
+            $filterInsurance,
+            $filterProblems,
+            true,
+            $this->batch->practice,
+            null,
+            null,
+            $this->batch,
+            $this
+        );
     }
 }
