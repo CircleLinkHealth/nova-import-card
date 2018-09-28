@@ -45,11 +45,11 @@ $app->singleton(
 ///**
 // * Configure Monolog.
 // */
-//$app->configureMonologUsing(function (Monolog\Logger $monolog) {
-//    $filename = storage_path('logs/laravel-' . php_sapi_name() . '.log');
-//    $handler = new Monolog\Handler\RotatingFileHandler($filename, config('app.log_max_files'));
-//    $monolog->pushHandler($handler);
-//});
+$app->configureMonologUsing(function (Monolog\Logger $monolog) {
+    $filename = storage_path('logs/laravel-' . php_sapi_name() . '.log');
+    $handler  = new Monolog\Handler\RotatingFileHandler($filename, config('app.log_max_files'));
+    $monolog->pushHandler($handler);
+});
 
 /*
 |--------------------------------------------------------------------------
