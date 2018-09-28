@@ -97,6 +97,12 @@ class CcdProblemService
             ->map([$this, 'setupProblem']);
     }
 
+    public function getPatientProblemsValues($userId)
+    {
+        return $this->getPatientProblems($userId)
+                    ->values();
+    }
+
     public function addPatientCcdProblem($ccdProblem)
     {
         if ($ccdProblem) {
