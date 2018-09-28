@@ -100,9 +100,13 @@ class EligibilityBatchController extends Controller
 
     public function show(EligibilityBatch $batch)
     {
-        $unprocessed = 'N/A';
-        $ineligible  = 'N/A';
-        $duplicates  = 'N/A';
+        $unprocessed = '';
+        $ineligible  = '';
+        $duplicates  = '';
+        $eligible    = '';
+        $stats       = '';
+
+        $batch->load('practice');
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
             $statuses = Ccda::select(['status', 'deleted_at'])
@@ -114,15 +118,18 @@ class EligibilityBatchController extends Controller
                 null)->count();
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
+            $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
         } elseif ($batch->type != EligibilityBatch::TYPE_PHX_DB_TABLES) {
             $stats = $batch->getOutcomes();
         }
 
-        $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
-        $practice = Practice::findOrFail($batch->practice_id);
-
-        return view('eligibilityBatch.show',
-            compact(['batch', 'stats', 'eligible', 'practice']));
+        return view('eligibilityBatch.show')
+            ->with('batch', $batch)
+            ->with('stats', $stats)
+            ->with('eligible', $eligible)
+            ->with('unprocessed', $unprocessed)
+            ->with('ineligible', $ineligible)
+            ->with('duplicates', $duplicates);
     }
 
     public function getCounts(EligibilityBatch $batch)
