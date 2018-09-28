@@ -115,18 +115,14 @@ class EligibilityBatchController extends Controller
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
         } elseif ($batch->type != EligibilityBatch::TYPE_PHX_DB_TABLES) {
-            $jobs = EligibilityJob::whereBatchId($batch->id)->get();
-
-            $unprocessed = $jobs->where('status', '<', 2)->count();
-            $ineligible  = $jobs->where('status', 3)->where('outcome', EligibilityJob::INELIGIBLE)->count();
-            $duplicates  = $jobs->where('status', 3)->where('outcome', EligibilityJob::DUPLICATE)->count();
+            $stats = $batch->getOutcomes();
         }
 
         $eligible = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
         $practice = Practice::findOrFail($batch->practice_id);
 
         return view('eligibilityBatch.show',
-            compact(['batch', 'unprocessed', 'eligible', 'ineligible', 'duplicates', 'practice']));
+            compact(['batch', 'stats', 'eligible', 'practice']));
     }
 
     public function getCounts(EligibilityBatch $batch)
