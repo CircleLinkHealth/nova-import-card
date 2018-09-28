@@ -24,7 +24,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <b>{{ $practice->display_name }}</b> | Batch #{{$batch->id}}
+                        <b>{{ $batch->practice->display_name }}</b> | Batch #{{$batch->id}}
                         | Started: <em>{{ $batch->created_at->format('m-d-Y h:mA') }}</em> | Last Update:
                         <em>{{ $batch->updated_at->format('m-d-Y h:mA')}}</em>
                         <div class="pull-right" style="color: {{$batch->getStatusFontColor()}};">
@@ -59,27 +59,31 @@
                             </div>
                         @endif
 
-                            @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
-                                <div class="pull-left" style="padding-left: 2%;">
-                                    <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
-                                       class="btn btn-danger">Reprocess</a>
-                                </div>
-                            @endif
+                        @if ($batch->type == App\EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE)
+                            <div class="pull-left" style="padding-left: 2%;">
+                                <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
+                                   class="btn btn-danger">Reprocess</a>
+                            </div>
+                        @endif
 
 
                         <br><br>
 
                         <h4>Counts</h4>
-                        Eligible: <span id="eligible">{{ $eligible }}</span>
-
                         @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
-                            <br>
                             Ineligible & Duplicates: <span
                                     id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
                             <br>
                             Not processed: <span
                                     id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
+                        @elseif(isset($stats) && !empty($stats))
+                            @forelse($stats as $key => $value)
+                                <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
+                            @empty
+                                <p>No stats found</p>
+                            @endforelse
                         @else
+                            Eligible: <span id="eligible">{{ $eligible }}</span>
                             <br>
                             Ineligible: <span id="ineligible">{{ $ineligible }}</span>
                             <br>
@@ -93,8 +97,10 @@
                         <h4>Processing Options</h4>
 
                         @forelse($batch->options as $k => $option)
-                            <b>{{snakeToSentenceCase(snake_case($k))}}</b>
-                            : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                            @if(!is_array($option))
+                                <b>{{snakeToSentenceCase(snake_case($k))}}</b>
+                                : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                            @endif
                         @empty
                             <p>No options found.</p>
                         @endforelse
