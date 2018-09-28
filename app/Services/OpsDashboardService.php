@@ -215,22 +215,22 @@ class OpsDashboardService
                 continue;
             }
             //It's assumed that a patient that had it's ccm_status change in the last day, will also have an entry in the revisions table
-            if ($patient->revisionHistory->isNotEmpty()){
+            if ($patient->patientInfo->revisionHistory->isNotEmpty()){
                 if ($patient->patientInfo->ccm_status == Patient::UNREACHABLE &&
                     $patient->patientInfo->date_unreachable >= $fromDate &&
-                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
+                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
                 {
                     $unreachable[] = $patient;
                 }
                 if ($patient->patientInfo->ccm_status == Patient::PAUSED &&
                     $patient->patientInfo->date_paused >= $fromDate &&
-                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
+                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED)
                 {
                     $paused[] = $patient;
                 }
                 if ($patient->patientInfo->ccm_status == Patient::WITHDRAWN &&
                     $patient->patientInfo->date_withdrawn >= $fromDate &&
-                    $patient->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
+                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
                     $withdrawn[] = $patient;
                 }
             }
