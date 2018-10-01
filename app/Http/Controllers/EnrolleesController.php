@@ -47,10 +47,11 @@ class EnrolleesController extends Controller
 
         $url = link_to_route('import.ccd.remix', 'Imported CCDAs.');
 
-        return redirect()->back()->with([
-            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 4-5 minutes. Something went wrong otherwise, and you should reach Michalis with a link to the Batch you were trying to import.",
+        return [
+            'message' => "A job has been scheduled. Imported CCDs should start showing up in $url in 5-10 minutes. Importing " . implode(',',
+                    $ids),
             'type'    => 'success',
-        ]);
+        ];
     }
 
     public function importMedicalRecords(Request $request)
