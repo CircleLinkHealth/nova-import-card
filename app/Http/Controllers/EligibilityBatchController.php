@@ -119,7 +119,7 @@ class EligibilityBatchController extends Controller
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
             $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
-        } elseif ($batch->type != EligibilityBatch::TYPE_PHX_DB_TABLES) {
+        } else {
             $stats = $batch->getOutcomes();
         }
 
