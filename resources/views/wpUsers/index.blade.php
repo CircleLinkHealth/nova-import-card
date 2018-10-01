@@ -172,9 +172,6 @@
                             Selected User Actions:
                             <select id="perform-action-select" name="action">
                                 <option value="delete">Delete</option>
-                                @if(app()->environment() != 'production')
-                                    <option value="scramble">Scramble</option>
-                                @endif
                                 <option value="withdraw" selected>Withdraw</option>
                             </select>
                             <button id="perform-action-submit"
