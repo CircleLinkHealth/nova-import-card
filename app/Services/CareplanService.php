@@ -71,7 +71,7 @@ class CareplanService
         return [
             'allCpmProblems'   => $this->cpmService->all(),
             'cpmProblems'      => $this->cpmUserService->getPatientProblems($userId),
-            'ccdProblems'      => $this->ccdUserService->getPatientProblems($user),
+            'ccdProblems'      => $this->ccdUserService->getPatientProblemsValues($user),
             'medications'      => $this->medicationService->repo()->patientMedication($userId)->getCollection(),
             'medicationGroups' => $this->medicationGroupService->repo()->groups(),
             'healthGoals'      => $this->biometricService->patientBiometrics($userId),
