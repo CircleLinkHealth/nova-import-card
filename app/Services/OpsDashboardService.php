@@ -318,7 +318,7 @@ class OpsDashboardService
             }
         }
         $count['Total'] = $count['0 mins'] + $count['0-5'] + $count['5-10'] + $count['10-15'] + $count['15-20'] + $count['20+'];
-        $count['Prior Day totals'] = 0;
+//        $count['Prior Day totals'] = 0;
 
         return $count;
     }
@@ -332,9 +332,13 @@ class OpsDashboardService
      *
      * @return \Illuminate\Support\Collection
      */
-    public function dailyReportRow($patients, $enrolledPatients, Carbon $date)
+    public function dailyReportRow($patients, $enrolledPatients, Carbon $date, $csv = null)
     {
         $fromDate = $date->copy()->subDay();
+
+        if ($csv){
+            $fromDate = $date->copy()->subDay()->setTimeFromTimeString('23:00');
+        }
 
 
         $ccmCounts      = $this->countPatientsByCcmTime($enrolledPatients, $date);

@@ -99,7 +99,7 @@ class OpsDashboardController extends Controller
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=', $date->copy()->subDay());
+                                               ->where('created_at', '>=', $date->copy()->subDay()->setTimeFromTimeString('23:00'));
                                          },
                                      ]);
                                  },
@@ -125,7 +125,7 @@ class OpsDashboardController extends Controller
         foreach ($practices as $practice) {
 
             $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date);
+                $enrolledPatients->where('program_id', $practice->id), $date, true);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -156,7 +156,7 @@ class OpsDashboardController extends Controller
             ) {
                 $sheet->cell('A1', function($cell) use ($date) {
                     // manipulate the cell
-                    $cell->setValue("Ops Report from: {$date->copy()->startOfDay()->toDateTimeString()} to: {$date->toDateTimeString()}");
+                    $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()} to: {$date->toDateTimeString()}");
 
                 });
                 $sheet->cell('A2', function($cell) use ($hoursBehind) {
