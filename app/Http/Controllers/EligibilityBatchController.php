@@ -119,12 +119,16 @@ class EligibilityBatchController extends Controller
             $ineligible  = $statuses->where('status', Ccda::INELIGIBLE)->where('deleted_at', null)->count();
             $duplicates  = $statuses->where('deleted_at', '!=', null)->count();
             $eligible    = Enrollee::whereBatchId($batch->id)->whereNull('user_id')->count();
-        } elseif ($batch->type != EligibilityBatch::TYPE_PHX_DB_TABLES) {
+        } else {
             $stats = $batch->getOutcomes();
         }
 
+        $enrolleesExist = ! ! Enrollee::whereBatchId($batch->id)->whereNull('user_id')->exists();
+
+
         return view('eligibilityBatch.show')
             ->with('batch', $batch)
+            ->with('enrolleesExist', $enrolleesExist)
             ->with('stats', $stats)
             ->with('eligible', $eligible)
             ->with('unprocessed', $unprocessed)
@@ -195,6 +199,7 @@ class EligibilityBatchController extends Controller
             'primary_insurance',
             'secondary_insurance',
             'tertiary_insurance',
+            'last_encounter',
             'referring_provider_name',
             'problems',
             'p1.name as ccm_condition_1',

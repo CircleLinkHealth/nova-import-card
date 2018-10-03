@@ -295,7 +295,7 @@ class Practice extends \App\BaseModel implements HasMedia
             return $q->whereActive(1);
         }
         return $q->whereActive(1)
-                     ->whereNotIn('name', ['demo', 'testdrive']);
+                     ->whereNotIn('name', ['demo', 'testdrive', 'mdally-demo']);
 
 
     }

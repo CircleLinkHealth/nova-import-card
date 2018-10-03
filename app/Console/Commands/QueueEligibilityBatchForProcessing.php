@@ -13,6 +13,7 @@ use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
 use App\Services\GoogleDrive;
+use App\TargetPatient;
 use Illuminate\Console\Command;
 use Storage;
 
@@ -349,7 +350,11 @@ class QueueEligibilityBatchForProcessing extends Command
 
     private function queueAthenaJobs(EligibilityBatch $batch): EligibilityBatch
     {
-        //@todo
+        //If the Athena batch has not patients, mark it as complete
+        if ( ! TargetPatient::whereBatchId($batch->id)->exists()) {
+            $batch->status = 3;
+            $batch->save();
+        }
 
         return $batch;
     }

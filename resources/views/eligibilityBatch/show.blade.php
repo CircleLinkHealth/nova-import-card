@@ -39,7 +39,7 @@
                             </div>
                         @endif
 
-                        @if($eligible > 0)
+                        @if($enrolleesExist)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('admin.enrollees.show.batch', [$batch->id])}}"
                                    class="btn btn-info">Import Patients</a>
@@ -70,13 +70,7 @@
                         <br><br>
 
                         <h4>Counts</h4>
-                        @if ($batch->type == App\EligibilityBatch::TYPE_PHX_DB_TABLES)
-                            Ineligible & Duplicates: <span
-                                    id="ineligible">{{ (int) (App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(true)->count() - $eligible)}}</span>
-                            <br>
-                            Not processed: <span
-                                    id="unprocessed">{{ App\Models\PatientData\PhoenixHeart\PhoenixHeartName::whereProcessed(false)->count() }}</span>
-                        @elseif(isset($stats) && !empty($stats))
+                            @if(isset($stats) && !empty($stats))
                             @forelse($stats as $key => $value)
                                 <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
                             @empty
