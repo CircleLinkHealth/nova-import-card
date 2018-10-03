@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Patient;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\SaasAccount;
 use App\Services\OpsDashboardService;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -56,19 +54,19 @@ class OpsDashboardController extends Controller
         $noReportDates = Carbon::parse('5 August 2018');
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
-                           ->first()
-                           ->getMedia("ops-daily-report-{$date->toDateString()}.json")
-                           ->sortByDesc('id')
-                           ->first())
-                           ->getFile();
+                                    ->first()
+                                    ->getMedia("ops-daily-report-{$date->toDateString()}.json")
+                                    ->sortByDesc('id')
+                                    ->first())
+            ->getFile();
 
         //first check if we have a valid file
         if ( ! $json || $date <= $noReportDates) {
             $hoursBehind = 'N/A';
-            $rows  = null;
-        }else{
+            $rows        = null;
+        } else {
             //then check if it's in json format
-            if (!is_json($json)){
+            if ( ! is_json($json)) {
                 throw new \Exception("File retrieved is not in json format.", 500);
             }
 
@@ -85,7 +83,8 @@ class OpsDashboardController extends Controller
         ]));
     }
 
-    public function dailyCsv(){
+    public function dailyCsv()
+    {
 
         $date = Carbon::now();
 
@@ -93,13 +92,14 @@ class OpsDashboardController extends Controller
                              ->with([
                                  'patients' => function ($p) use ($date) {
                                      $p->with([
-                                         'activities'      => function ($a) use ($date) {
+                                         'activities'                  => function ($a) use ($date) {
                                              $a->where('performed_at', '>=',
                                                  $date->copy()->startOfMonth()->startOfDay());
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=', $date->copy()->subDay()->setTimeFromTimeString('23:00'));
+                                               ->where('created_at', '>=',
+                                                   $date->copy()->subDay()->setTimeFromTimeString('23:00'));
                                          },
                                      ]);
                                  },
@@ -108,24 +108,10 @@ class OpsDashboardController extends Controller
                              ->get()
                              ->sortBy('display_name');
 
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->filter(function ($user) {
-                if (!$user) {
-                    return false;
-                }
-                if(!$user->patientInfo) {
-                    return false;
-                }
-                return $user->patientInfo->ccm_status == Patient::ENROLLED;
-            });
-        })->flatten()->unique('id');
-
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
+        $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
 
         foreach ($practices as $practice) {
-
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date, true);
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -154,12 +140,12 @@ class OpsDashboardController extends Controller
                 $hoursBehind,
                 $date
             ) {
-                $sheet->cell('A1', function($cell) use ($date) {
+                $sheet->cell('A1', function ($cell) use ($date) {
                     // manipulate the cell
                     $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()} to: {$date->toDateTimeString()}");
 
                 });
-                $sheet->cell('A2', function($cell) use ($hoursBehind) {
+                $sheet->cell('A2', function ($cell) use ($hoursBehind) {
                     // manipulate the cell
                     $cell->setValue("HoursBehind: {$hoursBehind}");
 
@@ -181,7 +167,7 @@ class OpsDashboardController extends Controller
                     'Paused',
                     'Withdrawn',
                     'Delta',
-                    'G0506 To Enroll'
+                    'G0506 To Enroll',
                 ]);
                 foreach ($rows as $key => $value) {
                     $sheet->appendRow([
@@ -195,12 +181,13 @@ class OpsDashboardController extends Controller
                         $value['Total'],
                         $value['Prior Day totals'],
                         $value['Added'],
-                        $value['Unreachable'],
-                        $value['Paused'],
-                        $value['Withdrawn'],
+                        '-' . $value['Unreachable'],
+                        '-' . $value['Paused'],
+                        '-' . $value['Withdrawn'],
                         $value['Delta'],
-                        $value['G0506 To Enroll']
-                    ]);}
+                        $value['G0506 To Enroll'],
+                    ]);
+                }
 
 
             });
@@ -209,16 +196,15 @@ class OpsDashboardController extends Controller
     }
 
 
-
     public function getLostAdded(Request $request)
     {
         $today   = Carbon::today();
         $maxDate = $today->copy()->subDay(1);
 
-        if ($request['fromDate'] && $request['toDate'] ){
+        if ($request['fromDate'] && $request['toDate']) {
             $fromDate = $request['fromDate'];
             $toDate   = $request['toDate'];
-        }else{
+        } else {
             $toDate   = $today->copy()->subDay(1)->setTimeFromTimeString('23:00');
             $fromDate = $toDate->copy()->subDay(1);
         }
@@ -246,7 +232,7 @@ class OpsDashboardController extends Controller
         $rows = [];
         foreach ($practices as $practice) {
             $patients = $practice->patients->where('program_id', $practice->id);
-            $row                      = $this->service->lostAddedRow($patients, $fromDate);
+            $row      = $this->service->lostAddedRow($patients, $fromDate);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -623,19 +609,19 @@ class OpsDashboardController extends Controller
 
     public function calculateLostAddedRow($rows)
     {
-        $total = [];
+        $total    = [];
         $totalRow = [];
         foreach ($rows as $key => $value) {
-            $total['Added'][]          = $value['Added'];
+            $total['Added'][]     = $value['Added'];
             $total['Paused'][]    = $value['Paused'];
             $total['Withdrawn'][] = $value['Withdrawn'];
-            $total['Delta'][]             = $value['Delta'];
+            $total['Delta'][]     = $value['Delta'];
         }
 
-        $totalRow['Added']          = array_sum($total['Added']);
+        $totalRow['Added']     = array_sum($total['Added']);
         $totalRow['Paused']    = array_sum($total['Paused']);
         $totalRow['Withdrawn'] = array_sum($total['Withdrawn']);
-        $totalRow['Delta']             = array_sum($total['Delta']);
+        $totalRow['Delta']     = array_sum($total['Delta']);
 
         return collect($totalRow);
 
@@ -645,13 +631,13 @@ class OpsDashboardController extends Controller
     {
         $totalCounts = [];
 
-        foreach ($rows as $row){
-            foreach ($row as $key => $value){
+        foreach ($rows as $row) {
+            foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
 
         }
-        foreach($totalCounts as $key => $value){
+        foreach ($totalCounts as $key => $value) {
 
             $totalCounts[$key] = array_sum($value);
         }
