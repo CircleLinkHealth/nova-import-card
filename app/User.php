@@ -2176,10 +2176,20 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->first();
     }
 
-    public function practices()
+    public function practices(bool $onlyActive = false, bool $onlyEnrolledPatients = false)
     {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
                     ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+                    ->when($onlyActive, function ($query) use ($onlyActive) {
+                        return $query->where('active', '=', 1);
+                    })
+                    ->when($onlyEnrolledPatients, function ($query) use ($onlyEnrolledPatients) {
+                        return $query->whereHas('patients', function ($innerQuery) {
+                           return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                               return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                           });
+                        });
+                    })
                     ->withTimestamps();
     }
 
@@ -2647,14 +2657,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            ['type', '=', CarePerson::BILLING_PROVIDER],
                            ['member_user_id', '=', $this->id],
                        ])
-                       ->orWhere(function ($q){
-                           $q->whereHas('user', function ($q){
-                               $q->whereHas('forwardAlertsTo', function ($q){
-                                   $q->where('contactable_id', $this->id)
-                                   ->orWhereIn('name', ['forward_careplan_approval_emails_instead_of_provider', 'forward_careplan_approval_emails_in_addition_to_provider']);
-                               });
-                           });
-                       });
+                         ->orWhere(function ($q) {
+                             $q->whereHas('user', function ($q) {
+                                 $q->whereHas('forwardAlertsTo', function ($q) {
+                                     $q->where('contactable_id', $this->id)
+                                       ->orWhereIn('name', [
+                                           'forward_careplan_approval_emails_instead_of_provider',
+                                           'forward_careplan_approval_emails_in_addition_to_provider',
+                                       ]);
+                                 });
+                             });
+                         });
                    })
                    ->with('primaryPractice')
                    ->with([
