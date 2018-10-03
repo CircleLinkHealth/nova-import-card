@@ -199,6 +199,7 @@ class EligibilityBatchController extends Controller
             'primary_insurance',
             'secondary_insurance',
             'tertiary_insurance',
+            'last_encounter',
             'referring_provider_name',
             'problems',
             'p1.name as ccm_condition_1',
