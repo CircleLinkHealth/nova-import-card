@@ -94,7 +94,11 @@
             }
 
             $('document').ready(function () {
-                $('#perform-action-select').on('change', onActionChange);
+
+                const actionSelectEl = $('#perform-action-select');
+                actionSelectEl.on('change', onActionChange);
+                actionSelectEl.change();
+
                 $('#perform-action-submit').on('click', onActionSubmit);
                 $('#select-all-in-page').on('change', selectAllUsers);
                 $('#select-all-matching-filters').on('click', selectAllMatchingFilters);
