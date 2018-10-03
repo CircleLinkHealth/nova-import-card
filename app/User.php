@@ -2184,8 +2184,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         return $query->where('active', '=', 1);
                     })
                     ->when($onlyEnrolledPatients, function ($query) use ($onlyEnrolledPatients) {
+                        //$query -> Practice Model
                         return $query->whereHas('patients', function ($innerQuery) {
+                            //$innerQuery -> User Model
                            return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                               //$innerInnerQuery -> Patient model
                                return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
                            });
                         });
