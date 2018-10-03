@@ -39,7 +39,7 @@
                             </div>
                         @endif
 
-                        @if($eligible > 0)
+                        @if($enrolleesExist)
                             <div class="pull-left" style="padding-left: 2%;">
                                 <a href="{{route('admin.enrollees.show.batch', [$batch->id])}}"
                                    class="btn btn-info">Import Patients</a>

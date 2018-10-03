@@ -123,8 +123,12 @@ class EligibilityBatchController extends Controller
             $stats = $batch->getOutcomes();
         }
 
+        $enrolleesExist = ! ! Enrollee::whereBatchId($batch->id)->whereNull('user_id')->exists();
+
+
         return view('eligibilityBatch.show')
             ->with('batch', $batch)
+            ->with('enrolleesExist', $enrolleesExist)
             ->with('stats', $stats)
             ->with('eligible', $eligible)
             ->with('unprocessed', $unprocessed)
