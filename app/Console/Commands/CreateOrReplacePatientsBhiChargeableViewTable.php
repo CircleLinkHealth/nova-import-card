@@ -65,7 +65,7 @@ class CreateOrReplacePatientsBhiChargeableViewTable extends Command
 		        from practices p
 		        join chargeables c on p.id = c.chargeable_id
 		        join chargeable_services cs on cs.id = c.chargeable_service_id 
-		        where c.chargeable_type = 'App\\Practice' and code = 'CPT 99484' and u.program_id = p.id and p.active = 1
+		        where c.chargeable_type = 'App\\\\Practice' and code = 'CPT 99484' and u.program_id = p.id and p.active = 1
             ) 
         ORDER BY u.id
 		");
