@@ -17,7 +17,11 @@ class OpsDashboardDataSeeder extends Seeder
      */
     public function run()
     {
-
+        $ccmStatuses = collect([
+            Patient::UNREACHABLE,
+            Patient::PAUSED,
+            Patient::WITHDRAWN
+        ]);
         $nurses = User::ofType('care-center')->pluck('id');
         $practiceIds = Practice::active()->get()->pluck('id');
         $date = Carbon::now();
@@ -35,6 +39,12 @@ class OpsDashboardDataSeeder extends Seeder
                 $p->enrolled();
             })
             ->get();
+
+        $patientsToLose = $patients->random(40);
+        foreach ($patientsToLose as $p){
+            $p->patientInfo->ccm_status = $ccmStatuses->random();
+            $p->save();
+        }
 
         foreach($patients as $patient){
             if ($patient->primaryPractice){
@@ -73,34 +83,5 @@ class OpsDashboardDataSeeder extends Seeder
 
         }
 
-
-//        factory(User::class, 50)->create()->each(function ($u) use ($practiceIds, $date, $activityDuration, $activityType) {
-//            $practiceId = $practiceIds->random();
-//            $u->attachPractice($practiceId, null, null);
-//            $u->program_id = $practiceId;
-//            $u->save();
-////            $u->patientInfo()->create();
-////            $u->patientInfo->ccm_status = 'enrolled';
-////            $u->patientInfo->registration_date = $date->startOfMonth()->toDateTimeString();
-////            $u->patientInfo->save();
-//            Patient::updateOrCreate([
-//                'user_id' => $u->id,
-//                'ccm_status' => 'enrolled',
-//                'registration_date' => $date->subDay(5)->toDateTimeString(),
-//            ]);
-//            $u->activities()->createMany(
-//                [
-//                    'type' => $activityType->random(),
-//                    'duration' => $activityDuration->random(),
-//                    'duration_unit' => 'seconds',
-//                    'performed_at' => $date->subDay(rand(1,20))->toDateTimeString()],
-//                [
-//                    'type' => $activityType->random(),
-//                    'duration' => $activityDuration->random(),
-//                    'duration_unit' => 'seconds',
-//                    'performed_at' => $date->subDay(rand(1,20))->toDateTimeString()
-//                ]
-//            );
-//        });
     }
 }
