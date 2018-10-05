@@ -185,15 +185,46 @@
                                                 <label>
                                                     <div>
                                                         <input type="checkbox"
-                                                               name="meta[0][meta_key]"
-                                                               id="phone"
-                                                               value="phone"/>
+                                                               id="phone"/>
                                                         <label for="phone">
                                                             <span> </span>Patient Phone Session
                                                         </label>
                                                     </div>
                                                 </label>
                                             </div>
+                                            <div class="col-sm-12">
+                                                <label>
+                                                    <div>
+                                                        <input type="checkbox"
+                                                               id="task"/>
+                                                        <label for="task">
+                                                            <span> </span>Associate with Task
+                                                        </label>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            @if(!empty($tasks))
+                                                <div class="col-sm-12" id="tasks-container" style="display: none;">
+                                                    <div class="multi-input-wrapper"
+                                                         style="padding-bottom: 3px">
+                                                        @foreach($tasks as $task)
+                                                            <div class="radio">
+                                                                <input type="radio"
+                                                                       class="tasks-radio"
+                                                                       name="task-id"
+                                                                       value="{{$task->id}}"
+                                                                       id="{{$task->id}}"/>
+                                                                <label for="{{$task->id}}">
+                                                                    <span> </span>{{$task->sub_type}}
+                                                                    ; {{$task->attempt_note}},
+                                                                    due {{$task->window_end}}
+                                                                    on {{$task->scheduled_date}}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-sm-12">
                                                 <div class="panel-group" id="accordion">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
@@ -395,6 +426,7 @@
         <script>
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
+            const taskTypesMap = @json($task_types);
 
             let form;
 
@@ -437,6 +469,22 @@
                         checked: $('#phone').is(':checked')
                     }
                 });
+
+                function associateWithTaskChange(e) {
+                    if (!e) {
+                        return;
+                    }
+                    if (e.currentTarget.checked) {
+                        $('#activityKey').prop("disabled", true);
+                        $('#tasks-container').show();
+                    }
+                    else {
+                        $('#activityKey').prop("disabled", false);
+                        $('#tasks-container').hide();
+                    }
+                }
+
+                $('#task').change(associateWithTaskChange);
 
                 function tcmChange(e) {
                     if (e) {

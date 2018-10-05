@@ -259,11 +259,20 @@ class NotesController extends Controller
             asort($provider_info);
             asort($careteam_info);
 
+            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+                                       ->where('type', '=', 'task')
+                                       ->where('inbound_cpm_id', '=', $patientId)
+                                       ->where('outbound_cpm_id', '=', $author_id)
+                                       ->select(['id', 'type', 'sub_type', 'attempt_note', 'scheduled_date', 'window_start', 'window_end'])
+                                       ->get();
+
             $view_data = [
                 'program_id'         => $patient->program_id,
                 'patient'            => $patient,
                 'patient_name'       => $patient_name,
                 'note_types'         => Activity::input_activity_types(),
+                'task_types'         => Activity::task_types(),
+                'tasks'              => $nurse_patient_tasks,
                 'author_id'          => $author_id,
                 'author_name'        => $author_name,
                 'careteam_info'      => $careteam_info,
