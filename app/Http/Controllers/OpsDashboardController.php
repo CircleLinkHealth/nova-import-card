@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardController extends Controller
@@ -88,16 +89,19 @@ class OpsDashboardController extends Controller
 
         $date = Carbon::now();
 
-        $practices = Practice::activeBillable()
+        $practices = Practice::select(['id','display_name'])
+                             ->activeBillable()
                              ->with([
                                  'patients' => function ($p) use ($date) {
                                      $p->with([
                                          'activities'                  => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay());
+                                             $a->select(['id','duration'])
+                                               ->where('performed_at', '>=',
+                                                   $date->copy()->startOfMonth()->startOfDay());
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                             $r->where('key', 'ccm_status')
+                                             $r->select(['id', 'revisionable_id', 'old_value', 'new_value', 'created_at'])
+                                               ->where('key', 'ccm_status')
                                                ->where('created_at', '>=',
                                                    $date->copy()->subDay()->setTimeFromTimeString('23:00'));
                                          },
@@ -118,6 +122,7 @@ class OpsDashboardController extends Controller
         }
         $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                     = collect($rows);
+
 
         Excel::create('CLH-Ops-Daily-Report-' . $date->toDateTimeString(), function ($excel) use (
             $rows,
