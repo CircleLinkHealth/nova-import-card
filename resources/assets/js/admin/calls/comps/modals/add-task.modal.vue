@@ -1,30 +1,21 @@
 <template>
-    <modal name="add-call-v2" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
+    <modal name="add-task" :info="addTaskModalInfo" :no-footer="true" class-name="modal-add-task">
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Call(s)
-                </div>
-                <div class="col-sm-6 text-right">
-                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">
-                        Show Unscheduled Patients
-                    </button>
+                    Add New Activity(ies)
                 </div>
             </div>
         </template>
         <template slot-scope="props">
-            <form action="/callcreate-multi" @submit="submitForm">
+            <form action="#" @submit="submitForm">
 
                 <div class="row">
-                    <table class="add-calls">
+                    <table class="add-tasks">
                         <thead>
                         <tr>
-                            <th class="family-override">
-                                <a v-show="hasToConfirmFamilyOverrides" class='my-tool-tip' data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="Tick to confirm family call override">
-                                    <i class='glyphicon glyphicon-info-sign'></i>
-                                </a>
+                            <th class="sub-type">
+                                Type
                             </th>
                             <th class="practices">
                                 Practice
@@ -59,7 +50,7 @@
                                 </a>
                             </th>
                             <th class="notes">
-                                Call notes
+                                Activity Note
                             </th>
                             <th class="remove">
                                 &nbsp;
@@ -69,11 +60,11 @@
                         <tbody>
                         <tr v-for="(action, index) in actions">
                             <td>
-                                <div v-show="action.showFamilyOverride">
-                                    <input type="checkbox" id="family_override"
-                                           name="family_override" v-model="action.call.familyOverride"
-                                           :disabled="action.disabled"/>
-                                </div>
+                                <v-select :disabled="action.disabled"
+                                          max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
+                                          :options="subTypesForSelect"
+                                          @input="function (type) {changeSubType(index, type)}">
+                                </v-select>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -110,28 +101,28 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.call.date"
+                                <input class="form-control" type="date" name="scheduled_date" v-model="action.task.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="time" name="window_start"
-                                       v-model="action.call.startTime"
+                                       v-model="action.task.startTime"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <div class="width-82">
                                     <input class="form-control" type="time" name="window_end"
-                                           v-model="action.call.endTime"
+                                           v-model="action.task.endTime"
                                            :disabled="action.disabled" required/>
                                 </div>
                                 <div class="width-18 padding-left-5 padding-top-7">
                                     <input type="checkbox" id="is_manual"
-                                           name="is_manual" v-model="action.call.isManual"
+                                           name="is_manual" v-model="action.task.isManual"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control" type="text" name="attempt_note" v-model="action.call.text"
+                                <input class="form-control" type="text" name="text" v-model="action.task.text"
                                        :disabled="action.disabled"/>
                             </td>
                             <td>
@@ -149,14 +140,14 @@
                         No available nurses for selected patient
                     </div>
                     <div class="alert alert-warning" v-if="hasPatientInDraftMode">
-                        Call not allowed: Care plan is in draft mode. QA the care plan first.
+                        Task not allowed: Care plan is in draft mode. QA the care plan first.
                     </div>
                 </div>
 
                 <br/>
                 <div class="row">
                     <div class="btn btn-primary btn-xs" @click="addNewAction">
-                        Add New Call
+                        Add New Activity
                     </div>
                 </div>
 
@@ -164,7 +155,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <notifications ref="notificationsComponent" name="add-call-v2-modal"></notifications>
+                        <notifications ref="notificationsComponent" name="add-task-modal"></notifications>
                         <center>
                             <loader v-if="loaders.submit"></loader>
                         </center>
@@ -188,10 +179,8 @@
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};
 
-    const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
-    const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call by checking the box.";
-
     const defaultFormData = {
+        subType: null,
         practiceId: null,
         patientId: null,
         nurseId: null,
@@ -199,15 +188,34 @@
         startTime: '09:00',
         endTime: '17:00',
         text: null,
-        isManual: 0,
-        familyOverride: 0
+        isManual: 0
     };
+
+    function getNewAction() {
+        return {
+            disabled: false,
+            task: Object.assign({}, defaultFormData),
+            filters: {
+                showUnscheduledPatients: false
+            },
+            patients: [],
+            nurses: [],
+            selectedSubTypeData: UNASSIGNED_VALUE,
+            selectedPatientData: UNASSIGNED_VALUE,
+            selectedPracticeData: UNASSIGNED_VALUE,
+            selectedNurseData: UNASSIGNED_VALUE,
+            selectedPatientIsInDraftMode: false,
+            nursesForSelect: [],
+            patientsForSelect: [],
+
+        };
+    }
 
     //need in cancelHandler.
     let self;
 
     export default {
-        name: 'add-call-v2-modal',
+        name: 'add-task-modal',
         mixins: [VueCache],
         components: {
             'modal': Modal,
@@ -217,17 +225,17 @@
         },
         data() {
             return {
-                addCallModalInfo: {
+                addTaskModalInfo: {
                     okHandler() {
-                        const form = this.$form()
-                        this.errors().submit = null
-                        console.log("form:add-call:submit", form)
-                        form.querySelector('button.submit.hidden').click()
+                        const form = this.$form();
+                        this.errors().submit = null;
+                        console.log("form:add-task:submit", form);
+                        form.querySelector('button.submit.hidden').click();
                     },
                     cancelHandler() {
                         self.resetForm();
-                        this.errors().submit = null
-                        Event.$emit("modal-add-call-v2:hide")
+                        this.errors().submit = null;
+                        Event.$emit("modal-add-task:hide")
                     },
                     $form: () => this.$el.querySelector('form'),
                     errors: () => this.errors
@@ -244,37 +252,28 @@
                     nurses: false
                 },
 
+                subTypesForSelect: [
+                    {label: 'Call', value: 'call'},
+                    {label: 'Call back', value: 'call_back'},
+                    {label: 'Refill', value: 'refill'},
+                    {label: 'Send Info', value: 'send_info'},
+                    {label: 'Get appt.', value: 'get_appt'},
+                    {label: 'CP Review', value: 'cp_review'},
+                    {label: 'Other', value: 'other_task'}
+                ],
+
                 practices: [],
                 practicesForSelect: [],
 
-                actions: [{
-                    disabled: false,
-                    showFamilyOverride: false,
-                    call: Object.assign({}, defaultFormData),
-                    filters: {
-                        showUnscheduledPatients: false
-                    },
-                    patients: [],
-                    nurses: [],
-                    selectedPatientData: UNASSIGNED_VALUE,
-                    selectedPracticeData: UNASSIGNED_VALUE,
-                    selectedNurseData: UNASSIGNED_VALUE,
-                    selectedPatientIsInDraftMode: false,
-                    nursesForSelect: [],
-                    patientsForSelect: [],
-
-                }]
+                actions: [getNewAction()]
             }
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.actions.filter(x => x.call.practiceId && x.nursesForSelect.length == 0).length > 0;
+                return this.actions.filter(x => x.task.practiceId && x.nursesForSelect.length === 0).length > 0;
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
-            },
-            hasToConfirmFamilyOverrides() {
-                return this.actions.filter(x => x.showFamilyOverride).length > 0;
             }
         },
         methods: {
@@ -310,33 +309,18 @@
             },
 
             addNewAction() {
-                this.actions.push({
-                    disabled: false,
-                    showFamilyOverride: false,
-                    call: Object.assign({}, defaultFormData),
-                    filters: {
-                        showUnscheduledPatients: false
-                    },
-                    patients: [],
-                    nurses: [],
-                    patientsForSelect: [],
-                    nursesForSelect: [],
-                    selectedPatientData: UNASSIGNED_VALUE,
-                    selectedPracticeData: UNASSIGNED_VALUE,
-                    selectedNurseData: UNASSIGNED_VALUE,
-                    selectedPatientIsInDraftMode: false,
-                });
+                this.actions.push(getNewAction());
             },
             removeAction(id) {
                 this.$delete(this.actions, id);
             },
             selectedPatient(actionIndex) {
-                return (this.actions[actionIndex].patients.find(patient => patient.id === this.actions[actionIndex].call.patientId) || {})
+                return (this.actions[actionIndex].patients.find(patient => patient.id === this.actions[actionIndex].task.patientId) || {});
             },
             setPractice(actionIndex, practiceId) {
                 if (practiceId) {
-                    this.actions[actionIndex].call.practiceId = practiceId;
-                    const practice = this.practices.find(practice => practice.id === this.actions[actionIndex].call.practiceId)
+                    this.actions[actionIndex].task.practiceId = practiceId;
+                    const practice = this.practices.find(practice => practice.id === this.actions[actionIndex].task.practiceId);
                     if (practice) {
                         if (!this.actions[actionIndex].selectedPracticeData || this.actions[actionIndex].selectedPracticeData.value !== practice.id) {
                             this.actions[actionIndex].selectedPracticeData = {
@@ -346,13 +330,18 @@
                         }
                     }
                     else {
-                        this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE
+                        this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE;
                     }
+                }
+            },
+            changeSubType(actionIndex, type) {
+                if (type) {
+                    this.actions[actionIndex].task.subType = type.value;
                 }
             },
             changePatient(actionIndex, patient) {
                 if (patient) {
-                    this.actions[actionIndex].call.patientId = patient.value;
+                    this.actions[actionIndex].task.patientId = patient.value;
                     const selectedPatient = this.selectedPatient(actionIndex);
                     this.setPractice(actionIndex, selectedPatient.program_id);
                     this.actions[actionIndex].selectedPatientIsInDraftMode = (selectedPatient.status === 'draft');
@@ -362,20 +351,20 @@
                 if (practice) {
 
                     //reset selected patient only if practice is different
-                    if (this.actions[actionIndex].call.practiceId !== practice.value) {
+                    if (this.actions[actionIndex].task.practiceId !== practice.value) {
                         this.selectedPatientData = UNASSIGNED_VALUE;
                     }
                     //always reset selected nurse
                     this.actions[actionIndex].selectedNurseData = UNASSIGNED_VALUE;
 
-                    this.actions[actionIndex].call.practiceId = practice.value;
+                    this.actions[actionIndex].task.practiceId = practice.value;
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
             },
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
-                    this.actions[actionIndex].call.nurseId = nurse.value;
+                    this.actions[actionIndex].task.nurseId = nurse.value;
                 }
             },
             changeUnscheduledPatients(actionIndex, e) {
@@ -385,28 +374,28 @@
                 return Promise.resolve([])
             },
             getPractices(actionIndex) {
-                this.loaders.practices = true
+                this.loaders.practices = true;
                 return this.cache()
                     .get(rootUrl(`api/practices`))
                     .then(response => {
-                        this.loaders.practices = false
-                        console.log('add-call:practices', response)
+                        this.loaders.practices = false;
+                        console.log('add-task:practices', response);
                         this.practices = (response || [])
                             .sort((a, b) => {
                                 if (a.display_name < b.display_name) return -1;
-                                else if (a.display_name > b.display_name) return 1
+                                else if (a.display_name > b.display_name) return 1;
                                 else return 0
                             })
                             .distinct(patient => patient.id);
                         this.setPracticesForSelect();
                     }).catch(err => {
-                        this.loaders.practices = false
-                        this.errors.practices = err.message
-                        console.error('add-call:practices', err)
+                        this.loaders.practices = false;
+                        this.errors.practices = err.message;
+                        console.error('add-task:practices', err)
                     })
             },
             getPatients(actionIndex) {
-                return !this.actions[actionIndex].call.practiceId ?
+                return !this.actions[actionIndex].task.practiceId ?
                     this.getAllPatients(actionIndex) :
                     (this.actions[actionIndex].filters.showUnscheduledPatients ?
                             this.getUnscheduledPatients(actionIndex) :
@@ -415,34 +404,34 @@
             },
             getUnscheduledPatients(actionIndex) {
                 this.loaders.patients = true
-                const practice_addendum = this.actions[actionIndex].call.practiceId ? `practices/${this.actions[actionIndex].call.practiceId}/` : '';
+                const practice_addendum = this.actions[actionIndex].task.practiceId ? `practices/${this.actions[actionIndex].task.practiceId}/` : '';
                 return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
-                    this.loaders.patients = false
-                    const pagination = response.data
-                    console.log('add-call:patients:unscheduled', pagination)
-                    return pagination
+                    this.loaders.patients = false;
+                    const pagination = response.data;
+                    console.log('add-task:patients:unscheduled', pagination);
+                    return pagination;
                 }).then((pagination) => {
                     this.actions[actionIndex].patients = ((pagination || {}).data || [])
                         .map(patient => {
-                            patient.name = patient.full_name
+                            patient.name = patient.full_name;
                             return patient;
                         })
                         .sort((a, b) => a.name > b.name ? 1 : -1)
                         .distinct(patient => patient.id);
                     this.setPatientsForSelect(actionIndex);
                 }).catch(err => {
-                    this.loaders.patients = false
-                    this.errors.patients = err.message
-                    console.error('add-call:patients:unscheduled', err)
+                    this.loaders.patients = false;
+                    this.errors.patients = err.message;
+                    console.error('add-task:patients:unscheduled', err)
                 })
             },
             getPracticePatients(actionIndex) {
-                if (this.actions[actionIndex].call.practiceId) {
-                    this.loaders.patients = true
-                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].call.practiceId}/patients`))
+                if (this.actions[actionIndex].task.practiceId) {
+                    this.loaders.patients = true;
+                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].task.practiceId}/patients`))
                         .then(response => {
-                            this.loaders.patients = false
-                            console.log('add-call:patients:practice', response.data)
+                            this.loaders.patients = false;
+                            console.log('add-task:patients:practice', response.data);
                             return response.data
                         }).then((patients = []) => {
                             this.actions[actionIndex].patients = patients
@@ -454,9 +443,9 @@
                                 .distinct(patient => patient.id);
                             this.setPatientsForSelect(actionIndex);
                         }).catch(err => {
-                            this.loaders.patients = false
-                            this.errors.patients = err.message
-                            console.error('add-call:patients:practice', err)
+                            this.loaders.patients = false;
+                            this.errors.patients = err.message;
+                            console.error('add-task:patients:practice', err)
                         })
                 }
                 return Promise.resolve([])
@@ -470,7 +459,7 @@
                     .get(rootUrl(`api/patients?rows=all&autocomplete`))
                     .then(response => {
                         this.loaders.patients = false
-                        console.log('add-call:patients:all', response.data)
+                        console.log('add-task:patients:all', response.data)
                         return response.data;
                     })
                     .then((patients = []) => {
@@ -480,26 +469,26 @@
                     }).catch(err => {
                         this.loaders.patients = false
                         this.errors.patients = err.message
-                        console.error('add-call:patients:all', err)
+                        console.error('add-task:patients:all', err)
                     })
                     */
             },
             getNurses(actionIndex) {
-                if (this.actions[actionIndex].call.practiceId) {
-                    this.loaders.nurses = true
-                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].call.practiceId}/nurses`))
+                if (this.actions[actionIndex].task.practiceId) {
+                    this.loaders.nurses = true;
+                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].task.practiceId}/nurses`))
                         .then(response => {
-                            this.loaders.nurses = false
+                            this.loaders.nurses = false;
                             this.actions[actionIndex].nurses = (response.data || []).map(nurse => {
-                                nurse.name = nurse.full_name
+                                nurse.name = nurse.full_name;
                                 return nurse;
-                            }).filter(nurse => nurse.name && nurse.name.trim() != '')
-                            console.log('add-call-get-nurses', this.actions[actionIndex].nurses);
+                            }).filter(nurse => nurse.name && nurse.name.trim() !== '');
+                            console.log('add-task-get-nurses', this.actions[actionIndex].nurses);
                             this.setNursesForSelect(actionIndex);
                             return this.actions[actionIndex].nurses;
                         }).catch(err => {
-                            console.error('add-call-get-nurses', err)
-                            this.loaders.nurses = false
+                            console.error('add-task-get-nurses', err);
+                            this.loaders.nurses = false;
                             this.errors.nurses = err.message
                         })
                 }
@@ -508,7 +497,7 @@
             submitForm(e) {
                 e.preventDefault();
 
-                Event.$emit('notifications-add-call-v2-modal:dismissAll');
+                Event.$emit('notifications-add-task-modal:dismissAll');
 
                 const patientIds = [];
                 const patients = [];
@@ -520,33 +509,33 @@
                             return false;
                         }
 
-                        const call = action.call;
+                        const task = action.task;
                         //CPM-291 - allow unassigned nurse
                         //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
-                        if (call.patientId === null || call.practiceId === null) {
+                        if (task.patientId === null || task.practiceId === null) {
                             return false;
                         }
                         return true;
                     })
                     .map(action => {
-                        const call = action.call;
-                        patients.push(action.patients.find(patient => patient.id === call.patientId));
-                        patientIds.push(call.patientId);
+                        const task = action.task;
+                        patients.push(action.patients.find(patient => patient.id === task.patientId));
+                        patientIds.push(task.patientId);
                         return {
-                            type: 'call',
-                            inbound_cpm_id: call.patientId,
-                            outbound_cpm_id: call.nurseId,
-                            scheduled_date: call.date,
-                            window_start: call.startTime,
-                            window_end: call.endTime,
-                            attempt_note: call.text,
-                            is_manual: call.isManual,
-                            family_override: call.familyOverride
+                            type: 'task',
+                            sub_type: task.subType,
+                            inbound_cpm_id: task.patientId,
+                            outbound_cpm_id: task.nurseId,
+                            scheduled_date: task.date,
+                            window_start: task.startTime,
+                            window_end: task.endTime,
+                            attempt_note: task.text,
+                            is_manual: task.isManual
                         };
                     });
 
                 if (!patients.length) {
-                    Event.$emit('notifications-add-call-v2-modal:create', {
+                    Event.$emit('notifications-add-task-modal:create', {
                         text: `Patient not found`,
                         type: 'warning'
                     });
@@ -556,8 +545,8 @@
                 //if any patient has status draft, we do not allow creation
                 const draftPatients = patients.filter(x => x.status === 'draft');
                 if (draftPatients.length) {
-                    Event.$emit('notifications-add-call-v2-modal:create', {
-                        text: `Call not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
+                    Event.$emit('notifications-add-task-modal:create', {
+                        text: `Task not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
                         type: 'warning'
                     });
                     return;
@@ -586,15 +575,9 @@
                                         //enable this action so it can be edited
                                         this.actions[index].disabled = false;
 
-                                        const familyOverrideError = call.code === CALL_MUST_OVERRIDE_STATUS_CODE;
-                                        this.actions[index].showFamilyOverride = familyOverrideError;
-
                                         let msg = `Call[${index + 1}]: `;
 
-                                        if (familyOverrideError) {
-                                            msg += CALL_MUST_OVERRIDE_WARNING;
-                                        }
-                                        else if (Array.isArray(call.errors)) {
+                                        if (Array.isArray(call.errors)) {
                                             msg += call.errors.join(', ');
                                         }
                                         else {
@@ -602,14 +585,14 @@
                                             msg += errorsMessages;
                                         }
 
-                                        Event.$emit('notifications-add-call-v2-modal:create', {
+                                        Event.$emit('notifications-add-task-modal:create', {
                                             text: msg,
                                             type: 'error',
                                             noTimeout: true
                                         });
                                     }
                                     else {
-                                        Event.$emit('notifications-add-call-v2-modal:create', {
+                                        Event.$emit('notifications-add-task-modal:create', {
                                             text: `Call[${index + 1}]: Created successfully`,
                                             noTimeout: true
                                         });
@@ -621,7 +604,7 @@
                             }
                             else {
                                 this.resetForm();
-                                Event.$emit("modal-add-call-v2:hide");
+                                Event.$emit("modal-add-task:hide");
                                 calls.forEach(call => {
                                     Event.$emit('calls:add', call);
                                 });
@@ -643,7 +626,7 @@
 
                         this.errors.submit = err.message
                         this.loaders.submit = false
-                        console.error('add-call', err)
+                        console.error('add-task', err)
 
                         let msg = err.message;
                         if (err.response && err.response.data && err.response.data.errors) {
@@ -665,13 +648,9 @@
 
                         }
 
-                        Event.$emit('notifications-add-call-v2-modal:create', {text: msg, type: 'error'})
+                        Event.$emit('notifications-add-task-modal:create', {text: msg, type: 'error'})
                     });
 
-            },
-            showUnscheduledPatients() {
-                Event.$emit('modal-add-call-v2:hide')
-                Event.$emit('modal-unscheduled-patients:show')
             }
         },
         created() {
@@ -693,7 +672,7 @@
                 }
             };
 
-            Event.$on('modal-add-call-v2:show', () => {
+            Event.$on('modal-add-task:show', () => {
 
                 const el = '.modal-container';
                 waitForEl(el, () => {
@@ -715,7 +694,7 @@
                     }
                     if (data.patientId) {
                         console.log(data);
-                        this.actions[this.actions.length - 1].call.patientId = data.patientId;
+                        this.actions[this.actions.length - 1].task.patientId = data.patientId;
                         this.actions[this.actions.length - 1].selectedPatientData = {
                             label: data.patientName,
                             value: data.patientId
@@ -731,7 +710,7 @@
 
 <style>
 
-    .modal-add-call .modal-wrapper {
+    .modal-add-task .modal-wrapper {
         overflow-x: auto;
         white-space: nowrap;
         display: block;
@@ -742,56 +721,56 @@
     }
 
     /*width will be set automatically when modal is mounted*/
-    .modal-add-call .modal-container {
+    .modal-add-task .modal-container {
         width: 1200px;
     }
 
-    .modal-add-call th, .modal-add-call td {
+    .modal-add-task th, .modal-add-task td {
         padding: 0.4em 0.4em;
         position: relative;
     }
 
-    .modal-add-call table.add-calls {
+    .modal-add-task table.add-tasks {
         table-layout: fixed;
     }
 
-    .modal-add-call table.add-calls th.practices {
-        width: 18%;
+    .modal-add-task table.add-tasks th.sub-type {
+        width: 5%;
     }
 
-    .modal-add-call table.add-calls th.patients {
-        width: 17%;
+    .modal-add-task table.add-tasks th.practices {
+        width: 16%;
     }
 
-    .modal-add-call table.add-calls th.nurses {
-        width: 17%;
+    .modal-add-task table.add-tasks th.patients {
+        width: 16%;
     }
 
-    .modal-add-call table.add-calls th.date {
-        width: 10%;
-    }
-
-    .modal-add-call table.add-calls th.start-time {
-        width: 8%;
-    }
-
-    .modal-add-call table.add-calls th.end-time {
-        width: 10%;
-    }
-
-    .modal-add-call table.add-calls th.notes {
+    .modal-add-task table.add-tasks th.nurses {
         width: 15%;
     }
 
-    .modal-add-call table.add-calls th.remove {
+    .modal-add-task table.add-tasks th.date {
+        width: 10%;
+    }
+
+    .modal-add-task table.add-tasks th.start-time {
+        width: 8%;
+    }
+
+    .modal-add-task table.add-tasks th.end-time {
+        width: 11%;
+    }
+
+    .modal-add-task table.add-tasks th.notes {
+        width: 16%;
+    }
+
+    .modal-add-task table.add-tasks th.remove {
         width: 3%;
     }
 
-    .modal-add-call table.add-calls th.family-override {
-        width: 2%;
-    }
-
-    .modal-add-call .loader {
+    .modal-add-task .loader {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -799,7 +778,7 @@
         height: 20px;
     }
 
-    .modal-add-call .glyphicon-remove {
+    .modal-add-task .glyphicon-remove {
         width: 20px;
         height: 20px;
         color: #d44a4a;
@@ -856,7 +835,7 @@
         overflow: hidden;
     }
 
-    .modal-add-call .modal-body {
+    .modal-add-task .modal-body {
         min-height: 300px;
     }
 

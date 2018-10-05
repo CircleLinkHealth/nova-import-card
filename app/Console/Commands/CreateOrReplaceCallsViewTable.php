@@ -52,6 +52,8 @@ class CreateOrReplaceCallsViewTable extends Command
         SELECT
             c.id,
             c.is_manual,
+            c.type,
+            c.sub_type,
             u2.nurse_id,
             u2.nurse,
             u1.patient_id,

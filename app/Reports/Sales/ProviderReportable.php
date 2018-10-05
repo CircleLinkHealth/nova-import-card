@@ -44,7 +44,12 @@ class ProviderReportable implements Reportable
      */
     public function callCount(Carbon $start, Carbon $end, $status = null)
     {
-        $q = Call::whereHas('inboundUser', function ($q) {
+        $q = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call')
+              ->orWhere('sub_type', '=', 'call_back')
+              ->orWhere('sub_type', '=', 'call');
+        })->whereHas('inboundUser', function ($q) {
             $q->hasBillingProvider($this->provider->id);
         })
                  ->where('called_date', '>=', $start)

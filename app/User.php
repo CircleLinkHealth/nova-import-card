@@ -2647,14 +2647,17 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            ['type', '=', CarePerson::BILLING_PROVIDER],
                            ['member_user_id', '=', $this->id],
                        ])
-                       ->orWhere(function ($q){
-                           $q->whereHas('user', function ($q){
-                               $q->whereHas('forwardAlertsTo', function ($q){
-                                   $q->where('contactable_id', $this->id)
-                                   ->orWhereIn('name', ['forward_careplan_approval_emails_instead_of_provider', 'forward_careplan_approval_emails_in_addition_to_provider']);
-                               });
-                           });
-                       });
+                         ->orWhere(function ($q) {
+                             $q->whereHas('user', function ($q) {
+                                 $q->whereHas('forwardAlertsTo', function ($q) {
+                                     $q->where('contactable_id', $this->id)
+                                       ->orWhereIn('name', [
+                                           'forward_careplan_approval_emails_instead_of_provider',
+                                           'forward_careplan_approval_emails_in_addition_to_provider',
+                                       ]);
+                                 });
+                             });
+                         });
                    })
                    ->with('primaryPractice')
                    ->with([
@@ -3114,7 +3117,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function hasScheduledCallToday()
     {
-        return Call::where('inbound_cpm_id', $this->id)
+        return Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call');
+        })
+                   ->where('inbound_cpm_id', $this->id)
                    ->where('status', 'scheduled')
                    ->where('scheduled_date', '=', Carbon::today()->format('Y-m-d'))
                    ->exists();
