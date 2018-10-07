@@ -427,6 +427,8 @@
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
             const taskTypesMap = @json($task_types);
+            const noteTypesMap = @json($note_types);
+            const patientNurseTasks = @json($tasks);
 
             let form;
 
@@ -475,16 +477,62 @@
                         return;
                     }
                     if (e.currentTarget.checked) {
-                        $('#activityKey').prop("disabled", true);
+
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in taskTypesMap) {
+                            if (!taskTypesMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(taskTypesMap[i], i);
+                            o.innerHTML = taskTypesMap[i];
+                            selectList.append(o);
+                        }
+
+                        //if there is a task selected, select it as note topic
+                        if ($('.tasks-radio').prop('checked')) {
+                            $('.tasks-radio').change();
+                        }
+
+                        selectList.prop("disabled", true);
                         $('#tasks-container').show();
                     }
                     else {
-                        $('#activityKey').prop("disabled", false);
+
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in noteTypesMap) {
+                            if (!noteTypesMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(noteTypesMap[i], i);
+                            o.innerHTML = noteTypesMap[i];
+                            selectList.append(o);
+                        }
+
+                        selectList.prop("disabled", false);
                         $('#tasks-container').hide();
                     }
                 }
 
                 $('#task').change(associateWithTaskChange);
+
+                function onTaskSelected(e) {
+                    const selectList = $('#activityKey');
+                    //get id of task
+                    const task = patientNurseTasks.find(x=>x.id === +e.currentTarget.value);
+                    if (!task) {
+                        return;
+                    }
+                    selectList.val(task.sub_type);
+                }
+                $('.tasks-radio').change(onTaskSelected);
 
                 function tcmChange(e) {
                     if (e) {
