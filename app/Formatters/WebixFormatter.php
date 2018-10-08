@@ -1,5 +1,6 @@
 <?php namespace App\Formatters;
 
+use App\Activity;
 use App\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
@@ -57,7 +58,14 @@ class WebixFormatter implements ReportFormatter
             }
 
             //Type
-            $formatted_notes[$count]['type'] = $note->type;
+            //pangratios: add support for task types
+            $task_types = Activity::task_types();
+            if (isset($task_types[$note->type])) {
+                $formatted_notes[$count]['type'] = $task_types[$note->type];
+            }
+            else {
+                $formatted_notes[$count]['type'] = $note->type;
+            }
 
             //Body
             $formatted_notes[$count]['comment'] = $note->body;
@@ -100,9 +108,10 @@ class WebixFormatter implements ReportFormatter
         $formatted_data = collect();
         $count          = 0;
 
+        $task_types = Activity::task_types();
         $billingProvider = $patient->billingProviderName;
 
-        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
+        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider, $task_types) {
             $result = [
                 'id'            => $note->id,
                 'logger_name'   => $note->author->fullName,
@@ -113,6 +122,11 @@ class WebixFormatter implements ReportFormatter
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
+
+            //pangratios: add support for task types
+            if (isset($task_types[$note->type])) {
+                $result['type_name'] = $task_types[$note->type];
+            }
 
             if ($note->notifications->count() > 0) {
                 if ($this->noteService->wasForwardedToCareTeam($note)) {
