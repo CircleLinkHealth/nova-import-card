@@ -92,10 +92,15 @@ class CreateOrReplaceCallsViewTable extends Command
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
            
         WHERE
-            c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
+            c.status = 'scheduled' and c.scheduled_date is not null
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()
         // because we store scheduled_date in New York time (EST), but we the timezone in database can be anything (UTC or local)
+
+        // removed where clause: c.status = 'scheduled' and c.scheduled_date >= DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York'))
+        // calls table is now an actions table.
+        // we have tasks that may be due in the past
+        // assuming that re-scheduler service is dropping past calls, we will only have type `task` that are in the past
     }
 }

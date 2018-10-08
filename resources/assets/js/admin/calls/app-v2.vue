@@ -41,10 +41,10 @@
 
                                 <template v-else="props.row['Type'] === 'task'">
                                     <span v-if="props.row['sub_type'] === 'call'">
-                                        <font-awesome-icon icon="phone"/>
+                                        <font-awesome-icon icon="phone"/> (task)
                                     </span>
                                     <span v-else-if="props.row['sub_type'] === 'call_back'">
-                                        <font-awesome-icon icon="phone"/> Back
+                                        <font-awesome-icon icon="phone"/> Back (task)
                                     </span>
                                     <span v-else-if="props.row['sub_type'] === 'refill'">
                                         Refill
@@ -82,7 +82,7 @@
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
-                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'" :class-name="'blue'"
+                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'" :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
@@ -309,6 +309,15 @@
                 document.location.href = url
             },
             today,
+            isInThePast(date) {
+                const checkingDate = new Date(date);
+                const today = new Date();
+                if (today.getFullYear() === checkingDate.getFullYear() && today.getDate() === checkingDate.getDate() && today.getMonth() === checkingDate.getMonth()) {
+                    return false;
+                }
+                //if greater than 0, it means that checkingDate is in the past.
+                return today - checkingDate > 0;
+            },
             urlFilterSuffix() {
                 const $table = this.$refs.tblCalls
                 if ($table && $table.$data) {
@@ -668,6 +677,10 @@
 
     .blue {
         color: #008cba;
+    }
+
+    .red {
+        color: #ba1d18;
     }
 
     tr.VueTables__filters-row input {

@@ -9,6 +9,12 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
               integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
               crossorigin="anonymous">
+
+        <style>
+            .red {
+                color: #ba1d18;
+            }
+        </style>
     @endpush
     @push('scripts')
         <script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
@@ -87,7 +93,7 @@
                                         @include('errors.errors')
                                         @include('errors.messages')
 
-                                        <h3>Scheduled Calls</h3>
+                                        <h3>Scheduled Activities</h3>
                                         @push('styles')
                                             <style>
                                                 .table tbody > tr > td.vert-align {
@@ -139,22 +145,22 @@
                                                             @else
                                                                 @switch($call->sub_type)
                                                                     @case('call')
-                                                                    <i class="fas fa-phone"></i>
+                                                                    <i class="fas fa-phone"></i> (T)
                                                                     @break
                                                                     @case('call_back')
-                                                                    <i class="fas fa-phone"></i> Back
+                                                                    <i class="fas fa-phone"></i> Back (T)
                                                                     @break
                                                                     @case('refill')
-                                                                    <span>Refill</span>
+                                                                    <span>Refill</span> (T)
                                                                     @break
                                                                     @case('cp_review')
-                                                                    <span>CP Review</span>
+                                                                    <span>CP Review</span> (T)
                                                                     @break
                                                                     @case('send_info')
-                                                                    <span>Send Info</span>
+                                                                    <span>Send Info</span> (T)
                                                                     @break
                                                                     @case('get_appt')
-                                                                    <span>Get Appt.</span>
+                                                                    <span>Get Appt.</span> (T)
                                                                     @break
                                                                     @default
                                                                     <span></span>
@@ -177,7 +183,9 @@
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
                                                         </td>
-                                                        <td>{{ $call->scheduled_date }}</td>
+                                                        <td class="{{ \Carbon\Carbon::parse($call->scheduled_date)->lessThan(\Carbon\Carbon::today()) ? 'red' : '' }}">
+                                                            {{ $call->scheduled_date }}
+                                                        </td>
                                                         <td>{{ $call->window_start }}</td>
                                                         <td>{{ $call->window_end }}</td>
                                                         <td>
