@@ -182,7 +182,7 @@
                                     <div class="new-note-item">
                                         <div class="form-group">
                                             <div class="col-sm-12">
-                                                <label>
+                                                <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
                                                                id="phone"/>
@@ -193,7 +193,7 @@
                                                 </label>
                                             </div>
                                             <div class="col-sm-12">
-                                                <label>
+                                                <label id="task-label" style="display: none;">
                                                     <div>
                                                         <input type="checkbox"
                                                                id="task"/>
@@ -211,12 +211,12 @@
                                                             <div class="radio">
                                                                 <input type="radio"
                                                                        class="tasks-radio"
-                                                                       name="task-id"
+                                                                       name="task_id"
                                                                        value="{{$task->id}}"
                                                                        id="{{$task->id}}"/>
                                                                 <label for="{{$task->id}}">
-                                                                    <span> </span>{{$task->sub_type}}
-                                                                    ; {{$task->attempt_note}},
+                                                                    <span> </span>{{$task_types[$task->sub_type]}}
+                                                                    ; {{!empty($task->attempt_note) ? $task->attempt_note . ',' : ''}}
                                                                     due {{$task->window_end}}
                                                                     on {{$task->scheduled_date}}
                                                                 </label>
@@ -369,6 +369,7 @@
                                         <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
+                                        <input type="hidden" name="task_status" id="task_status" value="">
                                     </div>
 
                                     <!-- Submit -->
@@ -406,8 +407,6 @@
                         "Successful Clinical Call"?
                         <i class="far fa-smile"></i>
                     </p>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
@@ -417,6 +416,25 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirm-task-completed" tabindex="-1" role="dialog"
+         aria-labelledby="confirm-task-completed-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Task Completed?</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Is this task completed?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-task-completed-submit" type="button" class="btn btn-success">Yes</button>
+                    <button id="confirm-task-not-completed-submit" type="button" class="btn btn-grey">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div>
         <br/>
@@ -441,11 +459,15 @@
                 function phoneSessionChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
+                            $('#task-label').hide();
                             $('#collapseOne').show();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", true);
                         }
                         else {
+                            if (patientNurseTasks.length) {
+                                $('#task-label').show();
+                            }
                             $('#collapseOne').hide();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", false);
@@ -478,6 +500,7 @@
                     }
                     if (e.currentTarget.checked) {
 
+                        $('#phone-label').hide();
                         const selectList = $('#activityKey');
                         selectList.empty();
                         const defaultOption = new Option('Select Topic', "");
@@ -502,6 +525,8 @@
                     }
                     else {
 
+                        $('.tasks-radio').prop('checked', false);
+                        $('#phone-label').show();
                         const selectList = $('#activityKey');
                         selectList.empty();
                         const defaultOption = new Option('Select Topic', "");
@@ -521,17 +546,25 @@
                     }
                 }
 
-                $('#task').change(associateWithTaskChange);
+                if (!patientNurseTasks.length) {
+                    $('#task-label').hide();
+                }
+                else {
+                    $('#task-label').show();
+                    $('#task').change(associateWithTaskChange);
+                }
 
                 function onTaskSelected(e) {
-                    const selectList = $('#activityKey');
                     //get id of task
-                    const task = patientNurseTasks.find(x=>x.id === +e.currentTarget.value);
+                    const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                     if (!task) {
                         return;
                     }
+
+                    const selectList = $('#activityKey');
                     selectList.val(task.sub_type);
                 }
+
                 $('.tasks-radio').change(onTaskSelected);
 
                 function tcmChange(e) {
@@ -568,6 +601,10 @@
                     e.preventDefault();
                     form = this;
 
+                    const isAssociatedWithTask = $('#task').is(':checked');
+                    const callHasTask = typeof form['task_id'] !== "undefined" && typeof form['task_id'].value !== "undefined" && form['task_id'].value.length > 0;
+
+                    const isPhoneSession = $('#phone').is(':checked');
                     let callIsSuccess = false;
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
@@ -580,10 +617,18 @@
                         callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
 
-                    const isPhoneSession = $('#phone').is(':checked');
-
                     if (userIsCCMCountable && isPhoneSession && !callHasStatus) {
                         alert('Please select whether patient was reached or not.');
+                        return;
+                    }
+
+                    if (isAssociatedWithTask && !callHasTask) {
+                        alert('Please select a task to associate to.');
+                        return;
+                    }
+
+                    if (isAssociatedWithTask) {
+                        $('#confirm-task-completed').modal('show');
                         return;
                     }
 
@@ -616,6 +661,16 @@
                     confirmSubmitForm();
                 });
 
+                $(document).on("click", "#confirm-task-completed-submit", function (event) {
+                    $('#task_status').val("done");
+                    confirmSubmitForm();
+                });
+
+                $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
+                    $('#task_status').val("not_done");
+                    confirmSubmitForm();
+                });
+
                 function confirmSubmitForm() {
                     //what is this?
                     $.get('/api/test').always(function (response) {
@@ -623,6 +678,10 @@
                             var key = 'notes:{{$patient->id}}:add'
                             window.sessionStorage.removeItem(key)
                         }
+                        //when we associate a note with task, we disable the note topic
+                        //we have to enable it back before posting to server,
+                        //otherwise its value will not reach the server
+                        $('#activityKey').prop("disabled", false);
                         form.submit();
                     });
                 }
