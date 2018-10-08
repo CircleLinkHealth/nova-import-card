@@ -609,7 +609,7 @@
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
-                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].length > 0;
+                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
                         callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                     }
                     else {

@@ -94,7 +94,7 @@ class CallController extends Controller
             ];
         }
 
-        if ($patient->inboundCalls) {
+        if ($input['type'] === 'call' && $patient->inboundCalls) {
             $scheduledCall = $patient->inboundCalls()
                                      ->where(function ($q) {
                                          $q->whereNull('type')
