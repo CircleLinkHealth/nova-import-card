@@ -182,6 +182,19 @@ class Activity extends BaseModel implements Transformable
         ];
     }
 
+    public static function task_types()
+    {
+        return [
+            'cp_review' => 'Review Care Plan',
+            'call'      => 'Call',
+            'call_back' => 'Call Back',
+            'refill'    => 'Refill',
+            'send_info' => 'Send Info',
+            'get_appt'  => 'Get Appt.',
+            'other'     => 'Other Task',
+        ];
+    }
+
     public function getCommentForActivity()
     {
         return $this->meta->where('meta_key', 'comment')->first()->meta_value;
