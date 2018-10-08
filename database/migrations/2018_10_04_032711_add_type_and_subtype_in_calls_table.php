@@ -15,9 +15,11 @@ class AddTypeAndSubtypeInCallsTable extends Migration
     {
         Schema::table('calls', function (Blueprint $table) {
             $table->string('type')
-                  ->nullable();
+                  ->nullable()
+                  ->after('id');
             $table->string('sub_type')
-                  ->nullable();
+                  ->nullable()
+                  ->before('note_id');
         });
     }
 

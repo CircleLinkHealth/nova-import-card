@@ -570,7 +570,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function inboundCalls()
     {
-        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id');
+        return $this->hasMany(Call::class, 'inbound_cpm_id', 'id')
+                    ->where(function ($q) {
+                        $q->whereNull('type')
+                          ->orWhere('type', '=', 'call');
+                    });
     }
 
     public function inboundScheduledCalls(Carbon $after = null)
@@ -2789,7 +2793,11 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
      */
     public function outboundCalls()
     {
-        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id');
+        return $this->hasMany(Call::class, 'outbound_cpm_id', 'id')
+                    ->where(function ($q) {
+                        $q->whereNull('type')
+                          ->orWhere('type', '=', 'call');
+                    });
     }
 
     public function scopeOfPractice($query, $practiceId)
