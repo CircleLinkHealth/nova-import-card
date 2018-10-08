@@ -125,6 +125,7 @@ class WebixFormatter implements ReportFormatter
 
             //pangratios: add support for task types
             if (isset($task_types[$note->type])) {
+                $result['logged_from'] = 'note_task';
                 $result['type_name'] = $task_types[$note->type];
             }
 
