@@ -475,13 +475,14 @@ class WelcomeCallListGenerator
                 }
             }
 
+            //If last encounter is not set, the check is skipped
             if ( ! isset($lastEncounter)) {
-                $this->ineligiblePatients->push($row);
+//                $this->ineligiblePatients->push($row);
 
-                $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
-                    EligibilityJob::INELIGIBLE);
+//                $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
+//                    EligibilityJob::INELIGIBLE);
 
-                return true;
+                return false;
             }
 
             $validator = Validator::make([
