@@ -46,8 +46,7 @@ class CallObserver
             $no_of_calls = Call::where(function ($q) {
                 $q->whereNull('type')
                   ->orWhere('type', '=', 'call')
-                  ->orWhere('sub_type', '=', 'call_back')
-                  ->orWhere('sub_type', '=', 'call');
+                  ->orWhere('sub_type', '=', 'Call Back');
             })
                                ->where(function ($q) use ($patient) {
                                    $q->where('outbound_cpm_id', $patient->id)

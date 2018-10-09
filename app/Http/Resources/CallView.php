@@ -19,7 +19,6 @@ class CallView extends Resource
         return [
             'id'                     => $this->id,
             'type'                   => $this->type,
-            'sub_type'               => $this->sub_type,
             'is_manual'              => $this->is_manual,
             'nurse_id'               => $this->nurse_id,
             'nurse'                  => $this->nurse,
