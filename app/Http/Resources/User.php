@@ -20,7 +20,7 @@ class User extends Resource
             'username'            => $this->username,
             'email'               => $this->email,
             'user_registered'     => $this->user_registered,
-            'full_name'           => $this->fullName,
+            'full_name'           => $this->getFullName(),
             'first_name'          => $this->first_name,
             'last_name'           => $this->last_name,
             'suffix'              => $this->suffix,

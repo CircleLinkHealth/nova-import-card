@@ -42,7 +42,7 @@ class UserController extends Controller
                      ->get()
                      ->mapWithKeys(function ($user) {
                          return [
-                             $user->id => "{$user->first_name} {$user->last_name} ({$user->id})",
+                             $user->id => "{$user->getFirstName($user->first_name)} {$user->getLastName($user->last_name)} ({$user->id})",
                          ];
                      })
                      ->all();

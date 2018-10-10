@@ -21,19 +21,19 @@
 
         <h4>
             <span style="float: left;">
-                To: Dr. {{ $provider->fullName }}
+                To: Dr. {{ $provider->getFullName() }}
             </span>
             <span style="float: right;">
                 {{ $note->created_at }}
             </span>
             <br>
-            From: {{ $sender->fullName }}
+            From: {{ $sender->getFullName() }}
         </h4>
 
         <br>
 
         <h4>
-            Re: {{ $patient->fullName }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
+            Re: {{ $patient->getFullName() }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
             &#124; {{$patient->age}} yrs &#124; {{ $patient->phone }}
         </h4>
 

@@ -129,10 +129,10 @@ class PracticeController extends Controller
         ])->map(function ($patient) {
             return [
                 'id' =>  $patient->id,
-                'first_name' =>  $patient->first_name,
-                'last_name' =>  $patient->last_name,
+                'first_name' =>  $patient->getFirstName($patient->first_name),
+                'last_name' =>  $patient->getLastName($patient->last_name),
                 'suffix' =>  $patient->suffix,
-                'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
+                'full_name' => $patient->getFullName(),
                 'city' =>  $patient->city,
                 'state' =>  $patient->state,
                 'status' => optional($patient->carePlan)->status
@@ -164,10 +164,10 @@ class PracticeController extends Controller
             }
             return [
                 'id' =>  $nurse->id,
-                'first_name' =>  $nurse->first_name,
-                'last_name' =>  $nurse->last_name,
+                'first_name' =>  $nurse->getFirstName($nurse->first_name),
+                'last_name' =>  $nurse->getLastName($nurse->last_name),
                 'suffix' =>  $nurse->suffix,
-                'full_name' => $nurse->display_name ?? ($nurse->first_name . ' ' . $nurse->last_name . ' ' . $nurse->suffix),
+                'full_name' => $nurse->display_name ?? ($nurse->getFullName()),
                 'city' =>  $nurse->city,
                 'state' =>  $nurse->state,
                 'states' => $states

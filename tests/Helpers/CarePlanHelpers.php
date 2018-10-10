@@ -289,10 +289,10 @@ trait CarePlanHelpers
                     ->click('approve-forward')
                     ->assertPathIs("/manage-patients/{$patient->id}/view-careplan?page=3")
                     ->assertSee('Care Plan')
-                    ->assertSee($patient->fullName)
+                    ->assertSee($patient->getFullName())
                     ->assertSee($patient->phone)
                     ->assertSee($today)
-                    ->assertSee($billingProvider->fullName)
+                    ->assertSee($billingProvider->getFullName())
                     ->assertSee($billingProvider->phone);
         });
 

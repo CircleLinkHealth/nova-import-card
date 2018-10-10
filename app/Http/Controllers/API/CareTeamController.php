@@ -37,6 +37,8 @@ class CareTeamController extends Controller
 
         $phone = $member->user->phoneNumbers->where('is_primary', 1)->first();
 
+        $memberUser = $member->user;
+
         $carePerson = [
             'id'                  => $member->id,
             'formatted_type'      => $formattedType,
@@ -44,16 +46,16 @@ class CareTeamController extends Controller
             'is_billing_provider' => $type == CarePerson::BILLING_PROVIDER,
             'type'                => $type,
             'user'                => [
-                'id'               => $member->user->id,
-                'email'            => $member->user->email,
-                'first_name'       => $member->user->first_name,
-                'last_name'        => $member->user->last_name,
-                'suffix'           => $member->user->suffix,
-                'address'          => $member->user->address,
-                'address2'         => $member->user->address2,
-                'city'             => $member->user->city,
-                'state'            => $member->user->state,
-                'zip'              => $member->user->zip,
+                'id'               => $memberUser->id,
+                'email'            => $memberUser->email,
+                'first_name'       => $memberUser->getFirstName($memberUser->first_name),
+                'last_name'        => $memberUser->getLastname($memberUser->last_name),
+                'suffix'           => $memberUser->suffix,
+                'address'          => $memberUser->address,
+                'address2'         => $memberUser->address2,
+                'city'             => $memberUser->city,
+                'state'            => $memberUser->state,
+                'zip'              => $memberUser->zip,
                 'phone_numbers'    => $phone
                     ? [
                         [
@@ -67,20 +69,20 @@ class CareTeamController extends Controller
                             'number' => '',
                         ],
                     ],
-                'primary_practice' => $member->user->primaryPractice
+                'primary_practice' => $memberUser->primaryPractice
                     ? [
-                        'id'           => $member->user->primaryPractice->id,
-                        'display_name' => $member->user->primaryPractice->display_name,
+                        'id'           => $memberUser->primaryPractice->id,
+                        'display_name' => $memberUser->primaryPractice->display_name,
                     ]
                     : [
                         'id'           => '',
                         'display_name' => '',
                     ],
-                'provider_info'    => $member->user->providerInfo
+                'provider_info'    => $memberUser->providerInfo
                     ? [
-                        'id'          => $member->user->providerInfo->id,
-                        'is_clinical' => $member->user->providerInfo->is_clinical,
-                        'specialty'   => $member->user->providerInfo->specialty,
+                        'id'          => $memberUser->providerInfo->id,
+                        'is_clinical' => $memberUser->providerInfo->is_clinical,
+                        'specialty'   => $memberUser->providerInfo->specialty,
                     ]
                     : [
                         'id'          => '',
@@ -136,9 +138,9 @@ class CareTeamController extends Controller
                                       'user'                => [
                                           'id'               => $member->user->id,
                                           'email'            => $member->user->email,
-                                          'first_name'       => $member->user->first_name,
-                                          'last_name'        => $member->user->last_name,
-                                          'full_name'        => $member->user->full_name,
+                                          'first_name'       => $member->user->getFirstName($member->user->first_name),
+                                          'last_name'        => $member->user->getLastName($member->user->first_name),
+                                          'full_name'        => $member->user->getFullName(),
                                           'suffix'           => optional($member->user->providerInfo)->is_clinical
                                               ? $member->user->suffix
                                               : 'non-clinical',

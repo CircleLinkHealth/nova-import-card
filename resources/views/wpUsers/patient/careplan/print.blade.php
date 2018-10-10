@@ -162,7 +162,7 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-5 print-row text-bold">{{$patient->fullName}}
+                        <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
                         <div class="col-xs-3 print-row">{{$patient->phone}}</div>
@@ -172,7 +172,7 @@ if (isset($patient) && ! empty($patient)) {
                     <div class="row gutter">
                         @if($billingDoctor)
                             <div class="col-xs-5 print-row text-bold">
-                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                                {{$billingDoctor->getFullName()}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
                                 {{$billingDoctor->phone}}
@@ -191,7 +191,7 @@ if (isset($patient) && ! empty($patient)) {
                     @if($regularDoctor)
                         <div class="row gutter">
                             <div class="col-xs-5 print-row text-bold">
-                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
                                 {{$regularDoctor->phone}}

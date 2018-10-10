@@ -313,7 +313,7 @@ class SuccessfulHandler implements CallHandler
         $this->prediction['complex'] = $this->isComplex;
 
         return
-            'You just called ' . $this->patient->user->fullName
+            'You just called ' . $this->patient->user->getFullName()
             . ' ' . $status . ' in <b>week '
             . $this->week . '. </b> <br/> <br/> <b>'
             . 'Please confirm or amend the above next predicted call time. </b>';

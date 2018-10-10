@@ -21,11 +21,11 @@ class AppointmentController extends Controller
         $providers = [];
         $providerList = User::whereHas('roles', function ($q) {
             $q->where('name', '=', 'provider');
-        })->get()->all();
+        })->get();
 
         foreach ($providerList as $provider) {
-            if ($provider->fullName) {
-                $providers[$provider->id] = $provider->fullName;
+            if ($provider->getFullName()) {
+                $providers[$provider->id] = $provider->getFullName();
             }
         }
         
@@ -88,7 +88,7 @@ class AppointmentController extends Controller
         $data['time'] = $appointment->time;
         $provider = User::find($appointment->provider_id);
         if ($provider) {
-            $data['provider_name'] = $provider->fullName;
+            $data['provider_name'] = $provider->getFullName();
 
             if ($provider->providerInfo->specialty) {
                 $data['provider_name'] = "{$data['provider_name']}, {$provider->providerInfo->specialty}";

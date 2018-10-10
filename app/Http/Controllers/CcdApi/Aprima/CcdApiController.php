@@ -297,7 +297,7 @@ class CcdApiController extends Controller
 
         $user = \Session::get('apiUser');
 
-        if (!$user->hasPermissionForSite('post-ccd-to-api', $user->primary_practice_id)) {
+        if (!$user->hasPermissionForSite('post-ccd-to-api', $user->getPrimaryPracticeId())) {
             return response()->json(['error' => 'You are not authorized to submit CCDs to this API.'], 403);
         }
 

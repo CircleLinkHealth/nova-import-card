@@ -64,7 +64,7 @@ class EnrollmentStatsController extends Controller
 
             $data[$ambassador->id]['hourly_rate'] = $hourCost;
 
-            $data[$ambassador->id]['name'] = User::find($ambassadorUser)->fullName;
+            $data[$ambassador->id]['name'] = User::find($ambassadorUser)->getFullName();
 
             $data[$ambassador->id]['total_hours'] = secondsToHHMM($base->sum('total_time_in_system'));
 

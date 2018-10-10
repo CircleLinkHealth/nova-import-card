@@ -223,7 +223,7 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['colsum_total']    = 0;
             $u20_patients[$patient_counter]['ccm_status']      = ucwords($patient->CCMStatus);
             $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
-            $u20_patients[$patient_counter]['patient_name']    = $patient->fullName;
+            $u20_patients[$patient_counter]['patient_name']    = $patient->getFullName();
             $u20_patients[$patient_counter]['patient_id']      = $patient->id;
             $acts                                              = $patient->activities;
 
@@ -369,10 +369,10 @@ class ReportsController extends Controller
             $u20_patients[$act_count]['colsum_total']    = 0;
             $u20_patients[$act_count]['ccm_status']      = ucwords($patient->CCMStatus);
             $u20_patients[$act_count]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
-            $u20_patients[$act_count]['patient_name']    = $patient->fullName;
+            $u20_patients[$act_count]['patient_name']    = $patient->getFullName();
             $provider                                    = User::find(intval($patient->getBillingProviderIDAttribute()));
             if ($provider) {
-                $u20_patients[$act_count]['provider_name'] = $provider->fullName;
+                $u20_patients[$act_count]['provider_name'] = $provider->getFullName();
             } else {
                 $u20_patients[$act_count]['provider_name'] = '';
             }
@@ -727,7 +727,7 @@ class ReportsController extends Controller
                     }
                     $sheet->appendRow([
                         $user->id,
-                        $user->fullName,
+                        $user->getFullName(),
                         $condition,
                         $programName,
                     ]);
@@ -835,8 +835,8 @@ class ReportsController extends Controller
 
                     $sheet->appendRow([
                         $user->id,
-                        $user->first_name,
-                        $user->last_name,
+                        $user->getFirstName($user->first_name),
+                        $user->getLastName($user->last_name),
                         $billingProviderName,
                         $user->phone,
                         $user->dob,
@@ -1093,7 +1093,7 @@ class ReportsController extends Controller
                         }
                     }
                     $sheet->appendRow([
-                        $user->fullName,
+                        $user->getFullName(),
                         $billingProviderName,
                         $programName,
                         $user->ccmStatus,

@@ -36,7 +36,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1><span>Editing </span>{{ $patient->fullName }}</h1>
+                <h1><span>Editing </span>{{ $patient->getFullName() }}</h1>
                 <div class="panel panel-default">
                     <div class="panel-body">
 
@@ -119,9 +119,9 @@
 
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::text('first_name', $patient->first_name, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('first_name', $patient->getFirstName($patient->first_name), ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::text('last_name', $patient->last_name, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('last_name', $patient->getLastName($patient->last_name), ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('suffix', 'Suffix:') !!}</div>
                                     <div class="col-xs-3">{!! Form::text('suffix', $patient->suffix, ['class' => 'form-control']) !!}</div>
                                 </div>

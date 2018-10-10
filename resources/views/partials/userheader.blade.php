@@ -4,7 +4,7 @@
             <div class="col-sm-8" style="line-height: 22px;">
                 <span style="font-size: 30px;"> <a
                             href="{{ route('patient.summary', array('patient' => $patient->id)) }}">
-                    {{$patient->fullName}}
+                    {{$patient->getFullName()}}
                     </a> </span>
                 @if($ccm_complex)
                     <span id="complex_tag"
@@ -39,7 +39,7 @@
                     </b>
                     <li><span> <b>Billing Dr.</b>: {{$provider}}  </span></li>
                     @if($regularDoctor)
-                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->full_name}}  </span></li>
+                        <li><span> <b>Regular Dr.</b>: {{$regularDoctor->getFullName()}}  </span></li>
                     @endif
                     <li><span> <b>Practice</b>: {{$patient->primaryProgramName()}} </span></li>
                     @if($patient->agentName)

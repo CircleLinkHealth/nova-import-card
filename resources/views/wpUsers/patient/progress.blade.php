@@ -77,14 +77,14 @@ if (isset($patient)) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->fullName}}</div>
+                        <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getFullName()}}</div>
                         <div class="col-xs-12 col-md-4 print-row">{{$patient->phone}}</div>
                         <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-md-4 print-row text-bold">
                             @if($provider)
-                                {{$provider->fullName}}{{($provider->getSpecialtyAttribute() == '')? '' : ', '. $provider->getSpecialtyAttribute() }}
+                                {{$provider->getFullName()}}{{($provider->getSpecialtyAttribute() == '')? '' : ', '. $provider->getSpecialtyAttribute() }}
                             @else
                                 <em>no lead contact</em>
                             @endif

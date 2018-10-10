@@ -240,10 +240,10 @@
                                 <input type="button" value="Export as PDF" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toPDF($$(obs_alerts_dtable), {
-                                               header: 'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               header: 'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 200, template: webix.template('#performed_at#') },
                                                'logger_name':             { header:'Author Name',    width:200, sort:'string', template: webix.template('#logger_name#')},
@@ -254,10 +254,10 @@
                                 <input type="button" value="Export as Excel" class="btn btn-primary"
                                        style='margin:15px;'
                                        onclick="webix.toExcel($$(obs_alerts_dtable), {
-                                               header:'CarePlan Manager notes for {{ $patient->fullName . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
+                                               header:'CarePlan Manager notes for {{ $patient->getFullName() . ", Dr. " . $patient->billingProviderName . " as of " . Carbon\Carbon::now()->toDateString() }}',
                                                orientation:'landscape',
                                                autowidth:true,
-                                               filename: '{{$patient->fullName }} {{Carbon\Carbon::now()->toDateString()}}',
+                                               filename: '{{$patient->getFullName() }} {{Carbon\Carbon::now()->toDateString()}}',
 
                                                columns:{
                                                'performed_at':       { header:'Date/Time', width: 110, template: webix.template('#performed_at#') },

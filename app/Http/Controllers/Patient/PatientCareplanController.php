@@ -108,15 +108,15 @@ class PatientCareplanController extends Controller
                                  }
 
                                  if ($cp->patient->patientInfo
-                                     && ! empty($cp->patient->fullName)
+                                     && ! empty($cp->patient->getFullName())
                                      && ! empty($cp->patient->first_name)
                                      && ! empty($cp->patient->last_name)) {
                                      return [
                                          'key'                        => $cp->patient->id,
                                          'id'                         => $cp->patient->id,
-                                         'patient_name'               => $cp->patient->fullName,
-                                         'first_name'                 => $cp->patient->first_name,
-                                         'last_name'                  => $cp->patient->last_name,
+                                         'patient_name'               => $cp->patient->getFullName(),
+                                         'first_name'                 => $cp->patient->getFirstName($cp->patient->first_name),
+                                         'last_name'                  => $cp->patient->getLastName($cp->patient->last_name),
                                          'careplan_status'            => $careplanStatus,
                                          'careplan_status_link'       => $careplanStatusLink,
                                          'careplan_provider_approver' => $approverName,

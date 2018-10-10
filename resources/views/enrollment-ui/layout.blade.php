@@ -41,7 +41,7 @@
             @endif
             <li><a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">Training Materials</a></li>
             <!-- Dropdown Trigger -->
-            <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ auth()->user()->fullName }}<i
+            <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ auth()->user()->getFullName() }}<i
                             class="material-icons right">settings</i></a></li>
         </ul>
     </div>

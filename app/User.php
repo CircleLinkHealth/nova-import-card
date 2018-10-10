@@ -678,7 +678,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->program_id;
     }
 
-    public function getPrimaryPracticeIdAttribute()
+    public function getPrimaryPracticeId()
     {
         return $this->program_id;
     }
@@ -727,24 +727,28 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->primaryPractice->display_name;
     }
 
-    public function setFirstNameAttribute($value)
+    public function setFirstName($value)
     {
         $this->attributes['first_name'] = ucwords($value);
-        $this->display_name             = $this->fullName;
+        $this->display_name             = $this->getFullName();
     }
 
-    public function setLastNameAttribute($value)
+    public function getFirstName($value){
+        return ucfirst(strtolower($value));
+    }
+
+    public function setLastName($value)
     {
         $this->attributes['last_name'] = $value;
-        $this->display_name            = $this->fullName;
+        $this->display_name            = $this->getFullName();
     }
 
-    public function getLastNameAttribute($value)
+    public function getLastName($value)
     {
         return ucfirst(strtolower($value));
     }
 
-    public function getFullNameAttribute()
+    public function getFullName()
     {
         $firstName = ucwords(strtolower($this->first_name));
         $lastName  = ucwords(strtolower($this->last_name));
@@ -760,7 +764,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function getFullNameWithIdAttribute()
     {
-        $name = $this->fullName;
+        $name = $this->getFullName();
 
         return $name . ' (' . $this->id . ')';
     }
@@ -1899,8 +1903,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         //dd($randomUserInfo);
         // set random data
         $user                    = $this;
-        $user->first_name        = $faker->firstName;
-        $user->last_name         = 'Z-' . $faker->lastName;
+        $user->setFirstName($faker->firstName);
+        $user->setLastName('Z-' . $faker->lastName);
         $user->username          = $faker->userName;
         $user->password          = $faker->password;
         $user->email             = $faker->freeEmail;
@@ -2250,7 +2254,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $billingProvider = $this->billingProviderUser();
 
         return $billingProvider
-            ? $billingProvider->fullName
+            ? $billingProvider->getFullName()
             : '';
     }
 
@@ -2266,7 +2270,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ? ''
                     : ', ') . ($i == $last && $i > 1
                     ? 'and '
-                    : '') . $carePerson->fullName;
+                    : '') . $carePerson->getFullName();
 
             $i++;
         }
@@ -2587,12 +2591,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function canApproveCarePlans()
     {
-        return $this->hasPermissionForSite('care-plan-approve', $this->primary_practice_id);
+        return $this->hasPermissionForSite('care-plan-approve', $this->getPrimaryPracticeId());
     }
 
     public function canQAApproveCarePlans()
     {
-        return $this->hasPermissionForSite('care-plan-qa-approve', $this->primary_practice_id);
+        return $this->hasPermissionForSite('care-plan-qa-approve', $this->getPrimaryPracticeId());
     }
 
     /**
@@ -2864,7 +2868,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function name()
     {
-        return $this->display_name ?? ($this->first_name . $this->last_name);
+        return $this->display_name ?? ($this->getFirstName($this->first_name) . $this->getLastName($this->last_name));
     }
 
     public function lastObservation()

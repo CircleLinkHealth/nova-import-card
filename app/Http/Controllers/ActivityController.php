@@ -156,7 +156,7 @@ class ActivityController extends Controller
             return response("User not found", 401);
         }
 
-        $patient_name = $patient->full_name;
+        $patient_name = $patient->getFullName();
 
         $userTimeZone = $patient->timeZone;
 
@@ -169,7 +169,7 @@ class ActivityController extends Controller
                              ->orderBy('first_name')
                              ->get()
                              ->mapWithKeys(function ($user) {
-                                 return [$user->id => $user->full_name];
+                                 return [$user->id => $user->getFullName()];
                              })
                              ->all();
 

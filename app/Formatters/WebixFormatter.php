@@ -44,7 +44,7 @@ class WebixFormatter implements ReportFormatter
             //Provider Name
             $provider = User::find(intval($note->patient->billingProviderID));
             if (is_object($provider)) {
-                $formatted_notes[$count]['provider_name'] = $provider->fullName;
+                $formatted_notes[$count]['provider_name'] = $provider->getFullName();
             } else {
                 $formatted_notes[$count]['provider_name'] = '';
             }
@@ -114,7 +114,7 @@ class WebixFormatter implements ReportFormatter
         $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider, $task_types) {
             $result = [
                 'id'            => $note->id,
-                'logger_name'   => $note->author->fullName,
+                'logger_name'   => $note->author->getFullName(),
                 'comment'       => $note->body,
                 'logged_from'   => 'note',
                 'type_name'     => $note->type,
@@ -162,7 +162,7 @@ class WebixFormatter implements ReportFormatter
         $appointments = $patient->appointments->map(function ($appointment) use ($billingProvider) {
             return [
                 'id'            => $appointment->id,
-                'logger_name'   => optional($appointment->author)->fullName,
+                'logger_name'   => optional($appointment->author)->getFullName(),
                 'comment'       => $appointment->comment,
                 'logged_from'   => 'appointment',
                 'type_name'     => $appointment->type,
@@ -179,7 +179,7 @@ class WebixFormatter implements ReportFormatter
         $activities = $patient->activities->map(function ($activity) use ($billingProvider) {
             return [
                 'id'            => $activity->id,
-                'logger_name'   => $activity->provider->fullName,
+                'logger_name'   => $activity->provider->getFullName(),
                 'comment'       => $activity->getCommentForActivity(),
                 'logged_from'   => 'manual_input',
                 'type_name'     => $activity->type,
@@ -422,7 +422,7 @@ class WebixFormatter implements ReportFormatter
 
             $formattedUpcomingAppointment[$appt->id] = [
 
-                'name'      => optional($provider)->fullName,
+                'name'      => optional($provider)->getFullName(),
                 'specialty' => $specialty,
                 'date'      => $appt->date,
                 'type'      => $appt->type,
@@ -469,7 +469,7 @@ class WebixFormatter implements ReportFormatter
 
             $formattedPastAppointment[$appt->id] = [
 
-                'name'      => $provider->fullName,
+                'name'      => $provider->getFullName(),
                 'specialty' => $specialty,
                 'date'      => $appt->date,
                 'type'      => $appt->type
@@ -524,7 +524,7 @@ class WebixFormatter implements ReportFormatter
             if ($careplanStatus == 'provider_approved') {
                 $approver = $patient->carePlan->providerApproverUser;
                 if ($approver) {
-                    $approverName = $approver->fullName;
+                    $approverName = $approver->getFullName();
                 }
 
                 $carePlanProviderDate = $patient->carePlan->provider_date;
@@ -577,7 +577,7 @@ class WebixFormatter implements ReportFormatter
                     continue;
                 }
 
-                $bpName            = $bpUser->fullName;
+                $bpName            = $bpUser->getFullName();
                 $foundUsers[$bpID] = $bpUser;
             }
 
@@ -592,7 +592,7 @@ class WebixFormatter implements ReportFormatter
                 $patientData[] = [
                     'key'                        => $patient->id,
                     // $part->id,
-                    'patient_name'               => $patient->fullName,
+                    'patient_name'               => $patient->getFullName(),
                     //$meta[$part->id]["first_name"][0] . " " .$meta[$part->id]["last_name"][0],
                     'first_name'                 => $patient->first_name,
                     //$meta[$part->id]["first_name"][0],

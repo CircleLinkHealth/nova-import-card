@@ -407,7 +407,7 @@ class NoteService
 
         foreach ($careteam_ids as $id) {
             if (User::find($id)) {
-                $careteam_info[$id] = User::find($id)->fullName;
+                $careteam_info[$id] = User::find($id)->getFullName();
             }
         }
 
@@ -455,7 +455,7 @@ class NoteService
                     ->whereNotNull('read_at')
                     ->get()
                     ->mapWithKeys(function ($notification) {
-                        return [$notification->notifiable->fullName => $notification->read_at->format('m/d/y h:iA T')];
+                        return [$notification->notifiable->getFullName() => $notification->read_at->format('m/d/y h:iA T')];
                     });
     }
 
@@ -470,7 +470,7 @@ class NoteService
                             return ['N/A' => $notification->created_at->format('m/d/y h:iA T')];
                         }
 
-                        return [$notification->notifiable->fullName => $notification->created_at->format('m/d/y h:iA T')];
+                        return [$notification->notifiable->getFullName() => $notification->created_at->format('m/d/y h:iA T')];
                     });
     }
 

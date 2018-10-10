@@ -21,7 +21,7 @@ class ApprovableBillablePatient extends Resource
             ->where('type', '=', 'billing_provider')
             ->first();
 
-        $name = $this->patient->fullName;
+        $name = $this->patient->getFullName();
         $url  = route('patient.note.index', [
             'patient' => $this->patient->id,
         ]);
@@ -60,7 +60,7 @@ class ApprovableBillablePatient extends Resource
             'name'                   => $name,
             'url'                    => $url,
             'provider'               => $bP
-                ? optional($bP->user)->fullName
+                ? optional($bP->user)->getFullName()
                 : '',
             'practice'               => $this->patient->primaryPractice->display_name,
             'practice_id'            => $this->patient->primaryPractice->id,

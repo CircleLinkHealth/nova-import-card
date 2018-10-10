@@ -199,7 +199,7 @@ class PracticeInvoiceGenerator
                                 }
 
                                 $data['patientData'][$u->id]['ccm_time']      = round($summary->ccm_time / 60, 2);
-                                $data['patientData'][$u->id]['name']          = $u->fullName;
+                                $data['patientData'][$u->id]['name']          = $u->getFullName();
                                 $data['patientData'][$u->id]['dob']           = $u->birth_date;
                                 $data['patientData'][$u->id]['practice']      = $u->program_id;
                                 $data['patientData'][$u->id]['provider']      = $u->billingProviderName;

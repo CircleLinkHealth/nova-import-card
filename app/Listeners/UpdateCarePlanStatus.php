@@ -61,13 +61,13 @@ class UpdateCarePlanStatus
 
             if (app()->environment(['worker', 'production','staging'])) {
                 sendSlackMessage('#careplanprintstatus',
-                    "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
+                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n");
             }
 
 
         } //This CarePlan is being `QA approved` by CLH
         elseif ($user->carePlanStatus == CarePlan::DRAFT
-                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
+                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
             $user->carePlan->status         = CarePlan::QA_APPROVED;
             $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();

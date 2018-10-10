@@ -217,7 +217,7 @@ class NotesController extends Controller
                 $patient_contact_window_exists = true;
             }
 
-            $patient_name = $patient->fullName;
+            $patient_name = $patient->getFullName();
 
             //Pull up user's call information.
 
@@ -244,7 +244,7 @@ class NotesController extends Controller
 
             $author      = Auth::user();
             $author_id   = $author->id;
-            $author_name = $author->fullName;
+            $author_name = $author->getFullName();
 
             //Patient Call Windows:
             $window = PatientContactWindow::getPreferred($patient->patientInfo);
@@ -560,7 +560,7 @@ class NotesController extends Controller
         $data['performed_at'] = $note->performed_at;
         $provider             = User::find($note->author_id);
         if ($provider) {
-            $data['provider_name'] = $provider->fullName;
+            $data['provider_name'] = $provider->getFullName();
         } else {
             $data['provider_name'] = '';
         }

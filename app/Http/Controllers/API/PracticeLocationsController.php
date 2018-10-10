@@ -40,8 +40,8 @@ class PracticeLocationsController extends Controller
             'id'                        => $loc->id,
             'clinical_contact'          => [
                 'email'      => $contactUser->email ?? null,
-                'first_name' => $contactUser->first_name ?? null,
-                'last_name'  => $contactUser->last_name ?? null,
+                'first_name' => $contactUser->getFirstName($contactUser->first_name) ?? null,
+                'last_name'  => $contactUser->getLastName($contactUser->last_name) ?? null,
                 'type'       => $contactType ?? 'billing_provider',
             ],
             'timezone'                  => $loc->timezone ?? 'America/New_York',

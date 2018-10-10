@@ -69,7 +69,7 @@ class CarePlanApprovalReminderTest extends TestCase
     public function checkToMail($notification, $recipient, $numberOfCareplans){
         $mailData = $notification->toMail($recipient)->build();
 
-        $expectedTo = [['address' => $recipient->email, 'name' => $recipient->fullName]];
+        $expectedTo = [['address' => $recipient->email, 'name' => $recipient->getFullName()]];
 
         $this->assertEquals("$numberOfCareplans CircleLink Care Plan(s) for your Approval!", $mailData->subject);
         $this->assertEquals($expectedTo, $mailData->to);

@@ -30,8 +30,8 @@ class ProfileController extends ApiController
                 'id' => $user->id,
                 'program_id' => $user->program_id,
                 'username' => $user->username,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
+                'first_name' => $user->getFirstName($user->first_name),
+                'last_name' => $user->getLastName($user->last_name),
                 'email' => $user->email,
                 'role' => [
                     'id' => $role->id,
