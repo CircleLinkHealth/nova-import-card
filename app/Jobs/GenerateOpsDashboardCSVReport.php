@@ -6,7 +6,6 @@ use App\Practice;
 use App\Repositories\Cache\UserNotificationList;
 use App\Repositories\Cache\View;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
-use App\SaasAccount;
 use App\Services\OpsDashboardService;
 use App\User;
 use Carbon\Carbon;
@@ -32,7 +31,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
      */
     public function __construct(User $user)
     {
-        $this->user = $user;
+        $this->user    = $user;
         $this->service = new OpsDashboardService(new OpsDashboardPatientEloquentRepository());
     }
 
@@ -43,7 +42,6 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
      */
     public function handle()
     {
-        ini_set("memory_limit","1000M");
         $date = Carbon::now();
 
         $practices = Practice::select(['id', 'display_name'])
@@ -86,8 +84,9 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                     = collect($rows);
 
+        $fileName = "CLH-Ops-CSV-Report-{$date->toDateTimeString()}";
 
-        $excel = Excel::create("CLH-Ops-CSV-Report-{$date->toDateTimeString()}", function ($excel) use (
+        $excel = Excel::create($fileName, function ($excel) use (
             $rows,
             $hoursBehind,
             $date
@@ -168,13 +167,19 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
             ->addMedia($report['full'])
             ->toMediaCollection("CLH-Ops-CSV-Reports-{$date->toDateString()}");
 
-        $json = [
-          'media_id' => $x->id,
-        ];
-        $str = json_encode($json);
-        $str2 = base64_encode($str);
+        //hack
+//        $json = [
+//          'media_id' => $x->id,
+//        ];
+//        $str = json_encode($json);
+//        $str2 = base64_encode($str);
+
+        $file['name']       = "{$fileName}.xls";
+        $file['collection'] = "CLH-Ops-CSV-Reports-{$date->toDateString()}";
+
+
         $viewHashKey = (new View())->storeViewInCache('admin.opsDashboard.csv', [
-            'link' => $str2,
+            'file' => $file,
             'date' => $date,
         ]);
 

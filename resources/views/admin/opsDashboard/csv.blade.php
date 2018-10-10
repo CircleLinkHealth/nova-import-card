@@ -26,7 +26,9 @@
                     <div class="panel-body">
                         <h5>Call Center Operations Report from: <strong>{{$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()}}</strong>, to: <strong>{{$date->toDateTimeString()}}</strong>.</h5>
                             <li>
-                                <a href="{{route('download', ['filePath' => $link])}}">Download Report</a>
+                                <a href="{{route('OpsDashboard.makeCsv', [
+                                'fileName' => $file['name'],
+                                'collection' => $file['collection']])}}">Download Report</a>
                             </li>
                     </div>
                 </div>
