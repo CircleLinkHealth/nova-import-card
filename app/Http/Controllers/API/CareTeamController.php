@@ -48,8 +48,8 @@ class CareTeamController extends Controller
             'user'                => [
                 'id'               => $memberUser->id,
                 'email'            => $memberUser->email,
-                'first_name'       => $memberUser->getFirstName($memberUser->first_name),
-                'last_name'        => $memberUser->getLastname($memberUser->last_name),
+                'first_name'       => $memberUser->getFirstName(),
+                'last_name'        => $memberUser->getLastname(),
                 'suffix'           => $memberUser->suffix,
                 'address'          => $memberUser->address,
                 'address2'         => $memberUser->address2,
@@ -138,8 +138,8 @@ class CareTeamController extends Controller
                                       'user'                => [
                                           'id'               => $member->user->id,
                                           'email'            => $member->user->email,
-                                          'first_name'       => $member->user->getFirstName($member->user->first_name),
-                                          'last_name'        => $member->user->getLastName($member->user->first_name),
+                                          'first_name'       => $member->user->getFirstName(),
+                                          'last_name'        => $member->user->getLastName(),
                                           'full_name'        => $member->user->getFullName(),
                                           'suffix'           => optional($member->user->providerInfo)->is_clinical
                                               ? $member->user->suffix

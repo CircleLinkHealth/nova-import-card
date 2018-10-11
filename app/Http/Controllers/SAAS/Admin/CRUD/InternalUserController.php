@@ -117,7 +117,7 @@ class InternalUserController extends Controller
                      ->get()
                      ->mapWithKeys(function ($user) {
                          return [
-                             $user->id => "{$user->getFirstName($user->first_name)} {$user->getLastName($user->last_name)} ({$user->id})",
+                             $user->id => "{$user->getFirstName()} {$user->getLastName()} ({$user->id})",
                          ];
                      })
                      ->all();

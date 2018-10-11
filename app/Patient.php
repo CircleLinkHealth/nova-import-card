@@ -265,7 +265,7 @@ class Patient extends BaseModel
 
     public function getFirstNameAttribute()
     {
-        return $this->user->getFirstName($this->user->first_name);
+        return $this->user->getFirstName();
     }
 
     public function setFirstNameAttribute($value)
@@ -278,7 +278,7 @@ class Patient extends BaseModel
 
     public function getLastNameAttribute()
     {
-        return $this->user->getLastName($this->user->last_name);
+        return $this->user->getLastName();
     }
 
     public function setLastNameAttribute($value)

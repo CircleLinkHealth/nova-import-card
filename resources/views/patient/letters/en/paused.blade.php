@@ -67,7 +67,7 @@
                         </div>
                         <br>
                         <div class="row gutter">
-                            As Dr. {{optional($patient->billingProviderUser())->getLastName($patient->billingProviderUser()->last_name)}} may have mentioned regarding
+                            As Dr. {{optional($patient->billingProviderUser())->getLastName()}} may have mentioned regarding
                             this
                             invite-only
                             program, personalized
@@ -84,7 +84,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Connection with your provider through updates shared with
-                                    Dr. {{optional($patient->billingProviderUser())->getLastName($patient->billingProviderUser()->last_name)}}.
+                                    Dr. {{optional($patient->billingProviderUser())->getLastName()}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Access to your care team from the comfort of your home, to help avoid frequent

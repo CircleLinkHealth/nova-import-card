@@ -82,7 +82,7 @@ class ProviderInfo extends \App\BaseModel
     // first_name
     public function getFirstNameAttribute()
     {
-        return $this->user->getFirstName($this->user->first_name);
+        return $this->user->getFirstName();
     }
 
     public function setFirstNameAttribute($value)
@@ -96,7 +96,7 @@ class ProviderInfo extends \App\BaseModel
     // last_name
     public function getLastNameAttribute()
     {
-        return $this->user->getLastName($this->user->last_name);
+        return $this->user->getLastName();
     }
 
     public function setLastNameAttribute($value)

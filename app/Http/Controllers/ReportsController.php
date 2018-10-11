@@ -835,8 +835,8 @@ class ReportsController extends Controller
 
                     $sheet->appendRow([
                         $user->id,
-                        $user->getFirstName($user->first_name),
-                        $user->getLastName($user->last_name),
+                        $user->getFirstName(),
+                        $user->getLastName(),
                         $billingProviderName,
                         $user->phone,
                         $user->dob,

@@ -733,8 +733,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->display_name             = $this->getFullName();
     }
 
-    public function getFirstName($value){
-        return ucfirst(strtolower($value));
+    public function getFirstName(){
+        return ucfirst(strtolower($this->first_name));
     }
 
     public function setLastName($value)
@@ -743,9 +743,9 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->display_name            = $this->getFullName();
     }
 
-    public function getLastName($value)
+    public function getLastName()
     {
-        return ucfirst(strtolower($value));
+        return ucfirst(strtolower($this->last_name));
     }
 
     public function getFullName()
@@ -2868,7 +2868,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function name()
     {
-        return $this->display_name ?? ($this->getFirstName($this->first_name) . $this->getLastName($this->last_name));
+        return $this->display_name ?? ($this->getFirstName() . $this->getLastName());
     }
 
     public function lastObservation()

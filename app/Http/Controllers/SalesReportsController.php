@@ -61,7 +61,7 @@ class SalesReportsController extends Controller
         if ($input['submit'] == 'download') {
             $pdf = PDF::loadView('sales.by-practice.report', ['data' => $data]);
 
-            $name = $provider->getLastName($provider->last_name) . '-' . Carbon::now()->toDateString();
+            $name = $provider->getLastName() . '-' . Carbon::now()->toDateString();
 
             $path = storage_path("download/$name.pdf");
 

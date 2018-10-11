@@ -43,8 +43,8 @@ class PrintPausedPatientLettersService
                 return [
                     'id'           => $patient->id,
                     'patient_name' => $patient->getFullName(),
-                    'first_name'   => $patient->getFirstName($patient->first_name),
-                    'last_name'    => $patient->getLastName($patient->last_name),
+                    'first_name'   => $patient->getFirstName(),
+                    'last_name'    => $patient->getLastName(),
                     'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
                     'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
                     'paused_date'  => optional($patient->date_paused)->format('m/d/Y'),

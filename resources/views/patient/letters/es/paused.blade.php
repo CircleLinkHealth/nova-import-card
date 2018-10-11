@@ -68,7 +68,7 @@
                         </div>
                         <br>
                         <div class="row gutter">
-                            Como quizás le mencionó el Dr. {{optional($patient->billingProviderUser())->getLastName($patient->billingProviderUser()->last_name)}} con
+                            Como quizás le mencionó el Dr. {{optional($patient->billingProviderUser())->getLastName()}} con
                             respecto a
                             este
                             programa por invitación, la atención personalizada es una parte importante para mantenerse
@@ -85,7 +85,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Conexión con su proveedor a través de actualizaciones compartidas con el
-                                    Dr. {{optional($patient->billingProviderUser())->getLastName($patient->billingProviderUser()->last_name)}}.
+                                    Dr. {{optional($patient->billingProviderUser())->getLastName()}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Acceso a su equipo de atención médica desde la comodidad de su hogar, para ayudarle
