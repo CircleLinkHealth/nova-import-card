@@ -215,7 +215,7 @@
                                                                        value="{{$task->id}}"
                                                                        id="{{$task->id}}"/>
                                                                 <label for="{{$task->id}}">
-                                                                    <span> </span>{{$task_types[$task->sub_type]}}
+                                                                    <span> </span>{{$task->sub_type}}
                                                                     ; {{!empty($task->attempt_note) ? $task->attempt_note . ',' : ''}}
                                                                     due {{$task->window_end}}
                                                                     on {{$task->scheduled_date}}

@@ -47,8 +47,7 @@ class PracticeReportable implements Reportable
         $q = Call::where(function ($q) {
             $q->whereNull('type')
               ->orWhere('type', '=', 'call')
-              ->orWhere('sub_type', '=', 'call_back')
-              ->orWhere('sub_type', '=', 'call');
+              ->orWhere('sub_type', '=', 'Call Back');
         })->whereHas('inboundUser', function ($q) {
             $q->where('program_id', '=', $this->practice->id);
         })

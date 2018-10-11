@@ -385,7 +385,7 @@ class NotesController extends Controller
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($task_status === "done") {
-                if ($call->sub_type === "call" || $call->sub_type === "call_back") {
+                if ($call->sub_type === "Call Back") {
                     $call->status = Call::REACHED;
 
                     //Updates when the patient was successfully contacted last
@@ -401,7 +401,7 @@ class NotesController extends Controller
                 }
             }
 
-            if ($call->sub_type === "call" || $call->sub_type === "call_back") {
+            if ($call->sub_type === "Call Back") {
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();

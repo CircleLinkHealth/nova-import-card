@@ -143,29 +143,11 @@
                                                             @if(empty($call->type) || $call->type === 'call')
                                                                 <i class="fas fa-phone"></i>
                                                             @else
-                                                                @switch($call->sub_type)
-                                                                    @case('call')
-                                                                    <i class="fas fa-phone"></i> (T)
-                                                                    @break
-                                                                    @case('call_back')
-                                                                    <i class="fas fa-phone"></i> Back (T)
-                                                                    @break
-                                                                    @case('refill')
-                                                                    <span>Refill</span> (T)
-                                                                    @break
-                                                                    @case('cp_review')
-                                                                    <span>CP Review</span> (T)
-                                                                    @break
-                                                                    @case('send_info')
-                                                                    <span>Send Info</span> (T)
-                                                                    @break
-                                                                    @case('get_appt')
-                                                                    <span>Get Appt.</span> (T)
-                                                                    @break
-                                                                    @default
-                                                                    <span></span>
-                                                                    @break
-                                                                @endswitch
+                                                                @if ($call->sub_type === 'Call Back')
+                                                                    <i class="fas fa-phone"></i> Back
+                                                                @else
+                                                                    <span>{{$call->sub_type}}</span>
+                                                                @endif
                                                             @endif
                                                             @if(!empty($call->attempt_note))
                                                                 <button type="button"
