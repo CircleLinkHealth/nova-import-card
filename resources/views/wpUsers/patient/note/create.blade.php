@@ -602,7 +602,7 @@
                     form = this;
 
                     const isAssociatedWithTask = $('#task').is(':checked');
-                    const callHasTask = typeof form['task_id'] !== "undefined" && typeof form['task_id'].value !== "undefined" && form['task_id'].value.length > 0;
+                    const callHasTask = $('.tasks-radio').is(':checked');
 
                     const isPhoneSession = $('#phone').is(':checked');
                     let callIsSuccess = false;
