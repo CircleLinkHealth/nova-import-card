@@ -78,7 +78,9 @@ class QueuePatientToExport implements ShouldQueue
         $noteFileName = $this->getNoteFileName($note);
 
         while ($file = $drive->fileExists($googleDriveDir['path'], $noteFileName)) {
-            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
+            return;
+            //Delete the file
+//            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
         }
 
         $pdfPath = $note->toPdf();
@@ -114,7 +116,9 @@ class QueuePatientToExport implements ShouldQueue
     private function firstOrCreateAndStreamCarePlanPdf(GoogleDrive $drive, array $googleDriveDir)
     {
         while ($file = $drive->fileExists($googleDriveDir['path'], 'CarePlan.pdf')) {
-            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
+            return;
+            //Delete the file
+//            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
         }
 
         $pdfPath = $this->patient->carePlan->toPdf();

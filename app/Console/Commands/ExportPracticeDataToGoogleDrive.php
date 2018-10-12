@@ -50,7 +50,8 @@ class ExportPracticeDataToGoogleDrive extends Command
             ->has('carePlan')
             ->chunk(100, function ($users) use ($folderId) {
                 foreach ($users as $user) {
-                    QueuePatientToExport::dispatch($user, $folderId);
+                    QueuePatientToExport::dispatch($user, $folderId)
+                                        ->onQueue('reports');
                 }
             });
     }
