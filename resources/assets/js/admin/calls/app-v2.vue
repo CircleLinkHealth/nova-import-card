@@ -174,7 +174,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Scheduler'],
+                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -216,7 +216,7 @@
                         'selected': 'blank'
                     },
                     sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice'],
+                    filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -466,6 +466,7 @@
                     Patient: call.patient,
                     Practice: call.practice,
                     Scheduler: call.scheduler,
+                    'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
                     'CCM Time': timeDisplay(call.ccm_time),
                     'BHI Time': timeDisplay(call.bhi_time),

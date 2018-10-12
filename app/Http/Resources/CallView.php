@@ -37,6 +37,7 @@ class CallView extends Resource
             'scheduler'              => $this->scheduler,
             'is_ccm'                 => $this->is_ccm,
             'is_bhi'                 => $this->is_bhi,
+            'billing_provider'       => $this->billing_provider,
         ];
     }
 }

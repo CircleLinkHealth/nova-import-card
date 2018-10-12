@@ -62,6 +62,11 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('practice', 'like', '%' . $practice . '%');
     }
 
+    public function billing_provider($billingProvider) {
+        return $this->builder->where('billing_provider', 'like', '%'. $billingProvider . '%');
+    }
+
+
     public function sort_is_manual($term)
     {
         return $this->builder->orderBy('is_manual', $term);
