@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Note;
 use App\Services\GoogleDrive;
 use App\User;
 use Illuminate\Bus\Queueable;
@@ -46,7 +47,15 @@ class QueuePatientToExport implements ShouldQueue
      */
     public function handle(GoogleDrive $drive)
     {
-        $this->firstOrCreateAndStreamCarePlanPdf($drive);
+        $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
+
+        $this->firstOrCreateAndStreamCarePlanPdf($drive, $googleDriveDir);
+
+        $notesDir = $this->firstOrCreateNotesDirectory($drive, $googleDriveDir);
+
+        $this->patient->notes->each(function ($note) use ($drive, $notesDir) {
+            $this->firstOrCreateAndStreamNotePdf($drive, $notesDir, $note);
+        });
     }
 
     private function getLocalFilesystemHandle()
@@ -64,18 +73,46 @@ class QueuePatientToExport implements ShouldQueue
         return "{$this->folderId}/{$this->folderName()}";
     }
 
+    private function firstOrCreateAndStreamNotePdf(GoogleDrive $drive, array $googleDriveDir, Note $note)
+    {
+        $noteFileName = $this->getNoteFileName($note);
+
+        while ($file = $drive->fileExists($googleDriveDir['path'], $noteFileName)) {
+            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
+        }
+
+        $pdfPath = $note->toPdf();
+
+        if ( ! $pdfPath) {
+            throw new \Exception("`$pdfPath` not created");
+        }
+
+
+        $put = $drive->getFilesystemHandle()
+                     ->putStream("{$googleDriveDir['path']}/$noteFileName", fopen($pdfPath, 'r+'));
+
+        if ( ! $put) {
+            throw new \Exception("Failed uploading PDF Note to `{$googleDriveDir}`. ");
+        }
+
+        $pathStartingAtStorage = substr($pdfPath, stripos($pdfPath, "storage/") + 8);
+
+        $deleted = $this->getLocalFilesystemHandle()
+                        ->delete($pathStartingAtStorage);
+    }
+
     /**
      * Create a PDF of the CarePlan and stream it to Google Drive
      *
      * @param GoogleDrive $drive
      *
-     * @return bool
+     * @param array $googleDriveDir
+     *
+     * @return void
      * @throws \Exception
      */
-    private function firstOrCreateAndStreamCarePlanPdf(GoogleDrive $drive)
+    private function firstOrCreateAndStreamCarePlanPdf(GoogleDrive $drive, array $googleDriveDir)
     {
-        $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
-
         while ($file = $drive->fileExists($googleDriveDir['path'], 'CarePlan.pdf')) {
             $deleted = $drive->getFilesystemHandle()->delete($file['path']);
         }
@@ -97,9 +134,7 @@ class QueuePatientToExport implements ShouldQueue
         $pathStartingAtStorage = substr($pdfPath, stripos($pdfPath, "storage/") + 8);
 
         $deleted = $this->getLocalFilesystemHandle()
-                        ->delete($pathStartingAtStorage);
-
-        return true;
+            ->delete($pathStartingAtStorage);
     }
 
     /**
@@ -128,5 +163,34 @@ class QueuePatientToExport implements ShouldQueue
         }
 
         return $drive->getDirectory($this->folderId, $this->folderName());
+    }
+
+    /**
+     * Get the patient's note directory. If it doesn't exist, create it first.
+     *
+     * @param GoogleDrive $drive
+     * @param $googleDriveDir
+     *
+     * @return mixed
+     */
+    private function firstOrCreateNotesDirectory(GoogleDrive $drive, $googleDriveDir)
+    {
+        if ( ! $drive->directoryExists($googleDriveDir['path'], 'Notes')) {
+            $drive->getFilesystemHandle()->makeDirectory("{$googleDriveDir['path']}/Notes");
+        }
+
+        return $drive->getDirectory($googleDriveDir['path'], 'Notes');
+    }
+
+    /**
+     * Get the filename for a pdf note
+     *
+     * @param Note $note
+     *
+     * @return string
+     */
+    private function getNoteFileName(Note $note)
+    {
+        return "{$note->performed_at->toDateTimeString()} - {$note->type} - ID: $note->id";
     }
 }
