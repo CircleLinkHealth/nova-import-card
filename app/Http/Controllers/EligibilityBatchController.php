@@ -11,6 +11,7 @@ use App\Services\CCD\ProcessEligibilityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EligibilityBatchController extends Controller
 {
@@ -219,6 +220,33 @@ class EligibilityBatchController extends Controller
                 $sheet->fromArray($eligible);
             });
         })->download('csv');
+    }
+
+    public function downloadCsvPatientList(EligibilityBatch $batch)
+    {
+        $practice = Practice::findOrFail($batch->practice_id);
+        $fileName = "{$practice->display_name}_batch_{$batch->id}_patient_list" . Carbon::now()->toAtomString();
+
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $batch->eligibilityJobs()
+                  ->chunk(500, function ($jobs) use ($handle) {
+                      foreach ($jobs as $job) {
+                          // Add a new row with data
+                          fputcsv($handle, $job->toArray());
+                      }
+                  });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '.csv"',
+        ]);
+
+        return $response;
     }
 
     public function getLastImportLog(EligibilityBatch $batch)

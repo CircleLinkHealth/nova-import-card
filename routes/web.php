@@ -958,6 +958,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'eligibility.download.last.import.logs',
                 ])->middleware('permission:batch.read');
 
+                Route::get('/download-patient-list-csv', [
+                    'uses' => 'EligibilityBatchController@downloadCsvPatientList',
+                    'as'   => 'eligibility.download.csv.patient.list',
+                ])->middleware('permission:batch.read');
+
                 Route::get('/batch-logs-csv', [
                     'uses' => 'EligibilityBatchController@downloadBatchLogCsv',
                     'as'   => 'eligibility.download.logs.csv',
