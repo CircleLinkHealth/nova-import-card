@@ -9,7 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Log;
 
 class QueuePatientToExport implements ShouldQueue
 {
@@ -43,29 +42,16 @@ class QueuePatientToExport implements ShouldQueue
      * @param GoogleDrive $drive
      *
      * @return void
+     * @throws \Exception
      */
     public function handle(GoogleDrive $drive)
     {
-        $pdfPath = $this->patient->carePlan->toPdf();
+        $this->createAndStreamCarePlanPdf($drive);
+    }
 
-        if ( ! $pdfPath) {
-            Log::critical("`$pdfPath` not created" . __FILE__);
-
-            return;
-        }
-
-        if ( ! $drive->directoryExists($this->folderId, $this->folderName())) {
-            $drive->getFilesystemHandle()->makeDirectory($this->fullCloudPath());
-        }
-
-        $googleDriveDir = $drive->getDirectory($this->folderId, $this->folderName());
-
-        $put = $drive->getFilesystemHandle()->put("{$googleDriveDir['path']}/{$this->folderName()}",
-            fopen($pdfPath, 'r+'));
-
-        if ( ! $put) {
-            Log::debug('error');
-        }
+    private function getLocalFilesystemHandle()
+    {
+        return \Storage::disk('storage');
     }
 
     private function folderName()
@@ -76,5 +62,66 @@ class QueuePatientToExport implements ShouldQueue
     private function fullCloudPath()
     {
         return "{$this->folderId}/{$this->folderName()}";
+    }
+
+    /**
+     * Create a PDF of the CarePlan and stream it to Google Drive
+     *
+     * @param GoogleDrive $drive
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    private function createAndStreamCarePlanPdf(GoogleDrive $drive)
+    {
+        $pdfPath = $this->patient->carePlan->toPdf();
+
+        if ( ! $pdfPath) {
+            throw new \Exception("`$pdfPath` not created");
+        }
+
+        $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
+
+        $put = $drive->getFilesystemHandle()
+                     ->putStream($this->pdfCarePlanPath($googleDriveDir), fopen($pdfPath, 'r+'));
+
+        if ( ! $put) {
+            throw new \Exception("Failed uploading PDF CarePlan to `{$googleDriveDir}`. ");
+        }
+
+        $pathStartingAtStorage = substr($pdfPath, stripos($pdfPath, "storage/") + 8);
+
+        $deleted = $this->getLocalFilesystemHandle()
+                        ->delete($pathStartingAtStorage);
+
+        return true;
+    }
+
+    /**
+     * The full path to the Careplan.pdf on Google Drive
+     *
+     * @param array $googleDriveDir
+     *
+     * @return string
+     */
+    private function pdfCarePlanPath(array $googleDriveDir)
+    {
+        return "{$googleDriveDir['path']}/CarePlan.pdf";
+    }
+
+    /**
+     * Get the directory with the patient's name. If it doesn't exist, create it.
+     *
+     * @param GoogleDrive $drive
+     *
+     * @return mixed
+     */
+    private function firstOrCreatePatientDirectory(GoogleDrive $drive)
+    {
+        if ( ! $drive->directoryExists($this->folderId, $this->folderName())) {
+            $drive->getFilesystemHandle()->makeDirectory($this->fullCloudPath());
+        }
+
+        return $drive->getDirectory($this->folderId, $this->folderName());
     }
 }
