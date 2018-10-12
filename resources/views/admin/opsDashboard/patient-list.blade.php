@@ -100,7 +100,7 @@
                         <tr>
                             <td>{{$patient->display_name}}</td>
                             <td>{{$patient->patientInfo->birth_date}}</td>
-                            <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
+                            <td>{{$patient->getPrimaryPracticeName()}}</td>
                             <td>@if($patient->patientInfo->registration_date >= $fromDate->toDateTimeString() && $patient->patientInfo->registration_date <= $toDate->toDateTimeString() && $patient->patientInfo->ccm_status != 'enrolled')added - @endif {{$patient->patientInfo->ccm_status}} </td>
                             <td>{{$patient->patientInfo->registration_date}}</td>
                             @if($patient->patientInfo->ccm_status == 'paused')

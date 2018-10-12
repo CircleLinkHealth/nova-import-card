@@ -54,8 +54,8 @@ class UpdateCarePlanStatus
             $approver = auth()->user();
 
             $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
-            $user->carePlanProviderApprover     = $approver->id;
-            $user->carePlanProviderApproverDate = $date->format('Y-m-d H:i:s');
+            $user->setCarePlanProviderApprover($approver->id);
+            $user->setCarePlanProviderApproverDate($date->format('Y-m-d H:i:s'));
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
@@ -82,7 +82,7 @@ class UpdateCarePlanStatus
 
             $this->addPatientConsentedNote($user);
 
-            $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
+            $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
         }
 
         $user->save();

@@ -289,8 +289,8 @@ class NotesController extends Controller
                 'window_flag'        => $patient_contact_window_exists,
                 'contact_days_array' => $contact_days_array,
                 'ccm_complex'        => $ccm_complex,
-                'notifies_text'      => $patient->notifies_text,
-                'note_channels_text' => $patient->note_channels_text,
+                'notifies_text'      => $patient->getNotifiesText(),
+                'note_channels_text' => $patient->getNoteChannelsText(),
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -457,7 +457,7 @@ class NotesController extends Controller
                         );
                     }
 
-                    $seconds = $patient->ccm_time;
+                    $seconds = $patient->getCcmTime();
 
                     $ccm_complex = $patient->isCCMComplex() ?? false;
 
@@ -580,8 +580,8 @@ class NotesController extends Controller
             'program_id'         => $patient->program_id,
             'meta'               => $meta_tags,
             'hasReaders'         => $readers->all(),
-            'notifies_text'      => $patient->notifies_text,
-            'note_channels_text' => $patient->note_channels_text,
+            'notifies_text'      => $patient->getNotifiesText(),
+            'note_channels_text' => $patient->getNoteChannelsText(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

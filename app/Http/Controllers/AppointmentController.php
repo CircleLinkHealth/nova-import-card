@@ -90,8 +90,8 @@ class AppointmentController extends Controller
         if ($provider) {
             $data['provider_name'] = $provider->getFullName();
 
-            if ($provider->providerInfo->specialty) {
-                $data['provider_name'] = "{$data['provider_name']}, {$provider->providerInfo->specialty}";
+            if ($provider->getSpecialty()) {
+                $data['provider_name'] = "{$data['provider_name']}, {$provider->getSpecialty()}";
             }
         } else {
             $data['provider_name'] = '';

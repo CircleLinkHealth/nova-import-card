@@ -337,7 +337,7 @@ class NoteService
             $patientRecord->is_ccm_complex = 1;
             $patientRecord->save();
 
-            if ($patient->user->ccm_time > 3600 && auth()->user()->nurseInfo) {
+            if ($patient->user->getCcmTime() > 3600 && auth()->user()->nurseInfo) {
                 (new AlternativeCareTimePayableCalculator(auth()->user()->nurseInfo))->adjustPayOnCCMComplexSwitch60Mins();
             }
         }
@@ -356,15 +356,15 @@ class NoteService
     ) {
 
         if ($phone_direction == 'inbound') {
-            $outbound_num  = $patient->primaryPhone;
+            $outbound_num  = $patient->getPrimaryPhone();
             $outbound_id   = $patient->id;
-            $inbound_num   = $author->primaryPhone;
+            $inbound_num   = $author->getPrimaryPhone();
             $inbound_id    = $author->id;
             $isCpmOutbound = false;
         } else {
-            $outbound_num  = $author->primaryPhone;
+            $outbound_num  = $author->getPrimaryPhone();
             $outbound_id   = $author->id;
-            $inbound_num   = $patient->primaryPhone;
+            $inbound_num   = $patient->getPrimaryPhone();
             $inbound_id    = $patient->id;
             $isCpmOutbound = true;
         }

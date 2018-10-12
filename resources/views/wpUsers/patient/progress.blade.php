@@ -5,7 +5,7 @@
 
 <?php
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-$provider = App\User::find($patient->getBillingProviderIDAttribute());
+$provider = App\User::find($patient->getBillingProviderId());
 
 function trim_bp($bp)
 {
@@ -13,7 +13,7 @@ function trim_bp($bp)
     echo $bp_[0];
 }
 if (isset($patient)) {
-    $seconds     = $patient->ccm_time;
+    $seconds     = $patient->getCcmTime();
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
@@ -78,20 +78,20 @@ if (isset($patient)) {
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getFullName()}}</div>
-                        <div class="col-xs-12 col-md-4 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-12 col-md-4 print-row">{{$patient->getPhone()}}</div>
                         <div class="col-xs-12 col-md-3 print-row">{{$today}}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 col-md-4 print-row text-bold">
                             @if($provider)
-                                {{$provider->getFullName()}}{{($provider->getSpecialtyAttribute() == '')? '' : ', '. $provider->getSpecialtyAttribute() }}
+                                {{$provider->getFullName()}}{{($provider->getSpecialty() == '')? '' : ', '. $provider->getSpecialty() }}
                             @else
                                 <em>no lead contact</em>
                             @endif
                         </div>
                         <div class="col-xs-12 col-md-4 print-row">
                             @if($provider)
-                                {{$provider->phone}}
+                                {{$provider->getPhone()}}
                             @endif
                         </div>
                         <div class="col-xs-12 col-md-4 print-row text-bold">{{$patient->getPreferredLocationName()}}</div>

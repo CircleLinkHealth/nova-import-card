@@ -109,7 +109,7 @@ class WebixFormatter implements ReportFormatter
         $count          = 0;
 
         $task_types = Activity::task_types();
-        $billingProvider = $patient->billingProviderName;
+        $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider, $task_types) {
             $result = [
@@ -404,17 +404,17 @@ class WebixFormatter implements ReportFormatter
         foreach ($upcoming as $appt) {
             $provider = User::find($appt->provider_id);
 
-            $specialty = $provider->providerInfo->specialty ?? null;
+            $specialty = $provider->getSpecialty() ?? null;
             if ($specialty) {
                 $specialty = '(' . $specialty . ')';
             }
 
             //format super specific phone number requirements
-            if ($provider && $provider->primaryPhone) {
+            if ($provider && $provider->getPrimaryPhone()) {
                 $phone = "P: " . preg_replace(
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                         '$1-$2-$3',
-                        $provider->primaryPhone
+                        $provider->getPrimaryPhone()
                     );
             } else {
                 $phone = null;
@@ -451,17 +451,17 @@ class WebixFormatter implements ReportFormatter
                 continue;
             }
 
-            $specialty = $provider->providerInfo->specialty ?? null;
+            $specialty = $provider->getSpecialty() ?? null;
             if ($specialty) {
                 $specialty = '(' . $specialty . ')';
             }
 
             //format super specific phone number requirements
-            if ($provider->primaryPhone) {
+            if ($provider->getPrimaryPhone()) {
                 $phone = "P: " . preg_replace(
                         '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
                         '$1-$2-$3',
-                        $provider->primaryPhone
+                        $provider->getPrimaryPhone()
                     );
             } else {
                 $phone = null;
@@ -594,11 +594,11 @@ class WebixFormatter implements ReportFormatter
                     // $part->id,
                     'patient_name'               => $patient->getFullName(),
                     //$meta[$part->id]["first_name"][0] . " " .$meta[$part->id]["last_name"][0],
-                    'first_name'                 => $patient->first_name,
+                    'first_name'                 => $patient->getFirstName(),
                     //$meta[$part->id]["first_name"][0],
-                    'last_name'                  => $patient->last_name,
+                    'last_name'                  => $patient->getLastName(),
                     //$meta[$part->id]["last_name"][0],
-                    'ccm_status'                 => ucfirst($patient->ccmStatus),
+                    'ccm_status'                 => ucfirst($patient->getCcmStatus()),
                     //ucfirst($meta[$part->id]["ccm_status"][0]),
                     'careplan_status'            => $careplanStatus,
                     //$careplanStatus,
@@ -608,20 +608,20 @@ class WebixFormatter implements ReportFormatter
                     //$careplanStatusLink,
                     'careplan_provider_approver' => $approverName,
                     //$approverName,
-                    'dob'                        => Carbon::parse($patient->birthDate)->format('m/d/Y'),
+                    'dob'                        => Carbon::parse($patient->getBirthDate())->format('m/d/Y'),
                     //date("m/d/Y", strtotime($user_config[$part->id]["birth_date"])),
                     'phone'                      => isset($patient->phoneNumbers->number)
                         ? $patient->phoneNumbers->number
-                        : $patient->phone,
+                        : $patient->getPhone(),
                     //$user_config[$part->id]["study_phone_number"],
-                    'age'                        => $patient->age,
-                    'reg_date'                   => Carbon::parse($patient->registrationDate)->format('m/d/Y'),
+                    'age'                        => $patient->getAge(),
+                    'reg_date'                   => Carbon::parse($patient->getRegistrationDate())->format('m/d/Y'),
                     //date("m/d/Y", strtotime($user_config[$part->id]["registration_date"])) ,
                     'last_read'                  => $lastObservationDate,
                     //date("m/d/Y", strtotime($last_read)),
-                    'ccm_time'                   => $patient->ccm_time,
+                    'ccm_time'                   => $patient->getCcmTime(),
                     //$ccm_time[0],
-                    'ccm_seconds'                => $patient->ccm_time,
+                    'ccm_seconds'                => $patient->getCcmTime(),
                     //$meta[$part->id]['cur_month_activity_time'][0]
                     'provider'                   => $bpName,
                     'site'                       => $programName,

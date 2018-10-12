@@ -95,7 +95,7 @@
                             </ul>
                         </div>
                         <div class="row gutter">
-                            Puesto que no hemos podido contactarnos con usted al {{$patient->primary_phone}}, y este
+                            Puesto que no hemos podido contactarnos con usted al {{$patient->getPrimaryPhone()}}, y este
                             programa
                             requiere que nuestros entrenadores de atención le llamen periódicamente, por favor puede
                             llamarnos

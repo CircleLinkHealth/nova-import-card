@@ -56,15 +56,15 @@ class ProviderUITimerComposer extends ServiceProvider
             if (isset($patient) && ! empty($patient) && is_a($patient, User::class)) {
                 $patientId        = $patient->id;
                 $patientProgramId = $patient->program_id;
-                $ccm_time         = $patient->ccm_time;
-                $bhi_time         = $patient->bhi_time;
+                $ccm_time         = $patient->getCcmTime();
+                $bhi_time         = $patient->getBhiTime();
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
                 $noBhiSwitch = $noBhiSwitch || ! optional($patient->primaryPractice()->first())->hasServiceCode("CPT 99484");
             } elseif (isset($patient) || ! empty($patient) && is_a($patient, Patient::class)) {
                 $patientId        = $patient->user_id;
                 $patientProgramId = $patient->user->program_id;
-                $ccm_time         = $patient->user->ccm_time;
-                $bhi_time         = $patient->user->bhi_time;
+                $ccm_time         = $patient->user->getCcmTime();
+                $bhi_time         = $patient->user->getBhiTime();
                 //also, do NOT show BHI switch if user's primary practice is not being charged for CPT 99484
                 $noBhiSwitch = $noBhiSwitch || ! optional($patient->user->primaryPractice()->first())->hasServiceCode("CPT 99484");
             }
@@ -89,7 +89,7 @@ class ProviderUITimerComposer extends ServiceProvider
 
             if ($patient) {
 
-                $seconds = $patient->ccm_time;
+                $seconds = $patient->getCcmTime();
 
                 $H           = floor($seconds / 3600);
                 $i           = ($seconds / 60) % 60;

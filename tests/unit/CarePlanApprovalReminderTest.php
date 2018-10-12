@@ -29,10 +29,10 @@ class CarePlanApprovalReminderTest extends TestCase
         $this->provider = $this->createUser($this->practice->id, 'provider');
         $this->patient = $this->createUser($this->practice->id, 'participant');
 
-        $this->patient->billing_provider_id = $this->provider->id;
-        $this->patient->ccm_status = Patient::ENROLLED;
+        $this->patient->setBillingProviderId($this->provider->id);
+        $this->patient->setCcmStatus(Patient::ENROLLED);
 
-        $this->assertEquals($this->provider->id, $this->patient->billing_provider_id);
+        $this->assertEquals($this->provider->id, $this->patient->getBillingProviderId());
     }
 
     /**
@@ -45,7 +45,7 @@ class CarePlanApprovalReminderTest extends TestCase
         //Set
         Notification::fake();
 
-        $this->patient->care_plan_status = CarePlan::QA_APPROVED;
+        $this->patient->setCarePlanStatus(CarePlan::QA_APPROVED);
 
         $numberOfCareplans = 10;
 

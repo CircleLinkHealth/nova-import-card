@@ -397,7 +397,7 @@ class UserRepository
         $program_name  = $program->display_name;
         $email_subject = '[' . $program_name . '] New User Registration!';
         $data          = [
-            'patient_name'  => $user->getFullNameAttribute(),
+            'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
             'patient_email' => $user->getEmailForPasswordReset(),
             'program'       => $program_name,

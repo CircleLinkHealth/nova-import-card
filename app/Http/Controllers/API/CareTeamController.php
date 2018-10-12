@@ -50,7 +50,7 @@ class CareTeamController extends Controller
                 'email'            => $memberUser->email,
                 'first_name'       => $memberUser->getFirstName(),
                 'last_name'        => $memberUser->getLastname(),
-                'suffix'           => $memberUser->suffix,
+                'suffix'           => $memberUser->getSuffix(),
                 'address'          => $memberUser->address,
                 'address2'         => $memberUser->address2,
                 'city'             => $memberUser->city,
@@ -82,7 +82,7 @@ class CareTeamController extends Controller
                     ? [
                         'id'          => $memberUser->providerInfo->id,
                         'is_clinical' => $memberUser->providerInfo->is_clinical,
-                        'specialty'   => $memberUser->providerInfo->specialty,
+                        'specialty'   => $memberUser->getSpecialty(),
                     ]
                     : [
                         'id'          => '',
@@ -142,7 +142,7 @@ class CareTeamController extends Controller
                                           'last_name'        => $member->user->getLastName(),
                                           'full_name'        => $member->user->getFullName(),
                                           'suffix'           => optional($member->user->providerInfo)->is_clinical
-                                              ? $member->user->suffix
+                                              ? $member->user->getSuffix()
                                               : 'non-clinical',
                                           'address'          => $member->user->address,
                                           'address2'         => $member->user->address2,
@@ -175,7 +175,7 @@ class CareTeamController extends Controller
                                               ? [
                                                   'id'          => $member->user->providerInfo->id,
                                                   'is_clinical' => $member->user->providerInfo->is_clinical,
-                                                  'specialty'   => $member->user->providerInfo->specialty,
+                                                  'specialty'   => $member->user->getSpecialty(),
                                               ]
                                               : [
                                                   'id'          => '',

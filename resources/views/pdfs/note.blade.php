@@ -33,8 +33,8 @@
         <br>
 
         <h4>
-            Re: {{ $patient->getFullName() }} &#124; DOB: {{ $patient->birthDate }} &#124; {{ $patient->gender }}
-            &#124; {{$patient->age}} yrs &#124; {{ $patient->phone }}
+            Re: {{ $patient->getFullName() }} &#124; DOB: {{ $patient->getBirthDate() }} &#124; {{ $patient->getGender() }}
+            &#124; {{$patient->getAge()}} yrs &#124; {{ $patient->getPhone() }}
         </h4>
 
         <br>

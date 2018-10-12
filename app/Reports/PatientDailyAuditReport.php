@@ -70,7 +70,7 @@ class PatientDailyAuditReport
 
         $this->data['name']     = $this->patient->user->getFullName();
         $this->data['month']    = $this->forMonth->format('F, Y');
-        $this->data['provider'] = $this->patient->user->billingProviderName;
+        $this->data['provider'] = $this->patient->user->getBillingProviderName();
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 
         $activities = DB::table('lv_activities')

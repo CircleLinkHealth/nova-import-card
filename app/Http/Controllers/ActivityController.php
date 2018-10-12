@@ -81,7 +81,7 @@ class ActivityController extends Controller
         foreach ($acts as $key => $value) {
             $provider = User::find($acts[$key]['provider_id']);
             if ($provider) {
-                $acts[$key]['provider_name'] = $provider->getFullNameAttribute();
+                $acts[$key]['provider_name'] = $provider->getFullName();
             }
             unset($acts[$key]['provider_id']);
         }
@@ -315,18 +315,18 @@ class ActivityController extends Controller
         $activity['type']          = $act->type;
         $activity['performed_at']  = $act->performed_at;
         $activity['provider_name'] = User::find($act->provider_id)
-            ? (User::find($act->provider_id)->getFullNameAttribute())
+            ? (User::find($act->provider_id)->getFullName())
             : '';
         $activity['duration']      = intval($act->duration) / 60;
 
         $careteam_info = [];
-        $careteam_ids  = $patient->careTeam;
+        $careteam_ids  = $patient->getCareTeam();
         if ((@unserialize($careteam_ids) !== false)) {
             $careteam_ids = unserialize($careteam_ids);
         }
         if ( ! empty($careteam_ids) && is_array($careteam_ids)) {
             foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = User::find($id)->getFullNameAttribute();;
+                $careteam_info[$id] = User::find($id)->getFullName();;
             }
         }
 

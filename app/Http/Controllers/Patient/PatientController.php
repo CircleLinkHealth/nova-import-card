@@ -43,7 +43,7 @@ class PatientController extends Controller
         if (auth()->user()->canApproveCarePlans()) {
             $showPatientsPendingApprovalBox = true;
             $patients                       = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
-                                                    return $user->careplanStatus == CarePlan::QA_APPROVED;
+                                                    return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
                                               });
             $patientsPendingApproval        = $this->formatter->patientListing($patients);
             $pendingApprovals = $patients->count();
@@ -351,15 +351,15 @@ class PatientController extends Controller
         $i        = 0;
         foreach ($results as $d) {
             $patients[$i]['name'] = ($d->display_name);
-            $dob                  = new Carbon(($d->birth_date));
+            $dob                  = new Carbon(($d->getBirthDate()));
             $patients[$i]['dob']  = $dob->format('m-d-Y');
-            $patients[$i]['mrn']  = $d->mrn_number;
+            $patients[$i]['mrn']  = $d->getMRN();
             $patients[$i]['link'] = route('patient.summary', ['patient' => $d->id]);
 
             $programObj = Practice::find($d->program_id);
 
             $patients[$i]['program'] = $programObj->display_name ?? '';
-            $patients[$i]['hint']    = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->primary_phone}";
+            $patients[$i]['hint']    = $patients[$i]['name'] . " DOB:" . $patients[$i]['dob'] . " [" . $patients[$i]['program'] . "] MRN: {$patients[$i]['mrn']} ID: {$d->id} PRIMARY PHONE: {$d->getPrimaryPhone()}";
             $i++;
         }
 

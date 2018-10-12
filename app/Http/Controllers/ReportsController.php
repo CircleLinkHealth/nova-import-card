@@ -115,7 +115,7 @@ class ReportsController extends Controller
         }//dd($biometrics_array);
 
         // get provider
-        $provider = User::find($user->leadContactID);
+        $provider = User::find($user->getLeadContactID());
 
         //Medication Tracking:
         $medications = $this->service->getMedicationStatus($user, false);
@@ -221,8 +221,8 @@ class ReportsController extends Controller
             $u20_patients[$patient_counter]['colsum_tcc']      = 0;
             $u20_patients[$patient_counter]['colsum_other']    = 0;
             $u20_patients[$patient_counter]['colsum_total']    = 0;
-            $u20_patients[$patient_counter]['ccm_status']      = ucwords($patient->CCMStatus);
-            $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$patient_counter]['ccm_status']      = ucwords($patient->getCcmStatus());
+            $u20_patients[$patient_counter]['dob']             = Carbon::parse($patient->getBirthDate())->format('m/d/Y');
             $u20_patients[$patient_counter]['patient_name']    = $patient->getFullName();
             $u20_patients[$patient_counter]['patient_id']      = $patient->id;
             $acts                                              = $patient->activities;
@@ -367,10 +367,10 @@ class ReportsController extends Controller
             $u20_patients[$act_count]['colsum_tcc']      = 0;
             $u20_patients[$act_count]['colsum_other']    = 0;
             $u20_patients[$act_count]['colsum_total']    = 0;
-            $u20_patients[$act_count]['ccm_status']      = ucwords($patient->CCMStatus);
-            $u20_patients[$act_count]['dob']             = Carbon::parse($patient->birthDate)->format('m/d/Y');
+            $u20_patients[$act_count]['ccm_status']      = ucwords($patient->getCcmStatus());
+            $u20_patients[$act_count]['dob']             = Carbon::parse($patient->getBirthDate())->format('m/d/Y');
             $u20_patients[$act_count]['patient_name']    = $patient->getFullName();
-            $provider                                    = User::find(intval($patient->getBillingProviderIDAttribute()));
+            $provider                                    = User::find(intval($patient->getBillingProviderId()));
             if ($provider) {
                 $u20_patients[$act_count]['provider_name'] = $provider->getFullName();
             } else {
@@ -576,7 +576,7 @@ class ReportsController extends Controller
 
         $patient = User::with('carePlan')->find($patientId);
 
-        if ($patient->careplan_mode == CarePlan::PDF) {
+        if ($patient->getCareplanMode() == CarePlan::PDF) {
             return redirect()->route('patient.pdf.careplan.print', ['patientId' => $patientId]);
         }
 
@@ -813,10 +813,10 @@ class ReportsController extends Controller
                         $billingProviderPhone = '';
                     } else {
                         $billingProviderName  = $billingProvider->display_name;
-                        $billingProviderPhone = $billingProvider->phone;
+                        $billingProviderPhone = $billingProvider->getPhone();
                     }
 
-                    $location = Location::find($user->patientInfo->preferred_contact_location);
+                    $location = Location::find($user->getPreferredContactLocation());
                     if ( ! $location) {
                         $locationName    = '';
                         $locationPhone   = '';
@@ -838,10 +838,10 @@ class ReportsController extends Controller
                         $user->getFirstName(),
                         $user->getLastName(),
                         $billingProviderName,
-                        $user->phone,
+                        $user->getPhone(),
                         $user->dob,
-                        $user->ccm_status,
-                        $user->gender,
+                        $user->getCcmStatus(),
+                        $user->getGender(),
                         $user->address,
                         $user->city,
                         $user->state,
@@ -854,7 +854,7 @@ class ReportsController extends Controller
                         $user->program_id,
                         'Caller id',
                         // provider_phone
-                        $user->patientInfo->preferred_contact_location,
+                        $user->getPreferredContactLocation(),
                         $locationName,
                         $locationPhone,
                         $locationAddress,
@@ -1096,10 +1096,10 @@ class ReportsController extends Controller
                         $user->getFullName(),
                         $billingProviderName,
                         $programName,
-                        $user->ccmStatus,
-                        $user->birthDate,
-                        $user->phone,
-                        $user->registrationDate,
+                        $user->getCcmStatus(),
+                        $user->getBirthDate(),
+                        $user->getPhone(),
+                        $user->getRegistrationDate(),
                         $monthlyTime,
                         $activity1status,
                         $activity1date,

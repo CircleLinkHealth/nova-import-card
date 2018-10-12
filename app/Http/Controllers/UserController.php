@@ -163,7 +163,7 @@ class UserController extends Controller
         $provider_raw = Practice::getProviders($blogId);
         $providers    = [];
         foreach ($provider_raw as $provider) {
-            $providers[$provider->id] = $provider->getFullNameAttribute();
+            $providers[$provider->id] = $provider->getFullName();
         }
 
         // @todo Check what's the name for Smoking
@@ -333,7 +333,7 @@ class UserController extends Controller
         $wpUser = $userRepo->createNewUser($wpUser, $params);
 
         if ($request->has('provider_id')) {
-            $wpUser->billing_provider_id = $request->input('provider_id');
+            $wpUser->setBillingProviderId($request->input('provider_id'));
         }
 
         //if location was selected save it
@@ -542,7 +542,7 @@ class UserController extends Controller
         $userRepo->editUser($wpUser, $params);
 
         if ($request->has('provider_id')) {
-            $wpUser->billing_provider_id = $request->input('provider_id');
+            $wpUser->setBillingProviderid($request->input('provider_id'));
         }
 
         return redirect()->back()->with('messages', ['successfully updated user']);

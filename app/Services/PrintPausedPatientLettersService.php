@@ -47,9 +47,9 @@ class PrintPausedPatientLettersService
                     'last_name'    => $patient->getLastName(),
                     'link'         => route('patient.careplan.print', ['patientId' => $patient->id]),
                     'reg_date'     => optional($patient->user_registered)->format('m/d/Y'),
-                    'paused_date'  => optional($patient->date_paused)->format('m/d/Y'),
-                    'provider'     => $patient->billingProviderName,
-                    'program_name' => $patient->primaryPracticeName,
+                    'paused_date'  => optional($patient->getDatePaused())->format('m/d/Y'),
+                    'provider'     => $patient->getBillingProviderName(),
+                    'program_name' => $patient->getPrimaryPracticeName(),
                 ];
             });
     }
@@ -69,7 +69,7 @@ class PrintPausedPatientLettersService
             ->whereIn('id', $userIdsToPrint)
             ->get()
             ->map(function ($user) {
-                $lang = strtolower($user->patientInfo->preferred_contact_language);
+                $lang = strtolower($user->getPreferredContactLanguage());
 
                 $fullPathToLetter = $this->pdfService->createPdfFromView('patient.letters.pausedLetter', [
                     'patient' => $user,

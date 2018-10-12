@@ -93,7 +93,7 @@
                             </ul>
                         </div>
                         <div class="row gutter">
-                            Since we have been unable to reach you at {{$patient->primary_phone}}, and this program
+                            Since we have been unable to reach you at {{$patient->getPrimaryPhone()}}, and this program
                             requires our
                             care
                             coaches to call periodically, can you please call us
