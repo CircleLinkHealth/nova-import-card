@@ -1320,6 +1320,11 @@ Route::group(['middleware' => 'auth'], function () {
                     'uses' => 'OpsDashboardController@dailyCsv',
                     'as'   => 'OpsDashboard.dailyCsv',
                 ])->middleware('permission:opsReport.read');
+                Route::get('/ops-csv/{fileName}/{collection}', [
+                    'uses' => 'OpsDashboardController@downloadCsvReport',
+                    'as'   => 'OpsDashboard.makeCsv',
+                ])->middleware('permission:opsReport.read');
+
 
 
                 Route::get('/lost-added', [
