@@ -14,6 +14,8 @@ use Storage;
 class GoogleDrive
 {
     /**
+     * Get file read stream handle
+     *
      * @param $fileName
      * @param $folder
      *
@@ -22,8 +24,7 @@ class GoogleDrive
      */
     public function getFileStream($fileName, $folder)
     {
-        $recursive = false;
-        $contents  = collect($this->getDisk()->listContents($folder, $recursive));
+        $contents = $this->getContents($folder);
 
         $file = $contents
             ->where('type', '=', 'file')
@@ -35,15 +36,68 @@ class GoogleDrive
             return false;
         }
 
-        $readStream = $this->getDisk()
+        $readStream = $this->getFilesystemHandle()
                            ->getDriver()
                            ->readStream($file['path']);
 
         return $readStream;
     }
 
-    public function getDisk()
+    /**
+     * Get the storafe disk handle for Google Drive
+     *
+     * @return \Illuminate\Filesystem\FilesystemAdapter
+     */
+    public function getFilesystemHandle()
     {
         return Storage::disk('google');
+    }
+
+    /**
+     * Get the contents of a folder in Google Drive
+     *
+     * @param $folder
+     * @param bool $recursive
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getContents($folder, $recursive = false)
+    {
+        return collect($this->getFilesystemHandle()->listContents($folder, $recursive));
+    }
+
+    /**
+     * @param $folder
+     * @param $dirName
+     * @param bool $recursive
+     *
+     * @return bool
+     */
+    public function directoryExists($folder, $dirName, $recursive = false)
+    {
+        return ! ! $this->getDirectory($folder, $dirName, $recursive = false);
+    }
+
+    /**
+     * @param $parentDir
+     * @param $dirName
+     * @param bool $recursive
+     *
+     * @return mixed
+     */
+    public function getDirectory($parentDir, $dirName, $recursive = false)
+    {
+        return $this->getContents($parentDir, $recursive)
+                    ->where('type', '=', 'dir')
+                    ->where('filename', '=', $dirName)
+                    ->first();
+    }
+
+    public function fileExists($parentDir, $fileNameWithExtension, $recursive = false)
+    {
+        return $this->getContents($parentDir, $recursive)
+                    ->where('type', '=', 'file')
+                    ->where('name', '=', $fileNameWithExtension)
+                    ->first();
     }
 }

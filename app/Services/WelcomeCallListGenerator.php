@@ -15,6 +15,7 @@ use App\EligibilityJob;
 use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Practice;
+use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
 use App\Services\Eligibility\Entities\Problem;
 use App\User;
 use Carbon\Carbon;
@@ -899,23 +900,7 @@ class WelcomeCallListGenerator
 
     private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
     {
-        collect($record['insurance_plans'])
-            ->each(function ($plan, $key) use (&$record) {
-                $concatString = null;
-
-                if ($plan['plan'] || $plan['group_number'] || $plan['policy_number'] || $plan['insurance_type']) {
-                    $concatString = "{$plan['plan']} - {$plan['group_number']} - {$plan['policy_number']} - {$plan['insurance_type']}";
-                }
-
-                if ($key == 'primary') {
-                    $record['primary_insurance'] = $concatString;
-                } elseif ($key == 'secondary') {
-                    $record['secondary_insurance'] = $concatString;
-                }
-            });
-
-
-        return $record;
+        return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
     }
 
 
