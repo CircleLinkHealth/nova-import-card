@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\QueuePatientToExport;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class ExportPracticeDataToGoogleDrive extends Command
@@ -49,9 +50,13 @@ class ExportPracticeDataToGoogleDrive extends Command
             ->with(['carePlan', 'notes'])
             ->has('carePlan')
             ->chunk(100, function ($users) use ($folderId) {
+                $i = 1;
                 foreach ($users as $user) {
                     QueuePatientToExport::dispatch($user, $folderId)
-                                        ->onQueue('reports');
+                                        ->onQueue('reports')
+                                        ->delay(Carbon::now()->addSeconds(5));
+
+                    $i++;
                 }
             });
     }
