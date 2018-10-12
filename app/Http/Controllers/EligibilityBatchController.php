@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Http\Resources\EligibilityJobCSVRow;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -231,11 +233,21 @@ class EligibilityBatchController extends Controller
             // Open output stream
             $handle = fopen('php://output', 'w');
 
+            $firstIteration = true;
+
             $batch->eligibilityJobs()
-                  ->chunk(500, function ($jobs) use ($handle) {
+                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
                       foreach ($jobs as $job) {
+                          $data = (new JsonMedicalRecordEligibilityJobToCsvAdapter($job))->toArray();
+
+                          if ($firstIteration) {
+                              // Add CSV headers
+                              fputcsv($handle, array_keys($data));
+
+                              $firstIteration = false;
+                          }
                           // Add a new row with data
-                          fputcsv($handle, $job->toArray());
+                          fputcsv($handle, $data);
                       }
                   });
 
