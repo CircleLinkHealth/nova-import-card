@@ -46,7 +46,7 @@ class QueuePatientToExport implements ShouldQueue
      */
     public function handle(GoogleDrive $drive)
     {
-        $this->createAndStreamCarePlanPdf($drive);
+        $this->firstOrCreateAndStreamCarePlanPdf($drive);
     }
 
     private function getLocalFilesystemHandle()
@@ -72,15 +72,20 @@ class QueuePatientToExport implements ShouldQueue
      * @return bool
      * @throws \Exception
      */
-    private function createAndStreamCarePlanPdf(GoogleDrive $drive)
+    private function firstOrCreateAndStreamCarePlanPdf(GoogleDrive $drive)
     {
+        $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
+
+        while ($file = $drive->fileExists($googleDriveDir['path'], 'CarePlan.pdf')) {
+            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
+        }
+
         $pdfPath = $this->patient->carePlan->toPdf();
 
         if ( ! $pdfPath) {
             throw new \Exception("`$pdfPath` not created");
         }
 
-        $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
 
         $put = $drive->getFilesystemHandle()
                      ->putStream($this->pdfCarePlanPath($googleDriveDir), fopen($pdfPath, 'r+'));

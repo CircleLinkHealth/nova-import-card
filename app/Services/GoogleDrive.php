@@ -92,4 +92,12 @@ class GoogleDrive
                     ->where('filename', '=', $dirName)
                     ->first();
     }
+
+    public function fileExists($parentDir, $fileNameWithExtension, $recursive = false)
+    {
+        return $this->getContents($parentDir, $recursive)
+                    ->where('type', '=', 'file')
+                    ->where('name', '=', $fileNameWithExtension)
+                    ->first();
+    }
 }
