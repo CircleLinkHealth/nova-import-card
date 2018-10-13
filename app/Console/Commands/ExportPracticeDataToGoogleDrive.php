@@ -52,9 +52,11 @@ class ExportPracticeDataToGoogleDrive extends Command
             ->chunk(100, function ($users) use ($folderId) {
                 $i = 1;
                 foreach ($users as $user) {
+                    \Log::debug("Queuing {$user->first_name} {$user->last_name} CLH ID:{$user->id} for Export.");
+                    
                     QueuePatientToExport::dispatch($user, $folderId)
                                         ->onQueue('reports')
-                                        ->delay(Carbon::now()->addSeconds(5));
+                                        ->delay(Carbon::now()->addSeconds($i * 3)); //temporary way to deal with
 
                     $i++;
                 }

@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class QueuePatientToExport implements ShouldQueue
 {
@@ -23,6 +24,8 @@ class QueuePatientToExport implements ShouldQueue
      * @var string
      */
     private $folderId;
+
+    private $driveContents;
 
     /**
      * Create a new job instance.
@@ -47,7 +50,12 @@ class QueuePatientToExport implements ShouldQueue
      */
     public function handle(GoogleDrive $drive)
     {
+        \Log::debug("Begin Export {$this->folderName()}");
+
         $googleDriveDir = $this->firstOrCreatePatientDirectory($drive);
+
+        //Get drive folder contents recursively once at the beginning of the job to conserve API calls
+        $this->driveContents = $drive->getContents($googleDriveDir['path'], true);
 
         $this->firstOrCreateAndStreamCarePlanPdf($drive, $googleDriveDir);
 
@@ -56,6 +64,8 @@ class QueuePatientToExport implements ShouldQueue
         $this->patient->notes->each(function ($note) use ($drive, $notesDir) {
             $this->firstOrCreateAndStreamNotePdf($drive, $notesDir, $note);
         });
+
+        \Log::debug("Finish Export {$this->folderName()}");
     }
 
     private function getLocalFilesystemHandle()
@@ -77,7 +87,11 @@ class QueuePatientToExport implements ShouldQueue
     {
         $noteFileName = $this->getNoteFileName($note);
 
-        while ($file = $drive->fileExists($googleDriveDir['path'], $noteFileName)) {
+        $file = $this->fileExists($noteFileName);
+
+        if ($file) {
+            \Log::debug("PDF Note exists in `{$googleDriveDir['path']}/$noteFileName`.");
+
             return;
             //Delete the file
 //            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
@@ -94,7 +108,7 @@ class QueuePatientToExport implements ShouldQueue
                      ->putStream("{$googleDriveDir['path']}/$noteFileName", fopen($pdfPath, 'r+'));
 
         if ( ! $put) {
-            throw new \Exception("Failed uploading PDF Note to `{$googleDriveDir}`. ");
+            throw new \Exception("Failed uploading PDF Note to `{$googleDriveDir['path']}`. ");
         }
 
         $pathStartingAtStorage = substr($pdfPath, stripos($pdfPath, "storage/") + 8);
@@ -115,7 +129,13 @@ class QueuePatientToExport implements ShouldQueue
      */
     private function firstOrCreateAndStreamCarePlanPdf(GoogleDrive $drive, array $googleDriveDir)
     {
-        while ($file = $drive->fileExists($googleDriveDir['path'], 'CarePlan.pdf')) {
+        \Log::debug("Begin Export PDF CarePlan for {$this->fullCloudPath()}.");
+
+        $file = $this->fileExists("CarePlan - {$this->folderName()}.pdf");
+
+        if ($file) {
+            \Log::debug("PDF CarePlan exists in {$this->fullCloudPath()}.");
+
             return;
             //Delete the file
 //            $deleted = $drive->getFilesystemHandle()->delete($file['path']);
@@ -123,7 +143,11 @@ class QueuePatientToExport implements ShouldQueue
 
         $pdfPath = $this->patient->carePlan->toPdf();
 
+        \Log::debug("PDF CarePlan path for `{$this->fullCloudPath()}` is `$pdfPath`.");
+
         if ( ! $pdfPath) {
+            \Log::debug("PDF CarePlan not created to upload to `{$this->fullCloudPath()}`.");
+
             throw new \Exception("`$pdfPath` not created");
         }
 
@@ -132,13 +156,21 @@ class QueuePatientToExport implements ShouldQueue
                      ->putStream($this->pdfCarePlanPath($googleDriveDir), fopen($pdfPath, 'r+'));
 
         if ( ! $put) {
-            throw new \Exception("Failed uploading PDF CarePlan to `{$googleDriveDir}`. ");
+            \Log::debug("PDF CarePlan not uploaded to `{$this->fullCloudPath()}` from `$pdfPath`.");
+
+            throw new \Exception("Failed uploading PDF CarePlan to `{$this->pdfCarePlanPath($googleDriveDir)}`. ");
         }
 
         $pathStartingAtStorage = substr($pdfPath, stripos($pdfPath, "storage/") + 8);
 
         $deleted = $this->getLocalFilesystemHandle()
-            ->delete($pathStartingAtStorage);
+                        ->delete($pathStartingAtStorage);
+
+        if ( ! $deleted) {
+            \Log::debug("PDF CarePlan not deleted from `$pathStartingAtStorage`.");
+
+            throw new \Exception("Failed uploading PDF CarePlan to `{$this->pdfCarePlanPath($googleDriveDir)}`. ");
+        }
     }
 
     /**
@@ -150,7 +182,7 @@ class QueuePatientToExport implements ShouldQueue
      */
     private function pdfCarePlanPath(array $googleDriveDir)
     {
-        return "{$googleDriveDir['path']}/CarePlan.pdf";
+        return "{$googleDriveDir['path']}/CarePlan - {$this->folderName()}.pdf";
     }
 
     /**
@@ -162,11 +194,14 @@ class QueuePatientToExport implements ShouldQueue
      */
     private function firstOrCreatePatientDirectory(GoogleDrive $drive)
     {
-        if ( ! $drive->directoryExists($this->folderId, $this->folderName())) {
+        $directory = $drive->getDirectory($this->folderId, $this->folderName());
+
+        if ( ! $directory) {
             $drive->getFilesystemHandle()->makeDirectory($this->fullCloudPath());
+            $directory = $drive->getDirectory($this->folderId, $this->folderName());
         }
 
-        return $drive->getDirectory($this->folderId, $this->folderName());
+        return $directory;
     }
 
     /**
@@ -179,11 +214,14 @@ class QueuePatientToExport implements ShouldQueue
      */
     private function firstOrCreateNotesDirectory(GoogleDrive $drive, $googleDriveDir)
     {
-        if ( ! $drive->directoryExists($googleDriveDir['path'], 'Notes')) {
+        $directory = $this->fileExists('Notes', 'dir');
+
+        if ( ! $directory) {
             $drive->getFilesystemHandle()->makeDirectory("{$googleDriveDir['path']}/Notes");
+            $directory = $drive->getDirectory($googleDriveDir['path'], 'Notes');
         }
 
-        return $drive->getDirectory($googleDriveDir['path'], 'Notes');
+        return $directory;
     }
 
     /**
@@ -196,5 +234,17 @@ class QueuePatientToExport implements ShouldQueue
     private function getNoteFileName(Note $note)
     {
         return "{$note->performed_at->toDateTimeString()} - {$note->type} - ID: $note->id";
+    }
+
+    public function fileExists($fileNameWithExtension, $type = 'file')
+    {
+        if ( ! is_a($this->driveContents, Collection::class)) {
+            return false;
+        }
+
+        return $this->driveContents
+            ->where('type', '=', $type)
+            ->where('name', '=', $fileNameWithExtension)
+            ->first();
     }
 }
