@@ -67,18 +67,6 @@ class GoogleDrive
     }
 
     /**
-     * @param $folder
-     * @param $dirName
-     * @param bool $recursive
-     *
-     * @return bool
-     */
-    public function directoryExists($folder, $dirName, $recursive = false)
-    {
-        return ! ! $this->getDirectory($folder, $dirName, $recursive = false);
-    }
-
-    /**
      * @param $parentDir
      * @param $dirName
      * @param bool $recursive
@@ -90,14 +78,6 @@ class GoogleDrive
         return $this->getContents($parentDir, $recursive)
                     ->where('type', '=', 'dir')
                     ->where('filename', '=', $dirName)
-                    ->first();
-    }
-
-    public function fileExists($parentDir, $fileNameWithExtension, $recursive = false)
-    {
-        return $this->getContents($parentDir, $recursive)
-                    ->where('type', '=', 'file')
-                    ->where('name', '=', $fileNameWithExtension)
                     ->first();
     }
 }
