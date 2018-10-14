@@ -99,7 +99,7 @@
                             <li role="presentation" class="dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                    aria-expanded="false">
-                                    Calls <span class="caret"></span>
+                                    Activities <span class="caret"></span>
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
 
