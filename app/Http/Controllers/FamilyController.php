@@ -51,7 +51,7 @@ class FamilyController extends Controller
 
             if ($patient->family()->count() >= 1) {
                 $fam->delete();
-                return "Sorry, {$patient->user->fullName} already belongs to a family.<br> <br>" . $contact_rohan;
+                return "Sorry, {$patient->user->getFullName()} already belongs to a family.<br> <br>" . $contact_rohan;
             };
 
             $patient->family_id = $fam->id;

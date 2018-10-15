@@ -223,7 +223,7 @@
                                         <td><input class="user-select-checkbox" type="checkbox" name="users[]"
                                                    value="{{ $wpUser->id }}"></td>
                                         <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
-                                               class=""> {{ $wpUser->fullNameWithID }}</a></td>
+                                               class=""> {{ $wpUser->getFullNameWithId() }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
                                                 {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}

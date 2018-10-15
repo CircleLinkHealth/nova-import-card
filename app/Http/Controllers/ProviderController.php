@@ -48,7 +48,7 @@ class ProviderController extends Controller
 
         if ($viewNext) {
             $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
-                return $user->careplanStatus == CarePlan::QA_APPROVED;
+                return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
             })->first();
 
             if ( ! $nextPatient) {

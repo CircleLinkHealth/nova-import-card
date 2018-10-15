@@ -68,7 +68,7 @@ class ExportNurseSchedulesToGoogleCalendar extends Command
             )->setTimezone('America/New_York');
 
             $calendarEvent = Event::create([
-                'name'          => $window->nurse->user->fullName,
+                'name'          => $window->nurse->user->getFullName(),
                 'startDateTime' => $startDateTime,
                 'endDateTime'   => $endDateTime,
             ]);

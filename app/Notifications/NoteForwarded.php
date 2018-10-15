@@ -91,7 +91,7 @@ class NoteForwarded extends Notification
                    . $this->note->performed_at->toFormattedDateString();
 
         if (auth()->check()) {
-            $message .= ' by ' . auth()->user()->full_name;
+            $message .= ' by ' . auth()->user()->getFullName();
         }
 
         return $message;

@@ -365,8 +365,8 @@ class SchedulerService
                 'service' => 'phone',
                 'status'  => 'scheduled',
 
-                'inbound_phone_number'  => $patient->phone
-                    ? $patient->phone
+                'inbound_phone_number'  => $patient->getPhone()
+                    ? $patient->getPhone()
                     : '',
                 'outbound_phone_number' => '',
 
@@ -508,8 +508,8 @@ class SchedulerService
                     $callPatient = $familyUsers[$key];
 
                     $value->scheduled_date       = $minDate->toDateTimeString();
-                    $value->inbound_phone_number = $callPatient->phone
-                        ? $callPatient->phone
+                    $value->inbound_phone_number = $callPatient->getPhone()
+                        ? $callPatient->getPhone()
                         : '';
                     $value->outbound_cpm_id      = $designatedNurse;
                     $value->window_start         = $window_start;

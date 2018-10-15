@@ -3,7 +3,7 @@
 ?>
 <div class="main-form-progress">
     <div class="row row-centered">
-        @if($patient->careplan_mode == App\CarePlan::PDF)
+        @if($patient->getCareplanMode() == App\CarePlan::PDF)
             <div class="progress-buttons col-sm-12 col-centered text-center">
                 <button id="approve-forward" form="ucpForm" type="submit" class="btn btn-primary btn-next inline-block submitFormBtn">
                     Save
@@ -11,7 +11,7 @@
             </div>
         @endif
 
-        @if($patient->careplan_mode == App\CarePlan::WEB)
+        @if($patient->getCareplanMode() == App\CarePlan::WEB)
             @if(isset($patient->id))
                 <div class="progress-buttons col-sm-12 col-centered text-center">
 

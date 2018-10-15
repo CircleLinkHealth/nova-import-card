@@ -248,7 +248,7 @@ class Enrollee extends \App\BaseModel
     public function getProviderFullNameAttribute()
     {
 
-        return $this->provider->fullName ?? null;
+        return $this->provider->getFullName() ?? null;
     }
 
     public function getPracticeNameAttribute()
@@ -263,7 +263,7 @@ class Enrollee extends \App\BaseModel
             config('services.twilio.from'));
 
         $link          = url("join/$this->invite_code");
-        $provider_name = User::find($this->provider_id)->fullName;
+        $provider_name = User::find($this->provider_id)->getFullName();
 
         $twilio->message(
             $this->primary_phone,
@@ -341,7 +341,7 @@ class Enrollee extends \App\BaseModel
 
         $link = url("join/$this->invite_code");
 
-        $provider_name = User::find($this->provider_id)->fullName;
+        $provider_name = User::find($this->provider_id)->getFullName();
 
         $twilio->message(
             $this->primary_phone,

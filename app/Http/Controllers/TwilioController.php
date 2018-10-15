@@ -76,7 +76,7 @@ class TwilioController extends Controller
         $smsQueue = Enrollee::toSMS()->get();
 
         foreach ($smsQueue as $recipient) {
-            $provider_name = User::find($recipient->provider_id)->fullName;
+            $provider_name = User::find($recipient->provider_id)->getFullName();
 
             if ($recipient->invite_sent_at == null) {
                 //first go, make invite code:

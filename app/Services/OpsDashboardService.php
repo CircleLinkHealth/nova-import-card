@@ -99,8 +99,8 @@ class OpsDashboardService
 
         $rowData = [
             'Name'                  => $patient->display_name,
-            'DOB'                   => $patient->patientInfo->birth_date,
-            'Practice Name'         => $patient->getPrimaryPracticeNameAttribute(),
+            'DOB'                   => $patient->getBirthDate(),
+            'Practice Name'         => $patient->getPrimaryPracticeName(),
             'Status'                => $statusColumn,
             'Date Registered'       => $patient->patientInfo->registration_date,
             'Date Paused/Withdrawn' => $statusDateColumn,

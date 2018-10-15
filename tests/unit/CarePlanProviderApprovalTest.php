@@ -66,16 +66,16 @@ class CarePlanProviderApprovalTest extends TestCase
         }
 
         //add each one individually and check for error messages
-        $this->patient->birthDate = Carbon::now()->subYear(20);
+        $this->patient->setBirthDate(Carbon::now()->subYear(20));
 
-        $this->patient->mrn = rand();
+        $this->patient->setMRN(rand());
 
         $this->patient->careTeamMembers()->create([
             'member_user_id' => $this->provider->id,
             'type'           => CarePerson::BILLING_PROVIDER,
         ]);
 
-        $this->patient->phone = '+1-541-754-3010';
+        $this->patient->setPhone('+1-541-754-3010');
 
         $this->patient->save();
 
@@ -221,7 +221,7 @@ class CarePlanProviderApprovalTest extends TestCase
 
         //Setup Patient and CarePlan
         $this->patient                                          = $this->createUser($this->practice->id, 'participant');
-        $this->patient->patientInfo->preferred_contact_location = $this->location->id;
+        $this->patient->setPreferredContactLocation($this->location->id);
         $this->patient->patientInfo->save();
 
         $this->carePlan = $this->patient->carePlan;

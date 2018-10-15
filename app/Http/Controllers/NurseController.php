@@ -128,7 +128,7 @@ class NurseController extends Controller
 
                 $formattedDate = $dayCounter->format('m/d Y');
 
-                $name = $nurse->first_name[0] . '. ' . $nurse->last_name;
+                $name = $nurse->first_name[0] . '. ' . $nurse->getLastName();
 
                 if ($countScheduled > 0) {
                     $data[$formattedDate][$name]['Scheduled'] = $countScheduled;

@@ -7,7 +7,7 @@
 
                 <span class="banner-title">THIS PATIENT IS ELIGIBLE FOR BEHAVIORAL HEALTH SERVICES, PLEASE ASK: </span>
                 <p class="banner-body">
-                    "DR. {{($user->billingProviderUser())->full_name}} would like us to spend a bit more time on these
+                    "DR. {{($user->billingProviderUser())->getFullName()}} would like us to spend a bit more time on these
                     calls, including covering behavioral and other health topics, and possibly looping in specialists
                     only if needed. If you don’t have supplemental insurance, there’s an $8 additional copay".
 

@@ -108,27 +108,27 @@ class PatientCareplanController extends Controller
                                  }
 
                                  if ($cp->patient->patientInfo
-                                     && ! empty($cp->patient->fullName)
+                                     && ! empty($cp->patient->getFullName())
                                      && ! empty($cp->patient->first_name)
                                      && ! empty($cp->patient->last_name)) {
                                      return [
                                          'key'                        => $cp->patient->id,
                                          'id'                         => $cp->patient->id,
-                                         'patient_name'               => $cp->patient->fullName,
-                                         'first_name'                 => $cp->patient->first_name,
-                                         'last_name'                  => $cp->patient->last_name,
+                                         'patient_name'               => $cp->patient->getFullName(),
+                                         'first_name'                 => $cp->patient->getFirstName(),
+                                         'last_name'                  => $cp->patient->getLastName(),
                                          'careplan_status'            => $careplanStatus,
                                          'careplan_status_link'       => $careplanStatusLink,
                                          'careplan_provider_approver' => $approverName,
-                                         'dob'                        => Carbon::parse($cp->patient->birthDate)->format('m/d/Y'),
+                                         'dob'                        => Carbon::parse($cp->patient->getBirthDate())->format('m/d/Y'),
                                          'phone'                      => '',
-                                         'age'                        => $cp->patient->age,
-                                         'reg_date'                   => Carbon::parse($cp->patient->registrationDate)->format('m/d/Y'),
+                                         'age'                        => $cp->patient->getAge(),
+                                         'reg_date'                   => Carbon::parse($cp->patient->getRegistrationDate())->format('m/d/Y'),
                                          'last_read'                  => '',
-                                         'ccm_time'                   => $cp->patient->ccm_time,
-                                         'ccm_seconds'                => $cp->patient->ccm_time,
-                                         'provider'                   => $cp->patient->billingProviderName,
-                                         'program_name'               => $cp->patient->primaryPracticeName,
+                                         'ccm_time'                   => $cp->patient->getCcmTime(),
+                                         'ccm_seconds'                => $cp->patient->getCcmTime(),
+                                         'provider'                   => $cp->patient->getBillingProviderName(),
+                                         'program_name'               => $cp->patient->getPrimaryPracticeName(),
                                          'careplan_last_printed'      => $printed_date,
                                          'careplan_printed'           => $printed_status,
                                      ];
@@ -393,11 +393,11 @@ class PatientCareplanController extends Controller
 
         $showApprovalButton = false; // default hide
         if (Auth::user()->hasRole(['provider'])) {
-            if ($patient->carePlanStatus != 'provider_approved') {
+            if ($patient->getCarePlanStatus() != 'provider_approved') {
                 $showApprovalButton = true;
             }
         } else {
-            if ($patient->carePlanStatus == 'draft') {
+            if ($patient->getCarePlanStatus() == 'draft') {
                 $showApprovalButton = true;
             }
         }
@@ -530,7 +530,7 @@ class PatientCareplanController extends Controller
             $newUser = $userRepo->createNewUser($user, $params);
 
             if ($request->has('provider_id')) {
-                $newUser->billing_provider_id = $request->input('provider_id');
+                $newUser->setBillingProviderId($request->input('provider_id'));
             }
 
             if ($newUser) {

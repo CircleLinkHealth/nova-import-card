@@ -34,7 +34,7 @@ class CareTeamReceivesAlertsTest extends TestCase
 
     public function test_it_returns_empty_collection_if_no_care_team()
     {
-        $this->assertEmpty($this->patient->care_team_receives_alerts);
+        $this->assertEmpty($this->patient->getCareTeamReceivesAlerts());
     }
 
     public function test_it_returns_only_one_user_if_duplicates_exist()
@@ -52,7 +52,7 @@ class CareTeamReceivesAlertsTest extends TestCase
             $i--;
         }
 
-        $this->assertEquals(1, $this->patient->care_team_receives_alerts->count());
+        $this->assertEquals(1, $this->patient->getCareTeamReceivesAlerts()->count());
     }
 
     public function test_it_returns_in_addition_to_provider()
@@ -81,8 +81,8 @@ class CareTeamReceivesAlertsTest extends TestCase
             'name' => User::FORWARD_ALERTS_IN_ADDITION_TO_PROVIDER,
         ]);
 
-        $this->assertEquals(3, $this->patient->care_team_receives_alerts->count());
-        $this->assertContains($cp3->id, $this->patient->care_team_receives_alerts->pluck('id'));
+        $this->assertEquals(3, $this->patient->getCareTeamReceivesAlerts()->count());
+        $this->assertContains($cp3->id, $this->patient->getCareTeamReceivesAlerts()->pluck('id'));
     }
 
     public function test_it_does_not_return_instead_of_provider()
@@ -112,9 +112,9 @@ class CareTeamReceivesAlertsTest extends TestCase
             'name' => User::FORWARD_ALERTS_INSTEAD_OF_PROVIDER,
         ]);
 
-        $this->assertEquals(2, $this->patient->care_team_receives_alerts->count());
+        $this->assertEquals(2, $this->patient->getCareTeamReceivesAlerts()->count());
 
-        $ids = $this->patient->care_team_receives_alerts->pluck('id');
+        $ids = $this->patient->getCareTeamReceivesAlerts()->pluck('id');
 
         $this->assertContains($this->provider->id, $ids);
         $this->assertContains($cp3->id, $ids);
@@ -135,7 +135,7 @@ class CareTeamReceivesAlertsTest extends TestCase
             'name' => CarePerson::IN_ADDITION_TO_BILLING_PROVIDER,
         ]);
 
-        $this->assertEquals(2, $this->patient->care_team_receives_alerts->count());
+        $this->assertEquals(2, $this->patient->getCareTeamReceivesAlerts()->count());
     }
 
     public function test_it_returns_only_location_contacts_person_instead_of_bp()
@@ -152,7 +152,7 @@ class CareTeamReceivesAlertsTest extends TestCase
             'name' => CarePerson::INSTEAD_OF_BILLING_PROVIDER,
         ]);
 
-        $this->assertEquals(1, $this->patient->care_team_receives_alerts->count());
+        $this->assertEquals(1, $this->patient->getCareTeamReceivesAlerts()->count());
     }
 
     protected function setUp()
