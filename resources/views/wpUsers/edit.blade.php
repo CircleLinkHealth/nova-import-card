@@ -36,7 +36,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h1><span>Editing </span>{{ $patient->fullName }}</h1>
+                <h1><span>Editing </span>{{ $patient->getFullName() }}</h1>
                 <div class="panel panel-default">
                     <div class="panel-body">
 
@@ -119,9 +119,9 @@
 
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('first_name', 'First Name:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::text('first_name', $patient->first_name, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('first_name', $patient->getFirstName(), ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('last_name', 'Last Name:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::text('last_name', $patient->last_name, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('last_name', $patient->getLastName(), ['class' => 'form-control']) !!}</div>
                                     <div class="col-xs-1">{!! Form::label('suffix', 'Suffix:') !!}</div>
                                     <div class="col-xs-3">{!! Form::text('suffix', $patient->suffix, ['class' => 'form-control']) !!}</div>
                                 </div>
@@ -163,7 +163,7 @@
 
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
-                                    <div class="col-xs-3">{!! Form::text('home_phone_number', $patient->home_phone_number, ['class' => 'form-control']) !!}</div>
+                                    <div class="col-xs-3">{!! Form::text('home_phone_number', $patient->getHomePhoneNumber(), ['class' => 'form-control']) !!}</div>
                                 </div>
 
 
@@ -175,7 +175,7 @@
                                         <div class="col-xs-2">{!! Form::label('program_id', 'Practice') !!}</div>
                                         <div class="col-xs-4">{!! Form::select('program_id', $wpBlogs, $primaryBlog, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                         <div class="col-xs-2">{!! Form::label('provider_id', 'Billing Provider:') !!}</div>
-                                        <div class="col-xs-4">{!! Form::select('provider_id', [], '', ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'value' => $patient->billing_provider_id]) !!}</div>
+                                        <div class="col-xs-4">{!! Form::select('provider_id', [], '', ['class' => 'form-control select-picker', 'style' => 'width:80%;', 'value' => $patient->getBillingProviderId()]) !!}</div>
                                         <div class="col-xs-6"></div>
                                         <div class="col-xs-4">{!! Form::label('auto_attach_programs', 'Give access to all of ' . auth()->user()->saasAccountName() . '\'s practices') !!}</div>
                                         <div class="col-xs-2">
@@ -243,7 +243,7 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('ccm_status', 'CCM Status:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::select('ccm_status', ['paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn', 'unreachable' => 'unreachable'], $patient->ccmStatus, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
+                                            <div class="col-xs-4">{!! Form::select('ccm_status', ['paused' => 'paused', 'enrolled' => 'enrolled', 'withdrawn' => 'withdrawn', 'unreachable' => 'unreachable'], $patient->getCcmStatus(), ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                             <div class="col-xs-2">{!! Form::label('careplan_status', 'Careplan Status:') !!}</div>
                                             <div class="col-xs-4">{!! Form::select('careplan_status', array('draft' => 'draft', 'qa_approved' => 'qa_approved', 'provider_approved' => 'provider_approved'), $patient->careplan->status, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
                                         </div>
@@ -252,9 +252,9 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('date_paused', 'Date Paused:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::text('date_paused', $patient->date_paused, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-4">{!! Form::text('date_paused', $patient->getDatePaused(), ['class' => 'form-control']) !!}</div>
                                             <div class="col-xs-2">{!! Form::label('date_withdrawn', 'Date Withdrawn:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::text('date_withdrawn', $patient->date_withdrawn, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-4">{!! Form::text('date_withdrawn', $patient->getDateWithdrawn(), ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
 
@@ -268,19 +268,19 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('mrn_number', 'MRN Number:') !!}</div>
-                                            <div class="col-xs-4">{!! Form::text('mrn_number', $patient->mrn_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                            <div class="col-xs-4">{!! Form::text('mrn_number', $patient->getMRN(), ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('active_date', 'Active Date:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('active_date', $patient->active_date, ['class' => 'form-control datepicker', 'style' => 'width:40%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('active_date', $patient->getActiveDate(), ['class' => 'form-control datepicker', 'style' => 'width:40%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('preferred_contact_time', 'Contact Time:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('preferred_contact_time', $patient->preferred_contact_time, ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('preferred_contact_time', $patient->getPreferredContactTime(), ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -290,43 +290,43 @@
                                                 <div class="radio-inline modal-box-clone label">
                                                     <div class="radio-inline">
                                                         <input id="contact-days-1" name="contact_days[]" value="1"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '1') ? 'checked="checked"' : (in_array('1', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-1"><span></span>&nbsp;M</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-2" name="contact_days[]" value="2"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '2') ? 'checked="checked"' : (in_array('2', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-2"><span></span>&nbsp;T</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-3" name="contact_days[]" value="3"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '3') ? 'checked="checked"' : (in_array('3', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-3"><span></span>&nbsp;W</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-4" name="contact_days[]" value="4"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '4') ? 'checked="checked"' : (in_array('4', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-4"><span></span>&nbsp;Th</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-5" name="contact_days[]" value="5"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '5') ? 'checked="checked"' : (in_array('5', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-5"><span></span>&nbsp;F</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-6" name="contact_days[]" value="6"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '6') ? 'checked="checked"' : (in_array('6', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-6"><span></span>&nbsp;Sa</label>
                                                     </div>
                                                     <div class="radio-inline">
                                                         <input id="contact-days-7" name="contact_days[]" value="7"
-                                                               type="checkbox" @if(isset($patient->preferred_cc_contact_days)){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->preferred_cc_contact_days)) ? 'checked="checked"' : '')) }}@endif>
+                                                               type="checkbox" @if(null !== $patient->getPreferredCcContactDays()){{ ((old('contact_days') == '7') ? 'checked="checked"' : (in_array('7', explode(', ', $patient->getPreferredCcContactDays())) ? 'checked="checked"' : '')) }}@endif>
                                                         <label style="font-size: 120%; margin: -1px;"
                                                                for="contact-days-7"><span></span>&nbsp;Su</label>
                                                     </div>
@@ -337,80 +337,80 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('preferred_contact_method', 'Contact Method:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('preferred_contact_method', array('CCT'), $patient->preferred_contact_method, ['class' => 'form-control select-picker', 'style' => 'width:30%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('preferred_contact_method', array('CCT'), $patient->getPreferredContactMethod(), ['class' => 'form-control select-picker', 'style' => 'width:30%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('preferred_contact_language', 'Contact Language:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('preferred_contact_language', array('EN'), $patient->preferred_contact_language, ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('preferred_contact_language', array('EN'), $patient->getPreferredContactLanguage(), ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('preferred_contact_location', 'Contact Location:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('preferred_contact_location', $locations_arr, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('preferred_contact_location', $locations_arr, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker', 'style' => 'width:80%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('gender', 'Gender:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('gender', array('M', 'F'), $patient->gender, ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('gender', array('M', 'F'), $patient->getGender(), ['class' => 'form-control select-picker', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
                                     a
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('birth_date', 'Birth Date:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('birth_date', $patient->birth_date, ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('birth_date', $patient->getBirthDate(), ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('consent_date', 'Consent Date:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('consent_date', $patient->consent_date, ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('consent_date', $patient->getConsentDate(), ['class' => 'form-control', 'style' => 'width:30%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('daily_reminder_optin', 'Daily Reminder Optin:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('daily_reminder_optin', array('Y'), $patient->daily_reminder_optin, ['class' => 'form-control select-picker', 'style' => 'width:10%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('daily_reminder_optin', array('Y'), $patient->getDailyReminderOptin(), ['class' => 'form-control select-picker', 'style' => 'width:10%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('daily_reminder_time', 'Daily Reminder Time:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('daily_reminder_time', $patient->daily_reminder_time, ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('daily_reminder_time', $patient->getDailyReminderTime(), ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('daily_reminder_areas', 'Daily Reminder Areas:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('daily_reminder_areas', $patient->daily_reminder_areas, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('daily_reminder_areas', $patient->getDailyReminderAreas(), ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('hospital_reminder_optin', 'Hospital Reminder Optin:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::select('hospital_reminder_optin', array('Y'), $patient->hospital_reminder_optin, ['class' => 'form-control select-picker', 'style' => 'width:10%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::select('hospital_reminder_optin', array('Y'), $patient->getHospitalReminderOptin(), ['class' => 'form-control select-picker', 'style' => 'width:10%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('hospital_reminder_time', 'Hospital Reminder Time:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('hospital_reminder_time', $patient->hospital_reminder_time, ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('hospital_reminder_time', $patient->getHospitalReminderTime(), ['class' => 'form-control', 'style' => 'width:20%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('hospital_reminder_areas', 'Hospital Reminder Areas:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('hospital_reminder_areas', $patient->hospital_reminder_areas, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('hospital_reminder_areas', $patient->getHospitalReminderAreas(), ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('registration_date', 'registration_date:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('registration_date', $patient->registration_date, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('registration_date', $patient->getRegistrationDate(), ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -421,11 +421,11 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('care_team', 'Care Team:') !!}</div>
                                             <div class="col-xs-10">
-                                                @if (isset($patient->care_team))
-                                                    @if (count($patient->care_team) > 0 && is_array($patient->care_team))
+                                                @if (null !== ($patient->getCareTeam()))
+                                                    @if (count($patient->getCareTeam()) > 0 && is_array($patient->getCareTeam()))
                                                         <div class="alert alert-warning">
                                                             <ul>
-                                                                @foreach ($patient->care_team as $id)
+                                                                @foreach ($patient->getCareTeam() as $id)
                                                                     <li>{!! Form::checkbox('care_team[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
                                                                 @endforeach
                                                             </ul>
@@ -439,12 +439,12 @@
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('send_alert_to', 'Send alerts to:') !!}</div>
                                             <div class="col-xs-10">
-                                                @if (isset($patient->send_alert_to))
-                                                    @if (is_array($patient->send_alert_to) && count($patient->send_alert_to) > 0)
+                                                @if (null !== ($patient->getSendAlertTo()))
+                                                    @if (is_array($patient->getSendAlertTo()) && count($patient->getSendAlertTo()) > 0)
                                                         <div class="alert alert-warning">
                                                             <strong>Send alerts to</strong>
                                                             <ul>
-                                                                @foreach ($patient->send_alert_to as $id)
+                                                                @foreach ($patient->getSendAlertTo() as $id)
                                                                     <li>{!! Form::checkbox('send_alert_to[]', $id, ['checked' => 'checked']) !!}{{ $id }}</li>
                                                                 @endforeach
                                                             </ul>
@@ -476,19 +476,19 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('npi_number', 'NPI Number:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('npi_number', $patient->npi_number, ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('npi_number', $patient->getNpiNumber(), ['class' => 'form-control', 'style' => 'width:100%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('specialty', 'Specialty:') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('specialty', $patient->specialty, ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('specialty', $patient->getSpecialty(), ['class' => 'form-control', 'style' => 'width:50%;']) !!}</div>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-xs-2">{!! Form::label('prefix', 'Prefix(DEPR?):') !!}</div>
-                                            <div class="col-xs-10">{!! Form::text('prefix', $patient->prefix, ['class' => 'form-control']) !!}</div>
+                                            <div class="col-xs-10">{!! Form::text('prefix', $patient->getPrefix(), ['class' => 'form-control']) !!}</div>
                                         </div>
                                     </div>
                                 </div>

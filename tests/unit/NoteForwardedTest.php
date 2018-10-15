@@ -46,7 +46,7 @@ class NoteForwardedTest extends TestCase
         $note->forward(true, true);
 
         $recipients = collect();
-        $recipients = $note->patient->care_team_receives_alerts;
+        $recipients = $note->patient->getCareTeamReceivesAlerts();
         //care center
         $recipients->push($this->nurse);
 

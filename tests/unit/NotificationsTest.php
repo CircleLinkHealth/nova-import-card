@@ -58,7 +58,7 @@ class NotificationsTest extends TestCase
                 $this->assertEquals("5 CircleLink Care Plan(s) for your Approval!", $mailData->subject);
                 $this->assertEquals("CircleLink Health", $mailData->from[0]['name']);
                 $this->assertEquals("notifications@careplanmanager.com", $mailData->from[0]['address']);
-                $this->assertEquals("{$this->provider->fullName}", $mailData->to[0]['name']);
+                $this->assertEquals("{$this->provider->getFullName()}", $mailData->to[0]['name']);
                 $this->assertEquals("{$this->provider->email}", $mailData->to[0]['address']);
                 $this->assertEquals("emails.careplansPendingApproval", $mailData->view);
 

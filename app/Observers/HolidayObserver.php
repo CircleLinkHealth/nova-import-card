@@ -27,7 +27,7 @@ class HolidayObserver
             return;
         }
 
-        $sentence = "Nurse $auth->fullName will take the day off on {$holiday->date->format('l, F j Y')}";
+        $sentence = "Nurse {$auth->getFullName()} will take the day off on {$holiday->date->format('l, F j Y')}";
         $sentence .= " View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 
@@ -56,7 +56,7 @@ class HolidayObserver
             return;
         }
 
-        $sentence = "Change of plans y'all! Nurse $auth->fullName will NOT be taking the day off on {$holiday->date->format('l, F j Y')}";
+        $sentence = "Change of plans y'all! Nurse {$auth->getFullName()} will NOT be taking the day off on {$holiday->date->format('l, F j Y')}";
         $sentence .= " View Schedule at ";
         $sentence .= route('get.admin.nurse.schedules');
 

@@ -65,7 +65,7 @@
 <nav>
     <div class="nav-wrapper center">
         <div class="mdl-layout__header-row" style="background: #4fb2e2; padding-left: 10px">
-            <span class="mdl-layout__title" style="color: white; font-size: 1.4em;">Dr. {{$enrollee->provider->fullName}}’s Office</span>
+            <span class="mdl-layout__title" style="color: white; font-size: 1.4em;">Dr. {{$enrollee->provider->getFullName()}}’s Office</span>
         </div>
     </div>
 </nav>

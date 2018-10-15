@@ -60,7 +60,7 @@ class NurseMonthlyBillGenerator
     ) {
 
         $this->nurse = $newNurse;
-        $this->nurseName = $newNurse->user->fullName;
+        $this->nurseName = $newNurse->user->getFullName();
         $this->startDate = $billingDateStart;
         $this->endDate = $billingDateEnd;
         $this->addDuration = $manualTimeAdd;
@@ -268,7 +268,7 @@ class NurseMonthlyBillGenerator
             'nurse_billable_time' => $this->formattedSystemTime,
             'total_billable_amount' => '$'.$this->payable,
             'total_billable_rate' => $this->rate,
-            'nurse_name' => $this->nurse->user->fullName,
+            'nurse_name' => $this->nurse->user->getFullName(),
 
             //range
             'date_start' => $this->startDate->format('jS M, Y'),
@@ -292,7 +292,7 @@ class NurseMonthlyBillGenerator
         }
 
         $data = [
-            'name' => $this->nurse->user->fullName,
+            'name' => $this->nurse->user->getFullName(),
             'percentage' => $this->percentTime,
             'total_time' => $this->formattedSystemTime,
             'payout' => $this->payable,

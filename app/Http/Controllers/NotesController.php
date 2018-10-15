@@ -217,7 +217,7 @@ class NotesController extends Controller
                 $patient_contact_window_exists = true;
             }
 
-            $patient_name = $patient->fullName;
+            $patient_name = $patient->getFullName();
 
             //Pull up user's call information.
 
@@ -244,7 +244,7 @@ class NotesController extends Controller
 
             $author      = Auth::user();
             $author_id   = $author->id;
-            $author_name = $author->fullName;
+            $author_name = $author->getFullName();
 
             //Patient Call Windows:
             $window = PatientContactWindow::getPreferred($patient->patientInfo);
@@ -259,21 +259,38 @@ class NotesController extends Controller
             asort($provider_info);
             asort($careteam_info);
 
+            $nurse_patient_tasks = Call::where('status', '=', 'scheduled')
+                                       ->where('type', '=', 'task')
+                                       ->where('inbound_cpm_id', '=', $patientId)
+                                       ->where('outbound_cpm_id', '=', $author_id)
+                                       ->select([
+                                           'id',
+                                           'type',
+                                           'sub_type',
+                                           'attempt_note',
+                                           'scheduled_date',
+                                           'window_start',
+                                           'window_end',
+                                       ])
+                                       ->get();
+
             $view_data = [
-                'program_id'         => $patient->program_id,
-                'patient'            => $patient,
-                'patient_name'       => $patient_name,
-                'note_types'         => Activity::input_activity_types(),
-                'author_id'          => $author_id,
-                'author_name'        => $author_name,
-                'careteam_info'      => $careteam_info,
-                'userTimeZone'       => $userTimeZone,
-                'window'             => $window,
-                'window_flag'        => $patient_contact_window_exists,
-                'contact_days_array' => $contact_days_array,
-                'ccm_complex'        => $ccm_complex,
-                'notifies_text'      => $patient->notifies_text,
-                'note_channels_text' => $patient->note_channels_text,
+                'program_id'           => $patient->program_id,
+                'patient'              => $patient,
+                'patient_name'         => $patient_name,
+                'note_types'           => Activity::input_activity_types(),
+                'task_types_to_topics' => Activity::task_types_to_topics(),
+                'tasks'                => $nurse_patient_tasks,
+                'author_id'            => $author_id,
+                'author_name'          => $author_name,
+                'careteam_info'        => $careteam_info,
+                'userTimeZone'         => $userTimeZone,
+                'window'               => $window,
+                'window_flag'          => $patient_contact_window_exists,
+                'contact_days_array'   => $contact_days_array,
+                'ccm_complex'          => $ccm_complex,
+                'notifies_text'      => $patient->getNotifiesText(),
+                'note_channels_text' => $patient->getNoteChannelsText(),
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -348,123 +365,165 @@ class NotesController extends Controller
             );
         }
 
+        $is_phone_session = isset($input['phone']);
+        $is_task          = isset($input['task_id']);
+
         /**
+         * If task:
+         *   - update task id with note
+         *   - if call/call back and reached - update last_successful_contact_time
+         *   - if call/call back update last contact time
+         *   - do not show the schedule next call page
+         *
          * If phone call AND:
          *   - if a nurse (care-center): update today's call and check if should redirect to schedule next call page
          *   - if any other role: store a call
          */
-        $is_phone_session = isset($input['phone']);
 
-        if (Auth::user()->hasRole('care-center')) {
+        if ($is_task) {
+            $task_id     = $input['task_id'];
+            $task_status = $input['task_status'];
+            $call        = Call::find($task_id);
+            if ($task_status === "done") {
+                if ($call->sub_type === "Call Back") {
+                    $call->status = Call::REACHED;
 
-            $is_withdrawn = $info->ccm_status == 'withdrawn';
+                    //Updates when the patient was successfully contacted last
+                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
 
-            if ( ! $is_phone_session && $is_withdrawn) {
-                return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
-                    'messages',
-                    ['Successfully Created Note']
-                );
+                    //took this from below :)
+                    if (auth()->user()->hasRole('provider')) {
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                    }
+
+                } else {
+                    $call->status = "done";
+                }
             }
 
-            if ($is_phone_session) {
-
-                if ( ! isset($input['call_status'])) {
-                    //exit with error
-                    return redirect()
-                        ->back()
-                        ->withErrors(["Invalid form input. Missing ['call_status']"])
-                        ->withInput();
-                }
-
-                $call_status = $input['call_status'];
-                $is_saas     = auth()->user()->isSaas();
-                $prediction  = null;
-
-                if ($call_status == Call::REACHED) {
-                    //Updates when the patient was successfully contacted last
-                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
-                }
-
-                if ( ! $is_saas && ! $is_withdrawn) {
-                    $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id, $call_status);
-                }
-
+            if ($call->sub_type === "Call Back") {
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();
+            }
 
-                if ($is_withdrawn || $prediction == null || $is_saas) {
+            $call->note_id = $note->id;
+            $call->save();
+
+        } else {
+            if (Auth::user()->hasRole('care-center')) {
+
+                $is_withdrawn = $info->ccm_status == 'withdrawn';
+
+                if ( ! $is_phone_session && $is_withdrawn) {
                     return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
                         'messages',
                         ['Successfully Created Note']
                     );
                 }
 
-                $seconds = $patient->ccm_time;
+                if ($is_phone_session) {
 
-                $ccm_complex = $patient->isCCMComplex() ?? false;
+                    if ( ! isset($input['call_status'])) {
+                        //exit with error
+                        return redirect()
+                            ->back()
+                            ->withErrors(["Invalid form input. Missing ['call_status']"])
+                            ->withInput();
+                    }
 
-                $ccm_above = false;
-                if ($seconds > 1199 && ! $ccm_complex) {
-                    $ccm_above = true;
-                } elseif ($seconds > 3599 && $ccm_complex) {
-                    $ccm_above = true;
-                }
+                    $call_status = $input['call_status'];
+                    $is_saas     = auth()->user()->isSaas();
+                    $prediction  = null;
 
-                $prediction['ccm_above']   = $ccm_above;
-                $prediction['ccm_complex'] = $ccm_complex;
+                    if ($call_status == Call::REACHED) {
+                        //Updates when the patient was successfully contacted last
+                        $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s'); // @todo add H:i:s
+                    }
 
-                return view('wpUsers.patient.calls.create', $prediction);
-            }
-        }
+                    if ( ! $is_saas && ! $is_withdrawn) {
+                        $prediction = $schedulerService->updateTodaysCallAndPredictNext($patient, $note->id,
+                            $call_status);
+                    }
 
-        //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
-        if ($is_phone_session) {
-
-            if (isset($input['call_status']) && $input['call_status'] == 'reached') {
-                if (auth()->user()->hasRole('provider')) {
-                    $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id, null);
-
-                    $this->patientRepo->updateCallLogs($patient->patientInfo, true);
-
-                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                    // add last contact time regardless of if success
+                    $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                     $info->save();
+
+                    if ($is_withdrawn || $prediction == null || $is_saas) {
+                        return redirect()->route('patient.note.index', ['patient' => $patientId])->with(
+                            'messages',
+                            ['Successfully Created Note']
+                        );
+                    }
+
+                    $seconds = $patient->getCcmTime();
+
+                    $ccm_complex = $patient->isCCMComplex() ?? false;
+
+                    $ccm_above = false;
+                    if ($seconds > 1199 && ! $ccm_complex) {
+                        $ccm_above = true;
+                    } elseif ($seconds > 3599 && $ccm_complex) {
+                        $ccm_above = true;
+                    }
+
+                    $prediction['ccm_above']   = $ccm_above;
+                    $prediction['ccm_complex'] = $ccm_complex;
+
+                    return view('wpUsers.patient.calls.create', $prediction);
                 }
             }
 
-            if (auth()->user()->hasRole('no-ccm-care-center')) {
-                if (isset($input['welcome_call'])) {
-                    $this->service->storeCallForNote(
-                        $note,
-                        'welcome call',
-                        $patient,
-                        auth()->user(),
-                        auth()->user()->id,
-                        null
-                    );
+            //If successful phone call and provider, also mark as the last successful day contacted. [ticket: 592]
+            if ($is_phone_session) {
 
-                    $info->date_welcomed = Carbon::now()->format('Y-m-d H:i:s');
-                    $info->save();
-                } else {
-                    $this->service->storeCallForNote(
-                        $note,
-                        'welcome attempt',
-                        $patient,
-                        auth()->user(),
-                        auth()->user()->id,
-                        null
-                    );
+                if (isset($input['call_status']) && $input['call_status'] == 'reached') {
+                    if (auth()->user()->hasRole('provider')) {
+                        $this->service->storeCallForNote($note, 'reached', $patient, Auth::user(), Auth::user()->id,
+                            null);
+
+                        $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+
+                        $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                        $info->save();
+                    }
                 }
 
-                if (isset($input['other_call'])) {
-                    $this->service->storeCallForNote(
-                        $note,
-                        'other call',
-                        $patient,
-                        auth()->user(),
-                        auth()->user()->id,
-                        null
-                    );
+                if (auth()->user()->hasRole('no-ccm-care-center')) {
+                    if (isset($input['welcome_call'])) {
+                        $this->service->storeCallForNote(
+                            $note,
+                            'welcome call',
+                            $patient,
+                            auth()->user(),
+                            auth()->user()->id,
+                            null
+                        );
+
+                        $info->date_welcomed = Carbon::now()->format('Y-m-d H:i:s');
+                        $info->save();
+                    } else {
+                        $this->service->storeCallForNote(
+                            $note,
+                            'welcome attempt',
+                            $patient,
+                            auth()->user(),
+                            auth()->user()->id,
+                            null
+                        );
+                    }
+
+                    if (isset($input['other_call'])) {
+                        $this->service->storeCallForNote(
+                            $note,
+                            'other call',
+                            $patient,
+                            auth()->user(),
+                            auth()->user()->id,
+                            null
+                        );
+                    }
                 }
             }
         }
@@ -501,7 +560,7 @@ class NotesController extends Controller
         $data['performed_at'] = $note->performed_at;
         $provider             = User::find($note->author_id);
         if ($provider) {
-            $data['provider_name'] = $provider->fullName;
+            $data['provider_name'] = $provider->getFullName();
         } else {
             $data['provider_name'] = '';
         }
@@ -521,8 +580,8 @@ class NotesController extends Controller
             'program_id'         => $patient->program_id,
             'meta'               => $meta_tags,
             'hasReaders'         => $readers->all(),
-            'notifies_text'      => $patient->notifies_text,
-            'note_channels_text' => $patient->note_channels_text,
+            'notifies_text'      => $patient->getNotifiesText(),
+            'note_channels_text' => $patient->getNoteChannelsText(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

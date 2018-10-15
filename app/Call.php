@@ -10,6 +10,8 @@ use Carbon\Carbon;
  *
  * @property int $id
  * @property int|null $note_id
+ * @property string|null $type
+ * @property string|null $sub_type
  * @property string $service
  * @property string $status
  * @property string $inbound_phone_number
@@ -60,6 +62,8 @@ class Call extends BaseModel
     protected $appends = ['is_from_care_center'];
 
     protected $fillable = [
+        'type',
+        'sub_type',
         'note_id',
         'service',
         'status',
@@ -142,10 +146,15 @@ class Call extends BaseModel
             $d = Carbon::now();
         }
 
-        $calls = Call::where(function ($q) use ($user, $d) {
-            $q->where('outbound_cpm_id', $user->id)
-              ->orWhere('inbound_cpm_id', $user->id);
+        $calls = Call::where(function ($q) {
+            $q->whereNull('type')
+              ->orWhere('type', '=', 'call')
+              ->orWhere('sub_type', '=', 'Call Back');
         })
+                     ->where(function ($q) use ($user, $d) {
+                         $q->where('outbound_cpm_id', $user->id)
+                           ->orWhere('inbound_cpm_id', $user->id);
+                     })
                      ->where('called_date', '>=', $d->startOfMonth()->toDateTimeString())
                      ->where('called_date', '<=', $d->endOfMonth()->toDateTimeString())
                      ->where('status', 'reached');

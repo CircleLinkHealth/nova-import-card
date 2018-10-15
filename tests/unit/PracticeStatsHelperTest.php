@@ -44,11 +44,11 @@ class PracticeStatsHelperTest extends TestCase
     public function test_enrollment_count()
     {
         for ($i = 0; $i < 2; $i++) {
-            $this->patients[$i]->date_withdrawn = Carbon::now();
+            $this->patients[$i]->setDateWithdrawn(Carbon::now());
         }
 
         for ($i = 4; $i < 8; $i++) {
-            $this->patients[$i]->date_paused = Carbon::now()->subDays(3);
+            $this->patients[$i]->setDatePaused(Carbon::now()->subDays(3));
         }
 
         $enrollmentCount = $this->service->enrollmentCount($this->start, $this->end);

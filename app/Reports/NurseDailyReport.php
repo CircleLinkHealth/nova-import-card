@@ -37,7 +37,7 @@ class NurseDailyReport
                 continue;
             }
 
-            $nurses[$i]['name']                     = $nurse->fullName;
+            $nurses[$i]['name']                     = $nurse->getFullName();
             $nurses[$i]['Time Since Last Activity'] = Carbon::parse($mostRecentPageTimer->end_time)->diffForHumans();
 
             $nurses[$i]['# Scheduled Calls Today']  = $nurse->countScheduledCallsForToday();

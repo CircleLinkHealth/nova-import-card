@@ -46,7 +46,7 @@ class PracticeController extends Controller
     */
     public function getPractices() {
         $practicesCollection = auth()->user()
-                                ->practices()
+                                ->practices(true, true) //only active practices, only enrolled patients
                                 ->with('locations')
                                 ->get([
                                             'id',
@@ -129,10 +129,10 @@ class PracticeController extends Controller
         ])->map(function ($patient) {
             return [
                 'id' =>  $patient->id,
-                'first_name' =>  $patient->first_name,
-                'last_name' =>  $patient->last_name,
-                'suffix' =>  $patient->suffix,
-                'full_name' => $patient->first_name . ' ' . $patient->last_name . ' ' . $patient->suffix,
+                'first_name' =>  $patient->getFirstName(),
+                'last_name' =>  $patient->getLastName(),
+                'suffix' =>  $patient->getSuffix(),
+                'full_name' => $patient->getFullName(),
                 'city' =>  $patient->city,
                 'state' =>  $patient->state,
                 'status' => optional($patient->carePlan)->status
@@ -164,10 +164,10 @@ class PracticeController extends Controller
             }
             return [
                 'id' =>  $nurse->id,
-                'first_name' =>  $nurse->first_name,
-                'last_name' =>  $nurse->last_name,
-                'suffix' =>  $nurse->suffix,
-                'full_name' => $nurse->display_name ?? ($nurse->first_name . ' ' . $nurse->last_name . ' ' . $nurse->suffix),
+                'first_name' =>  $nurse->getFirstName(),
+                'last_name' =>  $nurse->getLastName(),
+                'suffix' =>  $nurse->getSuffix(),
+                'full_name' => $nurse->display_name ?? ($nurse->getFullName()),
                 'city' =>  $nurse->city,
                 'state' =>  $nurse->state,
                 'states' => $states

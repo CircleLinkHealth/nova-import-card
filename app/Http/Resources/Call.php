@@ -26,6 +26,8 @@ class Call extends Resource
 
         return [
             'id'                    => $this->id,
+            'type'                  => $this->type,
+            'sub_type'              => $this->sub_type,
             'is_from_care_center'   => $this->isFromCareCenter,
             'note_id'               => $this->note_id,
             'service'               => $this->service,
