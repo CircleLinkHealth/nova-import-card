@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateOpsDashboardCSVReport;
 use App\Practice;
 use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\SaasAccount;
@@ -10,7 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Maatwebsite\Excel\Facades\Excel;
 
 class OpsDashboardController extends Controller
 {
@@ -86,115 +86,24 @@ class OpsDashboardController extends Controller
     public function dailyCsv()
     {
 
-        $date = Carbon::now();
+        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('reports');
 
-        $practices = Practice::activeBillable()
-                             ->with([
-                                 'patients' => function ($p) use ($date) {
-                                     $p->with([
-                                         'activities'                  => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay());
-                                         },
-                                         'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                             $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=',
-                                                   $date->copy()->subDay()->setTimeFromTimeString('23:00'));
-                                         },
-                                     ]);
-                                 },
-                             ])
-                             ->whereHas('patients.patientInfo')
-                             ->get()
-                             ->sortBy('display_name');
-
-        $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
-
-        foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
-            if ($row != null) {
-                $rows[$practice->display_name] = $row;
-            }
-        }
-        $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
-        $rows                     = collect($rows);
-
-        Excel::create('CLH-Ops-Daily-Report-' . $date->toDateTimeString(), function ($excel) use (
-            $rows,
-            $hoursBehind,
-            $date
-        ) {
-            // Set the title
-            $excel->setTitle('CLH Ops Daily Report');
-
-            // Chain the setters
-            $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
-
-            // Call them separately
-            $excel->setDescription('CLH Ops Daily Report');
-
-            // Our first sheet
-            $excel->sheet('Sheet 1', function ($sheet) use (
-                $rows,
-                $hoursBehind,
-                $date
-            ) {
-                $sheet->cell('A1', function ($cell) use ($date) {
-                    // manipulate the cell
-                    $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()} to: {$date->toDateTimeString()}");
-
-                });
-                $sheet->cell('A2', function ($cell) use ($hoursBehind) {
-                    // manipulate the cell
-                    $cell->setValue("HoursBehind: {$hoursBehind}");
-
-                });
-
-
-                $sheet->appendRow([
-                    'Active Accounts',
-                    '0 mins',
-                    '0-5',
-                    '5-10',
-                    '10-15',
-                    '15-20',
-                    '20+',
-                    'Total',
-                    'Prior Day Totals',
-                    'Added',
-                    'Unreachable',
-                    'Paused',
-                    'Withdrawn',
-                    'Delta',
-                    'G0506 To Enroll',
-                ]);
-                foreach ($rows as $key => $value) {
-                    $sheet->appendRow([
-                        $key,
-                        $value['0 mins'],
-                        $value['0-5'],
-                        $value['5-10'],
-                        $value['10-15'],
-                        $value['15-20'],
-                        $value['20+'],
-                        $value['Total'],
-                        $value['Prior Day totals'],
-                        $value['Added'],
-                        '-' . $value['Unreachable'],
-                        '-' . $value['Paused'],
-                        '-' . $value['Withdrawn'],
-                        $value['Delta'],
-                        $value['G0506 To Enroll'],
-                    ]);
-                }
-
-
-            });
-        })->export('xls');
+        return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
 
     }
 
+    public function downloadCsvReport($fileName, $collection)
+    {
+
+        $csv = auth()->user()
+            ->saasAccount
+            ->getMedia($collection)
+            ->where('file_name', $fileName)
+            ->first();
+
+        return $this->downloadMedia($csv);
+
+    }
 
     public function getLostAdded(Request $request)
     {

@@ -45,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Queue::looping(function () {
+            //Rollback any transactions that were left open by a previously failed job
             while (DB::transactionLevel() > 0) {
                 DB::rollBack();
             }

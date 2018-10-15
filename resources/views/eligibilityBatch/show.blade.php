@@ -64,6 +64,11 @@
                                 <a href="{{route('get.eligibility.reprocess', [$batch->id])}}"
                                    class="btn btn-danger">Reprocess</a>
                             </div>
+
+                                <div class="pull-left" style="padding-left: 2%;">
+                                    <a href="{{route('eligibility.download.csv.patient.list', [$batch->id])}}"
+                                       class="btn btn-info">All patients CSV</a>
+                                </div>
                         @endif
 
 
