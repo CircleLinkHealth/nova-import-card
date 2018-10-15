@@ -182,10 +182,10 @@ class Activity extends BaseModel implements Transformable
         ];
     }
 
-    public static function task_types()
+    public static function task_types_to_topics()
     {
         return [
-            'Review Care Plan' => 'Review Care Plan',
+            'CP Review' => 'Review Care Plan',
             'Call Back' => 'Call Back',
             'Refill'    => 'Refill',
             'Send Info' => 'Send Info',

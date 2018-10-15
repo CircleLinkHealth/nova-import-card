@@ -101,10 +101,9 @@ class WebixFormatter implements ReportFormatter
         $formatted_data = collect();
         $count          = 0;
 
-        $task_types      = Activity::task_types();
         $billingProvider = $patient->billingProviderName;
 
-        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider, $task_types) {
+        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
             $result = [
                 'id'            => $note->id,
                 'logger_name'   => $note->author->fullName,
@@ -117,7 +116,7 @@ class WebixFormatter implements ReportFormatter
             ];
 
             //pangratios: add support for task types
-            if (isset($task_types[$note->type])) {
+            if ($note->call && $note->call->type === 'task') {
                 $result['logged_from'] = 'note_task';
             }
 
@@ -126,7 +125,6 @@ class WebixFormatter implements ReportFormatter
                     $result['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
                 }
             }
-
 
             if (count($note->call) > 0) {
                 if ($note->call->status == 'reached') {
