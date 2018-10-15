@@ -192,7 +192,7 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
                                                             <input type="text" class="form-control" name="agent_name"
                                                                    id="agent_name" placeholder="Agent Name"
-                                                                   value="{{ (old('agent_name') ? old('agent_name') : ($patient-->getAgentName() ? $patient->getAgentName() : '')) }}">
+                                                                   value="{{ (old('agent_name') ? old('agent_name') : ($patient->getAgentName() ? $patient->getAgentName() : '')) }}">
                                                             <span class="help-block">{{ $errors->first('agent_name') }}</span>
                                                         </div>
                                                     </div>
