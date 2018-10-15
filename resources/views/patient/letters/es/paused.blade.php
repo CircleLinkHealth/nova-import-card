@@ -10,7 +10,7 @@
                                     <div class="col-xs-12 address"><strong>En nombre del</strong></div>
                                     <div class="col-xs-7 address">
                                         <div>
-                                            {{optional($patient->billingProviderUser())->fullName}}
+                                            {{optional($patient->billingProviderUser())->getFullName()}}
                                         </div>
                                         <div>
                                             {{$patient->primaryPractice->display_name}}
@@ -37,7 +37,7 @@
                                 <div class="row">
                                     <div class="col-xs-8">
                                         <div class="row">
-                                            <div class="col-xs-12 address">{{strtoupper($patient->fullName)}}</div>
+                                            <div class="col-xs-12 address">{{strtoupper($patient->getFullName())}}</div>
                                             <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
                                             <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
                                                 , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
@@ -57,18 +57,18 @@
                 <div class="row gutter">
                     <div class="col-xs-10 welcome-copy">
                         <div class="row gutter">
-                            Estimada {{$patient->fullName}},
+                            Estimada {{$patient->getFullName()}},
                         </div>
                         <div class="row gutter">
                         </div>
                         <div class="row gutter row">
-                            Dr. {{optional($patient->billingProviderUser())->fullName}}, ¡Bienvenido a la Gestión de
+                            Dr. {{optional($patient->billingProviderUser())->getFullName()}}, ¡Bienvenido a la Gestión de
                             Atención
                             Personalizada!
                         </div>
                         <br>
                         <div class="row gutter">
-                            Como quizás le mencionó el Dr. {{optional($patient->billingProviderUser())->last_name}} con
+                            Como quizás le mencionó el Dr. {{optional($patient->billingProviderUser())->getLastName()}} con
                             respecto a
                             este
                             programa por invitación, la atención personalizada es una parte importante para mantenerse
@@ -85,7 +85,7 @@
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Conexión con su proveedor a través de actualizaciones compartidas con el
-                                    Dr. {{optional($patient->billingProviderUser())->last_name}}.
+                                    Dr. {{optional($patient->billingProviderUser())->getLastName()}}.
                                 </li>
                                 <li style="list-style-type: disc;margin: 15px 0;">
                                     Acceso a su equipo de atención médica desde la comodidad de su hogar, para ayudarle
@@ -95,7 +95,7 @@
                             </ul>
                         </div>
                         <div class="row gutter">
-                            Puesto que no hemos podido contactarnos con usted al {{$patient->primary_phone}}, y este
+                            Puesto que no hemos podido contactarnos con usted al {{$patient->getPrimaryPhone()}}, y este
                             programa
                             requiere que nuestros entrenadores de atención le llamen periódicamente, por favor puede
                             llamarnos

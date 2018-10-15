@@ -217,7 +217,7 @@ class NotesController extends Controller
                 $patient_contact_window_exists = true;
             }
 
-            $patient_name = $patient->fullName;
+            $patient_name = $patient->getFullName();
 
             //Pull up user's call information.
 
@@ -244,7 +244,7 @@ class NotesController extends Controller
 
             $author      = Auth::user();
             $author_id   = $author->id;
-            $author_name = $author->fullName;
+            $author_name = $author->getFullName();
 
             //Patient Call Windows:
             $window = PatientContactWindow::getPreferred($patient->patientInfo);
@@ -289,8 +289,8 @@ class NotesController extends Controller
                 'window_flag'          => $patient_contact_window_exists,
                 'contact_days_array'   => $contact_days_array,
                 'ccm_complex'          => $ccm_complex,
-                'notifies_text'        => $patient->notifies_text,
-                'note_channels_text'   => $patient->note_channels_text,
+                'notifies_text'      => $patient->getNotifiesText(),
+                'note_channels_text' => $patient->getNoteChannelsText(),
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -457,7 +457,7 @@ class NotesController extends Controller
                         );
                     }
 
-                    $seconds = $patient->ccm_time;
+                    $seconds = $patient->getCcmTime();
 
                     $ccm_complex = $patient->isCCMComplex() ?? false;
 
@@ -560,7 +560,7 @@ class NotesController extends Controller
         $data['performed_at'] = $note->performed_at;
         $provider             = User::find($note->author_id);
         if ($provider) {
-            $data['provider_name'] = $provider->fullName;
+            $data['provider_name'] = $provider->getFullName();
         } else {
             $data['provider_name'] = '';
         }
@@ -580,8 +580,8 @@ class NotesController extends Controller
             'program_id'         => $patient->program_id,
             'meta'               => $meta_tags,
             'hasReaders'         => $readers->all(),
-            'notifies_text'      => $patient->notifies_text,
-            'note_channels_text' => $patient->note_channels_text,
+            'notifies_text'      => $patient->getNotifiesText(),
+            'note_channels_text' => $patient->getNoteChannelsText(),
         ];
 
         return view('wpUsers.patient.note.view', $view_data);

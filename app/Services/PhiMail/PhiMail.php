@@ -98,7 +98,7 @@ class PhiMail implements DirectMail
                 $this->connector->setSubject('Message from '.$patient->saasAccountName());
 
                 // Add the main body of the message.
-                $this->connector->addText("This is message regarding patient {$patient->fullName}.");
+                $this->connector->addText("This is message regarding patient {$patient->getFullName()}.");
             }
 
             if ($ccdaAttachmentPath) {

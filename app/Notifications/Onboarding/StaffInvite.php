@@ -90,12 +90,12 @@ class StaffInvite extends Notification
      */
     public function toArray($notifiable)
     {
-        $invitor_name = $this->sender->fullName;
+        $invitor_name = $this->sender->getFullName();
         $program_name = $this->practice->formatted_name;
 
         return [
             'subject'     => "$invitor_name Invited You to the Personalized Care Management Team with CircleLink!",
-            'greeting'    => "Dear $notifiable->fullName:",
+            'greeting'    => "Dear {$notifiable->getFullName()}:",
             'line'        => "$invitor_name at $program_name just invited you the Personalized Care Management team!",
             'action_text' => 'Confirm and create a password',
             'action_link' => route('get.onboarding.create.invited.user', [

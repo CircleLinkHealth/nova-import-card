@@ -139,7 +139,7 @@ class Note extends \App\BaseModel implements PdfReport
             $pdf->setOption('zoom', $fontSize);
         }
 
-        $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->fullName . '.pdf';
+        $this->fileName = Carbon::now()->toDateString() . '-' . $this->patient->getFullName() . '.pdf';
         $filePath       = base_path('storage/pdfs/notes/' . $this->fileName);
         $pdf->save($filePath, true);
 
@@ -247,7 +247,7 @@ class Note extends \App\BaseModel implements PdfReport
         $cpmSettings = $this->patient->primaryPractice->cpmSettings();
 
         if ($notifyCareteam && $cpmSettings->email_note_was_forwarded) {
-            $recipients = $this->patient->care_team_receives_alerts;
+            $recipients = $this->patient->getCareTeamReceivesAlerts();
 
             if ($force) {
                 $recipients->push($this->patient->billingProviderUser());

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <table class="table">
-        <caption>Calls for {{$patient->fullName}}</caption>
+        <caption>Calls for {{$patient->getFullName()}}</caption>
         <thead>
         <tr>
             <th>Call Id</th>

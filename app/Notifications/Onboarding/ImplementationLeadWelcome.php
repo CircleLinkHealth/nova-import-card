@@ -62,7 +62,7 @@ class ImplementationLeadWelcome extends Notification
     {
         return (new MailMessage)
             ->subject('Welcome to '.$notifiable->saasAccountName().'!')
-            ->greeting("Dear $notifiable->fullName:")
+            ->greeting("Dear {$notifiable->getFullName()}:")
             ->line("{$this->practice->formatted_name}’s Personalized Care Management program with CircleLink Health just launched!")
             ->line("Please reset your password with below button.")
             ->action('Reset Password', url('auth/password/reset'));

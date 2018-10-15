@@ -74,13 +74,13 @@ $user_info = [];
                                                         <div class="radio-inline">
                                                             <input dusk="male-gender" type="radio" id="radioMale"
                                                                    name="gender"
-                                                                   value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->gender == 'M') ? 'checked="checked"' : '')) }}>
+                                                                   value="M" {{ ((old('gender') == 'M') ? 'checked="checked"' : (($patient->getGender() == 'M') ? 'checked="checked"' : '')) }}>
                                                             <label for="radioMale"><span> </span>Male</label>
                                                         </div>
                                                         <div class="radio-inline">
                                                             <input dusk="female-gender" type="radio" id="radioFemale"
                                                                    name="gender"
-                                                                   value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->gender == 'F') ? 'checked="checked"' : '')) }}>
+                                                                   value="F" {{ ((old('gender') == 'F') ? 'checked="checked"' : (($patient->getGender() == 'F') ? 'checked="checked"' : '')) }}>
                                                             <label for="radioFemale"><span> </span>Female</label>
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('gender') }}</span>
@@ -97,13 +97,13 @@ $user_info = [];
                                                         <div class="radio">
                                                             <input type="radio" name="preferred_contact_language"
                                                                    id="languageEnglish"
-                                                                   value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : (($patient->preferred_contact_language == 'EN') ? 'checked="checked"' : '')) }}>
+                                                                   value="EN" {{ ((old('preferred_contact_language') == 'EN' || !old('preferred_contact_language')) ? 'checked="checked"' : (($patient->getPreferredContactLanguage() == 'EN') ? 'checked="checked"' : '')) }}>
                                                             <label for="languageEnglish"><span> </span>English</label>
                                                         </div>
                                                         <div class="radio radio-v-margin">
                                                             <input type="radio" name="preferred_contact_language"
                                                                    id="languageSpanish"
-                                                                   value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : (($patient->preferred_contact_language == 'ES') ? 'checked="checked"' : '')) }}>
+                                                                   value="ES" {{ ((old('preferred_contact_language') == 'ES') ? 'checked="checked"' : (($patient->getPreferredContactLanguage() == 'ES') ? 'checked="checked"' : '')) }}>
                                                             <label for="languageSpanish"><span> </span>Spanish</label>
                                                         </div>
                                                         <span class="help-block">{{ $errors->first('preferred_contact_language') }}</span>
@@ -112,7 +112,7 @@ $user_info = [];
                                                         <label class="sr-only" for="mrn_number">MRN</label>
                                                         <input type="text" class="form-control" name="mrn_number"
                                                                id="mrn_number" placeholder="MRN *"
-                                                               value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->mrn_number ? $patient->mrn_number : '')) }}">
+                                                               value="{{ (old('mrn_number') ? old('mrn_number') : ($patient->getMRN() ? $patient->getMRN() : '')) }}">
                                                         <span class="help-block">{{ $errors->first('mrn_number') }}</span>
                                                     </div>
                                                 </div>
@@ -123,7 +123,7 @@ $user_info = [];
                                                 <v-datepicker name="birth_date" class="selectpickerX form-control"
                                                               format="yyyy-MM-dd"
                                                               placeholder="YYYY-MM-DD"
-                                                              value="{{ $patient->resolveTimezoneToGMT(old('birth_date') ? old('birth_date') : ($patient->birth_date ? $patient->birth_date : '1960-01-01')) }}"
+                                                              value="{{ $patient->resolveTimezoneToGMT(old('birth_date') ? old('birth_date') : ($patient->getBirthDate() ? $patient->getBirthDate() : '1960-01-01')) }}"
                                                               required></v-datepicker>
                                                 <br/>
                                                 <span class="help-block">{{ $errors->first('birth_date') }}</span>
@@ -136,7 +136,7 @@ $user_info = [];
                                                             <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
                                                                    class="form-control" name="home_phone_number"
                                                                    id="home_phone_number" placeholder="Telephone *"
-                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->home_phone_number ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->home_phone_number) : '')) }}">
+                                                                   value="{{ (old('home_phone_number') ? old('home_phone_number') : ($patient->getHomePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getHomePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('home_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -148,7 +148,7 @@ $user_info = [];
                                                                    class="form-control" name="mobile_phone_number"
                                                                    id="mobile_phone_number"
                                                                    placeholder="Mobile Telephone *"
-                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->mobile_phone_number ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->mobile_phone_number) : '')) }}">
+                                                                   value="{{ (old('mobile_phone_number') ? old('mobile_phone_number') : ($patient->getMobilePhoneNumber() ? (new App\CLH\Helpers\StringManipulation())->formatPhoneNumber($patient->getMobilePhoneNumber()) : '')) }}">
                                                             <span class="help-block">{{ $errors->first('mobile_phone_number') }}</span>
                                                         </div>
                                                     </div>
@@ -192,7 +192,7 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('agent_name') ? 'has-error' : '' }}">
                                                             <input type="text" class="form-control" name="agent_name"
                                                                    id="agent_name" placeholder="Agent Name"
-                                                                   value="{{ (old('agent_name') ? old('agent_name') : ($patient->agent_name ? $patient->agent_name : '')) }}">
+                                                                   value="{{ (old('agent_name') ? old('agent_name') : ($patient-->getAgentName() ? $patient->getAgentName() : '')) }}">
                                                             <span class="help-block">{{ $errors->first('agent_name') }}</span>
                                                         </div>
                                                     </div>
@@ -203,7 +203,7 @@ $user_info = [];
                                                             <input type="tel" pattern='\d{3}[\-]\d{3}[\-]\d{4}'
                                                                    class="form-control" name="agent_telephone"
                                                                    id="agent_telephone" placeholder="Agent Telephone"
-                                                                   value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->agent_telephone ? $patient->agent_telephone : '')) }}">
+                                                                   value="{{ (old('agent_telephone') ? old('agent_telephone') : ($patient->getAgentTelephone() ? $patient->getAgentTelephone() : '')) }}">
                                                             <span class="help-block">{{ $errors->first('agent_telephone') }}</span>
                                                         </div>
                                                     </div>
@@ -217,7 +217,7 @@ $user_info = [];
                                                                    name="agent_relationship"
                                                                    id="agent_relationship"
                                                                    placeholder="Agent Relationship"
-                                                                   value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->agent_relationship ? $patient->agent_relationship : '')) }}">
+                                                                   value="{{ (old('agent_relationship') ? old('agent_relationship') : ($patient->getAgentRelationship() ? $patient->getAgentRelationship() : '')) }}">
                                                             <span class="help-block">{{ $errors->first('agent_relationship') }}</span>
                                                         </div>
                                                     </div>
@@ -225,7 +225,7 @@ $user_info = [];
                                                         <div class="form-group {{ $errors->first('agent_email') ? 'has-error' : '' }}">
                                                             <input type="text" class="form-control" name="agent_email"
                                                                    id="agent_email" placeholder="Agent Email"
-                                                                   value="{{ (old('agent_email') ? old('agent_email') : ($patient->agent_email ? $patient->agent_email : '')) }}">
+                                                                   value="{{ (old('agent_email') ? old('agent_email') : ($patient->getAgentEmail() ? $patient->getAgentEmail() : '')) }}">
                                                             <span class="help-block">{{ $errors->first('agent_email') }}</span>
                                                         </div>
                                                     </div>
@@ -251,7 +251,7 @@ $user_info = [];
                                                     <div class="radio">
                                                         <input type="radio" name="preferred_contact_method"
                                                                id="contactMethodCCT"
-                                                               value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->preferred_contact_method == 'CCT') ? 'checked="checked"' : '')) }}>
+                                                               value="CCT" {{ ((old('preferred_contact_method') == 'CCT') ? 'checked="checked"' : (($patient->getPreferredContactMethod() == 'CCT') ? 'checked="checked"' : '')) }}>
                                                         <label for="contactMethodCCT"><span> </span>Care Center</label>
                                                     </div>
 
@@ -278,7 +278,7 @@ $user_info = [];
                                                     <v-datepicker name="consent_date" class="selectpickerX form-control"
                                                                   format="yyyy-MM-dd"
                                                                   placeholder="YYYY-MM-DD" pattern="\d{4}\-\d{2}\-\d{2}"
-                                                                  value="{{ $patient->resolveTimezoneToGMT($patient->patientInfo->consent_date) }}"
+                                                                  value="{{ $patient->resolveTimezoneToGMT($patient->getConsentDate()) }}"
                                                                   required></v-datepicker>
                                                     <br/>
                                                     <span class="help-block">{{ $errors->first('consent_date') }}</span>
@@ -308,7 +308,7 @@ $user_info = [];
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program') ? 'has-error' : '' }}">
                                                     {!! Form::label('preferred_contact_location', 'Preferred Office Location  *:
         :') !!}
-                                                    {!! Form::select('preferred_contact_location', $locations, $patient->preferred_contact_location, ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
+                                                    {!! Form::select('preferred_contact_location', $locations, $patient->getPreferredContactLocation(), ['class' => 'form-control select-picker', 'style' => 'width:90;']) !!}
                                                 </div>
                                             @else
                                                 <div class="form-group form-item form-item-spacing col-sm-12 {{ $errors->first('program_id') ? 'has-error' : '' }}">
@@ -354,16 +354,16 @@ $user_info = [];
                                                 <div class="form-group form-item form-item-spacing col-sm-12">
                                                     <div class="row">
                                                         <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ') !!}</div>
-                                                        <div class="col-lg-8">{!! Form::select('ccm_status', [ App\Patient::PAUSED => 'Paused', App\Patient::ENROLLED => 'Enrolled', App\Patient::WITHDRAWN => 'Withdrawn', App\Patient::UNREACHABLE => 'Unreachable' ], $patient->ccm_status, ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
+                                                        <div class="col-lg-8">{!! Form::select('ccm_status', [ App\Patient::PAUSED => 'Paused', App\Patient::ENROLLED => 'Enrolled', App\Patient::WITHDRAWN => 'Withdrawn', App\Patient::UNREACHABLE => 'Unreachable' ], $patient->getCcmStatus(), ['class' => 'form-control selectpicker', 'style' => 'width:100%;']) !!}</div>
                                                     </div>
                                                 </div>
                                             @else
                                                 <div class="form-group form-item form-item-spacing col-sm-12">
                                                     <div class="row">
-                                                        <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->ccm_status == '' ? 'enrolled' : ucfirst($patient->ccm_status))) !!}</div>
+                                                        <div class="col-lg-4">{!! Form::label('ccm_status', 'CCM Enrollment: ' . ($patient->getCcmStatus() == '' ? 'enrolled' : ucfirst($patient->getCcmStatus()))) !!}</div>
                                                         <div class="col-lg-8">
                                                             <input type="hidden"
-                                                                   value="{{ $patient->ccm_status == '' ? 'enrolled' : $patient->ccm_status }}"
+                                                                   value="{{ $patient->getCcmStatus() == '' ? 'enrolled' : $patient->getCcmStatus() }}"
                                                                    name="ccm_status">
                                                         </div>
 
