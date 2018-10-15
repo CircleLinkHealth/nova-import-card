@@ -118,10 +118,6 @@ class Handler extends ExceptionHandler
         if ($this->isHttpException($e)) {
             return $this->renderHttpException($e);
         } elseif ($e instanceof \ErrorException) {
-            if ( ! config('app.debug')) {
-                abort(500);
-            }
-
             return parent::render($request, $e);
         } else {
             return parent::render($request, $e);
