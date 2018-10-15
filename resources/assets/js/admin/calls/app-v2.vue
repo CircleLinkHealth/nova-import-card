@@ -3,8 +3,7 @@
         <div class="row">
             <div class="col-sm-6">
                 <a class="btn btn-primary btn-xs" @click="exportExcel">Export Records</a>
-                <button class="btn btn-success btn-xs" @click="addCall">Add Call</button>
-                <button class="btn btn-success btn-xs" @click="addTask">Add Task</button>
+                <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients
                 </button>
                 <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
@@ -35,37 +34,22 @@
                         <div class="row" style="margin:auto">
                             <div class="col-xs-12" style="margin:auto;padding:0;text-align:center;">
 
-                                <template v-if="props.row['Type'] === null || props.row['Type'] === 'call'">
+                                <template v-if="props.row['Type'] === 'call'">
                                     <font-awesome-icon icon="phone"/>
                                 </template>
 
-                                <template v-else="props.row['Type'] === 'task'">
-                                    <span v-if="props.row['sub_type'] === 'call'">
-                                        <font-awesome-icon icon="phone"/> (task)
-                                    </span>
-                                    <span v-else-if="props.row['sub_type'] === 'call_back'">
-                                        <font-awesome-icon icon="phone"/> Back (task)
-                                    </span>
-                                    <span v-else-if="props.row['sub_type'] === 'refill'">
-                                        Refill
-                                    </span>
-                                    <spab v-else-if="props.row['sub_type'] === 'send_info'">
-                                        Send Info
-                                    </spab>
-                                    <span v-else-if="props.row['sub_type'] === 'get_appt'">
-                                        Get Appt.
-                                    </span>
-                                    <span v-else-if="props.row['sub_type'] === 'cp_review'">
-                                        CP Review
-                                    </span>
-                                    <span v-else-if="props.row['sub_type'] === 'other'">
-                                        Other
-                                    </span>
+                                <template v-else-if="props.row['Type'] === 'Call Back'">
+                                    <font-awesome-icon icon="phone"/>
+                                    Back
+                                </template>
+
+                                <template v-else>
+                                    {{props.row['Type']}}
                                 </template>
 
                                 <font-awesome-icon v-if="props.row['Manual']" icon="hand-point-up"/>
 
-                                <template v-if="props.row['Type'] === null || props.row['Type'] === 'call'">
+                                <template v-if="props.row['Type'] === 'call'">
                                     <font-awesome-icon v-if="props.row['Manual']" icon="calendar-check"/>
                                 </template>
                             </div>
@@ -82,7 +66,8 @@
                 </template>
                 <template slot="Activity Day" slot-scope="props">
                     <div>
-                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'" :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
+                        <date-editable v-model="props.row['Activity Day']" :format="'YYYY-mm-DD'"
+                                       :class-name="isInThePast(props.row['Activity Day']) ? 'red' : 'blue'"
                                        :on-change="props.row.onNextCallUpdate.bind(props.row)"
                                        :show-confirm="props.row['Manual']"
                                        :confirm-message="getEditDateTimeConfirmMessage(props.row)"></date-editable>
@@ -130,8 +115,7 @@
         </div>
         <select-nurse-modal ref="selectNurseModal" :selected-patients="selectedPatients"></select-nurse-modal>
         <select-times-modal ref="selectTimesModal" :selected-patients="selectedPatientsNew"></select-times-modal>
-        <add-call-v2-modal ref="addCallV2Modal"></add-call-v2-modal>
-        <add-task-modal ref="addTaskModal"></add-task-modal>
+        <add-action-modal ref="addActionModal"></add-action-modal>
         <unscheduled-patients-modal ref="unscheduledPatientsModal"></unscheduled-patients-modal>
     </div>
 </template>
@@ -145,13 +129,11 @@
     import SelectEditable from './comps/select-editable'
     import TimeEditable from './comps/time-editable'
     import Modal from '../common/modal'
-    import AddCallV2Modal from './comps/modals/add-call-v2.modal'
-    import AddTaskModal from './comps/modals/add-task.modal'
+    import AddActionModal from './comps/modals/add-action.modal'
     import SelectNurseModal from './comps/modals/select-nurse.modal'
     import SelectTimesModel from './comps/modals/select-times.modal'
     import UnscheduledPatientsModal from './comps/modals/unscheduled-patients.modal'
     import BindAppEvents from './app.events'
-    import {DayOfWeek, ShortDayOfWeek} from '../helpers/day-of-week'
     import Loader from '../../components/loader'
     import VueCache from '../../util/vue-cache'
     import {today} from '../../util/today'
@@ -181,8 +163,7 @@
             'select-editable': SelectEditable,
             'time-editable': TimeEditable,
             'modal': Modal,
-            'add-call-v2-modal': AddCallV2Modal,
-            'add-task-modal': AddTaskModal,
+            'add-action-modal': AddActionModal,
             'select-nurse-modal': SelectNurseModal,
             'select-times-modal': SelectTimesModel,
             'unscheduled-patients-modal': UnscheduledPatientsModal,
@@ -193,7 +174,7 @@
             return {
                 pagination: null,
                 selected: false,
-                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Scheduler'],
+                columns: ['selected', 'Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Successful Calls', 'Practice', 'Activity Start', 'Activity End', 'Preferred Call Days', 'Billing Provider', 'Scheduler'],
                 tableData: [],
                 nurses: [],
                 loaders: {
@@ -235,7 +216,7 @@
                         'selected': 'blank'
                     },
                     sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
-                    filterable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice'],
+                    filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
                     filterByColumn: true,
                     texts: {
                         count: `Showing {from} to {to} of ${((this.pagination || {}).total || 0)} records|${((this.pagination || {}).total || 0)} records|One record`
@@ -245,6 +226,7 @@
                         10, 25, 50, 100, 150, 200
                     ],
                     customSorting: {
+                        Type: (ascending) => (a, b) => 0,
                         Nurse: (ascending) => (a, b) => 0,
                         'Patient ID': (ascending) => (a, b) => 0,
                         'Activity Day': (ascending) => (a, b) => 0,
@@ -411,11 +393,8 @@
                     Event.$emit('modal-select-times:show');
                 }
             },
-            addCall() {
-                Event.$emit("modal-add-call-v2:show")
-            },
-            addTask() {
-                Event.$emit("modal-add-task:show")
+            addAction() {
+                Event.$emit("modal-add-action:show")
             },
             showUnscheduledPatientsModal() {
                 Event.$emit('modal-unscheduled-patients:show')
@@ -481,13 +460,13 @@
                     isBhiEligible: call.is_bhi,
                     isCcmEligible: call.is_ccm,
                     Type: call.type,
-                    sub_type: call.sub_type,
                     Manual: call.is_manual,
                     Nurse: call.nurse,
                     NurseId: call.nurse_id,
                     Patient: call.patient,
                     Practice: call.practice,
                     Scheduler: call.scheduler,
+                    'Billing Provider': call.billing_provider,
                     'Last Call': call.last_call,
                     'CCM Time': timeDisplay(call.ccm_time),
                     'BHI Time': timeDisplay(call.bhi_time),

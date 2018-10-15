@@ -275,20 +275,20 @@ class NotesController extends Controller
                                        ->get();
 
             $view_data = [
-                'program_id'         => $patient->program_id,
-                'patient'            => $patient,
-                'patient_name'       => $patient_name,
-                'note_types'         => Activity::input_activity_types(),
-                'task_types'         => Activity::task_types(),
-                'tasks'              => $nurse_patient_tasks,
-                'author_id'          => $author_id,
-                'author_name'        => $author_name,
-                'careteam_info'      => $careteam_info,
-                'userTimeZone'       => $userTimeZone,
-                'window'             => $window,
-                'window_flag'        => $patient_contact_window_exists,
-                'contact_days_array' => $contact_days_array,
-                'ccm_complex'        => $ccm_complex,
+                'program_id'           => $patient->program_id,
+                'patient'              => $patient,
+                'patient_name'         => $patient_name,
+                'note_types'           => Activity::input_activity_types(),
+                'task_types_to_topics' => Activity::task_types_to_topics(),
+                'tasks'                => $nurse_patient_tasks,
+                'author_id'            => $author_id,
+                'author_name'          => $author_name,
+                'careteam_info'        => $careteam_info,
+                'userTimeZone'         => $userTimeZone,
+                'window'               => $window,
+                'window_flag'          => $patient_contact_window_exists,
+                'contact_days_array'   => $contact_days_array,
+                'ccm_complex'          => $ccm_complex,
                 'notifies_text'      => $patient->getNotifiesText(),
                 'note_channels_text' => $patient->getNoteChannelsText(),
             ];
@@ -385,7 +385,7 @@ class NotesController extends Controller
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
             if ($task_status === "done") {
-                if ($call->sub_type === "call" || $call->sub_type === "call_back") {
+                if ($call->sub_type === "Call Back") {
                     $call->status = Call::REACHED;
 
                     //Updates when the patient was successfully contacted last
@@ -401,7 +401,7 @@ class NotesController extends Controller
                 }
             }
 
-            if ($call->sub_type === "call" || $call->sub_type === "call_back") {
+            if ($call->sub_type === "Call Back") {
                 // add last contact time regardless of if success
                 $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
                 $info->save();

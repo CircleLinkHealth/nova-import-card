@@ -2184,10 +2184,23 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                     ->first();
     }
 
-    public function practices()
+    public function practices(bool $onlyActive = false, bool $onlyEnrolledPatients = false)
     {
         return $this->belongsToMany(Practice::class, 'practice_role_user', 'user_id', 'program_id')
                     ->withPivot('role_id', 'has_admin_rights', 'send_billing_reports')
+                    ->when($onlyActive, function ($query) use ($onlyActive) {
+                        return $query->where('active', '=', 1);
+                    })
+                    ->when($onlyEnrolledPatients, function ($query) use ($onlyEnrolledPatients) {
+                        //$query -> Practice Model
+                        return $query->whereHas('patients', function ($innerQuery) {
+                            //$innerQuery -> User Model
+                           return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                               //$innerInnerQuery -> Patient model
+                               return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                           });
+                        });
+                    })
                     ->withTimestamps();
     }
 

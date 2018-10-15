@@ -52,8 +52,7 @@ class CreateOrReplaceCallsViewTable extends Command
         SELECT
             c.id,
             c.is_manual,
-            c.type,
-            c.sub_type,
+            if(c.type = 'call' or c.type is null, 'call', c.sub_type) as type,
             u2.nurse_id,
             u2.nurse,
             u1.patient_id,
@@ -70,7 +69,8 @@ class CreateOrReplaceCallsViewTable extends Command
             u6.preferred_call_days,
             if(pccm.id is null, false, true) as is_ccm,
             if(pbhi.id is null, false, true) as is_bhi,
-            if(u3.scheduler is null, c.scheduler, u3.scheduler) as scheduler
+            if(u3.scheduler is null, c.scheduler, u3.scheduler) as scheduler,
+            u8.billing_provider
         FROM 
             calls c
             left join (select u.id as patient_id, CONCAT(u.first_name, ' ', u.last_name) as patient from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
@@ -90,6 +90,9 @@ class CreateOrReplaceCallsViewTable extends Command
             left join patients_bhi_chargeable_view pbhi on c.inbound_cpm_id = pbhi.id
             
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
+            
+            left join (select pbp.user_id as patient_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
+
            
         WHERE
             c.status = 'scheduled' and c.scheduled_date is not null

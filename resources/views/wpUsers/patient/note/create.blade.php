@@ -215,7 +215,7 @@
                                                                        value="{{$task->id}}"
                                                                        id="{{$task->id}}"/>
                                                                 <label for="{{$task->id}}">
-                                                                    <span> </span>{{$task_types[$task->sub_type]}}
+                                                                    <span> </span>{{$task->sub_type}}
                                                                     ; {{!empty($task->attempt_note) ? $task->attempt_note . ',' : ''}}
                                                                     due {{$task->window_end}}
                                                                     on {{$task->scheduled_date}}
@@ -444,7 +444,7 @@
         <script>
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
-            const taskTypesMap = @json($task_types);
+            const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
             const patientNurseTasks = @json($tasks);
 
@@ -506,12 +506,12 @@
                         const defaultOption = new Option('Select Topic', "");
                         defaultOption.innerHTML = "Select Topic";
                         selectList.append(defaultOption);
-                        for (let i in taskTypesMap) {
-                            if (!taskTypesMap.hasOwnProperty(i)) {
+                        for (let i in taskTypeToTopicMap) {
+                            if (!taskTypeToTopicMap.hasOwnProperty(i)) {
                                 continue;
                             }
-                            const o = new Option(taskTypesMap[i], i);
-                            o.innerHTML = taskTypesMap[i];
+                            const o = new Option(taskTypeToTopicMap[i], taskTypeToTopicMap[i]);
+                            o.innerHTML = taskTypeToTopicMap[i];
                             selectList.append(o);
                         }
 
@@ -562,7 +562,7 @@
                     }
 
                     const selectList = $('#activityKey');
-                    selectList.val(task.sub_type);
+                    selectList.val(taskTypeToTopicMap[task.sub_type]);
                 }
 
                 $('.tasks-radio').change(onTaskSelected);
@@ -602,7 +602,7 @@
                     form = this;
 
                     const isAssociatedWithTask = $('#task').is(':checked');
-                    const callHasTask = typeof form['task_id'] !== "undefined" && typeof form['task_id'].value !== "undefined" && form['task_id'].value.length > 0;
+                    const callHasTask = $('.tasks-radio').is(':checked');
 
                     const isPhoneSession = $('#phone').is(':checked');
                     let callIsSuccess = false;
