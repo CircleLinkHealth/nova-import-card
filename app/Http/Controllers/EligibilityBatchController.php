@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
+use App\Http\Resources\EligibilityJobCSVRow;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\Eligibility\Adapters\JsonMedicalRecordEligibilityJobToCsvAdapter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EligibilityBatchController extends Controller
 {
@@ -172,53 +175,110 @@ class EligibilityBatchController extends Controller
     public function downloadEligibleCsv(EligibilityBatch $batch)
     {
         $practice = Practice::findOrFail($batch->practice_id);
-
-        $eligible = Enrollee::select([
-            'enrollees.id as eligible_patient_id',
-            'cpm_problem_1',
-            'cpm_problem_2',
-            'medical_record_type',
-            'medical_record_id',
-            'mrn',
-            'first_name',
-            'last_name',
-            'address',
-            'address_2',
-            'city',
-            'state',
-            'zip',
-            'primary_phone',
-            'other_phone',
-            'home_phone',
-            'cell_phone',
-            'email',
-            'dob',
-            'lang',
-            'preferred_days',
-            'preferred_window',
-            'primary_insurance',
-            'secondary_insurance',
-            'tertiary_insurance',
-            'last_encounter',
-            'referring_provider_name',
-            'problems',
-            'p1.name as ccm_condition_1',
-            'p2.name as ccm_condition_2',
-        ])
-                            ->join('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
-                            ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
-                            ->whereBatchId($batch->id)
-                            ->whereNull('user_id')
-                            ->get()
-                            ->toArray();
-
         $fileName = $practice->display_name . '_' . Carbon::now()->toAtomString();
 
-        return Excel::create($fileName, function ($excel) use ($eligible) {
-            $excel->sheet('Eligible Patients', function ($sheet) use ($eligible) {
-                $sheet->fromArray($eligible);
-            });
-        })->download('csv');
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+
+            Enrollee::select([
+                'enrollees.id as eligible_patient_id',
+                'cpm_problem_1',
+                'cpm_problem_2',
+                'medical_record_type',
+                'medical_record_id',
+                'mrn',
+                'first_name',
+                'last_name',
+                'address',
+                'address_2',
+                'city',
+                'state',
+                'zip',
+                'primary_phone',
+                'other_phone',
+                'home_phone',
+                'cell_phone',
+                'email',
+                'dob',
+                'lang',
+                'preferred_days',
+                'preferred_window',
+                'primary_insurance',
+                'secondary_insurance',
+                'tertiary_insurance',
+                'last_encounter',
+                'referring_provider_name',
+                'problems',
+                'p1.name as ccm_condition_1',
+                'p2.name as ccm_condition_2',
+            ])
+                    ->join('cpm_problems as p1', 'p1.id', '=', 'enrollees.cpm_problem_1')
+                    ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
+                    ->whereBatchId($batch->id)
+                    ->whereNull('user_id')
+                    ->chunk(500, function ($enrollees) use ($handle, &$firstIteration) {
+                        foreach ($enrollees as $enrollee) {
+                            $data = $enrollee->toArray();
+
+                            if ($firstIteration) {
+                                // Add CSV headers
+                                fputcsv($handle, array_keys($data));
+
+                                $firstIteration = false;
+                            }
+                            // Add a new row with data
+                            fputcsv($handle, $data);
+                        }
+                    });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '.csv"',
+        ]);
+
+        return $response;
+    }
+
+    public function downloadCsvPatientList(EligibilityBatch $batch)
+    {
+        $practice = Practice::findOrFail($batch->practice_id);
+        $fileName = "{$practice->display_name}_batch_{$batch->id}_patient_list" . Carbon::now()->toAtomString();
+
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+
+            $batch->eligibilityJobs()
+                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
+                      foreach ($jobs as $job) {
+                          $data = (new JsonMedicalRecordEligibilityJobToCsvAdapter($job))->toArray();
+
+                          if ($firstIteration) {
+                              // Add CSV headers
+                              fputcsv($handle, array_keys($data));
+
+                              $firstIteration = false;
+                          }
+                          // Add a new row with data
+                          fputcsv($handle, $data);
+                      }
+                  });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '.csv"',
+        ]);
+
+        return $response;
     }
 
     public function getLastImportLog(EligibilityBatch $batch)
