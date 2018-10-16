@@ -88,8 +88,7 @@
 
         <button class="btn blue waves-effect waves-light col s12"
                 id="update-practice"
-                form="edit-practice-form"
-                onclick="Materialize.toast('{{$practice->display_name}} was successfully updated.', 4000)">
+                form="edit-practice-form">
             Update Practice
         </button>
 
@@ -104,6 +103,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('select').material_select();
+
+            @if(isset($message))
+            Materialize.toast('{{$message}}', 4000)
+            @endif
         });
     </script>
 @endpush

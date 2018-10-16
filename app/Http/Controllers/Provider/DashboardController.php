@@ -14,6 +14,7 @@ use App\Location;
 use App\Practice;
 use App\Services\OnboardingService;
 use App\Settings;
+use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -274,15 +275,36 @@ class DashboardController extends Controller
             $update['clh_pppm']     = $request->input('clh_pppm');
             $update['term_days']    = $request->input('term_days');
             $update['active']       = $request->input('is_active');
+
+            if ( ! ! $this->primaryPractice->active && ! ! ! $update['active']) {
+                $enrolledPatientsExist = User::ofPractice($this->primaryPractice->id)
+                                             ->ofType('participant')
+                                             ->whereHas('patientInfo', function ($q) {
+                                                 $q->enrolled();
+                                             })
+                                             ->exists();
+
+                if ($enrolledPatientsExist) {
+                    return redirect()
+                        ->back()
+                        ->withErrors([
+                            'is_active' => "The practice cannot be deactivated because it has enrolled patients.",
+                        ]);
+                }
+            }
         }
 
         $this->primaryPractice->update($update);
 
-        Location::whereId($request['primary_location'])
-                ->update([
-                    'is_primary' => true,
-                ]);
+        if ($request->has('primary_location')) {
+            Location::whereId($request['primary_location'])
+                    ->update([
+                        'is_primary' => true,
+                    ]);
+        }
 
-        return redirect()->back();
+        return redirect()
+            ->back()
+            ->with('message', "The practice has been updated successfully.");
     }
 }

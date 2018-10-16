@@ -9,7 +9,6 @@ use App\Http\Requests\UpdatePracticeLocation;
 use App\Location;
 use App\Practice;
 use App\User;
-use Illuminate\Http\Request;
 
 class PracticeLocationsController extends Controller
 {
@@ -39,9 +38,9 @@ class PracticeLocationsController extends Controller
         return [
             'id'                        => $loc->id,
             'clinical_contact'          => [
-                'email'      => $contactUser->email ?? null,
-                'first_name' => $contactUser->getFirstName() ?? null,
-                'last_name'  => $contactUser->getLastName() ?? null,
+                'email'      => optional($contactUser)->email ?? null,
+                'first_name' => optional($contactUser)->getFirstName() ?? null,
+                'last_name'  => optional($contactUser)->getLastName() ?? null,
                 'type'       => $contactType ?? 'billing_provider',
             ],
             'timezone'                  => $loc->timezone ?? 'America/New_York',
