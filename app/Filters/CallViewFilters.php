@@ -27,63 +27,88 @@ class CallViewFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function unassigned() {
+    public function unassigned()
+    {
         return $this->builder->whereNull('nurse_id');
     }
 
-    public function nurse($nurse) {
-        return $this->builder->where('nurse', 'like', '%'. $nurse . '%');
+    public function type($type)
+    {
+        return $this->builder->where('type', 'like', '%' . $type . '%');
     }
 
-    public function patient_id($id) {
+    public function nurse($nurse)
+    {
+        return $this->builder->where('nurse', 'like', '%' . $nurse . '%');
+    }
+
+    public function patient_id($id)
+    {
         return $this->builder->where('patient_id', '=', $id);
     }
 
-    public function scheduled_date($date) {
-        return $this->builder->where('scheduled_date', 'like', '%'. $date . '%');
+    public function scheduled_date($date)
+    {
+        return $this->builder->where('scheduled_date', 'like', '%' . $date . '%');
     }
 
-    public function last_call($lastCall) {
-        return $this->builder->where('last_call', 'like', '%'. $lastCall . '%');
+    public function last_call($lastCall)
+    {
+        return $this->builder->where('last_call', 'like', '%' . $lastCall . '%');
     }
 
-    public function practice($practice) {
-        return $this->builder->where('practice', 'like', '%'. $practice . '%');
+    public function practice($practice)
+    {
+        return $this->builder->where('practice', 'like', '%' . $practice . '%');
     }
 
-    public function sort_is_manual($term) {
+    public function billing_provider($billingProvider) {
+        return $this->builder->where('billing_provider', 'like', '%'. $billingProvider . '%');
+    }
+
+
+    public function sort_is_manual($term)
+    {
         return $this->builder->orderBy('is_manual', $term);
     }
 
-    public function sort_nurse($term) {
+    public function sort_nurse($term)
+    {
         return $this->builder->orderBy('nurse', $term);
     }
 
-    public function sort_patient_id($term) {
+    public function sort_patient_id($term)
+    {
         return $this->builder->orderBy('patient_id', $term);
     }
 
-    public function sort_scheduled_date($term) {
+    public function sort_scheduled_date($term)
+    {
         return $this->builder->orderBy('scheduled_date', $term);
     }
 
-    public function sort_ccm_time($term) {
+    public function sort_ccm_time($term)
+    {
         return $this->builder->orderBy('ccm_time', $term);
     }
 
-    public function sort_bhi_time($term) {
+    public function sort_bhi_time($term)
+    {
         return $this->builder->orderBy('bhi_time', $term);
     }
 
-    public function sort_practice($term) {
+    public function sort_practice($term)
+    {
         return $this->builder->orderBy('practice', $term);
     }
 
-    public function sort_scheduler($term) {
+    public function sort_scheduler($term)
+    {
         return $this->builder->orderBy('scheduler', $term);
     }
 
-    public function sort_last_call($term) {
+    public function sort_last_call($term)
+    {
         return $this->builder->orderBy('last_call', $term);
     }
 

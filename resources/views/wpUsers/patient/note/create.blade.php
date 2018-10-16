@@ -182,18 +182,49 @@
                                     <div class="new-note-item">
                                         <div class="form-group">
                                             <div class="col-sm-12">
-                                                <label>
+                                                <label id="phone-label">
                                                     <div>
                                                         <input type="checkbox"
-                                                               name="meta[0][meta_key]"
-                                                               id="phone"
-                                                               value="phone"/>
+                                                               id="phone"/>
                                                         <label for="phone">
                                                             <span> </span>Patient Phone Session
                                                         </label>
                                                     </div>
                                                 </label>
                                             </div>
+                                            <div class="col-sm-12">
+                                                <label id="task-label" style="display: none;">
+                                                    <div>
+                                                        <input type="checkbox"
+                                                               id="task"/>
+                                                        <label for="task">
+                                                            <span> </span>Associate with Task
+                                                        </label>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                            @if(!empty($tasks))
+                                                <div class="col-sm-12" id="tasks-container" style="display: none;">
+                                                    <div class="multi-input-wrapper"
+                                                         style="padding-bottom: 3px">
+                                                        @foreach($tasks as $task)
+                                                            <div class="radio">
+                                                                <input type="radio"
+                                                                       class="tasks-radio"
+                                                                       name="task_id"
+                                                                       value="{{$task->id}}"
+                                                                       id="{{$task->id}}"/>
+                                                                <label for="{{$task->id}}">
+                                                                    <span> </span>{{$task->sub_type}}
+                                                                    ; {{!empty($task->attempt_note) ? $task->attempt_note . ',' : ''}}
+                                                                    due {{$task->window_end}}
+                                                                    on {{$task->scheduled_date}}
+                                                                </label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endif
                                             <div class="col-sm-12">
                                                 <div class="panel-group" id="accordion">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
@@ -338,6 +369,7 @@
                                         <input type="hidden" name="logger_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="author_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" name="programId" id="programId" value="{{$program_id}}">
+                                        <input type="hidden" name="task_status" id="task_status" value="">
                                     </div>
 
                                     <!-- Submit -->
@@ -375,8 +407,6 @@
                         "Successful Clinical Call"?
                         <i class="far fa-smile"></i>
                     </p>
-
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
@@ -386,6 +416,25 @@
         </div>
     </div>
 
+    <div class="modal fade" id="confirm-task-completed" tabindex="-1" role="dialog"
+         aria-labelledby="confirm-task-completed-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="confirm-note-create-label">Task Completed?</h3>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Is this task completed?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-task-completed-submit" type="button" class="btn btn-success">Yes</button>
+                    <button id="confirm-task-not-completed-submit" type="button" class="btn btn-grey">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div>
         <br/>
@@ -395,6 +444,9 @@
         <script>
 
             const userIsCCMCountable = @json(auth()->user()->isCCMCountable());
+            const taskTypesMap = @json($task_types);
+            const noteTypesMap = @json($note_types);
+            const patientNurseTasks = @json($tasks);
 
             let form;
 
@@ -407,11 +459,15 @@
                 function phoneSessionChange(e) {
                     if (e) {
                         if (e.currentTarget.checked) {
+                            $('#task-label').hide();
                             $('#collapseOne').show();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", true);
                         }
                         else {
+                            if (patientNurseTasks.length) {
+                                $('#task-label').show();
+                            }
                             $('#collapseOne').hide();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", false);
@@ -437,6 +493,79 @@
                         checked: $('#phone').is(':checked')
                     }
                 });
+
+                function associateWithTaskChange(e) {
+                    if (!e) {
+                        return;
+                    }
+                    if (e.currentTarget.checked) {
+
+                        $('#phone-label').hide();
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in taskTypesMap) {
+                            if (!taskTypesMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(taskTypesMap[i], i);
+                            o.innerHTML = taskTypesMap[i];
+                            selectList.append(o);
+                        }
+
+                        //if there is a task selected, select it as note topic
+                        if ($('.tasks-radio').prop('checked')) {
+                            $('.tasks-radio').change();
+                        }
+
+                        selectList.prop("disabled", true);
+                        $('#tasks-container').show();
+                    }
+                    else {
+
+                        $('.tasks-radio').prop('checked', false);
+                        $('#phone-label').show();
+                        const selectList = $('#activityKey');
+                        selectList.empty();
+                        const defaultOption = new Option('Select Topic', "");
+                        defaultOption.innerHTML = "Select Topic";
+                        selectList.append(defaultOption);
+                        for (let i in noteTypesMap) {
+                            if (!noteTypesMap.hasOwnProperty(i)) {
+                                continue;
+                            }
+                            const o = new Option(noteTypesMap[i], i);
+                            o.innerHTML = noteTypesMap[i];
+                            selectList.append(o);
+                        }
+
+                        selectList.prop("disabled", false);
+                        $('#tasks-container').hide();
+                    }
+                }
+
+                if (!patientNurseTasks.length) {
+                    $('#task-label').hide();
+                }
+                else {
+                    $('#task-label').show();
+                    $('#task').change(associateWithTaskChange);
+                }
+
+                function onTaskSelected(e) {
+                    //get id of task
+                    const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
+                    if (!task) {
+                        return;
+                    }
+
+                    const selectList = $('#activityKey');
+                    selectList.val(task.sub_type);
+                }
+
+                $('.tasks-radio').change(onTaskSelected);
 
                 function tcmChange(e) {
                     if (e) {
@@ -472,11 +601,15 @@
                     e.preventDefault();
                     form = this;
 
+                    const isAssociatedWithTask = $('#task').is(':checked');
+                    const callHasTask = $('.tasks-radio').is(':checked');
+
+                    const isPhoneSession = $('#phone').is(':checked');
                     let callIsSuccess = false;
                     let callHasStatus = false;
                     if (userIsCCMCountable) {
                         //radio buttons
-                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].length > 0;
+                        callHasStatus = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value.length > 0;
                         callIsSuccess = typeof form['call_status'] !== "undefined" && typeof form['call_status'].value !== "undefined" && form['call_status'].value === "reached";
                     }
                     else {
@@ -484,10 +617,18 @@
                         callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
 
-                    const isPhoneSession = $('#phone').is(':checked');
-
                     if (userIsCCMCountable && isPhoneSession && !callHasStatus) {
                         alert('Please select whether patient was reached or not.');
+                        return;
+                    }
+
+                    if (isAssociatedWithTask && !callHasTask) {
+                        alert('Please select a task to associate to.');
+                        return;
+                    }
+
+                    if (isAssociatedWithTask) {
+                        $('#confirm-task-completed').modal('show');
                         return;
                     }
 
@@ -520,6 +661,16 @@
                     confirmSubmitForm();
                 });
 
+                $(document).on("click", "#confirm-task-completed-submit", function (event) {
+                    $('#task_status').val("done");
+                    confirmSubmitForm();
+                });
+
+                $(document).on("click", "#confirm-task-not-completed-submit", function (event) {
+                    $('#task_status').val("not_done");
+                    confirmSubmitForm();
+                });
+
                 function confirmSubmitForm() {
                     //what is this?
                     $.get('/api/test').always(function (response) {
@@ -527,6 +678,10 @@
                             var key = 'notes:{{$patient->id}}:add'
                             window.sessionStorage.removeItem(key)
                         }
+                        //when we associate a note with task, we disable the note topic
+                        //we have to enable it back before posting to server,
+                        //otherwise its value will not reach the server
+                        $('#activityKey').prop("disabled", false);
                         form.submit();
                     });
                 }

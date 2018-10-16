@@ -43,10 +43,15 @@ class CallObserver
             $start = $date->copy()->startOfMonth();
             $end   = $date->copy()->endOfMonth();
 
-            $no_of_calls = Call::where(function ($q) use ($patient) {
-                $q->where('outbound_cpm_id', $patient->id)
-                  ->orWhere('inbound_cpm_id', $patient->id);
+            $no_of_calls = Call::where(function ($q) {
+                $q->whereNull('type')
+                  ->orWhere('type', '=', 'call')
+                  ->orWhere('sub_type', '=', 'Call Back');
             })
+                               ->where(function ($q) use ($patient) {
+                                   $q->where('outbound_cpm_id', $patient->id)
+                                     ->orWhere('inbound_cpm_id', $patient->id);
+                               })
                                ->where('called_date', '>=', $start)
                                ->where('called_date', '<=', $end)
                                ->whereIn('status', ['reached', 'not reached'])
