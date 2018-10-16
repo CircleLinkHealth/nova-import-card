@@ -3,7 +3,6 @@
 use App\Http\Controllers\Controller;
 use App\Location;
 use App\Practice;
-use Auth;
 use Illuminate\Http\Request;
 
 class PracticeController extends Controller
@@ -133,24 +132,5 @@ class PracticeController extends Controller
 
         $program->save();
         return redirect()->back()->with('messages', ['successfully updated program']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        // find program
-        $program = Practice::find($id);
-        if (!$program) {
-            abort(400);
-        }
-
-        $program->delete();
-
-        return redirect()->back()->with('messages', ['successfully removed program']);
     }
 }

@@ -57,11 +57,6 @@
                                                 <a href="{{ route('admin.programs.edit', array('id' => $wpBlog->id)) }}"
                                                    class="btn btn-xs btn-info">Edit
                                                 </a>
-
-                                                <a href="{{ route('admin.programs.destroy', array('id' => $wpBlog->id)) }}"
-                                                   class="btn btn-xs btn btn-warning"
-                                                   style="margin-left:10px;">Remove
-                                                </a>
                                             @endif
                                         </td>
                                     </tr>

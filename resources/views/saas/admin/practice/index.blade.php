@@ -53,12 +53,6 @@
                                                    class="btn btn-xs btn-success">
                                                     Edit Settings / Add Staff
                                                 </a>
-
-
-                                                {!! Form::open(['url' => route('saas-admin.practices.destroy', array('id' => $practice->id)), 'method' => 'delete']) !!}
-                                                <input type="submit" value="Remove" class="btn btn-xs btn btn-warning"
-                                                       style="margin-left:10px;">
-                                                {!! Form::close() !!}
                                             @endif
                                         </td>
                                     </tr>
