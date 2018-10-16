@@ -102,16 +102,16 @@ class DashboardController extends Controller
 
                                                       if ($existing) {
                                                           $service->amount = $existing->pivot->amount;
-                                                          $service->is_on = true;
+                                                          $service->is_on  = true;
                                                       }
 
                                                       return $service;
                                                   });
 
         return view('provider.chargableServices.create', array_merge([
-            'practice'          => $this->primaryPractice,
-            'practiceSlug'      => $this->practiceSlug,
-            'practiceSettings'  => $this->primaryPractice->cpmSettings(),
+            'practice'           => $this->primaryPractice,
+            'practiceSlug'       => $this->practiceSlug,
+            'practiceSettings'   => $this->primaryPractice->cpmSettings(),
             'chargeableServices' => PracticeChargeableServices::collection($allChargeableServices),
         ], $this->returnWithAll));
     }
@@ -208,7 +208,7 @@ class DashboardController extends Controller
             }
         }
 
-        if (!isset($settingsInput['api_auto_pull'])) {
+        if ( ! isset($settingsInput['api_auto_pull'])) {
             $settingsInput['api_auto_pull'] = 0;
         }
 
@@ -238,7 +238,7 @@ class DashboardController extends Controller
         foreach ($services as $id => $service) {
             if (array_key_exists('is_on', $service)) {
                 $sync[$id] = [
-                    'amount' => $service['amount']
+                    'amount' => $service['amount'],
                 ];
             }
         }
@@ -269,12 +269,19 @@ class DashboardController extends Controller
             $update['user_id'] = $request->input('lead_id');
         }
 
+        if (auth()->user()->hasRole('administrator')) {
+            $update['bill_to_name'] = $request->input('bill_to_name');
+            $update['clh_pppm']     = $request->input('clh_pppm');
+            $update['term_days']    = $request->input('term_days');
+            $update['active']       = $request->input('is_active');
+        }
+
         $this->primaryPractice->update($update);
 
         Location::whereId($request['primary_location'])
-            ->update([
-                'is_primary' => true
-            ]);
+                ->update([
+                    'is_primary' => true,
+                ]);
 
         return redirect()->back();
     }
