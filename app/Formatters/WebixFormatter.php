@@ -101,7 +101,7 @@ class WebixFormatter implements ReportFormatter
         $formatted_data = collect();
         $count          = 0;
 
-        $task_types = Activity::task_types();
+        $task_types      = Activity::task_types_to_topics();
         $billingProvider = $patient->getBillingProviderName();
 
         $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
