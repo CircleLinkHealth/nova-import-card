@@ -44,7 +44,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
     {
         $date = Carbon::now();
 
-        ini_set('memory_limit','256M');
+        ini_set('memory_limit','512M');
 
         $practices = Practice::select(['id', 'display_name'])
                              ->activeBillable()
