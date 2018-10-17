@@ -173,7 +173,7 @@ trait SetupTestCustomer
             ],
         ]);
 
-        $patient->setBillingProviderIdAttribute($providerId);
+        $patient->setBillingProviderId($providerId);
 
 
         $patient->load(

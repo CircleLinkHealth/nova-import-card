@@ -23,9 +23,9 @@ class CcdaImporterPredictionSeeder extends Seeder
                         continue;
                     }
 
-                    $ccda->location_id = $patient->preferred_contact_location ?? null;
-                    $ccda->practice_id = $patient->primary_practice_id ?? null;
-                    $ccda->billing_provider_id = $patient->billing_provider_id ?? null;
+                    $ccda->location_id = $patient->getPreferredContactLocation() ?? null;
+                    $ccda->practice_id = $patient->getPrimaryPracticeId() ?? null;
+                    $ccda->billing_provider_id = $patient->getBillingProviderId() ?? null;
                     $ccda->save();
 
                     $docLog = $ccda->document;

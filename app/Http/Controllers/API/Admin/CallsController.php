@@ -168,7 +168,7 @@ class CallsController extends ApiController
                          })
                          ->editColumn('ccm_time', function ($call) {
                              if ($call->inboundUser) {
-                                 $seconds     = $call->inboundUser->ccm_time;
+                                 $seconds     = $call->inboundUser->getCcmTime();
                                  $H           = floor($seconds / 3600);
                                  $i           = ($seconds / 60) % 60;
                                  $s           = $seconds % 60;

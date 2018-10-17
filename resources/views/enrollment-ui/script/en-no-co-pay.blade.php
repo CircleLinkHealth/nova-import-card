@@ -1,5 +1,5 @@
 <div>
-    <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is {{auth()->user()->fullName}} calling on behalf of
+    <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is {{auth()->user()->getFullName()}} calling on behalf of
         <b>Dr. @{{provider_name}}</b> at <b>{{$enrollee->practiceName}}</b>. I’m calling
         for {{$enrollee->first_name}} {{$enrollee->last_name}}. is
         this {{$enrollee->first_name}} {{$enrollee->last_name}}?</p>
@@ -76,7 +76,7 @@
 
 
     <p>
-        <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is {{auth()->user()->fullName}} calling on behalf of <b>Dr. @{{provider_name}}</b>
+        <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is {{auth()->user()->getFullName()}} calling on behalf of <b>Dr. @{{provider_name}}</b>
         at <b>{{$enrollee->practiceName}}</b>. The doctor[s] have invited you to their new personalized care management program.
         Please give us a call at [number Ambassador calling from on page 2] to learn more. Please note there is
         nothing to worry about, this program just lets the Dr. take better care of you between visits. Again the

@@ -117,7 +117,7 @@ if (isset($patient) && ! empty($patient)) {
                                             </template>
 
                                             <span class="btn btn-group text-right">
-                                                @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
+                                                @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
                                                     <a style="margin-right:10px;"
                                                        class="btn btn-info btn-sm inline-block"
                                                        aria-label="..."
@@ -162,20 +162,20 @@ if (isset($patient) && ! empty($patient)) {
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-5 print-row text-bold">{{$patient->fullName}}
+                        <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
-                        <div class="col-xs-3 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
                         <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
 
                     <div class="row gutter">
                         @if($billingDoctor)
                             <div class="col-xs-5 print-row text-bold">
-                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                                {{$billingDoctor->getFullName()}} {!! ($billingDoctor->getSpecialty() == '')? '' :  "<br> {$billingDoctor->getSpecialty()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
-                                {{$billingDoctor->phone}}
+                                {{$billingDoctor->getPhone()}}
                             </div>
                         @else
                             <div class="col-xs-5 print-row text-bold">
@@ -191,10 +191,10 @@ if (isset($patient) && ! empty($patient)) {
                     @if($regularDoctor)
                         <div class="row gutter">
                             <div class="col-xs-5 print-row text-bold">
-                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :  "<br> {$regularDoctor->getSpecialty()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
-                                {{$regularDoctor->phone}}
+                                {{$regularDoctor->getPhone()}}
                             </div>
                         </div>
                     @endif
@@ -303,7 +303,7 @@ if (isset($patient) && ! empty($patient)) {
                         </div>
 
                         <div class="col-xs-12">
-                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                            <p>Your care team will check in with you at {{$patient->getPhone()}} periodically.</p>
                         </div>
                     </div>
                 </div>
@@ -420,11 +420,6 @@ if (isset($patient) && ! empty($patient)) {
                     var careplan = (<?php
                         echo json_encode($careplan)
                         ?>) || {};
-
-                    if (careplan.ccdProblems && !(careplan.ccdProblems instanceof Array)) {
-                        careplan.ccdProblems = Object.values(careplan.ccdProblems);
-                    }
-
                 </script>
             @endpush
         @endif

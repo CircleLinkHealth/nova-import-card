@@ -54,20 +54,20 @@ class UpdateCarePlanStatus
             $approver = auth()->user();
 
             $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
-            $user->carePlanProviderApprover     = $approver->id;
-            $user->carePlanProviderApproverDate = $date->format('Y-m-d H:i:s');
+            $user->setCarePlanProviderApprover($approver->id);
+            $user->setCarePlanProviderApproverDate($date->format('Y-m-d H:i:s'));
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
             if (app()->environment(['worker', 'production','staging'])) {
                 sendSlackMessage('#careplanprintstatus',
-                    "Dr.{$approver->full_name} approved {$user->id}'s care plan.\n");
+                    "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n");
             }
 
 
         } //This CarePlan is being `QA approved` by CLH
         elseif ($user->carePlanStatus == CarePlan::DRAFT
-                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->primary_practice_id)) {
+                && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
             $user->carePlan->status         = CarePlan::QA_APPROVED;
             $user->carePlan->qa_approver_id = auth()->id();
             $user->carePlan->save();
@@ -82,7 +82,7 @@ class UpdateCarePlanStatus
 
             $this->addPatientConsentedNote($user);
 
-            $user->carePlanQaDate = date('Y-m-d H:i:s'); // careplan_qa_date
+            $user->setCarePlanQADate(date('Y-m-d H:i:s')); // careplan_qa_date
         }
 
         $user->save();

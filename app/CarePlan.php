@@ -213,7 +213,7 @@ class CarePlan extends BaseModel implements PdfReport
         $approver = $this->providerApproverUser;
 
         return $approver
-            ? $approver->fullName
+            ? $approver->getFullName()
             : '';
     }
 
@@ -320,9 +320,9 @@ class CarePlan extends BaseModel implements PdfReport
             //before enabling insurance validation, we have to store all insurance info in CPM
             //            'insurances' => $patient->ccdInsurancePolicies,
             'phoneNumber'     => optional($patient->phoneNumbers->first())->number,
-            'dob'             => $patient->patientInfo->birth_date,
-            'mrn'             => $patient->patientInfo->mrn_number,
-            'name'            => $patient->full_name,
+            'dob'             => $patient->getBirthDate(),
+            'mrn'             => $patient->getMRN(),
+            'name'            => $patient->getFullName(),
             'billingProvider' => optional($patient->billingProviderUser())->id,
         ];
 

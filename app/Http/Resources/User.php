@@ -20,10 +20,10 @@ class User extends Resource
             'username'            => $this->username,
             'email'               => $this->email,
             'user_registered'     => $this->user_registered,
-            'full_name'           => $this->fullName,
-            'first_name'          => $this->first_name,
-            'last_name'           => $this->last_name,
-            'suffix'              => $this->suffix,
+            'full_name'           => $this->getFullName(),
+            'first_name'          => $this->getFirstName(),
+            'last_name'           => $this->getLastName(),
+            'suffix'              => $this->getSuffix(),
             'address'             => $this->address,
             'address2'            => $this->address2,
             'city'                => $this->city,
@@ -55,8 +55,8 @@ class User extends Resource
         ];
 
         if ($this->relationLoaded('patientSummaries')) {
-            $result['ccm_time'] = $this->ccmTime;
-            $result['bhi_time'] = $this->bhiTime;
+            $result['ccm_time'] = $this->getCcmTime();
+            $result['bhi_time'] = $this->getBhiTime();
         }
 
         return $result;

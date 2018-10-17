@@ -128,6 +128,8 @@ class ImportConsentedEnrollees implements ShouldQueue
 
             \Cache::put("batch:{$this->batch->id}:last_consented_enrollee_import", $imported->toJson(), 14400);
         }
+
+        return $imported;
     }
 
     private function importTargetPatient(Enrollee $enrollee)
@@ -169,6 +171,9 @@ class ImportConsentedEnrollees implements ShouldQueue
 
     private function eligibilityJob(Enrollee $enrollee)
     {
+        if ($enrollee->eligibilityJob) {
+            return $enrollee->eligibilityJob;
+        }
         $hash = $enrollee->practice->name . $enrollee->first_name . $enrollee->last_name . $enrollee->mrn . $enrollee->city . $enrollee->state . $enrollee->zip;
 
         return EligibilityJob::whereHash($hash)->first();

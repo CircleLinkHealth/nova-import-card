@@ -1,6 +1,6 @@
 <?php
 if (isset($patient)) {
-    $seconds     = $patient->ccm_time;
+    $seconds     = $patient->user->getCcmTime();
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
@@ -118,7 +118,7 @@ if (isset($patient)) {
                          aria-expanded="false"
                          style="background: none !important;padding: 15px;line-height: 20px;cursor: pointer;">
                         <i class="glyphicon glyphicon glyphicon-cog"></i>
-                        {{auth()->user()->full_name}}
+                        {{auth()->user()->getFullName()}}
                         <span class="caret" style="color: #fff"></span>
                     </div>
                     <ul class="dropdown-menu" role="menu" style="background: white !important;">

@@ -23,7 +23,7 @@ if ( ! function_exists('checkIfExists')) {
 }
 
 $today = \Carbon\Carbon::now()->toFormattedDateString();
-// $provider = App\User::find($patient->getLeadContactIDAttribute());
+// $provider = App\User::find($patient->getLeadContactID());
 
 ?>
 
@@ -135,7 +135,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                                 <div class="col-xs-7 address">
                                                     <div>
                                                         @if($billingDoctor)
-                                                            @if($billingDoctor->fullName){{$billingDoctor->fullName}}@endif
+                                                            @if($billingDoctor->getFullName()){{$billingDoctor->getFullName()}}@endif
                                                         @endif
                                                     </div>
                                                     <div>
@@ -164,7 +164,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <div class="row">
                                                 <div class="col-xs-8">
                                                     <div class="row">
-                                                        <div class="col-xs-12 address">{{strtoupper($patient->fullName)}}</div>
+                                                        <div class="col-xs-12 address">{{strtoupper($patient->getFullName())}}</div>
                                                         <div class="col-xs-12 address">{{strtoupper($patient->address)}}</div>
                                                         <div class="col-xs-12 address"> {{strtoupper($patient->city)}}
                                                             , {{strtoupper($patient->state)}} {{strtoupper($patient->zip)}}</div>
@@ -190,7 +190,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter">
                                     </div>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        Welcome to Dr. {{$billingDoctor->fullName}}'s Personalized Care Management
+                                        Welcome to Dr. {{$billingDoctor->getFullName()}}'s Personalized Care Management
                                         program!
                                     </div>
                                     <br>
@@ -200,7 +200,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     </div>
                                     <br>
                                     <div class="row gutter" style="line-height: 1.0em;">
-                                        As Dr. {{$billingDoctor->fullName}} mentioned, this program is an important part
+                                        As Dr. {{$billingDoctor->getFullName()}} mentioned, this program is an important part
                                         of
                                         better
                                         self-management of your health. By participating, you benefit in a number ways:
@@ -208,7 +208,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                     <div class="row gutter"><BR>
                                         <ul type="disc" style="line-height: 1.0em;list-style-type: disc;">
                                             <li style="list-style-type: disc;margin: 15px 0;">Regular calls to check-in
-                                                on behalf of Dr. {{$billingDoctor->fullName}}, so (s)he can help keep
+                                                on behalf of Dr. {{$billingDoctor->getFullName()}}, so (s)he can help keep
                                                 you
                                                 healthy between visits
 
@@ -274,19 +274,19 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     <br>
 
                     <div class="row gutter">
-                        <div class="col-xs-5 print-row text-bold">{{$patient->fullName}}
+                        <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
-                        <div class="col-xs-3 print-row">{{$patient->phone}}</div>
+                        <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
                         <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
                     <div class="row gutter">
                         @if($billingDoctor)
                             <div class="col-xs-5 print-row text-bold">
-                                {{$billingDoctor->fullName}} {!! ($billingDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$billingDoctor->getSpecialtyAttribute()}"!!}
+                                {{$billingDoctor->getFullName()}} {!! ($billingDoctor->getSpecialty() == '')? '' :  "<br> {$billingDoctor->getSpecialty()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
-                                {{$billingDoctor->phone}}
+                                {{$billingDoctor->getPhone()}}
                             </div>
                         @else
                             <div class="col-xs-5 print-row text-bold">
@@ -302,10 +302,10 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                     @if($regularDoctor)
                         <div class="row gutter">
                             <div class="col-xs-5 print-row text-bold">
-                                {{$regularDoctor->fullName}} {!! ($regularDoctor->getSpecialtyAttribute() == '')? '' :  "<br> {$regularDoctor->getSpecialtyAttribute()}"!!}
+                                {{$regularDoctor->getFullName()}} {!! ($regularDoctor->getSpecialty() == '')? '' :  "<br> {$regularDoctor->getSpecialty()}"!!}
                             </div>
                             <div class="col-xs-3 print-row">
-                                {{$regularDoctor->phone}}
+                                {{$regularDoctor->getPhone()}}
                             </div>
                         </div>
                     @endif
@@ -600,7 +600,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         </div>
 
                         <div class="col-xs-12">
-                            <p>Your care team will check in with you at {{$patient->phone}} periodically.</p>
+                            <p>Your care team will check in with you at {{$patient->getPhone()}} periodically.</p>
                         </div>
                     </div>
                 </div>
@@ -694,7 +694,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                                             <p style="margin-left: -10px;">
                                                 <strong>
                                                     {{snakeToSentenceCase($carePerson->type)}}:
-                                                </strong>{{optional($carePerson->user)->first_name}} {{optional($carePerson->user)->last_name}} {{ optional($carePerson->user)->suffix }}
+                                                </strong>{{optional($carePerson->user)->getFirstName()}} {{optional($carePerson->user)->getLastName()}} {{ optional($carePerson->user)->getSuffix() }}
                                             </p>
                                         </div>
                                     </li>

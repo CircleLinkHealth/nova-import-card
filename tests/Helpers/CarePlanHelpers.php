@@ -279,7 +279,7 @@ trait CarePlanHelpers
 
     public function printCarePlanTest(User $patient)
     {
-        $billingProvider = User::find($patient->getBillingProviderIDAttribute());
+        $billingProvider = User::find($patient->getBillingProviderID());
         $today           = Carbon::now()->toFormattedDateString();
 
         $this->be($this->provider);
@@ -289,11 +289,11 @@ trait CarePlanHelpers
                     ->click('approve-forward')
                     ->assertPathIs("/manage-patients/{$patient->id}/view-careplan?page=3")
                     ->assertSee('Care Plan')
-                    ->assertSee($patient->fullName)
-                    ->assertSee($patient->phone)
+                    ->assertSee($patient->getFullName())
+                    ->assertSee($patient->getPhone())
                     ->assertSee($today)
-                    ->assertSee($billingProvider->fullName)
-                    ->assertSee($billingProvider->phone);
+                    ->assertSee($billingProvider->getFullName())
+                    ->assertSee($billingProvider->getPhone());
         });
 
         /**

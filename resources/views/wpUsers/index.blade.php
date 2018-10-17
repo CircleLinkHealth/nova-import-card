@@ -94,7 +94,11 @@
             }
 
             $('document').ready(function () {
-                $('#perform-action-select').on('change', onActionChange);
+
+                const actionSelectEl = $('#perform-action-select');
+                actionSelectEl.on('change', onActionChange);
+                actionSelectEl.change();
+
                 $('#perform-action-submit').on('click', onActionSubmit);
                 $('#select-all-in-page').on('change', selectAllUsers);
                 $('#select-all-matching-filters').on('click', selectAllMatchingFilters);
@@ -171,11 +175,8 @@
                         @if(Cerberus::hasPermission('user.update'))
                             Selected User Actions:
                             <select id="perform-action-select" name="action">
-                                @if(app()->environment() != 'production')
-                                    <option value="scramble">Scramble</option>
-                                @endif
                                 <option value="delete">Delete</option>
-                                <option value="withdraw">Withdraw</option>
+                                <option value="withdraw" selected>Withdraw</option>
                             </select>
                             <button id="perform-action-submit"
                                     type="submit" value="Submit"
@@ -222,7 +223,7 @@
                                         <td><input class="user-select-checkbox" type="checkbox" name="users[]"
                                                    value="{{ $wpUser->id }}"></td>
                                         <td><a href="{{ route('admin.users.edit', array('id' => $wpUser->id)) }}"
-                                               class=""> {{ $wpUser->fullNameWithID }}</a></td>
+                                               class=""> {{ $wpUser->getFullNameWithId() }}</a></td>
                                         <td>
                                             @if (count($wpUser->roles) > 0)
                                                 {{$wpUser->roles->unique('display_name')->implode('display_name', ', ')}}

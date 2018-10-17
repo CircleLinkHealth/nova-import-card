@@ -57,7 +57,11 @@ class ReschedulerHandler
     {
 
         $calls = Call
-            ::whereStatus('scheduled')
+            ::where(function ($q) {
+                $q->whereNull('type')
+                  ->orWhere('type', '=', 'call');
+            })
+            ->whereStatus('scheduled')
             ->with(['inboundUser'])
             ->where('scheduled_date', '<=', Carbon::now()->toDateString())
             ->get();

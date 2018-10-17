@@ -27,9 +27,9 @@
                     <tr>
                         <td>{{$patient->display_name}}</td>
                         <td>{{$patient->patientInfo->birth_date}}</td>
-                        <td>{{$patient->getPrimaryPracticeNameAttribute()}}</td>
+                        <td>{{$patient->getPrimaryPracticeName()}}</td>
                         <td>{{$patient->patientInfo->ccm_status}}</td>
-                        <td>{{$patient->registration_date}}</td>
+                        <td>{{$patient->getRegistrationDate()}}</td>
                         @if($patient->patientInfo->ccm_status == 'paused')
                             <td>Paused: {{$patient->patientInfo->date_paused}}</td>
                         @elseif($patient->patientInfo->ccm_status == 'withdrawn')

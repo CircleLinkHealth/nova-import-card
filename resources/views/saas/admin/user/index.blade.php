@@ -111,7 +111,7 @@
                                             </div>
                                         </td>
                                         <td><a href="{{ route('saas-admin.users.edit', ['userId' => $wpUser->id]) }}" target="_blank"
-                                               class=""> {{ $wpUser->fullNameWithID }}</a></td>
+                                               class=""> {{ $wpUser->getFullNameWithId() }}</a></td>
                                         <td>
                                             @if ($wpUser->roles->isNotEmpty())
                                                 {{ $wpUser->roles->first()->display_name }}

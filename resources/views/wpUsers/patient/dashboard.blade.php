@@ -53,7 +53,7 @@
                                     <i class="icon--phone-call--big icon--menu"></i>
                                 </div>
                                 <div>
-                                    <p class="text-medium-big text--menu text-serif">Scheduled Calls<BR><BR><br></p>
+                                    <p class="text-medium-big text--menu text-serif">Scheduled Activities<BR><BR></p>
                                 </div>
                             </a>
                         </li>

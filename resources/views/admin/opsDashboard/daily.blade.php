@@ -89,13 +89,9 @@
                 </div>
                 <div class="col-md-12">
                     <div class="ops-csv">
-                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV Report (for today)</a>
+                        <a href="{{route('OpsDashboard.dailyCsv')}}" class="btn btn-info">Generate CSV: From 11pm to Now</a>
                     </div>
                 </div>
-
-                    {{--<div class="col-md-8">--}}
-                        {{--<input id="date" type="date" name="date" value="{{$date->toDateString()}}" max="{{$maxDate->toDateString()}}" required class="form-control">--}}
-                    {{--</div>--}}
             </div>
         </div>
         <div class="col-md-12">

@@ -39,17 +39,21 @@ class GenerateOpsDailyReport implements ShouldQueue
     {
         $date = Carbon::now();
 
-        $practices = Practice::activeBillable()
+        $practices = Practice::select(['id','display_name'])
+                             ->activeBillable()
                              ->with([
                                  'patients' => function ($p) use ($date) {
                                      $p->with([
-                                         'activities'      => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                 $date->copy()->startOfMonth()->startOfDay());
+                                         'activities'                  => function ($a) use ($date) {
+                                             $a->select(['id','duration'])
+                                               ->where('performed_at', '>=',
+                                                   $date->copy()->startOfMonth()->startOfDay());
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                             $r->where('key', 'ccm_status')
-                                               ->where('created_at', '>=', $date->copy()->subDay());
+                                             $r->select(['id', 'revisionable_id', 'old_value', 'new_value', 'created_at'])
+                                               ->where('key', 'ccm_status')
+                                               ->where('created_at', '>=',
+                                                   $date->copy()->subDay()->setTimeFromTimeString('23:00'));
                                          },
                                      ]);
                                  },
@@ -58,24 +62,10 @@ class GenerateOpsDailyReport implements ShouldQueue
                              ->get()
                              ->sortBy('display_name');
 
-        $enrolledPatients = $practices->map(function ($practice) {
-            return $practice->patients->filter(function ($user) {
-                if (!$user) {
-                    return false;
-                }
-                if(!$user->patientInfo) {
-                    return false;
-                }
-                return $user->patientInfo->ccm_status == Patient::ENROLLED;
-            });
-        })->flatten()->unique('id');
-
-        $hoursBehind = $this->service->calculateHoursBehind($date, $enrolledPatients);
+        $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
 
         foreach ($practices as $practice) {
-
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'),
-                $enrolledPatients->where('program_id', $practice->id), $date);
+            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
