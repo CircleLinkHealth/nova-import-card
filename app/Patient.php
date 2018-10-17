@@ -401,6 +401,11 @@ class Patient extends BaseModel
         return 'Success';
     }
 
+    public function getCcmTime()
+    {
+        return $this->user->getCcmTime();
+    }
+
     public function scopeEnrolled($query)
     {
 
