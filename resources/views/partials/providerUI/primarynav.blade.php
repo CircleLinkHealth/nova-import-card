@@ -1,6 +1,7 @@
 <?php
 if (isset($patient)) {
-    $seconds     = $patient->user->getCcmTime();
+    //$patient can be a User or Patient model.
+    $seconds     = $patient->getCcmTime();
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
