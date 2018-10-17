@@ -51,9 +51,8 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                              ->with([
                                  'patients' => function ($p) use ($date) {
                                      $p->with([
-                                         'activities'                  => function ($a) use ($date) {
-                                             $a->where('performed_at', '>=',
-                                                   $date->copy()->startOfMonth()->startOfDay());
+                                         'patientSummaries'            => function ($s) use ($date) {
+                                             $s->where('month_year', $date->copy()->startOfMonth());
                                          },
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
@@ -66,6 +65,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                              ->whereHas('patients.patientInfo')
                              ->get()
                              ->sortBy('display_name');
+
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
 
