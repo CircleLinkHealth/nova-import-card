@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\EligibilityJob;
 use App\ProcessedFile;
 use App\Services\CCD\ProcessEligibilityService;
+use App\WT1CsvParser;
 use Illuminate\Console\Command;
 
-class ImportWT1Ccds extends Command
+class ImportWT1Csv extends Command
 {
 
     /**
@@ -19,14 +21,14 @@ class ImportWT1Ccds extends Command
      *
      * @var string
      */
-    protected $signature = 'wt1:importCcds';
+    protected $signature = 'wt1:importCsv';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import WT1 CCDs from /cryptdata/var/sftp/sftp1/files/';
+    protected $description = 'Import WT1 CSV from /cryptdata/var/sftp/sftp1/files/';
 
     /**
      * Create a new command instance.
@@ -64,14 +66,31 @@ class ImportWT1Ccds extends Command
                 continue;
             }
 
+            $parser = new WT1CsvParser();
+            $parser->parseFile($fileName);
+            $patients = $parser->toArray();
+
+            if (count($patients) == 0) {
+                $this->info("Could not get any patients from $fileName");
+                continue;
+            }
+
             //todo: Practice id for WT1
+            $practice = new \stdClass();
+            $practice->id = 999;
+            $practice->name = 'WT1';
+
             $batch = $this->processEligibilityService->createClhMedicalRecordTemplateBatch(
                 'ccdas',
                 $path,
-                999,
+                $practice->id,
                 true,
                 false,
                 true);
+
+            foreach ($patients as $p) {
+                $this->createEligibilityJob($p, $practice, $batch->id);
+            }
 
             $this->info("Create Medical Record Template Batch for: $fileName");
 
@@ -81,5 +100,22 @@ class ImportWT1Ccds extends Command
                 break;
             }
         }
+    }
+
+    private function createEligibilityJob($p, $practice, $batchId)
+    {
+        $hash = $practice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['zip'];
+
+        $job = EligibilityJob::whereHash($hash)->first();
+
+        if ( ! $job) {
+            $job = EligibilityJob::create([
+                'batch_id' => $batchId,
+                'hash'     => $hash,
+                'data'     => $p,
+            ]);
+        }
+
+        return $job;
     }
 }

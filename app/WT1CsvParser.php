@@ -50,7 +50,7 @@ class WT1CsvParser
     /**
      * Parse a CSV row and add to result of patients.
      * NOTE: using plain PHP instead of Eloquent for better performance.
-     * 
+     *
      * @param $row array
      */
     private function addToResult($row)
@@ -91,20 +91,32 @@ class WT1CsvParser
             $entry['allergies'] = []; //we want this to be translated to [{}]
         }
 
-        $entry['patient_id']         = $patientId;
-        $entry['last_name']          = $row['lastname'];
-        $entry['first_name']         = $row['firstname'];
-        $entry['middle_name']        = "";
-        $entry['date_of_birth']      = $row['dob'];
-        $entry['address_line_1']     = $row['addr1'];
-        $entry['address_line_2']     = "";
-        $entry['city']               = $row['city'];
-        $entry['state']              = $row['state'];
-        $entry['postal_code']        = $row['zip'];
-        $entry['primary_phone']      = $row['phonecell'];
-        $entry['cell_phone']         = $row['phonecell'];
-        $entry['preferred_provider'] = "";
-        $entry['last_visit']         = $row['datecreated'];
+        $entry['patient_id']     = $patientId;
+        $entry['mrn']            = $this->getValue($row, 'medicalrecordnumber');
+        $entry['last_name']      = $this->getValue($row, 'lastname');
+        $entry['first_name']     = $this->getValue($row, 'firstname');
+        $entry['middle_name']    = null;
+        $entry['date_of_birth']  = $this->getValue($row, 'dob');
+        $entry['address_line_1'] = $this->getValue($row, 'addr1');
+        $entry['address_line_2'] = null;
+        $entry['city']           = $this->getValue($row, 'city');
+        $entry['state']          = $this->getValue($row, 'state');
+        $entry['postal_code']    = $this->getValue($row, 'zip');
+        $entry['primary_phone']  = $this->getValue($row, 'phonehome');
+        $entry['cell_phone']     = $this->getValue($row, 'phonecell');
+        //datecreated was in first csv
+        $entry['last_visit'] = $this->getValue($row, 'encounterdate') ?? $this->getValue($row, 'datecreated');
+
+
+        if (isset($row['providerfirstname'])) {
+            $entry['preferred_provider'] = $row['providerfirstname'] . ' ' . ($row['providerlastname'] ?? '');
+        } else {
+            $entry['preferred_provider'] = null;
+        }
+
+        $entry['insurance_plans']['primary'] = [
+            "plan" => "Medicare",
+        ];
 
 //        $entry['insurance_plans']['primary']   = [
 //            "plan"           => "Test Insurance",
@@ -136,11 +148,33 @@ class WT1CsvParser
 //            "start_date" => "2014-03-11",
 //        ];
 
+        if (isset($row['answer'])) {
+            $entry['medications'][] = [
+                "name" => $row['answer'],
+            ];
+        }
+
 //        $entry['allergies'][] = [
 //            "name" => "Animal Dander",
 //        ];
 
         $this->patients[$patientId] = $entry;
+    }
+
+    private function getValue($row, $key)
+    {
+        if ( ! isset($row[$key])) {
+            return null;
+        }
+
+        if (empty($row[$key])) {
+            return null;
+        }
+
+        if ($row[$key] === "null" || $row[$key] === "NULL") {
+            return null;
+        }
+        return $row[$key];
     }
 
 
