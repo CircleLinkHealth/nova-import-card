@@ -1,6 +1,6 @@
 <?php
 if (isset($patient)) {
-    $seconds     = $patient->getCcmTime();
+    $seconds     = $patient->user->getCcmTime();
     $H           = floor($seconds / 3600);
     $i           = ($seconds / 60) % 60;
     $s           = $seconds % 60;
