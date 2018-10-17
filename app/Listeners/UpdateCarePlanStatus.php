@@ -66,7 +66,7 @@ class UpdateCarePlanStatus
 
 
         } //This CarePlan is being `QA approved` by CLH
-        elseif ($user->carePlanStatus == CarePlan::DRAFT
+        elseif ($user->getCarePlanStatus() == CarePlan::DRAFT
                 && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
             $user->carePlan->status         = CarePlan::QA_APPROVED;
             $user->carePlan->qa_approver_id = auth()->id();
