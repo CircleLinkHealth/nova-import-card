@@ -222,12 +222,10 @@ class OpsDashboardService
                 continue;
             }
             if ($patient->patientInfo->ccm_status == Patient::ENROLLED) {
-                if ($patient->activities) {
-                    $activities = $patient->activities->where('performed_at', '<=', $date);
+                if ($patient->patientSummaries->first()) {
+                    $ccmTime = $patient->patientSummaries->first()->ccm_time;
 
-                    $ccmTime = $activities->sum('duration');
-
-                    if ($ccmTime === 0) {
+                    if ($ccmTime === 0 || $ccmTime == null) {
                         $count['0 mins'] += 1;
                     }
                     if ($ccmTime > 0 and $ccmTime <= 300) {
@@ -431,10 +429,18 @@ class OpsDashboardService
 
         $allPatients = $enrolledPatients->pluck('id')->unique()->all();
 
-        $sum = Activity::whereIn('patient_id', $allPatients)
-                       ->where('performed_at', '>=', $startOfMonth)
-                       ->where('performed_at', '<=', $date)
-                       ->sum('duration');
+//        $sum = Activity::whereIn('patient_id', $allPatients)
+//                       ->where('performed_at', '>=', $startOfMonth)
+//                       ->where('performed_at', '<=', $date)
+//                       ->sum('duration');
+
+        $ccmTimeTotal = [];
+        foreach ($enrolledPatients as $patient) {
+            if ($patient->patientSummaries->first()) {
+                $ccmTimeTotal[] = $patient->patientSummaries->first()->ccm_time;
+            }
+        }
+        $sum = array_sum($ccmTimeTotal);
 
         $avg = $sum / count($allPatients);
 
