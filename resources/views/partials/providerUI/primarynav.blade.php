@@ -44,7 +44,8 @@ if (isset($patient)) {
             <ul class="nav navbar-nav navbar-right">
                 @if (auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
-                        <time-tracker-call-mode ref="timeTrackerCallMode" :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
+                        <time-tracker-call-mode ref="timeTrackerCallMode"
+                                                :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
                     </li>
                 @endif
                 @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
@@ -68,10 +69,12 @@ if (isset($patient)) {
                             Practices <span class="caret" style="color: #fff"></span>
                         </div>
                         <ul class="dropdown-menu" role="menu" style="background: white !important;">
-                            <li><a href="{{ route('saas-admin.practices.create', []) }}">Add New</a></li>
-                            <li><a href="{{ route('saas-admin.practices.index', []) }}">Manage Active</a></li>
-                            <li><a href="{{ route('saas-admin.practices.billing.create', []) }}">Billable Patient Report</a></li>
-                            <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable Patients</a></li>
+                            <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
+                            <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
+                            <li><a href="{{ route('saas-admin.practices.billing.create', []) }}">Billable Patient
+                                    Report</a></li>
+                            <li><a href="{{ route('saas-admin.monthly.billing.make', []) }}">Approve Billable
+                                    Patients</a></li>
                         </ul>
                     </li>
                 @endif

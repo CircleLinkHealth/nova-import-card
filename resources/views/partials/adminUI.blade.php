@@ -175,21 +175,6 @@
                             </li>
                         @endif
 
-                        @if(Cerberus::hasPermission('practice.read'))
-                            <li role="presentation" class="dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
-                                   aria-expanded="false">
-                                    Programs <span class="caret"></span>
-                                </a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="{{ route('admin.programs.index') }}">Programs</a></li>
-                                    @if(Cerberus::hasPermission('location.read'))
-                                        <li><a href="{{ route('locations.index') }}">Locations</a></li>
-                                    @endif
-                                </ul>
-                            </li>
-                        @endif
-
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button"
                                aria-expanded="false">
@@ -251,9 +236,8 @@
                                 Practices <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ route('admin.programs.create') }}">Add New</a></li>
-                                <li><a href="{{ route('admin.programs.index', []) }}">View Active</a></li>
-
+                                <li><a href="{{ route('saas-admin.practices.create')}}">Add New</a></li>
+                                <li><a href="{{ route('saas-admin.practices.index')}}">Manage</a></li>
                                 <li><a href="{{ route('invite.create', []) }}">Send Onboarding Invite</a>
                                 <li>
                                     <a href="{{ route('get.onboarding.create.program.lead.user', []) }}">Onboarding</a>
