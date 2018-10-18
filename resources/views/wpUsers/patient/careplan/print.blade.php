@@ -45,7 +45,7 @@ if (isset($patient) && ! empty($patient)) {
                                         </span>
                                     </span>
                                 </div>
-                                @if(! empty($errors->messages()))
+                                @if(! empty(optional($errors)->messages()))
                                 <div>
                                     <div class="alert alert-danger text-left" style="line-height: 2">
                                         <h4>CarePlan cannot be approved because:</h4>
