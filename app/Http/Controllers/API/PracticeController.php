@@ -46,7 +46,7 @@ class PracticeController extends Controller
     */
     public function getPractices() {
         $practicesCollection = auth()->user()
-                                ->practices()
+                                ->practices(true, true) //only active practices, only enrolled patients
                                 ->with('locations')
                                 ->get([
                                             'id',

@@ -1,11 +1,5 @@
 @extends('partials.adminUI')
 
-<?php
-
-    $active_nurses  = activeNurseNames();
-
-?>
-
 @push('styles')
     <style>
         #calls-table tbody>tr>td {
@@ -45,13 +39,12 @@
         <div class="col-md-11 main-section">
             <div class="row">
                 <div class="col-sm-8">
-                    <h1>Patient Call Management</h1>
+                    <h1>Patient Activity Management</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">Manage Patient Calls</div>
                         <div class="panel-body">
                             <div>
                                 @include('errors.errors')

@@ -18,6 +18,7 @@ class CallView extends Resource
     {
         return [
             'id'                     => $this->id,
+            'type'                   => $this->type,
             'is_manual'              => $this->is_manual,
             'nurse_id'               => $this->nurse_id,
             'nurse'                  => $this->nurse,
@@ -36,6 +37,7 @@ class CallView extends Resource
             'scheduler'              => $this->scheduler,
             'is_ccm'                 => $this->is_ccm,
             'is_bhi'                 => $this->is_bhi,
+            'billing_provider'       => $this->billing_provider,
         ];
     }
 }

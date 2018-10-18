@@ -1,22 +1,17 @@
 <template>
-    <modal name="add-call-v2" :info="addCallModalInfo" :no-footer="true" class-name="modal-add-call">
+    <modal name="add-action" :info="addActionModalInfo" :no-footer="true" class-name="modal-add-action">
         <template slot="title">
             <div class="row">
                 <div class="col-sm-6">
-                    Add New Call(s)
-                </div>
-                <div class="col-sm-6 text-right">
-                    <button class="btn btn-warning btn-xs" @click="showUnscheduledPatients">
-                        Show Unscheduled Patients
-                    </button>
+                    Add New Activity(ies)
                 </div>
             </div>
         </template>
         <template slot-scope="props">
-            <form action="/callcreate-multi" @submit="submitForm">
+            <form action="#" @submit="submitForm">
 
                 <div class="row">
-                    <table class="add-calls">
+                    <table class="add-actions">
                         <thead>
                         <tr>
                             <th class="family-override">
@@ -25,6 +20,9 @@
                                    title="Tick to confirm family call override">
                                     <i class='glyphicon glyphicon-info-sign'></i>
                                 </a>
+                            </th>
+                            <th class="sub-type">
+                                Type
                             </th>
                             <th class="practices">
                                 Practice
@@ -59,7 +57,7 @@
                                 </a>
                             </th>
                             <th class="notes">
-                                Call notes
+                                Activity Note
                             </th>
                             <th class="remove">
                                 &nbsp;
@@ -71,9 +69,16 @@
                             <td>
                                 <div v-show="action.showFamilyOverride">
                                     <input type="checkbox" id="family_override"
-                                           name="family_override" v-model="action.call.familyOverride"
+                                           name="family_override" v-model="action.data.familyOverride"
                                            :disabled="action.disabled"/>
                                 </div>
+                            </td>
+                            <td>
+                                <v-select :disabled="action.disabled"
+                                          max-height="200px" class="form-control" v-model="action.selectedSubTypeData"
+                                          :options="subTypesForSelect"
+                                          @input="function (type) {changeSubType(index, type)}">
+                                </v-select>
                             </td>
                             <td>
                                 <v-select :disabled="action.disabled"
@@ -110,28 +115,28 @@
                                 </v-select>
                             </td>
                             <td>
-                                <input class="form-control" type="date" name="scheduled_date" v-model="action.call.date"
+                                <input class="form-control" type="date" name="scheduled_date" v-model="action.data.date"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="time" name="window_start"
-                                       v-model="action.call.startTime"
+                                       v-model="action.data.startTime"
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <div class="width-82">
                                     <input class="form-control" type="time" name="window_end"
-                                           v-model="action.call.endTime"
+                                           v-model="action.data.endTime"
                                            :disabled="action.disabled" required/>
                                 </div>
                                 <div class="width-18 padding-left-5 padding-top-7">
                                     <input type="checkbox" id="is_manual"
-                                           name="is_manual" v-model="action.call.isManual"
+                                           name="is_manual" v-model="action.data.isManual"
                                            :disabled="action.disabled"/>
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control" type="text" name="attempt_note" v-model="action.call.text"
+                                <input class="form-control" type="text" name="text" v-model="action.data.text"
                                        :disabled="action.disabled"/>
                             </td>
                             <td>
@@ -149,14 +154,14 @@
                         No available nurses for selected patient
                     </div>
                     <div class="alert alert-warning" v-if="hasPatientInDraftMode">
-                        Call not allowed: Care plan is in draft mode. QA the care plan first.
+                        Action not allowed: Care plan is in draft mode. QA the care plan first.
                     </div>
                 </div>
 
                 <br/>
                 <div class="row">
                     <div class="btn btn-primary btn-xs" @click="addNewAction">
-                        Add New Call
+                        Add New Activity
                     </div>
                 </div>
 
@@ -164,7 +169,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <notifications ref="notificationsComponent" name="add-call-v2-modal"></notifications>
+                        <notifications ref="notificationsComponent" name="add-action-modal"></notifications>
                         <center>
                             <loader v-if="loaders.submit"></loader>
                         </center>
@@ -187,11 +192,12 @@
     import VueCache from '../../../../util/vue-cache'
 
     const UNASSIGNED_VALUE = {label: 'Unassigned', value: null};
-
     const CALL_MUST_OVERRIDE_STATUS_CODE = 418;
     const CALL_MUST_OVERRIDE_WARNING = "The family members of this patient have a call scheduled at different time. Please confirm you still want to schedule this call by checking the box.";
 
     const defaultFormData = {
+        type: null,
+        subType: null,
         practiceId: null,
         patientId: null,
         nurseId: null,
@@ -203,11 +209,32 @@
         familyOverride: 0
     };
 
+    function getNewAction() {
+        return {
+            disabled: false,
+            showFamilyOverride: false,
+            data: Object.assign({}, defaultFormData),
+            filters: {
+                showUnscheduledPatients: false
+            },
+            patients: [],
+            nurses: [],
+            selectedSubTypeData: UNASSIGNED_VALUE,
+            selectedPatientData: UNASSIGNED_VALUE,
+            selectedPracticeData: UNASSIGNED_VALUE,
+            selectedNurseData: UNASSIGNED_VALUE,
+            selectedPatientIsInDraftMode: false,
+            nursesForSelect: [],
+            patientsForSelect: [],
+
+        };
+    }
+
     //need in cancelHandler.
     let self;
 
     export default {
-        name: 'add-call-v2-modal',
+        name: 'add-action-modal',
         mixins: [VueCache],
         components: {
             'modal': Modal,
@@ -217,17 +244,17 @@
         },
         data() {
             return {
-                addCallModalInfo: {
+                addActionModalInfo: {
                     okHandler() {
-                        const form = this.$form()
-                        this.errors().submit = null
-                        console.log("form:add-call:submit", form)
-                        form.querySelector('button.submit.hidden').click()
+                        const form = this.$form();
+                        this.errors().submit = null;
+                        console.log("form:add-action:submit", form);
+                        form.querySelector('button.submit.hidden').click();
                     },
                     cancelHandler() {
                         self.resetForm();
-                        this.errors().submit = null
-                        Event.$emit("modal-add-call-v2:hide")
+                        this.errors().submit = null;
+                        Event.$emit("modal-add-action:hide")
                     },
                     $form: () => this.$el.querySelector('form'),
                     errors: () => this.errors
@@ -244,31 +271,25 @@
                     nurses: false
                 },
 
+                subTypesForSelect: [
+                    {label: 'Call', value: 'call'},
+                    {label: 'Call back', value: 'Call Back'},
+                    {label: 'Refill', value: 'Refill'},
+                    {label: 'Send Info', value: 'Send Info'},
+                    {label: 'Get appt.', value: 'Get Appt.'},
+                    {label: 'CP Review', value: 'CP Review'},
+                    {label: 'Other Task', value: 'Other Task'}
+                ],
+
                 practices: [],
                 practicesForSelect: [],
 
-                actions: [{
-                    disabled: false,
-                    showFamilyOverride: false,
-                    call: Object.assign({}, defaultFormData),
-                    filters: {
-                        showUnscheduledPatients: false
-                    },
-                    patients: [],
-                    nurses: [],
-                    selectedPatientData: UNASSIGNED_VALUE,
-                    selectedPracticeData: UNASSIGNED_VALUE,
-                    selectedNurseData: UNASSIGNED_VALUE,
-                    selectedPatientIsInDraftMode: false,
-                    nursesForSelect: [],
-                    patientsForSelect: [],
-
-                }]
+                actions: [getNewAction()]
             }
         },
         computed: {
             hasNotAvailableNurses() {
-                return this.actions.filter(x => x.call.practiceId && x.nursesForSelect.length == 0).length > 0;
+                return this.actions.filter(x => x.data.practiceId && x.nursesForSelect.length === 0).length > 0;
             },
             hasPatientInDraftMode() {
                 return this.actions.filter(x => x.selectedPatientIsInDraftMode).length > 0;
@@ -310,33 +331,18 @@
             },
 
             addNewAction() {
-                this.actions.push({
-                    disabled: false,
-                    showFamilyOverride: false,
-                    call: Object.assign({}, defaultFormData),
-                    filters: {
-                        showUnscheduledPatients: false
-                    },
-                    patients: [],
-                    nurses: [],
-                    patientsForSelect: [],
-                    nursesForSelect: [],
-                    selectedPatientData: UNASSIGNED_VALUE,
-                    selectedPracticeData: UNASSIGNED_VALUE,
-                    selectedNurseData: UNASSIGNED_VALUE,
-                    selectedPatientIsInDraftMode: false,
-                });
+                this.actions.push(getNewAction());
             },
             removeAction(id) {
                 this.$delete(this.actions, id);
             },
             selectedPatient(actionIndex) {
-                return (this.actions[actionIndex].patients.find(patient => patient.id === this.actions[actionIndex].call.patientId) || {})
+                return (this.actions[actionIndex].patients.find(patient => patient.id === this.actions[actionIndex].data.patientId) || {});
             },
             setPractice(actionIndex, practiceId) {
                 if (practiceId) {
-                    this.actions[actionIndex].call.practiceId = practiceId;
-                    const practice = this.practices.find(practice => practice.id === this.actions[actionIndex].call.practiceId)
+                    this.actions[actionIndex].data.practiceId = practiceId;
+                    const practice = this.practices.find(practice => practice.id === this.actions[actionIndex].data.practiceId);
                     if (practice) {
                         if (!this.actions[actionIndex].selectedPracticeData || this.actions[actionIndex].selectedPracticeData.value !== practice.id) {
                             this.actions[actionIndex].selectedPracticeData = {
@@ -346,13 +352,26 @@
                         }
                     }
                     else {
-                        this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE
+                        this.actions[actionIndex].selectedPracticeData = UNASSIGNED_VALUE;
                     }
+                }
+            },
+            changeSubType(actionIndex, type) {
+                if (type) {
+                    if (type.value === "call") {
+                        this.actions[actionIndex].data.type = 'call';
+                        this.actions[actionIndex].data.subType = null;
+                    }
+                    else {
+                        this.actions[actionIndex].data.type = 'task';
+                        this.actions[actionIndex].data.subType = type.value;
+                    }
+
                 }
             },
             changePatient(actionIndex, patient) {
                 if (patient) {
-                    this.actions[actionIndex].call.patientId = patient.value;
+                    this.actions[actionIndex].data.patientId = patient.value;
                     const selectedPatient = this.selectedPatient(actionIndex);
                     this.setPractice(actionIndex, selectedPatient.program_id);
                     this.actions[actionIndex].selectedPatientIsInDraftMode = (selectedPatient.status === 'draft');
@@ -362,20 +381,20 @@
                 if (practice) {
 
                     //reset selected patient only if practice is different
-                    if (this.actions[actionIndex].call.practiceId !== practice.value) {
+                    if (this.actions[actionIndex].data.practiceId !== practice.value) {
                         this.selectedPatientData = UNASSIGNED_VALUE;
                     }
                     //always reset selected nurse
                     this.actions[actionIndex].selectedNurseData = UNASSIGNED_VALUE;
 
-                    this.actions[actionIndex].call.practiceId = practice.value;
+                    this.actions[actionIndex].data.practiceId = practice.value;
                     return Promise.all([this.getPatients(actionIndex), this.getNurses(actionIndex)])
                 }
                 return Promise.resolve([])
             },
             changeNurse(actionIndex, nurse) {
                 if (nurse) {
-                    this.actions[actionIndex].call.nurseId = nurse.value;
+                    this.actions[actionIndex].data.nurseId = nurse.value;
                 }
             },
             changeUnscheduledPatients(actionIndex, e) {
@@ -385,28 +404,28 @@
                 return Promise.resolve([])
             },
             getPractices(actionIndex) {
-                this.loaders.practices = true
+                this.loaders.practices = true;
                 return this.cache()
                     .get(rootUrl(`api/practices`))
                     .then(response => {
-                        this.loaders.practices = false
-                        console.log('add-call:practices', response)
+                        this.loaders.practices = false;
+                        console.log('add-action:practices', response);
                         this.practices = (response || [])
                             .sort((a, b) => {
                                 if (a.display_name < b.display_name) return -1;
-                                else if (a.display_name > b.display_name) return 1
+                                else if (a.display_name > b.display_name) return 1;
                                 else return 0
                             })
                             .distinct(patient => patient.id);
                         this.setPracticesForSelect();
                     }).catch(err => {
-                        this.loaders.practices = false
-                        this.errors.practices = err.message
-                        console.error('add-call:practices', err)
+                        this.loaders.practices = false;
+                        this.errors.practices = err.message;
+                        console.error('add-action:practices', err)
                     })
             },
             getPatients(actionIndex) {
-                return !this.actions[actionIndex].call.practiceId ?
+                return !this.actions[actionIndex].data.practiceId ?
                     this.getAllPatients(actionIndex) :
                     (this.actions[actionIndex].filters.showUnscheduledPatients ?
                             this.getUnscheduledPatients(actionIndex) :
@@ -415,34 +434,34 @@
             },
             getUnscheduledPatients(actionIndex) {
                 this.loaders.patients = true
-                const practice_addendum = this.actions[actionIndex].call.practiceId ? `practices/${this.actions[actionIndex].call.practiceId}/` : '';
+                const practice_addendum = this.actions[actionIndex].data.practiceId ? `practices/${this.actions[actionIndex].data.practiceId}/` : '';
                 return this.axios.get(rootUrl(`api/${practice_addendum}patients/without-scheduled-calls`)).then(response => {
-                    this.loaders.patients = false
-                    const pagination = response.data
-                    console.log('add-call:patients:unscheduled', pagination)
-                    return pagination
+                    this.loaders.patients = false;
+                    const pagination = response.data;
+                    console.log('add-action:patients:unscheduled', pagination);
+                    return pagination;
                 }).then((pagination) => {
                     this.actions[actionIndex].patients = ((pagination || {}).data || [])
                         .map(patient => {
-                            patient.name = patient.full_name
+                            patient.name = patient.full_name;
                             return patient;
                         })
                         .sort((a, b) => a.name > b.name ? 1 : -1)
                         .distinct(patient => patient.id);
                     this.setPatientsForSelect(actionIndex);
                 }).catch(err => {
-                    this.loaders.patients = false
-                    this.errors.patients = err.message
-                    console.error('add-call:patients:unscheduled', err)
+                    this.loaders.patients = false;
+                    this.errors.patients = err.message;
+                    console.error('add-action:patients:unscheduled', err)
                 })
             },
             getPracticePatients(actionIndex) {
-                if (this.actions[actionIndex].call.practiceId) {
-                    this.loaders.patients = true
-                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].call.practiceId}/patients`))
+                if (this.actions[actionIndex].data.practiceId) {
+                    this.loaders.patients = true;
+                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].data.practiceId}/patients`))
                         .then(response => {
-                            this.loaders.patients = false
-                            console.log('add-call:patients:practice', response.data)
+                            this.loaders.patients = false;
+                            console.log('add-action:patients:practice', response.data);
                             return response.data
                         }).then((patients = []) => {
                             this.actions[actionIndex].patients = patients
@@ -454,9 +473,9 @@
                                 .distinct(patient => patient.id);
                             this.setPatientsForSelect(actionIndex);
                         }).catch(err => {
-                            this.loaders.patients = false
-                            this.errors.patients = err.message
-                            console.error('add-call:patients:practice', err)
+                            this.loaders.patients = false;
+                            this.errors.patients = err.message;
+                            console.error('add-action:patients:practice', err)
                         })
                 }
                 return Promise.resolve([])
@@ -470,7 +489,7 @@
                     .get(rootUrl(`api/patients?rows=all&autocomplete`))
                     .then(response => {
                         this.loaders.patients = false
-                        console.log('add-call:patients:all', response.data)
+                        console.log('add-action:patients:all', response.data)
                         return response.data;
                     })
                     .then((patients = []) => {
@@ -480,26 +499,26 @@
                     }).catch(err => {
                         this.loaders.patients = false
                         this.errors.patients = err.message
-                        console.error('add-call:patients:all', err)
+                        console.error('add-action:patients:all', err)
                     })
                     */
             },
             getNurses(actionIndex) {
-                if (this.actions[actionIndex].call.practiceId) {
-                    this.loaders.nurses = true
-                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].call.practiceId}/nurses`))
+                if (this.actions[actionIndex].data.practiceId) {
+                    this.loaders.nurses = true;
+                    return this.axios.get(rootUrl(`api/practices/${this.actions[actionIndex].data.practiceId}/nurses`))
                         .then(response => {
-                            this.loaders.nurses = false
+                            this.loaders.nurses = false;
                             this.actions[actionIndex].nurses = (response.data || []).map(nurse => {
-                                nurse.name = nurse.full_name
+                                nurse.name = nurse.full_name;
                                 return nurse;
-                            }).filter(nurse => nurse.name && nurse.name.trim() != '')
-                            console.log('add-call-get-nurses', this.actions[actionIndex].nurses);
+                            }).filter(nurse => nurse.name && nurse.name.trim() !== '');
+                            console.log('add-action-get-nurses', this.actions[actionIndex].nurses);
                             this.setNursesForSelect(actionIndex);
                             return this.actions[actionIndex].nurses;
                         }).catch(err => {
-                            console.error('add-call-get-nurses', err)
-                            this.loaders.nurses = false
+                            console.error('add-action-get-nurses', err);
+                            this.loaders.nurses = false;
                             this.errors.nurses = err.message
                         })
                 }
@@ -508,7 +527,7 @@
             submitForm(e) {
                 e.preventDefault();
 
-                Event.$emit('notifications-add-call-v2-modal:dismissAll');
+                Event.$emit('notifications-add-action-modal:dismissAll');
 
                 const patientIds = [];
                 const patients = [];
@@ -520,33 +539,34 @@
                             return false;
                         }
 
-                        const call = action.call;
+                        const data = action.data;
                         //CPM-291 - allow unassigned nurse
                         //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
-                        if (call.patientId === null || call.practiceId === null) {
+                        if (data.patientId === null || data.practiceId === null) {
                             return false;
                         }
                         return true;
                     })
                     .map(action => {
-                        const call = action.call;
-                        patients.push(action.patients.find(patient => patient.id === call.patientId));
-                        patientIds.push(call.patientId);
+                        const data = action.data;
+                        patients.push(action.patients.find(patient => patient.id === data.patientId));
+                        patientIds.push(data.patientId);
                         return {
-                            type: 'call',
-                            inbound_cpm_id: call.patientId,
-                            outbound_cpm_id: call.nurseId,
-                            scheduled_date: call.date,
-                            window_start: call.startTime,
-                            window_end: call.endTime,
-                            attempt_note: call.text,
-                            is_manual: call.isManual,
-                            family_override: call.familyOverride
+                            type: data.type,
+                            sub_type: data.subType,
+                            inbound_cpm_id: data.patientId,
+                            outbound_cpm_id: data.nurseId,
+                            scheduled_date: data.date,
+                            window_start: data.startTime,
+                            window_end: data.endTime,
+                            attempt_note: data.text,
+                            is_manual: data.isManual,
+                            family_override: data.familyOverride
                         };
                     });
 
                 if (!patients.length) {
-                    Event.$emit('notifications-add-call-v2-modal:create', {
+                    Event.$emit('notifications-add-action-modal:create', {
                         text: `Patient not found`,
                         type: 'warning'
                     });
@@ -556,8 +576,8 @@
                 //if any patient has status draft, we do not allow creation
                 const draftPatients = patients.filter(x => x.status === 'draft');
                 if (draftPatients.length) {
-                    Event.$emit('notifications-add-call-v2-modal:create', {
-                        text: `Call not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
+                    Event.$emit('notifications-add-action-modal:create', {
+                        text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
                         type: 'warning'
                     });
                     return;
@@ -574,46 +594,46 @@
                             this.loaders.submit = false;
 
                             //we have to check that all calls have been placed successfully
-                            const calls = response.data || [];
-                            const errors = calls.filter(x => x.errors && x.errors.length > 0);
+                            const actions = response.data || [];
+                            const errors = actions.filter(x => x.errors && x.errors.length > 0);
                             if (errors.length) {
 
                                 //we have to go through all calls and display if call was saved or not
-                                calls.forEach((call, index) => {
+                                actions.forEach((action, index) => {
 
-                                    if (call.errors && call.errors.length > 0) {
+                                    if (action.errors && action.errors.length > 0) {
 
                                         //enable this action so it can be edited
                                         this.actions[index].disabled = false;
 
-                                        const familyOverrideError = call.code === CALL_MUST_OVERRIDE_STATUS_CODE;
+                                        const familyOverrideError = action.code === CALL_MUST_OVERRIDE_STATUS_CODE;
                                         this.actions[index].showFamilyOverride = familyOverrideError;
 
-                                        let msg = `Call[${index + 1}]: `;
+                                        let msg = `Action[${index + 1}]: `;
 
                                         if (familyOverrideError) {
                                             msg += CALL_MUST_OVERRIDE_WARNING;
                                         }
-                                        else if (Array.isArray(call.errors)) {
-                                            msg += call.errors.join(', ');
+                                        else if (Array.isArray(action.errors)) {
+                                            msg += action.errors.join(', ');
                                         }
                                         else {
-                                            const errorsMessages = Object.values(call.errors).map(x => x[0]).join(', ');
+                                            const errorsMessages = Object.values(action.errors).map(x => x[0]).join(', ');
                                             msg += errorsMessages;
                                         }
 
-                                        Event.$emit('notifications-add-call-v2-modal:create', {
+                                        Event.$emit('notifications-add-action-modal:create', {
                                             text: msg,
                                             type: 'error',
                                             noTimeout: true
                                         });
                                     }
                                     else {
-                                        Event.$emit('notifications-add-call-v2-modal:create', {
-                                            text: `Call[${index + 1}]: Created successfully`,
+                                        Event.$emit('notifications-add-action-modal:create', {
+                                            text: `Action[${index + 1}]: Created successfully`,
                                             noTimeout: true
                                         });
-                                        Event.$emit('calls:add', call);
+                                        Event.$emit('actions:add', call);
                                     }
 
                                 });
@@ -621,12 +641,12 @@
                             }
                             else {
                                 this.resetForm();
-                                Event.$emit("modal-add-call-v2:hide");
-                                calls.forEach(call => {
-                                    Event.$emit('calls:add', call);
+                                Event.$emit("modal-add-action:hide");
+                                actions.forEach(action => {
+                                    Event.$emit('actions:add', action);
                                 });
 
-                                console.log('calls:add', calls);
+                                console.log('actions:add', actions);
                             }
 
                         }
@@ -643,7 +663,7 @@
 
                         this.errors.submit = err.message
                         this.loaders.submit = false
-                        console.error('add-call', err)
+                        console.error('add-action', err)
 
                         let msg = err.message;
                         if (err.response && err.response.data && err.response.data.errors) {
@@ -665,13 +685,8 @@
 
                         }
 
-                        Event.$emit('notifications-add-call-v2-modal:create', {text: msg, type: 'error'})
+                        Event.$emit('notifications-add-action-modal:create', {text: msg, type: 'error'})
                     });
-
-            },
-            showUnscheduledPatients() {
-                Event.$emit('modal-add-call-v2:hide')
-                Event.$emit('modal-unscheduled-patients:show')
             }
         },
         created() {
@@ -693,7 +708,7 @@
                 }
             };
 
-            Event.$on('modal-add-call-v2:show', () => {
+            Event.$on('modal-add-action:show', () => {
 
                 const el = '.modal-container';
                 waitForEl(el, () => {
@@ -708,14 +723,14 @@
 
             });
 
-            Event.$on('add-call-modals:set', (data) => {
+            Event.$on('add-action-modals:set', (data) => {
                 if (data) {
                     if (data.practiceId) {
                         // this.setPractice(data.practiceId)
                     }
                     if (data.patientId) {
                         console.log(data);
-                        this.actions[this.actions.length - 1].call.patientId = data.patientId;
+                        this.actions[this.actions.length - 1].data.patientId = data.patientId;
                         this.actions[this.actions.length - 1].selectedPatientData = {
                             label: data.patientName,
                             value: data.patientId
@@ -731,7 +746,7 @@
 
 <style>
 
-    .modal-add-call .modal-wrapper {
+    .modal-add-action .modal-wrapper {
         overflow-x: auto;
         white-space: nowrap;
         display: block;
@@ -742,48 +757,52 @@
     }
 
     /*width will be set automatically when modal is mounted*/
-    .modal-add-call .modal-container {
+    .modal-add-action .modal-container {
         width: 1200px;
     }
 
-    .modal-add-call th, .modal-add-call td {
+    .modal-add-action th, .modal-add-action td {
         padding: 0.4em 0.4em;
         position: relative;
     }
 
-    .modal-add-call table.add-calls {
+    .modal-add-action table.add-actions {
         table-layout: fixed;
     }
 
-    .modal-add-call table.add-calls th.practices {
-        width: 18%;
+    .modal-add-action table.add-actions th.sub-type {
+        width: 5%;
     }
 
-    .modal-add-call table.add-calls th.patients {
-        width: 17%;
+    .modal-add-action table.add-actions th.practices {
+        width: 16%;
     }
 
-    .modal-add-call table.add-calls th.nurses {
-        width: 17%;
+    .modal-add-action table.add-actions th.patients {
+        width: 16%;
     }
 
-    .modal-add-call table.add-calls th.date {
-        width: 10%;
-    }
-
-    .modal-add-call table.add-calls th.start-time {
-        width: 8%;
-    }
-
-    .modal-add-call table.add-calls th.end-time {
-        width: 10%;
-    }
-
-    .modal-add-call table.add-calls th.notes {
+    .modal-add-action table.add-actions th.nurses {
         width: 15%;
     }
 
-    .modal-add-call table.add-calls th.remove {
+    .modal-add-action table.add-actions th.date {
+        width: 10%;
+    }
+
+    .modal-add-action table.add-actions th.start-time {
+        width: 8%;
+    }
+
+    .modal-add-action table.add-actions th.end-time {
+        width: 11%;
+    }
+
+    .modal-add-action table.add-actions th.notes {
+        width: 16%;
+    }
+
+    .modal-add-action table.add-actions th.remove {
         width: 3%;
     }
 
@@ -791,7 +810,7 @@
         width: 2%;
     }
 
-    .modal-add-call .loader {
+    .modal-add-action .loader {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -799,7 +818,7 @@
         height: 20px;
     }
 
-    .modal-add-call .glyphicon-remove {
+    .modal-add-action .glyphicon-remove {
         width: 20px;
         height: 20px;
         color: #d44a4a;
@@ -856,7 +875,7 @@
         overflow: hidden;
     }
 
-    .modal-add-call .modal-body {
+    .modal-add-action .modal-body {
         min-height: 300px;
     }
 

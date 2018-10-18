@@ -1,5 +1,6 @@
 <?php namespace App\Formatters;
 
+use App\Activity;
 use App\Appointment;
 use App\Contracts\ReportFormatter;
 use App\Models\CCD\Allergy;
@@ -100,9 +101,10 @@ class WebixFormatter implements ReportFormatter
         $formatted_data = collect();
         $count          = 0;
 
+        $task_types      = Activity::task_types();
         $billingProvider = $patient->billingProviderName;
 
-        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider) {
+        $notes = $patient->notes->sortByDesc('id')->map(function ($note) use ($patient, $billingProvider, $task_types) {
             $result = [
                 'id'            => $note->id,
                 'logger_name'   => $note->author->fullName,
@@ -113,6 +115,11 @@ class WebixFormatter implements ReportFormatter
                 'provider_name' => $billingProvider,
                 'tags'          => '',
             ];
+
+            //pangratios: add support for task types
+            if (isset($task_types[$note->type])) {
+                $result['logged_from'] = 'note_task';
+            }
 
             if ($note->notifications->count() > 0) {
                 if ($this->noteService->wasForwardedToCareTeam($note)) {
@@ -194,8 +201,9 @@ class WebixFormatter implements ReportFormatter
     public function formatDataForViewPrintCareplanReport($users)
     {
 
-        $careplanReport = [];
-        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(new \App\Repositories\CpmProblemRepository(app()), new \App\Repositories\UserRepositoryEloquent(app())));
+        $careplanReport    = [];
+        $cpmProblemService = (new \App\Services\CPM\CpmProblemService(new \App\Repositories\CpmProblemRepository(app()),
+            new \App\Repositories\UserRepositoryEloquent(app())));
 
         foreach ($users as $user) {
             $careplanReport[$user->id]['symptoms']    = $user->cpmSymptoms()->get()->pluck('name')->all();
@@ -209,7 +217,7 @@ class WebixFormatter implements ReportFormatter
         $other_problems = (new ReportsService())->getInstructionsforOtherProblems($user);
 
         if ( ! empty($other_problems) && isset($careplanReport[$user->id]) && isset($careplanReport[$user->id]['problems'])) {
-            if (!is_string($careplanReport[$user->id]['problems'])) {
+            if ( ! is_string($careplanReport[$user->id]['problems'])) {
                 $careplanReport[$user->id]['problems']['Full Conditions List'] = $other_problems;
             }
         }
@@ -476,7 +484,8 @@ class WebixFormatter implements ReportFormatter
         return $careplanReport;
     }
 
-    public function patients(Collection $patients = null) {
+    public function patients(Collection $patients = null)
+    {
         $patientData = [];
         $auth        = \Auth::user();
 
@@ -492,7 +501,7 @@ class WebixFormatter implements ReportFormatter
         $isCareCenter          = $auth->hasRole('care-center');
         $isAdmin               = $auth->hasRole('administrator');
         $isProvider            = $auth->hasRole('provider');
-        $isPracticeStaff            = $auth->hasRole(['office_admin', 'med_assistant']);
+        $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
 
         foreach ($patients as $patient) {
@@ -621,15 +630,15 @@ class WebixFormatter implements ReportFormatter
 
     public function patientListing(Collection $patients = null)
     {
-        $patientData = $this->patients($patients);
-        $patientJson = json_encode($patientData);
-        $auth        = \Auth::user();
+        $patientData           = $this->patients($patients);
+        $patientJson           = json_encode($patientData);
+        $auth                  = \Auth::user();
         $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->hasRole('care-center');
         $isAdmin               = $auth->hasRole('administrator');
         $isProvider            = $auth->hasRole('provider');
-        $isPracticeStaff            = $auth->hasRole(['office_admin', 'med_assistant']);
+        $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
         return compact([
             'patientJson',

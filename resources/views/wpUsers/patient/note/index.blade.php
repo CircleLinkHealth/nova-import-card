@@ -74,7 +74,7 @@
                                                 placeholder: "Filter"
                                             }],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => ''
@@ -101,13 +101,14 @@
                                             id: "logged_from",
                                             header: ["Type", {content: "textFilter", placeholder: "Filter"}],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note") {
                                                     return "Note";
-                                                else if (obj.logged_from == "manual_input") {
+                                                } else if (obj.logged_from == "note_task") {
+                                                    return "Note re: Task";
+                                                } else if (obj.logged_from == "manual_input") {
                                                     return "Offline Activity";
                                                 } else if (obj.logged_from == "appointment") {
                                                     return "Appointment";
-
                                                 }
                                                 return obj.type_name;
                                             },
@@ -125,7 +126,7 @@
                                             id: "comment",
                                             header: ["Preview"],
                                             template: function (obj) {
-                                                if (obj.logged_from == "note")
+                                                if (obj.logged_from == "note" || obj.logged_from == "note_task")
                                                     return "<a href='<?php echo route('patient.note.view', [
                                                         'patientId' => $patient->id,
                                                         'noteId'    => ''
