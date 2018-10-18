@@ -53,7 +53,7 @@
                             @forelse( $practices as $practice )
                                 <tr>
                                     <td>
-                                        <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
+                                        <a href="{{ route('provider.dashboard.manage.practice', ['practiceSlug' => $practice->name]) }}"
                                            class=""><strong>{{ $practice->display_name }}</strong></a></td>
                                     <td>{{ date('F d, Y g:i A', strtotime($practice->created_at)) }}</td>
                                     <td class="text-right">

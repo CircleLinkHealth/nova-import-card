@@ -87,6 +87,7 @@ class PracticeController extends Controller
         $practice->name            = str_slug($request['display_name']);
         $practice->display_name    = $request['display_name'];
         $practice->term_days       = $request['term_days'];
+        $practice->clh_pppm        = $request['amount'];
         $practice->active          = isset($request['active'])
             ? 1
             : 0;
