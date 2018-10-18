@@ -1833,35 +1833,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
 
         ], function () {
-
-            Route::get('programs', [
-                'uses' => 'Admin\PracticeController@index',
-                'as'   => 'admin.programs.index',
-            ])->middleware('permission:practice.read');
-            Route::get('programs/create', [
-                'uses' => 'Admin\PracticeController@create',
-                'as'   => 'admin.programs.create',
-            ])->middleware('permission:location.read');
-            Route::post('programs/create', [
-                'uses' => 'Admin\PracticeController@store',
-                'as'   => 'admin.programs.store',
-            ])->middleware('permission:practice.create');
-            Route::get('programs/{id}', [
-                'uses' => 'Admin\PracticeController@show',
-                'as'   => 'admin.programs.show',
-            ])->middleware('permission:practice.read,location.read');
-            Route::get('programs/{id}/edit', [
-                'uses' => 'Admin\PracticeController@edit',
-                'as'   => 'admin.programs.edit',
-            ])->middleware('permission:practice.read,location.read');
-            Route::post('programs/{id}/edit', [
-                'uses' => 'Admin\PracticeController@update',
-                'as'   => 'admin.programs.update',
-            ])->middleware('permission:practice.update');
-            Route::get('programs/{id}/destroy', [
-                'uses' => 'Admin\PracticeController@destroy',
-                'as'   => 'admin.programs.destroy',
-            ])->middleware('permission:practice.delete');
             Route::get('programs/{id}/questions', [
                 'uses' => 'Admin\PracticeController@showQuestions',
                 'as'   => 'admin.programs.questions',
@@ -2238,7 +2209,6 @@ Route::group([
             'index'   => 'saas-admin.practices.index',
             'store'   => 'saas-admin.practices.store',
             'create'  => 'saas-admin.practices.create',
-            'destroy' => 'saas-admin.practices.destroy',
             'update'  => 'saas-admin.practices.update',
             'show'    => 'saas-admin.practices.show',
             'edit'    => 'saas-admin.practices.edit',
