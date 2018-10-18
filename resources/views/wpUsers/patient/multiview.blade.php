@@ -277,7 +277,7 @@ $today = \Carbon\Carbon::now()->toFormattedDateString();
                         <div class="col-xs-5 print-row text-bold">{{$patient->getFullName()}}
                             (DOB: {{$patient->patientInfo->dob()}})
                         </div>
-                        <div class="col-xs-3 print-row">{{$patient->getPhone(}}</div>
+                        <div class="col-xs-3 print-row">{{$patient->getPhone()}}</div>
                         <div class="col-xs-4 print-row text-right">{{$today}}</div>
                     </div>
                     <div class="row gutter">

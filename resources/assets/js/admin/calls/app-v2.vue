@@ -6,6 +6,10 @@
                 <button class="btn btn-success btn-xs" @click="addAction">Add Activity</button>
                 <button class="btn btn-warning btn-xs" @click="showUnscheduledPatientsModal">Unscheduled Patients
                 </button>
+                <button class="btn btn-primary btn-xs" @click="changeShowOnlyCompletedTasks">
+                    <span v-if="showOnlyCompletedTasks">Show All Scheduled Activities</span>
+                    <span v-else>Show Completed Tasks</span>
+                </button>
                 <button class="btn btn-info btn-xs" @click="clearFilters">Clear Filters</button>
                 <label class="btn btn-gray btn-xs">
                     <input type="checkbox" v-model="showOnlyUnassigned" @change="changeShowOnlyUnassigned"/>
@@ -185,7 +189,8 @@
                 tokens: {
                     calls: null
                 },
-                showOnlyUnassigned: false
+                showOnlyUnassigned: false,
+                showOnlyCompletedTasks: false
             }
         },
         computed: {
@@ -248,7 +253,11 @@
         methods: {
             rootUrl,
             changeShowOnlyUnassigned(e) {
-                return this.activateFilters()
+                return this.activateFilters();
+            },
+            changeShowOnlyCompletedTasks(e) {
+                this.showOnlyCompletedTasks = !this.showOnlyCompletedTasks;
+                return this.activateFilters();
             },
             columnMapping(name) {
                 const columns = {
@@ -301,17 +310,18 @@
                 return today - checkingDate > 0;
             },
             urlFilterSuffix() {
-                const $table = this.$refs.tblCalls
+                const $table = this.$refs.tblCalls;
                 if ($table && $table.$data) {
-                    const query = $table.$data.query
+                    const query = $table.$data.query;
                     const filters = Object.keys(query).map(key => ({
                         key,
                         value: query[key]
-                    })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('')
-                    const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : ''
-                    const unassigned = this.showOnlyUnassigned ? `&unassigned` : ''
-                    console.log('sort:column', sortColumn)
-                    return `${filters}${sortColumn}${unassigned}`
+                    })).filter(item => item.value).map((item) => `&${this.columnMapping(item.key)}=${encodeURIComponent(item.value)}`).join('');
+                    const sortColumn = $table.orderBy.column ? `&sort_${this.columnMapping($table.orderBy.column)}=${$table.orderBy.ascending ? 'asc' : 'desc'}` : '';
+                    const unassigned = this.showOnlyUnassigned ? `&unassigned` : '';
+                    const completedTasks = this.showOnlyCompletedTasks ? `&completed_tasks` : '&scheduled';
+                    console.log('sort:column', sortColumn);
+                    return `${filters}${sortColumn}${unassigned}${completedTasks}`;
                 }
                 return ''
             },

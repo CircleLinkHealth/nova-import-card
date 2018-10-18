@@ -396,20 +396,21 @@ class WebixFormatter implements ReportFormatter
         foreach ($upcoming as $appt) {
             $provider = User::find($appt->provider_id);
 
-            $specialty = $provider->getSpecialty() ?? null;
-            if ($specialty) {
-                $specialty = '(' . $specialty . ')';
-            }
+            $phone = null;
+            if ($provider) {
+                $specialty = $provider->getSpecialty() ?? null;
+                if ($specialty) {
+                    $specialty = '(' . $specialty . ')';
+                }
 
-            //format super specific phone number requirements
-            if ($provider && $provider->getPrimaryPhone()) {
-                $phone = "P: " . preg_replace(
-                        '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
-                        '$1-$2-$3',
-                        $provider->getPrimaryPhone()
-                    );
-            } else {
-                $phone = null;
+                //format super specific phone number requirements
+                if ($provider->getPrimaryPhone()) {
+                    $phone = "P: " . preg_replace(
+                            '~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~',
+                            '$1-$2-$3',
+                            $provider->getPrimaryPhone()
+                        );
+                }
             }
 
             $formattedUpcomingAppointment[$appt->id] = [

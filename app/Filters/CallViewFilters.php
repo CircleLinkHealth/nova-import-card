@@ -27,6 +27,21 @@ class CallViewFilters extends QueryFilters
         parent::__construct($request);
     }
 
+    public function scheduled()
+    {
+        return $this->builder->where('status', '=', 'scheduled');
+    }
+
+    public function completed_tasks()
+    {
+        return $this->builder
+            ->where('type', '!=', 'call')
+            ->where(function ($q) {
+                $q->where('status', '=', 'done')
+                  ->orWhere('status', '=', 'reached');
+            });
+    }
+
     public function unassigned()
     {
         return $this->builder->whereNull('nurse_id');
@@ -62,8 +77,9 @@ class CallViewFilters extends QueryFilters
         return $this->builder->where('practice', 'like', '%' . $practice . '%');
     }
 
-    public function billing_provider($billingProvider) {
-        return $this->builder->where('billing_provider', 'like', '%'. $billingProvider . '%');
+    public function billing_provider($billingProvider)
+    {
+        return $this->builder->where('billing_provider', 'like', '%' . $billingProvider . '%');
     }
 
 

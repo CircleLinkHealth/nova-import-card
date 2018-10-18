@@ -52,6 +52,7 @@ class CreateOrReplaceCallsViewTable extends Command
         SELECT
             c.id,
             c.is_manual,
+            c.status,
             if(c.type = 'call' or c.type is null, 'call', c.sub_type) as type,
             u2.nurse_id,
             u2.nurse,
@@ -95,7 +96,7 @@ class CreateOrReplaceCallsViewTable extends Command
 
            
         WHERE
-            c.status = 'scheduled' and c.scheduled_date is not null
+            c.scheduled_date is not null
       ");
 
         // we are using DATE(CONVERT_TZ(UTC_TIMESTAMP(),'UTC','America/New_York')) instead of CURDATE()

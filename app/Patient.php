@@ -289,6 +289,10 @@ class Patient extends BaseModel
         return true;
     }
 
+    public function getFullName(){
+        return $this->user->getFullName();
+    }
+
     public function getAddressAttribute()
     {
         return $this->user->address;
@@ -399,6 +403,11 @@ class Patient extends BaseModel
         }
 
         return 'Success';
+    }
+
+    public function getCcmTime()
+    {
+        return $this->user->getCcmTime();
     }
 
     public function scopeEnrolled($query)

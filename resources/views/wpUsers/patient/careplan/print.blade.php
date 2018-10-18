@@ -45,7 +45,7 @@ if (isset($patient) && ! empty($patient)) {
                                         </span>
                                     </span>
                                 </div>
-                                @if(! empty($errors->messages()))
+                                @if(! empty(optional($errors)->messages()))
                                 <div>
                                     <div class="alert alert-danger text-left" style="line-height: 2">
                                         <h4>CarePlan cannot be approved because:</h4>
@@ -117,7 +117,7 @@ if (isset($patient) && ! empty($patient)) {
                                             </template>
 
                                             <span class="btn btn-group text-right">
-                                                @if ( ($patient->carePlanStatus == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->carePlanStatus == 'draft' && auth()->user()->hasPermission('care-plan-qa-approve')) )
+                                                @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
                                                     <a style="margin-right:10px;"
                                                        class="btn btn-info btn-sm inline-block"
                                                        aria-label="..."
