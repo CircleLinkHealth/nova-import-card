@@ -171,7 +171,7 @@ class CallController extends Controller
 
         $call                  = new Call;
         $call->type            = $input['type'];
-        $call->sub_type        = $input['sub_type'];
+        $call->sub_type        = isset($input['sub_type']) ? $input['sub_type'] : null;
         $call->inbound_cpm_id  = $user->id;
         $call->scheduled_date  = $input['scheduled_date'];
         $call->window_start    = $input['window_start'];
