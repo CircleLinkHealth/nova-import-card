@@ -46,11 +46,13 @@
                 <div style="height: 15px;"></div>
 
 
-                <select id="primary_location" name="primary_location" class="validate" required>
-                    @foreach($locations as $location)
+                <select id="primary_location" name="primary_location" class="validate" required data-error="required">
+                    @forelse($locations as $location)
                         <option value="{{$location['id']}}"
                                 @if($location['is_primary']) selected @endif>{{$location['name']}}</option>
-                    @endforeach
+                    @empty
+                        <option value="0">No locations found</option>
+                    @endforelse
                 </select>
 
             </div>

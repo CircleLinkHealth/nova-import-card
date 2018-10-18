@@ -98,6 +98,10 @@ class PracticeLocationsController extends Controller
             'ehr_password'   => $formData['ehr_password'] ?? null,
         ]);
 
+        if (Location::where('practice_id', $primaryPractice->id)->count() == 1) {
+            $location->is_primary = 1;
+            $location->save();
+        }
 
         $location->emr_direct_address = $formData['emr_direct_address'];
 
