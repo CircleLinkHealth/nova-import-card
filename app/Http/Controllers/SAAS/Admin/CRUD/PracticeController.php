@@ -15,14 +15,37 @@ class PracticeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $filter = 'active';
+
+        if ($request->has('filter')) {
+            $filter = $request->input('filter', 'all');
+        }
+
+        switch ($filter) {
+            case 'all':
+                $filterOptions = [0, 1];
+                break;
+            case 'active':
+                $filterOptions = [1];
+                break;
+            case 'inactive':
+                $filterOptions = [0];
+                break;
+            default:
+                $filterOptions = [0, 1];
+                break;
+        }
+
         $practices = Practice::orderBy('id', 'desc')
-                             ->whereActive(1)
+                             ->whereIn('active', $filterOptions)
                              ->authUserCanAccess()
                              ->get();
 
-        return view('saas.admin.practice.index', ['practices' => $practices]);
+        return view('saas.admin.practice.index')
+            ->with('practices', $practices)
+            ->with('filter', $filter);
     }
 
     /**
@@ -71,9 +94,9 @@ class PracticeController extends Controller
         $practice->save();
 
         $practice->chargeableServices()
-            ->attach($request['service_id'], [
-                'amount' => $request['amount'],
-            ]);
+                 ->attach($request['service_id'], [
+                     'amount' => $request['amount'],
+                 ]);
 
         return redirect()->route('provider.dashboard.manage.locations', ['practiceSlug' => $practice->name])
                          ->with('messages', ['successfully created new program']);

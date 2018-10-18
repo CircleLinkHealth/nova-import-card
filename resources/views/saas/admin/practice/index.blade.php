@@ -3,6 +3,15 @@
 @section('title', 'Manage Practices')
 
 @section('content')
+    @push('styles')
+        <style>
+            .selected-practice-index-filter {
+                color: #009dea;
+                text-decoration: underline;
+            }
+        </style>
+    @endpush
+
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
@@ -19,49 +28,46 @@
                     @endif
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">Practice</div>
+                    <div class="panel-heading">
+                        Practice
+                        <div class="pull-right">
+                            <a class="{{$filter == 'all' ? 'selected-practice-index-filter' : ''}}"
+                               href="{{route('saas-admin.practices.index',['filter' => 'all'])}}">All</a> /
+                            <a class="{{$filter == 'active' ? 'selected-practice-index-filter' : ''}}"
+                               href="{{route('saas-admin.practices.index',['filter' => 'active'])}}">Active</a> /
+                            <a class="{{$filter == 'inactive' ? 'selected-practice-index-filter' : ''}}"
+                               href="{{route('saas-admin.practices.index',['filter' => 'inactive'])}}">Inactive</a>
+                        </div>
+                    </div>
                     <div class="panel-body">
                         @include('errors.errors')
                         <table class="table table-striped">
                             <thead>
                             <tr>
                                 <td><strong>Name</strong></td>
-                                <td><strong>Patients</strong></td>
-                                <td><strong>Created</strong></td>
+                                <td><strong>Created At</strong></td>
                                 <td><strong></strong></td>
                             </tr>
                             </thead>
                             <tbody>
-                            @if (count($practices) > 0)
-                                @foreach( $practices as $practice )
-                                    <tr>
-                                        <td>
-                                            <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
-                                               class=""><strong>{{ $practice->display_name }}</strong></a></td>
-                                        <td>
-                                            @if (count($practice->users) > 0)
-                                                <a href="{{ route('admin.users.index', array('filterProgram' => $practice->id)) }}"
-                                                   class=""><strong>{{ count($practice->users()->whereHas('roles', function ($q) {
-					$q->where('name', '=', 'participant');
-				})->get()) }}</strong></a>
-                                            @endif
-                                        </td>
-                                        <td>{{ date('F d, Y g:i A', strtotime($practice->created_at)) }}</td>
-                                        <td class="text-right">
-                                            @if(Cerberus::hasPermission('practice.read'))
-                                                <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
-                                                   class="btn btn-xs btn-success">
-                                                    Edit Settings / Add Staff
-                                                </a>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
+                            @forelse( $practices as $practice )
                                 <tr>
-                                    <td colspan="6">No programs found</td>
+                                    <td>
+                                        <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
+                                           class=""><strong>{{ $practice->display_name }}</strong></a></td>
+                                    <td>{{ date('F d, Y g:i A', strtotime($practice->created_at)) }}</td>
+                                    <td class="text-right">
+                                        <a href="{{ route('provider.dashboard.index', ['practiceSlug' => $practice->name]) }}"
+                                           class="btn btn-xs btn-success">
+                                            Edit Settings / Add Staff
+                                        </a>
+                                    </td>
                                 </tr>
-                            @endif
+                            @empty
+                                <tr>
+                                    <td colspan="6">No practices found</td>
+                                </tr>
+                            @endforelse
                             </tbody>
                         </table>
                     </div>
