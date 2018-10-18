@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\EligibilityJob;
+use App\Practice;
 use App\ProcessedFile;
 use App\Services\CCD\ProcessEligibilityService;
 use App\WT1CsvParser;
@@ -76,9 +77,10 @@ class ImportWT1Csv extends Command
             }
 
             //todo: Practice id for WT1
-            $practice = new \stdClass();
-            $practice->id = 999;
+            $practice = new Practice();
             $practice->name = 'wt1 test';
+            $practice->active = 1;
+            $practice->save();
             //
 
             $batch = $this->processEligibilityService->createClhMedicalRecordTemplateBatch(
@@ -87,6 +89,7 @@ class ImportWT1Csv extends Command
                 $practice->id,
                 true,
                 false,
+                true,
                 true);
 
             foreach ($patients as $p) {
