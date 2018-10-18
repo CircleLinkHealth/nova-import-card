@@ -40,8 +40,9 @@ class UpdateCarePlanStatus
         $user = $event->patient;
 
         //Stop the propagation to other Listeners if the CarePlan is already approved.
-        if ($user->carePlanStatus == CarePlan::PROVIDER_APPROVED) {
+        if ($user->getCarePlanStatus() == CarePlan::PROVIDER_APPROVED) {
             Log::debug('UpdateCarePlanStatus: Called but care plan is already approved. Exiting.');
+
             return;
         }
         $practiceSettings = $event->practiceSettings;
@@ -53,13 +54,13 @@ class UpdateCarePlanStatus
             $date     = Carbon::now();
             $approver = auth()->user();
 
-            $user->carePlanStatus               = CarePlan::PROVIDER_APPROVED;
+            $user->setCarePlanStatus(CarePlan::PROVIDER_APPROVED);
             $user->setCarePlanProviderApprover($approver->id);
             $user->setCarePlanProviderApproverDate($date->format('Y-m-d H:i:s'));
             $user->carePlan->forward();
             event(new PdfableCreated($user->carePlan));
 
-            if (app()->environment(['worker', 'production','staging'])) {
+            if (app()->environment(['worker', 'production', 'staging'])) {
                 sendSlackMessage('#careplanprintstatus',
                     "Dr.{$approver->getFullName()} approved {$user->id}'s care plan.\n");
             }

@@ -1,5 +1,4 @@
 <div class="edit-navigation-buttons col-lg-10 col-lg-offset-1">
-    {{-- $patient->ccmStatus . ' | ' . $patient->careplanStatus --}}
     @include('errors.errors')
     <br/>
     <div class="btn-group btn-group-justified" role="group" aria-label="...">
