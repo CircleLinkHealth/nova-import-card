@@ -5,8 +5,10 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
+use App\Practice;
 use App\Repositories\PatientWriteRepository;
 use App\Services\Calls\SchedulerService;
+use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -198,7 +200,8 @@ class NotesController extends Controller
 
     public function create(
         Request $request,
-        $patientId
+        $patientId,
+        CpmMedicationService $medicationService
     ) {
 
         //@todo segregate to helper functions :/
@@ -236,9 +239,6 @@ class NotesController extends Controller
                 return response("User's Program not found", 401);
             }
 
-            //is there any check here? returns true or false
-            Auth::user()->hasRole('care-center');
-
             //providers
             $provider_info = [];
 
@@ -274,6 +274,12 @@ class NotesController extends Controller
                                        ])
                                        ->get();
 
+            $isCareCoach = Auth::user()->hasRole('care-center');
+            $meds        = [];
+            if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
+                $meds = $medicationService->repo()->patientMedicationsList($patientId);
+            }
+
             $view_data = [
                 'program_id'           => $patient->program_id,
                 'patient'              => $patient,
@@ -289,12 +295,20 @@ class NotesController extends Controller
                 'window_flag'          => $patient_contact_window_exists,
                 'contact_days_array'   => $contact_days_array,
                 'ccm_complex'          => $ccm_complex,
-                'notifies_text'      => $patient->getNotifiesText(),
-                'note_channels_text' => $patient->getNoteChannelsText(),
+                'notifies_text'        => $patient->getNotifiesText(),
+                'note_channels_text'   => $patient->getNoteChannelsText(),
+                'medications'          => $meds,
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
         }
+    }
+
+    private function shouldPrePopulateWithMedications(User $patient)
+    {
+        return Practice::whereId($patient->program_id)
+                       ->where('name', '=', 'phoenix-heart')
+                       ->exists();
     }
 
     /**

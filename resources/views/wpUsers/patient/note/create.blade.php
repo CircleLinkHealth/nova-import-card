@@ -447,10 +447,43 @@
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
             const patientNurseTasks = @json($tasks);
+            const medications = @json($medications);
+
+            const MEDICATIONS_SEPARATOR = '------------------------------';
 
             let form;
 
+            const waitForEl = function (selector, callback) {
+                if (!$(selector).length) {
+                    setTimeout(function () {
+                        window.requestAnimationFrame(function () {
+                            waitForEl(selector, callback)
+                        });
+                    }, 100);
+                } else {
+                    callback();
+                }
+            };
+
             $(document).ready(function () {
+
+                if (medications && medications.length) {
+                    waitForEl('#note', () => {
+                        const noteBody = $('#note');
+                        if (noteBody.val().length === 0) {
+                            const medDescriptions = [];
+                            for (let i = 0; i < medications.length; i++) {
+                                const med = medications[i];
+                                const desc = `-${med.name}\n\t${med.sig}`;
+                                medDescriptions.push(desc);
+                            }
+
+                            noteBody.val(`\n\n${MEDICATIONS_SEPARATOR}\n${medDescriptions.join('\n')}`);
+                            const event = new Event('change');
+                            document.getElementById('note').dispatchEvent(event);
+                        }
+                    });
+                }
 
                 //CPM-182: Show a confirmation box if user spend time creating the note
                 //but did not register a phone session
@@ -636,12 +669,13 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
+                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
 
                     //CPM-182:
                     // if time more than 90 seconds
                     // and (is not phone session, or phone session but not success)
 
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBody.length > CHARACTERS_THRESHOLD) {
+                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD) {
 
                         if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;
