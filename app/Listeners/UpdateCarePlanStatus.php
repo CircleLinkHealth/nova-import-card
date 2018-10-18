@@ -46,7 +46,7 @@ class UpdateCarePlanStatus
         }
         $practiceSettings = $event->practiceSettings;
         //This CarePlan has already been `QA approved` by CLH, and is now being approved by a member of the practice
-        if ($user->carePlanStatus == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
+        if ($user->getCarePlanStatus() == CarePlan::QA_APPROVED && auth()->user()->canApproveCarePlans()) {
 
             Log::debug("UpdateCarePlanStatus: Ready to set status to PROVIDER_APPROVED");
 
@@ -66,7 +66,7 @@ class UpdateCarePlanStatus
 
 
         } //This CarePlan is being `QA approved` by CLH
-        elseif ($user->carePlanStatus == CarePlan::DRAFT
+        elseif ($user->getCarePlanStatus() == CarePlan::DRAFT
                 && auth()->user()->hasPermissionForSite('care-plan-qa-approve', $user->getPrimaryPracticeId())) {
             $user->carePlan->status         = CarePlan::QA_APPROVED;
             $user->carePlan->qa_approver_id = auth()->id();

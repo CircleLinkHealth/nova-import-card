@@ -289,6 +289,10 @@ class Patient extends BaseModel
         return true;
     }
 
+    public function getFullName(){
+        return $this->user->getFullName();
+    }
+
     public function getAddressAttribute()
     {
         return $this->user->address;
