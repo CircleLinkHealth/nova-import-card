@@ -67,18 +67,19 @@ class ImportWT1Csv extends Command
             }
 
             $parser = new WT1CsvParser();
-            $parser->parseFile($fileName);
+            $parser->parseFile($path);
             $patients = $parser->toArray();
 
             if (count($patients) == 0) {
-                $this->info("Could not get any patients from $fileName");
+                $this->info("Could not get any patients from $path");
                 continue;
             }
 
             //todo: Practice id for WT1
             $practice = new \stdClass();
             $practice->id = 999;
-            $practice->name = 'WT1';
+            $practice->name = 'wt1 test';
+            //
 
             $batch = $this->processEligibilityService->createClhMedicalRecordTemplateBatch(
                 'ccdas',
@@ -92,7 +93,7 @@ class ImportWT1Csv extends Command
                 $this->createEligibilityJob($p, $practice, $batch->id);
             }
 
-            $this->info("Create Medical Record Template Batch for: $fileName");
+            $this->info("Create Medical Record Template Batch for: $path");
 
             $count++;
 
@@ -104,7 +105,7 @@ class ImportWT1Csv extends Command
 
     private function createEligibilityJob($p, $practice, $batchId)
     {
-        $hash = $practice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['zip'];
+        $hash = $practice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['postal_code'];
 
         $job = EligibilityJob::whereHash($hash)->first();
 
