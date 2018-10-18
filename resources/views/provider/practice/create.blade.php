@@ -3,7 +3,6 @@
 @section('title', 'Manage Practice')
 
 @section('module')
-
     @include('errors.errors')
 
     <div class="container">
@@ -106,8 +105,8 @@
         $(document).ready(function () {
             $('select').material_select();
 
-            @if(isset($message))
-            Materialize.toast('{{$message}}', 4000)
+            @if(\Session::has('message'))
+            Materialize.toast('{{\Session::get('message')}}', 4000)
             @endif
         });
     </script>
