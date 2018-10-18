@@ -333,7 +333,7 @@ class MedicalRecord
                     'reference_sig'   => null,
                     'date_range'      =>
                         [
-                            'start' => $medication['startdate'],
+                            'start' => $medication['startdate'] ?? $medication['start_date'],
                             'end'   => null,
                         ],
                     'status'          => '',
