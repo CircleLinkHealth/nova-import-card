@@ -38,6 +38,7 @@
 
     const defaultNextCall = {
         id: null,
+        type: null,
         attempt_note: '',
         window_start: '09:00',
         window_end: '17:00',
@@ -97,6 +98,7 @@
                     return;
                 }
                 this.nextCall.id = call.id;
+                this.nextCall.type = call.type;
                 this.nextCall.inbound_cpm_id = call.inbound_cpm_id;
                 this.nextCall.outbound_cpm_id = call.outbound_cpm_id;
                 this.nextCall.scheduled_date = call.scheduled_date;

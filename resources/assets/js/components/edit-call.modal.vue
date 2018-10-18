@@ -213,6 +213,7 @@ The 'edit call' modal can be used from nurses, as opposed to 'add call' which is
                 const formData = Object.assign({}, this.formData);
                 //always set is_manual - a nurse is scheduling this call
                 formData['is_manual'] = 1;
+                formData['type'] = 'call';
                 formData['family_override'] = 1;
 
                 this.loaders.submit = true;
