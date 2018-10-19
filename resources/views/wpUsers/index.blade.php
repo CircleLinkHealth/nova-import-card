@@ -232,7 +232,7 @@
                                         <td>{{ $wpUser->email }}</td>
                                         <td>
                                             @if ($wpUser->primaryPractice)
-                                                <a href="{{ route('admin.programs.show', array('id' => $wpUser->primaryPractice->id)) }}"
+                                                <a href="{{ route('provider.dashboard.manage.notifications', [$wpUser->primaryPractice->name]) }}"
                                                    class=""> {{ $wpUser->primaryPractice->display_name }}</a>
                                             @endif
                                         </td>
