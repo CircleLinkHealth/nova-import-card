@@ -205,6 +205,8 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! ! ! $batch->options['finishedReadingFile']) {
+            ini_set('memory_limit', '512M');
+
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
@@ -308,7 +310,7 @@ class QueueEligibilityBatchForProcessing extends Command
             while ( ! feof($handle)) {
                 if (($buffer = fgets($handle)) !== false) {
                     $mr = new JsonMedicalRecordAdapter($buffer);
-                    $mr->firstOrUpdateOrCreateEligibilityJob($batch);
+                    $mr->createEligibilityJob($batch);
                 }
             }
             fclose($handle);
@@ -331,7 +333,7 @@ class QueueEligibilityBatchForProcessing extends Command
             }
 
             $mr = new JsonMedicalRecordAdapter($iteration);
-            $mr->firstOrUpdateOrCreateEligibilityJob($batch);
+            $mr->createEligibilityJob($batch);
         }
     }
 

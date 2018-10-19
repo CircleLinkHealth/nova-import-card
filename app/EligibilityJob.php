@@ -12,6 +12,7 @@ class EligibilityJob extends BaseModel
     const ELIGIBLE = 'eligible';
     const INELIGIBLE = 'ineligible';
     const DUPLICATE = 'duplicate';
+    const ENROLLED = 'enrolled';
 
     const STATUSES = [
         'not_started' => 0,
@@ -36,6 +37,7 @@ class EligibilityJob extends BaseModel
         'data',
         'messages',
         'outcome',
+        'reason',
         'status',
     ];
 
