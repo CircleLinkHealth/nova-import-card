@@ -73,6 +73,7 @@
     "prettus/laravel-validation": "*",
     "propaganistas/laravel-phone": "^3.0",
     "rap2hpoutre/laravel-log-viewer": "^0.4.0",
+    "seld/jsonlint": "^1.7",
     "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
     "spatie/laravel-medialibrary": "^6.9",
