@@ -31,8 +31,11 @@ class JsonMedicalRecordEligibilityJobToCsvAdapter
         $adapted = (new JsonMedicalRecordInsurancePlansAdapter())->adapt($this->job->data);
 
         return [
-            'outcome'  => $this->job->outcome,
-            'messages' => json_encode($this->job->messages),
+            'eligibility_job_id' => $this->job->id,
+            'outcome'            => $this->job->outcome,
+            'reason'             => $this->job->reason,
+
+            'messages'           => json_encode($this->job->messages),
 
             'patient_id'    => $this->job->data['patient_id'],
             'first_name'    => $this->job->data['first_name'],

@@ -702,46 +702,54 @@ class WelcomeCallListGenerator
             $duplicateMySqlError = false;
             $errorMsg            = null;
 
-            if ( ! $enrolledPatientExists) {
-                try {
-                    $this->enrollees = Enrollee::create($args);
-                } catch (\Illuminate\Database\QueryException $e) {
-                    $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1062) {
-                        $duplicateMySqlError = true;
-                        $errorMsg            = $e->getMessage();
-                    } else {
-                        throw $e;
-                    }
-                }
-
-                if ( ! $duplicateMySqlError) {
-                    $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
-
-                    return false;
-                }
-            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
-                $updated         = $enrolleeExists->update($args);
-                $this->enrollees = $enrolleeExists->fresh();
-            }
-
             if ($enrolledPatientExists) {
                 $this->setEligibilityJobStatus(3, [
                     'duplicate' => 'This patient already has a careplan. ' . route('patient.careplan.print',
                             [$enrolledPatientExists->id]),
                 ], EligibilityJob::ENROLLED);
-            } elseif ($enrolleeExists) {
-                $batchInfo = $enrolleeExists->batch_id ? " in batch {$enrolleeExists->batch_id}" : '';
+
+                return true;
+            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
+                $updated         = $enrolleeExists->update($args);
+                $this->enrollees = $enrolleeExists->fresh();
+
+                return false;
+            }
+
+            try {
+                $this->enrollees = Enrollee::create($args);
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    $duplicateMySqlError = true;
+                    $errorMsg            = $e->getMessage();
+                } else {
+                    throw $e;
+                }
+            }
+
+            if ($enrolleeExists) {
+                $batchInfo = $enrolleeExists->batch_id
+                    ? " in batch {$enrolleeExists->batch_id}"
+                    : '';
                 $this->setEligibilityJobStatus(3,
-                    ['eligible-duplicate' => "This patient has already been processed and found to be eligible$batchInfo. Eligible Patient Id: $enrolleeExists->id"],
-                    EligibilityJob::ELIGIBLE);
-            } elseif ($duplicateMySqlError) {
+                    ['eligible-also-in-previous-batch' => "This patient has already been processed and found to be eligible$batchInfo. Eligible Patient Id: $enrolleeExists->id"],
+                    EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH);
+
+                return false;
+            }
+
+            if ($duplicateMySqlError) {
                 $this->setEligibilityJobStatus(3,
                     ['duplicate' => "Seems like the Enrollee already exists. Error caused: $errorMsg."],
                     EligibilityJob::DUPLICATE);
-            }
 
-            return true;
+                return true;
+            } else {
+                $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
+
+                return false;
+            }
         });
     }
 
