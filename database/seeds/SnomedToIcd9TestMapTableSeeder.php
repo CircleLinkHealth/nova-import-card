@@ -15,8 +15,7 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
     {
         \DB::table('snomed_to_icd9_map')->delete();
 
-        $limit = ini_get('memory_limit'); // retrieve the set limit
-        ini_set('memory_limit', -1); // remove memory limit
+        ini_set('memory_limit', '512M'); // remove memory limit
 
         $this->items()->map(function ($item) {
             \DB::table('snomed_to_icd9_map')->insert([ $item ]);
@@ -25,8 +24,6 @@ class SnomedToIcd9TestMapTableSeeder extends Seeder
 
             $this->command->info("$name seeded");
         });
-
-        ini_set('memory_limit', $limit);
     }
 
     public function items() : Collection {
