@@ -307,7 +307,10 @@ class NotesController extends Controller
     private function shouldPrePopulateWithMedications(User $patient)
     {
         return Practice::whereId($patient->program_id)
-                       ->where('name', '=', 'phoenix-heart')
+                       ->where(function ($q) {
+                           $q->where('name', '=', 'phoenix-heart')
+                             ->orWhere('name', '=', 'demo');
+                       })
                        ->exists();
     }
 
