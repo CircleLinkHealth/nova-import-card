@@ -12,7 +12,9 @@ namespace App\Services\Eligibility\Adapters;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Seld\JsonLint\JsonParser;
 
 class JsonMedicalRecordAdapter
 {
@@ -66,8 +68,14 @@ class JsonMedicalRecordAdapter
      *
      * @return EligibilityJob|null
      */
-    public function firstOrUpdateOrCreateEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
+    public function createEligibilityJob(EligibilityBatch $eligibilityBatch): ?EligibilityJob
     {
+        //hack to fix Lakhsmi's broken json for River city list from september 2018
+        if ($eligibilityBatch->practice_id == 119) {
+            $this->source = str_replace('1/2"', '1/2', $this->source);
+            $this->source = str_replace('n\a', 'n/a', $this->source);
+        }
+
         if ( ! $this->isValid()) {
             return null;
         }
@@ -129,6 +137,14 @@ class JsonMedicalRecordAdapter
         $isJson = is_json($this->source);
 
         if ( ! $isJson) {
+            $parser = new JsonParser;
+
+            try {
+                $parser->parse($this->source, JsonParser::DETECT_KEY_CONFLICTS);
+            } catch (\Exception $e) {
+                \Log::debug('NOT VALID JSON: ' . json_encode($e->getDetails()) . $this->source);
+            }
+
             return collect();
         }
 
@@ -145,12 +161,19 @@ class JsonMedicalRecordAdapter
 
     private function getKey(EligibilityBatch $eligibilityBatch)
     {
-        return $eligibilityBatch->practice->name
+        $key = $eligibilityBatch->practice->name
                . $this->validatedData->get('first_name')
-               . $this->validatedData->get('last_name')
-               . $this->validatedData->get('patient_id')
-               . $this->validatedData->get('city')
-               . $this->validatedData->get('state')
-               . $this->validatedData->get('zip');
+               . $this->validatedData->get('last_name');
+
+        $dob = null;
+
+        try {
+            $dob = Carbon::parse($this->validatedData->get('date_of_birth'))->toDateString();
+        } catch (\Exception $e) {
+            \Log::debug("Could not parse `date_of_birth`. Value {$this->validatedData->get('date_of_birth')}. Key: `$key`. {$e->getMessage()}, {$e->getCode()}. Source json string: `$this->source`");
+        }
+
+        return $key
+               . $dob ?? $this->validatedData->get('date_of_birth');
     }
 }
