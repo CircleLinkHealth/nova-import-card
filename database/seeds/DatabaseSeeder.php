@@ -40,7 +40,7 @@ class DatabaseSeeder extends Seeder
 //      $this->call('CpmProblemsTableSeeder');
 
         $limit = ini_get('memory_limit'); // retrieve the set limit
-        ini_set('memory_limit', -1);
+        ini_set('memory_limit', '512M');
 
         $this->call(AppConfigTableSeeder::class);
         $this->call(CpmProblemsTableSeeder::class);
