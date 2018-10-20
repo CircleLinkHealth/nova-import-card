@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command(QueueEligibilityBatchForProcessing::class)
                  ->everyMinute()
-                 ->withoutOverlapping(15);
+                 ->withoutOverlapping();
 
         $schedule->command(AutoPullEnrolleesFromAthena::class)
                  ->monthlyOn(1);
