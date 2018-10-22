@@ -41,7 +41,7 @@ class PatientObserver
 
         $enrollee = Enrollee::where([
             ['mrn', '=', $patient->mrn_number],
-            ['practice_id', '=', $user->primaryPractice],
+            ['practice_id', '=', optional($user)->primaryPractice],
         ])->first();
 
 
