@@ -160,7 +160,7 @@ class WelcomeCallListGenerator
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
     {
-        if ( ! $this->filterProblems) {
+        if ( ! $this->filterProblems || $this->patientList->isEmpty()) {
             return $this;
         }
 
@@ -191,7 +191,7 @@ class WelcomeCallListGenerator
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has 0 conditions.'],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'problems');
 
                 return false;
             }
@@ -338,7 +338,17 @@ class WelcomeCallListGenerator
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has less than 2 ccm conditions'],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'problems');
+
+                return false;
+            }
+
+            if ( ! $this->practice->hasServiceCode('CPT 99484')) {
+                $this->ineligiblePatients->push($row);
+
+                $this->setEligibilityJobStatus(3,
+                    ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
+                    EligibilityJob::INELIGIBLE, 'problems');
 
                 return false;
             }
@@ -364,16 +374,22 @@ class WelcomeCallListGenerator
         }
 
         $this->patientList = $this->patientList->reject(function (&$record) {
-            if (isset($record['insurances'])) {
-                return ! $this->validateInsuranceWithCollection($record);
-            }
-
             if (isset($record['insurance_plans'])) {
+                //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
                 $record = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($record);
             }
 
-            if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
+            if (isset($record['insurances'])) {
+                return ! $this->validateInsuranceWithCollection($record);
+            } elseif (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
                 return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
+            } else {
+                $this->ineligiblePatients->push($record);
+
+                $this->setEligibilityJobStatus(3, ['insurance' => 'No insurance plans found.'],
+                    EligibilityJob::INELIGIBLE, 'insurance');
+
+                return true;
             }
         });
 
@@ -398,7 +414,8 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
+            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE,
+                'insurance');
 
             return false;
         }
@@ -442,7 +459,8 @@ class WelcomeCallListGenerator
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
+            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE,
+                'insurance');
 
             return false;
         }
@@ -498,7 +516,7 @@ class WelcomeCallListGenerator
 
                 $this->setEligibilityJobStatus(3, [
                     'last_encounter' => implode(',', $validator->messages()->all()) . " value: `$lastEncounter`",
-                ], EligibilityJob::INELIGIBLE);
+                ], EligibilityJob::INELIGIBLE, 'last_encounter');
 
                 return true;
             }
@@ -512,7 +530,7 @@ class WelcomeCallListGenerator
 
                 $this->setEligibilityJobStatus(3,
                     ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'last_encounter');
 
                 return true;
             }
@@ -684,45 +702,54 @@ class WelcomeCallListGenerator
             $duplicateMySqlError = false;
             $errorMsg            = null;
 
-            if ( ! $enrolleeExists && ! $enrolledPatientExists) {
-                try {
-                    $this->enrollees = Enrollee::create($args);
-                } catch (\Illuminate\Database\QueryException $e) {
-                    $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1062) {
-                        $duplicateMySqlError = true;
-                        $errorMsg            = $e->getMessage();
-                    } else {
-                        throw $e;
-                    }
-                }
-
-                if ( ! $duplicateMySqlError) {
-                    $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
-
-                    return false;
-                }
-            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
-                $updated         = $enrolleeExists->update($args);
-                $this->enrollees = $enrolleeExists->fresh();
-            }
-
             if ($enrolledPatientExists) {
                 $this->setEligibilityJobStatus(3, [
                     'duplicate' => 'This patient already has a careplan. ' . route('patient.careplan.print',
                             [$enrolledPatientExists->id]),
-                ], EligibilityJob::DUPLICATE);
-            } elseif ($enrolleeExists) {
+                ], EligibilityJob::ENROLLED);
+
+                return true;
+            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
+                $updated         = $enrolleeExists->update($args);
+                $this->enrollees = $enrolleeExists->fresh();
+
+                return false;
+            }
+
+            try {
+                $this->enrollees = Enrollee::create($args);
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    $duplicateMySqlError = true;
+                    $errorMsg            = $e->getMessage();
+                } else {
+                    throw $e;
+                }
+            }
+
+            if ($enrolleeExists) {
+                $batchInfo = $enrolleeExists->batch_id
+                    ? " in batch {$enrolleeExists->batch_id}"
+                    : '';
                 $this->setEligibilityJobStatus(3,
-                    ['duplicate' => 'This patient was already processed and was found to be eligible. Eligible Patient Id: ' . $enrolleeExists->id],
-                    EligibilityJob::DUPLICATE);
-            } elseif ($duplicateMySqlError) {
+                    ['eligible-also-in-previous-batch' => "This patient has already been processed and found to be eligible$batchInfo. Eligible Patient Id: $enrolleeExists->id"],
+                    EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH);
+
+                return false;
+            }
+
+            if ($duplicateMySqlError) {
                 $this->setEligibilityJobStatus(3,
                     ['duplicate' => "Seems like the Enrollee already exists. Error caused: $errorMsg."],
                     EligibilityJob::DUPLICATE);
-            }
 
-            return true;
+                return true;
+            } else {
+                $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
+
+                return false;
+            }
         });
     }
 
@@ -887,7 +914,13 @@ class WelcomeCallListGenerator
         return $this->eligibilityJob;
     }
 
-    private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null)
+    /**
+     * @param int $status
+     * @param array $messages
+     * @param null $outcome
+     * @param null $reason
+     */
+    private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null, $reason = null)
     {
         if ( ! $this->eligibilityJob) {
             return;
@@ -896,6 +929,7 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->status   = $status;
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
+        $this->eligibilityJob->reason   = $reason;
     }
 
     private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)

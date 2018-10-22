@@ -161,7 +161,11 @@ class EligibilityBatch extends BaseModel
                              ->groupBy('outcome')
                              ->get()
                              ->mapWithKeys(function ($result) {
-                                 return [$result['outcome'] => $result['total']];
+                                 return [
+                                     is_null($result['outcome'])
+                                         ? 'Not processed yet.'
+                                         : $result['outcome'] => $result['total'],
+                                 ];
                              });
     }
 }

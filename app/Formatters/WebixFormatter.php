@@ -396,7 +396,8 @@ class WebixFormatter implements ReportFormatter
         foreach ($upcoming as $appt) {
             $provider = User::find($appt->provider_id);
 
-            $phone = null;
+            $phone     = null;
+            $specialty = null;
             if ($provider) {
                 $specialty = $provider->getSpecialty() ?? null;
                 if ($specialty) {
