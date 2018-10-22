@@ -289,8 +289,8 @@ class NotesController extends Controller
                 'window_flag'          => $patient_contact_window_exists,
                 'contact_days_array'   => $contact_days_array,
                 'ccm_complex'          => $ccm_complex,
-                'notifies_text'      => $patient->getNotifiesText(),
-                'note_channels_text' => $patient->getNoteChannelsText(),
+                'notifies_text'        => $patient->getNotifiesText(),
+                'note_channels_text'   => $patient->getNoteChannelsText(),
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
@@ -384,32 +384,33 @@ class NotesController extends Controller
             $task_id     = $input['task_id'];
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
-            if ($task_status === "done") {
-                if ($call->sub_type === "Call Back") {
-                    $call->status = Call::REACHED;
+            if ($call) {
+                if ($task_status === "done") {
+                    if ($call->sub_type === "Call Back") {
+                        $call->status = Call::REACHED;
 
-                    //Updates when the patient was successfully contacted last
-                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                        //Updates when the patient was successfully contacted last
+                        $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
 
-                    //took this from below :)
-                    if (auth()->user()->hasRole('provider')) {
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                        //took this from below :)
+                        if (auth()->user()->hasRole('provider')) {
+                            $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                        }
+
+                    } else {
+                        $call->status = "done";
                     }
-
-                } else {
-                    $call->status = "done";
                 }
+
+                if ($call->sub_type === "Call Back") {
+                    // add last contact time regardless of if success
+                    $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                    $info->save();
+                }
+
+                $call->note_id = $note->id;
+                $call->save();
             }
-
-            if ($call->sub_type === "Call Back") {
-                // add last contact time regardless of if success
-                $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
-                $info->save();
-            }
-
-            $call->note_id = $note->id;
-            $call->save();
-
         } else {
             if (Auth::user()->hasRole('care-center')) {
 
