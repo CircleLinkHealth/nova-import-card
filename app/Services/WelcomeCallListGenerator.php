@@ -509,6 +509,10 @@ class WelcomeCallListGenerator
                 return false;
             }
 
+            if (strtolower($lastEncounter) == 'null') {
+                return false;
+            }
+
             $validator = Validator::make([
                 'last_encounter' => $lastEncounter,
             ], [
