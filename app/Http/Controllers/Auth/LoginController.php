@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Jenssegers\Agent\Agent;
 
@@ -70,6 +72,21 @@ class LoginController extends Controller
         return $this->username;
     }
 
+
+    public function showLoginForm()
+    {
+
+        $agent = new Agent();
+
+
+        if ( ! $this->validateBrowserVersion($agent)) {
+            $message = "You are using a version of {$agent->browser()} that is very old. Please update to a newer version.";
+            return view('auth.login')->withErrors(['messages' => [$message]]);
+        }
+
+        return view('auth.login');
+    }
+
     /**
      * @param Request $request
      *
@@ -81,6 +98,7 @@ class LoginController extends Controller
         $this->usernameOrEmail($request);
         $loginResponse = $this->traitLogin($request);
 
+
         if ( ! $this->validateBrowserCompatibility()) {
             $this->sendInvalidBrowserResponse();
         }
@@ -88,6 +106,7 @@ class LoginController extends Controller
         if ( ! $this->validatePasswordAge()) {
             auth()->logout();
             $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+
             return redirect('auth/password/reset')
                 ->withErrors(['old-password' => "You password has not been changed for the last $days days. Please reset it to continue."]);
         }
@@ -129,7 +148,6 @@ class LoginController extends Controller
         if (auth()->check() && auth()->user()->skip_browser_checks) {
             return true;
         }
-
         $agent = new Agent();
 
         if ($agent->isIE()) {
@@ -226,6 +244,46 @@ class LoginController extends Controller
         }
 
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+    }
+
+    protected function validateBrowserVersion(Agent $agent)
+    {
+
+        $browsers = $this->getBrowsers();
+
+        $browser = $browsers->where('name', $agent->browser())->first();
+
+        if ($browser) {
+
+            $browserVersion = explode(".", $browser->minimum_version);
+            $agentVersion   = explode(".", $agent->version($agent->browser()));
+
+            if ((int)$agentVersion[0] == (int)$browserVersion[0]) {
+                if ($agentVersion[1] && $browserVersion[1]) {
+                    if ((int)$agentVersion[1] == (int)$browserVersion[1]) {
+                        if ($agentVersion[2] && $browserVersion[2]) {
+                            if ((int)$agentVersion[2] == (int)$browserVersion[2]) {
+                                return true;
+                            } elseif ((int)$agentVersion[2] > (int)$browserVersion[2]) {
+                                return true;
+                            }
+                        }
+                    } elseif ((int)$agentVersion[1] > (int)$browserVersion[1]) {
+                        return true;
+                    }
+                }
+            } elseif ((int)$agentVersion[0] > (int)$browserVersion[0]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    protected function getBrowsers(): Collection
+    {
+        return DB::table('browsers')->get();
     }
 
 }
