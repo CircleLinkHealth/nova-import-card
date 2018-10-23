@@ -59,13 +59,19 @@ class TwilioController extends Controller
 
         $practiceId = $enrollee['practice_id'];
 
-        $callerIdNumber = Practice::find($practiceId)->outgoing_phone_number;
+        $callerIdNumber = (Practice::find($practiceId))->outgoing_phone_number;
 
-        $dial = $response->dial(['callerId' => $callerIdNumber]);
+        if ($callerIdNumber){
+            $dial = $response->dial(['callerId' => $callerIdNumber]);
 
-        $dial->number($phoneNumberToDial);
+            $dial->number($phoneNumberToDial);
 
-        return $response;
+            return $response;
+        }
+
+        throw new \Exception("Practice Outgoing Phone Number not found.", 500);
+
+
     }
 
     public function sendTestSMS()

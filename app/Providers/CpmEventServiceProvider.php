@@ -11,7 +11,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Mail\Events\MessageSending;
 
-class EventServiceProvider extends ServiceProvider
+class CpmEventServiceProvider extends ServiceProvider
 {
 
     /**
