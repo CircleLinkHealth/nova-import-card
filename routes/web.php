@@ -1269,6 +1269,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'CallReportController.exportxls',
             ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
+            Route::get('call-v2', [
+                'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
+                'as'   => 'CallReportController.exportxlsv2',
+            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
+
             Route::get('provider-usage', [
                 'uses' => 'Admin\Reports\ProviderUsageReportController@index',
                 'as'   => 'ProviderUsageReportController.index',
