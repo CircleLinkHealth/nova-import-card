@@ -59,7 +59,7 @@ class TwilioController extends Controller
 
         $practiceId = $enrollee['practice_id'];
 
-        $callerIdNumber = (Practice::find($practiceId))->outgoing_phone_number;
+        $callerIdNumber = optional(Practice::find($practiceId))->outgoing_phone_number;
 
         if ($callerIdNumber){
             $dial = $response->dial(['callerId' => $callerIdNumber]);
