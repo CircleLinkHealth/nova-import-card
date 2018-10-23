@@ -295,7 +295,7 @@
                 return this.$refs.tblCalls.query || {}
             },
             exportExcel() {
-                const url = rootUrl(`admin/reports/call?excel${this.urlFilterSuffix()}`)
+                const url = rootUrl(`admin/reports/call-v2?excel${this.urlFilterSuffix()}`)
                 console.log('calls:excel', url)
                 document.location.href = url
             },

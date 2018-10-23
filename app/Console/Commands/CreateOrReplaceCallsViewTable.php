@@ -74,11 +74,11 @@ class CreateOrReplaceCallsViewTable extends Command
             u8.billing_provider
         FROM 
             calls c
-            left join (select u.id as patient_id, CONCAT(u.first_name, ' ', u.last_name) as patient from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
+            left join (select u.id as patient_id, CONCAT(u.display_name) as patient from users u where u.deleted_at is null) as u1 on c.inbound_cpm_id = u1.patient_id
 
-            left join (select u.id as nurse_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as nurse from users u where u.deleted_at is null) as u2 on c.outbound_cpm_id = u2.nurse_id
+            left join (select u.id as nurse_id, CONCAT(u.display_name, ' ', u.suffix) as nurse from users u where u.deleted_at is null) as u2 on c.outbound_cpm_id = u2.nurse_id
 
-            left join (select u.id as scheduler_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as `scheduler` from users u where u.deleted_at is null) as u3 on c.scheduler = u3.scheduler_id
+            left join (select u.id as scheduler_id, CONCAT(u.display_name, ' ', u.suffix) as `scheduler` from users u where u.deleted_at is null) as u3 on c.scheduler = u3.scheduler_id
             
             left join (select pi.user_id as patient_id, pi.last_contact_time as last_call, pi.no_call_attempts_since_last_success from patient_info pi where pi.deleted_at is null and pi.ccm_status = 'enrolled') as u4 on c.inbound_cpm_id = u4.patient_id
             
@@ -92,7 +92,7 @@ class CreateOrReplaceCallsViewTable extends Command
             
             left join patients_ccm_view pccm on c.inbound_cpm_id = pccm.id
             
-            left join (select pbp.user_id as patient_id, CONCAT(u.first_name, ' ', u.last_name, ' ', u.suffix) as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
+            left join (select pbp.user_id as patient_id, CONCAT(u.display_name, ' ', u.suffix) as billing_provider from users u join (select pctm.user_id, pctm.member_user_id from users u 		left join patient_care_team_members pctm on u.id = pctm.user_id where pctm.type = 'billing_provider') pbp on pbp.member_user_id = u.id) u8 on c.inbound_cpm_id = u8.patient_id
 
            
         WHERE
