@@ -60,8 +60,6 @@ class WT1CsvParser
             $this->patients[$patientId] = [];
         }
 
-        //MedicalRecordNumber, Encounter_ID, Org_ID, Provider_ID, ProviderFirstName, ProviderLastName
-
         $entry = $this->patients[$patientId];
 
         //exit if problem already processed
@@ -91,33 +89,51 @@ class WT1CsvParser
             $entry['allergies'] = []; //we want this to be translated to [{}]
         }
 
-        $entry['patient_id']     = $patientId;
-        $entry['mrn']            = $this->getValue($row, 'medicalrecordnumber');
+        $entry['patient_id'] = $patientId;
+
+        //medicalrecordnumber was in first csv
+        $entry['mrn'] = $this->getValue($row, 'medicalrecordnumber') ?? $this->getValue($row, 'mrn');
+
         $entry['last_name']      = $this->getValue($row, 'lastname');
         $entry['first_name']     = $this->getValue($row, 'firstname');
-        $entry['middle_name']    = null;
+        $entry['middle_name']    = $this->getValue($row, 'middlename');
         $entry['date_of_birth']  = $this->getValue($row, 'dob');
         $entry['address_line_1'] = $this->getValue($row, 'addr1');
-        $entry['address_line_2'] = null;
+        $entry['address_line_2'] = $this->getValue($row, 'addr2');
         $entry['city']           = $this->getValue($row, 'city');
         $entry['state']          = $this->getValue($row, 'state');
         $entry['postal_code']    = $this->getValue($row, 'zip');
         $entry['primary_phone']  = $this->getValue($row, 'phonehome');
         $entry['cell_phone']     = $this->getValue($row, 'phonecell');
-        //datecreated was in first csv
+
+        //datecreated was in first csv - not found in latest csv
         $entry['last_visit'] = $this->getValue($row, 'encounterdate') ?? $this->getValue($row, 'datecreated');
+        
+        $entry['preferred_provider'] = $this->getProviderValue($row);
 
-
-        if (isset($row['providerfirstname'])) {
-            $entry['preferred_provider'] = $row['providerfirstname'] . ' ' . ($row['providerlastname'] ?? '');
-        } else {
-            $entry['preferred_provider'] = null;
-        }
+        //FamHxAllergies,FamHxDiabetesII,FamHxCOPD,FamHxTuberculosis,FamHxHTN,FamHxHeartDisease,FamHxStroke,FamHxBleeding,FamHxMigraine,FamHxPsychiatric,FamHxDepression,FamHxAlcoholAbuse,FamHxArthritis,FamHxOsteoporosis,FamHxCancer,FamHxColonPolyps,FamHxColonCancer,FamHxKidneyDisease,FamHxLiverDisease,FamHxGERD,FamHxHeartAttack,FamHxHighChol,FamHxThyroidDisease,FamHxOther,FamHxAsthma,FamHxBreastCancer,FamHxCervicalCancer,FamHxLungCancer,FamHxOtherCancer,FamHxProstateCancer,FamHxDementia,FamHxHearingLoss,FamHxHuntingtons,FamHxParkinsons,FamHxSeizures,FamHxGlaucoma,FamHxMacularDeg
+        //ReportedDiabetes,ReportedOverweight,ReportedPoorVision,ReportedHearing,ReportedDizziness,ReportedFalls,ReportedForgetfullness,ReportedDepression,ReportedSleeping,ReportedJointPain,ReportedHeart,ReportedHighBP,ReportedCAD,ReportedStroke,ReportedOsteoporosis,ReportedArthritis,ReportedADDADHD,ReportedAnxity,ReportedAspergers,ReportedBackPain,ReportedBiPolar,ReportedCancer,ReportedCHDCF,ReportedDementia,ReportedGERD,ReportingHearingProb,ReportedAfib,ReportedAngina,ReportedAtherosclerosis,ReportedCardiomyopathy,ReportedHeartOther,ReportedPAD,ReportedPVD,ReportedValveDisease,ReportedHepatitis,ReportedHIVAIDs,ReportedHxHeartAttack,ReportedIncontinence,ReportedInpatientLastMonth,ReportedInpatientLastYear,ReportedKidneyTrans,ReportedMovementDis,ReportedOCD,ReportedOtherMH,ReportedRA,ReportedSchizophrenia,ReportedSeizures,ReportedStrokeIsc,ReportedStrokeTIA,ReportedStrokeHem,ReportedUrinary,ReportedAsthma,ReportedCOPD,ReportedAsthmaCOPD,ReportedOther1,ReportedOther2,ReportedOther3,ReportedOther4,ReportedOther5,MacularLeftEye,MacularRightEye
+        //ServingsNuts,ServingsFruit,ServingsFish,ServingsMeat,ServingsVegetables,ServingsBeverages,ServingsFriedFood,ServingsSaturatedFat
+        //ROSWeightGain,ROSWeightLoss,ROSMalaise,ROSFever,ROSChills,ROSFatigue,ROSWeakness,ROSAllergies,ROSAppetite,ROSDizziness,ROSInsomnia,ROSSOB,ROSWheezing,ROSVertigo,ROSBackPain,ROSJointPain,ROSProbSleep,ROSForgetful,ROSVisionProb,ROSHearingProb,ROSFalling,ROSSnoring,ROSChoking,ROSTremors,ROSCough,ROSEyePain,ROSHalos,ROSBleeding,ROSLegPain,ROSChestPain,ROSNumbness,ROSStiffness,ROSSwelling,ROSOther
+        //FCSitting,FCStanding,FCLifting,FCCarrying,FCPushing,FCPulling,FCBending,FCStooping,FCSquatting,FCKneeling,FCReaching,FCHandUse
+        //SAHandrails,SASlippery,SADriving,SALocking,SAFamily,SAFriends
+        //MCIEye,MCIWalking,MCITouch,MCIClock,MCILocation,MCICopy,MCI3Step,MCIListofWords,MCIWritten,MCIWrite,MCICount
+        //DSHappyFamily,DSOutlook,DSDepression,DSSadness,DSActivities,DSWeight,DSAppetite,DSSleeping,DSAgitation,DSThought,DSDetails,DSMovements,DSFatigue,DSWorthlessness,DSConcentration,DSDecisions,DSSuicide,DSPHQ9Score
+        //AllergyAnaphylaxis,AllergyCannotUseEpiPen,AllergyFood,AllergyVenom,AllergyInhalants,AllergyMedications,AllergyOther,AllergyHasEpi,AllergyNoEpi,AllergyCanUseEpi
+        //FallRiskNumberofFalls,FallRiskSafeHabits,FallRiskDiffProblems,FallRiskGait,FallRiskConcerned,FallRiskFellLastYear,FallRiskFellLastMonth,FallRiskFellInjury,
+        //Allergy1,Allergy2,Allergy3,Allergy4,Allergy5
+        //MedsNoMeds,MedsDiabetes,MedsSleep,MedsDepression,MedsPain,MedsHeart,MedsBP,MedsThyroid,MedsCholesterol,MedsReflux,MedsAntiSeizure,MedsThinner,MedsRespiratory,MedsAllergy,MedsAntibiotics,MedsAsprin,MedsCorticosteroid,MedsAllergyMeds,MedsCalcium,MedsVitamins,MedsOther1,MedsOther2,MedsOther3,MedsOther4,MedsOther5,Medications1,Medications2,Medications3,Medications4,Medications5,Medications6,Medications7,Medications8,Medications9,Medications10,Medications11,Medications12,Medications13,Medications14,Medications15,Medications16,Medications17,Medications18,Medications19,Medications20
+        //Vaccine1,Vaccine2,Vaccine3,Vaccine4,Vaccine5,Vaccine6
+        //ADLBathing,ADLInhalerusage,ADLFeedingself,ADLInOutCar,ADLDressing,ADLInOutBed,ADLPutOnTakeOffClothes,ADLInOutTub,ADLDryPowderInhaler,ADLHousekeeping,ADLDifficultyManaging,ADLUseOfPhone,ADLAdministerMeds,ADLManageMoney,ADLShopping,ADLUsesPillOrganizer
+        //AdvDirWantsSpeakPhys,AdvDirHasSpokenPhys,AdvDirAdvancedDirectives
+        //ObsHasSeenProv2Mo,ObsHasNotSeenProv2Mo,ObsTakingMedsAsRx,ObsNotTakingMedsAsRx,ObsPtComplaintsNew,ObsPtComplaintsNotNew,ObsPtDiscussedDepression,ObsPtNotDiscussedDepression,ObsPtDiscussedOutlook,ObsPtNotDiscussedOutlook
+        //RVRFDiabetes,RVRFCHD,RVRFStroke,RVRFColorectal,RVRFOsteoporosis,RVRFDepression,RVRFCognitive,RVRFFunctional,RVRFProstate,RVRFCOPD
 
         $entry['insurance_plans']['primary'] = [
             "plan" => "Medicare",
         ];
 
+        //PrimaryIns,PrimaryInsPol,SecondaryIns,SecondaryInsPol
 //        $entry['insurance_plans']['primary']   = [
 //            "plan"           => "Test Insurance",
 //            "group_number"   => "",
@@ -148,12 +164,6 @@ class WT1CsvParser
 //            "start_date" => "2014-03-11",
 //        ];
 
-        if (isset($row['answer'])) {
-            $entry['medications'][] = [
-                "name" => $row['answer'],
-            ];
-        }
-
 //        $entry['allergies'][] = [
 //            "name" => "Animal Dander",
 //        ];
@@ -161,18 +171,45 @@ class WT1CsvParser
         $this->patients[$patientId] = $entry;
     }
 
-    private function getValue($row, $key)
+    private function getProviderValue($row, $default = null) {
+        $firstName  = $this->getValue($row, 'providerfirstname', '');
+        $middleName = $this->getValue($row, 'providermiddlename', '');
+        $lastName   = $this->getValue($row, 'providerlastname', '');
+        $result = '';
+        if ( ! empty($firstName)) {
+            $result .= $firstName;
+            if ( ! empty($middleName)) {
+                $result .= ' ';
+            }
+        }
+        if ( ! empty($middleName)) {
+            $result .= $middleName;
+            if ( ! empty($lastName)) {
+                $result .= ' ';
+            }
+        }
+        if ( ! empty($lastName)) {
+            $result .= $lastName;
+        }
+
+        if (empty($result)) {
+            $result = $default;
+        }
+        return $result;
+    }
+
+    private function getValue($row, $key, $default = null)
     {
         if ( ! isset($row[$key])) {
-            return null;
+            return $default;
         }
 
         if (empty($row[$key])) {
-            return null;
+            return $default;
         }
 
-        if ($row[$key] === "null" || $row[$key] === "NULL") {
-            return null;
+        if ($row[$key] === "null" || $row[$key] === "NULL" || $row[$key] === "\\N") {
+            return $default;
         }
         return $row[$key];
     }
