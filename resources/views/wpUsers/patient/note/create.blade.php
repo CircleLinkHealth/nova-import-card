@@ -555,6 +555,12 @@
 
                         selectList.prop("disabled", true);
                         $('#tasks-container').show();
+
+                        //if only one task, just select it
+                        if (patientNurseTasks.length === 1) {
+                            $('.tasks-radio').prop('checked', true);
+                            $('.tasks-radio').change();
+                        }
                     }
                     else {
 
