@@ -298,31 +298,49 @@ class EligibilityBatchController extends Controller
 
     public function downloadBatchLogCsv(EligibilityBatch $batch)
     {
-        $arr = EligibilityJob::select([
-            'batch_id',
-            'hash',
-            'messages',
-            'outcome',
-            'status',
-        ])
-                             ->whereBatchId($batch->id)
-                             ->get()
-                             ->map(function ($j) {
-                                 return [
-                                     'batch_id' => $j->batch_id,
-                                     'hash'     => $j->hash,
-                                     'messages' => json_encode($j->messages),
-                                     'outcome'  => $j->outcome,
-                                     'status'   => $j->getStatus(),
-                                 ];
-                             })->all();
+        ini_set('max_execution_time', 300);
 
         $fileName = 'batch_id_' . $batch->id . '_logs_' . Carbon::now()->toAtomString();
 
-        return Excel::create($fileName, function ($excel) use ($arr) {
-            $excel->sheet('Sheet', function ($sheet) use ($arr) {
-                $sheet->fromArray($arr);
-            });
-        })->download('csv');
+        $response = new StreamedResponse(function () use ($batch) {
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            $firstIteration = true;
+
+            $batch->eligibilityJobs()
+                  ->select([
+                      'batch_id',
+                      'hash',
+                      'messages',
+                      'outcome',
+                      'reason',
+                      'status',
+                  ])
+                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
+                      foreach ($jobs as $job) {
+                          $data = $job->toArray();
+
+                          $data['messages'] = json_encode($data['messages']);
+
+                          if ($firstIteration) {
+                              // Add CSV headers
+                              fputcsv($handle, array_keys($data));
+
+                              $firstIteration = false;
+                          }
+                          // Add a new row with data
+                          fputcsv($handle, $data);
+                      }
+                  });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '.csv"',
+        ]);
+
+        return $response;
     }
 }

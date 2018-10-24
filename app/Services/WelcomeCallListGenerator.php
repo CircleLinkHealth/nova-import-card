@@ -153,9 +153,10 @@ class WelcomeCallListGenerator
 
     protected function filterPatientList()
     {
-        $this->byLastEncounter()
-             ->byInsurance()
-             ->byNumberOfProblems();
+        $this
+            ->byNumberOfProblems()
+            ->byLastEncounter()
+            ->byInsurance();
     }
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
@@ -164,8 +165,12 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $cpmProblems      = CpmProblem::all();
-        $snomedToIcdMap   = SnomedToCpmIcdMap::all();
+        $cpmProblems      = \Cache::remember('all_cpm_problems', 60, function () {
+            return CpmProblem::all();
+        });
+        $snomedToIcdMap   = \Cache::remember('all_snomed_to_cpm_icd_maps', 60, function () {
+            return SnomedToCpmIcdMap::all();
+        });
         $icd9Map          = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
         $icd10Map         = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
         $snomedMap        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
@@ -501,6 +506,10 @@ class WelcomeCallListGenerator
 //                $this->setEligibilityJobStatus(3, ['last_encounter' => 'No last encounter field found'],
 //                    EligibilityJob::INELIGIBLE);
 
+                return false;
+            }
+
+            if (strtolower($lastEncounter) == 'null') {
                 return false;
             }
 
