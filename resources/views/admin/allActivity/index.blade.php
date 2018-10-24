@@ -55,8 +55,7 @@
         </style>
     @endpush
     <div class="container-fluid">
-
-        <form action="{{route('all.activity')}}" method="GET">
+        <form action="{{$submitUrl ?? route('revisions.all.activity')}}" method="GET">
             <div class="row">
                 <div class="col-md-3 col-md-offset-2">
                     <div class="form-group">
@@ -95,10 +94,14 @@
 
         <br/>
 
-        @if($revisions->isNotEmpty())
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-body">
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    {{isset($user) ? "Showing PHI for {$user->getFullName()}" : 'Showing history of all data'}}
+                </div>
+                <div class="panel-body">
+                    @if($revisions->isNotEmpty())
+
                         <table class="table table-striped table-bordered table-curved table-condensed table-hover">
                             <thead>
                             <tr>
@@ -127,20 +130,23 @@
                             @endforeach
                             </tbody>
                         </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 center-align">
+                        {{$revisions->appends([
+                            'date-from' => $startDate->toDateString(),
+                            'date-to' => $endDate->toDateString()
+                        ])->render()}}
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-12 center-align">
-                            {{$revisions->appends([
-                                'date-from' => $startDate->toDateString(),
-                                'date-to' => $endDate->toDateString()
-                            ])->render()}}
-                        </div>
-                    </div>
-
+                    @else
+                        <h5>No data found.</h5>
+                    @endif
                 </div>
             </div>
-        @endif
+        </div>
+
     </div>
 
 @stop
