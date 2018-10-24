@@ -258,25 +258,17 @@ class LoginController extends Controller
             $browserVersion = explode(".", $browser->minimum_version);
             $agentVersion   = explode(".", $agent->version($agent->browser()));
 
-            if ((int)$agentVersion[0] == (int)$browserVersion[0]) {
-                if ($agentVersion[1] && $browserVersion[1]) {
-                    if ((int)$agentVersion[1] == (int)$browserVersion[1]) {
-                        if ($agentVersion[2] && $browserVersion[2]) {
-                            if ((int)$agentVersion[2] == (int)$browserVersion[2]) {
-                                return true;
-                            } elseif ((int)$agentVersion[2] > (int)$browserVersion[2]) {
-                                return true;
-                            }
-                        }
-                    } elseif ((int)$agentVersion[1] > (int)$browserVersion[1]) {
+            for ($x = 0; $x <= 4; $x++){
+                if ($agentVersion[$x]){
+                    if ((int)$agentVersion[$x] > (int)$browserVersion[$x]){
                         return true;
+                    }elseif ((int)$agentVersion[$x] < (int)$browserVersion[$x]){
+                        return false;
                     }
                 }
-            } elseif ((int)$agentVersion[0] > (int)$browserVersion[0]) {
-                return true;
             }
+            return true;
         }
-
         return false;
     }
 
