@@ -24,10 +24,6 @@
                                     }
 
                                     function hideAlertContainerIfYouMust() {
-                                        //get alert container
-                                        //get child (.list-group)
-                                        //go through children (li)
-                                        //if all style.display=none -> set alert container to display:none
                                         const alertContainer = document.getElementsByClassName('alert')[0];
                                         const list = alertContainer.children[0];
                                         const listItems = list.children;
