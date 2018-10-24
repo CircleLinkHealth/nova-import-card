@@ -208,7 +208,7 @@
                                     <a href="{{route('OpsDashboard.billingChurn')}}">Billing Churn</a>
                                 </li>
                                 <li>
-                                    <a href="{{route('all.activity')}}">All Activity</a>
+                                    <a href="{{route('revisions.all.activity')}}">All Activity</a>
                                 </li>
 
                             </ul>

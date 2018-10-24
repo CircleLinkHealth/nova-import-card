@@ -885,10 +885,17 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
-        Route::get('all-activity', [
-            'uses' => 'ShowAllActivity',
-            'as'   => 'all.activity',
-        ]);
+        Route::group(['prefix' => 'revisions'], function () {
+            Route::get('all-activity', [
+                'uses' => 'ShowRevisionsController@allActivity',
+                'as'   => 'revisions.all.activity',
+            ]);
+
+            Route::get('{userId}/phi', [
+                'uses' => 'ShowRevisionsController@phi',
+                'as'   => 'revisions.patient.phi',
+            ]);
+        });
 
         Route::group(['prefix' => 'demo'], function () {
             Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
