@@ -162,6 +162,7 @@
                             .then(x => {
                                 //if all successfull
 
+                                let successIds = [];
                                 let allSuccess = true;
                                 x.forEach((prom, i) => {
 
@@ -179,6 +180,7 @@
                                         });
                                     }
                                     else {
+                                        successIds.push($vm.calls[i].patient.id);
                                         $vm.calls[i].disabled = true;
                                     }
 
@@ -188,6 +190,8 @@
                                 if (allSuccess) {
                                     Event.$emit('modal-select-times:hide');
                                 }
+
+                                Event.$emit('select-times-modal:change', {callIDs: successIds, nextCall: nextCall});
 
                             })
                             .catch(err => {
