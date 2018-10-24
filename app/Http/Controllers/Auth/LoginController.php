@@ -75,13 +75,13 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-
         $agent = new Agent();
 
-
         if ( ! $this->validateBrowserVersion($agent)) {
-            $message = "You are using a version of {$agent->browser()} that is very old. Please update to a newer version.";
-            return view('auth.login')->withErrors(['messages' => [$message]]);
+
+            $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
+
+            return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
         }
 
         return view('auth.login');
@@ -249,13 +249,18 @@ class LoginController extends Controller
     protected function validateBrowserVersion(Agent $agent)
     {
 
+        //$request->cookie('skip_outdated_browser_check') -> returns null for some reason
+        if (isset($_COOKIE['skip_outdated_browser_check'])) {
+            return true;
+        }
+
         $browsers = $this->getBrowsers();
 
         $browser = $browsers->where('name', $agent->browser())->first();
 
         if ($browser) {
 
-            $browserVersion = explode(".", $browser->minimum_version);
+            $browserVersion = explode(".", $browser->warning_version);
             $agentVersion   = explode(".", $agent->version($agent->browser()));
 
             for ($x = 0; $x <= 4; $x++){
