@@ -102,6 +102,18 @@ trait MakesOrReceivesCalls
     }
 
     /**
+     * Returns a count of the successful calls on a given day.
+     *
+     * @param Carbon $date
+     *
+     * @return int
+     */
+    public function countSuccessfulCallsFor(Carbon $date)
+    {
+        return $this->successfulCallsFor($date)->count();
+    }
+
+    /**
      * Returns a count of the successful calls made today
      *
      * @return int

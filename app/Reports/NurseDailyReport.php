@@ -16,8 +16,13 @@ use Carbon\Carbon;
 
 class NurseDailyReport
 {
-    public static function data()
+    public static function data(Carbon $forDate = null)
     {
+
+        if ($forDate == null) {
+            $forDate = Carbon::now();
+        }
+
         $nurse_users = User::ofType('care-center')
                            ->where('access_disabled', 0)
                            ->get();
@@ -40,12 +45,12 @@ class NurseDailyReport
             $nurses[$i]['name']                     = $nurse->getFullName();
             $nurses[$i]['Time Since Last Activity'] = Carbon::parse($mostRecentPageTimer->end_time)->diffForHumans();
 
-            $nurses[$i]['# Scheduled Calls Today']  = $nurse->countScheduledCallsForToday();
-            $nurses[$i]['# Completed Calls Today']  = $nurse->countCompletedCallsForToday();
-            $nurses[$i]['# Successful Calls Today'] = $nurse->countSuccessfulCallsMadeToday();
+            $nurses[$i]['# Scheduled Calls Today']  = $nurse->countScheduledCallsFor($forDate);
+            $nurses[$i]['# Completed Calls Today']  = $nurse->countCompletedCallsFor($forDate);
+            $nurses[$i]['# Successful Calls Today'] = $nurse->countSuccessfulCallsFor($forDate);
 
             $activity_time = Activity::where('provider_id', $nurse->id)
-                                     ->createdToday()
+                                     ->createdOn($forDate)
                                      ->sum('duration');
 
             $H1                      = floor($activity_time / 3600);
@@ -54,7 +59,7 @@ class NurseDailyReport
             $activity_time_formatted = sprintf("%02d:%02d:%02d", $H1, $m1, $s1);
 
             $system_time = PageTimer::where('provider_id', $nurse->id)
-                                    ->createdToday('updated_at')
+                                    ->createdOn($forDate, 'updated_at')
                                     ->sum('billable_duration');
 
             $system_time_formatted = secondsToHMS($system_time);
