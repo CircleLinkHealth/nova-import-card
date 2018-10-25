@@ -64,7 +64,8 @@ class ProviderController extends Controller
         ]));
     }
 
-    public function removePatient($patientId, $viewNext =  false){
+    public function removePatient($patientId, $viewNext = false)
+    {
 
         $user = User::find($patientId);
 
@@ -72,7 +73,6 @@ class ProviderController extends Controller
             return response("User not found", 401);
         }
 
-//        dd($user);
         try {
             $user->delete();
         } catch (\Exception $e) {
@@ -85,7 +85,7 @@ class ProviderController extends Controller
             })->first();
 
             if ( ! $nextPatient) {
-                return redirect()->to('/')->with('messages', ['successfully deleted user']);
+                return redirect()->to('/');
             }
 
             $patientId = $nextPatient->id;
@@ -93,15 +93,10 @@ class ProviderController extends Controller
             return redirect()->to(route('patient.careplan.print', [
                 'patientId'    => $patientId,
                 'clearSession' => $viewNext,
-            ]))->with('messages', ['successfully deleted user']);
+            ]));
 
         }
 
-        return redirect()->to('/')->with('messages', ['successfully deleted user']);
-
-
-
-
-
+        return redirect()->to('/');
     }
 }
