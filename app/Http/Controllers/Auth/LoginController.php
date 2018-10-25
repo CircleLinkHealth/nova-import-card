@@ -319,7 +319,7 @@ class LoginController extends Controller
     protected function checkVersion(Array $agentVersion, Array $browserVersion)
     {
         for ($x = 0; $x <= 4; $x++) {
-            if ($agentVersion[$x]) {
+            if (array_key_exists($x, $agentVersion) && array_key_exists($x, $browserVersion)) {
                 if ((int)$agentVersion[$x] > (int)$browserVersion[$x]) {
                     return true;
                 } elseif ((int)$agentVersion[$x] < (int)$browserVersion[$x]) {
