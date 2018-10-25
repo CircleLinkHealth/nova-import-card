@@ -742,6 +742,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.approve',
         ])->middleware('permission:care-plan-approve,care-plan-qa-approve');
 
+        Route::post('not-eligible/{viewNext?}', [
+            'uses' => 'ProviderController@removePatient',
+            'as'   => 'patient.careplan.not.eligible',
+        ])->middleware('permission:care-plan-approve');
+
         Route::get('view-careplan/pdf', [
             'uses' => 'ReportsController@viewPdfCarePlan',
             'as'   => 'patient.pdf.careplan.print',

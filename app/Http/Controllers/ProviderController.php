@@ -63,4 +63,45 @@ class ProviderController extends Controller
             'clearSession' => $viewNext,
         ]));
     }
+
+    public function removePatient($patientId, $viewNext =  false){
+
+        $user = User::find($patientId);
+
+        if ( ! $user) {
+            return response("User not found", 401);
+        }
+
+//        dd($user);
+        try {
+            $user->delete();
+        } catch (\Exception $e) {
+            report($e);
+        }
+
+        if ($viewNext) {
+            $nextPatient = auth()->user()->patientsPendingApproval()->get()->filter(function ($user) {
+                return $user->getCarePlanStatus() == CarePlan::QA_APPROVED;
+            })->first();
+
+            if ( ! $nextPatient) {
+                return redirect()->to('/')->with('messages', ['successfully deleted user']);
+            }
+
+            $patientId = $nextPatient->id;
+
+            return redirect()->to(route('patient.careplan.print', [
+                'patientId'    => $patientId,
+                'clearSession' => $viewNext,
+            ]))->with('messages', ['successfully deleted user']);
+
+        }
+
+        return redirect()->to('/')->with('messages', ['successfully deleted user']);
+
+
+
+
+
+    }
 }
