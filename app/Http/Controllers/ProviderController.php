@@ -66,7 +66,6 @@ class ProviderController extends Controller
 
     public function removePatient($patientId, $viewNext = false)
     {
-
         $user = User::find($patientId);
 
         if ( ! $user) {
