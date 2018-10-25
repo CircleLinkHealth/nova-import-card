@@ -885,10 +885,17 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'admin',
     ], function () {
 
-        Route::get('all-activity', [
-            'uses' => 'ShowAllActivity',
-            'as'   => 'all.activity',
-        ]);
+        Route::group(['prefix' => 'revisions'], function () {
+            Route::get('all-activity', [
+                'uses' => 'ShowRevisionsController@allActivity',
+                'as'   => 'revisions.all.activity',
+            ]);
+
+            Route::get('{userId}/phi', [
+                'uses' => 'ShowRevisionsController@phi',
+                'as'   => 'revisions.patient.phi',
+            ]);
+        });
 
         Route::group(['prefix' => 'demo'], function () {
             Route::get('create', 'Demo\SendSampleNoteController@showMakeNoteForm');
@@ -1267,6 +1274,11 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('call', [
                 'uses' => 'Admin\Reports\CallReportController@exportxls',
                 'as'   => 'CallReportController.exportxls',
+            ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
+
+            Route::get('call-v2', [
+                'uses' => 'Admin\Reports\CallReportController@exportxlsV2',
+                'as'   => 'CallReportController.exportxlsv2',
             ])->middleware('permission:call.read,note.read,patient.read,patientSummary.read');
 
             Route::get('provider-usage', [
