@@ -82,15 +82,7 @@ class JsonMedicalRecordAdapter
 
         $hash = $this->getKey($eligibilityBatch);
 
-        $job = EligibilityJob::whereHash($hash)->first();
-
-        if ( ! $job) {
-            $job = EligibilityJob::create([
-                'batch_id' => $eligibilityBatch->id,
-                'hash'     => $hash,
-                'data'     => $this->validatedData->all(),
-            ]);
-        } elseif ($eligibilityBatch->shouldSafeReprocess()) {
+        if ($eligibilityBatch->shouldSafeReprocess()) {
             $job = EligibilityJob::updateOrCreate([
                 'batch_id' => $eligibilityBatch->id,
                 'hash'     => $hash,
@@ -99,6 +91,12 @@ class JsonMedicalRecordAdapter
                 'messages' => null, //reset since we are re-processing
                 'outcome'  => null, //reset since we are re-processing
                 'status'   => 0, //reset since we are re-processing
+            ]);
+        } else {
+            $job = EligibilityJob::create([
+                'batch_id' => $eligibilityBatch->id,
+                'hash'     => $hash,
+                'data'     => $this->validatedData->all(),
             ]);
         }
 
