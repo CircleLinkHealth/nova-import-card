@@ -185,6 +185,7 @@ class EligibilityBatchController extends Controller
 
             Enrollee::select([
                 'enrollees.id as eligible_patient_id',
+                'eligibility_job_id',
                 'cpm_problem_1',
                 'cpm_problem_2',
                 'medical_record_type',
@@ -222,9 +223,42 @@ class EligibilityBatchController extends Controller
                     ->with('eligibilityJob')
                     ->chunk(500, function ($enrollees) use ($handle, &$firstIteration) {
                         foreach ($enrollees as $enrollee) {
-                            $data = $enrollee->toArray();
-
-                            $data['was_previously_found_eligible'] = optional($enrollee->eligibilityJob)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH ? 'Y' : 'N';
+                            $data = [
+                                'eligible_patient_id'           => $enrollee->eligible_patient_id,
+                                'was_previously_found_eligible' => optional($enrollee->eligibilityJob)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH
+                                    ? 'Y'
+                                    : 'N',
+                                'eligibility_job_id'            => $enrollee->eligibility_job_id,
+                                'cpm_problem_1'                 => $enrollee->cpm_problem_1,
+                                'cpm_problem_2'                 => $enrollee->cpm_problem_2,
+                                'medical_record_type'           => $enrollee->medical_record_type,
+                                'medical_record_id'             => $enrollee->medical_record_id,
+                                'mrn'                           => $enrollee->mrn,
+                                'first_name'                    => $enrollee->first_name,
+                                'last_name'                     => $enrollee->last_name,
+                                'address'                       => $enrollee->address,
+                                'address_2'                     => $enrollee->address_2,
+                                'city'                          => $enrollee->city,
+                                'state'                         => $enrollee->state,
+                                'zip'                           => $enrollee->zip,
+                                'primary_phone'                 => $enrollee->primary_phone,
+                                'other_phone'                   => $enrollee->other_phone,
+                                'home_phone'                    => $enrollee->home_phone,
+                                'cell_phone'                    => $enrollee->cell_phone,
+                                'email'                         => $enrollee->email,
+                                'dob'                           => $enrollee->dob,
+                                'lang'                          => $enrollee->lang,
+                                'preferred_days'                => $enrollee->preferred_days,
+                                'preferred_window'              => $enrollee->preferred_window,
+                                'primary_insurance'             => $enrollee->primary_insurance,
+                                'secondary_insurance'           => $enrollee->secondary_insurance,
+                                'tertiary_insurance'            => $enrollee->tertiary_insurance,
+                                'last_encounter'                => $enrollee->last_encounter,
+                                'referring_provider_name'       => $enrollee->referring_provider_name,
+                                'ccm_condition_1'               => $enrollee->ccm_condition_1,
+                                'ccm_condition_2'               => $enrollee->ccm_condition_2,
+                                'problems'                      => $enrollee->problems,
+                            ];
 
                             if ($firstIteration) {
                                 // Add CSV headers
