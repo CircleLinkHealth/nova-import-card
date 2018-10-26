@@ -205,14 +205,14 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! ! ! $batch->options['finishedReadingFile']) {
-            ini_set('memory_limit', '512M');
+            ini_set('memory_limit', '800M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<', 2)
-                                     ->take(400)
+                                     ->take(1000)
                                      ->get();
 
         if ($unprocessed->isNotEmpty()) {
