@@ -1,5 +1,16 @@
 <?php
 
+$supervisor = [
+    'supervisor-1' => [
+        'connection' => 'redis',
+        'queue'      => ['default', 'ccda-processor', 'medical-records', 'reports'],
+        'balance'    => 'auto',
+        'processes'  => 10,
+        'tries'      => 1,
+        'timeout'    => 300,
+    ],
+];
+
 return [
 
     /*
@@ -71,24 +82,9 @@ return [
     */
 
     'environments' => [
-        'production' => [
-            'supervisor-1'   => [
-                'connection' => 'redis',
-                'queue'      => ['default', 'ccda-processor', 'medical-records', 'reports'],
-                'balance'    => 'auto',
-                'processes'  => 10,
-                'tries'      => 1,
-            ],
-        ],
-
-        'local' => [
-            'supervisor-1' => [
-                'connection' => 'redis',
-                'queue'      => ['default', 'ccda-processor', 'medical-records', 'reports'],
-                'balance'    => 'auto',
-                'processes'  => 3,
-                'tries'      => 1,
-            ],
-        ],
+        'local'      => $supervisor,
+        'production' => $supervisor,
+        'staging'    => $supervisor,
+        'worker'     => $supervisor,
     ],
 ];
