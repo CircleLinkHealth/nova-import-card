@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
-use App\Http\Resources\EligibilityJobCSVRow;
+use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
@@ -185,6 +185,7 @@ class EligibilityBatchController extends Controller
 
             Enrollee::select([
                 'enrollees.id as eligible_patient_id',
+                'eligibility_job_id',
                 'cpm_problem_1',
                 'cpm_problem_2',
                 'medical_record_type',
@@ -219,9 +220,45 @@ class EligibilityBatchController extends Controller
                     ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
                     ->whereBatchId($batch->id)
                     ->whereNull('user_id')
+                    ->with('eligibilityJob')
                     ->chunk(500, function ($enrollees) use ($handle, &$firstIteration) {
                         foreach ($enrollees as $enrollee) {
-                            $data = $enrollee->toArray();
+                            $data = [
+                                'eligible_patient_id'           => $enrollee->eligible_patient_id,
+                                'was_previously_found_eligible' => optional($enrollee->eligibilityJob)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH
+                                    ? 'Y'
+                                    : 'N',
+                                'eligibility_job_id'            => $enrollee->eligibility_job_id,
+                                'cpm_problem_1'                 => $enrollee->cpm_problem_1,
+                                'cpm_problem_2'                 => $enrollee->cpm_problem_2,
+                                'medical_record_type'           => $enrollee->medical_record_type,
+                                'medical_record_id'             => $enrollee->medical_record_id,
+                                'mrn'                           => $enrollee->mrn,
+                                'first_name'                    => $enrollee->first_name,
+                                'last_name'                     => $enrollee->last_name,
+                                'address'                       => $enrollee->address,
+                                'address_2'                     => $enrollee->address_2,
+                                'city'                          => $enrollee->city,
+                                'state'                         => $enrollee->state,
+                                'zip'                           => $enrollee->zip,
+                                'primary_phone'                 => $enrollee->primary_phone,
+                                'other_phone'                   => $enrollee->other_phone,
+                                'home_phone'                    => $enrollee->home_phone,
+                                'cell_phone'                    => $enrollee->cell_phone,
+                                'email'                         => $enrollee->email,
+                                'dob'                           => $enrollee->dob,
+                                'lang'                          => $enrollee->lang,
+                                'preferred_days'                => $enrollee->preferred_days,
+                                'preferred_window'              => $enrollee->preferred_window,
+                                'primary_insurance'             => $enrollee->primary_insurance,
+                                'secondary_insurance'           => $enrollee->secondary_insurance,
+                                'tertiary_insurance'            => $enrollee->tertiary_insurance,
+                                'last_encounter'                => $enrollee->last_encounter,
+                                'referring_provider_name'       => $enrollee->referring_provider_name,
+                                'ccm_condition_1'               => $enrollee->ccm_condition_1,
+                                'ccm_condition_2'               => $enrollee->ccm_condition_2,
+                                'problems'                      => $enrollee->problems,
+                            ];
 
                             if ($firstIteration) {
                                 // Add CSV headers
@@ -308,6 +345,8 @@ class EligibilityBatchController extends Controller
 
             $firstIteration = true;
 
+            $cpmProblemsMap = CpmProblem::pluck('name', 'id');
+
             $batch->eligibilityJobs()
                   ->select([
                       'batch_id',
@@ -316,12 +355,31 @@ class EligibilityBatchController extends Controller
                       'outcome',
                       'reason',
                       'status',
+                      'bhi_problem_id',
+                      'ccm_problem_2_id',
+                      'ccm_problem_1_id',
+                      'ternary_insurance',
+                      'secondary_insurance',
+                      'primary_insurance',
+                      'last_encounter',
                   ])
-                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
+                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration, $cpmProblemsMap) {
                       foreach ($jobs as $job) {
-                          $data = $job->toArray();
-
-                          $data['messages'] = json_encode($data['messages']);
+                          $data = [
+                              'batch_id'            => $job->batch_id,
+                              'hash'                => $job->hash,
+                              'outcome'             => $job->outcome,
+                              'reason'              => $job->reason,
+                              'messages'            => json_encode($job->messages),
+                              'last_encounter'      => $job->last_encounter,
+                              'ccm_problem_1'       => $cpmProblemsMap[$job->ccm_problem_1_id] ?? '',
+                              'ccm_problem_2'       => $cpmProblemsMap[$job->ccm_problem_2_id] ?? '',
+                              'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
+                              'primary_insurance'   => $job->primary_insurance,
+                              'secondary_insurance' => $job->secondary_insurance,
+                              'ternary_insurance'   => $job->ternary_insurance,
+                              'processing_status'   => $job->getStatus(),
+                          ];
 
                           if ($firstIteration) {
                               // Add CSV headers

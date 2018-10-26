@@ -112,7 +112,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<', 2)
-                                     ->take(10)
+                                     ->take(500)
                                      ->get();
 
         if ($unprocessed->isEmpty()) {
@@ -123,12 +123,12 @@ class QueueEligibilityBatchForProcessing extends Command
         }
 
         $unprocessed->map(function ($job) use ($batch) {
-            ProcessSinglePatientEligibility::dispatch(
+            (new ProcessSinglePatientEligibility(
                 collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice
-            );
+            ))->handle();
         });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
