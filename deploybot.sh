@@ -48,4 +48,5 @@ php artisan opcache:clear
 php artisan opcache:optimize
 
 # Restart Queue Workers
+php artisan horizon:terminate
 php artisan queue:restart
