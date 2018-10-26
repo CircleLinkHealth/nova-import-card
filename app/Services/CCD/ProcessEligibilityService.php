@@ -372,7 +372,7 @@ class ProcessEligibilityService
 
         $patientList = [];
 
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 1000; $i++) {
             $patient = $collection->shift();
 
             if ( ! is_array($patient)) {
@@ -392,10 +392,6 @@ class ProcessEligibilityService
             ]);
 
             $patient['eligibility_job_id'] = $job->id;
-
-            if ($job->status == 0) {
-                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
-            }
         }
 
         $options                = $batch->options;
