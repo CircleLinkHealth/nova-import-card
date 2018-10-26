@@ -165,19 +165,50 @@ class WelcomeCallListGenerator
             return $this;
         }
 
-        $cpmProblems      = \Cache::remember('all_cpm_problems', 60, function () {
-            return CpmProblem::all();
-        });
-        $snomedToIcdMap   = \Cache::remember('all_snomed_to_cpm_icd_maps', 60, function () {
-            return SnomedToCpmIcdMap::all();
-        });
-        $icd9Map          = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
-        $icd10Map         = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
-        $snomedMap        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
-        $cpmProblemsMap   = $cpmProblems->pluck('name', 'id');
-        $allBhiProblemIds = $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
+        $cpmProblems = \Cache::remember('all_cpm_problems', 60, function () {
+            return CpmProblem::all()
+                             ->transform(function ($problem) {
+                                 $problem->searchKeywords = collect(explode(',', $problem->contains), [$problem->name])
+                                     ->transform(function ($keyword) {
+                                         return trim(strtolower($keyword));
+                                     })
+                                     ->filter()
+                                     ->unique()
+                                     ->values()
+                                     ->toArray();
 
-        $patientList = $this->patientList->map(function ($row) use (
+                                 return $problem;
+                             });
+        });
+
+        $icd9Map = \Cache::remember('map_icd_9_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        });
+
+        $icd10Map = \Cache::remember('map_icd_10_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        });
+
+        $snomedMap = \Cache::remember('map_snomed_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        });
+
+        $cpmProblemsMap = \Cache::remember('map_name_to_cpm_problems', 60, function () use ($cpmProblems) {
+            return $cpmProblems->pluck('name', 'id');
+        });
+
+        $allBhiProblemIds = \Cache::remember('bhi_cpm_problem_ids', 60, function () use ($cpmProblems) {
+            return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
+        });
+
+
+        $this->patientList = $this->patientList->map(function ($row) use (
             $cpmProblems,
             $icd9Map,
             $icd10Map,
@@ -210,10 +241,10 @@ class WelcomeCallListGenerator
                 }
             }
 
-            $qualifyingProblems = [];
+            $qualifyingCcmProblems = [];
 
             //the cpm_problem_id for qualifying problems
-            $qualifyingProblemsCpmIdStack = [];
+            $qualifyingCcmProblemsCpmIdStack = [];
 
             $eligibleBhiProblemIds = [];
 
@@ -242,9 +273,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
                             $cpmProblemId = $icd9Map->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -257,9 +288,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
                             $cpmProblemId = $icd10Map->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -272,9 +303,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
                             $cpmProblemId = $snomedMap->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -289,16 +320,14 @@ class WelcomeCallListGenerator
                      * Try to match keywords
                      */
                     if ($p->getName()) {
-                        foreach ($cpmProblems as $problem) {
-                            $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
-
-                            foreach ($keywords as $keyword) {
+                        foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
+                            foreach ($problem->searchKeywords as $keyword) {
                                 if (empty($keyword)) {
                                     continue;
                                 }
 
                                 if (str_contains(strtolower($p->getName()), strtolower($keyword))
-                                    && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                                    && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
                                 ) {
                                     $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
                                                              ->whereCpmProblemId($problem->id)
@@ -322,8 +351,8 @@ class WelcomeCallListGenerator
                                         }
                                     }
 
-                                    $qualifyingProblems[]           = "{$problem->name}, $code";
-                                    $qualifyingProblemsCpmIdStack[] = $problem->id;
+                                    $qualifyingCcmProblems[]           = "{$problem->name}, $code";
+                                    $qualifyingCcmProblemsCpmIdStack[] = $problem->id;
 
                                     if ( ! ! $problem->is_behavioral) {
                                         $eligibleBhiProblemIds[] = $problem->id;
@@ -332,14 +361,22 @@ class WelcomeCallListGenerator
                             }
                         }
                     }
+
+                    //Stop checking if we've already found 2 ccm problems
+                    if (count($qualifyingCcmProblems) == 2) {
+                        break;
+                    }
                 }
             }
 
 
-            $qualifyingProblems    = array_unique($qualifyingProblems);
+            $qualifyingCcmProblems = array_unique($qualifyingCcmProblems);
             $qualifyingBhiProblems = array_unique($eligibleBhiProblemIds);
 
-            if (count($qualifyingProblems) < 2 && count($qualifyingBhiProblems) == 0) {
+            $ccmProbCount = count($qualifyingCcmProblems);
+            $bhiProbCount = count($qualifyingBhiProblems);
+
+            if ($ccmProbCount < 2 && $bhiProbCount == 0) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has less than 2 ccm conditions'],
@@ -348,26 +385,26 @@ class WelcomeCallListGenerator
                 return false;
             }
 
-            if ( ! $this->practice->hasServiceCode('CPT 99484')) {
-                $this->ineligiblePatients->push($row);
+            if ($ccmProbCount < 2 && $bhiProbCount > 0) {
+                if ( ! $this->practice->hasServiceCode('CPT 99484')) {
+                    $this->ineligiblePatients->push($row);
 
-                $this->setEligibilityJobStatus(3,
-                    ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
-                    EligibilityJob::INELIGIBLE, 'problems');
+                    $this->setEligibilityJobStatus(3,
+                        ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
+                        EligibilityJob::INELIGIBLE, 'problems');
 
-                return false;
+                    return false;
+                }
             }
 
-            $row['ccm_condition_1'] = $qualifyingProblems[0];
-            $row['ccm_condition_2'] = $qualifyingProblems[1] ?? null;
+            $row['ccm_condition_1'] = $qualifyingCcmProblems[0];
+            $row['ccm_condition_2'] = $qualifyingCcmProblems[1] ?? null;
 
-            $row['cpm_problem_1'] = $qualifyingProblemsCpmIdStack[0];
-            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1] ?? null;
+            $row['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
+            $row['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
 
             return $row;
-        })->values();
-
-        $this->patientList = new Collection(array_filter($patientList->all()));
+        })->filter()->values();
 
         return $this;
     }
@@ -944,6 +981,13 @@ class WelcomeCallListGenerator
     private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
     {
         return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
+    }
+
+    private function getSnomedToIcdMap()
+    {
+        return \Cache::remember('all_snomed_to_cpm_icd_maps', 60, function () {
+            return SnomedToCpmIcdMap::all();
+        });
     }
 
 
