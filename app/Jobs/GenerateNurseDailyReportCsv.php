@@ -29,9 +29,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
      */
     public function __construct(Carbon $forDate = null)
     {
-        if ($forDate == null) {
-            $this->date = Carbon::now();
-        }
+        $this->date = $forDate ?? Carbon::now();
 
         $this->reportData = NurseDailyReport::data($forDate)->map(function ($nurseReport) {
 
@@ -47,7 +45,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                          ])
                          ->first();
 
-            if (! $nurse){
+            if ( ! $nurse) {
                 \Log::error("User not found: {$nurseReport['name']}");
                 return [];
             }
@@ -71,12 +69,12 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                                          ->get()
                                          ->sum('duration');
 
-            $total          = $pageTimers + $offlineActivities;
-            $actualHours    = round($total / 3600, 1);
+            $total       = $pageTimers + $offlineActivities;
+            $actualHours = round($total / 3600, 1);
 
             $hoursCommitted = 'N/A';
-            if ($nurse->nurseInfo->workhourables && $nurse->nurseInfo->workhourables->count() > 0 ) {
-                    $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($this->date->format('l'))};
+            if ($nurse->nurseInfo->workhourables && $nurse->nurseInfo->workhourables->count() > 0) {
+                $hoursCommitted = $nurse->nurseInfo->workhourables->first()->{strtolower($this->date->format('l'))};
             }
 
             return [
@@ -87,8 +85,11 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
                 '# Completed Calls Today'  => $nurseReport['# Completed Calls Today'],
                 'CCM Mins Today'           => $nurseReport['CCM Mins Today'],
                 'last_activity'            => $nurseReport['last_activity'],
-                'Actual Hours worked'      => $actualHours ?: 'N/A',
-                'Hours Committed'          => $hoursCommitted  == 0 ? '0' : $hoursCommitted,
+                'Actual Hours worked'      => $actualHours
+                    ?: 'N/A',
+                'Hours Committed'          => $hoursCommitted == 0
+                    ? '0'
+                    : $hoursCommitted,
             ];
         })->filter()->values();
     }
@@ -105,11 +106,9 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
     {
         $path = $this->exportToCsv($this->reportData);
 
-        $date = Carbon::now();
-
         $media = User::find(357)
                      ->addMedia($path['full'])
-                     ->toMediaCollection("nurse_daily_report_for_{$date->toDateString()}");
+                     ->toMediaCollection("nurse_daily_report_for_{$this->date->toDateString()}");
 
         $link = $media->getUrl();
 
@@ -121,10 +120,10 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
      */
     public function exportToCsv()
     {
-        $now      = Carbon::now()->toDateTimeString();
+        $dateString      = $this->date->toDateTimeString();
         $filename = "Nurse_Daily_Report";
 
-        return Excel::create("{$filename}_{$now}", function ($excel) {
+        return Excel::create("{$filename}_{$dateString}", function ($excel) {
             $excel->sheet('Nurse Daily Report', function ($sheet) {
                 $sheet->fromArray(
                     $this->reportData->all()
