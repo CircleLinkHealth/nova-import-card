@@ -22,7 +22,7 @@ class JsonMedicalRecordInsurancePlansAdapter
      */
     public function adapt(array $record)
     {
-        collect($record['insurance_plans'])
+        collect($record['insurance_plans'] ?? $record['insurance_plan'])
             ->each(function ($plan, $key) use (&$record) {
                 $concatString = null;
 

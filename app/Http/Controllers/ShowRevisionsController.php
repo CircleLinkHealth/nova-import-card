@@ -20,6 +20,8 @@ class ShowRevisionsController extends Controller
      */
     public function allActivity(Request $request)
     {
+        $phiOnly = $request->routeIs('revisions.phi.activity');
+
         if ($request->has('date-from')) {
             $startDate = new Carbon($request['date-from']);
         } else {
@@ -57,6 +59,9 @@ class ShowRevisionsController extends Controller
         if ($errors->isEmpty()) {
             $revisions = Revision::where('updated_at', '>=', $startDate->toDateTimeString())
                                  ->where('updated_at', '<=', $endDate->toDateTimeString())
+                                 ->when($phiOnly, function ($q) use ($revisionableType) {
+                                     $q->where('is_phi', '=', true);
+                                 })
                                  ->when(! ! $revisionableType, function ($q) use ($revisionableType) {
                                      $q->where('revisionable_type', '=', $revisionableType);
                                  })
@@ -96,8 +101,8 @@ class ShowRevisionsController extends Controller
         }
 
         $patientInfoId = optional(Patient::whereUserId($userId)->first())->id;
-        $user = User::withTrashed()
-            ->find($userId);
+        $user          = User::withTrashed()
+                             ->find($userId);
 
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59);
@@ -126,7 +131,7 @@ class ShowRevisionsController extends Controller
             'endDate',
             'revisions',
             'submitUrl',
-            'user'
+            'user',
         ]));
     }
 }

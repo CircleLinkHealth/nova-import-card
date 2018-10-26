@@ -210,7 +210,9 @@
                                 <li>
                                     <a href="{{route('revisions.all.activity')}}">All Activity</a>
                                 </li>
-
+                                <li>
+                                    <a href="{{route('revisions.phi.activity')}}">PHI Activity</a>
+                                </li>
                             </ul>
                         </li>
 

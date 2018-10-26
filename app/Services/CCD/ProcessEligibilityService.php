@@ -118,7 +118,7 @@ class ProcessEligibilityService
 //                        ProcessCcda::withChain([
 //                            new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch),
 //                        ])->dispatch($ccda->id)
-//                                   ->onQueue('ccda-processor');
+//                                   ->onQueue('low');
 //
 //                        $localDisk->delete($path);
 //                    }
@@ -181,9 +181,9 @@ class ProcessEligibilityService
             $ccda->save();
 
             ProcessCcda::withChain([
-                (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch))->onQueue('ccda-processor'),
+                (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, $batch))->onQueue('low'),
             ])->dispatch($ccda->id)
-                       ->onQueue('ccda-processor');
+                       ->onQueue('low');
 
             $cloudDisk->move($file['path'],
                 "{$processedDir['path']}/ccdaId=$ccda->id::processed={$file['filename']}");
@@ -266,9 +266,9 @@ class ProcessEligibilityService
 
                         ProcessCcda::withChain([
                             (new CheckCcdaEnrollmentEligibility($ccda->id, $practice, (bool)$filterLastEncounter,
-                                (bool)$filterInsurance, (bool)$filterProblems))->onQueue('ccda-processor'),
+                                (bool)$filterInsurance, (bool)$filterProblems))->onQueue('low'),
                         ])->dispatch($ccda->id)
-                                   ->onQueue('ccda-processor');
+                                   ->onQueue('low');
                     } else {
                         $pathWithUnderscores = str_replace('/', '_', $path);
                         $put                 = $cloudDisk->put("{$processedDir['path']}/$pathWithUnderscores",
@@ -372,7 +372,7 @@ class ProcessEligibilityService
 
         $patientList = [];
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 1000; $i++) {
             $patient = $collection->shift();
 
             if ( ! is_array($patient)) {
@@ -383,23 +383,15 @@ class ProcessEligibilityService
 
             $patient = $this->transformCsvRow($patient);
 
-            $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'] . $patient['city'] . $patient['state'] . $patient['zip'];
+            $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'];
 
-            $job = EligibilityJob::whereHash($hash)->first();
-
-            if ( ! $job) {
-                $job = EligibilityJob::create([
-                    'batch_id' => $batch->id,
-                    'hash'     => $hash,
-                    'data'     => $patient,
-                ]);
-            }
+            $job = EligibilityJob::create([
+                'batch_id' => $batch->id,
+                'hash'     => $hash,
+                'data'     => $patient,
+            ]);
 
             $patient['eligibility_job_id'] = $job->id;
-
-            if ($job->status == 0) {
-                ProcessSinglePatientEligibility::dispatch(collect([$patient]), $job, $batch, $batch->practice);
-            }
         }
 
         $options                = $batch->options;

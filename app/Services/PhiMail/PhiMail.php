@@ -276,7 +276,7 @@ class PhiMail implements DirectMail
             'source'    => Ccda::EMR_DIRECT,
         ]);
 
-        ImportCcda::dispatch($this->ccda)->onQueue('medical-records');
+        ImportCcda::dispatch($this->ccda)->onQueue('low');
     }
 
     /**

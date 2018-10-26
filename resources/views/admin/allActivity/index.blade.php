@@ -97,7 +97,7 @@
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    {{isset($user) ? "Showing PHI for {$user->getFullName()}" : 'Showing history of all data'}}
+                    {{isset($user) ? "PHI History for {$user->getFullName()}" : 'History'}}
                 </div>
                 <div class="panel-body">
                     @if($revisions->isNotEmpty())
@@ -106,6 +106,7 @@
                             <thead>
                             <tr>
                                 <th id="change-id">Change Id</th>
+                                <th id="change-id">Changed By</th>
                                 <th id="type">Type</th>
                                 <th id="key">Key</th>
                                 <th id="is-phi">Is PHI</th>
@@ -119,6 +120,7 @@
                             @foreach($revisions as $history)
                                 <tr>
                                     <th>{{$history->id}}</th>
+                                    <th>{{$history->user_id ? link_to_route('admin.users.edit', $history->user_id, [$history->user_id]) : 'System'}}</th>
                                     <td title="{{$history->revisionable_type}}">{{str_replace('App\\', '',$history->revisionable_type)}}</td>
                                     <td title="{{$history->key}}">{{$history->key}}</td>
                                     <td>{{$history->is_phi ? 'Yes' : 'No'}}</td>

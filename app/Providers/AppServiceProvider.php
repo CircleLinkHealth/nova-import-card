@@ -29,6 +29,7 @@ use Illuminate\Notifications\HasDatabaseNotifications;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Dusk\DuskServiceProvider;
+use Laravel\Horizon\Horizon;
 use Orangehill\Iseed\IseedServiceProvider;
 use Queue;
 use Way\Generators\GeneratorsServiceProvider;
@@ -44,6 +45,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Horizon::auth(function ($request) {
+            return optional(auth()->user())->hasRole('administrator');
+        });
+
         Queue::looping(function () {
             //Rollback any transactions that were left open by a previously failed job
             while (DB::transactionLevel() > 0) {

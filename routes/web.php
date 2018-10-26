@@ -891,6 +891,11 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'revisions.all.activity',
             ]);
 
+            Route::get('phi-activity', [
+                'uses' => 'ShowRevisionsController@allActivity',
+                'as'   => 'revisions.phi.activity',
+            ]);
+
             Route::get('{userId}/phi', [
                 'uses' => 'ShowRevisionsController@phi',
                 'as'   => 'revisions.patient.phi',

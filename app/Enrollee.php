@@ -278,7 +278,7 @@ class Enrollee extends \App\BaseModel
      */
     public function setDobAttribute($dob)
     {
-        $this->attributes['dob'] = Carbon::parse($dob);
+        $this->attributes['dob'] = is_a($dob, Carbon::class) ? $dob : Carbon::parse($dob);
     }
 
     /**

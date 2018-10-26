@@ -112,7 +112,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<', 2)
-                                     ->take(10)
+                                     ->take(500)
                                      ->get();
 
         if ($unprocessed->isEmpty()) {
@@ -123,12 +123,12 @@ class QueueEligibilityBatchForProcessing extends Command
         }
 
         $unprocessed->map(function ($job) use ($batch) {
-            ProcessSinglePatientEligibility::dispatch(
+            (new ProcessSinglePatientEligibility(
                 collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice
-            );
+            ))->handle();
         });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
@@ -164,9 +164,9 @@ class QueueEligibilityBatchForProcessing extends Command
                                ProcessCcda::withChain([
                                    (new CheckCcdaEnrollmentEligibility($ccda->id,
                                        $practice,
-                                       $batch))->onQueue('ccda-processor'),
+                                       $batch))->onQueue('low'),
                                ])->dispatch($ccda->id)
-                                          ->onQueue('ccda-processor');
+                                          ->onQueue('low');
 
                                return $ccda;
                            });
@@ -191,7 +191,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function queuePHXJobs($batch): EligibilityBatch
     {
-        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
+        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('low');
 
         return $batch->fresh();
     }
@@ -205,32 +205,37 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! ! ! $batch->options['finishedReadingFile']) {
-            ini_set('memory_limit', '512M');
+            ini_set('memory_limit', '800M');
 
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
-                                     ->where('status', '<', 2)
-                                     ->take(400)
-                                     ->get();
+        if ($batch->status == EligibilityBatch::STATUSES['not_started']) {
+            EligibilityJob::whereBatchId($batch->id)
+                          ->where('status', '<', 2)
+                          ->chunk(1000, function ($jobs) use ($batch) {
+                              foreach ($jobs as $job) {
+                                  ProcessSinglePatientEligibility::dispatch(
+                                      collect([$job->data]),
+                                      $job,
+                                      $batch,
+                                      $batch->practice
+                                  );
+                              }
+                          });
 
-        if ($unprocessed->isNotEmpty()) {
             $batch->status = EligibilityBatch::STATUSES['processing'];
-        } else {
-            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->save();
         }
 
-        $unprocessed->each(function ($job) use ($batch) {
-            (new ProcessSinglePatientEligibility(
-                collect([$job->data]),
-                $job,
-                $batch,
-                $batch->practice
-            ))->handle();
-        });
+        $jobsToBeProcessedCount = EligibilityJob::whereBatchId($batch->id)
+                                                ->where('status', '<', 2)
+                                                ->count();
 
-        $batch->save();
+        if ($jobsToBeProcessedCount == 0) {
+            $batch->status = EligibilityBatch::STATUSES['complete'];
+            $batch->save();
+        }
 
         return $batch;
     }
