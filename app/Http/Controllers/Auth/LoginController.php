@@ -175,6 +175,7 @@ class LoginController extends Controller
      */
     protected function sendInvalidBrowserResponse($browser, $isCLH = false)
     {
+        $messages = [];
         if ($browser == 'IE') {
             $messages = [
                 'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
