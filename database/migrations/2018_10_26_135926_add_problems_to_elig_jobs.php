@@ -65,6 +65,16 @@ class AddProblemsToEligJobs extends Migration
     public function down()
     {
         Schema::table('eligibility_jobs', function (Blueprint $table) {
+            foreach (
+                [
+                    'bhi_problem_id',
+                    'ccm_problem_2_id',
+                    'ccm_problem_1_id',
+                ] as $key
+            ) {
+                $table->dropForeign([$key]);
+            }
+
             $table->dropColumn('bhi_problem_id');
             $table->dropColumn('ccm_problem_1_id');
             $table->dropColumn('ccm_problem_2_id');
