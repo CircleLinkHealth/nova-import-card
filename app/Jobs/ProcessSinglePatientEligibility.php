@@ -51,6 +51,8 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      */
     private $eligibilityJob;
 
+    public $queue = 'low';
+
     /**
      * Create a new job instance.
      *
