@@ -219,9 +219,12 @@ class EligibilityBatchController extends Controller
                     ->leftJoin('cpm_problems as p2', 'p2.id', '=', 'enrollees.cpm_problem_2')
                     ->whereBatchId($batch->id)
                     ->whereNull('user_id')
+                    ->with('eligibilityJob')
                     ->chunk(500, function ($enrollees) use ($handle, &$firstIteration) {
                         foreach ($enrollees as $enrollee) {
                             $data = $enrollee->toArray();
+
+                            $data['was_previously_found_eligible'] = optional($enrollee->job)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH ? 'Y' : 'N';
 
                             if ($firstIteration) {
                                 // Add CSV headers
