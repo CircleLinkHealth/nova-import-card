@@ -11,6 +11,28 @@ use Carbon\Carbon;
 trait DateScopesTrait
 {
     /**
+     * Scope a query to only include activities created on a day. Defaults to created_at field, but a different field may
+     * be specified.
+     *
+     * @param $builder
+     * @param Carbon $date
+     * @param string $field
+     */
+    public function scopeCreatedOn(
+        $builder,
+        Carbon $date,
+        $field = 'created_at'
+    ) {
+        $builder->where(function ($q) use
+        (
+            $field, $date
+        ) {
+            $q->where($field, '>=', $date->copy()->startOfDay())
+              ->where($field, '<=', $date->copy()->endOfDay());
+        });
+    }
+
+    /**
      * Scope a query to only include activities created today. Defaults to created_at field, but a different field may
      * be specified.
      *
