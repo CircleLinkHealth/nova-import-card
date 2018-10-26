@@ -49,10 +49,21 @@ class EligibilityJob extends BaseModel
         'outcome',
         'reason',
         'status',
+        'bhi_problem_id',
+        'ccm_problem_2_id',
+        'ccm_problem_1_id',
+        'ternary_insurance',
+        'secondary_insurance',
+        'primary_insurance',
+        'last_encounter',
     ];
 
     protected $attributes = [
         'status' => 0,
+    ];
+
+    protected $dates = [
+        'last_encounter',
     ];
 
     public function getStatus($statusId = null)

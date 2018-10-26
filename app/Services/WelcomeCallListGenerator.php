@@ -403,6 +403,12 @@ class WelcomeCallListGenerator
             $row['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
             $row['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
 
+            if ($this->eligibilityJob) {
+                $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
+                $this->eligibilityJob->ccm_problem_1_id = $row['cpm_problem_1'];
+                $this->eligibilityJob->ccm_problem_2_id = $row['cpm_problem_2'];
+            }
+
             return $row;
         })->filter()->values();
 
@@ -442,6 +448,8 @@ class WelcomeCallListGenerator
     {
         $eligibleInsurances = [];
 
+        $i = 0;
+
         foreach ($record['insurances'] as $insurance) {
             if (str_contains(strtolower($insurance['type']), [
                 'medicare b',
@@ -450,6 +458,24 @@ class WelcomeCallListGenerator
             ])
             ) {
                 $eligibleInsurances[] = $insurance;
+            }
+
+            if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
+                switch ($i) {
+                    case 0:
+                        $this->eligibilityJob->primary_insurance = $insurance;
+                        break;
+                    case 1:
+                        $this->eligibilityJob->secondary_insurance = $insurance;
+                        break;
+                    case 2:
+                        $this->eligibilityJob->tertiary_insurance = $insurance;
+                        break;
+                    default:
+                        break;
+                }
+
+                $i++;
             }
         }
 
@@ -472,14 +498,14 @@ class WelcomeCallListGenerator
         $tertiary  = strtolower($record['tertiary_insurance'] ?? null);
 
         //Change none to an empty string
-        if (str_contains($primary, 'none')) {
-            $primary = '';
+        if (str_contains($primary, 'none') || empty($primary)) {
+            $primary = null;
         }
-        if (str_contains($secondary, ['none', 'no secondary plan'])) {
-            $secondary = '';
+        if (str_contains($secondary, ['none', 'no secondary plan']) || empty($secondary)) {
+            $secondary = null;
         }
-        if (str_contains($tertiary, ['none', 'no tertiary plan'])) {
-            $tertiary = '';
+        if (str_contains($tertiary, ['none', 'no tertiary plan']) || empty($tertiary)) {
+            $tertiary = null;
         }
 
         //Keep the patient if they have medicaid
@@ -496,6 +522,12 @@ class WelcomeCallListGenerator
             ) {
                 $eligibleInsurances[] = $insurance;
             }
+        }
+
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->primary_insurance   = $primary;
+            $this->eligibilityJob->secondary_insurance = $secondary;
+            $this->eligibilityJob->ternary_insurance   = $tertiary;
         }
 
         if (count($eligibleInsurances) < 1) {
@@ -570,6 +602,10 @@ class WelcomeCallListGenerator
             $lastEncounterDate = is_a($lastEncounter, Carbon::class)
                 ? $lastEncounter
                 : new Carbon($lastEncounter);
+
+            if ($this->eligibilityJob) {
+                $this->eligibilityJob->last_encounter = $lastEncounterDate;
+            }
 
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
