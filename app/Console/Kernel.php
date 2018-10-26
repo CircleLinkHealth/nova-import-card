@@ -101,11 +101,11 @@ class Kernel extends ConsoleKernel
 //            ->dailyAt('05:00');
 
         $schedule->command(QueueGenerateNurseInvoices::class)
-                 ->dailyAt('23:50')
+                 ->dailyAt('23:40')
                  ->withoutOverlapping();
 
         $schedule->command(QueueGenerateNurseDailyReport::class)
-                 ->dailyAt('23:55')
+                 ->dailyAt('23:45')
                  ->withoutOverlapping();
 
         $schedule->command(CareplanEnrollmentAdminNotification::class)
