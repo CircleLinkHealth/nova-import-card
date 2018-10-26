@@ -422,14 +422,14 @@ class WelcomeCallListGenerator
         }
 
         $this->patientList = $this->patientList->reject(function (&$record) {
-            if (isset($record['insurance_plans'])) {
+            if (isset($record['insurance_plans']) || isset($record['insurance_plan'])) {
                 //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
                 $record = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($record);
             }
 
             if (isset($record['insurances'])) {
                 return ! $this->validateInsuranceWithCollection($record);
-            } elseif (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
+            } elseif (isset($record['primary_insurance']) || isset($record['secondary_insurance']) || isset($record['tertiary_insurance'])) {
                 return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
             } else {
                 $this->ineligiblePatients->push($record);
