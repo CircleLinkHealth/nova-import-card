@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\EligibilityBatch;
 use App\EligibilityJob;
 use App\Enrollee;
-use App\Http\Resources\EligibilityJobCSVRow;
+use App\Models\CPM\CpmProblem;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
@@ -308,6 +308,8 @@ class EligibilityBatchController extends Controller
 
             $firstIteration = true;
 
+            $cpmProblemsMap = CpmProblem::pluck('name', 'id');
+
             $batch->eligibilityJobs()
                   ->select([
                       'batch_id',
@@ -316,12 +318,31 @@ class EligibilityBatchController extends Controller
                       'outcome',
                       'reason',
                       'status',
+                      'bhi_problem_id',
+                      'ccm_problem_2_id',
+                      'ccm_problem_1_id',
+                      'ternary_insurance',
+                      'secondary_insurance',
+                      'primary_insurance',
+                      'last_encounter',
                   ])
-                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration) {
+                  ->chunk(500, function ($jobs) use ($handle, &$firstIteration, $cpmProblemsMap) {
                       foreach ($jobs as $job) {
-                          $data = $job->toArray();
-
-                          $data['messages'] = json_encode($data['messages']);
+                          $data = [
+                              'batch_id'            => $job->batch_id,
+                              'hash'                => $job->hash,
+                              'outcome'             => $job->outcome,
+                              'reason'              => $job->reason,
+                              'messages'            => json_encode($job->messages),
+                              'last_encounter'      => $job->last_encounter,
+                              'ccm_problem_1'       => $cpmProblemsMap[$job->ccm_problem_1_id] ?? '',
+                              'ccm_problem_2'       => $cpmProblemsMap[$job->ccm_problem_2_id] ?? '',
+                              'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
+                              'primary_insurance'   => $job->primary_insurance,
+                              'secondary_insurance' => $job->secondary_insurance,
+                              'ternary_insurance'   => $job->ternary_insurance,
+                              'processing_status'   => $job->getStatus(),
+                          ];
 
                           if ($firstIteration) {
                               // Add CSV headers
