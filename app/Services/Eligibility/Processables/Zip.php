@@ -45,7 +45,7 @@ class Zip extends BaseProcessable
                 new CheckCcdaEnrollmentEligibility($ccda->id, $this->practice, $this->filterLastEncounter,
                     $this->filterInsurance, $this->filterProblems),
             ])->dispatch($ccda->id)
-                       ->onQueue('ccda-processor');
+                       ->onQueue('low');
         }
     }
 

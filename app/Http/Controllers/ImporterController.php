@@ -197,7 +197,7 @@ class ImporterController extends Controller
         foreach ($request->allFiles()['medical_records'] as $file) {
             if ($file->getClientOriginalExtension() == 'csv') {
                 ImportCsvPatientList::dispatch(parseCsvToArray($file),
-                    $file->getClientOriginalName())->onQueue('medical-records');
+                    $file->getClientOriginalName())->onQueue('low');
 
                 $link = link_to_route(
                     'import.ccd.remix',
@@ -214,7 +214,7 @@ class ImporterController extends Controller
                 'source'    => Ccda::IMPORTER,
             ]);
 
-            ImportCcda::dispatch($ccda)->onQueue('medical-records');
+            ImportCcda::dispatch($ccda)->onQueue('low');
         }
 
         return redirect()->route('import.ccd.remix');

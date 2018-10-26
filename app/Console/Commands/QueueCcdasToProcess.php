@@ -47,7 +47,7 @@ class QueueCcdasToProcess extends Command
             ->get(['id'])
             ->map(function ($ccda) {
                 $job = (new ProcessCcda($ccda))
-                    ->onQueue('ccda-processor')
+                    ->onQueue('low')
                     ->delay(Carbon::now()->addSeconds(20));
 
                 dispatch($job);

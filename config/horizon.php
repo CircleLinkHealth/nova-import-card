@@ -3,9 +3,9 @@
 $supervisor = [
     'supervisor-1' => [
         'connection' => 'redis',
-        'queue'      => ['default', 'ccda-processor', 'medical-records', 'reports'],
+        'queue'      => ['high', 'default', 'low'],
         'balance'    => 'auto',
-        'processes'  => 10,
+        'processes'  => 15,
         'tries'      => 1,
         'timeout'    => 300,
     ],

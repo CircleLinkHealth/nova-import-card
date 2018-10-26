@@ -164,9 +164,9 @@ class QueueEligibilityBatchForProcessing extends Command
                                ProcessCcda::withChain([
                                    (new CheckCcdaEnrollmentEligibility($ccda->id,
                                        $practice,
-                                       $batch))->onQueue('ccda-processor'),
+                                       $batch))->onQueue('low'),
                                ])->dispatch($ccda->id)
-                                          ->onQueue('ccda-processor');
+                                          ->onQueue('low');
 
                                return $ccda;
                            });
@@ -191,7 +191,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function queuePHXJobs($batch): EligibilityBatch
     {
-        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
+        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('low');
 
         return $batch->fresh();
     }
