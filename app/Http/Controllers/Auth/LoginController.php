@@ -82,7 +82,7 @@ class LoginController extends Controller
     {
         $agent = new Agent();
 
-        if ( ! $this->validateBrowserVersion($agent)) {
+        if ( ! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
 
             $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
 
