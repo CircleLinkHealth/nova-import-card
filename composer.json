@@ -55,6 +55,7 @@
     "lab404/laravel-impersonate": "^1.2",
     "laracasts/utilities": "~2.0",
     "laravel/framework": "5.5.*",
+    "laravel/horizon": "^1.4",
     "laravel/passport": "^4.0",
     "laravel/tinker": "^1.0",
     "laravelcollective/html": "5.5.*",
