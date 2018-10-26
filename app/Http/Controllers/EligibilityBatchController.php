@@ -224,7 +224,7 @@ class EligibilityBatchController extends Controller
                         foreach ($enrollees as $enrollee) {
                             $data = $enrollee->toArray();
 
-                            $data['was_previously_found_eligible'] = optional($enrollee->job)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH ? 'Y' : 'N';
+                            $data['was_previously_found_eligible'] = optional($enrollee->eligibilityJob)->outcome == EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH ? 'Y' : 'N';
 
                             if ($firstIteration) {
                                 // Add CSV headers
