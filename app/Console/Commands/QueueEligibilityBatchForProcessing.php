@@ -220,7 +220,7 @@ class QueueEligibilityBatchForProcessing extends Command
                                       $job,
                                       $batch,
                                       $batch->practice
-                                  );
+                                  )->onQueue('low');
                               }
                           });
 
