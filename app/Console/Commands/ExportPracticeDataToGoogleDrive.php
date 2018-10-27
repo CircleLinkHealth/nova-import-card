@@ -55,7 +55,7 @@ class ExportPracticeDataToGoogleDrive extends Command
                     \Log::debug("Queuing {$user->first_name} {$user->last_name} CLH ID:{$user->id} for Export.");
                     
                     QueuePatientToExport::dispatch($user, $folderId)
-                                        ->onQueue('reports')
+                                        ->onQueue('high')
                                         ->delay(Carbon::now()->addSeconds($i * 3)); //temporary way to deal with
 
                     $i++;

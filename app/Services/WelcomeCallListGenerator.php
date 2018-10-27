@@ -120,6 +120,11 @@ class WelcomeCallListGenerator
 
         $this->eligibilityJob = $eligibilityJob;
 
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->status = 1;
+            $this->eligibilityJob->save();
+        }
+
         try {
             $this->filterPatientList();
 
