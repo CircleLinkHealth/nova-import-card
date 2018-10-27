@@ -86,7 +86,7 @@ class OpsDashboardController extends Controller
     public function dailyCsv()
     {
 
-        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('reports');
+        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('high');
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
 
