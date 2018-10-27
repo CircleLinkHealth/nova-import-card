@@ -28,7 +28,9 @@
                         | Started: <em>{{ $batch->created_at->format('m-d-Y h:mA') }}</em> | Last Update:
                         <em>{{ $batch->updated_at->format('m-d-Y h:mA')}}</em>
                         <div class="pull-right" style="color: {{$batch->getStatusFontColor()}};">
-                            <b>{{ strtoupper($batch->getStatus()) }}</b></div>
+                            @if ($batch->status != 0)
+                                <b>{{ strtoupper($batch->getStatus()) }}</b></div>
+                        @endif
                     </div>
 
                     <div class="panel-body">
@@ -65,17 +67,17 @@
                                    class="btn btn-danger">Reprocess</a>
                             </div>
 
-                                <div class="pull-left" style="padding-left: 2%;">
-                                    <a href="{{route('eligibility.download.csv.patient.list', [$batch->id])}}"
-                                       class="btn btn-info">All patients CSV</a>
-                                </div>
+                            <div class="pull-left" style="padding-left: 2%;">
+                                <a href="{{route('eligibility.download.csv.patient.list', [$batch->id])}}"
+                                   class="btn btn-info">All patients CSV</a>
+                            </div>
                         @endif
 
 
                         <br><br>
 
                         <h4>Counts</h4>
-                            @if(isset($stats) && !empty($stats))
+                        @if(isset($stats) && !empty($stats))
                             @forelse($stats as $key => $value)
                                 <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
                             @empty

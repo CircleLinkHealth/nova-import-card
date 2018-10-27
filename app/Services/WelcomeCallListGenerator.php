@@ -120,6 +120,11 @@ class WelcomeCallListGenerator
 
         $this->eligibilityJob = $eligibilityJob;
 
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->status = 1;
+            $this->eligibilityJob->save();
+        }
+
         try {
             $this->filterPatientList();
 
@@ -706,12 +711,18 @@ class WelcomeCallListGenerator
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
 
-            if (array_key_exists('last_encounter', $args)) {
-                $args['last_encounter'] = Carbon::parse($args['last_encounter']);
-            } elseif (array_key_exists('last_visit', $args)) {
-                $args['last_encounter'] = Carbon::parse($args['last_visit']);
-            } else {
+            $lastEncounter = $args['last_encounter'] ?? $args['last_visit'];
+
+            $validator = Validator::make([
+                'last_encounter' => $lastEncounter,
+            ], [
+                'last_encounter' => 'required|filled|date',
+            ]);
+
+            if ($validator->fails()) {
                 $args['last_encounter'] = null;
+            } else {
+                $args['last_encounter'] = Carbon::parse($lastEncounter);
             }
 
             $args['batch_id'] = $this->batch->id;

@@ -39,6 +39,6 @@ class QueueGenerateOpsDailyReport extends Command
      */
     public function handle()
     {
-        GenerateOpsDailyReport::dispatch()->onQueue('reports');
+        GenerateOpsDailyReport::dispatch()->onQueue('high');
     }
 }

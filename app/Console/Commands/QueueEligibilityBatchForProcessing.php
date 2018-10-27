@@ -210,23 +210,19 @@ class QueueEligibilityBatchForProcessing extends Command
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
-        if ($batch->status == EligibilityBatch::STATUSES['not_started']) {
-            EligibilityJob::whereBatchId($batch->id)
-                          ->where('status', '<', 2)
-                          ->chunk(1000, function ($jobs) use ($batch) {
-                              foreach ($jobs as $job) {
-                                  ProcessSinglePatientEligibility::dispatch(
-                                      collect([$job->data]),
-                                      $job,
-                                      $batch,
-                                      $batch->practice
-                                  );
-                              }
-                          });
-
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
-        }
+        EligibilityJob::whereBatchId($batch->id)
+                      ->where('status', '=', 0)
+                      ->inRandomOrder()
+                      ->take(300)
+                      ->get()
+                      ->each(function ($job) use ($batch) {
+                          ProcessSinglePatientEligibility::dispatch(
+                              collect([$job->data]),
+                              $job,
+                              $batch,
+                              $batch->practice
+                          )->onQueue('low');
+                      });
 
         $jobsToBeProcessedCount = EligibilityJob::whereBatchId($batch->id)
                                                 ->where('status', '<', 2)
@@ -234,8 +230,11 @@ class QueueEligibilityBatchForProcessing extends Command
 
         if ($jobsToBeProcessedCount == 0) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
-            $batch->save();
+        } else {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
         }
+
+        $batch->save();
 
         return $batch;
     }

@@ -69,6 +69,6 @@ class QueueGenerateNurseDailyReport extends Command
         //not sure why we were passing a list of admin user ids
         //GenerateNurseDailyReportCsv::dispatch(User::ofType('administrator')->pluck('id'))
         GenerateNurseDailyReportCsv::dispatch($forDate)
-                                   ->onQueue('reports');
+                                   ->onQueue('high');
     }
 }

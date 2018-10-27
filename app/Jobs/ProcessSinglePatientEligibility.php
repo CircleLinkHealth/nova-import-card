@@ -51,8 +51,6 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      */
     private $eligibilityJob;
 
-    public $queue = 'low';
-
     /**
      * Create a new job instance.
      *
@@ -83,17 +81,20 @@ class ProcessSinglePatientEligibility implements ShouldQueue
      */
     public function handle()
     {
-        new WelcomeCallListGenerator(
-            $this->patient,
-            $this->filterLastEncounter,
-            $this->filterInsurance,
-            $this->filterProblems,
-            true,
-            $this->practice,
-            null,
-            null,
-            $this->batch,
-            $this->eligibilityJob
-        );
+        //Only process if EligibilityJob status is 0 (not_started)
+        if ($this->eligibilityJob->status == 0) {
+            new WelcomeCallListGenerator(
+                $this->patient,
+                $this->filterLastEncounter,
+                $this->filterInsurance,
+                $this->filterProblems,
+                true,
+                $this->practice,
+                null,
+                null,
+                $this->batch,
+                $this->eligibilityJob
+            );
+        }
     }
 }
