@@ -223,11 +223,6 @@ class QueueEligibilityBatchForProcessing extends Command
                                       $batch,
                                       $batch->practice
                                   )->onQueue('low');
-
-                                  if ($firstIteration) {
-                                      $batch->status = EligibilityBatch::STATUSES['processing'];
-                                      $batch->save();
-                                  }
                               }
                           });
         }

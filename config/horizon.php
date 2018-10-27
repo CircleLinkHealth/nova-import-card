@@ -5,7 +5,7 @@ $supervisor = [
         'connection' => 'redis',
         'queue'      => ['high', 'default', 'low'],
         'balance'    => 'auto',
-        'processes'  => 12,
+        'processes'  => 10,
         'tries'      => 1,
         'timeout'    => 300,
     ],
