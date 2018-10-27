@@ -210,10 +210,12 @@ class QueueEligibilityBatchForProcessing extends Command
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
+        $firstIteration = true;
+
         if ($batch->status == EligibilityBatch::STATUSES['not_started']) {
             EligibilityJob::whereBatchId($batch->id)
                           ->where('status', '<', 2)
-                          ->chunk(1000, function ($jobs) use ($batch) {
+                          ->chunk(1000, function ($jobs) use ($batch, &$firstIteration) {
                               foreach ($jobs as $job) {
                                   ProcessSinglePatientEligibility::dispatch(
                                       collect([$job->data]),
@@ -221,11 +223,13 @@ class QueueEligibilityBatchForProcessing extends Command
                                       $batch,
                                       $batch->practice
                                   )->onQueue('low');
+
+                                  if ($firstIteration) {
+                                      $batch->status = EligibilityBatch::STATUSES['processing'];
+                                      $batch->save();
+                                  }
                               }
                           });
-
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-            $batch->save();
         }
 
         $jobsToBeProcessedCount = EligibilityJob::whereBatchId($batch->id)
