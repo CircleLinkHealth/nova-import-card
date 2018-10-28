@@ -14,6 +14,7 @@ use App\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Validator;
 use Seld\JsonLint\JsonParser;
 
 class JsonMedicalRecordAdapter
@@ -153,8 +154,26 @@ class JsonMedicalRecordAdapter
 
     private function validate(Collection $coll): bool
     {
-        //@todo: implement validation rules
-        return true;
+
+        $validator = Validator::make($coll->all(), [
+            'patient_id' => 'required',
+            'last_name' => 'required|alpha_num',
+            'first_name' => 'required|alpha_num',
+            'date_of_birth' => 'required|date',
+            'problems' => ['required', function ($attribute, $value, $fail) {
+                if (count($value) < 1) {
+                    $fail($attribute . 'field must contain at least 1 problem.');
+                }
+            }],
+            'primary_phone' => "phone:us|required_if:cell_phone,==,null,",
+            'cell_phone' => "phone:us|required_if:primary_phone,==,null,",
+        ]);
+
+        if ($validator->passes()) {
+            return true;
+        }
+
+        return false;
     }
 
     private function getKey(EligibilityBatch $eligibilityBatch)
