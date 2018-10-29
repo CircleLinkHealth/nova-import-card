@@ -83,6 +83,7 @@ class GenerateOpsDailyReport implements ShouldQueue
         $data = [
             'hoursBehind' => $hoursBehind,
             'rows'        => $rows,
+            'dateGenerated' => $this->date->toDateTimeString(),
         ];
 
         $path = storage_path("ops-daily-report-{$this->date->toDateString()}.json");
