@@ -1,31 +1,43 @@
 @extends('partials.adminUI')
 
 @push('styles')
-<style>
-    .job-completed-card {
-        background-color: #fafafa;
-        color: #212121;
-        padding: 3rem;
-        border-radius: 2rem;
-        font-family: 'Roboto', arial, 'Noto Sans Japanese', sans-serif;
-        margin: 4rem;
-    }
+    <style>
+        .job-completed-card {
+            background-color: #fafafa;
+            color: #212121;
+            padding: 3rem;
+            border-radius: 2rem;
+            font-family: 'Roboto', arial, 'Noto Sans Japanese', sans-serif;
+            margin: 4rem;
+        }
 
-    .job-completed-card-title {
-        color: #ff5723;
-        border-bottom: 1px solid #e6e6e6;
-        padding: 1rem;
-    }
+        .job-completed-card-title {
+            color: #ff5723;
+            border-bottom: 1px solid #e6e6e6;
+            padding: 1rem;
+        }
 
-    .job-completed-card-footer {
-        font-size: 12px;
-        margin: 40px 0 0 0;
-    }
-</style>
+        .job-completed-card-footer {
+            font-size: 12px;
+            margin: 40px 0 0 0;
+        }
+    </style>
 @endpush
 
-@section('content')
+<?php
 
+function getRelativeUrl($url)
+{
+    $step1 = parse_url($url);
+    if (isset($step1['query'])) {
+        return $step1['path'] . '?' . $step1['query'];
+    }
+    return $step1['path'];
+}
+
+?>
+
+@section('content')
     <div class="container">
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
@@ -37,7 +49,7 @@
                         </h3>
 
                         @isset($cache['link'])
-                            <a href="{{$cache['link']}}" class="alert-link">{{$cache['linkTitle']}}</a>
+                            <a href="{{getRelativeUrl($cache['link'])}}" class="alert-link">{{$cache['linkTitle']}}</a>
                         @endisset
 
                         <h5>{{$cache['description'] ?? ''}}</h5>

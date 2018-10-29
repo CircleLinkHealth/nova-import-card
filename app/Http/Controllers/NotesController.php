@@ -404,7 +404,17 @@ class NotesController extends Controller
             if ($call) {
                 if ($task_status === "done") {
                     if ($call->sub_type === "Call Back") {
-                        $call->status = Call::REACHED;
+
+                        if ( ! isset($input['call_status'])) {
+                            //exit with error
+                            return redirect()
+                                ->back()
+                                ->withErrors(["Invalid form input. Missing ['call_status']"])
+                                ->withInput();
+                        }
+
+                        $call_status = $input['call_status'];
+                        $call->status = $call_status;
 
                         //Updates when the patient was successfully contacted last
                         $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');

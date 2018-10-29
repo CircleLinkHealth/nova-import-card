@@ -46,8 +46,8 @@ use Illuminate\Support\Facades\Cache;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
 /**
  * App\User
@@ -2918,7 +2918,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'is_online'             => $this->is_online,
             'patient_info'          => optional($this->patientInfo()->first())->safe(),
             'provider_info'         => $this->providerInfo()->first(),
-            'billing_provider_name' => $this->billing_provider_name,
+            'billing_provider_name' => $this->getBillingProviderName(),
             'billing_provider_id'   => $this->getBillingProviderId(),
             'careplan'              => optional($careplan)->safe(),
             'last_read'             => optional($observation)->obs_date,
