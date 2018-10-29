@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('emailapprovalreminder:providers')
                  ->weekdays()
-                 ->dailyAt('08:00');
+                 ->at('08:00');
 
         //commenting out due to isues with google calendar
 //        $schedule->command('nurseSchedule:export')
@@ -80,8 +80,7 @@ class Kernel extends ConsoleKernel
                  ->everyThirtyMinutes();
 
         $schedule->command(EmailRNDailyReport::class)
-                 ->weekdays()
-                 ->at('21:00');
+                 ->dailyAt('21:00');
 
         $schedule->command(QueueSendApprovedCareplanSlackNotification::class)
                  ->dailyAt('23:40');
