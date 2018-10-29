@@ -646,7 +646,7 @@ class WelcomeCallListGenerator
                 $args = $args->all();
             }
 
-            if (isset($args['insurance_plans'])) {
+            if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
                 $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
             }
 
