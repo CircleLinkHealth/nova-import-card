@@ -16,9 +16,9 @@ class UserCsvResource extends Resource
      */
     public function toArray($request)
     {
-        $practice = optional($this->primaryPractice()->first());
-        $patient  = optional($this->patientInfo()->first());
-        $careplan = optional($this->carePlan()->first());
+        $practice = $this->primaryPractice;
+        $patient  = $this->patientInfo;
+        $careplan = $this->carePlan;
         $ccmStatusDate = '';
         if ($patient->ccm_status == 'paused'){
             $ccmStatusDate = $patient->date_paused;
