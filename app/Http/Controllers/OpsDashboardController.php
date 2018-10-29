@@ -52,6 +52,8 @@ class OpsDashboardController extends Controller
         }
         //there are no compatible reports in the cloud before this day
         $noReportDates = Carbon::parse('5 August 2018');
+        //for older reports that dont have dateGenerated
+        $dateGenerated = null;
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
@@ -73,6 +75,9 @@ class OpsDashboardController extends Controller
             $data        = json_decode($json, true);
             $hoursBehind = $data['hoursBehind'];
             $rows        = $data['rows'];
+            if(array_key_exists('dateGenerated', $data)){
+            $dateGenerated = Carbon::parse($data['dateGenerated']);
+        }
         }
 
         return view('admin.opsDashboard.daily', compact([
@@ -80,6 +85,7 @@ class OpsDashboardController extends Controller
             'maxDate',
             'hoursBehind',
             'rows',
+            'dateGenerated'
         ]));
     }
 
