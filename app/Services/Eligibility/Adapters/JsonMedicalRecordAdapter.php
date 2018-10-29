@@ -165,6 +165,8 @@ class JsonMedicalRecordAdapter
                     $fail($attribute . 'field must contain at least 1 problem.');
                 }
             }],
+            'problems.*.name' => "required_if:problems.*.code,==,null,",
+            'problems.*.code' => "required_if:problems.*.name,==,null,",
             'primary_phone' => "phone:us|required_if:cell_phone,==,null,",
             'cell_phone' => "phone:us|required_if:primary_phone,==,null,",
         ]);
