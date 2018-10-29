@@ -12,7 +12,7 @@ namespace App;
 use Storage;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 
-class Media extends \Spatie\MediaLibrary\Media
+class Media extends \Spatie\MediaLibrary\Models\Media
 {
     /**
      * Get the file

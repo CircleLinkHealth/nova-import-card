@@ -46,19 +46,21 @@ if (isset($patient) && ! empty($patient)) {
                                     </span>
                                 </div>
                                 @if(! empty(optional($errors)->messages()))
-                                <div>
-                                    <div class="alert alert-danger text-left" style="line-height: 2">
-                                        <h4>CarePlan cannot be approved because:</h4>
-                                        <ul class="list-group">
-                                            @foreach ($errors->all() as $error)
-                                                <li><span class="glyphicon glyphicon-exclamation-sign"></span> {!! $error !!}</li>
-                                            @endforeach
-                                        </ul>
+                                    <div>
+                                        <div class="alert alert-danger text-left" style="line-height: 2">
+                                            <h4>CarePlan cannot be approved because:</h4>
+                                            <ul class="list-group">
+                                                @foreach ($errors->all() as $error)
+                                                    <li>
+                                                        <span class="glyphicon glyphicon-exclamation-sign"></span> {!! $error !!}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        <div class="row" style="margin-bottom: 5%;">
+                                            @include('errors.incompatibleBrowser')
+                                        </div>
                                     </div>
-                                    <div class="row" style="margin-bottom: 5%;">
-                                        @include('errors.incompatibleBrowser')
-                                    </div>
-                                </div>
                                 @endif
 
                                 @if($showInsuranceReviewFlag)
@@ -116,33 +118,51 @@ if (isset($patient) && ! empty($patient)) {
                                                 @endif
                                             </template>
 
-                                            <span class="btn btn-group text-right">
-                                                @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
+                                            @if ( ($patient->getCarePlanStatus() == 'qa_approved' && auth()->user()->canApproveCarePlans()) || ($patient->getCarePlanStatus() == 'draft' && auth()->user()->canQAApproveCarePlans()) )
+                                                <a style="margin-right:10px;"
+                                                   class="btn btn-info btn-sm inline-block"
+                                                   aria-label="..."
+                                                   role="button"
+                                                   href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+
+                                                @if(auth()->user()->hasRole('provider'))
                                                     <a style="margin-right:10px;"
-                                                       class="btn btn-info btn-sm inline-block"
+                                                       class="btn btn-success btn-sm inline-block"
                                                        aria-label="..."
                                                        role="button"
-                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id]) }}">Approve</a>
+                                                       href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve
+                                                        and View Next</a>
 
-                                                    @if(auth()->user()->hasRole('provider'))
-                                                        <a style="margin-right:10px;"
-                                                           class="btn btn-success btn-sm inline-block"
-                                                           aria-label="..."
-                                                           role="button"
-                                                           href="{{ route('patient.careplan.approve', ['patientId' => $patient->id, 'viewNext' => true]) }}">Approve and View Next</a>
-                                                    @endif
+                                                    <form action="{{route('patient.careplan.not.eligible', ['patientId' => $patient->id, 'viewNext' => true])}}"
+                                                          method="POST" id="not-eligible-form" style="display: inline">
+                                                        {{ csrf_field() }}
+                                                        <button type="button" style="margin-right:10px;"
+                                                                onclick="notEligibleClick()"
+                                                                class="btn btn-danger btn-sm text-right">Not Eligible
+                                                        </button>
+
+                                                        <script>
+                                                            function notEligibleClick() {
+                                                                if (confirm('Are you sure this Patient is not eligible?' +
+                                                                        ' (This action cannot be undone)')) {
+                                                                    document.getElementById('not-eligible-form').submit();
+                                                                }
+                                                            }
+                                                        </script>
+                                                    </form>
                                                 @endif
+                                            @endif
 
-                                                <a class="btn btn-info btn-sm inline-block" aria-label="..."
-                                                   role="button"
-                                                   href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print This Page</a>
+                                            <a class="btn btn-info btn-sm inline-block" aria-label="..."
+                                               role="button"
+                                               href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print
+                                                This Page</a>
 
-                                                <form class="lang" action="#" method="POST" id="form">
+                                            <form class="lang" action="#" method="POST" id="form">
                                                 {{ csrf_field() }}
-                                                    <input type="hidden" name="lang" value="es"/>
-                                                    <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
-                                    -->       </form>
-                                            </span>
+                                                <input type="hidden" name="lang" value="es"/>
+                                                <!-- <button type="submit" class="btn btn-info btn-sm text-right" aria-label="..." value="">Translate to Spanish</button>
+                                -->       </form>
                                         </pdf-careplans>
                                     @endif
                                 </div>

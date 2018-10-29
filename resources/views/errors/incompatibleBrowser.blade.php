@@ -1,7 +1,7 @@
-<form method="POST" action="{{ route('store.browser.compatibility.check.preference') }}">
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+@if($errors->has('invalid-browser') || $errors->has('invalid-browser-force-switch'))
+    <form method="POST" action="{{ route('store.browser.compatibility.check.preference') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-    @if($errors->has('invalid-browser') || $errors->has('invalid-browser-force-switch'))
         <div class="col-md-12 text-center">
             @if(!$errors->has('invalid-browser-force-switch'))
                 <div class="col-md-12">
@@ -18,5 +18,6 @@
             <a href="https://www.google.com/chrome/browser/desktop/index.html" class="btn btn-success btn-lg">Download
                 Chrome</a>
         </div>
-    @endif
-</form>
+
+    </form>
+@endif
