@@ -87,7 +87,7 @@ class Kernel extends ConsoleKernel
                  ->dailyAt('23:40');
 
         $schedule->command(QueueGenerateOpsDailyReport::class)
-                 ->dailyAt('23:00');
+                 ->dailyAt('23:30');
 
         //Run at 12:01am every 1st of month
         $schedule->command(ResetPatients::class)
