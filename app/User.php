@@ -2918,7 +2918,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             'is_online'             => $this->is_online,
             'patient_info'          => optional($this->patientInfo()->first())->safe(),
             'provider_info'         => $this->providerInfo()->first(),
-            'billing_provider_name' => $this->billing_provider_name,
+            'billing_provider_name' => $this->getBillingProviderName(),
             'billing_provider_id'   => $this->getBillingProviderId(),
             'careplan'              => optional($careplan)->safe(),
             'last_read'             => optional($observation)->obs_date,

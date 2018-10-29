@@ -31,7 +31,7 @@ class UserCsvResource extends Resource
         }
 
         return ('"' . $this->display_name ?? $this->name()) . '",' .
-               '"' . $this->billing_provider_name . '",' .
+               '"' . $this->getBillingProviderName() . '",' .
                '"' . $practice->display_name . '",' .
                '"' . $patient->ccm_status . '",' .
                '"' . $careplan->status . '",' .
