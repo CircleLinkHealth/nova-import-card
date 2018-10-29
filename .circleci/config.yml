@@ -22,7 +22,7 @@ jobs:
     - checkout
 
     - run: sudo apt update && sudo apt install zlib1g-dev libsqlite3-dev libpng-dev
-    - run: sudo docker-php-ext-install zip gd
+    - run: sudo docker-php-ext-install zip gd mysqli mbstring pdo pdo_mysql mcrypt tokenizer xml pcntl
 
     # Download and cache dependencies
 

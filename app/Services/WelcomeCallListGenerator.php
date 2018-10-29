@@ -381,6 +381,12 @@ class WelcomeCallListGenerator
             $ccmProbCount = count($qualifyingCcmProblems);
             $bhiProbCount = count($qualifyingBhiProblems);
 
+            if ($this->eligibilityJob) {
+                $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
+                $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
+                $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+            }
+
             if ($ccmProbCount < 2 && $bhiProbCount == 0) {
                 $this->ineligiblePatients->push($row);
 
@@ -407,12 +413,6 @@ class WelcomeCallListGenerator
 
             $row['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
             $row['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
-
-            if ($this->eligibilityJob) {
-                $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
-                $this->eligibilityJob->ccm_problem_1_id = $row['cpm_problem_1'];
-                $this->eligibilityJob->ccm_problem_2_id = $row['cpm_problem_2'];
-            }
 
             return $row;
         })->filter()->values();
@@ -646,7 +646,7 @@ class WelcomeCallListGenerator
                 $args = $args->all();
             }
 
-            if (isset($args['insurance_plans'])) {
+            if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
                 $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
             }
 
