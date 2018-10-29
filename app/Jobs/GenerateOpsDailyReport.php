@@ -62,6 +62,7 @@ class GenerateOpsDailyReport implements ShouldQueue
                              ->sortBy('display_name');
 
 
+
         $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
 
         foreach ($practices as $practice) {
