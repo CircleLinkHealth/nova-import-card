@@ -42,6 +42,10 @@
 
                         @push('scripts')
                             <script>
+
+                                const activityStr = @json($activity_json) + "";
+                                const activityJson = JSON.parse(activityStr);
+
                                 function startCompare(value, filter) {
                                     value = value.toString().toLowerCase();
                                     filter = '<' + filter.toString().toLowerCase();
@@ -188,7 +192,7 @@
                                         size: 10, // the number of records per a page
                                         group: 5   // the number of pages in the pager
                                     },
-                                    {!!$activity_json!!}
+                                    data: activityJson
                                 })
                                 ;
                                 webix.event(window, "resize", function () {
