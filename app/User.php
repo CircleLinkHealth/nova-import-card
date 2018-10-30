@@ -3181,4 +3181,15 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
             ->pluck('cpmProblem.name', 'cpmProblem.id')
             ->all();
     }
+
+    /**
+     * Temporary solution for `careplan_assessments.careplan_id` not being an actual `careplan_id` but a `user_id`
+     * @see CPM-423
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function carePlanAssessment()
+    {
+        return $this->hasOne(CareplanAssessment::class, 'careplan_id');
+    }
 }
