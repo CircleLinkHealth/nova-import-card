@@ -326,19 +326,26 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param Request $input
+     * @param Request $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(
-        Request $input,
+        Request $request,
         SchedulerService $schedulerService,
         $patientId
     ) {
 
-        $input = $input->all();
+        $input = $request->all();
+        //prevent xss
+        if (isset($input['body'])) {
+            $input['body'] = strip_tags($input['body']);
+        }
+        if (isset($input['type'])) {
+            $input['type'] = strip_tags($input['type']);
+        }
 
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
@@ -413,7 +420,7 @@ class NotesController extends Controller
                                 ->withInput();
                         }
 
-                        $call_status = $input['call_status'];
+                        $call_status  = $input['call_status'];
                         $call->status = $call_status;
 
                         //Updates when the patient was successfully contacted last
