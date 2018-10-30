@@ -69,47 +69,48 @@ const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call.vue');
-
+const AddActionCallComponent = () => import(/* webpackChunkName: "chunk-add-action-modal" */ './admin/calls/comps/modals/add-action.modal.vue');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
 
 Vue.component('billing-report', BillingComponent);
-Vue.component('component-proxy', ComponentProxy)
-Vue.component('careTeam', CareTeamComponent)
-Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson)
-Vue.component('createCarePerson', CreateCarePerson)
-Vue.component('updateCarePerson', UpdateCarePerson)
-Vue.component('select2', Select2Component)
-Vue.component('fab', FabComponent)
-Vue.component('openModal', OpenModalComponent)
-Vue.component('notifications', NotificationsComponent)
-Vue.component('pdfCareplans', PdfCarePlans)
-Vue.component('medicationsList', MedicationsListComponent)
-Vue.component('problemsList', ProblemsList)
-Vue.component('allergiesList', AllergiesList)
-Vue.component('nurseDailyHours', NurseDailyHours)
-Vue.component('questionnaire-app', QuestionnaireApp)
-Vue.component('time-tracker', TimeTracker)
-Vue.component('time-tracker-call-mode', TimeTrackerCallModeComponent)
-Vue.component('server-time-display', ServerTimeDisplay)
-Vue.component('loader', LoaderComponent)
-Vue.component('persistent-textarea', PersistentTextArea)
-Vue.component('care-areas', CareAreasComponent)
-Vue.component('health-goals', HealthGoalsComponent)
-Vue.component('medications', MedicationsComponent)
-Vue.component('symptoms', SymptomsComponent)
-Vue.component('lifestyles', LifestylesComponent)
-Vue.component('instructions', InstructionsComponent)
-Vue.component('allergies', AllergiesComponent)
-Vue.component('social-services', SocialServicesComponent)
-Vue.component('others', OthersComponent)
-Vue.component('misc-modal', MiscModalComponent)
-Vue.component('appointments', AppointmentsComponent)
-Vue.component('patient-list', PatientList)
-Vue.component('v-datepicker', DatepickerComponent)
-Vue.component('importer-trainer', ImporterTrainerComponent)
+Vue.component('component-proxy', ComponentProxy);
+Vue.component('careTeam', CareTeamComponent);
+Vue.component('createAppointmentsAddCarePerson', CreateAppointmentsAddCarePerson);
+Vue.component('createCarePerson', CreateCarePerson);
+Vue.component('updateCarePerson', UpdateCarePerson);
+Vue.component('select2', Select2Component);
+Vue.component('fab', FabComponent);
+Vue.component('openModal', OpenModalComponent);
+Vue.component('notifications', NotificationsComponent);
+Vue.component('pdfCareplans', PdfCarePlans);
+Vue.component('medicationsList', MedicationsListComponent);
+Vue.component('problemsList', ProblemsList);
+Vue.component('allergiesList', AllergiesList);
+Vue.component('nurseDailyHours', NurseDailyHours);
+Vue.component('questionnaire-app', QuestionnaireApp);
+Vue.component('time-tracker', TimeTracker);
+Vue.component('time-tracker-call-mode', TimeTrackerCallModeComponent);
+Vue.component('server-time-display', ServerTimeDisplay);
+Vue.component('loader', LoaderComponent);
+Vue.component('persistent-textarea', PersistentTextArea);
+Vue.component('care-areas', CareAreasComponent);
+Vue.component('health-goals', HealthGoalsComponent);
+Vue.component('medications', MedicationsComponent);
+Vue.component('symptoms', SymptomsComponent);
+Vue.component('lifestyles', LifestylesComponent);
+Vue.component('instructions', InstructionsComponent);
+Vue.component('allergies', AllergiesComponent);
+Vue.component('social-services', SocialServicesComponent);
+Vue.component('others', OthersComponent);
+Vue.component('misc-modal', MiscModalComponent);
+Vue.component('appointments', AppointmentsComponent);
+Vue.component('patient-list', PatientList);
+Vue.component('v-datepicker', DatepickerComponent);
+Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
+Vue.component('add-action-modal', AddActionCallComponent);
 
 const App = new Vue({
     el: '#app',
