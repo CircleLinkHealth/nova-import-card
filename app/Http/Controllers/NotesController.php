@@ -7,6 +7,7 @@ use App\Note;
 use App\PatientContactWindow;
 use App\Practice;
 use App\Repositories\PatientWriteRepository;
+use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
 use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
@@ -326,26 +327,19 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param Request $request
+     * @param SafeRequest $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(
-        Request $request,
+        SafeRequest $request,
         SchedulerService $schedulerService,
         $patientId
     ) {
 
-        $input = $request->all();
-        //prevent xss
-        if (isset($input['body'])) {
-            $input['body'] = strip_tags($input['body']);
-        }
-        if (isset($input['type'])) {
-            $input['type'] = strip_tags($input['type']);
-        }
+        $input = $request->allSafe();
 
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
