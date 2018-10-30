@@ -32,7 +32,7 @@ class SafeRequest extends Request
     {
         $res = $this->input($key, $default);
         return $res
-            ? strip_tags($res)
+            ? htmlspecialchars($res)
             : $res;
     }
 
@@ -51,7 +51,7 @@ class SafeRequest extends Request
 
         $result = array();
         foreach ($all as $key => $value) {
-            $result[$key] = strip_tags($value);
+            $result[$key] = htmlspecialchars($value);
         }
         return $result;
     }
