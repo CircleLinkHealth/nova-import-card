@@ -19,7 +19,6 @@ class Media extends \Spatie\MediaLibrary\Models\Media
      *
      * @return string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      */
     public function getFile()
     {
