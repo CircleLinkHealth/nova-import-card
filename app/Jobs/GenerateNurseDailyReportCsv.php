@@ -112,7 +112,7 @@ class GenerateNurseDailyReportCsv implements ShouldQueue
 
         $link = $media->getUrl();
 
-        $notificationService->notifyAdmins('Nurse Daily Report', '', $link, 'Download Spreadsheet');
+        $notificationService->notifyAdmins('Nurse Daily Report ' . $this->date->toDateString(), '', $link, 'Download Spreadsheet');
     }
 
     /**
