@@ -41,7 +41,7 @@
 
                 <div class="mini-action-button">
                     <p>
-                        <i v-on:click="createActivity"
+                        <i v-on:click="createTask"
                            class="icon material-icons">calendar_today</i>
                     </p>
                     <p class="text">Add Activity</p>
@@ -88,9 +88,16 @@
                         name: 'create-care-person'
                     });
                 },
-                createActivity() {
+                createTask() {
                     this.setOpenModal({
-                        name: 'add-action-modal'
+                        name: 'add-task-modal',
+                        props: {
+                            patientId: window['patientId'],
+                            practice: {
+                                id: window['patientPractice'].id,
+                                name: window['patientPractice'].name,
+                            }
+                        }
                     });
                 },
                 document() {

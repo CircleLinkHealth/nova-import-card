@@ -65,11 +65,11 @@ const SocialServicesComponent = () => import(/* webpackChunkName: "chunk-carepla
 const MiscModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/misc.modal')
 const OthersComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/others')
 const AppointmentsComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/appointments')
+const AddTaskModalComponent = () => import(/* webpackChunkName: "chunk-careplan" */ './components/careplan/modals/add-task.modal');
 const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */ './components/patients/listing')
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
-const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call.vue');
-const AddActionCallComponent = () => import(/* webpackChunkName: "chunk-add-action-modal" */ './admin/calls/comps/modals/add-action.modal.vue');
+const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -110,7 +110,7 @@ Vue.component('patient-list', PatientList);
 Vue.component('v-datepicker', DatepickerComponent);
 Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
-Vue.component('add-action-modal', AddActionCallComponent);
+Vue.component('add-task-modal', AddTaskModalComponent);
 
 const App = new Vue({
     el: '#app',
