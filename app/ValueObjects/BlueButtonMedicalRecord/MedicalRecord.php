@@ -240,7 +240,7 @@ class MedicalRecord
                     'suffix' => null,
                 ],
             'dob'              => $this->data['date_of_birth'],
-            'gender'           => '',
+            'gender'           => $this->data['gender'],
             'mrn_number'       => $this->data['patient_id'],
             'marital_status'   => '',
             'address'          =>
