@@ -143,8 +143,7 @@ if (isset($patient) && ! empty($patient)) {
 
                                                         <script>
                                                             function notEligibleClick() {
-                                                                if (confirm('Are you sure this Patient is not eligible?' +
-                                                                        ' (This action cannot be undone)')) {
+                                                                if (confirm('CAUTION: Clicking "confirm" will delete this patient’s entire record from Care Plan Manager. This action cannot be undone. Do you want to delete this patients entire record?')) {
                                                                     document.getElementById('not-eligible-form').submit();
                                                                 }
                                                             }
