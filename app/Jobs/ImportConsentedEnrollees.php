@@ -190,10 +190,11 @@ class ImportConsentedEnrollees implements ShouldQueue
             $mr = new MedicalRecord($job, $enrollee->practice);
 
             $mr = Ccda::create([
-                'practice_id' => $enrollee->practice->id,
-                'location_id' => $enrollee->practice->primary_location_id,
-                'mrn'         => $job->data['patient_id'],
-                'json'        => $mr->toJson(),
+                'practice_id'             => $enrollee->practice->id,
+                'location_id'             => $enrollee->practice->primary_location_id,
+                'mrn'                     => $job->data['patient_id'],
+                'json'                    => $mr->toJson(),
+                'referring_provider_name' => $job->data['preferred_provider'],
             ]);
 
             $imr = $mr->import();
