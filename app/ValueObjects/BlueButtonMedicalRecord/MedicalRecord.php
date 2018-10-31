@@ -63,7 +63,7 @@ class MedicalRecord
         return [
             'custodian'           =>
                 [
-                    'name' => '',
+                    'name' => $this->data['preferred_provider'],
                 ],
             'date'                => '',
             'title'               => '',
