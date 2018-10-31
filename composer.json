@@ -26,6 +26,10 @@
     },
     {
       "type": "git",
+      "url": "git@github.com:ishansiddiqui/lara-pdf-merger.git"
+    },
+    {
+      "type": "git",
       "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
@@ -60,7 +64,7 @@
     "laravelcollective/html": "5.5.*",
     "league/flysystem-aws-s3-v3": "~1.0",
     "league/fractal": "0.12.*",
-    "lynx39/lara-pdf-merger": "^1.0",
+    "lynx39/lara-pdf-merger": "dev-php7.2-adjustments",
     "maatwebsite/excel": "^2.1",
     "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
@@ -73,7 +77,7 @@
     "seld/jsonlint": "^1.7",
     "spatie/laravel-backup": "^5.10",
     "spatie/laravel-google-calendar": "^2.0",
-    "spatie/laravel-medialibrary": "^6.9",
+    "spatie/laravel-medialibrary": "^7.0.0",
     "spiritix/lada-cache": "^2.1",
     "twilio/sdk": "5.7",
     "tylercd100/lern": "^3.8",
