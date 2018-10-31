@@ -177,7 +177,7 @@ class MedicalRecord
 
     private function fillAllergiesSection()
     {
-        return collect($this->data['allergies'])
+        return collect($this->data['allergies'] ?? $this->data['Allergies'])
             ->map(function ($allergy) {
                 if ( ! validAllergyName($allergy['name'])) {
                     return false;
