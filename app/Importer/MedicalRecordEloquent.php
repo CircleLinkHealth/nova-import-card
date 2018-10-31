@@ -319,6 +319,12 @@ abstract class MedicalRecordEloquent extends \App\BaseModel implements MedicalRe
             return $this;
         }
 
+        if (!empty($this->location_id)) {
+            $this->setLocationIdPrediction($this->location_id);
+
+            return $this;
+        }
+
 
         //historic lookup
         $historicPredictor  = new HistoricLocationPredictor($this->getDocumentCustodian(), $this->providers);
