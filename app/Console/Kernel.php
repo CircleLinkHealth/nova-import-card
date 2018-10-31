@@ -48,9 +48,9 @@ class Kernel extends ConsoleKernel
         $schedule->command(AutoPullEnrolleesFromAthena::class)
                  ->monthlyOn(1);
 
-        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:05');
+        $schedule->command(RescheduleMissedCalls::class)->dailyAt('00:01');
 
-        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:20');
+        $schedule->command(TuneScheduledCalls::class)->dailyAt('00:05');
 
 //        $schedule->call(function () {
 //            (new EnrollmentSMSSender())->exec();
