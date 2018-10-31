@@ -199,7 +199,8 @@ class ImportConsentedEnrollees implements ShouldQueue
 
             $imr = $mr->import();
 
-            $enrollee->user_id = $imr->patient_id;
+            $enrollee->medical_record_id   = $mr->id;
+            $enrollee->medical_record_type = Ccda::class;
             $enrollee->save();
 
             return $imr;

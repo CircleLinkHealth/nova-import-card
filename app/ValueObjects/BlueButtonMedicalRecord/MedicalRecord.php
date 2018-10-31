@@ -107,7 +107,7 @@ class MedicalRecord
                                     'prefix' => null,
                                     'given'  =>
                                         [
-                                            0 => '',
+                                            0 => $this->data['preferred_provider'],
                                         ],
                                     'family' => '',
                                     'suffix' => '',
