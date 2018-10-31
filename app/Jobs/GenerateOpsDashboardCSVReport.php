@@ -78,7 +78,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $rows['CircleLink Total'] = $this->calculateDailyTotalRow($rows);
         $rows                     = collect($rows);
 
-        $fileName = "CLH-Ops-CSV-Report-{$date->toDateTimeString()}";
+        $fileName = "CLH-Ops-CSV-Report-{$date->format('Y-m-d-H:i:s')}";
 
         $excel = Excel::create($fileName, function ($excel) use (
             $rows,

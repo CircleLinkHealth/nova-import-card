@@ -1855,11 +1855,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::group([
 
         ], function () {
-            Route::get('programs/{id}/questions', [
-                'uses' => 'Admin\PracticeController@showQuestions',
-                'as'   => 'admin.programs.questions',
-            ]);
-
             // locations
             Route::get('locations', [
                 'uses' => 'LocationController@index',

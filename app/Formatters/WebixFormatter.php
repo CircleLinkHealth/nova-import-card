@@ -73,11 +73,8 @@ class WebixFormatter implements ReportFormatter
                 $formatted_notes[$count]['tags'] .= '<div class="label label-warning"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></div> ';
             }
 
-
-            if (count($note->call) > 0) {
-                if ($note->call->status == 'reached') {
-                    $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-                }
+            if ($note->call && $note->call->status == 'reached') {
+                $formatted_notes[$count]['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
             }
 
             if ($note->isTCM) {
@@ -127,10 +124,8 @@ class WebixFormatter implements ReportFormatter
                 }
             }
 
-            if (count($note->call) > 0) {
-                if ($note->call->status == 'reached') {
-                    $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
-                }
+            if ($note->call && $note->call->status == 'reached') {
+                $result['tags'] .= '<div class="label label-info"><span class="glyphicon glyphicon-earphone" aria-hidden="true"></span></div> ';
             }
 
             if ($note->isTCM) {
@@ -191,7 +186,7 @@ class WebixFormatter implements ReportFormatter
                              ->toJson();
 
         if ( ! empty($report_data)) {
-            return "data:$report_data";
+            return $report_data;
         }
 
         return '';
