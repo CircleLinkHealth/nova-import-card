@@ -58,4 +58,13 @@ class JsonMedicalRecordAdapterTest extends TestCase
 
         $this->assertFalse($adapter->isValid());
     }
+
+    public function test_validation_passes_if_problems_contains_both_valid_and_empty_problems()
+    {
+        $data = '{"patient_id":"1234","last_name":"Bar","first_name":"Foo","middle_name":"","date_of_birth":"1900-01-20 00:00:00.0","address_line_1":"123 Summer Street","address_line_2":"","city":"NYC","state":"NY","postal_code":"12345","primary_phone":"(201) 281-9204","cell_phone":"","preferred_provider":"","last_visit":"","insurance_plans":{"primary":{"plan":"Test Insurance","group_number":"","policy_number":"TEST1234","insurance_type":"Medicaid"},"secondary":{"plan":"Test Medicare","group_number":"","policy_number":"123455","insurance_type":"Medicare"}},"problems":[{"name":"","code_type":"","code":"","start_date":""},{"name":"Solar Dermatitis","code_type":"ICD9","code":"692.74","start_date":"07/12/2013"},{"name":"Hypertension","code_type":"ICD9","code":"401.9","start_date":"08/21/2014"},{"name":"","code_type":"","code":"","start_date":""}],"allergies":[{"name":"Animal Dander"},{"name":"Lipitor"},{"name":"Lyrica"}]}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertTrue($adapter->isValid());
+    }
 }
