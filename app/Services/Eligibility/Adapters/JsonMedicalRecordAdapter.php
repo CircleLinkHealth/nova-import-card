@@ -154,28 +154,26 @@ class JsonMedicalRecordAdapter
 
     private function validate(Collection $coll): bool
     {
-
         $validator = Validator::make($coll->all(), [
-            'patient_id' => 'required',
-            'last_name' => 'required|alpha_num',
-            'first_name' => 'required|alpha_num',
-            'date_of_birth' => 'required|date',
-            'problems' => ['required', function ($attribute, $value, $fail) {
-                if (count($value) < 1) {
-                    $fail($attribute . 'field must contain at least 1 problem.');
-                }
-            }],
+            'patient_id'      => 'required',
+            'last_name'       => 'required|alpha_num',
+            'first_name'      => 'required|alpha_num',
+            'date_of_birth'   => 'required|date',
+            'problems'        => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if (count($value) < 1) {
+                        $fail($attribute . 'field must contain at least 1 problem.');
+                    }
+                },
+            ],
             'problems.*.name' => "required_if:problems.*.code,==,null,",
             'problems.*.code' => "required_if:problems.*.name,==,null,",
-            'primary_phone' => "phone:us|required_if:cell_phone,==,null,",
-            'cell_phone' => "phone:us|required_if:primary_phone,==,null,",
+            'primary_phone'   => "phone:us|required_if:cell_phone,==,null,",
+            'cell_phone'      => "phone:us|required_if:primary_phone,==,null,",
         ]);
 
-        if ($validator->passes()) {
-            return true;
-        }
-
-        return false;
+        return $validator->passes();
     }
 
     private function getKey(EligibilityBatch $eligibilityBatch)
