@@ -44,12 +44,13 @@ class CareplanEnrollmentAdminNotification extends Command
         $admins = User::ofType('administrator')->get();
 
         CarePlan::where('provider_date', '>=', Carbon::yesterday())
-                ->with('assessment')
+                ->has('patient.carePlanAssessment')
+                ->with('patient.carePlanAssessment')
                 ->get()
                 ->map(function ($c) use ($admins) {
-                    if ($c->assessment) {
+                    if ($c->patient->carePlanAssessment) {
                         $admins->map(function ($user) use ($c) {
-                            $user->notify(new SendAssessmentNotification($c->assessment));
+                            $user->notify(new SendAssessmentNotification($c->patient->carePlanAssessment));
                         });
                     }
                 });

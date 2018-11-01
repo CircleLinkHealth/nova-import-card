@@ -12,14 +12,13 @@ namespace App;
 use Storage;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 
-class Media extends \Spatie\MediaLibrary\Media
+class Media extends \Spatie\MediaLibrary\Models\Media
 {
     /**
      * Get the file
      *
      * @return string
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Spatie\MediaLibrary\Exceptions\InvalidConversion
      */
     public function getFile()
     {

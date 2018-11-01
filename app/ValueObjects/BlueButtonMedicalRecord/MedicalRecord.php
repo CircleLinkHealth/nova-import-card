@@ -63,7 +63,7 @@ class MedicalRecord
         return [
             'custodian'           =>
                 [
-                    'name' => '',
+                    'name' => $this->data['preferred_provider'],
                 ],
             'date'                => '',
             'title'               => '',
@@ -107,7 +107,7 @@ class MedicalRecord
                                     'prefix' => null,
                                     'given'  =>
                                         [
-                                            0 => '',
+                                            0 => $this->data['preferred_provider'],
                                         ],
                                     'family' => '',
                                     'suffix' => '',
@@ -177,7 +177,7 @@ class MedicalRecord
 
     private function fillAllergiesSection()
     {
-        return collect($this->data['allergies'])
+        return collect($this->data['allergies'] ?? $this->data['Allergies'])
             ->map(function ($allergy) {
                 if ( ! validAllergyName($allergy['name'])) {
                     return false;
@@ -240,7 +240,7 @@ class MedicalRecord
                     'suffix' => null,
                 ],
             'dob'              => $this->data['date_of_birth'],
-            'gender'           => '',
+            'gender'           => $this->data['gender'],
             'mrn_number'       => $this->data['patient_id'],
             'marital_status'   => '',
             'address'          =>

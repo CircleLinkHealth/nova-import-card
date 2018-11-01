@@ -15,9 +15,9 @@ class UserSafeResource extends Resource
      */
     public function toArray($request)
     {
-        $careplan    = $this->carePlan()->first();
-        $observation = $this->observations()->orderBy('id', 'desc')->first();
-        $phone       = $this->phoneNumbers()->first();
+        $careplan    = $this->carePlan;
+        $observation = $this->observations->first();
+        $phone       = $this->phoneNumbers->first();
 
         return [
             'id' => $this->id,
@@ -31,9 +31,9 @@ class UserSafeResource extends Resource
             'status' => $this->status,
             'user_status' => $this->user_status,
             'is_online' => $this->is_online,
-            'patient_info' => optional($this->patientInfo()->first())->safe(),
-            'provider_info' => $this->providerInfo()->first(),
-            'billing_provider_name' => $this->billing_provider_name,
+            'patient_info' => optional($this->patientInfo)->safe(),
+            'provider_info' => $this->providerInfo,
+            'billing_provider_name' => $this->getBillingProviderName(),
             'billing_provider_id' => $this->getBillingProviderId(),
             'careplan' => optional($careplan)->safe(),
             'last_read' => optional($observation)->obs_date,

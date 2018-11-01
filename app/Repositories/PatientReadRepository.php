@@ -29,27 +29,37 @@ class PatientReadRepository
         return $this->user;
     }
 
-    public function patients(PatientFilters $filters) {
+    public function patients(PatientFilters $filters)
+    {
         $users = $this->model()
-                    ->whereHas('patientInfo')
-                    ->intersectPracticesWith(auth()->user())
-                    ->filter($filters);
-        if (!$filters->isExcel()) { //check that an excel file is not requested]
+                      ->with([
+                          'carePlan',
+                          'phoneNumbers',
+                          'patientInfo',
+                          'primaryPractice',
+                          'providerInfo',
+                          'observations' => function ($q) {
+                              $q
+                                  ->latest();
+                          },
+                      ])
+                      ->whereHas('patientInfo')
+                      ->intersectPracticesWith(auth()->user())
+                      ->filter($filters);
+        if ( ! $filters->isExcel()) { //check that an excel file is not requested]
             if (isset($filters->filters()['rows']) && $filters->filters()['rows'] == 'all') {
                 $users = $users->paginate($users->count());
-            }
-            else {
+            } else {
                 $users = $users->paginate($filters->filters()['rows'] ?? 15);
             }
-        }
-        else {
+        } else {
             if (isset($filters->filters()['rows']) && is_integer((int)$filters->filters()['rows'])) {
                 $users = $users->paginate($filters->filters()['rows']);
-            }
-            else {
+            } else {
                 $users = $users->paginate($users->count());
             }
         }
+
         return $users;
     }
 
@@ -110,7 +120,8 @@ class PatientReadRepository
         return $result;
     }
 
-    public function search(PatientSearchModel $searchModel) {
+    public function search(PatientSearchModel $searchModel)
+    {
         return $searchModel->results();
     }
 }

@@ -143,11 +143,6 @@ class CarePlan extends BaseModel implements PdfReport
         return $this->belongsTo(User::class, 'provider_approver_id', 'id');
     }
 
-    public function assessment()
-    {
-        return $this->hasOne(CareplanAssessment::class, 'careplan_id');
-    }
-
     /**
      * Create a PDF of this resource and return the path to it.
      *

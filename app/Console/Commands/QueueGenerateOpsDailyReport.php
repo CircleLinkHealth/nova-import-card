@@ -13,7 +13,7 @@ class QueueGenerateOpsDailyReport extends Command
      *
      * @var string
      */
-    protected $signature = 'report:OpsDailyReport';
+    protected $signature = 'report:OpsDailyReport {endDate? : End date in YYYY-MM-DD. The report will be produced up to 11pm of endDate.}';
 
     /**
      * The console command description.
@@ -39,6 +39,12 @@ class QueueGenerateOpsDailyReport extends Command
      */
     public function handle()
     {
-        GenerateOpsDailyReport::dispatch()->onQueue('high');
+        $endDateStr = $this->argument('endDate') ?? null;
+
+        $endDate = $endDateStr
+            ? Carbon::parse($endDateStr)->setTime(23, 0)
+            : Carbon::now();
+
+        GenerateOpsDailyReport::dispatch($endDate)->onQueue('high');
     }
 }

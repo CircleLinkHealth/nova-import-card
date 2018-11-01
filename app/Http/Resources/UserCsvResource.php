@@ -16,9 +16,9 @@ class UserCsvResource extends Resource
      */
     public function toArray($request)
     {
-        $practice = optional($this->primaryPractice()->first());
-        $patient  = optional($this->patientInfo()->first());
-        $careplan = optional($this->carePlan()->first());
+        $practice = $this->primaryPractice;
+        $patient  = $this->patientInfo;
+        $careplan = $this->carePlan;
         $ccmStatusDate = '';
         if ($patient->ccm_status == 'paused'){
             $ccmStatusDate = $patient->date_paused;
@@ -31,7 +31,7 @@ class UserCsvResource extends Resource
         }
 
         return ('"' . $this->display_name ?? $this->name()) . '",' .
-               '"' . $this->billing_provider_name . '",' .
+               '"' . $this->getBillingProviderName() . '",' .
                '"' . $practice->display_name . '",' .
                '"' . $patient->ccm_status . '",' .
                '"' . $careplan->status . '",' .
