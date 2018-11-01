@@ -14,6 +14,7 @@ use App\EligibilityJob;
 use App\Services\Eligibility\Entities\MedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 use Validator;
 use Seld\JsonLint\JsonParser;
 
@@ -40,6 +41,11 @@ class JsonMedicalRecordAdapter
      * @var bool
      */
     private $isValid = null;
+
+    /**
+     * @var MessageBag|null
+     */
+    private $validationErrors = null;
 
     public function __construct(string $source)
     {
@@ -172,6 +178,8 @@ class JsonMedicalRecordAdapter
             'primary_phone'   => "phone:us|required_if:cell_phone,==,null,",
             'cell_phone'      => "phone:us|required_if:primary_phone,==,null,",
         ]);
+
+        $this->validationErrors = $validator->errors();
 
         return $validator->passes();
     }
