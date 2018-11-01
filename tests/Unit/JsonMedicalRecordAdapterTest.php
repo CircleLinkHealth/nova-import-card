@@ -67,4 +67,13 @@ class JsonMedicalRecordAdapterTest extends TestCase
 
         $this->assertTrue($adapter->isValid());
     }
+
+    public function test_validation_passes_if_at_least_one_phone_number_is_valid()
+    {
+        $data = '{"city": "NYC", "email": "NULL", "state": "NY ", "gender": "female", "language": "NULL", "problems":[{"name":"Solar Dermatitis","code_type":"ICD9","code":"692.74","start_date":"07/12/2013"},{"name":"Hypertension","code_type":"ICD9","code":"401.9","start_date":"08/21/2014"}], "allergies": [{"name": ""}], "last_name": "Vancouver", "cell_phone": "2012819204", "first_name": "Jane", "home_phone": "NULL", "last_visit": "NULL", "patient_id": "12345", "medications": [{"sig": "", "name": "", "start_date": ""}], "middle_name": "NULL", "postal_code": "12345", "date_of_birth": "1970-01-01 00:00:00.000", "primary_phone": "NULL", "address_line_1": "2123 Summer Street", "address_line_2": "NULL", "insurance_plans": {"primary": {"plan": "", "group_number": "", "policy_number": "", "insurance_type": ""}, "secondary": {"plan": "", "group_number": "", "policy_number": "", "insurance_type": ""}}, "preferred_provider": "Dr. Demo, MD"}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertTrue($adapter->isValid());
+    }
 }
