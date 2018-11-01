@@ -5,7 +5,7 @@
             <h4 class="modal-title">Add New Activity(ies)</h4>
         </template>
         <template slot="body">
-            <form action="#" @submit="submitForm">
+            <form id="add-task-form" action="#" @submit="submitForm">
 
                 <div class="row">
                     <table class="add-actions">
@@ -14,6 +14,7 @@
 
                             <th class="sub-type">
                                 Type
+                                <span class="required">*</span>
                             </th>
 
                             <th class="nurses">
@@ -30,10 +31,6 @@
                             <th class="end-time">
                                 End Time
                                 <span class="required">*</span>
-                                <a class='my-tool-tip' data-toggle="tooltip" data-placement="top"
-                                   title="Tick if patient requested call time">
-                                    <i class='glyphicon glyphicon-info-sign'></i>
-                                </a>
                             </th>
                             <th class="notes">
                                 Activity Note
@@ -59,7 +56,7 @@
                                           max-height="200px"
                                           class="form-control" name="outbound_cpm_id"
                                           v-model="action.selectedNurseData"
-                                          :options="action.nursesForSelect"
+                                          :options="nursesForSelect"
                                           @input="function (nurse) {changeNurse(index, nurse)}"
                                           required>
                                 </v-select>
@@ -74,16 +71,9 @@
                                        :disabled="action.disabled" required/>
                             </td>
                             <td>
-                                <div class="width-82">
-                                    <input class="form-control" type="time" name="window_end"
-                                           v-model="action.data.endTime"
-                                           :disabled="action.disabled" required/>
-                                </div>
-                                <div class="width-18 padding-left-5 padding-top-7">
-                                    <input type="checkbox" id="is_manual"
-                                           name="is_manual" v-model="action.data.isManual"
-                                           :disabled="action.disabled"/>
-                                </div>
+                                <input class="form-control" type="time" name="window_end"
+                                       v-model="action.data.endTime"
+                                       :disabled="action.disabled" required/>
                             </td>
                             <td>
                                 <input class="form-control" type="text" name="text" v-model="action.data.text"
@@ -99,7 +89,7 @@
                     </table>
                 </div>
 
-                <div>
+                <div class="row">
                     <div class="alert alert-danger" v-if="hasNotAvailableNurses">
                         No available nurses for selected patient
                     </div>
@@ -124,6 +114,18 @@
                 </div>
                 <button class="submit hidden"></button>
             </form>
+        </template>
+        <template slot="footer">
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button class="btn btn-danger" @click="clearOpenModal">Cancel</button>
+
+                    <button :disabled="false" @click="buttonSave" class=" btn btn-info">
+                        Save <i v-if="false" class="fa fa-spinner fa-pulse fa-fw"></i>
+                    </button>
+                </div>
+
+            </div>
         </template>
     </modal>
 </template>
@@ -174,21 +176,6 @@
         },
         data() {
             return {
-                addActionModalInfo: {
-                    okHandler() {
-                        const form = this.$form();
-                        this.errors().submit = null;
-                        console.log("form:add-action:submit", form);
-                        form.querySelector('button.submit.hidden').click();
-                    },
-                    cancelHandler() {
-                        self.resetForm();
-                        this.errors().submit = null;
-                        Event.$emit("modal-add-action:hide")
-                    },
-                    $form: () => this.$el.querySelector('form'),
-                    errors: () => this.errors
-                },
                 errors: {
                     submit: null
                 },
@@ -234,7 +221,7 @@
                         startTime: '09:00',
                         endTime: '17:00',
                         text: null,
-                        isManual: 0,
+                        isManual: 1,
                         familyOverride: 0
                     }
                 },
@@ -302,23 +289,23 @@
                                     return nurse;
                                 })
                                 .filter(nurse => nurse.name && nurse.name.trim() !== '');
-                            console.log('add-task-get-nurses', this.nurses);
                             this.setNursesForSelect();
                             return this.nurses;
                         })
                         .catch(err => {
-                            console.error('add-task-get-nurses', err);
                             this.loaders.nurses = false;
                             this.errors.nurses = err.message
                         });
+                },
+                buttonSave() {
+                    const form = document.getElementById("add-task-form");
+                    form.querySelector('button.submit.hidden').click();
                 },
                 submitForm(e) {
                     e.preventDefault();
 
                     Event.$emit('notifications-add-action-modal:dismissAll');
 
-                    const patientIds = [];
-                    const patients = [];
                     const formData = this.actions
                         .filter(action => {
                             //filter out any actions that are not filled out
@@ -330,15 +317,11 @@
                             const data = action.data;
                             //CPM-291 - allow unassigned nurse
                             //if (call.patientId === null || call.nurseId === null || call.practiceId === null) {
-                            if (data.patientId === null || data.practiceId === null) {
-                                return false;
-                            }
-                            return true;
+                            return !(data.subType == null || data.patientId === null || data.practiceId === null);
+
                         })
                         .map(action => {
                             const data = action.data;
-                            patients.push(action.patients.find(patient => patient.id === data.patientId));
-                            patientIds.push(data.patientId);
                             return {
                                 type: data.type,
                                 sub_type: data.subType,
@@ -353,20 +336,11 @@
                             };
                         });
 
-                    if (!patients.length) {
+                    if (formData.length === 0) {
                         Event.$emit('notifications-add-action-modal:create', {
-                            text: `Patient not found`,
-                            type: 'warning'
-                        });
-                        return;
-                    }
-
-                    //if any patient has status draft, we do not allow creation
-                    const draftPatients = patients.filter(x => x.status === 'draft');
-                    if (draftPatients.length) {
-                        Event.$emit('notifications-add-action-modal:create', {
-                            text: `Action not allowed: This patients' [${draftPatients.map(x => x.name || x.full_name).join(', ')}] care plan is in draft mode. QA the care plan before scheduling a call`,
-                            type: 'warning'
+                            text: "Please make sure all required fields are set.",
+                            type: 'error',
+                            noTimeout: true
                         });
                         return;
                     }
@@ -428,13 +402,7 @@
 
                                 }
                                 else {
-                                    this.resetForm();
-                                    Event.$emit("modal-add-action:hide");
-                                    actions.forEach(action => {
-                                        Event.$emit('actions:add', action);
-                                    });
-
-                                    console.log('actions:add', actions);
+                                    this.clearOpenModal();
                                 }
 
                             }
@@ -478,6 +446,7 @@
                 }
             }),
         created() {
+            this.getNurses();
         },
         mounted() {
 
@@ -498,7 +467,7 @@
             };
 
             if (this.show) {
-                const el = '.modal-add-task';
+                const el = '.vue-modal-container';
                 waitForEl(el, () => {
                     $(el).css('width', document.body.offsetWidth * 0.95);
                 });
@@ -515,7 +484,7 @@
 
 <style>
 
-    .modal-add-task .modal-wrapper {
+    .modal-add-task .vue-modal-wrapper {
         overflow-x: auto;
         white-space: nowrap;
         display: block;
@@ -525,8 +494,8 @@
         margin-right: auto;
     }
 
-    /*width will be set automatically when modal is mounted*/
-    .modal-add-task {
+    .modal-add-task .vue-modal-container {
+        /*width will be set automatically when modal is mounted*/
         width: 1200px;
     }
 
@@ -540,15 +509,7 @@
     }
 
     .modal-add-task table.add-actions th.sub-type {
-        width: 5%;
-    }
-
-    .modal-add-task table.add-actions th.practices {
-        width: 16%;
-    }
-
-    .modal-add-task table.add-actions th.patients {
-        width: 16%;
+        width: 10%;
     }
 
     .modal-add-task table.add-actions th.nurses {
@@ -556,27 +517,23 @@
     }
 
     .modal-add-task table.add-actions th.date {
-        width: 10%;
+        width: 12%;
     }
 
     .modal-add-task table.add-actions th.start-time {
-        width: 8%;
+        width: 12%;
     }
 
     .modal-add-task table.add-actions th.end-time {
-        width: 11%;
+        width: 12%;
     }
 
     .modal-add-task table.add-actions th.notes {
-        width: 16%;
+        width: 22%;
     }
 
     .modal-add-task table.add-actions th.remove {
-        width: 3%;
-    }
-
-    .modal-add-task table.add-calls th.family-override {
-        width: 2%;
+        width: 5%;
     }
 
     .modal-add-task .loader {
@@ -644,7 +601,7 @@
         overflow: hidden;
     }
 
-    .modal-add-action .modal-body {
+    .modal-add-task .vue-modal-body {
         min-height: 300px;
     }
 

@@ -85,6 +85,13 @@ class CallController extends Controller
             ];
         }
 
+        if ($input['type'] === 'task' && empty($input['sub_type'])) {
+            return [
+                'errors' => ['invalid form'],
+                'code'   => 407,
+            ];
+        }
+
         // validate patient doesnt already have a scheduled call
         $patient = User::find($input['inbound_cpm_id']);
         if ( ! $patient) {
