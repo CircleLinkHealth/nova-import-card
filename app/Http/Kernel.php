@@ -1,7 +1,32 @@
 <?php namespace App\Http;
 
+use App\Http\Middleware\ACL\ProviderDashboardACL;
+use App\Http\Middleware\AprimaCcdApiAuthAdapter;
+use App\Http\Middleware\CheckCarePlanMode;
+use App\Http\Middleware\CheckOnboardingInvite;
+use App\Http\Middleware\CheckWebSocketServer;
 use App\Http\Middleware\DisableDebugbar;
+use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\LogoutIfAccessDisabled;
+use App\Http\Middleware\PatientProgramSecurity;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\TrustProxies;
+use App\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
+use Illuminate\Http\Middleware\FrameGuard;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
+use Michalisantoniou6\Cerberus\Middleware\CerberusAbility;
+use Michalisantoniou6\Cerberus\Middleware\CerberusPermission;
+use Michalisantoniou6\Cerberus\Middleware\CerberusRole;
 
 class Kernel extends HttpKernel
 {
@@ -13,14 +38,14 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\LogoutIfAccessDisabled::class,
-            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            LogoutIfAccessDisabled::class,
+            CreateFreshApiToken::class,
         ],
         'api' => [
             'throttle:60,1',
@@ -34,8 +59,9 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \App\Http\Middleware\TrustProxies::class,
+        CheckForMaintenanceMode::class,
+        TrustProxies::class,
+        FrameGuard::class,
     ];
 
     /**
@@ -45,23 +71,23 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         //Laravel Middleware
-        'auth'                       => \Illuminate\Auth\Middleware\Authenticate::class,
-        'auth.basic'                 => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'bindings'                   => \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        'can'                        => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'auth'                       => Authenticate::class,
+        'auth.basic'                 => AuthenticateWithBasicAuth::class,
+        'bindings'                   => SubstituteBindings::class,
+        'can'                        => Authorize::class,
+        'guest'                      => RedirectIfAuthenticated::class,
+        'throttle'                   => ThrottleRequests::class,
 
         //CLH Middleware
-        'ability'                    => \Michalisantoniou6\Cerberus\Middleware\CerberusAbility::class,
-        'aprima.ccdapi.auth.adapter' => Middleware\AprimaCcdApiAuthAdapter::class,
+        'ability'                    => CerberusAbility::class,
+        'aprima.ccdapi.auth.adapter' => AprimaCcdApiAuthAdapter::class,
         'disable-debugbar'           => DisableDebugbar::class,
-        'permission'                 => \Michalisantoniou6\Cerberus\Middleware\CerberusPermission::class,
-        'patientProgramSecurity'     => \App\Http\Middleware\PatientProgramSecurity::class,
-        'checkWebSocketServer'       => \App\Http\Middleware\CheckWebSocketServer::class,
-        'providerDashboardACL'       => Middleware\ACL\ProviderDashboardACL::class,
-        'role'                       => \Michalisantoniou6\Cerberus\Middleware\CerberusRole::class,
-        'verify.invite'              => \App\Http\Middleware\CheckOnboardingInvite::class,
-        'check.careplan.mode'        => \App\Http\Middleware\CheckCarePlanMode::class,
+        'permission'                 => CerberusPermission::class,
+        'patientProgramSecurity'     => PatientProgramSecurity::class,
+        'checkWebSocketServer'       => CheckWebSocketServer::class,
+        'providerDashboardACL'       => ProviderDashboardACL::class,
+        'role'                       => CerberusRole::class,
+        'verify.invite'              => CheckOnboardingInvite::class,
+        'check.careplan.mode'        => CheckCarePlanMode::class,
     ];
 }
