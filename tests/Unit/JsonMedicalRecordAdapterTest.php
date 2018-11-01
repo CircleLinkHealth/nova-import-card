@@ -40,4 +40,40 @@ class JsonMedicalRecordAdapterTest extends TestCase
 
         $this->assertTrue(is_a($job, EligibilityJob::class));
     }
+
+    public function test_validation_fails_if_problems_only_contains_single_empty_problem()
+    {
+        $data = '{"patient_id":"1234","last_name":"Bar","first_name":"Foo","middle_name":"","date_of_birth":"1900-01-20 00:00:00.0","address_line_1":"123 Summer Street","address_line_2":"","city":"NYC","state":"NY","postal_code":"12345","primary_phone":"(201) 281-9204","cell_phone":"","preferred_provider":"","last_visit":"","insurance_plans":{"primary":{"plan":"Test Insurance","group_number":"","policy_number":"TEST1234","insurance_type":"Medicaid"},"secondary":{"plan":"Test Medicare","group_number":"","policy_number":"123455","insurance_type":"Medicare"}},"problems":[{"name":"","code_type":"","code":"","start_date":""}],"allergies":[{"name":"Animal Dander"},{"name":"Lipitor"},{"name":"Lyrica"}]}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertFalse($adapter->isValid());
+    }
+
+    public function test_validation_fails_if_problems_only_contains_many_empty_problems()
+    {
+        $data = '{"patient_id":"1234","last_name":"Bar","first_name":"Foo","middle_name":"","date_of_birth":"1900-01-20 00:00:00.0","address_line_1":"123 Summer Street","address_line_2":"","city":"NYC","state":"NY","postal_code":"12345","primary_phone":"(201) 281-9204","cell_phone":"","preferred_provider":"","last_visit":"","insurance_plans":{"primary":{"plan":"Test Insurance","group_number":"","policy_number":"TEST1234","insurance_type":"Medicaid"},"secondary":{"plan":"Test Medicare","group_number":"","policy_number":"123455","insurance_type":"Medicare"}},"problems":[{"name":"","code_type":"","code":"","start_date":""},{"name":"","code_type":"","code":"","start_date":""},{"name":"","code_type":"","code":"","start_date":""}],"allergies":[{"name":"Animal Dander"},{"name":"Lipitor"},{"name":"Lyrica"}]}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertFalse($adapter->isValid());
+    }
+
+    public function test_validation_passes_if_problems_contains_both_valid_and_empty_problems()
+    {
+        $data = '{"patient_id":"1234","last_name":"Bar","first_name":"Foo","middle_name":"","date_of_birth":"1900-01-20 00:00:00.0","address_line_1":"123 Summer Street","address_line_2":"","city":"NYC","state":"NY","postal_code":"12345","primary_phone":"(201) 281-9204","cell_phone":"","preferred_provider":"","last_visit":"","insurance_plans":{"primary":{"plan":"Test Insurance","group_number":"","policy_number":"TEST1234","insurance_type":"Medicaid"},"secondary":{"plan":"Test Medicare","group_number":"","policy_number":"123455","insurance_type":"Medicare"}},"problems":[{"name":"","code_type":"","code":"","start_date":""},{"name":"Solar Dermatitis","code_type":"ICD9","code":"692.74","start_date":"07/12/2013"},{"name":"Hypertension","code_type":"ICD9","code":"401.9","start_date":"08/21/2014"},{"name":"","code_type":"","code":"","start_date":""}],"allergies":[{"name":"Animal Dander"},{"name":"Lipitor"},{"name":"Lyrica"}]}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertTrue($adapter->isValid());
+    }
+
+    public function test_validation_passes_if_at_least_one_phone_number_is_valid()
+    {
+        $data = '{"city": "NYC", "email": "NULL", "state": "NY ", "gender": "female", "language": "NULL", "problems":[{"name":"Solar Dermatitis","code_type":"ICD9","code":"692.74","start_date":"07/12/2013"},{"name":"Hypertension","code_type":"ICD9","code":"401.9","start_date":"08/21/2014"}], "allergies": [{"name": ""}], "last_name": "Vancouver", "cell_phone": "2012819204", "first_name": "Jane", "home_phone": "NULL", "last_visit": "NULL", "patient_id": "12345", "medications": [{"sig": "", "name": "", "start_date": ""}], "middle_name": "NULL", "postal_code": "12345", "date_of_birth": "1970-01-01 00:00:00.000", "primary_phone": "NULL", "address_line_1": "2123 Summer Street", "address_line_2": "NULL", "insurance_plans": {"primary": {"plan": "", "group_number": "", "policy_number": "", "insurance_type": ""}, "secondary": {"plan": "", "group_number": "", "policy_number": "", "insurance_type": ""}}, "preferred_provider": "Dr. Demo, MD"}';
+
+        $adapter = new JsonMedicalRecordAdapter($data);
+
+        $this->assertTrue($adapter->isValid());
+    }
 }
