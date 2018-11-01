@@ -20,7 +20,7 @@ class ValidateHttpHost
         $requestHost = $request->getHttpHost();
 
         if (!in_array($requestHost, [$actualHost, "www.$actualHost"])) {
-            abort(404, "Suspicious host.");
+            \Log::critical("Suspicious host: $requestHost");
         }
 
         return $next($request);
