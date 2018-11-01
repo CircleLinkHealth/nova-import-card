@@ -190,10 +190,6 @@
 
                                 <li><a href="{{ route('monthly.billing.make') }}">Approve Billable Patients</a></li>
 
-                                <li><a href="{{ route('PatientConditionsReportController.getReport') }}">Patient
-                                        Conditions (export)</a>
-                                </li>
-
                                 <li><a href="{{ route('excel.report.t2') }}">Unreachable Patients (export)</a>
                                 </li>
 
