@@ -59,7 +59,7 @@
 						<h2>CarePlan<span class="text-thin">Manager&trade;</span></h2>
 					</div>
 						<div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-							<form class="" role="form" method="POST" action="{{ url('/auth/login') }}">
+							<form class="" role="form" method="POST" action="{{ url('/auth/login') }}" autocomplete="off">
 								<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 									<div class="col-md-12">

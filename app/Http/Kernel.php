@@ -1,7 +1,6 @@
 <?php namespace App\Http;
 
 use App\Http\Middleware\DisableDebugbar;
-use App\Http\Middleware\ValidateHttpHost;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -36,8 +35,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \App\Http\Middleware\TrustProxies::class,
-        ValidateHttpHost::class
+        \App\Http\Middleware\TrustProxies::class
     ];
 
     /**
