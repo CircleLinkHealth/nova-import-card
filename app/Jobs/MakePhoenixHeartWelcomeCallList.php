@@ -96,8 +96,10 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
                 }
 
                 $patient['problems']->push(Problem::create([
-                    'name' => $problem->name,
+                    'name' => $problem->description,
                     'code' => $problemCode,
+                    'start' => $problem->start_date,
+                    'end' => $problem->end_date,
                 ]));
             }
 
