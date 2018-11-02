@@ -711,18 +711,20 @@ class WelcomeCallListGenerator
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
 
-            $lastEncounter = $args['last_encounter'] ?? $args['last_visit'];
+            $lastEncounter = $args['last_encounter'] ?? $args['last_visit'] ?? null;
 
-            $validator = Validator::make([
-                'last_encounter' => $lastEncounter,
-            ], [
-                'last_encounter' => 'required|filled|date',
-            ]);
+            if ($lastEncounter) {
+                $validator = Validator::make([
+                    'last_encounter' => $lastEncounter,
+                ], [
+                    'last_encounter' => 'required|filled|date',
+                ]);
 
-            if ($validator->fails()) {
-                $args['last_encounter'] = null;
-            } else {
-                $args['last_encounter'] = Carbon::parse($lastEncounter);
+                if ($validator->fails()) {
+                    $args['last_encounter'] = null;
+                } else {
+                    $args['last_encounter'] = Carbon::parse($lastEncounter);
+                }
             }
 
             $args['batch_id'] = $this->batch->id;
