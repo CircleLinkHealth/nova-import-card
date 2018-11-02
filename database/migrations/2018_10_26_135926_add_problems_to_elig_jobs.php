@@ -26,7 +26,7 @@ class AddProblemsToEligJobs extends Migration
                   ->nullable()
                   ->after('messages');
 
-            $table->string('ternary_insurance')
+            $table->string('tertiary_insurance')
                   ->nullable()
                   ->after('messages');
 
@@ -80,7 +80,7 @@ class AddProblemsToEligJobs extends Migration
             $table->dropColumn('ccm_problem_2_id');
             $table->dropColumn('primary_insurance');
             $table->dropColumn('secondary_insurance');
-            $table->dropColumn('ternary_insurance');
+            $table->dropColumn('tertiary_insurance');
             $table->dropColumn('last_encounter');
         });
     }
