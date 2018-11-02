@@ -100,9 +100,28 @@ class WT1CsvParser
 
         $entry['insurance_plans'] = $this->getInsurances($row);
 
-        $entry['problems']    = $this->getMergedList($row, $entry['problems'], 'reported');
-        $entry['allergies']   = $this->getMergedList($row, $entry['allergies'], 'allergy');
-        $entry['medications'] = $this->getMergedList($row, $entry['medications'], 'meds');
+        $entry['problems'] = $this->getMergedList($row, $entry['problems'], 'reported', function ($value) {
+            return [
+                'code',
+                'name' => $value,
+                'code_type',
+                'start_date',
+            ];
+        });
+
+        $entry['allergies']   = $this->getMergedList($row, $entry['allergies'], 'allergy', function ($value) {
+            return [
+                'name' => $value,
+            ];
+        });
+
+        $entry['medications'] = $this->getMergedList($row, $entry['medications'], 'meds', function ($value) {
+            return [
+                'name' => $value,
+                'sig',
+                'start_date',
+            ];
+        });
 
         $this->patients[$patientId] = $entry;
     }
@@ -157,7 +176,7 @@ class WT1CsvParser
         return $result;
     }
 
-    private function getMergedList($row, $currentList, $fieldName)
+    private function getMergedList($row, $currentList, $fieldName, $mapper)
     {
         $rowList = $this->getListFromFields($row, $fieldName);
 
@@ -172,9 +191,7 @@ class WT1CsvParser
             }
 
             if ( ! $found) {
-                $currentList[] = [
-                    'name' => $fieldValue,
-                ];
+                $currentList[] = $mapper($fieldValue);
             }
         }
         return $currentList;
