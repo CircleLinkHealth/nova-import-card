@@ -475,13 +475,13 @@ class WelcomeCallListGenerator
             if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
                 switch ($i) {
                     case 0:
-                        $this->eligibilityJob->primary_insurance = $insurance;
+                        $this->eligibilityJob->primary_insurance = $insurance['type'];
                         break;
                     case 1:
-                        $this->eligibilityJob->secondary_insurance = $insurance;
+                        $this->eligibilityJob->secondary_insurance = $insurance['type'];
                         break;
                     case 2:
-                        $this->eligibilityJob->tertiary_insurance = $insurance;
+                        $this->eligibilityJob->tertiary_insurance = $insurance['type'];
                         break;
                     default:
                         break;
