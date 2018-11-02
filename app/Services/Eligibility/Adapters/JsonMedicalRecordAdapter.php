@@ -129,7 +129,6 @@ class JsonMedicalRecordAdapter
 
         $this->isValid = $this->validate($coll);
 
-        $x = 1;
         if ($this->isValid) {
             $this->validatedData = $coll;
         }
