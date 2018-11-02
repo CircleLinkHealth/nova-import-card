@@ -259,6 +259,9 @@ class CarePlanHelper
                         ]);
 
                         break;
+                    } elseif ($phone->number == $number) {
+                        //number is already saved. bail
+                        break;
                     }
                 }
             }
@@ -588,7 +591,8 @@ class CarePlanHelper
         ])->first();
 
         if ($enrollee) {
-            $enrollee->user_id = $this->user->id;
+            $enrollee->user_id     = $this->user->id;
+            $enrollee->provider_id = $this->imr->billing_provider_id;
             $enrollee->save();
         }
 
@@ -630,6 +634,17 @@ class CarePlanHelper
                 $providerLog->save();
             });
 
+        $mr = $this
+            ->imr
+            ->medicalRecord();
+
+        if ($mr) {
+            $mr->practice_id         = $this->imr->practice_id;
+            $mr->location_id         = $this->imr->location_id;
+            $mr->billing_provider_id = $this->imr->billing_provider_id;
+
+            $mr->save();
+        }
 
         return $this;
     }

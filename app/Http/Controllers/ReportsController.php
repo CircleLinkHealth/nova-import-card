@@ -806,9 +806,10 @@ class ReportsController extends Controller
                         continue 1;
                     }
 
-                    $billingProvider = User::find($user->billingProviderID);
+                    $billingProvider = User::find($user->getBillingProviderId());
+                    //is billingProviderPhone to be used anywhere?
                     if ( ! $billingProvider) {
-                        $billingProvider      = '';
+                        $billingProviderName  = '';
                         $billingProviderPhone = '';
                     } else {
                         $billingProviderName  = $billingProvider->display_name;

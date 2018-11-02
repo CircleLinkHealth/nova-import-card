@@ -43,28 +43,29 @@ class CcdToLogTranformer
         $phones = UserMetaParserHelpers::getAllPhoneNumbers($demographics->phones);
 
         return [
-            'first_name' => array_key_exists(0, $demographics->name->given)
+            'first_name'    => array_key_exists(0, $demographics->name->given)
                 ? $demographics->name->given[0]
                 : null,
-            'last_name'  => $demographics->name->family,
-            'dob'        => $demographics->dob,
-            'gender'     => $demographics->gender,
-            'mrn_number' => $demographics->mrn_number,
-            'street'     => array_key_exists(0, $demographics->address->street)
+            'last_name'     => $demographics->name->family,
+            'dob'           => $demographics->dob,
+            'gender'        => $demographics->gender,
+            'mrn_number'    => $demographics->mrn_number,
+            'street'        => array_key_exists(0, $demographics->address->street)
                 ? $demographics->address->street[0]
                 : null,
-            'street2'    => array_key_exists(1, $demographics->address->street)
+            'street2'       => array_key_exists(1, $demographics->address->street)
                 ? $demographics->address->street[1]
                 : null,
-            'city'       => $demographics->address->city,
-            'state'      => $demographics->address->state,
-            'zip'        => $demographics->address->zip,
-            'cell_phone' => $phones['mobile'][0],
-            'home_phone' => $phones['home'][0],
-            'work_phone' => $phones['work'][0],
-            'email'      => $demographics->email,
-            'language'   => $demographics->language,
-            'ethnicity'  => $demographics->ethnicity,
+            'city'          => $demographics->address->city,
+            'state'         => $demographics->address->state,
+            'zip'           => $demographics->address->zip,
+            'cell_phone'    => $phones['mobile'][0],
+            'home_phone'    => $phones['home'][0],
+            'work_phone'    => $phones['work'][0],
+            'primary_phone' => $phones['primary'][0],
+            'email'         => $demographics->email,
+            'language'      => $demographics->language,
+            'ethnicity'     => $demographics->ethnicity,
         ];
     }
 
@@ -162,33 +163,33 @@ class CcdToLogTranformer
     {
         $codes = [];
 
-        if (!$ccdProblem->code_system_name) {
+        if ( ! $ccdProblem->code_system_name) {
             $ccdProblem->code_system_name = getProblemCodeSystemName([$ccdProblem->code_system]);
         }
 
         if ($ccdProblem->code_system_name) {
             $codes[] = [
-                'code_system_name'   => $ccdProblem->code_system_name,
-                'code_system_oid'    => $ccdProblem->code_system,
-                'code'               => $ccdProblem->code,
-                'name'               => $ccdProblem->name,
+                'code_system_name' => $ccdProblem->code_system_name,
+                'code_system_oid'  => $ccdProblem->code_system,
+                'code'             => $ccdProblem->code,
+                'name'             => $ccdProblem->name,
             ];
         }
 
         foreach ($ccdProblem->translations as $translation) {
-            if (!$translation->code_system_name) {
+            if ( ! $translation->code_system_name) {
                 $translation->code_system_name = getProblemCodeSystemName([$translation->code_system]);
 
-                if (!$translation->code_system_name) {
+                if ( ! $translation->code_system_name) {
                     continue;
                 }
             }
 
             $codes[] = [
-                'code_system_name'   => $translation->code_system_name,
-                'code_system_oid'    => $translation->code_system,
-                'code'               => $translation->code,
-                'name'               => $translation->name,
+                'code_system_name' => $translation->code_system_name,
+                'code_system_oid'  => $translation->code_system,
+                'code'             => $translation->code,
+                'name'             => $translation->name,
             ];
         }
 
