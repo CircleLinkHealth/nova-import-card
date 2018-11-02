@@ -15,12 +15,13 @@ class UserMetaParserHelpers
      */
     public function getAllPhoneNumbers($phones = [])
     {
-        $home = [];
-        $mobile = [];
-        $work = [];
+        $home    = [];
+        $mobile  = [];
+        $work    = [];
+        $primary = [];
 
         foreach ($phones as $phone) {
-            if (!isset($phone->number)) {
+            if ( ! isset($phone->number)) {
                 continue;
             }
 
@@ -28,24 +29,30 @@ class UserMetaParserHelpers
                 ? $phone->type
                 : 'home';
 
-            if (!$number = StringManipulation::formatPhoneNumber($phone->number)) {
+            if ( ! $number = StringManipulation::formatPhoneNumber($phone->number)) {
                 continue;
             }
 
-            if ($type == 'home') {
-                array_push($home, $number);
-            } else {
-                if ($type == 'mobile') {
+            switch ($type) {
+                case 'home':
+                    array_push($home, $number);
+                    break;
+
+                case 'mobile':
                     array_push($mobile, $number);
-                } else {
-                    if ($type == 'work') {
-                        array_push($work, $number);
-                    }
-                }
+                    break;
+
+                case 'work':
+                    array_push($work, $number);
+                    break;
+
+                case 'primary_phone':
+                    array_push($primary, $number);
+                    break;
             }
         }
 
-        $phoneCollections = compact('home', 'mobile', 'work');
+        $phoneCollections = compact('home', 'mobile', 'work', 'primary');
 
         foreach ($phoneCollections as $key => $phoneCollection) {
             if (empty($phoneCollection)) {

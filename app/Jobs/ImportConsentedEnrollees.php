@@ -189,12 +189,21 @@ class ImportConsentedEnrollees implements ShouldQueue
         if ($job->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
             $mr = new MedicalRecord($job, $enrollee->practice);
 
+            $provider = $job->data['preferred_provider'];
+
+            $exists = Ccda::where('referring_provider_name', $provider)
+                          ->where('practice_id', $enrollee->practice->id)
+                          ->whereNotNull('billing_provider_id')
+                          ->whereNotNull('location_id')
+                          ->first();
+
             $mr = Ccda::create([
                 'practice_id'             => $enrollee->practice->id,
-                'location_id'             => $enrollee->practice->primary_location_id,
+                'location_id'             => optional($exists)->location_id ?? $enrollee->practice->primary_location_id,
+                'billing_provider_id'     => optional($exists)->billing_provider_id ?? null,
                 'mrn'                     => $job->data['patient_id'],
                 'json'                    => $mr->toJson(),
-                'referring_provider_name' => $job->data['preferred_provider'],
+                'referring_provider_name' => $provider,
             ]);
 
             $imr = $mr->import();
