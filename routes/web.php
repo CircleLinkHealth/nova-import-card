@@ -1302,10 +1302,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'ProviderMonthlyUsageReportController.index',
             ])->middleware('permission:provider.read,nurse.read');
 
-            Route::get('patient-conditions', [
-                'uses' => 'Admin\Reports\PatientConditionsReportController@exportxls',
-                'as'   => 'PatientConditionsReportController.getReport',
-            ])->middleware('permission:patient.read,patientProblem.read');
             Route::group([
                 'prefix' => 'calls-dashboard',
             ], function () {
