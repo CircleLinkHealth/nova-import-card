@@ -112,7 +112,7 @@ class QueueEligibilityBatchForProcessing extends Command
 
         $unprocessed = EligibilityJob::whereBatchId($batch->id)
                                      ->where('status', '<', 2)
-                                     ->take(10)
+                                     ->take(500)
                                      ->get();
 
         if ($unprocessed->isEmpty()) {
@@ -123,12 +123,12 @@ class QueueEligibilityBatchForProcessing extends Command
         }
 
         $unprocessed->map(function ($job) use ($batch) {
-            ProcessSinglePatientEligibility::dispatch(
+            (new ProcessSinglePatientEligibility(
                 collect([$job->data]),
                 $job,
                 $batch,
                 $batch->practice
-            );
+            ))->handle();
         });
 
         $batch->status = EligibilityBatch::STATUSES['processing'];
@@ -164,9 +164,9 @@ class QueueEligibilityBatchForProcessing extends Command
                                ProcessCcda::withChain([
                                    (new CheckCcdaEnrollmentEligibility($ccda->id,
                                        $practice,
-                                       $batch))->onQueue('ccda-processor'),
+                                       $batch))->onQueue('low'),
                                ])->dispatch($ccda->id)
-                                          ->onQueue('ccda-processor');
+                                          ->onQueue('low');
 
                                return $ccda;
                            });
@@ -191,7 +191,7 @@ class QueueEligibilityBatchForProcessing extends Command
      */
     private function queuePHXJobs($batch): EligibilityBatch
     {
-        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('ccda-processor');
+        MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('low');
 
         return $batch->fresh();
     }
@@ -205,28 +205,34 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queueClhMedicalRecordTemplateJobs(EligibilityBatch $batch): EligibilityBatch
     {
         if ( ! ! ! $batch->options['finishedReadingFile']) {
+            ini_set('memory_limit', '800M');
+
             $created = $this->createEligibilityJobsFromJsonFile($batch);
         }
 
-        $unprocessed = EligibilityJob::whereBatchId($batch->id)
-                                     ->where('status', '<', 2)
-                                     ->take(50)
-                                     ->get();
+        EligibilityJob::whereBatchId($batch->id)
+                      ->where('status', '=', 0)
+                      ->inRandomOrder()
+                      ->take(300)
+                      ->get()
+                      ->each(function ($job) use ($batch) {
+                          ProcessSinglePatientEligibility::dispatch(
+                              collect([$job->data]),
+                              $job,
+                              $batch,
+                              $batch->practice
+                          )->onQueue('low');
+                      });
 
-        if ($unprocessed->isNotEmpty()) {
-            $batch->status = EligibilityBatch::STATUSES['processing'];
-        } else {
+        $jobsToBeProcessedCount = EligibilityJob::whereBatchId($batch->id)
+                                                ->where('status', '<', 2)
+                                                ->count();
+
+        if ($jobsToBeProcessedCount == 0) {
             $batch->status = EligibilityBatch::STATUSES['complete'];
+        } else {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
         }
-
-        $unprocessed->each(function ($job) use ($batch) {
-            ProcessSinglePatientEligibility::dispatch(
-                collect([$job->data]),
-                $job,
-                $batch,
-                $batch->practice
-            );
-        });
 
         $batch->save();
 
@@ -308,7 +314,7 @@ class QueueEligibilityBatchForProcessing extends Command
             while ( ! feof($handle)) {
                 if (($buffer = fgets($handle)) !== false) {
                     $mr = new JsonMedicalRecordAdapter($buffer);
-                    $mr->firstOrUpdateOrCreateEligibilityJob($batch);
+                    $mr->createEligibilityJob($batch);
                 }
             }
             fclose($handle);
@@ -331,7 +337,7 @@ class QueueEligibilityBatchForProcessing extends Command
             }
 
             $mr = new JsonMedicalRecordAdapter($iteration);
-            $mr->firstOrUpdateOrCreateEligibilityJob($batch);
+            $mr->createEligibilityJob($batch);
         }
     }
 

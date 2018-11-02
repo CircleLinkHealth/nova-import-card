@@ -88,7 +88,9 @@
                                     <td>{{ $observation->obs_method }}</td>
                                     <td>{{ $observation->obs_value }}</td>
                                     <td>{{ $observation->obs_unit }}</td>
-                                    <td><a href="{{ route('admin.programs.show', array('id' => $observation->program_id)) }}" class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
+                                    <td>
+                                        <a href="{{ route('provider.dashboard.manage.notifications', [$wpUser->primaryPractice->name]) }}"
+                                           class="btn btn-orange btn-xs">{{ $observation->program_id }}</a></td>
                                     <td>
                                         @if(Cerberus::hasPermission('observation.update'))
                                             <a href="{{ route('admin.observations.edit', array('id' => $observation->id)) }}" class="btn btn-primary">Edit</a>

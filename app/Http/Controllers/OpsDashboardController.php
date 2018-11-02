@@ -52,6 +52,8 @@ class OpsDashboardController extends Controller
         }
         //there are no compatible reports in the cloud before this day
         $noReportDates = Carbon::parse('5 August 2018');
+        //for older reports that dont have dateGenerated
+        $dateGenerated = null;
 
         $json = optional(SaasAccount::whereSlug('circlelink-health')
                                     ->first()
@@ -73,6 +75,9 @@ class OpsDashboardController extends Controller
             $data        = json_decode($json, true);
             $hoursBehind = $data['hoursBehind'];
             $rows        = $data['rows'];
+            if(array_key_exists('dateGenerated', $data)){
+            $dateGenerated = Carbon::parse($data['dateGenerated']);
+        }
         }
 
         return view('admin.opsDashboard.daily', compact([
@@ -80,13 +85,14 @@ class OpsDashboardController extends Controller
             'maxDate',
             'hoursBehind',
             'rows',
+            'dateGenerated'
         ]));
     }
 
     public function dailyCsv()
     {
 
-        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('reports');
+        GenerateOpsDashboardCSVReport::dispatch(auth()->user())->onQueue('high');
 
         return "Waldo is working on compiling the reports you requested. <br> Give it a minute, and then head to " . link_to('/jobs/completed') . " and refresh frantically to see a link to the report you requested.";
 

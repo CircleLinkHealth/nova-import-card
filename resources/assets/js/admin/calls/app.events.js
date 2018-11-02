@@ -74,26 +74,26 @@ export default (App, Event) => {
     Event.$on('select-nurse:update', selectNurseUpdateHandler)
 
     function selectTimesChangeHandler({callIDs, nextCall, callTimeStart, callTimeEnd}) {
-        console.log('select-times-change-handler', ...arguments)
-        if (callIDs && Array.isArray(callIDs)) {
-            const id = callIDs[0]
-            const $row = App.tableData.find(row => row.id == id)
-            console.log(id, $row)
-            if ($row && nextCall && callTimeStart && callTimeEnd) {
-                return $row.updateMultiValues({nextCall, callTimeStart, callTimeEnd}).then(() => {
-                    callIDs.splice(0, 1)
-                    return selectTimesChangeHandler({callIDs, nextCall, callTimeStart, callTimeEnd})
-                })
+        for (let i = 0; i < callIDs.length; i++) {
+            const row = App.tableData.find(row => row.id === callIDs[i]);
+            if (!row) {
+                continue;
             }
-            else {
-                Event.$emit('modal-select-times:hide')
+            if (nextCall) {
+                row['Activity Day'] = nextCall;
+            }
+
+            if (callTimeStart) {
+                row['Activity Start'] = callTimeStart;
+            }
+
+            if (callTimeEnd) {
+                row['Activity End'] = callTimeEnd;
             }
         }
-        return new Promise((resolve, reject) => resolve(null))
     }
 
-    //not used anymore.
-    Event.$on('select-times-modal:change', selectTimesChangeHandler)
+    Event.$on('select-times-modal:change', selectTimesChangeHandler);
 
     Event.$on('actions:add', App.activateFilters)
 

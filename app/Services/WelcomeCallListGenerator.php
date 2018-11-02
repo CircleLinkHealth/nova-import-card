@@ -120,6 +120,11 @@ class WelcomeCallListGenerator
 
         $this->eligibilityJob = $eligibilityJob;
 
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->status = 1;
+            $this->eligibilityJob->save();
+        }
+
         try {
             $this->filterPatientList();
 
@@ -147,32 +152,75 @@ class WelcomeCallListGenerator
         }
 
         if ($this->eligibilityJob) {
-            $this->eligibilityJob->save();
+            try {
+                $this->eligibilityJob->save();
+            } catch (\Exception $e) {
+                \Log::critical($e);
+                \Log::critical($this->eligibilityJob);
+
+                throw new \Exception("Eligibility processing exception: {$e->getMessage()}");
+            }
         }
     }
 
     protected function filterPatientList()
     {
-        $this->byLastEncounter()
-             ->byInsurance()
-             ->byNumberOfProblems();
+        $this
+            ->byNumberOfProblems()
+            ->byLastEncounter()
+            ->byInsurance();
     }
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
     {
-        if ( ! $this->filterProblems) {
+        if ( ! $this->filterProblems || $this->patientList->isEmpty()) {
             return $this;
         }
 
-        $cpmProblems      = CpmProblem::all();
-        $snomedToIcdMap   = SnomedToCpmIcdMap::all();
-        $icd9Map          = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
-        $icd10Map         = $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
-        $snomedMap        = $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
-        $cpmProblemsMap   = $cpmProblems->pluck('name', 'id');
-        $allBhiProblemIds = $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
+        $cpmProblems = \Cache::remember('all_cpm_problems', 60, function () {
+            return CpmProblem::all()
+                             ->transform(function ($problem) {
+                                 $problem->searchKeywords = collect(explode(',', $problem->contains), [$problem->name])
+                                     ->transform(function ($keyword) {
+                                         return trim(strtolower($keyword));
+                                     })
+                                     ->filter()
+                                     ->unique()
+                                     ->values()
+                                     ->toArray();
 
-        $patientList = $this->patientList->map(function ($row) use (
+                                 return $problem;
+                             });
+        });
+
+        $icd9Map = \Cache::remember('map_icd_9_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD9);
+        });
+
+        $icd10Map = \Cache::remember('map_icd_10_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::ICD10);
+        });
+
+        $snomedMap = \Cache::remember('map_snomed_to_cpm_problems', 60, function () {
+            $snomedToIcdMap = $this->getSnomedToIcdMap();
+
+            return $snomedToIcdMap->pluck('cpm_problem_id', Constants::SNOMED);
+        });
+
+        $cpmProblemsMap = \Cache::remember('map_name_to_cpm_problems', 60, function () use ($cpmProblems) {
+            return $cpmProblems->pluck('name', 'id');
+        });
+
+        $allBhiProblemIds = \Cache::remember('bhi_cpm_problem_ids', 60, function () use ($cpmProblems) {
+            return $cpmProblems->where('is_behavioral', '=', true)->pluck('id');
+        });
+
+
+        $this->patientList = $this->patientList->map(function ($row) use (
             $cpmProblems,
             $icd9Map,
             $icd10Map,
@@ -191,7 +239,7 @@ class WelcomeCallListGenerator
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has 0 conditions.'],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'problems');
 
                 return false;
             }
@@ -205,10 +253,10 @@ class WelcomeCallListGenerator
                 }
             }
 
-            $qualifyingProblems = [];
+            $qualifyingCcmProblems = [];
 
             //the cpm_problem_id for qualifying problems
-            $qualifyingProblemsCpmIdStack = [];
+            $qualifyingCcmProblemsCpmIdStack = [];
 
             $eligibleBhiProblemIds = [];
 
@@ -237,9 +285,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD9_NAME, 'all'])) {
                             $cpmProblemId = $icd9Map->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD9: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -252,9 +300,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::ICD10_NAME, 'all'])) {
                             $cpmProblemId = $icd10Map->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -267,9 +315,9 @@ class WelcomeCallListGenerator
                         if (in_array($codeType, [Constants::SNOMED_NAME, 'all'])) {
                             $cpmProblemId = $snomedMap->get($p->getCode());
 
-                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingProblemsCpmIdStack)) {
-                                $qualifyingProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getName()}";
-                                $qualifyingProblemsCpmIdStack[] = $cpmProblemId;
+                            if ($cpmProblemId && ! in_array($cpmProblemId, $qualifyingCcmProblemsCpmIdStack)) {
+                                $qualifyingCcmProblems[]           = "{$cpmProblemsMap->get($cpmProblemId)}, ICD10: {$p->getCode()}";
+                                $qualifyingCcmProblemsCpmIdStack[] = $cpmProblemId;
 
                                 if ($allBhiProblemIds->contains($cpmProblemId)) {
                                     $eligibleBhiProblemIds[] = $cpmProblemId;
@@ -284,16 +332,14 @@ class WelcomeCallListGenerator
                      * Try to match keywords
                      */
                     if ($p->getName()) {
-                        foreach ($cpmProblems as $problem) {
-                            $keywords = array_merge(explode(',', $problem->contains), [$problem->name]);
-
-                            foreach ($keywords as $keyword) {
+                        foreach ($cpmProblems->whereNotIn('id', $qualifyingCcmProblemsCpmIdStack) as $problem) {
+                            foreach ($problem->searchKeywords as $keyword) {
                                 if (empty($keyword)) {
                                     continue;
                                 }
 
                                 if (str_contains(strtolower($p->getName()), strtolower($keyword))
-                                    && ! in_array($problem->id, $qualifyingProblemsCpmIdStack)
+                                    && ! in_array($problem->id, $qualifyingCcmProblemsCpmIdStack)
                                 ) {
                                     $code = SnomedToCpmIcdMap::where('icd_9_code', '!=', '')
                                                              ->whereCpmProblemId($problem->id)
@@ -317,8 +363,8 @@ class WelcomeCallListGenerator
                                         }
                                     }
 
-                                    $qualifyingProblems[]           = "{$problem->name}, $code";
-                                    $qualifyingProblemsCpmIdStack[] = $problem->id;
+                                    $qualifyingCcmProblems[]           = "{$problem->name}, $code";
+                                    $qualifyingCcmProblemsCpmIdStack[] = $problem->id;
 
                                     if ( ! ! $problem->is_behavioral) {
                                         $eligibleBhiProblemIds[] = $problem->id;
@@ -327,32 +373,56 @@ class WelcomeCallListGenerator
                             }
                         }
                     }
+
+                    //Stop checking if we've already found 2 ccm problems
+                    if (count($qualifyingCcmProblems) == 2) {
+                        break;
+                    }
                 }
             }
 
 
-            $qualifyingProblems    = array_unique($qualifyingProblems);
+            $qualifyingCcmProblems = array_unique($qualifyingCcmProblems);
             $qualifyingBhiProblems = array_unique($eligibleBhiProblemIds);
 
-            if (count($qualifyingProblems) < 2 && count($qualifyingBhiProblems) == 0) {
+            $ccmProbCount = count($qualifyingCcmProblems);
+            $bhiProbCount = count($qualifyingBhiProblems);
+
+            if ($this->eligibilityJob) {
+                $this->eligibilityJob->bhi_problem_id   = $qualifyingBhiProblems[0] ?? null;
+                $this->eligibilityJob->ccm_problem_1_id = $qualifyingCcmProblemsCpmIdStack[0] ?? null;
+                $this->eligibilityJob->ccm_problem_2_id = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
+            }
+
+            if ($ccmProbCount < 2 && $bhiProbCount == 0) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3, ['problems' => 'Patient has less than 2 ccm conditions'],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'problems');
 
                 return false;
             }
 
-            $row['ccm_condition_1'] = $qualifyingProblems[0];
-            $row['ccm_condition_2'] = $qualifyingProblems[1] ?? null;
+            if ($ccmProbCount < 2 && $bhiProbCount > 0) {
+                if ( ! $this->practice->hasServiceCode('CPT 99484')) {
+                    $this->ineligiblePatients->push($row);
 
-            $row['cpm_problem_1'] = $qualifyingProblemsCpmIdStack[0];
-            $row['cpm_problem_2'] = $qualifyingProblemsCpmIdStack[1] ?? null;
+                    $this->setEligibilityJobStatus(3,
+                        ['problems' => 'Patient is BHI eligible, but practice does not support BHI. Patient has less than 2 ccm conditions.'],
+                        EligibilityJob::INELIGIBLE, 'problems');
+
+                    return false;
+                }
+            }
+
+            $row['ccm_condition_1'] = $qualifyingCcmProblems[0];
+            $row['ccm_condition_2'] = $qualifyingCcmProblems[1] ?? null;
+
+            $row['cpm_problem_1'] = $qualifyingCcmProblemsCpmIdStack[0];
+            $row['cpm_problem_2'] = $qualifyingCcmProblemsCpmIdStack[1] ?? null;
 
             return $row;
-        })->values();
-
-        $this->patientList = new Collection(array_filter($patientList->all()));
+        })->filter()->values();
 
         return $this;
     }
@@ -364,16 +434,22 @@ class WelcomeCallListGenerator
         }
 
         $this->patientList = $this->patientList->reject(function (&$record) {
-            if (isset($record['insurances'])) {
-                return ! $this->validateInsuranceWithCollection($record);
-            }
-
-            if (isset($record['insurance_plans'])) {
+            if (isset($record['insurance_plans']) || isset($record['insurance_plan'])) {
+                //adapt record so that we can use validateInsuranceWithPrimarySecondaryTertiary()
                 $record = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($record);
             }
 
-            if (isset($record['primary_insurance']) && isset($record['secondary_insurance'])) {
+            if (isset($record['insurances'])) {
+                return ! $this->validateInsuranceWithCollection($record);
+            } elseif (isset($record['primary_insurance']) || isset($record['secondary_insurance']) || isset($record['tertiary_insurance'])) {
                 return ! $this->validateInsuranceWithPrimarySecondaryTertiary($record);
+            } else {
+                $this->ineligiblePatients->push($record);
+
+                $this->setEligibilityJobStatus(3, ['insurance' => 'No insurance plans found.'],
+                    EligibilityJob::INELIGIBLE, 'insurance');
+
+                return true;
             }
         });
 
@@ -384,6 +460,8 @@ class WelcomeCallListGenerator
     {
         $eligibleInsurances = [];
 
+        $i = 0;
+
         foreach ($record['insurances'] as $insurance) {
             if (str_contains(strtolower($insurance['type']), [
                 'medicare b',
@@ -393,12 +471,31 @@ class WelcomeCallListGenerator
             ) {
                 $eligibleInsurances[] = $insurance;
             }
+
+            if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
+                switch ($i) {
+                    case 0:
+                        $this->eligibilityJob->primary_insurance = $insurance;
+                        break;
+                    case 1:
+                        $this->eligibilityJob->secondary_insurance = $insurance;
+                        break;
+                    case 2:
+                        $this->eligibilityJob->tertiary_insurance = $insurance;
+                        break;
+                    default:
+                        break;
+                }
+
+                $i++;
+            }
         }
 
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
+            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE,
+                'insurance');
 
             return false;
         }
@@ -413,14 +510,14 @@ class WelcomeCallListGenerator
         $tertiary  = strtolower($record['tertiary_insurance'] ?? null);
 
         //Change none to an empty string
-        if (str_contains($primary, 'none')) {
-            $primary = '';
+        if (str_contains($primary, 'none') || empty($primary)) {
+            $primary = null;
         }
-        if (str_contains($secondary, ['none', 'no secondary plan'])) {
-            $secondary = '';
+        if (str_contains($secondary, ['none', 'no secondary plan']) || empty($secondary)) {
+            $secondary = null;
         }
-        if (str_contains($tertiary, ['none', 'no tertiary plan'])) {
-            $tertiary = '';
+        if (str_contains($tertiary, ['none', 'no tertiary plan']) || empty($tertiary)) {
+            $tertiary = null;
         }
 
         //Keep the patient if they have medicaid
@@ -439,10 +536,17 @@ class WelcomeCallListGenerator
             }
         }
 
+        if ($this->eligibilityJob) {
+            $this->eligibilityJob->primary_insurance   = $primary;
+            $this->eligibilityJob->secondary_insurance = $secondary;
+            $this->eligibilityJob->ternary_insurance   = $tertiary;
+        }
+
         if (count($eligibleInsurances) < 1) {
             $this->ineligiblePatients->push($record);
 
-            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE);
+            $this->setEligibilityJobStatus(3, ['insurance' => 'No medicare found'], EligibilityJob::INELIGIBLE,
+                'insurance');
 
             return false;
         }
@@ -486,6 +590,10 @@ class WelcomeCallListGenerator
                 return false;
             }
 
+            if (strtolower($lastEncounter) == 'null') {
+                return false;
+            }
+
             $validator = Validator::make([
                 'last_encounter' => $lastEncounter,
             ], [
@@ -498,7 +606,7 @@ class WelcomeCallListGenerator
 
                 $this->setEligibilityJobStatus(3, [
                     'last_encounter' => implode(',', $validator->messages()->all()) . " value: `$lastEncounter`",
-                ], EligibilityJob::INELIGIBLE);
+                ], EligibilityJob::INELIGIBLE, 'last_encounter');
 
                 return true;
             }
@@ -507,12 +615,16 @@ class WelcomeCallListGenerator
                 ? $lastEncounter
                 : new Carbon($lastEncounter);
 
+            if ($this->eligibilityJob) {
+                $this->eligibilityJob->last_encounter = $lastEncounterDate;
+            }
+
             if ($lastEncounterDate->lt($minEligibleDate)) {
                 $this->ineligiblePatients->push($row);
 
                 $this->setEligibilityJobStatus(3,
                     ['last_encounter' => "Patient last encounter `{$lastEncounterDate->toDateString()}` is more than a year ago."],
-                    EligibilityJob::INELIGIBLE);
+                    EligibilityJob::INELIGIBLE, 'last_encounter');
 
                 return true;
             }
@@ -541,7 +653,7 @@ class WelcomeCallListGenerator
                 $args = $args->all();
             }
 
-            if (isset($args['insurance_plans'])) {
+            if (isset($args['insurance_plans']) || isset($args['insurance_plan'])) {
                 $args = $this->adaptClhFormatInsurancePlansToPrimaryAndSecondary($args);
             }
 
@@ -606,12 +718,20 @@ class WelcomeCallListGenerator
             $args['medical_record_type'] = $this->medicalRecordType;
             $args['medical_record_id']   = $this->medicalRecordId;
 
-            if (array_key_exists('last_encounter', $args)) {
-                $args['last_encounter'] = Carbon::parse($args['last_encounter']);
-            } elseif (array_key_exists('last_visit', $args)) {
-                $args['last_encounter'] = Carbon::parse($args['last_visit']);
-            } else {
-                $args['last_encounter'] = null;
+            $lastEncounter = $args['last_encounter'] ?? $args['last_visit'] ?? null;
+
+            if ($lastEncounter) {
+                $validator = Validator::make([
+                    'last_encounter' => $lastEncounter,
+                ], [
+                    'last_encounter' => 'required|filled|date',
+                ]);
+
+                if ($validator->fails()) {
+                    $args['last_encounter'] = null;
+                } else {
+                    $args['last_encounter'] = Carbon::parse($lastEncounter);
+                }
             }
 
             $args['batch_id'] = $this->batch->id;
@@ -684,45 +804,54 @@ class WelcomeCallListGenerator
             $duplicateMySqlError = false;
             $errorMsg            = null;
 
-            if ( ! $enrolleeExists && ! $enrolledPatientExists) {
-                try {
-                    $this->enrollees = Enrollee::create($args);
-                } catch (\Illuminate\Database\QueryException $e) {
-                    $errorCode = $e->errorInfo[1];
-                    if ($errorCode == 1062) {
-                        $duplicateMySqlError = true;
-                        $errorMsg            = $e->getMessage();
-                    } else {
-                        throw $e;
-                    }
-                }
-
-                if ( ! $duplicateMySqlError) {
-                    $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
-
-                    return false;
-                }
-            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
-                $updated         = $enrolleeExists->update($args);
-                $this->enrollees = $enrolleeExists->fresh();
-            }
-
             if ($enrolledPatientExists) {
                 $this->setEligibilityJobStatus(3, [
                     'duplicate' => 'This patient already has a careplan. ' . route('patient.careplan.print',
                             [$enrolledPatientExists->id]),
-                ], EligibilityJob::DUPLICATE);
-            } elseif ($enrolleeExists) {
+                ], EligibilityJob::ENROLLED);
+
+                return true;
+            } elseif ($enrolleeExists && optional($this->batch)->shouldSafeReprocess()) {
+                $updated         = $enrolleeExists->update($args);
+                $this->enrollees = $enrolleeExists->fresh();
+
+                return false;
+            }
+
+            try {
+                $this->enrollees = Enrollee::create($args);
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1062) {
+                    $duplicateMySqlError = true;
+                    $errorMsg            = $e->getMessage();
+                } else {
+                    throw $e;
+                }
+            }
+
+            if ($enrolleeExists) {
+                $batchInfo = $enrolleeExists->batch_id
+                    ? " in batch {$enrolleeExists->batch_id}"
+                    : '';
                 $this->setEligibilityJobStatus(3,
-                    ['duplicate' => 'This patient was already processed and was found to be eligible. Eligible Patient Id: ' . $enrolleeExists->id],
-                    EligibilityJob::DUPLICATE);
-            } elseif ($duplicateMySqlError) {
+                    ['eligible-also-in-previous-batch' => "This patient has already been processed and found to be eligible$batchInfo. Eligible Patient Id: $enrolleeExists->id"],
+                    EligibilityJob::ELIGIBLE_ALSO_IN_PREVIOUS_BATCH);
+
+                return false;
+            }
+
+            if ($duplicateMySqlError) {
                 $this->setEligibilityJobStatus(3,
                     ['duplicate' => "Seems like the Enrollee already exists. Error caused: $errorMsg."],
                     EligibilityJob::DUPLICATE);
-            }
 
-            return true;
+                return true;
+            } else {
+                $this->setEligibilityJobStatus(3, [], EligibilityJob::ELIGIBLE);
+
+                return false;
+            }
         });
     }
 
@@ -887,7 +1016,13 @@ class WelcomeCallListGenerator
         return $this->eligibilityJob;
     }
 
-    private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null)
+    /**
+     * @param int $status
+     * @param array $messages
+     * @param null $outcome
+     * @param null $reason
+     */
+    private function setEligibilityJobStatus(int $status, $messages = [], $outcome = null, $reason = null)
     {
         if ( ! $this->eligibilityJob) {
             return;
@@ -896,11 +1031,19 @@ class WelcomeCallListGenerator
         $this->eligibilityJob->status   = $status;
         $this->eligibilityJob->messages = $messages;
         $this->eligibilityJob->outcome  = $outcome;
+        $this->eligibilityJob->reason   = $reason;
     }
 
     private function adaptClhFormatInsurancePlansToPrimaryAndSecondary($record)
     {
         return (new JsonMedicalRecordInsurancePlansAdapter())->adapt($record);
+    }
+
+    private function getSnomedToIcdMap()
+    {
+        return \Cache::remember('all_snomed_to_cpm_icd_maps', 60, function () {
+            return SnomedToCpmIcdMap::all();
+        });
     }
 
 

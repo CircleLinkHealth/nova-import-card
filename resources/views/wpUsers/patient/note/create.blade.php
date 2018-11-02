@@ -226,7 +226,7 @@
                                                 </div>
                                             @endif
                                             <div class="col-sm-12">
-                                                <div class="panel-group" id="accordion">
+                                                <div class="panel-group" id="accordion" style="margin-bottom: 2px">
                                                     <div id="collapseOne" class="panel-collapse collapse in"
                                                          style="display: none;">
                                                         <div class="multi-input-wrapper">
@@ -243,93 +243,90 @@
                                                                         for="Outbound"><span> </span>Outbound</label>
                                                             </div>
                                                         </div>
-
-
-                                                        @if(auth()->user()->isCCMCountable())
-                                                            <div class="multi-input-wrapper"
-                                                                 style="padding-bottom: 3px">
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="not reached"
-                                                                           id="not-reached"/>
-                                                                    <label for="not-reached">
-                                                                        <span> </span>Patient Not Reached
-                                                                    </label>
-                                                                </div>
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="reached"
-                                                                           id="reached"/>
-                                                                    <label for="reached">
-                                                                        <span> </span>Successful Clinical Call
-                                                                    </label>
-                                                                </div>
-                                                                <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
-                                                                <div class="radio">
-                                                                    <input type="radio"
-                                                                           name="call_status"
-                                                                           value="ignored"
-                                                                           id="ignored"/>
-                                                                    <label for="ignored">
-                                                                        <span> </span>Patient Busy - Rescheduled Call
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        @else
-
-                                                            <div class="multi-input-wrapper"
-                                                                 style="padding-bottom: 3px">
-                                                                <div>
-                                                                    <div class="radio">
-                                                                        <input type="checkbox"
-                                                                               name="welcome_call"
-                                                                               value="welcome_call"
-                                                                               id="welcome_call"/>
-                                                                        <label for="welcome_call">
-                                                                            <span> </span>Successful
-                                                                            Welcome Call
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                                <div>
-                                                                    <div class="radio">
-                                                                        <input type="checkbox"
-                                                                               name="other_call"
-                                                                               value="other_call"
-                                                                               id="other_call"/>
-                                                                        <label for="other_call">
-                                                                            <span> </span>Successful
-                                                                            Other
-                                                                            Patient Call
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                        @endif
-                                                        <div class="multi-input-wrapper" style="padding-top: 3px">
-                                                            <div><input type="checkbox"
-                                                                        name="medication_recon"
-                                                                        value="true"
-                                                                        id="medication_recon"/>
-                                                                <label for="medication_recon">
-                                                                    <span> </span>Medication Reconciliation
-                                                                </label>
-                                                            </div>
-                                                            <input type="hidden" name="tcm" value="hospital">
-                                                            <div><input type="checkbox"
-                                                                        name="tcm"
-                                                                        value="true"
-                                                                        id="tcm"/>
-                                                                <label for="tcm">
-                                                                    <span> </span>Patient in Hospital/ER (now or
-                                                                    recently)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                @if(auth()->user()->isCCMCountable())
+                                                    <div class="call-status-radios multi-input-wrapper"
+                                                         style="padding-bottom: 3px; display: none">
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="not reached"
+                                                                   id="not-reached"/>
+                                                            <label for="not-reached">
+                                                                <span> </span>Patient Not Reached
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="reached"
+                                                                   id="reached"/>
+                                                            <label for="reached">
+                                                                <span> </span>Successful Clinical Call
+                                                            </label>
+                                                        </div>
+                                                        <!-- CPM-165 Ability for RN to mark unsuccessful call but NOT count towards an attempt -->
+                                                        <div class="radio">
+                                                            <input type="radio"
+                                                                   name="call_status"
+                                                                   value="ignored"
+                                                                   id="ignored"/>
+                                                            <label for="ignored">
+                                                                <span> </span>Patient Busy - Rescheduled Call
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="call-status-radios multi-input-wrapper"
+                                                         style="padding-bottom: 3px; display: none">
+                                                        <div>
+                                                            <div class="radio">
+                                                                <input type="checkbox"
+                                                                       name="welcome_call"
+                                                                       value="welcome_call"
+                                                                       id="welcome_call"/>
+                                                                <label for="welcome_call">
+                                                                    <span> </span>Successful
+                                                                    Welcome Call
                                                                 </label>
                                                             </div>
                                                         </div>
-
+                                                        <div>
+                                                            <div class="radio">
+                                                                <input type="checkbox"
+                                                                       name="other_call"
+                                                                       value="other_call"
+                                                                       id="other_call"/>
+                                                                <label for="other_call">
+                                                                    <span> </span>Successful
+                                                                    Other
+                                                                    Patient Call
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="other-radios multi-input-wrapper" style="padding-top: 3px; display: none">
+                                                    <div><input type="checkbox"
+                                                                name="medication_recon"
+                                                                value="true"
+                                                                id="medication_recon"/>
+                                                        <label for="medication_recon">
+                                                            <span> </span>Medication Reconciliation
+                                                        </label>
+                                                    </div>
+                                                    <input type="hidden" name="tcm" value="hospital">
+                                                    <div><input type="checkbox"
+                                                                name="tcm"
+                                                                value="true"
+                                                                id="tcm"/>
+                                                        <label for="tcm">
+                                                            <span> </span>Patient in Hospital/ER (now or
+                                                            recently)
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -447,10 +444,43 @@
             const taskTypeToTopicMap = @json($task_types_to_topics);
             const noteTypesMap = @json($note_types);
             const patientNurseTasks = @json($tasks);
+            const medications = @json($medications);
+
+            const MEDICATIONS_SEPARATOR = '------------------------------';
 
             let form;
 
+            const waitForEl = function (selector, callback) {
+                if (!$(selector).length) {
+                    setTimeout(function () {
+                        window.requestAnimationFrame(function () {
+                            waitForEl(selector, callback)
+                        });
+                    }, 100);
+                } else {
+                    callback();
+                }
+            };
+
             $(document).ready(function () {
+
+                if (medications && medications.length) {
+                    waitForEl('#note', () => {
+                        const noteBody = $('#note');
+                        if (noteBody.val().length === 0) {
+                            const medDescriptions = [];
+                            for (let i = 0; i < medications.length; i++) {
+                                const med = medications[i];
+                                const desc = `-${med.name}\n\t${med.sig}`;
+                                medDescriptions.push(desc);
+                            }
+
+                            noteBody.val(`\n\n${MEDICATIONS_SEPARATOR}\n${medDescriptions.join('\n')}`);
+                            const event = new Event('change');
+                            document.getElementById('note').dispatchEvent(event);
+                        }
+                    });
+                }
 
                 //CPM-182: Show a confirmation box if user spend time creating the note
                 //but did not register a phone session
@@ -461,6 +491,8 @@
                         if (e.currentTarget.checked) {
                             $('#task-label').hide();
                             $('#collapseOne').show();
+                            $('.call-status-radios').show();
+                            $('.other-radios').show();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", true);
                         }
@@ -469,6 +501,8 @@
                                 $('#task-label').show();
                             }
                             $('#collapseOne').hide();
+                            $('.call-status-radios').hide();
+                            $('.other-radios').hide();
                             $("#Inbound").prop("checked", false);
                             $("#Outbound").prop("checked", false);
                         }
@@ -479,6 +513,8 @@
                     }
                     else {
                         $('#collapseOne').toggle();
+                        $('.call-status-radios').toggle();
+                        $('.other-radios').toggle();
                     }
                     //bug fix - this set value to phone="Outbound" in the form without
                     //the user knowing
@@ -515,6 +551,10 @@
                             selectList.append(o);
                         }
 
+                        //hide radios. will be decided what to show when a task is clicked
+                        $('.call-status-radios').hide();
+                        $('.other-radios').hide();
+
                         //if there is a task selected, select it as note topic
                         if ($('.tasks-radio').prop('checked')) {
                             $('.tasks-radio').change();
@@ -522,6 +562,12 @@
 
                         selectList.prop("disabled", true);
                         $('#tasks-container').show();
+
+                        //if only one task, just select it
+                        if (patientNurseTasks.length === 1) {
+                            $('.tasks-radio').prop('checked', true);
+                            $('.tasks-radio').change();
+                        }
                     }
                     else {
 
@@ -559,6 +605,13 @@
                     const task = patientNurseTasks.find(x => x.id === +e.currentTarget.value);
                     if (!task) {
                         return;
+                    }
+
+                    if (task.sub_type === 'Call Back') {
+                        $('.call-status-radios').show();
+                    }
+                    else {
+                        $('.call-status-radios').hide();
                     }
 
                     const selectList = $('#activityKey');
@@ -617,9 +670,12 @@
                         callIsSuccess = form['welcome_call'].checked || form['other_call'].checked;
                     }
 
-                    if (userIsCCMCountable && isPhoneSession && !callHasStatus) {
-                        alert('Please select whether patient was reached or not.');
-                        return;
+                    if (!callHasStatus) {
+                        const isCallBackTask = $('#activityKey').val() === "Call Back";
+                        if ((userIsCCMCountable && isPhoneSession) || (isAssociatedWithTask && isCallBackTask)) {
+                            alert('Please select whether patient was reached or not.');
+                            return;
+                        }
                     }
 
                     if (isAssociatedWithTask && !callHasTask) {
@@ -628,7 +684,7 @@
                     }
 
                     if (isAssociatedWithTask) {
-                        $('#confirm-task-completed').modal('show');
+                        showTaskCompletedModal();
                         return;
                     }
 
@@ -636,12 +692,13 @@
                     const CHARACTERS_THRESHOLD = 100;
                     let showModal = false;
                     const noteBody = form['body'].value;
+                    const noteBodyWithoutMeds = noteBody.substring(0, noteBody.indexOf(MEDICATIONS_SEPARATOR)).trim();
 
                     //CPM-182:
                     // if time more than 90 seconds
                     // and (is not phone session, or phone session but not success)
 
-                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBody.length > CHARACTERS_THRESHOLD) {
+                    if ((Date.now() - startDate) >= SECONDS_THRESHOLD || noteBodyWithoutMeds.length > CHARACTERS_THRESHOLD) {
 
                         if (!isPhoneSession || !callIsSuccess) {
                             showModal = true;
@@ -684,6 +741,10 @@
                         $('#activityKey').prop("disabled", false);
                         form.submit();
                     });
+                }
+
+                function showTaskCompletedModal() {
+                    $('#confirm-task-completed').modal('show');
                 }
             });
 

@@ -72,7 +72,8 @@ class CarePlanHelper
         $this->user->program_id   = $this->imr->practice_id ?? null;
         $this->user->save();
 
-        $this->handleEnrollees();
+        $this->handleEnrollees()
+             ->updateTrainingFeatures();
 
         return $this->carePlan;
     }
@@ -242,10 +243,12 @@ class CarePlanHelper
             if ($this->validatePhoneNumber($primaryPhone)) {
                 $number = $this->str->formatPhoneNumberE164($primaryPhone);
 
-                foreach ([PhoneNumber::HOME   => $homePhone,
-                          PhoneNumber::MOBILE => $mobilePhone,
-                          PhoneNumber::WORK   => $workPhone,
-                ] as $type => $phone
+                foreach (
+                    [
+                        PhoneNumber::HOME   => $homePhone,
+                        PhoneNumber::MOBILE => $mobilePhone,
+                        PhoneNumber::WORK   => $workPhone,
+                    ] as $type => $phone
                 ) {
                     if ( ! $phone) {
                         PhoneNumber::create([
@@ -255,6 +258,9 @@ class CarePlanHelper
                             'is_primary' => true,
                         ]);
 
+                        break;
+                    } elseif ($phone->number == $number) {
+                        //number is already saved. bail
                         break;
                     }
                 }
@@ -545,10 +551,48 @@ class CarePlanHelper
 
     public function handleEnrollees()
     {
-        $enrollee = Enrollee::whereMedicalRecordId($this->imr->medical_record_id)->whereNull('user_id')->first();
+        $enrollee = Enrollee::where(function ($q) {
+            $q
+                ->where('medical_record_type', $this->imr->medical_record_type)
+                ->whereMedicalRecordId($this->imr->medical_record_id)
+                ->whereNull('user_id');
+        })->orWhere([
+            [
+                'practice_id',
+                '=',
+                $this->user->program_id,
+            ],
+            [
+                'first_name',
+                '=',
+                $this->user->first_name,
+            ],
+            [
+                'last_name',
+                '=',
+                $this->user->last_name,
+            ],
+            [
+                'dob',
+                '=',
+                $this->dem->dob,
+            ],
+        ])->orWhere([
+            [
+                'practice_id',
+                '=',
+                $this->user->program_id,
+            ],
+            [
+                'mrn',
+                '=',
+                $this->dem->mrn_number,
+            ],
+        ])->first();
 
         if ($enrollee) {
-            $enrollee->user_id = $this->user->id;
+            $enrollee->user_id     = $this->user->id;
+            $enrollee->provider_id = $this->imr->billing_provider_id;
             $enrollee->save();
         }
 
@@ -562,5 +606,46 @@ class CarePlanHelper
         ]);
 
         return $validator->passes();
+    }
+
+    private function updateTrainingFeatures()
+    {
+        $this
+            ->imr
+            ->medicalRecord()
+            ->document
+            ->each(function ($documentLog) {
+                $documentLog->practice_id         = $this->imr->practice_id;
+                $documentLog->location_id         = $this->imr->location_id;
+                $documentLog->billing_provider_id = $this->imr->billing_provider_id;
+
+                $documentLog->save();
+            });
+
+        $this
+            ->imr
+            ->medicalRecord()
+            ->providers
+            ->each(function ($providerLog) {
+                $providerLog->practice_id         = $this->imr->practice_id;
+                $providerLog->location_id         = $this->imr->location_id;
+                $providerLog->billing_provider_id = $this->imr->billing_provider_id;
+
+                $providerLog->save();
+            });
+
+        $mr = $this
+            ->imr
+            ->medicalRecord();
+
+        if ($mr) {
+            $mr->practice_id         = $this->imr->practice_id;
+            $mr->location_id         = $this->imr->location_id;
+            $mr->billing_provider_id = $this->imr->billing_provider_id;
+
+            $mr->save();
+        }
+
+        return $this;
     }
 }

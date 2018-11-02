@@ -18,42 +18,48 @@ class GenerateOpsDailyReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $service;
+    /**
+     * @var Carbon
+     */
+    private $date;
 
     /**
      * Create a new job instance.
      *
-     * @return void
+     * @param Carbon|null $date
      */
-    public function __construct()
+    public function __construct(Carbon $date = null)
     {
-        $this->service = new OpsDashboardService(new OpsDashboardPatientEloquentRepository());
+        if ( ! $date) {
+            $date = Carbon::now();
+        }
+
+        $this->date = $date;
     }
 
     /**
      * Execute the job.
      *
+     * @param OpsDashboardService $opsDashboardService
+     *
      * @return void
      */
-    public function handle()
+    public function handle(OpsDashboardService $opsDashboardService)
     {
-        $date = Carbon::now();
+        ini_set('memory_limit', '512M');
 
-        $practices = Practice::select(['id','display_name'])
+        $practices = Practice::select(['id', 'display_name'])
                              ->activeBillable()
                              ->with([
-                                 'patients' => function ($p) use ($date) {
+                                 'patients' => function ($p) {
                                      $p->with([
-                                         'activities'                  => function ($a) use ($date) {
-                                             $a->select(['id','duration'])
-                                               ->where('performed_at', '>=',
-                                                   $date->copy()->startOfMonth()->startOfDay());
+                                         'patientSummaries'            => function ($s) {
+                                             $s->where('month_year', $this->date->copy()->startOfMonth());
                                          },
-                                         'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                             $r->select(['id', 'revisionable_id', 'old_value', 'new_value', 'created_at'])
-                                               ->where('key', 'ccm_status')
+                                         'patientInfo.revisionHistory' => function ($r) {
+                                             $r->where('key', 'ccm_status')
                                                ->where('created_at', '>=',
-                                                   $date->copy()->subDay()->setTimeFromTimeString('23:00'));
+                                                   $this->date->copy()->subDay()->setTimeFromTimeString('23:00'));
                                          },
                                      ]);
                                  },
@@ -62,10 +68,11 @@ class GenerateOpsDailyReport implements ShouldQueue
                              ->get()
                              ->sortBy('display_name');
 
-        $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
+
+        $hoursBehind = $opsDashboardService->calculateHoursBehind($this->date, $practices);
 
         foreach ($practices as $practice) {
-            $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
+            $row = $opsDashboardService->dailyReportRow($practice->patients->unique('id'), $this->date);
             if ($row != null) {
                 $rows[$practice->display_name] = $row;
             }
@@ -76,27 +83,28 @@ class GenerateOpsDailyReport implements ShouldQueue
         $data = [
             'hoursBehind' => $hoursBehind,
             'rows'        => $rows,
+            'dateGenerated' => $this->date->toDateTimeString(),
         ];
 
-        $path = storage_path("ops-daily-report-{$date->toDateString()}.json");
+        $path = storage_path("ops-daily-report-{$this->date->toDateString()}.json");
 
         $saved = file_put_contents($path, json_encode($data));
 
         if ( ! $saved) {
             if (app()->environment('worker')) {
                 sendSlackMessage('#callcenter_ops',
-                    "Daily Call Center Operations Report for {$date->toDateString()} could not be created. \n");
+                    "Daily Call Center Operations Report for {$this->date->toDateString()} could not be created. \n");
             }
         }
 
         SaasAccount::whereSlug('circlelink-health')
                    ->first()
                    ->addMedia($path)
-                   ->toMediaCollection("ops-daily-report-{$date->toDateString()}.json");
+                   ->toMediaCollection("ops-daily-report-{$this->date->toDateString()}.json");
 
         if (app()->environment('worker')) {
             sendSlackMessage('#callcenter_ops',
-                "Daily Call Center Operations Report for {$date->toDateString()} created. \n");
+                "Daily Call Center Operations Report for {$this->date->toDateString()} created. \n");
         }
     }
 
@@ -105,13 +113,13 @@ class GenerateOpsDailyReport implements ShouldQueue
     {
         $totalCounts = [];
 
-        foreach ($rows as $row){
-            foreach ($row as $key => $value){
+        foreach ($rows as $row) {
+            foreach ($row as $key => $value) {
                 $totalCounts[$key][] = $value;
             }
 
         }
-        foreach($totalCounts as $key => $value){
+        foreach ($totalCounts as $key => $value) {
 
             $totalCounts[$key] = array_sum($value);
         }

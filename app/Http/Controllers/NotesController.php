@@ -5,8 +5,11 @@ use App\Call;
 use App\Contracts\ReportFormatter;
 use App\Note;
 use App\PatientContactWindow;
+use App\Practice;
 use App\Repositories\PatientWriteRepository;
+use App\SafeRequest;
 use App\Services\Calls\SchedulerService;
+use App\Services\CPM\CpmMedicationService;
 use App\Services\NoteService;
 use App\User;
 use Carbon\Carbon;
@@ -198,7 +201,8 @@ class NotesController extends Controller
 
     public function create(
         Request $request,
-        $patientId
+        $patientId,
+        CpmMedicationService $medicationService
     ) {
 
         //@todo segregate to helper functions :/
@@ -236,9 +240,6 @@ class NotesController extends Controller
                 return response("User's Program not found", 401);
             }
 
-            //is there any check here? returns true or false
-            Auth::user()->hasRole('care-center');
-
             //providers
             $provider_info = [];
 
@@ -274,6 +275,12 @@ class NotesController extends Controller
                                        ])
                                        ->get();
 
+            $isCareCoach = Auth::user()->hasRole('care-center');
+            $meds        = [];
+            if ($isCareCoach && $this->shouldPrePopulateWithMedications($patient)) {
+                $meds = $medicationService->repo()->patientMedicationsList($patientId);
+            }
+
             $view_data = [
                 'program_id'           => $patient->program_id,
                 'patient'              => $patient,
@@ -289,12 +296,23 @@ class NotesController extends Controller
                 'window_flag'          => $patient_contact_window_exists,
                 'contact_days_array'   => $contact_days_array,
                 'ccm_complex'          => $ccm_complex,
-                'notifies_text'      => $patient->getNotifiesText(),
-                'note_channels_text' => $patient->getNoteChannelsText(),
+                'notifies_text'        => $patient->getNotifiesText(),
+                'note_channels_text'   => $patient->getNoteChannelsText(),
+                'medications'          => $meds,
             ];
 
             return view('wpUsers.patient.note.create', $view_data);
         }
+    }
+
+    private function shouldPrePopulateWithMedications(User $patient)
+    {
+        return Practice::whereId($patient->program_id)
+                       ->where(function ($q) {
+                           $q->where('name', '=', 'phoenix-heart')
+                             ->orWhere('name', '=', 'demo');
+                       })
+                       ->exists();
     }
 
     /**
@@ -309,19 +327,19 @@ class NotesController extends Controller
      * Also: in some conditions call will be stored for other roles as well.
      * They are never redirected to Schedule Next Calll page.
      *
-     * @param Request $input
+     * @param SafeRequest $request
      * @param SchedulerService $schedulerService
      * @param $patientId
      *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(
-        Request $input,
+        SafeRequest $request,
         SchedulerService $schedulerService,
         $patientId
     ) {
 
-        $input = $input->all();
+        $input = $request->allSafe();
 
         //in case Performed By field is removed from the form (per CPM-165)
         if ( ! isset($input['author_id'])) {
@@ -384,32 +402,43 @@ class NotesController extends Controller
             $task_id     = $input['task_id'];
             $task_status = $input['task_status'];
             $call        = Call::find($task_id);
-            if ($task_status === "done") {
-                if ($call->sub_type === "Call Back") {
-                    $call->status = Call::REACHED;
+            if ($call) {
+                if ($task_status === "done") {
+                    if ($call->sub_type === "Call Back") {
 
-                    //Updates when the patient was successfully contacted last
-                    $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                        if ( ! isset($input['call_status'])) {
+                            //exit with error
+                            return redirect()
+                                ->back()
+                                ->withErrors(["Invalid form input. Missing ['call_status']"])
+                                ->withInput();
+                        }
 
-                    //took this from below :)
-                    if (auth()->user()->hasRole('provider')) {
-                        $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                        $call_status  = $input['call_status'];
+                        $call->status = $call_status;
+
+                        //Updates when the patient was successfully contacted last
+                        $info->last_successful_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+
+                        //took this from below :)
+                        if (auth()->user()->hasRole('provider')) {
+                            $this->patientRepo->updateCallLogs($patient->patientInfo, true);
+                        }
+
+                    } else {
+                        $call->status = "done";
                     }
-
-                } else {
-                    $call->status = "done";
                 }
+
+                if ($call->sub_type === "Call Back") {
+                    // add last contact time regardless of if success
+                    $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
+                    $info->save();
+                }
+
+                $call->note_id = $note->id;
+                $call->save();
             }
-
-            if ($call->sub_type === "Call Back") {
-                // add last contact time regardless of if success
-                $info->last_contact_time = Carbon::now()->format('Y-m-d H:i:s');
-                $info->save();
-            }
-
-            $call->note_id = $note->id;
-            $call->save();
-
         } else {
             if (Auth::user()->hasRole('care-center')) {
 

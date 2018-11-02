@@ -50,7 +50,7 @@ class GeneratePatientReports extends Command
             }
 
             //Check Status
-            $status = $patient->carePlanStatus;
+            $status = $patient->getCarePlanStatus();
             if ($status != 'provider_approved') {
                 $this->error(" User Not Provider Approved: " . $patient_id . " ");
                 continue;

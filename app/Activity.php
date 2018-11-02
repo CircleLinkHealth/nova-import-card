@@ -37,6 +37,7 @@ use Prettus\Repository\Traits\TransformableTrait;
  * @property-read \Illuminate\Database\Eloquent\Collection|\Venturecraft\Revisionable\Revision[] $revisionHistory
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdBy(\App\User $user)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdThisMonth($field = 'created_at')
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdOn(Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdToday($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity createdYesterday($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Activity whereCommentId($value)

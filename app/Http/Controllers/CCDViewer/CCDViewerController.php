@@ -4,7 +4,6 @@ use App\CLH\Repositories\CCDImporterRepository;
 use App\Http\Controllers\Controller;
 use App\Models\MedicalRecords\Ccda;
 use Illuminate\Http\Request;
-use JavaScript;
 
 class CCDViewerController extends Controller
 {
@@ -14,7 +13,7 @@ class CCDViewerController extends Controller
     public function __construct(CCDImporterRepository $repo)
     {
         $this->repo = $repo;
-        ini_set('memory_limit', '-1');
+        ini_set('memory_limit', '512M');
     }
 
     public function create()

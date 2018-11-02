@@ -3,7 +3,6 @@
 namespace App\Billing\Practices;
 
 use App\AppConfig;
-use App\Models\CCD\Problem;
 use App\Practice;
 use App\Repositories\PatientSummaryEloquentRepository;
 use App\User;
@@ -72,7 +71,7 @@ class PracticeInvoiceGenerator
     /**
      * @param $reportName
      *
-     * @return \Spatie\MediaLibrary\Media
+     * @return \Spatie\MediaLibrary\Models\Media
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      */
     public function makeInvoicePdf($reportName)
@@ -94,7 +93,7 @@ class PracticeInvoiceGenerator
     /**
      * @param $reportName
      *
-     * @return \Spatie\MediaLibrary\Media
+     * @return \Spatie\MediaLibrary\Models\Media
      * @throws \Spatie\MediaLibrary\Exceptions\FileCannotBeAdded
      */
     public function makePatientReportPdf($reportName)

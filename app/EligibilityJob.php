@@ -9,9 +9,20 @@ class EligibilityJob extends BaseModel
 {
     use SoftDeletes;
 
+    //Outcome: A patient that was found to be eligible for the first time in this batch
     const ELIGIBLE = 'eligible';
+
+    //Outcome: A patient that was found to be eligible in this batch, but was also found eligible in a previous batch
+    const ELIGIBLE_ALSO_IN_PREVIOUS_BATCH = 'eligible_also_in_previous_batch';
+
+    //Outcome: An ineligile patient
     const INELIGIBLE = 'ineligible';
+
+    //Outcome: A patient that exists more than once in the same batch
     const DUPLICATE = 'duplicate';
+
+    //Outcome: A patient that was found eligible, but is already an enrolled patient in CPM
+    const ENROLLED = 'enrolled';
 
     const STATUSES = [
         'not_started' => 0,
@@ -36,11 +47,23 @@ class EligibilityJob extends BaseModel
         'data',
         'messages',
         'outcome',
+        'reason',
         'status',
+        'bhi_problem_id',
+        'ccm_problem_2_id',
+        'ccm_problem_1_id',
+        'ternary_insurance',
+        'secondary_insurance',
+        'primary_insurance',
+        'last_encounter',
     ];
 
     protected $attributes = [
         'status' => 0,
+    ];
+
+    protected $dates = [
+        'last_encounter',
     ];
 
     public function getStatus($statusId = null)
