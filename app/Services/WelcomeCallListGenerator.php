@@ -152,7 +152,14 @@ class WelcomeCallListGenerator
         }
 
         if ($this->eligibilityJob) {
-            $this->eligibilityJob->save();
+            try {
+                $this->eligibilityJob->save();
+            } catch (\Exception $e) {
+                \Log::critical($e);
+                \Log::critical($this->eligibilityJob);
+
+                throw new \Exception("Eligibility processing exception: {$e->getMessage()}");
+            }
         }
     }
 

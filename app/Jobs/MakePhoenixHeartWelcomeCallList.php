@@ -9,7 +9,6 @@ use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
 use App\Practice;
 use App\Repositories\Cache\UserNotificationList;
-use App\Services\Cache\NotificationService;
 use App\Services\Eligibility\Entities\Problem;
 use App\Services\WelcomeCallListGenerator;
 use Illuminate\Bus\Queueable;
@@ -40,7 +39,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      * @return void
      * @throws \Exception
      */
-    public function handle(NotificationService $notificationService)
+    public function handle()
     {
         $names = PhoenixHeartName::where('processed', '=', false)
                                  ->take(30)
