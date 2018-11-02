@@ -469,19 +469,19 @@ class WelcomeCallListGenerator
                 'medicare',
             ])
             ) {
-                $eligibleInsurances[] = $insurance;
+                $eligibleInsurances[] = $insurance['type'];
             }
 
             if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
                 switch ($i) {
                     case 0:
-                        $this->eligibilityJob->primary_insurance = $insurance;
+                        $this->eligibilityJob->primary_insurance = $insurance['type'];
                         break;
                     case 1:
-                        $this->eligibilityJob->secondary_insurance = $insurance;
+                        $this->eligibilityJob->secondary_insurance = $insurance['type'];
                         break;
                     case 2:
-                        $this->eligibilityJob->tertiary_insurance = $insurance;
+                        $this->eligibilityJob->tertiary_insurance = $insurance['type'];
                         break;
                     default:
                         break;
@@ -539,7 +539,7 @@ class WelcomeCallListGenerator
         if ($this->eligibilityJob) {
             $this->eligibilityJob->primary_insurance   = $primary;
             $this->eligibilityJob->secondary_insurance = $secondary;
-            $this->eligibilityJob->ternary_insurance   = $tertiary;
+            $this->eligibilityJob->tertiary_insurance   = $tertiary;
         }
 
         if (count($eligibleInsurances) < 1) {
