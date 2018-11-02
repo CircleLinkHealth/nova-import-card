@@ -52,7 +52,7 @@ class EligibilityJob extends BaseModel
         'bhi_problem_id',
         'ccm_problem_2_id',
         'ccm_problem_1_id',
-        'ternary_insurance',
+        'tertiary_insurance',
         'secondary_insurance',
         'primary_insurance',
         'last_encounter',

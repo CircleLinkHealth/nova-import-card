@@ -539,7 +539,7 @@ class WelcomeCallListGenerator
         if ($this->eligibilityJob) {
             $this->eligibilityJob->primary_insurance   = $primary;
             $this->eligibilityJob->secondary_insurance = $secondary;
-            $this->eligibilityJob->ternary_insurance   = $tertiary;
+            $this->eligibilityJob->tertiary_insurance   = $tertiary;
         }
 
         if (count($eligibleInsurances) < 1) {

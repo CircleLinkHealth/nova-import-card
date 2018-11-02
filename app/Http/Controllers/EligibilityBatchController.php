@@ -358,7 +358,7 @@ class EligibilityBatchController extends Controller
                       'bhi_problem_id',
                       'ccm_problem_2_id',
                       'ccm_problem_1_id',
-                      'ternary_insurance',
+                      'tertiary_insurance',
                       'secondary_insurance',
                       'primary_insurance',
                       'last_encounter',
@@ -377,7 +377,7 @@ class EligibilityBatchController extends Controller
                               'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
                               'primary_insurance'   => $job->primary_insurance,
                               'secondary_insurance' => $job->secondary_insurance,
-                              'ternary_insurance'   => $job->ternary_insurance,
+                              'tertiary_insurance'   => $job->tertiary_insurance,
                               'processing_status'   => $job->getStatus(),
                           ];
 
