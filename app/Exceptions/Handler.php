@@ -105,23 +105,17 @@ class Handler extends ExceptionHandler
     ) {
         if ($e instanceof ModelNotFoundException) {
             return response($e->getMessage(), 400);
-        }
-
-        if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+        } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
             return response()->json(['token_expired'], $e->getStatusCode());
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json(['token_invalid'], $e->getStatusCode());
         } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
             return response()->json(['token_blacklisted'], '403');
+        } elseif ($this->isHttpException($e)) {
+            return $this->renderHttpException($e);
         }
 
-        if ($this->isHttpException($e)) {
-            return $this->renderHttpException($e);
-        } elseif ($e instanceof \ErrorException) {
-            return parent::render($request, $e);
-        } else {
-            return parent::render($request, $e);
-        }
+        return parent::render($request, $e);
     }
 
     /**
