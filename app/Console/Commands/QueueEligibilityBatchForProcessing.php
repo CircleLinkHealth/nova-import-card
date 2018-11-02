@@ -9,6 +9,7 @@ use App\Jobs\MakePhoenixHeartWelcomeCallList;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
+use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordAdapter;
@@ -192,6 +193,18 @@ class QueueEligibilityBatchForProcessing extends Command
     private function queuePHXJobs($batch): EligibilityBatch
     {
         MakePhoenixHeartWelcomeCallList::dispatch($batch)->onQueue('low');
+
+        $jobsToBeProcessedExist = EligibilityJob::whereBatchId($batch->id)
+                                                ->where('status', '<', 2)
+                                                ->exists();
+
+        if ($jobsToBeProcessedExist) {
+            $batch->status = EligibilityBatch::STATUSES['processing'];
+        } elseif (! PhoenixHeartName::where('processed', '=', false)->exists()) {
+            $this->status = EligibilityBatch::STATUSES['complete'];
+        }
+
+        $batch->save();
 
         return $batch->fresh();
     }
