@@ -469,7 +469,7 @@ class WelcomeCallListGenerator
                 'medicare',
             ])
             ) {
-                $eligibleInsurances[] = $insurance;
+                $eligibleInsurances[] = $insurance['type'];
             }
 
             if ($this->eligibilityJob && ! empty($insurance) && $i < 3) {
