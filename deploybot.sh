@@ -6,8 +6,8 @@ SHARED=$1
 RELEASE=$2
 
 # Create a shared vendor directory and symlink it to the project root
-mkdir -p $SHARED/vendor
-ln -s $SHARED/vendor $RELEASE/vendor
+# mkdir -p $SHARED/vendor
+# ln -s $SHARED/vendor $RELEASE/vendor
 
 
 # Create a shared storage directory and symlink it to the project root
