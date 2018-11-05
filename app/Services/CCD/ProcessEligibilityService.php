@@ -390,10 +390,15 @@ class ProcessEligibilityService
 
             $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'];
 
+            $errors = null;
+            if ($validator->fails()){
+                $errors = json_encode($validator->errors());
+            }
             $job = EligibilityJob::create([
                 'batch_id' => $batch->id,
                 'hash'     => $hash,
                 'data'     => $patient,
+                'errors'   => $errors,
             ]);
 
             $patient['eligibility_job_id'] = $job->id;
