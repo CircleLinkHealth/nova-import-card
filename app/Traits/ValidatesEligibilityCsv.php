@@ -9,45 +9,106 @@
 namespace App\Traits;
 
 
-use Illuminate\Support\Collection;
 use Validator;
 
 trait ValidatesEligibilityCsv
 {
-    public function validateRow($row){
-        //validate row
-        //return validator
+    public function validateRow($row)
+    {
+        $row = $this->transformProblems($row);
+        $row = $this->transformPhones($row);
 
         return $this->validate($row);
     }
 
-    public function determineFieldFormat(){
-        //problem string, is it JSON? Is it a Problem class? how is it represented in the CSV? Test with ops csv excel report.
-        //i think its json for sure, because the system converts it to that when we get here.
+    private function transformProblems(Array $row)
+    {
+
+        if (is_json($row['problems_string'])) {
+            $problems               = json_decode($row['problems_string'])->Problems;
+            $row['problems_string'] = [];
+            foreach ($problems as $problem) {
+                $row['problems_string'][] = [
+                    'Name' => $problem->Name,
+                    'Code' => $problem->Code,
+                ];
+            }
+        }
+
+        return $row;
     }
 
-    //to perform extra validations?
+    private function transformPhones(Array $row)
+    {
+        $row['phones'] = [
+            'primary_phone' => array_key_exists('primary_phone', $row)
+                ? $row['primary_phone']
+                : null,
+            'home_phone'    => array_key_exists('home_phone', $row)
+                ? $row['home_phone']
+                : null,
+            'cell_phone'    => array_key_exists('cell_phone', $row)
+                ? $row['cell_phone']
+                : null,
+            'other_phone'   => array_key_exists('other_phone', $row)
+                ? $row['other_phone']
+                : null,
+        ];
+        return $row;
+    }
 
     //to perform validation for the whole csv?
-    public function validateCsv(){
+    public function validateCsv()
+    {
 
     }
 
-    public function validate(Collection $collection){
+    public function validate(Array $array)
+    {
 
-        return Validator::make($collection->all(), [
-            'patient_id' => 'required',
-            'last_name' => 'required|alpha_num',
-            'first_name' => 'required|alpha_num',
-            'date_of_birth' => 'required|date',
-            'problems' => ['required', function ($attribute, $value, $fail) {
-                if (count($value) < 1) {
-                    $fail($attribute . 'field must contain at least 1 problem.');
-                }
-            }],
-            'primary_phone' => "phone:us|required_if:cell_phone,==,null,",
-            'cell_phone' => "phone:us|required_if:primary_phone,==,null,",
+
+        return Validator::make($array, [
+            'mrn'             => 'required',
+            'last_name'       => 'required|alpha_num',
+            'first_name'      => 'required|alpha_num',
+            'dob'             => 'required|date',
+            'problems_string' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $count = collect($value)
+                        ->reject(function ($problem) {
+                            $name = $problem['name'] ?? null;
+                            $code = $problem['code'] ?? null;
+                            if (in_array(strtolower($name), ['null', 'n/a', 'none', 'n\a'])) {
+                                $name = null;
+                            }
+                            if (in_array(strtolower($code), ['null', 'n/a', 'none', 'n\a'])) {
+                                $code = null;
+                            }
+
+                            return ! $name && ! $code;
+                        })->count();
+
+                    return $count >= 1;
+                },
+            ],
+            'phones'          => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $count = collect($value)
+                        ->reject(function ($phone) {
+                            if ( ! preg_match("/\A[(]?[0-9]{3}[)]?[ ,-]?[0-9]{3}[ ,-]?[0-9]{4}\z/", $phone)) {
+                                $phone = null;
+                            }
+
+                            return ! $phone;
+                        })->count();
+
+                    return $count >= 1;
+                },
+            ],
         ]);
+
     }
 
 
