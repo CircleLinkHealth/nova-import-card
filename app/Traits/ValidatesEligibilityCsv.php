@@ -9,6 +9,8 @@
 namespace App\Traits;
 
 
+use App\Rules\CsvEligibilityPhones;
+use App\Rules\CsvEligibilityProblems;
 use Validator;
 
 trait ValidatesEligibilityCsv
@@ -63,50 +65,15 @@ trait ValidatesEligibilityCsv
 
     }
 
-    public function validate(Array $array)
+    private function validate(Array $array)
     {
-
-
         return Validator::make($array, [
             'mrn'             => 'required',
             'last_name'       => 'required|alpha_num',
             'first_name'      => 'required|alpha_num',
             'dob'             => 'required|date',
-            'problems_string' => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $count = collect($value)
-                        ->reject(function ($problem) {
-                            $name = $problem['name'] ?? null;
-                            $code = $problem['code'] ?? null;
-                            if (in_array(strtolower($name), ['null', 'n/a', 'none', 'n\a'])) {
-                                $name = null;
-                            }
-                            if (in_array(strtolower($code), ['null', 'n/a', 'none', 'n\a'])) {
-                                $code = null;
-                            }
-
-                            return ! $name && ! $code;
-                        })->count();
-
-                    return $count >= 1;
-                },
-            ],
-            'phones'          => [
-                'required',
-                function ($attribute, $value, $fail) {
-                    $count = collect($value)
-                        ->reject(function ($phone) {
-                            if ( ! preg_match("/\A[(]?[0-9]{3}[)]?[ ,-]?[0-9]{3}[ ,-]?[0-9]{4}\z/", $phone)) {
-                                $phone = null;
-                            }
-
-                            return ! $phone;
-                        })->count();
-
-                    return $count >= 1;
-                },
-            ],
+            'problems_string' => ['required', new CsvEligibilityProblems()],
+            'phones'          => ['required', new CsvEligibilityPhones()],
         ]);
 
     }
