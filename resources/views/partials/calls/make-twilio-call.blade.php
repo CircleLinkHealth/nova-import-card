@@ -48,10 +48,13 @@
     </div>
 </div>
 
-<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-<script src="{{ mix('js/browser-calls.js', true) }}"></script>
+<script src="https://media.twiliocdn.com/sdk/js/client/v1.6/twilio.min.js"></script>
+<script src="{{ mix('js/browser-calls.js') }}"></script>
 <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 
@@ -65,7 +68,7 @@
             callStatus: 'Summoning Calling Gods...',
             toCall: '',
             enableHangUp: true,
-            disableCall: true,
+            disableCall: false,
             warning: 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
         },
 
@@ -89,16 +92,16 @@
 
             checkPhoneFormatValidity(){
 
-                let regex = /^\+?[1]\d{10}$/;
-
-                if (this.toCall.match(regex) != null) {
-                    this.disableCall = false;
-                    this.warning = ''
-                } else {
-                    this.disableCall = true;
-                    this.warning = 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
-
-                }
+                // let regex = /^\+?[1]\d{10}$/;
+                //
+                // if (this.toCall.match(regex) != null) {
+                //     this.disableCall = false;
+                //     this.warning = ''
+                // } else {
+                //     this.disableCall = true;
+                //     this.warning = 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
+                //
+                // }
 
             },
 
