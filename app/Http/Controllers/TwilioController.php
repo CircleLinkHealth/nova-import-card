@@ -71,7 +71,7 @@ class TwilioController extends Controller
 
     public function placeCall(Request $request)
     {
-        $response = new Twiml();
+        $response       = new Twiml();
         $callerIdNumber = config('services.twilio')['from'];
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
@@ -82,7 +82,7 @@ class TwilioController extends Controller
             $dial->number($phoneNumberToDial);
         }
 
-        return $this->responseWithXmlType($response);
+        return $this->responseWithXmlType(response($response));
     }
 
     private function responseWithXmlType($response)
