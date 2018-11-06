@@ -82,7 +82,12 @@ class TwilioController extends Controller
             $dial->number($phoneNumberToDial);
         }
 
-        return $response;
+        return $this->responseWithXmlType($response);
+    }
+
+    private function responseWithXmlType($response)
+    {
+        return $response->header('Content-Type', 'application/xml');
     }
 
     public function sendTestSMS()
