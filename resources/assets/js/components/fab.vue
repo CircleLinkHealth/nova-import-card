@@ -2,6 +2,7 @@
     <div>
         <section class="fab">
             <div class="mini-action-container">
+
                 <div class="mini-action-button">
                     <a :href="createNoteUrl">
                         <i class="icon material-icons">speaker_notes</i>
@@ -38,6 +39,14 @@
                     <p class="text">Add Care Person</p>
                 </div>
 
+                <div class="mini-action-button">
+                    <p>
+                        <i v-on:click="createTask"
+                           class="icon material-icons">calendar_today</i>
+                    </p>
+                    <p class="text">Add Activity</p>
+                </div>
+
             </div>
             <div class="action-button">
                 <i class="icon material-icons">add</i>
@@ -47,9 +56,9 @@
 </template>
 
 <script>
-    import { mapGetters, mapActions } from 'vuex'
-    import { getCurrentUser, setOpenModal } from "../store/actions";
-    import { currentUser } from '../store/getters';
+    import {mapGetters, mapActions} from 'vuex'
+    import {getCurrentUser, setOpenModal} from "../store/actions";
+    import {currentUser} from '../store/getters';
 
     export default {
         data() {
@@ -77,11 +86,23 @@
                 createCarePerson() {
                     this.setOpenModal({
                         name: 'create-care-person'
-                    })
+                    });
                 },
-                document () {
+                createTask() {
+                    this.setOpenModal({
+                        name: 'add-task-modal',
+                        props: {
+                            patientId: window['patientId'],
+                            practice: {
+                                id: window['patientPractice'].id,
+                                name: window['patientPractice'].name,
+                            }
+                        }
+                    });
+                },
+                document() {
                     return (typeof (document) == 'undefined') ? {
-                        querySelector: (query) => ({ getAttribute: () => null })
+                        querySelector: (query) => ({getAttribute: () => null})
                     } : document
                 }
             }
