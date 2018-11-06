@@ -2170,7 +2170,7 @@ Route::group([
         'as'   => 'twilio.call',
     ]);
 
-    Route::get('/call/place', [
+    Route::post('/call/place', [
         'uses' => 'TwilioController@placeCall',
         'as'   => 'twilio.call.place',
     ]);

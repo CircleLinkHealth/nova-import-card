@@ -148,7 +148,7 @@
                     this.onPhone = true;
                     // make outbound call with current number
                     var n = this.toCall;
-                    this.connection = Twilio.Device.connect({ number: n });
+                    this.connection = Twilio.Device.connect({ To: n });
                     this.log = 'Calling ' + n;
                 } else {
                     // hang up call in progress
