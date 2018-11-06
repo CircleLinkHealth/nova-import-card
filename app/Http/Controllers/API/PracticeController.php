@@ -164,7 +164,7 @@ class PracticeController extends Controller
                           ]);
                       })
                       ->ofPractice($practiceId)
-                      ->with(['nurseInfo', 'nurseInfo.states'])
+                      ->with('nurseInfo.states')
                       ->get([
                           'id',
                           'first_name',
