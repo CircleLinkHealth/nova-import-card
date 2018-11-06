@@ -2160,8 +2160,6 @@ Route::get('/downloadInvoice/{practice}/{name}', [
 Route::group([
     'prefix' => 'twilio',
 ], function () {
-
-
     Route::post('/token', [
         'uses' => 'TwilioController@obtainToken',
         'as'   => 'twilio.token',
@@ -2170,6 +2168,11 @@ Route::group([
     Route::post('/call/make', [
         'uses' => 'TwilioController@newCall',
         'as'   => 'twilio.call',
+    ]);
+
+    Route::get('/call/place', [
+        'uses' => 'TwilioController@placeCall',
+        'as'   => 'twilio.call.place',
     ]);
 
     Route::get('/call', 'TwilioController@makeCall');
