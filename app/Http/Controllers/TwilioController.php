@@ -76,9 +76,9 @@ class TwilioController extends Controller
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 
-        $phoneNumberToDial = $request->input('phoneNumber');
+        $phoneNumberToDial = $request->input('To');
 
-        if (isset($phoneNumberToDial)) {
+        if ($phoneNumberToDial) {
             $dial->number($phoneNumberToDial);
         }
 
