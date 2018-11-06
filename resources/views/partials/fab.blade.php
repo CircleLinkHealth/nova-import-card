@@ -16,6 +16,13 @@
     <fab ref="fabComponent"></fab>
 </div>
 
-
-
+@push('scripts')
+    <script>
+        window['patientId'] = @json($patient->id);
+        window['patientPractice'] = {
+            id: @json($patient->primaryPractice->id),
+            name: @json($patient->primaryPractice->display_name)
+        };
+    </script>
+@endpush
 
