@@ -27,8 +27,8 @@ class CsvEligibilityProblems implements Rule
     {
         $count = collect($value)
             ->reject(function ($problem) {
-                $name = $problem['name'] ?? null;
-                $code = $problem['code'] ?? null;
+                $name = $problem['Name'] ?? null;
+                $code = $problem['Code'] ?? null;
                 if (in_array(strtolower($name), ['null', 'n/a', 'none', 'n\a'])) {
                     $name = null;
                 }
