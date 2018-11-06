@@ -15,6 +15,7 @@ use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class OpsDashboardService
 {
@@ -203,8 +204,6 @@ class OpsDashboardService
      */
     public function dailyReportRow($patients, Carbon $date)
     {
-        $fromDate = $date->copy()->subDay()->setTimeFromTimeString('23:00');
-
         $paused          = [];
         $withdrawn       = [];
         $enrolled        = [];
@@ -470,6 +469,9 @@ class OpsDashboardService
 
 
     /**
+     * Returns the number of working days for the date range given.
+     * Accounts for weekends and holidays.
+     *
      * @param $fromDate
      * @param $toDate
      *
@@ -477,9 +479,14 @@ class OpsDashboardService
      */
     public function calculateWeekdays($fromDate, $toDate)
     {
+        $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) {
-            return ! $date->isWeekend();
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays){
+
+            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+
+            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+
         }, new Carbon($toDate));
 
     }
