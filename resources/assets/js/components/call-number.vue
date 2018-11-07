@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="col-sm-2">
-                    <button class="btn btn-circle" @click="toggleCall(selectedNumber)"
+                    <button class="btn btn-circle" @click="toggleCallMessage(selectedNumber)"
                             :class="[ onPhone[selectedNumber] ? 'btn-danger': 'btn-success' ]"
                             :disabled="!validPhone(selectedNumber) || onAnyCall || !selectedNumber">
                         <i class="fa fa-fw fa-phone" :class="[ onPhone[selectedNumber] ? 'fa-close': 'fa-phone' ]"></i>
@@ -24,6 +24,7 @@
                 </div>
             </div>
         </template>
+
     </div>
 </template>
 <script>
@@ -32,6 +33,7 @@
     import LoaderComponent from '../components/loader';
 
     let Twilio;
+    let bc;
 
     export default {
         name: 'call-number',
@@ -68,6 +70,25 @@
                 const value = !this.muted[number];
                 this.muted[number] = value;
                 this.device.activeConnection().mute(value);
+            },
+
+            toggleCallMessage: function (number) {
+                if (!this.onPhone[number]) {
+                    this.handleBroadcastMessage({
+                        action: "start_call",
+                        data: {
+                            number: number
+                        }
+                    });
+                }
+                else {
+                    this.handleBroadcastMessage({
+                        action: "end_call",
+                        data: {
+                            number: number
+                        }
+                    });
+                }
             },
 
             // Make an outbound call with the current number,
@@ -141,10 +162,104 @@
                         console.log(error);
                         self.log = 'Could not fetch token, see console.log';
                     });
+            },
+            subscribeToBroadcastChannel: function () {
+                // Connection to a broadcast channel
+                bc = new BroadcastChannel('cpm');
+                bc.onmessage = ev => {
+                    this.handleBroadcastMessage(ev.data);
+                };
+            },
+            handleBroadcastMessage: function (message) {
+                let self = this;
+                if (!message) {
+                    self.log = "There was an error";
+                    return;
+                }
+
+                const action = message.action;
+                const data = message.data;
+
+                let error;
+
+                switch (action) {
+                    case "call_status":
+
+                        let resp;
+                        if (!self.device || !self.device.isInitialized) {
+                            error = "twilio_not_ready";
+                        }
+                        else {
+                            let number = undefined;
+                            const status = device.status();
+                            if (status === "ready") {
+                                for (let i in self.onPhone) {
+                                    if (self.onPhone[i]) {
+                                        number = i;
+                                        break;
+                                    }
+                                }
+                            }
+                            resp = {
+                                status,
+                                number
+                            };
+                        }
+
+                        bc.postMessage({
+                            action: action + "_response",
+                            data: resp,
+                            error
+                        });
+                        break;
+                    case "start_call":
+                    case "end_call":
+                        let number = data.number;
+                        if (!number) {
+                            //pick the first
+                            number = self.numbers[0];
+                        }
+
+                        if (!self.device || !self.device.isInitialized) {
+                            error = "twilio_not_ready";
+                        }
+
+                        this.toggleCall(number);
+                        bc.postMessage({
+                            action: action + "_response",
+                            data: error ? undefined : "done",
+                            error
+                        });
+
+                        if (action === "end_call") {
+                            window.close();
+                        }
+
+                        break;
+                    case "mute_call":
+                    case "unmute_call":
+                        if (!self.device || !self.device.isInitialized) {
+                            error = "twilio_not_ready";
+                        }
+
+                        this.toggleMute(data.number);
+                        bc.postMessage({
+                            action: action + "_response",
+                            data: error ? undefined : 'done',
+                            error
+                        });
+                        break;
+                }
             }
+
         },
         created() {
             this.resetPhoneState();
+            this.subscribeToBroadcastChannel();
+
+            window.onbeforeunload = function (event) {
+                bc.postMessage({action: "call_window_close", data: {error: null}});
+            };
         },
         mounted() {
             let self = this;
