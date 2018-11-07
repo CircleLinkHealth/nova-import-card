@@ -55,7 +55,7 @@
             toggleMute: function (number) {
                 const value = !this.muted[number];
                 this.muted[number] = value;
-                Twilio.Device.activeConnection().mute(value);
+                this.device.activeConnection().mute(value);
             },
 
             // Make an outbound call with the current number,
@@ -65,12 +65,12 @@
                     this.muted[number] = false;
                     this.onPhone[number] = true;
                     // make outbound call with current number
-                    this.connection = Twilio.Device.connect({To: number});
+                    this.connection = this.device.connect({To: number});
                     this.log = 'Calling ' + number;
                     EventBus.$emit('tracker:call-mode:enter');
                 } else {
                     // hang up call in progress
-                    Twilio.Device.disconnectAll();
+                    this.device.disconnectAll();
                     EventBus.$emit('tracker:call-mode:exit');
                 }
             },
@@ -98,32 +98,37 @@
                 let self = this;
 
                 const url = rootUrl(`/twilio/token`);
-                let device = null;
 
                 self.axios.get(url)
                     .then(response => {
                         this.log = 'Ready';
-                        device = Twilio.Device.setup(response.data.token);
+                        self.device = new Twilio.Device(response.data.token);
+
+                        self.device.on('disconnect', () => {
+                            self.resetPhoneState();
+                            self.connection = null;
+                            self.log = 'Call ended.';
+                        });
+
+                        self.device.on('offline', () => {
+                            self.resetPhoneState();
+                            self.connection = null;
+                            self.log = 'Call ended.';
+                        });
+
+                        self.device.on('error', (err) => {
+                            self.resetPhoneState();
+                            self.log = err.message;
+                        });
+
+                        self.device.on('ready', () => {
+                            self.log = 'Ready to make call';
+                        });
                     })
                     .catch(error => {
                         console.log(error);
                         self.log = 'Could not fetch token, see console.log';
                     });
-
-                Twilio.Device.disconnect(function () {
-                    self.resetPhoneState();
-                    self.connection = null;
-                    self.log = 'Call ended.';
-                });
-
-                Twilio.Device.error(function (err) {
-                    self.resetPhoneState();
-                    self.log = err.message;
-                });
-
-                Twilio.Device.ready(function () {
-                    self.log = 'Ready to make call';
-                });
             }
         },
         created() {
