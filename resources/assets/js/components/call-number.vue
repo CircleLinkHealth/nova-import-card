@@ -1,18 +1,29 @@
 <template>
     <div>
         <loader v-if="waiting"></loader>
-        <template v-if="!waiting" v-for="number in numbers">
-            <button class="btn btn-circle" @click="toggleCall(number)"
-                    :class="[ onPhone[number] ? 'btn-danger': 'btn-success' ]"
-                    :disabled="!validPhone(number) || onAnyCall">
-                {{number}} <i class="fa fa-fw fa-phone"
-                              :class="[ onPhone[number] ? 'fa-close': 'fa-phone' ]"></i>
-            </button>
-            <button class="btn btn-circle btn-default" v-if="onPhone[number]" @click="toggleMute(number)">
-                <i class="fa fa-fw" :class="[ muted[number] ? 'fa-microphone-slash': 'fa-microphone' ]"></i>
-            </button>
-        </template>
         <div>{{log}}</div>
+        <template v-if="!waiting">
+            <div class="row">
+                <div class="col-sm-10">
+                    <select2 class="form-control" v-model="selectedNumber" :disabled="onAnyCall">
+                        <option v-for="(number, index) in numbers" :key="index" :value="number">{{number}}</option>
+                    </select2>
+                </div>
+
+                <div class="col-sm-2">
+                    <button class="btn btn-circle" @click="toggleCall(selectedNumber)"
+                            :class="[ onPhone[selectedNumber] ? 'btn-danger': 'btn-success' ]"
+                            :disabled="!validPhone(selectedNumber) || onAnyCall || !selectedNumber">
+                        <i class="fa fa-fw fa-phone" :class="[ onPhone[selectedNumber] ? 'fa-close': 'fa-phone' ]"></i>
+                    </button>
+                    <button class="btn btn-circle btn-default" v-if="onPhone[selectedNumber]"
+                            @click="toggleMute(selectedNumber)">
+                        <i class="fa fa-fw"
+                           :class="[ muted[selectedNumber] ? 'fa-microphone-slash': 'fa-microphone' ]"></i>
+                    </button>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
 <script>
@@ -39,6 +50,7 @@
                 connection: null,
                 //twilio device
                 device: null,
+                selectedNumber: null
             }
         },
         computed: {
