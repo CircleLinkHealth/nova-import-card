@@ -104,7 +104,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
             ) {
                 $sheet->cell('A1', function ($cell) use ($date) {
                     // manipulate the cell
-                    $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()} to: {$date->toDateTimeString()}");
+                    $cell->setValue("Ops Report from: {$date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()} to: {$date->toDateTimeString()}");
 
                 });
                 $sheet->cell('A2', function ($cell) use ($hoursBehind) {
