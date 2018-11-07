@@ -257,6 +257,38 @@ class Patient extends BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
+    public function getContactWindowsString(){
+
+        $windows = [];
+        foreach ($this->contactWindows as $window){
+            switch ($window->day_of_week){
+                case (1):
+                    $windows[]= "Monday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (2):
+                    $windows[]= "Tuesday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (3):
+                    $windows[]= "Wednesday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (4):
+                    $windows[]= "Thursday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (5):
+                    $windows[]= "Friday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (6):
+                    $windows[]= "Saturday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+                case (7):
+                    $windows[]= "Sunday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    break;
+            }
+        }
+
+        return implode($windows);
+    }
+
     public function family()
     {
 
