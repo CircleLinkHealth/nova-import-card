@@ -59,7 +59,7 @@ class GenerateOpsDailyReport implements ShouldQueue
                                          'patientInfo.revisionHistory' => function ($r) {
                                              $r->where('key', 'ccm_status')
                                                ->where('created_at', '>=',
-                                                   $this->date->copy()->subDay()->setTimeFromTimeString('23:00'));
+                                                   $this->date->copy()->subDay()->setTimeFromTimeString('23:30'));
                                          },
                                      ]);
                                  },
