@@ -6,13 +6,6 @@
 @section('content')
     @push('scripts')
         <script src="https://media.twiliocdn.com/sdk/js/client/v1.6/twilio.min.js"></script>
-
-        <script>
-            $(document).ready(function () {
-                window.Twilio = Twilio;
-            });
-
-        </script>
     @endpush
 
     <div class="row" style="margin-top:30px;">

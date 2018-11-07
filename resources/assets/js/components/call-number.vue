@@ -26,12 +26,17 @@
                 onPhone: false,
                 log: 'Initializing',
                 connection: null,
+                //twilio device
+                device: null,
             }
         },
         computed: {
             validPhone: function () {
                 // return /^([0-9]|#|\*)+$/.test(this.number.replace(/[-()\s]/g,''));
                 return true;
+            },
+            status: function () {
+                return Twilio.Device.status();
             }
         },
         methods: {
@@ -59,15 +64,13 @@
         },
         mounted() {
             let self = this;
-            let device = null;
-            let Twilio = window.Twilio;
 
             const url = rootUrl(`/twilio/token`);
 
             self.axios.get(url)
                 .then(response => {
                         this.log = 'Connecting';
-                        device = Twilio.Device.setup(response.data.token);
+                        this.device = Twilio.Device.setup(response.data.token);
                     }
                 )
                 .catch(error => {
