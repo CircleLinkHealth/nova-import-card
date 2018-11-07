@@ -17,6 +17,7 @@
 </template>
 <script>
     import {rootUrl} from "../app.config";
+    import EventBus from '../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../components/loader';
 
     let Twilio;
@@ -65,10 +66,12 @@
                     this.onPhone[number] = true;
                     // make outbound call with current number
                     this.connection = Twilio.Device.connect({To: number});
-                    this.log = 'Calling ' + n;
+                    this.log = 'Calling ' + number;
+                    EventBus.$emit('tracker:call-mode:enter');
                 } else {
                     // hang up call in progress
                     Twilio.Device.disconnectAll();
+                    EventBus.$emit('tracker:call-mode:exit');
                 }
             },
             resetPhoneState: function () {
