@@ -2,7 +2,7 @@
     <div>
         <button class="btn btn-circle" @click="toggleCall()"
                 :class="[ onPhone ? 'btn-danger': 'btn-success' ]"
-                :disabled="!validPhone">
+                :disabled="!onPhone && status !== 'ready'">
             {{number}} <i class="fa fa-fw fa-phone"
                           :class="[ onPhone ? 'fa-close': 'fa-phone' ]"></i>
         </button>
@@ -36,6 +36,9 @@
                 return true;
             },
             status: function () {
+                if (!this.device) {
+                    return null;
+                }
                 return Twilio.Device.status();
             }
         },
