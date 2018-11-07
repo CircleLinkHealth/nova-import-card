@@ -3,6 +3,7 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Validator;
 
 class JsonEligibilityPhones implements Rule
 {
@@ -27,10 +28,12 @@ class JsonEligibilityPhones implements Rule
     {
         $count = collect($value)
             ->reject(function ($phone) {
-                if (! preg_match("/\A[(]?[0-9]{3}[)]?[ ,-]?[0-9]{3}[ ,-]?[0-9]{4}\z/", $phone)) {
-                    $phone = null;
-                }
-                return ! $phone;
+
+                $validator = Validator::make(['phoneNumber' => $phone], [
+                    'phoneNumber'     => 'required|phone:AUTO,US',
+                ]);
+
+                return $validator->fails();
             })->count();
 
         return $count >= 1;
