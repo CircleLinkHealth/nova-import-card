@@ -2161,13 +2161,18 @@ Route::get('/downloadInvoice/{practice}/{name}', [
 ]);
 
 Route::group([
-    'prefix' => 'twilio',
+    'prefix'     => 'twilio',
+    'middleware' => 'auth',
 ], function () {
     Route::get('/token', [
         'uses' => 'TwilioController@obtainToken',
         'as'   => 'twilio.token',
     ]);
+});
 
+Route::group([
+    'prefix' => 'twilio',
+], function () {
     Route::post('/call/place', [
         'uses' => 'TwilioController@placeCall',
         'as'   => 'twilio.call.place',
