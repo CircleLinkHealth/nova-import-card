@@ -11,10 +11,14 @@ namespace App\Services\Eligibility\Adapters;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Rules\JsonEligibilityPhones;
+use App\Rules\JsonEligibilityProblems;
 use App\Services\Eligibility\Entities\MedicalRecord;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 use Seld\JsonLint\JsonParser;
+use Validator;
 
 class JsonMedicalRecordAdapter
 {
@@ -39,6 +43,11 @@ class JsonMedicalRecordAdapter
      * @var bool
      */
     private $isValid = null;
+
+    /**
+     * @var MessageBag|null
+     */
+    private $validationErrors = null;
 
     public function __construct(string $source)
     {
@@ -153,8 +162,31 @@ class JsonMedicalRecordAdapter
 
     private function validate(Collection $coll): bool
     {
-        //@todo: implement validation rules
-        return true;
+        $array           = $coll->all();
+        $array['phones'] = [
+            'primary_phone' => array_key_exists('primary_phone', $array)
+                ? $array['primary_phone']
+                : null,
+            'home_phone'    => array_key_exists('home_phone', $array)
+                ? $array['home_phone']
+                : null,
+            'cell_phone'    => array_key_exists('cell_phone', $array)
+                ? $array['cell_phone']
+                : null,
+        ];
+
+        $validator = Validator::make($array, [
+            'patient_id'    => 'required',
+            'last_name'     => 'required|alpha_num',
+            'first_name'    => 'required|alpha_num',
+            'date_of_birth' => 'required|date',
+            'problems'      => ['required', new JsonEligibilityProblems()],
+            'phones'        => ['required', new JsonEligibilityPhones()],
+        ]);
+
+        $this->validationErrors = $validator->errors();
+
+        return $validator->passes();
     }
 
     private function getKey(EligibilityBatch $eligibilityBatch)
