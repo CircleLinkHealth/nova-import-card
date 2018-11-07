@@ -46,16 +46,15 @@ class CsvEligibilityValidationTest extends TestCase
             $batch->status = EligibilityBatch::STATUSES['processing'];
             $batch->save();
         }
-        $this->assertEquals(EligibilityBatch::STATUSES['processing'], $batch->getStatus());
+        $this->assertEquals('processing', $batch->getStatus());
 
         $this->assertTrue($batch->hasJobs());
 
         $jobs = $batch->eligibilityJobs();
         $this->assertEquals(6, $jobs->count());
 
-        //assert jobs have no errors
-//        $this->assertAttributeEmpty();
 
+        //assert jobs have no errors
 
     }
 
@@ -85,7 +84,7 @@ class CsvEligibilityValidationTest extends TestCase
             'id' => $batch->id,
         ]);
 
-        $this->assertEquals(EligibilityBatch::STATUSES['processing'], $batch->getStatus());
+        $this->assertEquals('processing', $batch->getStatus());
 
         $this->assertTrue($batch->hasJobs());
 

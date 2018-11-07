@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use Validator;
 use Illuminate\Contracts\Validation\Rule;
 
 class CsvEligibilityPhones implements Rule
@@ -25,14 +26,15 @@ class CsvEligibilityPhones implements Rule
      */
     public function passes($attribute, $value)
     {
-        $count = collect($value)
-            ->reject(function ($phone) {
-                if ( ! preg_match("/\A[(]?[0-9]{3}[)]?[ ,-]?[0-9]{3}[ ,-]?[0-9]{4}\z/", $phone)) {
-                    $phone = null;
-                }
+            $count = collect($value)
+                ->reject(function ($phone) {
 
-                return ! $phone;
-            })->count();
+                    $validator = Validator::make(['phoneNumber' => $phone], [
+                        'phoneNumber'     => 'required|phone:AUTO,US',
+                    ]);
+
+                    return $validator->fails();
+                })->count();
 
         return $count >= 1;
     }
