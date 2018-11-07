@@ -16,11 +16,12 @@
                 </div>
                 @include('partials.userheader')
                 <div class="main-form-block main-form-horizontal main-form-primary-horizontal col-md-12">
-                    @forelse($patient->phoneNumbers as $phone)
-                        <call-number number="{{$phone->number}}"></call-number>
-                    @empty
+                    @if(!empty($patient->phoneNumbers))
+                        <call-number v-bind:numbers="{{$patient->phoneNumbers->map(function($p) {return $p->number;} )}}">
+                        </call-number>
+                    @else
                         <p>No phone numbers found</p>
-                    @endforelse
+                    @endif
                 </div>
             </div>
         </div>
