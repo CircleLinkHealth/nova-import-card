@@ -52,7 +52,10 @@ class BillablePatientsEloquentRepository
 
         $result = PatientMonthlySummary::orderBy('needs_qa', 'desc')
                                        ->where('month_year', $month)
-                                       ->where('total_time', '>=', 1200)
+                                       ->where(function ($q) {
+                                           $q->where('ccm_time', '>=', 1200)
+                                             ->orWhere('bhi_time', '>=', 1200);
+                                       })
                                        ->with([
                                            'patient' => function ($q) use ($month, $practiceId) {
                                                $q->with([

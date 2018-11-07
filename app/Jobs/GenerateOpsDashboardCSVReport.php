@@ -39,6 +39,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
      * Execute the job.
      *
      * @return void
+     * @throws \Exception
      */
     public function handle()
     {
@@ -57,7 +58,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                                          'patientInfo.revisionHistory' => function ($r) use ($date) {
                                              $r->where('key', 'ccm_status')
                                                ->where('created_at', '>=',
-                                                   $date->copy()->subDay()->setTimeFromTimeString('23:00'));
+                                                   $date->copy()->subDay()->setTimeFromTimeString('23:30'));
                                          },
                                      ]);
                                  },
