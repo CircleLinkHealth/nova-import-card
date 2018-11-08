@@ -218,7 +218,7 @@ return [
         \Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         \Maatwebsite\Excel\ExcelServiceProvider::class,
         Prettus\Repository\Providers\RepositoryServiceProvider::class,
-        Yajra\Datatables\DatatablesServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
         Spatie\GoogleCalendar\GoogleCalendarServiceProvider::class,
         ObserversServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
@@ -248,7 +248,7 @@ return [
 
     'aliases' => [
 
-        'App'            => Illuminate\Support\Facades\App::class,
+        'App'          => Illuminate\Support\Facades\App::class,
         'Agent'        => Jenssegers\Agent\Facades\Agent::class,
         'Artisan'      => Illuminate\Support\Facades\Artisan::class,
         'Auth'         => Illuminate\Support\Facades\Auth::class,
@@ -284,6 +284,7 @@ return [
         'Input'     => Illuminate\Support\Facades\Input::class,
         'Inspiring' => Illuminate\Foundation\Inspiring::class,
 
+        'DataTables'     => Yajra\DataTables\Facades\DataTables::class,
         'Debugbar'       => Barryvdh\Debugbar\Facade::class,
         'Excel'          => \Maatwebsite\Excel\Facades\Excel::class,
         'Form'           => \Collective\Html\FormFacade::class,
