@@ -389,11 +389,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read');
         });
 
-        Route::get('calls-management', [
-            'uses' => 'API\Admin\CallsController@toBeDeprecatedIndex',
-            'as'   => 'call.anyCallsManagement',
-        ])->middleware('permission:call.read');
-
         Route::resource('profile', 'API\ProfileController')->middleware('permission:user.read,role.read');
 
         Route::resource('nurses', 'API\NurseController')->middleware('permission:nurse.read');
