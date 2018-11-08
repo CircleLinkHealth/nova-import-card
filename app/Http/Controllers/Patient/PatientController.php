@@ -272,8 +272,14 @@ class PatientController extends Controller
                     ->where('id', $patientId)
                     ->firstOrFail();
 
+        $phoneNumbers = $user->phoneNumbers
+            ->map(function ($p) {
+                return $p->number;
+            });
+
         return view('wpUsers.patient.calls.index')
-            ->with('patient', $user);
+            ->with('patient', $user)
+            ->with('phoneNumbers', $phoneNumbers);
     }
 
     /**

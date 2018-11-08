@@ -50,7 +50,7 @@
                 connection: null,
                 //twilio device
                 device: null,
-                selectedNumber: null
+                selectedNumber: this.numbers[0] ? this.numbers[0] : null
             }
         },
         computed: {
