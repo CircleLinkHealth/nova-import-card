@@ -16,7 +16,7 @@ class CreateEhrReportWriterInfoTable extends Migration
         Schema::create('ehr_report_writer_info', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->text('drive_folder');
+            $table->text('google_drive_folder');
             $table->timestamps();
 
             $table->foreign('user_id')

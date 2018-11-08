@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class EhrReportWriterInfo extends Model
 {
     protected $fillable = [
-        'drive_folder'
+        'user_id',
+        'google_drive_folder',
     ];
+
+    protected $table = 'ehr_report_writer_info';
 
     public function careAmbassador()
     {

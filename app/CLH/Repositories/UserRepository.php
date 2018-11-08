@@ -2,6 +2,7 @@
 
 use App\CareAmbassador;
 use App\CarePlan;
+use App\EhrReportWriterInfo;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -61,6 +62,11 @@ class UserRepository
         // care ambassador info
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
+        }
+
+        // ehr report writer info
+        if ($user->hasRole('ehr-report-writer')){
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
         //Add Email Notification
@@ -172,6 +178,13 @@ class UserRepository
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
+        }
+
+        if ($user->hasRole('ehr-report-writer')  && ! $user->ehrReportWriterInfo){
+            $ehrReportWriterInfo = new EhrReportWriterInfo;
+            $ehrReportWriterInfo->user_id = $user->id;
+            $ehrReportWriterInfo->save();
+            $user->load('ehrReportWriterInfo');
         }
     }
 
@@ -341,6 +354,26 @@ class UserRepository
             $ambassador->save();
 
             $user->careAmbassador()->save($ambassador);
+        }
+    }
+
+    public function saveOrUpdateEhrReportWriterInfo(
+        User $user,
+        ParameterBag $params
+    ){
+        if ($user->ehrReportWriterInfo != null) {
+            $user->ehrReportWriterInfo->google_drive_folder    = $params->get('google_drive_folder');
+
+            $user->ehrReportWriterInfo->save();
+        } else {
+            $ehrReportWriter = EhrReportWriterInfo::create([
+                'user_id' => $user->id,
+                'google_drive_folder' => $params->get('google_drive_folder')
+            ]);
+
+            $ehrReportWriter->save();
+
+            $user->ehrReportWriterInfo()->save($ehrReportWriter);
         }
     }
 
