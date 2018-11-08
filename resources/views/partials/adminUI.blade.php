@@ -124,10 +124,6 @@
                                 </a>
                                 <ul class="dropdown-menu" role="menu">
                                     <li><a href="{{ route('get.admin.nurse.schedules') }}">Schedules</a>
-                                    {{--                                    <li><a href="{{ route('stats.nurse.info') }}">Nurse Statistics</a>--}}
-                                    <li><a href="{{ route('admin.reports.nurseTime.index') }}">Nurse
-                                            Time</a>
-                                    </li>
                                     <li><a href="{{ route('admin.reports.nurse.daily') }}">Daily
                                             Report</a></li>
                                     <li><a href="{{ route('admin.reports.nurse.monthly') }}">Monthly

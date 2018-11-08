@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentStatsController extends Controller
 {
@@ -25,7 +24,7 @@ class EnrollmentStatsController extends Controller
      */
     public function ambassadorStats(Request $request)
     {
-        return Datatables::collection(collect($this->getAmbassadorStats($request)))->make(true);
+        return datatables()->collection(collect($this->getAmbassadorStats($request)))->make(true);
     }
 
     /**
@@ -128,7 +127,7 @@ class EnrollmentStatsController extends Controller
      */
     public function practiceStats(Request $request)
     {
-        return Datatables::collection(collect($this->getPracticeStats($request)))
+        return datatables()->collection(collect($this->getPracticeStats($request)))
                          ->make(true);
     }
 
