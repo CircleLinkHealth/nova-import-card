@@ -9,14 +9,20 @@
 namespace App\Traits;
 
 
-use App\Rules\CsvEligibilityPhones;
-use App\Rules\CsvEligibilityProblems;
+use App\Rules\EligibilityPhones;
+use App\Rules\EligibilityProblems;
 use Validator;
 
-trait ValidatesEligibilityCsv
+trait ValidatesEligibility
 {
     public function validateRow($row)
     {
+        if (array_key_exists('patient_id', $row)) {
+            $row['mrn'] = $row['patient_id'];
+        }
+        if (array_key_exists('date_of_birth', $row)){
+            $row['dob'] = $row['date_of_birth'];
+        }
         $row = $this->transformProblems($row);
         $row = $this->transformPhones($row);
 
@@ -26,11 +32,11 @@ trait ValidatesEligibilityCsv
     private function transformProblems(Array $row)
     {
 
-        if (is_json($row['problems_string'])) {
+        if (array_key_exists('problems_string', $row) && is_json($row['problems_string'])) {
             $problems               = json_decode($row['problems_string'])->Problems;
             $row['problems_string'] = [];
             foreach ($problems as $problem) {
-                $row['problems_string'][] = [
+                $row['problems'][] = [
                     'Name' => $problem->Name,
                     'Code' => $problem->Code,
                 ];
@@ -56,6 +62,7 @@ trait ValidatesEligibilityCsv
                 ? $row['other_phone']
                 : null,
         ];
+
         return $row;
     }
 
@@ -68,14 +75,13 @@ trait ValidatesEligibilityCsv
     private function validate(Array $array)
     {
         return Validator::make($array, [
-            'mrn'             => 'required',
-            'last_name'       => 'required|alpha_num',
-            'first_name'      => 'required|alpha_num',
-            'dob'             => 'required|date',
-            'problems_string' => ['required', new CsvEligibilityProblems()],
-            'phones'          => ['required', new CsvEligibilityPhones()],
+            'mrn'        => 'required',
+            'last_name'  => 'required|alpha_num',
+            'first_name' => 'required|alpha_num',
+            'dob'        => 'required|date',
+            'problems'   => ['required', new EligibilityProblems()],
+            'phones'     => ['required', new EligibilityPhones()],
         ]);
-
     }
 
 

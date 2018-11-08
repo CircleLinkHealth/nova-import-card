@@ -5,7 +5,7 @@ namespace App\Rules;
 use Validator;
 use Illuminate\Contracts\Validation\Rule;
 
-class CsvEligibilityPhones implements Rule
+class EligibilityPhones implements Rule
 {
     /**
      * Create a new rule instance.

@@ -20,14 +20,14 @@ use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
-use App\Traits\ValidatesEligibilityCsv;
+use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 
 class ProcessEligibilityService
 {
-    use ValidatesEligibilityCsv;
+    use ValidatesEligibility;
 
     public function fromGoogleDrive(EligibilityBatch $batch)
     {

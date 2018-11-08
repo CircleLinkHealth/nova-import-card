@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class JsonEligibilityProblems implements Rule
+class EligibilityProblems implements Rule
 {
     /**
      * Create a new rule instance.
@@ -27,13 +27,17 @@ class JsonEligibilityProblems implements Rule
     {
         $count = collect($value)
             ->reject(function ($problem) {
-                $name = $problem['name'] ?? null;
-                $code = $problem['code'] ?? null;
+                if (array_key_exists('Name', $problem)){
+                    $name = $problem['Name'] ?? null;
+                    $code = $problem['Code'] ?? null;
+                }else{
+                    $name = $problem['name'] ?? null;
+                    $code = $problem['code'] ?? null;
+                }
 
                 if (in_array(strtolower($name), ['null', 'n/a', 'none', 'n\a'])) {
                     $name = null;
                 }
-
                 if (in_array(strtolower($code), ['null', 'n/a', 'none', 'n\a'])) {
                     $code = null;
                 }
