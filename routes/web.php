@@ -1664,7 +1664,6 @@ Route::group(['middleware' => 'auth'], function () {
 
         });
 
-        // report - nurse time report
         //these fall under the admin-access permission
         Route::get('reports/nurse/time', [
             'uses' => 'Admin\Reports\NurseTimeReportController@index',

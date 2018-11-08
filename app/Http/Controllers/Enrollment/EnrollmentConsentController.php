@@ -8,8 +8,6 @@ use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
 {
@@ -93,7 +91,7 @@ class EnrollmentConsentController extends Controller
         $formatted = collect($formatted);
         $formatted->sortByDesc('date');
 
-        return Datatables::collection($formatted)->make(true);
+        return datatables()->collection($formatted)->make(true);
     }
 
     public function makeEnrollmentReport()
