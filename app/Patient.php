@@ -257,36 +257,42 @@ class Patient extends BaseModel
         return $this->hasMany(PatientContactWindow::class, 'patient_info_id');
     }
 
-    public function getContactWindowsString(){
+    public function getContactWindowsString()
+    {
 
         $windows = [];
-        foreach ($this->contactWindows as $window){
-            switch ($window->day_of_week){
+
+        foreach ($this->contactWindows as $window) {
+            $start = Carbon::parse($window->window_time_start)->format('h:i a');
+            $end   = Carbon::parse($window->window_time_end)->format('h:i a');
+            switch ($window->day_of_week) {
                 case (1):
-                    $windows[]= "Monday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Monday: {$start} - {$end}<br/>";
                     break;
                 case (2):
-                    $windows[]= "Tuesday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Tuesday: {$start} - {$end}<br/>";
                     break;
                 case (3):
-                    $windows[]= "Wednesday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Wednesday: {$start} - {$end}<br/>";
                     break;
                 case (4):
-                    $windows[]= "Thursday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Thursday: {$start} - {$end}<br/>";
                     break;
                 case (5):
-                    $windows[]= "Friday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Friday: {$start} - {$end}<br/>";
                     break;
                 case (6):
-                    $windows[]= "Saturday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Saturday: {$start} - {$end}<br/>";
                     break;
                 case (7):
-                    $windows[]= "Sunday: {$window->window_time_start} - {$window->window_time_end}<br/>";
+                    $windows[] = "Sunday: {$start} - {$end}<br/>";
                     break;
             }
         }
 
-        return implode($windows);
+        return empty($windows)
+            ? "Patient call date/time preferences not found."
+            : implode($windows);
     }
 
     public function family()
@@ -321,7 +327,8 @@ class Patient extends BaseModel
         return true;
     }
 
-    public function getFullName(){
+    public function getFullName()
+    {
         return $this->user->getFullName();
     }
 
@@ -521,7 +528,8 @@ class Patient extends BaseModel
         );
     }
 
-    public function hasFamilyId() {
+    public function hasFamilyId()
+    {
         return $this->family_id != null;
     }
 
@@ -641,19 +649,19 @@ class Patient extends BaseModel
     public function safe()
     {
         return [
-            'id'                      => $this->id,
-            'user_id'                 => $this->user_id,
-            'ccm_status'              => $this->ccm_status,
-            'birth_date'              => $this->birth_date,
-            'age'                     => $this->birth_date
+            'id'               => $this->id,
+            'user_id'          => $this->user_id,
+            'ccm_status'       => $this->ccm_status,
+            'birth_date'       => $this->birth_date,
+            'age'              => $this->birth_date
                 ? (Carbon::now()->year - Carbon::parse($this->birth_date)->year)
                 : 0,
-            'gender'                  => $this->gender,
-            'date_paused'             => optional($this->date_paused)->format('c'),
-            'date_withdrawn'          => optional($this->date_withdrawn)->format('c'),
-            'date_unreachable'        => optional($this->date_unreachable)->format('c'),
-            'created_at'              => optional($this->created_at)->format('c'),
-            'updated_at'              => optional($this->updated_at)->format('c')
+            'gender'           => $this->gender,
+            'date_paused'      => optional($this->date_paused)->format('c'),
+            'date_withdrawn'   => optional($this->date_withdrawn)->format('c'),
+            'date_unreachable' => optional($this->date_unreachable)->format('c'),
+            'created_at'       => optional($this->created_at)->format('c'),
+            'updated_at'       => optional($this->updated_at)->format('c'),
         ];
     }
 
