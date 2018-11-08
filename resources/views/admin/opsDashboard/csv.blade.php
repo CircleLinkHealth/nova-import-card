@@ -24,7 +24,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><h3>Operations Dashboard CSV</h3></div>
                     <div class="panel-body">
-                        <h5>Call Center Operations Report from: <strong>{{$date->copy()->subDay()->setTimeFromTimeString('23:00')->toDateTimeString()}}</strong>, to: <strong>{{$date->toDateTimeString()}}</strong>.</h5>
+                        <h5>Call Center Operations Report from: <strong>{{$date->copy()->subDay()->setTimeFromTimeString('23:30')->toDateTimeString()}}</strong>, to: <strong>{{$date->toDateTimeString()}}</strong>.</h5>
                             <li>
                                 <a href="{{route('OpsDashboard.makeCsv', [
                                 'fileName' => $file['name'],
