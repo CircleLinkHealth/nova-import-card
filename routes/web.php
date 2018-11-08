@@ -1651,11 +1651,6 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
         //these fall under the admin-access permission
-        Route::get('reports/nurse/time', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@index',
-            'as'   => 'admin.reports.nurseTime.index',
-        ]);
-
         Route::get('reports/nurse/invoice', [
             'uses' => 'NurseController@makeInvoice',
             'as'   => 'admin.reports.nurse.invoice',
@@ -1685,12 +1680,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@monthlyOverview',
             'as'   => 'admin.reports.nurse.allocation',
         ])->middleware('permission:nurseReport.read');
-
-        Route::get('reports/nurseTime/exportxls', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@exportxls',
-            'as'   => 'admin.reports.nurseTime.exportxls',
-        ])->middleware('permission:nurseReport.create');
-
 
         Route::get('reports/nurse/monthly', [
             'uses' => 'NurseController@monthlyReport',
