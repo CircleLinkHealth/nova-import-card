@@ -21,24 +21,20 @@ class TwilioController extends Controller
 
     public function __construct(Request $request)
     {
-
         $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
-        $this->capability->allowClientOutgoing(config('services.twilio.enrollment-app-sid'));
+        $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
         $this->token = $this->capability->generateToken();
     }
 
     public function obtainToken()
     {
-
-        return response()->json(['token' => $this->capability->generateToken()]);
+        return response()->json(['token' => $this->token]);
     }
 
     public function makeCall()
     {
-
         return view(
-            'partials.calls.make-twilio-call',
-            [
+            'partials.calls.make-twilio-call', [
                 'token' => $this->token,
             ]
         );
@@ -46,22 +42,21 @@ class TwilioController extends Controller
 
     public function newCall(Request $request)
     {
-
         $response = new Twiml();
 
         $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
 
         $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial) {
             $q->where('cell_phone', $phoneNumberToDial)
-                ->orWhere('home_phone', $phoneNumberToDial)
-                ->orWhere('other_phone', $phoneNumberToDial);
+              ->orWhere('home_phone', $phoneNumberToDial)
+              ->orWhere('other_phone', $phoneNumberToDial);
         })->first();
 
         $practiceId = $enrollee['practice_id'];
 
         $callerIdNumber = optional(Practice::find($practiceId))->outgoing_phone_number;
 
-        if ($callerIdNumber){
+        if ($callerIdNumber) {
             $dial = $response->dial(['callerId' => $callerIdNumber]);
 
             $dial->number($phoneNumberToDial);
@@ -72,6 +67,27 @@ class TwilioController extends Controller
         throw new \Exception("Practice Outgoing Phone Number not found.", 500);
 
 
+    }
+
+    public function placeCall(Request $request)
+    {
+        $response       = new Twiml();
+        $callerIdNumber = config('services.twilio')['from'];
+
+        $dial = $response->dial(['callerId' => $callerIdNumber]);
+
+        $phoneNumberToDial = $request->input('To');
+
+        if ($phoneNumberToDial) {
+            $dial->number($phoneNumberToDial);
+        }
+
+        return $this->responseWithXmlType(response($response));
+    }
+
+    private function responseWithXmlType($response)
+    {
+        return $response->header('Content-Type', 'application/xml');
     }
 
     public function sendTestSMS()
@@ -87,18 +103,18 @@ class TwilioController extends Controller
             if ($recipient->invite_sent_at == null) {
                 //first go, make invite code:
 
-                $recipient->invite_code = rand(183, 982) . substr(uniqid(), -3);
-                $link = url("join/$recipient->invite_code");
-                $recipient->invite_sent_at = Carbon::now()->toDateTimeString();
+                $recipient->invite_code     = rand(183, 982) . substr(uniqid(), -3);
+                $link                       = url("join/$recipient->invite_code");
+                $recipient->invite_sent_at  = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
-                $recipient->attempt_count = 1;
+                $recipient->attempt_count   = 1;
                 $recipient->save();
 
                 $message = "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link";
 
                 $client->account->messages->create(
 
-                    // the number we are sending to - Any phone number
+                // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
 
@@ -109,17 +125,17 @@ class TwilioController extends Controller
             } else {
                 $sad_face_emoji = "\u{1F648}";
 
-                $link = url("join/$recipient->invite_code");
-                $recipient->invite_sent_at = Carbon::now()->toDateTimeString();
+                $link                       = url("join/$recipient->invite_code");
+                $recipient->invite_sent_at  = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
-                $recipient->attempt_count = 2;
+                $recipient->attempt_count   = 2;
                 $recipient->save();
 
                 $message = "Dr. $provider_name hasn’t heard from you regarding their new wellness program. $sad_face_emoji Please enroll here: $link";
 
                 $client->account->messages->create(
 
-                    // the number we are sending to - Any phone number
+                // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
 
