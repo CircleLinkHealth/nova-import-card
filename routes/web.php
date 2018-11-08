@@ -1575,14 +1575,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.patientCallManagement.index',
             ]);
 
-            Route::get('calls/{id}/edit', [
-                'uses' => 'Admin\PatientCallManagementController@edit',
-                'as'   => 'admin.patientCallManagement.edit',
-            ])->middleware('permission:nurse.read,call.read');
-            Route::post('calls/{id}/edit', [
-                'uses' => 'Admin\PatientCallManagementController@update',
-                'as'   => 'admin.patientCallManagement.update',
-            ])->middleware('permission:call.update');
             Route::get('time-tracker', [
                 'uses' => 'Admin\TimeTrackerController@index',
                 'as'   => 'admin.timeTracker.index',
