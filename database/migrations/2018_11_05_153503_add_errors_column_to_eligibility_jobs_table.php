@@ -14,7 +14,7 @@ class AddErrorsColumnToEligibilityJobsTable extends Migration
     public function up()
     {
         Schema::table('eligibility_jobs', function (Blueprint $table) {
-            $table->text('errors')->after('messages')->nullable();
+            $table->json('errors')->after('messages')->nullable();
         });
     }
 
