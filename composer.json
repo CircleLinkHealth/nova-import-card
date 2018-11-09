@@ -84,7 +84,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
-    "yajra/laravel-datatables-oracle": "~6.0"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "Xethron/Laravel-4-Generators": "*",

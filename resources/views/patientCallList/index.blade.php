@@ -35,6 +35,9 @@
                     }
                     return true;
                 });
+
+                $('.patientNameLink').tooltip({ boundary: 'window' });
+
             });
         </script>
     @endpush
@@ -125,7 +128,7 @@
                                             </thead>
                                             <tbody>
                                             @if (count($calls) > 0)
-                                                @foreach($calls as $call)
+                                                @foreach($calls as $key => $call)
                                                     @if(!$call->inboundUser)
                                                         @continue
                                                     @endif
@@ -160,7 +163,15 @@
                                                             @if($call->inboundUser)
                                                                 <a href="{{ route('patient.careplan.print', array('patient' => $call->inboundUser->id)) }}"
                                                                    class="patientNameLink" call-id="{{ $call->id }}"
-                                                                   style="text-decoration:underline;font-weight:bold;">{{ $call->inboundUser->display_name }} </a>
+                                                                   style="text-decoration:underline;font-weight:bold;"
+                                                                   data-template='<div class="tooltip" style="text-align:left" role="tooltip"><div class="arrow"></div><div class="tooltip-inner" style="text-align:left"></div></div>'
+                                                                   data-toggle="tooltip"
+                                                                   data-container="body"
+                                                                   data-placement="right"
+                                                                   data-html="true"
+                                                                   title="{{$call->inboundUser->patientInfo->getContactWindowsString()}}">
+                                                                    {{ $call->inboundUser->display_name }}
+                                                                </a>
                                                             @else
                                                                 <em style="color:red;">unassigned</em>
                                                             @endif
