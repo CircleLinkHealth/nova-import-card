@@ -53,7 +53,11 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
-            return redirect()->route('enrollment-center.dashboard', []);
+            return redirect()->route('enrollment-center.dashboard');
+        }
+
+        if ($user->hasRole('ehr-report-writer')){
+            return redirect()->route('report-writer.dashboard');
         }
 
         return redirect()->route('patients.dashboard', []);
