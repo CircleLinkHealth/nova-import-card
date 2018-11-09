@@ -389,11 +389,6 @@ Route::group(['middleware' => 'auth'], function () {
             ])->middleware('permission:patient.read');
         });
 
-        Route::get('calls-management', [
-            'uses' => 'API\Admin\CallsController@toBeDeprecatedIndex',
-            'as'   => 'call.anyCallsManagement',
-        ])->middleware('permission:call.read');
-
         Route::resource('profile', 'API\ProfileController')->middleware('permission:user.read,role.read');
 
         Route::resource('nurses', 'API\NurseController')->middleware('permission:nurse.read');
@@ -1579,14 +1574,6 @@ Route::group(['middleware' => 'auth'], function () {
                 'as'   => 'admin.patientCallManagement.index',
             ]);
 
-            Route::get('calls/{id}/edit', [
-                'uses' => 'Admin\PatientCallManagementController@edit',
-                'as'   => 'admin.patientCallManagement.edit',
-            ])->middleware('permission:nurse.read,call.read');
-            Route::post('calls/{id}/edit', [
-                'uses' => 'Admin\PatientCallManagementController@update',
-                'as'   => 'admin.patientCallManagement.update',
-            ])->middleware('permission:call.update');
             Route::get('time-tracker', [
                 'uses' => 'Admin\TimeTrackerController@index',
                 'as'   => 'admin.timeTracker.index',
@@ -1667,13 +1654,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         });
 
-        // report - nurse time report
         //these fall under the admin-access permission
-        Route::get('reports/nurse/time', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@index',
-            'as'   => 'admin.reports.nurseTime.index',
-        ]);
-
         Route::get('reports/nurse/invoice', [
             'uses' => 'NurseController@makeInvoice',
             'as'   => 'admin.reports.nurse.invoice',
@@ -1703,12 +1684,6 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'NurseController@monthlyOverview',
             'as'   => 'admin.reports.nurse.allocation',
         ])->middleware('permission:nurseReport.read');
-
-        Route::get('reports/nurseTime/exportxls', [
-            'uses' => 'Admin\Reports\NurseTimeReportController@exportxls',
-            'as'   => 'admin.reports.nurseTime.exportxls',
-        ])->middleware('permission:nurseReport.create');
-
 
         Route::get('reports/nurse/monthly', [
             'uses' => 'NurseController@monthlyReport',

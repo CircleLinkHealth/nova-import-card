@@ -44,8 +44,26 @@ if (isset($patient)) {
             <ul class="nav navbar-nav navbar-right">
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
-                        <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
+                        @if($patient->program_id == 8)
+                            <div class="call-mode" style="margin-top: 10px;">
+                                <button class="btn btn-primary" type="button"
+                                        onclick="openCallsPage()">
+                                    <span>Open Calls Page</span>
+                                </button>
+                            </div>
+                            @push('scripts')
+                                <script>
+                                    function openCallsPage() {
+                                        const strWindowFeatures = "location=yes,height=570,width=520,scrollbars=yes,status=yes";
+                                        const URL = "{{route('patient.show.call.page', [$patient->id])}}";
+                                        window.open(URL, "_blank", strWindowFeatures);
+                                    }
+                                </script>
+                            @endpush
+                        @else
+                            <time-tracker-call-mode ref="timeTrackerCallMode"
+                                                    :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
+                        @endif
                     </li>
                 @endif
                 @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
