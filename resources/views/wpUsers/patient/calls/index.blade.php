@@ -9,7 +9,7 @@
     @endpush
 
     <div class="container">
-        <div class="row" style="margin-top:30px;">
+        <div class="row">
             <div class="main-form-container col-lg-4 col-lg-offset-4">
                 <div class="row">
                     <div class="main-form-title col-lg-12">

@@ -5,21 +5,21 @@
         <template v-if="!waiting">
             <div class="row">
                 <div class="col-sm-10">
-                    <select2 class="form-control" v-model="selectedNumber" :disabled="onAnyCall">
+                    <select2 class="form-control" v-model="selectedNumber" :disabled="hasActiveCall">
                         <option v-for="(number, index) in numbers" :key="index" :value="number">{{number}}</option>
                     </select2>
                 </div>
 
-                <div class="col-sm-2">
+                <div class="col-sm-2" style="margin-top: 5px">
                     <button class="btn btn-circle" @click="toggleCallMessage(selectedNumber)"
-                            :class="[ onPhone[selectedNumber] ? 'btn-danger': 'btn-success' ]"
-                            :disabled="!validPhone(selectedNumber) || onAnyCall || !selectedNumber">
-                        <i class="fa fa-fw fa-phone" :class="[ onPhone[selectedNumber] ? 'fa-close': 'fa-phone' ]"></i>
+                            :class="onPhone[selectedNumber] ? 'btn-danger': 'btn-success'"
+                            :disabled="!validPhone(selectedNumber) || !selectedNumber">
+                        <i class="fa fa-fw fa-phone" :class="onPhone[selectedNumber] ? 'fa-close': 'fa-phone'"></i>
                     </button>
                     <button class="btn btn-circle btn-default" v-if="onPhone[selectedNumber]"
-                            @click="toggleMute(selectedNumber)">
+                            @click="toggleMuteMessage(selectedNumber)">
                         <i class="fa fa-fw"
-                           :class="[ muted[selectedNumber] ? 'fa-microphone-slash': 'fa-microphone' ]"></i>
+                           :class="muted[selectedNumber] ? 'fa-microphone-slash': 'fa-microphone'"></i>
                     </button>
                 </div>
             </div>
@@ -31,9 +31,10 @@
     import {rootUrl} from "../app.config";
     import EventBus from '../admin/time-tracker/comps/event-bus'
     import LoaderComponent from '../components/loader';
+    import {registerHandler, sendRequest} from "./bc-job-manager";
 
     let Twilio;
-    let bc;
+    let self;
 
     export default {
         name: 'call-number',
@@ -45,6 +46,7 @@
         ],
         data() {
             return {
+                hasActiveCall: false,
                 waiting: false,
                 muted: [],
                 onPhone: [],
@@ -53,11 +55,6 @@
                 //twilio device
                 device: null,
                 selectedNumber: this.numbers[0] ? this.numbers[0] : null
-            }
-        },
-        computed: {
-            onAnyCall: function () {
-                return this.onPhone.some(x => x);
             }
         },
         methods: {
@@ -69,53 +66,57 @@
             toggleMute: function (number) {
                 const value = !this.muted[number];
                 this.muted[number] = value;
-                this.device.activeConnection().mute(value);
+                // this.device.activeConnection().mute(value);
+            },
+
+            toggleMuteMessage: function (number) {
+                const action = this.muted[number] ? "call_unmuted" : "call_muted";
+                this.toggleMute(number);
+                sendRequest(action, {number: {value: number, muted: self.muted[number]}})
+                    .then(() => {
+
+                    })
+                    .catch(err => console.error(err));
             },
 
             toggleCallMessage: function (number) {
-                if (!this.onPhone[number]) {
-                    this.handleBroadcastMessage({
-                        action: "start_call",
-                        data: {
-                            number: number
-                        }
-                    });
-                }
-                else {
-                    this.handleBroadcastMessage({
-                        action: "end_call",
-                        data: {
-                            number: number
-                        }
-                    });
-                }
+                const action = this.onPhone[number] ? "call_ended" : "call_started";
+                this.toggleCall(number);
+                sendRequest(action, {number: {value: number, muted: self.muted[number]}})
+                    .then(() => {
+
+                    })
+                    .catch(err => console.error(err));
             },
 
             // Make an outbound call with the current number,
             // or hang up the current call
             toggleCall: function (number) {
                 if (!this.onPhone[number]) {
+                    this.hasActiveCall = true;
                     this.muted[number] = false;
                     this.onPhone[number] = true;
                     // make outbound call with current number
-                    this.connection = this.device.connect({To: number});
+                    //this.connection = this.device.connect({To: number});
                     this.log = 'Calling ' + number;
                     EventBus.$emit('tracker:call-mode:enter');
                 } else {
+                    this.hasActiveCall = false;
+                    this.muted[number] = false;
+                    this.onPhone[number] = false;
                     // hang up call in progress
-                    this.device.disconnectAll();
+                    // this.device.disconnectAll();
                     EventBus.$emit('tracker:call-mode:exit');
                 }
             },
             resetPhoneState: function () {
-                let self = this;
+                self.hasActiveCall = false;
                 self.numbers.forEach(x => {
                     self.onPhone[x] = false;
                     self.muted[x] = false;
                 });
             },
             setTwilio: function (onDone) {
-                let self = this;
                 self.waiting = true;
                 if (window.Twilio) {
                     self.waiting = false;
@@ -128,8 +129,6 @@
                 }, 100);
             },
             initTwilio: function () {
-                let self = this;
-
                 const url = rootUrl(`/twilio/token`);
 
                 self.axios.get(url)
@@ -163,106 +162,97 @@
                         self.log = 'Could not fetch token, see console.log';
                     });
             },
-            subscribeToBroadcastChannel: function () {
-                // Connection to a broadcast channel
-                bc = new BroadcastChannel('cpm');
-                bc.onmessage = ev => {
-                    this.handleBroadcastMessage(ev.data);
-                };
+            getActiveCalNumber() {
+                let number = null;
+                for (let i in self.onPhone) {
+
+                    if (!self.onPhone.hasOwnProperty(i)) {
+                        continue;
+                    }
+
+                    if (self.onPhone[i]) {
+                        number = i;
+                        break;
+                    }
+                }
+                return number;
             },
-            handleBroadcastMessage: function (message) {
-                let self = this;
-                if (!message) {
-                    self.log = "There was an error";
-                    return;
+            registerBroadcastChannelHandlers: function () {
+                registerHandler("call_status", (msg) => {
+                    let status = null;
+                    let number = null;
+
+                    if (!self.device || !self.device.isInitialized) {
+                        status = "twilio_not_ready";
+                    }
+                    else {
+                        status = self.device.status();
+                        if (status === "ready") {
+                            number = self.getActiveCalNumber();
+                        }
+                    }
+                    return Promise.resolve({
+                        status: status,
+                        number: number ? {
+                            value: number,
+                            muted: self.muted[number]
+                        } : null
+                    });
+                });
+
+                function endCallHandler(msg) {
+
+                    const number = self.getActiveCalNumber();
+                    if (number) {
+                        self.toggleCall(number);
+                    }
+
+                    //resolve the promise but also close the window
+                    return new Promise((resolve, reject) => {
+                        resolve({});
+                        window.close();
+                    });
+
                 }
 
-                const action = message.action;
-                const data = message.data;
+                registerHandler("end_call", endCallHandler);
 
-                let error;
+                function muteHandler(msg) {
 
-                switch (action) {
-                    case "call_status":
-
-                        let resp;
-                        if (!self.device || !self.device.isInitialized) {
-                            error = "twilio_not_ready";
-                        }
-                        else {
-                            let number = undefined;
-                            const status = device.status();
-                            if (status === "ready") {
-                                for (let i in self.onPhone) {
-                                    if (self.onPhone[i]) {
-                                        number = i;
-                                        break;
-                                    }
-                                }
-                            }
-                            resp = {
-                                status,
-                                number
-                            };
-                        }
-
-                        bc.postMessage({
-                            action: action + "_response",
-                            data: resp,
-                            error
-                        });
-                        break;
-                    case "start_call":
-                    case "end_call":
-                        let number = data.number;
-                        if (!number) {
-                            //pick the first
-                            number = self.numbers[0];
-                        }
-
-                        if (!self.device || !self.device.isInitialized) {
-                            error = "twilio_not_ready";
-                        }
-
-                        this.toggleCall(number);
-                        bc.postMessage({
-                            action: action + "_response",
-                            data: error ? undefined : "done",
-                            error
-                        });
-
-                        if (action === "end_call") {
-                            window.close();
-                        }
-
-                        break;
-                    case "mute_call":
-                    case "unmute_call":
-                        if (!self.device || !self.device.isInitialized) {
-                            error = "twilio_not_ready";
-                        }
-
-                        this.toggleMute(data.number);
-                        bc.postMessage({
-                            action: action + "_response",
-                            data: error ? undefined : 'done',
-                            error
-                        });
-                        break;
+                    const number = self.getActiveCalNumber();
+                    if (number) {
+                        self.toggleMute(number);
+                    }
+                    return Promise.resolve({});
                 }
+
+                registerHandler("mute_call", muteHandler);
+                registerHandler("unmute_call", muteHandler);
             }
 
         },
         created() {
+
+            self = this;
             this.resetPhoneState();
-            this.subscribeToBroadcastChannel();
+            this.registerBroadcastChannelHandlers();
 
             window.onbeforeunload = function (event) {
-                bc.postMessage({action: "call_window_close", data: {error: null}});
+                let number = self.getActiveCalNumber();
+                if (number) {
+                    self.toggleCallMessage(number);
+                }
+                sendRequest("calls_page_closed", {})
+                    .then((msg) => {})
+                    .catch((err) => {});
             };
+
+            //just handling the case of refresh
+            sendRequest("calls_page_opened", {})
+                .then((msg) => {})
+                .catch((err) => {});
         },
         mounted() {
-            let self = this;
             self.setTwilio(() => {
                 self.initTwilio();
             });

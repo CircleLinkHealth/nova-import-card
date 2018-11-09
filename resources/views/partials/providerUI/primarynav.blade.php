@@ -36,34 +36,16 @@ if (isset($patient)) {
 
         </div>
 
-        <div class="col-lg-5 col-sm-10 col-xs-10" id="search-bar-container">
+        <div class="col-lg-4 col-sm-10 col-xs-10" id="search-bar-container">
             @include('partials.search')
         </div>
 
-        <div class="hidden-xs col-lg-6 col-sm-12">
+        <div class="hidden-xs col-lg-7 col-sm-12">
             <ul class="nav navbar-nav navbar-right">
                 @if (Route::getCurrentRoute()->getName() !== "patient.show.call.page" && auth()->user()->hasRole('care-center') && isset($patient) && optional($patient)->id && (!isset($noLiveCountTimeTracking)))
                     <li>
-                        @if($patient->program_id == 8)
-                            <div class="call-mode" style="margin-top: 10px;">
-                                <button class="btn btn-primary" type="button"
-                                        onclick="openCallsPage()">
-                                    <span>Open Calls Page</span>
-                                </button>
-                            </div>
-                            @push('scripts')
-                                <script>
-                                    function openCallsPage() {
-                                        const strWindowFeatures = "location=yes,height=570,width=520,scrollbars=yes,status=yes";
-                                        const URL = "{{route('patient.show.call.page', [$patient->id])}}";
-                                        window.open(URL, "_blank", strWindowFeatures);
-                                    }
-                                </script>
-                            @endpush
-                        @else
-                            <time-tracker-call-mode ref="timeTrackerCallMode"
-                                                    :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
-                        @endif
+                        <time-tracker-call-mode ref="timeTrackerCallMode"
+                                                :patient-id="{{ isset($patient) ? (optional($patient)->id ?? '0') : '0' }}"></time-tracker-call-mode>
                     </li>
                 @endif
                 @if(auth()->user()->hasRole('saas-admin') || auth()->user()->hasRole('administrator') || auth()->user()->hasRole('saas-admin-view-only'))
