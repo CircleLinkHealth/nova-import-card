@@ -46,6 +46,7 @@ class EligibilityJob extends BaseModel
         'hash',
         'data',
         'messages',
+        'errors',
         'outcome',
         'reason',
         'status',
