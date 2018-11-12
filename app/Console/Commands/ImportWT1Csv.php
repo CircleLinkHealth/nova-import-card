@@ -53,7 +53,7 @@ class ImportWT1Csv extends Command
         $count = 0;
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, 'circlelink_wt1_') === false) {
+            if (stripos($fileName, 'clh_') === false) {
                 continue;
             }
 

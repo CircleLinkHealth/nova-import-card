@@ -86,13 +86,19 @@ class WT1CsvParser
         $entry['first_name']     = $this->getValue($row, 'firstname');
         $entry['middle_name']    = $this->getValue($row, 'middlename');
         $entry['date_of_birth']  = $this->getValue($row, 'dob');
-        $entry['address_line_1'] = $this->getValue($row, 'addr1');
-        $entry['address_line_2'] = $this->getValue($row, 'addr2');
-        $entry['city']           = $this->getValue($row, 'city');
-        $entry['state']          = $this->getValue($row, 'state');
-        $entry['postal_code']    = $this->getValue($row, 'zip');
-        $entry['primary_phone']  = $this->getValue($row, 'phonehome');
-        $entry['cell_phone']     = $this->getValue($row, 'phonecell');
+        $entry['address_line_1'] = $this->getValue($row, 'addr1', '');
+        $entry['address_line_2'] = $this->getValue($row, 'addr2', '');
+        $entry['city']           = $this->getValue($row, 'city', '');
+        $entry['state']          = $this->getValue($row, 'state', '');
+        $entry['postal_code']    = $this->getValue($row, 'zip', '');
+        $entry['primary_phone']  = $this->getValue($row, 'phonehome', '');
+        $entry['cell_phone']     = $this->getValue($row, 'phonecell', '');
+
+        $entry['other_phone'] = '';
+        $entry['home_phone']  = $this->getValue($row, 'phonehome', '');
+        $entry['invite_code'] = '';
+        $entry['status'] = '';
+        $entry['attempt_count'] = 0;
 
         $entry['last_visit'] = $this->getValue($row, 'dos');
 
@@ -102,14 +108,14 @@ class WT1CsvParser
 
         $entry['problems'] = $this->getMergedList($row, $entry['problems'], 'reported', function ($value) {
             return [
-                'code',
-                'name' => $value,
-                'code_type',
-                'start_date',
+                'code'       => null,
+                'name'       => $value,
+                'code_type'  => null,
+                'start_date' => null,
             ];
         });
 
-        $entry['allergies']   = $this->getMergedList($row, $entry['allergies'], 'allergy', function ($value) {
+        $entry['allergies'] = $this->getMergedList($row, $entry['allergies'], 'allergy', function ($value) {
             return [
                 'name' => $value,
             ];
@@ -117,9 +123,9 @@ class WT1CsvParser
 
         $entry['medications'] = $this->getMergedList($row, $entry['medications'], 'meds', function ($value) {
             return [
-                'name' => $value,
-                'sig',
-                'start_date',
+                'name'       => $value,
+                'sig'        => null,
+                'start_date' => null,
             ];
         });
 
@@ -157,9 +163,11 @@ class WT1CsvParser
             return null;
         }
 
-        $result                  = [];
-        $result["plan"]          = $plan;
-        $result["policy_number"] = $this->getValue($row, 'primaryinspol');
+        $result                   = [];
+        $result["plan"]           = $plan;
+        $result["policy_number"]  = $this->getValue($row, 'primaryinspol');
+        $result["group_number"]   = null;
+        $result["insurance_type"] = null;
         return $result;
     }
 
