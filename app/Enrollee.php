@@ -219,13 +219,11 @@ class Enrollee extends \App\BaseModel
 
     public function provider()
     {
-
         return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function careAmbassador()
     {
-
         return $this->belongsTo(CareAmbassador::class, 'care_ambassador_id');
     }
 
@@ -247,8 +245,7 @@ class Enrollee extends \App\BaseModel
 
     public function getProviderFullNameAttribute()
     {
-
-        return $this->provider->getFullName() ?? null;
+        return optional($this->provider)->getFullName();
     }
 
     public function getPracticeNameAttribute()
@@ -278,7 +275,9 @@ class Enrollee extends \App\BaseModel
      */
     public function setDobAttribute($dob)
     {
-        $this->attributes['dob'] = is_a($dob, Carbon::class) ? $dob : Carbon::parse($dob);
+        $this->attributes['dob'] = is_a($dob, Carbon::class)
+            ? $dob
+            : Carbon::parse($dob);
     }
 
     /**

@@ -57,6 +57,7 @@ class NotesController extends Controller
                 $q->where('date', '>=', $date);
             },
             'billingProvider',
+            'primaryPractice',
             'notes'        => function ($q) use ($date) {
                 $q->where('performed_at', '>=', $date)
                   ->with(['author', 'call', 'notifications']);

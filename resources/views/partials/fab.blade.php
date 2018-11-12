@@ -16,6 +16,17 @@
     <fab ref="fabComponent"></fab>
 </div>
 
+@push('scripts')
+    <script>
+        window['patientId'] = @json($patient->id);
 
+        @if ($patient->primaryPractice)
+            window['patientPractice'] = {
+                id: @json($patient->primaryPractice->id),
+                name: @json($patient->primaryPractice->display_name)
+            };
+        @endif
 
+    </script>
+@endpush
 

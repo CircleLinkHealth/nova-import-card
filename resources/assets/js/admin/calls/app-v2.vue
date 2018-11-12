@@ -34,7 +34,7 @@
                     <input class="row-select" v-model="selected" @change="toggleAllSelect" type="checkbox"/>
                 </template>
                 <template slot="Type" slot-scope="props">
-                    <div class="container" style="width:60px;padding:0">
+                    <div class="container" style="width:auto;padding:0;margin:0">
                         <div class="row" style="margin:auto">
                             <div class="col-xs-12" style="margin:auto;padding:0;text-align:center;">
 
@@ -218,7 +218,8 @@
             options() {
                 return {
                     columnsClasses: {
-                        'selected': 'blank'
+                        'selected': 'blank',
+                        'Type': 'padding-2'
                     },
                     sortable: ['Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'CCM Time', 'BHI Time', 'Practice', 'Scheduler'],
                     filterable: ['Type', 'Nurse', 'Patient ID', 'Activity Day', 'Last Call', 'Practice', 'Billing Provider'],
@@ -650,6 +651,12 @@
 
     .VueTables__child-row-toggler.VueTables__child-row-toggler--open::before {
         content: "⬇";
+    }
+
+    td.padding-2 {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+        vertical-align: middle !important;
     }
 
     .row-select {

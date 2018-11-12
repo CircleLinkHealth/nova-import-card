@@ -8,8 +8,6 @@ use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Yajra\Datatables\Facades\Datatables;
 
 class EnrollmentConsentController extends Controller
 {
@@ -21,13 +19,13 @@ class EnrollmentConsentController extends Controller
     {
 
         //todo change to Enrollee
-        $enrollees = Enrollee
-            ::where('status', '!=', 'enrolled')
-            ->where('attempt_count', '<', 3)
-            ->get();
+        $enrollees = Enrollee::with('careAmbassador', 'practice', 'provider')
+                             ->where('status', '!=', 'enrolled')
+                             ->where('attempt_count', '<', 3)
+                             ->get();
 
         $formatted = [];
-        $count = 0;
+        $count     = 0;
 
         foreach ($enrollees as $enrollee) {
             $status = '';
@@ -60,19 +58,25 @@ class EnrollmentConsentController extends Controller
                 $status = 'SMS: Consented';
             }
 
-            $days = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_days;
-            $times = ($enrollee->preferred_days == null) ? 'N/A' : $enrollee->preferred_window;
+            $days  = ($enrollee->preferred_days == null)
+                ? 'N/A'
+                : $enrollee->preferred_days;
+            $times = ($enrollee->preferred_days == null)
+                ? 'N/A'
+                : $enrollee->preferred_window;
+
+            $careAmbassador = optional($enrollee->careAmbassador)->user;
 
             $formatted[$count] = [
 
                 'name'                     => $enrollee->first_name . ' ' . $enrollee->last_name,
-                'program'                  => ucwords(Practice::find($enrollee->practice_id)->name),
-                'provider'                 => ucwords(User::find($enrollee->provider_id)->getFullName() ?? null),
+                'program'                  => ucwords(optional($enrollee->practice)->name),
+                'provider'                 => ucwords($enrollee->getProviderFullNameAttribute()),
                 'has_copay'                => $enrollee->has_copay
                     ? 'Yes'
                     : 'No',
                 'status'                   => $status,
-                'care_ambassador'          => ucwords($enrollee->careAmbassador->user->getFullName() ?? null),
+                'care_ambassador'          => ucwords(optional($careAmbassador)->getFullName() ?? null),
                 'last_call_outcome'        => ucwords($enrollee->last_call_outcome),
                 'last_call_outcome_reason' => ucwords($enrollee->last_call_outcome_reason),
                 'mrn_number'               => ucwords($enrollee->mrn_number),
@@ -83,7 +87,7 @@ class EnrollmentConsentController extends Controller
                 'last_attempt_at'          => ucwords($enrollee->last_attempt_at),
                 'consented_at'             => ucwords($enrollee->consented_at),
                 'preferred_days'           => $days,
-                'preferred_window'         => $times
+                'preferred_window'         => $times,
 
             ];
 
@@ -93,7 +97,7 @@ class EnrollmentConsentController extends Controller
         $formatted = collect($formatted);
         $formatted->sortByDesc('date');
 
-        return Datatables::collection($formatted)->make(true);
+        return datatables()->collection($formatted)->make(true);
     }
 
     public function makeEnrollmentReport()
@@ -105,7 +109,7 @@ class EnrollmentConsentController extends Controller
     public function create($invite_code)
     {
 
-        $enrollee = Enrollee::whereInviteCode($invite_code)->first();
+        $enrollee                   = Enrollee::whereInviteCode($invite_code)->first();
         $enrollee->invite_opened_at = Carbon::now()->toDateTimeString();
         $enrollee->save();
 
@@ -124,7 +128,7 @@ class EnrollmentConsentController extends Controller
         $enrollee = Enrollee::find($input['enrollee_id']);
 
         $enrollee->consented_at = Carbon::parse($input['consented_at'])->toDateTimeString();
-        $enrollee->status = 'consented';
+        $enrollee->status       = 'consented';
         $enrollee->save();
 
         return json_encode($enrollee);

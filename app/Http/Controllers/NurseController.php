@@ -82,7 +82,7 @@ class NurseController extends Controller
 
     public function dailyReport()
     {
-        return Datatables::collection(NurseDailyReport::data())->make(true);
+        return datatables()->collection(NurseDailyReport::data())->make(true);
     }
 
     public function makeHourlyStatistics()
