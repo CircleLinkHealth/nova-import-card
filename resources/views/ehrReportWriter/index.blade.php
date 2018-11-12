@@ -1,12 +1,12 @@
 @include('ehrReportWriter.head')
 <body>
-
-    <div>
+<div class="container">
+    <div class="col-md-12">
         <h3>Hi, {{auth()->user()->display_name}}!</h3>
         <p>This tool will ensure the data is in the appropriate format to be ingested by CLH.</p>
     </div>
 
-    <div>
+    <div class="col-md-12">
         <h2>Supported Templates</h2>
         <p>The date must be in one of the 3 formats below.</p>
     </div>
@@ -28,15 +28,13 @@
         <form class="form" action="{{route('report-writer.validate')}}" method="POST">
             {{csrf_field()}}
             <div>
-           <textarea rows="15" cols="100" maxlength="5000" class="form-group" name="json" required placeholder="Paste json patient records for validation here..."></textarea>
+                <textarea rows="15" cols="100" maxlength="5000" class="form-group" name="json" required placeholder="Paste json patient records for validation here..."></textarea>
             </div>
             <div>
                 <input class="btn btn-primary" type="submit">
             </div>
         </form>
     </div>
-
-
-
+</div>
 
 </body>
