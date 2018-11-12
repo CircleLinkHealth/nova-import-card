@@ -13,7 +13,7 @@ class EhrReportWriterInfo extends Model
 
     protected $table = 'ehr_report_writer_info';
 
-    public function careAmbassador()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
