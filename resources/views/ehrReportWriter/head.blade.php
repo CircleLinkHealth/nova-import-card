@@ -56,3 +56,4 @@
     </style>
     @stack('styles')
 </head>
+@yield('content')
