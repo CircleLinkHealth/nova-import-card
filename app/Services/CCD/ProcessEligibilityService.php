@@ -20,12 +20,15 @@ use App\Jobs\ProcessEligibilityFromGoogleDrive;
 use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
+use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 
 class ProcessEligibilityService
 {
+    use ValidatesEligibility;
+
     public function fromGoogleDrive(EligibilityBatch $batch)
     {
         $dir                 = $batch->options['dir'];
@@ -383,12 +386,15 @@ class ProcessEligibilityService
 
             $patient = $this->transformCsvRow($patient);
 
+            $validator = $this->validateRow($patient);
+
             $hash = $batch->practice->name . $patient['first_name'] . $patient['last_name'] . $patient['mrn'];
 
             $job = EligibilityJob::create([
                 'batch_id' => $batch->id,
                 'hash'     => $hash,
                 'data'     => $patient,
+                'errors'   => $validator->fails() ? $validator->errors() : null,
             ]);
 
             $patient['eligibility_job_id'] = $job->id;

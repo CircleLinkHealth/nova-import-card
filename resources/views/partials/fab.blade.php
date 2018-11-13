@@ -19,10 +19,14 @@
 @push('scripts')
     <script>
         window['patientId'] = @json($patient->id);
-        window['patientPractice'] = {
-            id: @json($patient->primaryPractice->id),
-            name: @json($patient->primaryPractice->display_name)
-        };
+
+        @if ($patient->primaryPractice)
+            window['patientPractice'] = {
+                id: @json($patient->primaryPractice->id),
+                name: @json($patient->primaryPractice->display_name)
+            };
+        @endif
+
     </script>
 @endpush
 
