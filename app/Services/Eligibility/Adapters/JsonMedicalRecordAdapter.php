@@ -11,13 +11,19 @@ namespace App\Services\Eligibility\Adapters;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
+use App\Rules\JsonEligibilityPhones;
+use App\Rules\JsonEligibilityProblems;
 use App\Services\Eligibility\Entities\MedicalRecord;
+use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\MessageBag;
 use Seld\JsonLint\JsonParser;
+use Validator;
 
 class JsonMedicalRecordAdapter
 {
+    use ValidatesEligibility;
     /**
      * A json string that is the source data
      *
@@ -39,6 +45,11 @@ class JsonMedicalRecordAdapter
      * @var bool
      */
     private $isValid = null;
+
+    /**
+     * @var MessageBag|null
+     */
+    private $validationErrors = null;
 
     public function __construct(string $source)
     {
@@ -114,11 +125,12 @@ class JsonMedicalRecordAdapter
 
         $coll = $this->decode();
 
+
         if ($coll->isEmpty()) {
             return false;
         }
 
-        $this->isValid = $this->validate($coll);
+        $this->isValid = $this->validateRow($coll->all())->passes();
 
         if ($this->isValid) {
             $this->validatedData = $coll;
@@ -149,12 +161,6 @@ class JsonMedicalRecordAdapter
         $decoded = json_decode($this->source, true);
 
         return collect($decoded);
-    }
-
-    private function validate(Collection $coll): bool
-    {
-        //@todo: implement validation rules
-        return true;
     }
 
     private function getKey(EligibilityBatch $eligibilityBatch)
