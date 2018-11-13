@@ -12,6 +12,8 @@ use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Location;
 use App\Practice;
+use App\PracticeEnrollmentTips;
+use App\SafeRequest;
 use App\Services\OnboardingService;
 use App\Settings;
 use App\User;
@@ -128,6 +130,16 @@ class DashboardController extends Controller
         $practiceSlug = $this->practiceSlug;
 
         return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
+    }
+
+    public function getCreateEnrollment()
+    {
+        return view('provider.enrollment.create', array_merge([
+            'practice'         => $this->primaryPractice,
+            'practiceSlug'     => $this->practiceSlug,
+            'practiceSettings' => $this->primaryPractice->cpmSettings(),
+            'tips'             => optional($this->primaryPractice->enrollmentTips)->content,
+        ], $this->returnWithAll));
     }
 
     public function getIndex()
@@ -306,5 +318,65 @@ class DashboardController extends Controller
         return redirect()
             ->back()
             ->with('message', "The practice has been updated successfully.");
+    }
+
+    public function postStoreEnrollment(SafeRequest $request)
+    {
+        //todo: we are allowing HTML here. so we have to do some manual error control.
+        //i.e look for function(), <script>, eval()
+        $detail = $request->input('tips');
+
+        if (strpos($detail, "<script>") !== false ||
+            strpos($detail, "function(") !== false ||
+            strpos($detail, "eval(") !== false) {
+            return redirect()
+                ->back()
+                ->withErrors([
+                    'suspicious-input' => "You have entered invalid input.",
+                ]);
+        }
+
+        libxml_use_internal_errors(true);
+        $dom = new \domdocument();
+        $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        $images = $dom->getelementsbytagname('img');
+
+        foreach ($images as $k => $img) {
+            $data = $img->getattribute('src');
+
+            //proceed only if the image is in base64 encoding
+            if (strpos($data, 'data') === false || strpos($data, 'base64') === false) {
+                continue;
+            }
+
+            list($type, $data) = explode(';', $data);
+            list(, $data) = explode(',', $data);
+
+            $data       = base64_decode($data);
+            $image_name = time() . $k . '.png';
+            $path       = public_path() . '/' . $image_name;
+
+            //todo: save on cloud. not in source code
+            file_put_contents($path, $data);
+
+            $img->removeattribute('src');
+            $img->setattribute('src', '/' . $image_name);
+        }
+
+        $detail = $dom->savehtml();
+
+        $tips = $this->primaryPractice->enrollmentTips;
+        if ( ! $tips) {
+            $tips              = new PracticeEnrollmentTips();
+            $tips->practice_id = $this->primaryPractice->id;
+        }
+
+        $tips->content = $detail;
+        $tips->save();
+
+        return redirect()
+            ->back()
+            ->with('message', "Enrollment tips were saved successfully.");
     }
 }

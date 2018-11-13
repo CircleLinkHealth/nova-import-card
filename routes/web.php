@@ -1994,6 +1994,16 @@ Route::group([
         'uses' => 'Provider\DashboardController@getCreateLocation',
         'as'   => 'provider.dashboard.manage.locations',
     ])->middleware('permission:practiceSetting.read');
+
+    Route::get('enrollment', [
+        'uses' => 'Provider\DashboardController@getCreateEnrollment',
+        'as'   => 'provider.dashboard.manage.enrollment',
+    ])->middleware('permission:practiceSetting.read');
+
+    Route::post('enrollment', [
+        'uses' => 'Provider\DashboardController@postStoreEnrollment',
+        'as'   => 'provider.dashboard.store.enrollment',
+    ])->middleware('permission:practiceSetting.update');
 });
 
 /*
