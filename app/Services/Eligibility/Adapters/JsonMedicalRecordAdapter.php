@@ -163,35 +163,6 @@ class JsonMedicalRecordAdapter
         return collect($decoded);
     }
 
-//    private function validate(Collection $coll): bool
-//    {
-//        $array           = $coll->all();
-//        $array['phones'] = [
-//            'primary_phone' => array_key_exists('primary_phone', $array)
-//                ? $array['primary_phone']
-//                : null,
-//            'home_phone'    => array_key_exists('home_phone', $array)
-//                ? $array['home_phone']
-//                : null,
-//            'cell_phone'    => array_key_exists('cell_phone', $array)
-//                ? $array['cell_phone']
-//                : null,
-//        ];
-//
-//        $validator = Validator::make($array, [
-//            'patient_id'    => 'required',
-//            'last_name'     => 'required|alpha_num',
-//            'first_name'    => 'required|alpha_num',
-//            'date_of_birth' => 'required|date',
-//            'problems'      => ['required', new JsonEligibilityProblems()],
-//            'phones'        => ['required', new JsonEligibilityPhones()],
-//        ]);
-//
-//        $this->validationErrors = $validator->errors();
-//
-//        return $validator->passes();
-//    }
-
     private function getKey(EligibilityBatch $eligibilityBatch)
     {
         $key = $eligibilityBatch->practice->name
