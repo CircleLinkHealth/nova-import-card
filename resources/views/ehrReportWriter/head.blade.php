@@ -56,4 +56,34 @@
     </style>
     @stack('styles')
 </head>
+<body>
+<ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+               aria-expanded="false">{{ Auth::user()->getFullName() }} [ID:{{ Auth::user()->id }}]<span
+                        class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="{{ url('/auth/logout') }}">Logout</a></li>
+            </ul>
+        </li>
+</ul>
+</body>
+@include('partials.footer')
 @yield('content')
+@if (Agent::isIE())
+    <!-- Script for polyfilling Promises on IE9 and 10 -->
+
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="{{ mix('js/polyfills/es7-object-polyfill.min.js') }}"></script>
+@endif
+
+<script src="{{mix('compiled/js/app-clh-admin-ui.js')}}"></script>
+<script type="text/javascript" src="{{ mix('compiled/js/admin-ui.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>
+@stack('scripts')
+<div style="clear:both;height:100px;"></div>
+</html>
