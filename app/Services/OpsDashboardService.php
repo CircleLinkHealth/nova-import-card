@@ -15,6 +15,7 @@ use App\Repositories\OpsDashboardPatientEloquentRepository;
 use App\User;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class OpsDashboardService
 {
@@ -203,8 +204,6 @@ class OpsDashboardService
      */
     public function dailyReportRow($patients, Carbon $date)
     {
-        $fromDate = $date->copy()->subDay()->setTimeFromTimeString('23:00');
-
         $paused          = [];
         $withdrawn       = [];
         $enrolled        = [];
@@ -249,28 +248,24 @@ class OpsDashboardService
                     }
                 }
             }
-            //It's assumed that a patient that had it's ccm_status change in the last day, will also have an entry in the revisions table
-            if ($patient->patientInfo->revisionHistory->isNotEmpty()) {
-                if ($patient->patientInfo->ccm_status == Patient::UNREACHABLE &&
-                    $patient->patientInfo->date_unreachable >= $fromDate &&
-                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
-                    $unreachable[] = $patient;
-                }
-                if ($patient->patientInfo->ccm_status == Patient::PAUSED &&
-                    $patient->patientInfo->date_paused >= $fromDate &&
-                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
-                    $paused[] = $patient;
-                }
-                if ($patient->patientInfo->ccm_status == Patient::WITHDRAWN &&
-                    $patient->patientInfo->date_withdrawn >= $fromDate &&
-                    $patient->patientInfo->revisionHistory->sortByDesc('created_at')->last()->old_value == Patient::ENROLLED) {
-                    $withdrawn[] = $patient;
-                }
-            }
+            $revisionHistory = $patient->patientInfo->revisionHistory->sortByDesc('created_at');
 
-            if ($patient->patientInfo->ccm_status == Patient::ENROLLED &&
-                $patient->patientInfo->registration_date >= $fromDate) {
-                $enrolled[] = $patient;
+            if ($revisionHistory->isNotEmpty()) {
+                if ($revisionHistory->last()->old_value == Patient::ENROLLED){
+                    if ($revisionHistory->first()->new_value == Patient::UNREACHABLE) {
+                        $unreachable[] = $patient;
+                    }
+                    if ($revisionHistory->first()->new_value == Patient::PAUSED) {
+                        $paused[] = $patient;
+                    }
+                    if ($revisionHistory->first()->new_value == Patient::WITHDRAWN) {
+                        $withdrawn[] = $patient;
+                    }
+                }
+                if ($revisionHistory->last()->old_value !== Patient::ENROLLED &&
+                    $revisionHistory->first()->new_value == Patient::ENROLLED){
+                    $enrolled[] = $patient;
+                }
             }
             if ($patient->patientInfo->ccm_status == Patient::TO_ENROLL) {
                 $to_enroll[] = $patient;
@@ -470,6 +465,9 @@ class OpsDashboardService
 
 
     /**
+     * Returns the number of working days for the date range given.
+     * Accounts for weekends and holidays.
+     *
      * @param $fromDate
      * @param $toDate
      *
@@ -477,9 +475,14 @@ class OpsDashboardService
      */
     public function calculateWeekdays($fromDate, $toDate)
     {
+        $holidays = DB::table('company_holidays')->get();
 
-        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) {
-            return ! $date->isWeekend();
+        return Carbon::parse($fromDate)->diffInDaysFiltered(function (Carbon $date) use ($holidays){
+
+            $matchingHolidays = $holidays->where('holiday_date', $date->toDateString());
+
+            return ! $date->isWeekend() && ! $matchingHolidays->count() >= 1;
+
         }, new Carbon($toDate));
 
     }

@@ -30,7 +30,7 @@
                         </div>
 
                         <div class="pull-right">
-                            <button v-on:click="call" type="button" v-bind:disabled="disableCall"
+                            <button v-on:click="toggleCall" type="button" v-bind:disabled="disableCall"
                                     class="btn btn-primary btn-lg call-customer-button">
                                 <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
                                 Make Call
@@ -48,10 +48,13 @@
     </div>
 </div>
 
-<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-<script src="{{ mix('js/browser-calls.js', true) }}"></script>
+<script src="https://media.twiliocdn.com/sdk/js/client/v1.6/twilio.min.js"></script>
+<script src="{{ mix('js/browser-calls.js') }}"></script>
 <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/vue.resource/1.2.0/vue-resource.min.js"></script>
 
@@ -65,44 +68,61 @@
             callStatus: 'Summoning Calling Gods...',
             toCall: '',
             enableHangUp: true,
-            disableCall: true,
-            warning: 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
+            disableCall: false,
+            warning: 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...',
+
+            countryCode: '1',
+            currentNumber: '',
+            muted: false,
+            onPhone: false,
+            log: 'Connecting...',
+            connection: null
         },
 
         mounted: function () {
+            let self = this;
 
-            this.$http.post("/twilio/token", {forPage: window.location.pathname}, function (data) {
+            self.$http.post("/twilio/token", {forPage: window.location.pathname}, data => {
+            })
+                .then(response => {
+                        this.callStatus = 'Ready';
+                        Twilio.Device.setup(response.body.token);
+                    }
+                )
+                .catch(error => {
+                    console.log(err);
+                    self.log = 'Could not fetch token, see console.log';
+                });
 
-                // Set up the Twilio Client Device with the token
+            Twilio.Device.disconnect(function () {
+                self.onPhone = false;
+                self.connection = null;
+                self.log = 'Call ended.';
+            });
 
-            }).then(response => {
-
-                    this.callStatus = 'Ready';
-                    Twilio.Device.setup(response.body.token);
-
-                }
-            );
-
+            Twilio.Device.ready(function () {
+                self.log = 'Connected';
+            });
         },
 
         methods: {
 
-            checkPhoneFormatValidity(){
+            checkPhoneFormatValidity() {
 
-                let regex = /^\+?[1]\d{10}$/;
-
-                if (this.toCall.match(regex) != null) {
-                    this.disableCall = false;
-                    this.warning = ''
-                } else {
-                    this.disableCall = true;
-                    this.warning = 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
-
-                }
+                // let regex = /^\+?[1]\d{10}$/;
+                //
+                // if (this.toCall.match(regex) != null) {
+                //     this.disableCall = false;
+                //     this.warning = ''
+                // } else {
+                //     this.disableCall = true;
+                //     this.warning = 'Enter Valid Phone Format (+1XXXXXXXXXX) to make call...'
+                //
+                // }
 
             },
 
-            call(){
+            call() {
 
                 this.callStatus = "Calling " + this.toCall + "...";
                 Twilio.Device.connect({"phoneNumber": this.toCall});
@@ -110,9 +130,32 @@
 
             },
 
-            hangUp(){
+            hangUp() {
                 Twilio.Device.disconnectAll();
-            }
+            },
+
+            // Handle muting
+            toggleMute: function() {
+                this.muted = !this.muted;
+                Twilio.Device.activeConnection().mute(this.muted);
+            },
+
+            // Make an outbound call with the current number,
+            // or hang up the current call
+            toggleCall: function() {
+                if (!this.onPhone) {
+                    this.muted = false;
+                    this.onPhone = true;
+                    // make outbound call with current number
+                    var n = this.toCall;
+                    this.connection = Twilio.Device.connect({ To: n });
+                    this.log = 'Calling ' + n;
+                } else {
+                    // hang up call in progress
+                    Twilio.Device.disconnectAll();
+                }
+            },
+
 
         }
 

@@ -56,13 +56,7 @@ class OpsDashboardDataSeeder extends Seeder
                         'performed_at' => $date->copy()->subDay(1)->toDateTimeString(),
                         'provider_id' => $nurses->random(),
                         ],
-                    [
-                        'type' => $activityType->random(),
-                        'duration' => $activityDuration->random(),
-                        'duration_unit' => 'seconds',
-                        'performed_at' => $date->copy()->subDay(2)->toDateTimeString(),
-                        'provider_id' => $nurses->random(),
-                    ]]);
+                    ]);
             }else{
                 $patient->attachPractice($practiceIds->random(), null, null, 2);
                 $patient->activities()->createMany([
@@ -72,13 +66,7 @@ class OpsDashboardDataSeeder extends Seeder
                         'duration_unit' => 'seconds',
                         'performed_at' => $date->copy()->subDay(5)->toDateTimeString(),
                         'provider_id' => $nurses->random(),],
-                    [
-                        'type' => $activityType->random(),
-                        'duration' => $activityDuration->random(),
-                        'duration_unit' => 'seconds',
-                        'performed_at' => $date->copy()->subDay(5)->toDateTimeString(),
-                        'provider_id' => $nurses->random(),
-                    ]]);
+                ]);
             }
 
         }
