@@ -10,7 +10,6 @@ class EhrReportWriterController extends Controller
     use ValidatesEligibility;
 
     public function index(){
-
         return view('ehrReportWriter.index');
     }
 
