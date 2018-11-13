@@ -29,6 +29,7 @@ class EnrollmentCenterController extends Controller
                 ::toCall()
                 ->where('lang', 'ES')
                 ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
                 ->first();
 
             //if no spanish, get a EN user.
@@ -36,6 +37,7 @@ class EnrollmentCenterController extends Controller
                 $enrollee = Enrollee
                     ::toCall()
                     ->orderBy('attempt_count')
+                    ->with('practice.enrollmentTips')
                     ->first();
             }
         } else { // auth ambassador doesn't speak ES, get a regular user.
@@ -43,6 +45,7 @@ class EnrollmentCenterController extends Controller
             $enrollee = Enrollee
                 ::toCall()
                 ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
                 ->first();
         }
 
@@ -51,6 +54,7 @@ class EnrollmentCenterController extends Controller
             'care_ambassador_id' => $careAmbassador->id,
         ])
             ->orderBy('attempt_count')
+            ->with('practice.enrollmentTips')
             ->first();
 
         if ($engagedEnrollee) {

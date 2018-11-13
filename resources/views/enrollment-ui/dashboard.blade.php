@@ -76,6 +76,11 @@
                     Requested Call Back</a>
                 <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
                     Declined</a>
+
+                @if(count($enrollee->practice->enrollmentTips))
+                    <a class="waves-effect waves-light btn" href="#tips" id="tips-link"
+                       style="background: black;">Tips</a>
+                @endif
             </div>
 
             <div v-if="onCall === true" style="text-align: center">
@@ -127,6 +132,11 @@
     <!-- Rejected -->
         @include('enrollment-ui.modals.rejected')
 
+    <!-- Enrollment tips -->
+        @if(count($enrollee->practice->enrollmentTips))
+            @include('enrollment-ui.modals.tips')
+        @endif
+
     </div>
 
     <script src="https://unpkg.com/vue@2.1.3/dist/vue.js"></script>
@@ -134,6 +144,8 @@
     <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
 
     <script>
+
+        const hasTips = @json(count($enrollee->practice->enrollmentTips) > 0);
 
         Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -167,8 +179,10 @@
                 callStatus: 'Summoning Calling Gods...',
                 toCall: '',
 
-                total_time_in_system: '{!!$report->total_time_in_system !!}'
+                total_time_in_system: '{!!$report->total_time_in_system !!}',
 
+                practice_id: '{{ $enrollee->practice->id }}',
+                hasTips: hasTips
             },
 
             computed: {
@@ -288,11 +302,53 @@
                 $('#consented').modal();
                 $('#utc').modal();
                 $('#rejected').modal();
+                $('#tips').modal();
                 $('select').material_select();
 
+                if (this.hasTips) {
+                    let showTips = true;
+                    const tipsSettings = this.getTipsSettings();
+                    if (tipsSettings) {
+                        if (tipsSettings[this.practice_id] && !tipsSettings[this.practice_id].show) {
+                            showTips = false;
+                        }
+                    }
+
+                    $('#do-not-show-tips-again').prop('checked', !showTips);
+                    if (showTips) {
+                        //show the modal here
+                        $('#tips-link').click();
+                    }
+                }
             },
 
             methods: {
+
+                getTipsSettings() {
+                    const tipsSettingsStr = localStorage.getItem('enrollment-tips-per-practice');
+                    if (tipsSettingsStr) {
+                        return JSON.parse(tipsSettingsStr);
+                    }
+                    return null;
+                },
+
+                setTipsSettings(settings) {
+                    localStorage.setItem('enrollment-tips-per-practice', JSON.stringify(settings));
+                },
+
+                /**
+                 * used by the tips modal
+                 * @param e
+                 */
+                doNotShowTipsAgain(e) {
+                    let settings = this.getTipsSettings();
+                    if (!settings) {
+                        settings = {};
+                    }
+                    settings[this.practice_id] = {show: !e.currentTarget.checked};
+                    this.setTipsSettings(settings);
+                },
+
                 validatePhone(value) {
                     let isValid = this.isValidPhoneNumber(value)
 
