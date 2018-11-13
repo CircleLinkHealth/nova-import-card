@@ -1,6 +1,5 @@
 <?php namespace App\CLH\Repositories;
 
-use App\CareAmbassador;
 use App\CarePlan;
 use App\EhrReportWriterInfo;
 use App\Nurse;
@@ -65,7 +64,7 @@ class UserRepository
         }
 
         // ehr report writer info
-        if ($user->hasRole('ehr-report-writer')){
+        if ($user->hasRole('ehr-report-writer')) {
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
@@ -180,8 +179,8 @@ class UserRepository
             $user->load('nurseInfo');
         }
 
-        if ($user->hasRole('ehr-report-writer')  && ! $user->ehrReportWriterInfo){
-            $ehrReportWriterInfo = new EhrReportWriterInfo;
+        if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
+            $ehrReportWriterInfo          = new EhrReportWriterInfo;
             $ehrReportWriterInfo->user_id = $user->id;
             $ehrReportWriterInfo->save();
             $user->load('ehrReportWriterInfo');
@@ -340,41 +339,25 @@ class UserRepository
         ParameterBag $params
     ) {
 
-        if ($user->careAmbassador != null) {
-            $user->careAmbassador->hourly_rate    = $params->get('hourly_rate');
-            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
-                ? 1
-                : 0;
-            $user->careAmbassador->save();
-        } else {
-            $ambassador = CareAmbassador::create([
-                'user_id' => $user->id,
+        $user->careAmbassador()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'hourly_rate'    => $params->get('hourly_rate')
+                    ?: null,
+                'speaks_spanish' => $params->get('speaks_spanish') == 'on'
+                    ? 1
+                    : 0,
             ]);
-
-            $ambassador->save();
-
-            $user->careAmbassador()->save($ambassador);
-        }
     }
 
     public function saveOrUpdateEhrReportWriterInfo(
         User $user,
         ParameterBag $params
-    ){
-        if ($user->ehrReportWriterInfo != null) {
-            $user->ehrReportWriterInfo->google_drive_folder    = $params->get('google_drive_folder');
-
-            $user->ehrReportWriterInfo->save();
-        } else {
-            $ehrReportWriter = EhrReportWriterInfo::create([
-                'user_id' => $user->id,
-                'google_drive_folder' => $params->get('google_drive_folder')
-            ]);
-
-            $ehrReportWriter->save();
-
-            $user->ehrReportWriterInfo()->save($ehrReportWriter);
-        }
+    ) {
+        $user->ehrReportWriterInfo()->updateOrCreate(
+            ['user_id' => $user->id],
+            ['google_drive_folder' => $params->get('google_drive_folder')]
+        );
     }
 
     /**
@@ -476,6 +459,10 @@ class UserRepository
         // nurse info
         if ($user->hasRole('care-center')) {
             $this->saveOrUpdateNurseInfo($user, $params);
+        }
+
+        if ($user->hasRole('ehr-report-writer')){
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
         return $user;
