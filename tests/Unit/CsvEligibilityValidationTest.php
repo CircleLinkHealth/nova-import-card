@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\EligibilityBatch;
+use App\Jobs\ProcessSinglePatientEligibility;
 use App\Practice;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Csv\CsvPatientList;
@@ -50,11 +51,22 @@ class CsvEligibilityValidationTest extends TestCase
 
         $this->assertTrue($batch->hasJobs());
 
-        $jobs = $batch->eligibilityJobs();
+        $jobs = $batch->eligibilityJobs()->get();
         $this->assertEquals(6, $jobs->count());
 
+        $jobs->map(function ($job) use ($batch) {
+            (new ProcessSinglePatientEligibility(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            ))->handle();
+        });
 
-        //assert jobs have no errors
+        foreach($jobs as $job){
+            $this->assertEquals("3", $job->status);
+            $this->assertNotNull($job->outcome);
+        }
 
     }
 
@@ -88,8 +100,22 @@ class CsvEligibilityValidationTest extends TestCase
 
         $this->assertTrue($batch->hasJobs());
 
-        $jobs = $batch->eligibilityJobs();
+        $jobs = $batch->eligibilityJobs()->get();
         $this->assertEquals(5, $jobs->count());
+
+        $jobs->map(function ($job) use ($batch) {
+            (new ProcessSinglePatientEligibility(
+                collect([$job->data]),
+                $job,
+                $batch,
+                $batch->practice
+            ))->handle();
+        });
+
+        foreach($jobs as $job){
+            $this->assertEquals("3", $job->status);
+            $this->assertNotNull($job->outcome);
+        }
 
     }
 

@@ -39,7 +39,7 @@
                     <p class="text">Add Care Person</p>
                 </div>
 
-                <div class="mini-action-button">
+                <div v-if="hasPractice" class="mini-action-button">
                     <p>
                         <i v-on:click="createTask"
                            class="icon material-icons">calendar_today</i>
@@ -63,6 +63,7 @@
     export default {
         data() {
             return {
+                hasPractice: false,
                 createNoteUrl: this.document().querySelector('meta[name="route.patient.note.create"]').getAttribute('content'),
                 createObservationUrl: this.document().querySelector('meta[name="route.patient.observation.create"]').getAttribute('content'),
                 createActivityUrl: this.document().querySelector('meta[name="route.patient.activity.create"]').getAttribute('content'),
@@ -79,7 +80,14 @@
         created() {
             this.getCurrentUser()
         },
-
+        mounted() {
+            if (window['patientPractice']) {
+                this.hasPractice = true;
+            }
+            else {
+                this.hasPractice = false;
+            }
+        },
         methods: Object.assign(
             mapActions(['setOpenModal', 'getCurrentUser']),
             {

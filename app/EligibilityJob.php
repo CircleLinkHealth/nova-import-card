@@ -39,6 +39,7 @@ class EligibilityJob extends BaseModel
     protected $casts = [
         'data'     => 'array',
         'messages' => 'array',
+        'errors'   => 'array',
     ];
 
     protected $fillable = [
