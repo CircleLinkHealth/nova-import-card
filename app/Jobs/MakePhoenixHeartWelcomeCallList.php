@@ -96,6 +96,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             //format insurances
             $insurances = PhoenixHeartInsurance::where('patient_id', '=', $patient->get('patient_id'))
                                                ->get()
+                                               ->unique('name')
                                                ->sortBy('order')
                                                ->pluck('name')
                                                ->map(function ($ins) {
