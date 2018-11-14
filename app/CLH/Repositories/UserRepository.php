@@ -1,5 +1,6 @@
 <?php namespace App\CLH\Repositories;
 
+use App\CareAmbassador;
 use App\CarePlan;
 use App\EhrReportWriterInfo;
 use App\Nurse;
@@ -339,7 +340,7 @@ class UserRepository
         ParameterBag $params
     ) {
 
-        $user->careAmbassador()->updateOrCreate(
+        CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
                 'hourly_rate'    => $params->get('hourly_rate')
@@ -354,7 +355,7 @@ class UserRepository
         User $user,
         ParameterBag $params
     ) {
-        $user->ehrReportWriterInfo()->updateOrCreate(
+        EhrReportWriterInfo::updateOrCreate(
             ['user_id' => $user->id],
             ['google_drive_folder' => $params->get('google_drive_folder')]
         );
