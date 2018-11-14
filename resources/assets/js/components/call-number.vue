@@ -251,7 +251,7 @@
 
             self = this;
             this.resetPhoneState();
-            //this.registerBroadcastChannelHandlers();
+            this.registerBroadcastChannelHandlers();
 
             window.onbeforeunload = function (event) {
                 if (self.onPhone) {
