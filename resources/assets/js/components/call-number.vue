@@ -66,7 +66,7 @@
             toggleMute: function (number) {
                 const value = !this.muted[number];
                 this.muted[number] = value;
-                // this.device.activeConnection().mute(value);
+                this.device.activeConnection().mute(value);
             },
 
             toggleMuteMessage: function (number) {
@@ -97,7 +97,7 @@
                     this.muted[number] = false;
                     this.onPhone[number] = true;
                     // make outbound call with current number
-                    //this.connection = this.device.connect({To: number});
+                    this.connection = this.device.connect({To: number});
                     this.log = 'Calling ' + number;
                     EventBus.$emit('tracker:call-mode:enter');
                 } else {
@@ -105,7 +105,7 @@
                     this.muted[number] = false;
                     this.onPhone[number] = false;
                     // hang up call in progress
-                    // this.device.disconnectAll();
+                    this.device.disconnectAll();
                     EventBus.$emit('tracker:call-mode:exit');
                 }
             },
@@ -137,23 +137,27 @@
                         self.device = new Twilio.Device(response.data.token);
 
                         self.device.on('disconnect', () => {
+                            console.log('twilio device: disconnect');
                             self.resetPhoneState();
                             self.connection = null;
                             self.log = 'Call ended.';
                         });
 
                         self.device.on('offline', () => {
+                            console.log('twilio device: offline');
                             self.resetPhoneState();
                             self.connection = null;
-                            self.log = 'Call ended.';
+                            self.log = 'Offline.';
                         });
 
                         self.device.on('error', (err) => {
+                            console.log('twilio device: error');
                             self.resetPhoneState();
                             self.log = err.message;
                         });
 
                         self.device.on('ready', () => {
+                            console.log('twilio device: ready');
                             self.log = 'Ready to make call';
                         });
                     })
