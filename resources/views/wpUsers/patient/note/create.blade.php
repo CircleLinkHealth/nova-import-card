@@ -448,6 +448,9 @@
 
             const MEDICATIONS_SEPARATOR = '------------------------------';
 
+            //flag to check whether form was submitted already
+            //CPM-91 and CPM-437 double submitting notes
+            let submitted = false;
             let form;
 
             const waitForEl = function (selector, callback) {
@@ -729,6 +732,14 @@
                 });
 
                 function confirmSubmitForm() {
+
+                    //CPM-91 and CPM-437 double submitting notes
+                    if (submitted) {
+                        return;
+                    }
+
+                    submitted = true;
+
                     //what is this?
                     $.get('/api/test').always(function (response) {
                         if (response.status == 200 || response.message == 'clh') {

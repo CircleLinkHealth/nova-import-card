@@ -186,7 +186,7 @@ class WebixFormatter implements ReportFormatter
                              ->toJson();
 
         if ( ! empty($report_data)) {
-            return "data:$report_data";
+            return $report_data;
         }
 
         return '';
