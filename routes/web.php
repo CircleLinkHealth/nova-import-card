@@ -84,6 +84,18 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.file.download',
     ]);
 
+    Route::group(['prefix' => 'ehr-report-writer'], function(){
+        Route::get('index', [
+            'uses' => 'EhrReportWriterController@index',
+            'as'   => 'report-writer.dashboard',
+        ]);
+
+        Route::post('validate', [
+            'uses' => 'EhrReportWriterController@validateJson',
+            'as'   => 'report-writer.validate'
+        ]);
+    });
+
     /**
      * API
      */

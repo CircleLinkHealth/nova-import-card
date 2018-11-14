@@ -25,6 +25,10 @@ class DownloadController extends Controller
         }
 
         if ( ! file_exists($path)) {
+            $path = storage_path("eligibility-templates/$filePath");
+        }
+
+        if ( ! file_exists($path)) {
             $downloadMedia = $this->mediaFileExists($filePath);
 
             if ($downloadMedia) {

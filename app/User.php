@@ -558,6 +558,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(Nurse::class, 'user_id', 'id');
     }
 
+    public function ehrReportWriterInfo(){
+        return $this->hasOne(EhrReportWriterInfo::class, 'user_id', 'id');
+    }
+
     public function carePlan()
     {
         return $this->hasOne(CarePlan::class, 'user_id', 'id');

@@ -26,7 +26,7 @@ trait ValidatesEligibility
         $row = $this->transformProblems($row);
         $row = $this->transformPhones($row);
 
-        return $this->validate($row);
+        return $this->validatePatient($row);
     }
 
     private function transformProblems(Array $row)
@@ -72,7 +72,24 @@ trait ValidatesEligibility
 
     }
 
-    private function validate(Array $array)
+    public function validateJsonStructure($row){
+
+        $toValidate = [];
+        $rules      = [];
+
+        foreach (array_keys($row) as $key) {
+            $toValidate[$key] = $key;
+        }
+
+        foreach ($this->validJsonKeys() as $name) {
+            $rules[$name] = 'required|filled|same:' . $name;
+        }
+
+        return Validator::make($toValidate, $rules);
+
+    }
+
+    public function validatePatient(Array $array)
     {
         return Validator::make($array, [
             'mrn'        => 'required',
@@ -82,6 +99,33 @@ trait ValidatesEligibility
             'problems'   => ['required', new EligibilityProblems()],
             'phones'     => ['required', new EligibilityPhones()],
         ]);
+    }
+
+    public function validJsonKeys(): array
+    {
+        return [
+            "email",
+            "language",
+            "gender",
+            "patient_id",
+            "last_name",
+            "first_name",
+            "middle_name",
+            "date_of_birth",
+            "address_line_1",
+            "address_line_2",
+            "city",
+            "state",
+            "postal_code",
+            "primary_phone",
+            "cell_phone",
+            "preferred_provider",
+            "last_visit",
+            "insurance_plans",
+            "problems",
+            "medications",
+            "allergies",
+        ];
     }
 
 
