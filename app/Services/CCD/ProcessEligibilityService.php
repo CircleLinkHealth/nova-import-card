@@ -314,13 +314,15 @@ class ProcessEligibilityService
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
-        $filterProblems
+        $filterProblems,
+        $fromReportWriter = false
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
             'patientList'         => $patientList,
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
+            'fromReportWriter'    => (boolean)$fromReportWriter,
         ]);
     }
 
