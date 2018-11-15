@@ -29,7 +29,10 @@ class WT1ImportTest extends TestCase
 //        //create batch and eligibility jobs
 //        \Artisan::call('wt1:importCsv');
 //
-//        //process the batch
+//        //process the batch - need to call 4 times, because we have 1118 jobs, 300 processed each time
+//        \Artisan::call('batch:process');
+//        \Artisan::call('batch:process');
+//        \Artisan::call('batch:process');
 //        \Artisan::call('batch:process');
 //
 //        $noOfJobsAfter = EligibilityJob::count();
@@ -38,8 +41,10 @@ class WT1ImportTest extends TestCase
 //        $enrolsAfter = Enrollee::count();
 //        $this->assertTrue($enrolsAfter > $enrolsBefore);
 //
-//        $latestJob = EligibilityJob::latest()->first();
-//        $this->assertTrue($latestJob->outcome != null);
+//        $incomplete = EligibilityJob::where('status', '!=', EligibilityJob::STATUSES['complete'])
+//                      ->count();
+//
+//        $this->assertTrue($incomplete === 0);
 //    }
 
 }
