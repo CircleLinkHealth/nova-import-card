@@ -325,7 +325,6 @@ class DashboardController extends Controller
         //i.e look for function(), <script>, eval()
         $detail = $request->input('tips');
 
-        //todo
         if (strpos($detail, "&lt;script&gt;") !== false ||
             strpos($detail, "function(") !== false ||
             strpos($detail, "eval(") !== false) {
