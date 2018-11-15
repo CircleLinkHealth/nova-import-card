@@ -94,12 +94,6 @@ class WT1CsvParser
         $entry['primary_phone']  = $this->getValue($row, 'phonehome', '');
         $entry['cell_phone']     = $this->getValue($row, 'phonecell', '');
 
-        $entry['other_phone'] = '';
-        $entry['home_phone']  = $this->getValue($row, 'phonehome', '');
-        $entry['invite_code'] = '';
-        $entry['status'] = '';
-        $entry['attempt_count'] = 0;
-
         $entry['last_visit'] = $this->getValue($row, 'dos');
 
         $entry['preferred_provider'] = $this->getProviderValue($row);
@@ -167,7 +161,7 @@ class WT1CsvParser
         $result["plan"]           = $plan;
         $result["policy_number"]  = $this->getValue($row, 'primaryinspol');
         $result["group_number"]   = null;
-        $result["insurance_type"] = null;
+        $result["insurance_type"] = "Medicare";
         return $result;
     }
 
