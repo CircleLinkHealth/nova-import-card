@@ -322,11 +322,11 @@ class DashboardController extends Controller
 
     public function postStoreEnrollment(SafeRequest $request)
     {
-        //todo: we are allowing HTML here. so we have to do some manual error control.
         //i.e look for function(), <script>, eval()
         $detail = $request->input('tips');
 
-        if (strpos($detail, "<script>") !== false ||
+        //todo
+        if (strpos($detail, "&lt;script&gt;") !== false ||
             strpos($detail, "function(") !== false ||
             strpos($detail, "eval(") !== false) {
             return redirect()
@@ -340,8 +340,9 @@ class DashboardController extends Controller
         $dom = new \domdocument();
         $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
+        /*
+         * in case we decide to support image upload
         $images = $dom->getelementsbytagname('img');
-
         foreach ($images as $k => $img) {
             $data = $img->getattribute('src');
 
@@ -357,13 +358,13 @@ class DashboardController extends Controller
             $image_name = time() . $k . '.png';
             $path       = public_path() . '/' . $image_name;
 
-            //todo: save on cloud. not in source code
+            //should save on cloud. not in source code
             file_put_contents($path, $data);
 
             $img->removeattribute('src');
             $img->setattribute('src', '/' . $image_name);
         }
-
+        */
         $detail = $dom->savehtml();
 
         $tips = $this->primaryPractice->enrollmentTips;
