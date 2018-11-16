@@ -23,9 +23,19 @@
                     <input class="input-field" name="reason_other" id="reason_other"/>
                 </div>
 
+                <div v-if="isSoftDecline" class="col s6 m12 select-custom">
+                    <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
+                    <input type="date" name="soft_decline_callback" id="soft_decline_callback">
+                    <input class="input-field" name="reason_other" id="reason_other"/>
+                    <input type="hidden" name="status" value="soft_rejected">
+                </div>
+                <div v-else>
+                    <input type="hidden" name="status" value="rejected">
+                </div>
+
             </div>
 
-            <input type="hidden" name="status" value="rejected">
+
             <input type="hidden" name="enrollee_id" value="{{$enrollee->id}}">
             <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
             <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">

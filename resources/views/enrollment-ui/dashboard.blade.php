@@ -35,57 +35,47 @@
             font-size: 20px;
         }
 
+        /**
+            NOTE: these styles are for sidebar.blade
+            For some reason, there were not applied if added in that file
+         */
+
+        .counter {
+            font-size: larger;
+        }
+
+        .card-subtitle {
+        }
+
+        .side-nav a {
+            height: 36px;
+            line-height: 36px;
+        }
+
+        .side-nav .row {
+            margin-bottom: 0;
+        }
+
+        .side-nav .card {
+            margin: .5rem 0 0.1rem 0;
+        }
+
+        .side-nav .card-content {
+            padding: 10px;
+        }
+
+        .call-button {
+            max-width: 100%;
+            background: #4caf50;
+        }
+
     </style>
 
     <div id="enrollment_calls">
 
         @include('enrollment-ui.sidebar')
 
-        <div style="margin-left: 26%;">
-
-            <div style="text-align: center">
-                <h5> @{{ name }} </h5>
-
-                <div v-if="onCall === true" style="text-align: center">
-                    <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                class="material-icons left">call_end</i>Hang Up</a>
-                </div>
-                <div v-else style="text-align: center">
-                    @if($enrollee->home_phone_e164 != '')
-                        <a v-on:click="call(home_phone, 'Home')" class="waves-effect waves-light btn"
-                           style="background: #4caf50"><i
-                                    class="material-icons left">phone</i>Home</a>
-                    @endif
-                    @if($enrollee->cell_phone_e164 != '')
-                        <a v-on:click="call(cell_phone, 'Cell')" class="waves-effect waves-light btn"
-                           style="background: #4caf50"><i
-                                    class="material-icons left">phone</i>Cell</a>
-                    @endif
-                    @if($enrollee->other_phone_e164 != '')
-                        <a v-on:click="call(other_phone, 'Other')" class="waves-effect waves-light btn"
-                           style="background: #4caf50"><i
-                                    class="material-icons left">phone</i>Other</a>
-                    @endif
-                </div>
-            </div>
-
-            <div style="margin-top: 10px; text-align: center">
-                <a class="waves-effect waves-light btn" href="#consented">Patient Consented</a>
-                <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">No Answer (Voicemail
-                    Script) /
-                    Requested Call Back</a>
-                <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">Patient
-                    Declined</a>
-
-                @if(count($enrollee->practice->enrollmentTips))
-                    <a class="waves-effect waves-light btn" href="#tips" id="tips-link"
-                       style="background: black;">Tips</a>
-                @endif
-            </div>
-
-            <div v-if="onCall === true" style="text-align: center">
-                <blockquote>Call Status: @{{ this.callStatus }}</blockquote>
-            </div>
+        <div style="margin-left: 21%;">
 
             <div style="padding: 0px 10px; font-size: 16px;">
 
@@ -182,7 +172,9 @@
                 total_time_in_system: '{!!$report->total_time_in_system !!}',
 
                 practice_id: '{{ $enrollee->practice->id }}',
-                hasTips: hasTips
+                hasTips: hasTips,
+                isSoftDecline: false,
+                callError: null
             },
 
             computed: {
@@ -287,7 +279,12 @@
                         this.callStatus = 'Caller Ready';
                         Materialize.toast(this.callStatus, 5000);
                         Twilio.Device.setup(response.body.token);
-
+                        Twilio.Device.error((err) => {
+                            this.callError = err.message;
+                        });
+                        Twilio.Device.disconnect(() => {
+                            this.onCall = false;
+                        });
                     }
                 );
 
@@ -301,7 +298,12 @@
 
                 $('#consented').modal();
                 $('#utc').modal();
-                $('#rejected').modal();
+                $('#rejected').modal({
+                    complete: function () {
+                        //always reset when modal is closed
+                        self.isSoftDecline = false;
+                    }
+                });
                 $('#tips').modal();
                 $('select').material_select();
 
@@ -323,6 +325,12 @@
             },
 
             methods: {
+
+                //triggered when cilck on Soft Decline
+                //gets reset when modal closes
+                softReject() {
+                    this.isSoftDecline = true;
+                },
 
                 getTipsSettings() {
                     const tipsSettingsStr = localStorage.getItem('enrollment-tips-per-practice');
@@ -382,17 +390,18 @@
                 },
 
                 call(phone, type) {
+                    this.callError = null;
+                    this.onCall = true;
                     this.callStatus = "Calling " + type + "..." + phone;
                     Materialize.toast(this.callStatus, 3000);
                     Twilio.Device.connect({"phoneNumber": phone});
-                    this.onCall = true;
                 },
 
                 hangUp() {
-                    Twilio.Device.disconnectAll();
+                    this.onCall = false;
                     this.callStatus = "Ended Call";
                     Materialize.toast(this.callStatus, 3000);
-                    this.onCall = false;
+                    Twilio.Device.disconnectAll();
                 }
             },
         });

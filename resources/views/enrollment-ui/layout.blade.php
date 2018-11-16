@@ -19,11 +19,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    <style>
-
-    </style>
-
 </head>
 
 <!-- Dropdown Structure -->
@@ -37,9 +32,21 @@
         <a href="#!" style="padding-left: 10px" class="brand-logo">CircleLink Health Enrollment Center</a>
         <ul class="right hide-on-med-and-down">
             @if(auth()->user()->hasRole('care-ambassador-view-only'))
-            <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
+                <li><a href="{{route('patients.dashboard')}}">Patient Dashboard</a></li>
             @endif
-            <li><a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">Training Materials</a></li>
+
+            @if($enrollee && count($enrollee->practice->enrollmentTips) > 0)
+                <li>
+                    <!-- #tips is a modal in dashboard.blade -->
+                    <a class="waves-effect waves-light btn" href="#tips" id="tips-link"
+                       style="background: black;">
+                        Tips
+                    </a>
+                </li>
+            @endif
+
+            <li><a href="https://drive.google.com/file/d/0Byt9en_0bcOpRGM3LVBQamh4WkE/view" target="_blank">Training
+                    Materials</a></li>
             <!-- Dropdown Trigger -->
             <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ auth()->user()->getFullName() }}<i
                             class="material-icons right">settings</i></a></li>
