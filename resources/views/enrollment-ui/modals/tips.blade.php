@@ -25,7 +25,7 @@
             <div class="col s6 text-right">
                 <button type="button"
                         data-dismiss="modal" aria-label="Got it!"
-                        class="modal-action waves-effect waves-light btn">
+                        class="modal-close waves-effect waves-light btn">
                     Got it!
                 </button>
             </div>

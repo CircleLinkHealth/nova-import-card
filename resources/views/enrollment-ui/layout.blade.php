@@ -38,8 +38,7 @@
             @if($enrollee && count($enrollee->practice->enrollmentTips) > 0)
                 <li>
                     <!-- #tips is a modal in dashboard.blade -->
-                    <a class="waves-effect waves-light btn" href="#tips" id="tips-link"
-                       style="background: black;">
+                    <a href="#tips" id="tips-link">
                         Tips
                     </a>
                 </li>
