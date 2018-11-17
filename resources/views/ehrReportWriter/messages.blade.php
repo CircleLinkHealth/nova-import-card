@@ -1,7 +1,9 @@
-@if (isset($errors))
-    @if (count($errors) > 0)
+
+@if (session('errors'))
+    @if (session('errors')->count() > 0)
         <ul>
-            @foreach ($errors->getMessages() as $key => $value)
+            @foreach (session('errors')->getMessages() as $key => $value)
+                <?php xdebug_break(); ?>
                 @if($key == 'warnings')
                     <div class="alert alert-warning">
                         @foreach ($value as $error)

@@ -17,7 +17,6 @@ use App\Importer\Loggers\Problem\NumberedProblemFields;
 use App\Jobs\CheckCcdaEnrollmentEligibility;
 use App\Jobs\ProcessCcda;
 use App\Jobs\ProcessEligibilityFromGoogleDrive;
-use App\Jobs\ProcessSinglePatientEligibility;
 use App\Models\MedicalRecords\Ccda;
 use App\Practice;
 use App\Traits\ValidatesEligibility;
@@ -315,15 +314,15 @@ class ProcessEligibilityService
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems,
-        $fromReportWriter = false
+        $invalid_structure = 0
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
             'patientList'         => $patientList,
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
-            'fromReportWriter'    => (boolean)$fromReportWriter,
-        ]);
+        ],
+            $invalid_structure);
     }
 
     /**
@@ -334,13 +333,15 @@ class ProcessEligibilityService
      *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createBatch($type, int $practiceId, $options = [])
+    public function createBatch($type, int $practiceId, $options = [], $invalid_structure = 0, $validationStats = null)
     {
         return EligibilityBatch::create([
-            'type'        => $type,
-            'practice_id' => $practiceId,
-            'status'      => EligibilityBatch::STATUSES['not_started'],
-            'options'     => $options,
+            'type'              => $type,
+            'practice_id'       => $practiceId,
+            'status'            => EligibilityBatch::STATUSES['not_started'],
+            'options'           => $options,
+            'invalid_structure' => $invalid_structure,
+            'validation_stats'  => $validationStats,
         ]);
     }
 
@@ -396,7 +397,9 @@ class ProcessEligibilityService
                 'batch_id' => $batch->id,
                 'hash'     => $hash,
                 'data'     => $patient,
-                'errors'   => $validator->fails() ? $validator->errors() : null,
+                'errors'   => $validator->fails()
+                    ? $validator->errors()
+                    : null,
             ]);
 
             $patient['eligibility_job_id'] = $job->id;
@@ -445,7 +448,9 @@ class ProcessEligibilityService
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
-        $filterProblems
+        $filterProblems,
+        $invalidStructure = 0,
+        $validationStats = null
     ) {
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
             'folder'              => $folder,
@@ -454,7 +459,9 @@ class ProcessEligibilityService
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
             'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
-        ]);
+        ],
+            $invalidStructure,
+            $validationStats);
     }
 
     /**

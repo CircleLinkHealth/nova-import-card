@@ -9,6 +9,7 @@ class EhrReportWriterInfo extends Model
     protected $fillable = [
         'user_id',
         'google_drive_folder',
+        'google_drive_folder_path',
     ];
 
     protected $table = 'ehr_report_writer_info';

@@ -110,6 +110,8 @@ class EligibilityBatchController extends Controller
         $stats       = '';
 
         $batch->load('practice');
+        $fromReportWriter = $batch->getInitiatorUser()->hasRole('ehr-report-writer');
+        $validationStats = $batch->getValidationStats();
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
             $statuses = Ccda::select(['status', 'deleted_at'])
@@ -129,14 +131,18 @@ class EligibilityBatchController extends Controller
         $enrolleesExist = ! ! Enrollee::whereBatchId($batch->id)->whereNull('user_id')->exists();
 
 
-        return view('eligibilityBatch.show')
-            ->with('batch', $batch)
-            ->with('enrolleesExist', $enrolleesExist)
-            ->with('stats', $stats)
-            ->with('eligible', $eligible)
-            ->with('unprocessed', $unprocessed)
-            ->with('ineligible', $ineligible)
-            ->with('duplicates', $duplicates);
+        return view('eligibilityBatch.show', compact([
+            'batch',
+            'enrolleesExist',
+            'stats',
+            'eligible',
+            'unprocessed',
+            'ineligible',
+            'duplicates',
+            'fromReportWriter',
+            'validationStats'
+        ]));
+
     }
 
     public function getCounts(EligibilityBatch $batch)

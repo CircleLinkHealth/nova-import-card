@@ -32,7 +32,9 @@
                 {{csrf_field()}}
                 <div>
                     <textarea rows="15" cols="100" maxlength="5000" class="form-group" name="json" required
-                              placeholder="Paste json patient records for validation here..."></textarea>
+                              placeholder="Paste json patient records for validation here...
+
+(Make sure each patient JSON row is inserted as such: [ row ,row , (etc)]"></textarea>
                 </div>
                 <div>
                     <input class="btn btn-primary" type="submit">
@@ -54,13 +56,14 @@
                         @foreach($files as $key => $file)
                             <input type="checkbox" name="{{$key}}[path]" value="{{$file['path']}}"> {{$file['name']}}
                             <input type="hidden" name="{{$key}}[ext]" value="{{$file['extension']}}">
+                            <input type="hidden" name="{{$key}}[name]" value="{{$file['name']}}">
                             <br/>
                         @endforeach
                     </ul>
                 </div>
                 <div class="col-md-12 form-group">
                     <select class="select2" name="practice_id">
-                        <option value="">Select Practice</option>
+                        <option value="{{0}}">Select Practice</option>
                         @foreach($practices as $practice)
                             <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                         @endforeach

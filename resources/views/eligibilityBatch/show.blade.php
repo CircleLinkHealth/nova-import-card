@@ -72,39 +72,63 @@
                                    class="btn btn-info">All patients CSV</a>
                             </div>
                         @endif
-
-
-                        <br><br>
-
-                        <h4>Counts</h4>
-                        @if(isset($stats) && !empty($stats))
-                            @forelse($stats as $key => $value)
-                                <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
-                            @empty
-                                <p>No stats found</p>
-                            @endforelse
-                        @else
-                            Eligible: <span id="eligible">{{ $eligible }}</span>
-                            <br>
-                            Ineligible: <span id="ineligible">{{ $ineligible }}</span>
-                            <br>
-                            Duplicates: <span id="duplicates">{{ $duplicates }}</span>
-                            <br>
-                            Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
+                        @if($fromReportWriter)
+                            <div class="pull-right" style="padding-left: 2%;">
+                                <a href=""
+                                   class="btn btn-info">Notify Report Writer</a>
+                            </div>
                         @endif
 
+
                         <br><br>
 
-                        <h4>Processing Options</h4>
+                        <div class="col-md-6">
+                            <h4>Counts</h4>
 
-                        @forelse($batch->options as $k => $option)
-                            @if(!is_array($option))
-                                <b>{{snakeToSentenceCase(snake_case($k))}}</b>
-                                : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                            @if(isset($stats) && !empty($stats))
+                                @forelse($stats as $key => $value)
+                                    <b>{{snakeToSentenceCase(snake_case($key))}}</b>: {{$value}}<br>
+                                @empty
+                                    <p>No stats found</p>
+                                @endforelse
+                            @else
+                                Eligible: <span id="eligible">{{ $eligible }}</span>
+                                <br>
+                                Ineligible: <span id="ineligible">{{ $ineligible }}</span>
+                                <br>
+                                Duplicates: <span id="duplicates">{{ $duplicates }}</span>
+                                <br>
+                                Not processed: <span id="unprocessed">{{ $unprocessed }}</span>
                             @endif
-                        @empty
-                            <p>No options found.</p>
-                        @endforelse
+
+                            <br><br>
+
+                            <h4>Processing Options</h4>
+
+                            @forelse($batch->options as $k => $option)
+                                @if(!is_array($option))
+                                    <b>{{snakeToSentenceCase(snake_case($k))}}</b>
+                                    : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
+                                @endif
+                            @empty
+                                <p>No options found.</p>
+                            @endforelse
+                        </div>
+                        @if($fromReportWriter)
+                            <h4>Validation Stats</h4>
+                            Total records: {{$validationStats['total']}}<br>
+
+                            Total records with invalid data structure: {{$validationStats['invalid_structure']}}<br>
+
+                            Total records with invalid data: {{$validationStats['invalid_data']}}<br>
+                            Missing/invalid mrn: {{$validationStats['mrn']}}<br>
+                            Missing/invalid name: {{$validationStats['name']}}<br>
+                            Invalid DOB: {{$validationStats['dob']}}<br>
+                            0 problems: {{$validationStats['problems']}}<br>
+                            0 phones: {{$validationStats['phones']}}<br>
+
+                        @endif
+
                     </div>
                 </div>
             </div>

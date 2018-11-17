@@ -14,6 +14,7 @@ use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
@@ -355,10 +356,23 @@ class UserRepository
         User $user,
         ParameterBag $params
     ) {
+
+        $contents = collect(Storage::drive('google')->listContents('/', false));
+        $dir      = $contents->where('type', '=', 'dir')
+                             ->where('filename', '=', $params->get('google_drive_folder'))
+                             ->first();
+
+        $path = $dir !== null ? $dir['path'] : null;
+
+
         EhrReportWriterInfo::updateOrCreate(
             ['user_id' => $user->id],
-            ['google_drive_folder' => $params->get('google_drive_folder')]
+            [
+                'google_drive_folder'      => $params->get('google_drive_folder'),
+                'google_drive_folder_path' => $path,
+            ]
         );
+
     }
 
     /**
@@ -462,7 +476,7 @@ class UserRepository
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
-        if ($user->hasRole('ehr-report-writer')){
+        if ($user->hasRole('ehr-report-writer')) {
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
