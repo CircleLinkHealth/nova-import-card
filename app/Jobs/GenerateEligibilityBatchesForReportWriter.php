@@ -31,8 +31,9 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
 
     protected $service;
 
-    protected $jsonValidationStats = [
+    protected $validationStats = [
         'total'             => 0,
+        'invalid_structure' => 0,
         'invalid_data'      => 0,
         'mrn'               => 0,
         'name'              => 0,
@@ -68,17 +69,18 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
             $invalidStructure = 0;
             $errors = [];
             if ($file['ext'] == 'csv') {
+                $validationStats = $this->validationStats;
                 //add try
                 $string         = Storage::disk('google')->get($file['path']);
                 $patients       = $this->parseCsvStringToArray($string);
                 $csvPatientList = new CsvPatientList(collect($patients));
                 $isValid        = $csvPatientList->guessValidator();
                 if ( ! $isValid) {
-                    $invalidStructure = 1;
+                    $validationStats['structure'] += 1;
                 }
 
                 $batch = $this->service->createSingleCSVBatch($patients, $this->practiceId, $this->filterLastEncounter, $this->filterInsurance,
-                    $this->filterProblems, $invalidStructure);
+                    $this->filterProblems, $validationStats);
                 if ($batch) {
                     $messages['success'][] = "Eligibility Batch created.";
                 }
@@ -91,21 +93,22 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
                     //todo: what to do here
                     continue;
                 }
+                $validationStats = $this->validationStats;
 
                 $data = json_decode($string, true);
 
                 foreach ($data as $patient) {
-                    $this->jsonValidationStats['total'] += 1;
+                    $validationStats['total'] += 1;
                     $structureValidator = $this->validateJsonStructure($patient);
                     if ($structureValidator->fails()){
-                        $invalidStructure += 1;
+                        $validationStats['invalid_structure'] += 1;
                     }
                     $dataValidator = $this->validateRow($patient);
-                    $this->calculateJsonValidationStats($dataValidator->errors());
+                    $validationStats = $this->calculateJsonValidationStats($dataValidator->errors(), $validationStats);
                 }
                 $batch = $this->service->createClhMedicalRecordTemplateBatch($this->user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $this->practiceId, $this->filterLastEncounter, $this->filterInsurance,
-                    $this->filterProblems, $invalidStructure, $this->jsonValidationStats);
+                    $this->filterProblems, $validationStats);
             }
         }
         //Delete files on drive? Or check each time if a batch exists?
@@ -127,27 +130,29 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
         return $data;
     }
 
-    private function calculateJsonValidationStats(MessageBag $errors){
+    private function calculateJsonValidationStats(MessageBag $errors, $validationStats){
 
         if (! empty($errors)) {
-            $this->jsonValidationStats['invalid_data'] += 1;
+            $validationStats['invalid_data'] += 1;
             if (array_key_exists('mrn', $errors->messages())) {
-                $this->jsonValidationStats['mrn'] += 1;
+                $validationStats['mrn'] += 1;
             }
 
             if (array_key_exists('first_name', $errors->messages()) || array_key_exists('last_name', $errors->messages())) {
-                $this->jsonValidationStats['name'] += 1;
+                $validationStats['name'] += 1;
             }
 
             if (array_key_exists('dob', $errors->messages())) {
-                $this->jsonValidationStats['dob'] += 1;
+                $validationStats['dob'] += 1;
             }
             if (array_key_exists('problems', $errors->messages())) {
-                $this->jsonValidationStats['problems'] += 1;
+                $validationStats['problems'] += 1;
             }
             if (array_key_exists('phones', $errors->messages())) {
-                $this->jsonValidationStats['phones'] += 1;
+                $validationStats['phones'] += 1;
             }
         }
+
+        return $validationStats;
     }
 }

@@ -314,7 +314,7 @@ class ProcessEligibilityService
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems,
-        $invalid_structure = 0
+        $validationStats = null
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
             'patientList'         => $patientList,
@@ -322,7 +322,7 @@ class ProcessEligibilityService
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
         ],
-            $invalid_structure);
+            $validationStats);
     }
 
     /**
@@ -333,14 +333,13 @@ class ProcessEligibilityService
      *
      * @return $this|\Illuminate\Database\Eloquent\Model
      */
-    public function createBatch($type, int $practiceId, $options = [], $invalid_structure = 0, $validationStats = null)
+    public function createBatch($type, int $practiceId, $options = [], $validationStats = null)
     {
         return EligibilityBatch::create([
             'type'              => $type,
             'practice_id'       => $practiceId,
             'status'            => EligibilityBatch::STATUSES['not_started'],
             'options'           => $options,
-            'invalid_structure' => $invalid_structure,
             'validation_stats'  => $validationStats,
         ]);
     }
@@ -449,7 +448,6 @@ class ProcessEligibilityService
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems,
-        $invalidStructure = 0,
         $validationStats = null
     ) {
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
@@ -460,7 +458,6 @@ class ProcessEligibilityService
             'filterProblems'      => (boolean)$filterProblems,
             'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
         ],
-            $invalidStructure,
             $validationStats);
     }
 

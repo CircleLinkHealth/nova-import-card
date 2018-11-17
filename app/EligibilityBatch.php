@@ -26,8 +26,8 @@ class EligibilityBatch extends BaseModel
      * @var array
      */
     protected $casts = [
-        'options'           => 'array',
-        'stats'             => 'array',
+        'options'          => 'array',
+        'stats'            => 'array',
         'validation_stats' => 'array',
     ];
 
@@ -38,7 +38,6 @@ class EligibilityBatch extends BaseModel
         'stats',
         'status',
         'initiator_id',
-        'invalid_structure',
         'validation_stats',
     ];
 
@@ -179,61 +178,51 @@ class EligibilityBatch extends BaseModel
 
     public function getValidationStats()
     {
-        if ($this->type == EligibilityBatch::TYPE_ONE_CSV){
+        $validationStats = [
+            'total'             => 0,
+            'invalid_structure' => 0,
+            'invalid_data'      => 0,
+            'mrn'               => 0,
+            'name'              => 0,
+            'dob'               => 0,
+            'problems'          => 0,
+            'phones'            => 0,
+        ];
+
+        if ($this->type == EligibilityBatch::TYPE_ONE_CSV) {
             $jobs = $this->eligibilityJobs;
-
-            $validationStats = [
-                'total'             => $jobs->count(),
-                'invalid_structure' => $this->invalid_structure,
-                'invalid_data'      => 0,
-                'mrn'               => 0,
-                'name'              => 0,
-                'dob'               => 0,
-                'problems'          => 0,
-                'phones'            => 0,
-            ];
-            foreach ($jobs as $job) {
-                $errors = $job->errors;
-                if ($errors) {
-                    $validationStats['invalid_data'] += 1;
-                    if (array_key_exists('mrn', $errors)) {
-                        $validationStats['mrn'] += 1;
-                    }
-
-                    if (array_key_exists('first_name', $errors) || array_key_exists('last_name', $errors)) {
-                        $validationStats['name'] += 1;
-                    }
-
-                    if (array_key_exists('dob', $errors)) {
-                        $validationStats['dob'] += 1;
-                    }
-                    if (array_key_exists('problems', $errors)) {
-                        $validationStats['problems'] += 1;
-                    }
-                    if (array_key_exists('phones', $errors)) {
-                        $validationStats['phones'] += 1;
+            $validationStats['total']             = $jobs->count();
+            if ($this->validation_stats !== null) {
+                $validationStats['invalid_structure'] = $this->validation_stats['invalid_structure'];
+                foreach ($jobs as $job) {
+                    $errors = $job->errors;
+                    if ($errors) {
+                        $validationStats['invalid_data'] += 1;
+                        if (array_key_exists('mrn', $errors)) {
+                            $validationStats['mrn'] += 1;
+                        }
+                        if (array_key_exists('first_name', $errors) || array_key_exists('last_name', $errors)) {
+                            $validationStats['name'] += 1;
+                        }
+                        if (array_key_exists('dob', $errors)) {
+                            $validationStats['dob'] += 1;
+                        }
+                        if (array_key_exists('problems', $errors)) {
+                            $validationStats['problems'] += 1;
+                        }
+                        if (array_key_exists('phones', $errors)) {
+                            $validationStats['phones'] += 1;
+                        }
                     }
                 }
             }
+            return $validationStats;
+        }
+        if ($this->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
+            return $this->validation_stats ?: $validationStats;
+        }
 
-            return $validationStats;
-        }
-        if ($this->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE){
-            $validationStats = $this->validation_stats;
-            if ($validationStats == null){
-                $validationStats = [
-                    'total' => 0,
-                    'invalid_data' => 0,
-                    'mrn'  => 0,
-                    'name' => 0,
-                    'dob'  => 0,
-                    'problems' => 0,
-                    'phones' => 0,
-                ];
-            }
-            $validationStats['invalid_structure'] = $this->invalid_structure;
-            return $validationStats;
-        }
+        return $validationStats;
 
     }
 }
