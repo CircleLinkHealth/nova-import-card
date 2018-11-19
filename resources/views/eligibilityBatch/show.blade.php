@@ -163,7 +163,7 @@ Thanks for your hard work.
                             </textarea>
                             </div>
                             <div class="form-group">
-                                <input type="submit" class="btn btn-primary" value="Send E-mail">
+                                <input type="submit" class="btn btn-primary" value="Send">
                             </div>
 
                         </form>
