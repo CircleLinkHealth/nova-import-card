@@ -57,7 +57,11 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('ehr-report-writer')){
-            return redirect()->route('report-writer.dashboard');
+            if (app()->environment('worker')){
+                return redirect()->route('report-writer.dashboard');
+            }
+            return redirect()->route('login')->with(['messages' => ["message" => "Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net"]]);
+
         }
 
         return redirect()->route('patients.dashboard', []);
