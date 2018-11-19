@@ -100,6 +100,11 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'report-writer.submit'
         ]);
 
+        Route::post('notify', [
+            'uses' => 'EhrReportWriterController@notifyReportWriter',
+            'as'   => 'report-writer.notify'
+        ]);
+
     });
 
     /**

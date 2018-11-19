@@ -6,10 +6,10 @@ use App\Services\CCD\ProcessEligibilityService;
 use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Traits\ValidatesEligibility;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\MessageBag;
 use Storage;
 
@@ -47,15 +47,21 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user, Array $files, $practiceId, $filterProblems, $filterInsurance, $filterLastEncounter)
-    {
-        $this->user = $user;
-        $this->files = $files;
-        $this->practiceId = $practiceId;
-        $this->filterProblems = $filterProblems;
-        $this->filterInsurances = $filterInsurance;
+    public function __construct(
+        $user,
+        Array $files,
+        $practiceId,
+        $filterProblems,
+        $filterInsurance,
+        $filterLastEncounter
+    ) {
+        $this->user                = $user;
+        $this->files               = $files;
+        $this->practiceId          = $practiceId;
+        $this->filterProblems      = $filterProblems;
+        $this->filterInsurances    = $filterInsurance;
         $this->filterLastEncounter = $filterLastEncounter;
-        $this->service = new ProcessEligibilityService();
+        $this->service             = new ProcessEligibilityService();
     }
 
     /**
@@ -66,31 +72,33 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
     public function handle()
     {
         foreach ($this->files as $file) {
-            $invalidStructure = 0;
-            $errors = [];
             if ($file['ext'] == 'csv') {
                 $validationStats = $this->validationStats;
-                //add try
-                $string         = Storage::disk('google')->get($file['path']);
+                try {
+                    $string = Storage::disk('google')->get($file['path']);
+                } catch (\Exception $e) {
+                    \Log::error($e);
+                    continue;
+                }
                 $patients       = $this->parseCsvStringToArray($string);
                 $csvPatientList = new CsvPatientList(collect($patients));
                 $isValid        = $csvPatientList->guessValidator();
                 if ( ! $isValid) {
                     $validationStats['structure'] += 1;
                 }
-
-                $batch = $this->service->createSingleCSVBatch($patients, $this->practiceId, $this->filterLastEncounter, $this->filterInsurance,
+               $this->service->createSingleCSVBatch($patients, $this->practiceId, $this->filterLastEncounter,
+                    $this->filterInsurance,
                     $this->filterProblems, $validationStats);
-                if ($batch) {
-                    $messages['success'][] = "Eligibility Batch created.";
-                }
-                //delete files that had batches created for them?
             }
             if ($file['ext'] == 'json') {
-                //try
-                $string = Storage::disk('google')->get($file['path']);
+                try {
+                    $string = Storage::disk('google')->get($file['path']);
+                } catch (\Exception $e) {
+                    \Log::error($e);
+                    continue;
+                }
                 if ( ! is_json($string)) {
-                    //todo: what to do here
+                    \Log::error('EHR Report Writer file not in Json format.');
                     continue;
                 }
                 $validationStats = $this->validationStats;
@@ -99,20 +107,21 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
 
                 foreach ($data as $patient) {
                     $validationStats['total'] += 1;
-                    $structureValidator = $this->validateJsonStructure($patient);
-                    if ($structureValidator->fails()){
+                    $structureValidator       = $this->validateJsonStructure($patient);
+                    if ($structureValidator->fails()) {
                         $validationStats['invalid_structure'] += 1;
                     }
-                    $dataValidator = $this->validateRow($patient);
+                    $dataValidator   = $this->validateRow($patient);
                     $validationStats = $this->calculateJsonValidationStats($dataValidator->errors(), $validationStats);
                 }
-                $batch = $this->service->createClhMedicalRecordTemplateBatch($this->user->ehrReportWriterInfo->google_drive_folder_path,
+                $this->service->createClhMedicalRecordTemplateBatch($this->user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $this->practiceId, $this->filterLastEncounter, $this->filterInsurance,
                     $this->filterProblems, $validationStats);
             }
         }
         //Delete files on drive? Or check each time if a batch exists?
     }
+
     private function parseCsvStringToArray($string)
     {
         $lines   = explode(PHP_EOL, $string);
@@ -130,15 +139,17 @@ class GenerateEligibilityBatchesForReportWriter implements ShouldQueue
         return $data;
     }
 
-    private function calculateJsonValidationStats(MessageBag $errors, $validationStats){
+    private function calculateJsonValidationStats(MessageBag $errors, $validationStats)
+    {
 
-        if (! empty($errors)) {
+        if ( ! empty($errors)) {
             $validationStats['invalid_data'] += 1;
             if (array_key_exists('mrn', $errors->messages())) {
                 $validationStats['mrn'] += 1;
             }
 
-            if (array_key_exists('first_name', $errors->messages()) || array_key_exists('last_name', $errors->messages())) {
+            if (array_key_exists('first_name', $errors->messages()) || array_key_exists('last_name',
+                    $errors->messages())) {
                 $validationStats['name'] += 1;
             }
 

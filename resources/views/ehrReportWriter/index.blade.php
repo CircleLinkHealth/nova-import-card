@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-12 form-group">
                     <select class="select2" name="practice_id">
-                        <option value="{{0}}">Select Practice</option>
+                        <option value="{{null}}">Select Practice</option>
                         @foreach($practices as $practice)
                             <option value="{{$practice->id}}">{{$practice->display_name}}</option>
                         @endforeach

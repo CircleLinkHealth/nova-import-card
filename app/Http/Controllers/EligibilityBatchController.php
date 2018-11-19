@@ -110,7 +110,8 @@ class EligibilityBatchController extends Controller
         $stats       = '';
 
         $batch->load('practice');
-        $fromReportWriter = $batch->getInitiatorUser()->hasRole('ehr-report-writer');
+        //pass initiator
+        $initiatorUser = $batch->getInitiatorUser();
         $validationStats = $batch->getValidationStats();
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
@@ -139,7 +140,7 @@ class EligibilityBatchController extends Controller
             'unprocessed',
             'ineligible',
             'duplicates',
-            'fromReportWriter',
+            'initiatorUser',
             'validationStats'
         ]));
 

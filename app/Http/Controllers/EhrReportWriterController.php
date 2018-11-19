@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateEligibilityBatchesForReportWriter;
+use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Traits\ValidatesEligibility;
+use App\User;
 use Illuminate\Http\Request;
 use Storage;
 
@@ -46,7 +48,7 @@ class EhrReportWriterController extends Controller
         $i = 1;
         foreach ($data as $key => $value) {
 
-            if (! is_numeric($key)){
+            if ( ! is_numeric($key)) {
                 $value = $data;
             }
 
@@ -60,11 +62,10 @@ class EhrReportWriterController extends Controller
             }
             $i++;
 
-            if (! is_numeric($key)){
+            if ( ! is_numeric($key)) {
                 break;
             }
         }
-
 
 
         if (empty($messages)) {
@@ -77,12 +78,13 @@ class EhrReportWriterController extends Controller
 
     public function submitFile(Request $request, ProcessEligibilityService $service)
     {
-        $messages = [];
-        $user = auth()->user();
-        //if practice is not selected return
+        $messages   = [];
+        $user       = auth()->user();
         $practiceId = $request->input('practice_id');
-        if ($practiceId == 0){
+
+        if ( ! $practiceId) {
             $messages['warnings'][] = "Please select a Practice!";
+
             return redirect()->back()->withErrors($messages);
         }
 
@@ -105,7 +107,7 @@ class EhrReportWriterController extends Controller
         }
 
         GenerateEligibilityBatchesForReportWriter::dispatch($user, $files, $practiceId, $filterProblems,
-            $filterInsurance, $filterLastEncounter);
+            $filterInsurance, $filterLastEncounter)->onQueue('low');
         $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
 
         return redirect()->back()->withErrors($messages);
@@ -113,10 +115,17 @@ class EhrReportWriterController extends Controller
 
     public function notifyReportWriter(Request $request)
     {
-        //get batch initiator
-        //->notify(new EhrReportWriterNotification($text, $practiceName))
-        //with success message
-        return redirect()->back();
+        $reportWriterUser = User::find($request->get('initiator_id'));
+
+        $text = $request->get('text');
+
+        $reportWriterUser->notify(new EhrReportWriterNotification($text, $request->get('practice_name')));
+
+
+        return redirect()->back()->with([
+            'message' => 'Ehr Report Writer successfully notified.',
+            'type'    => 'success',
+        ]);
     }
 
     private function getFilesFromGoogleFolder($user)

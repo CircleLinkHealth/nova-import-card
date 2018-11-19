@@ -72,10 +72,9 @@
                                    class="btn btn-info">All patients CSV</a>
                             </div>
                         @endif
-                        @if($fromReportWriter)
+                        @if($initiatorUser->hasRole('ehr-report-writer'))
                             <div class="pull-right" style="padding-left: 2%;">
-                                <a href=""
-                                   class="btn btn-info">Notify Report Writer</a>
+                                <button class="btn btn-primary" onclick="notifyReportWriter()">Notify Report Writer</button>
                             </div>
                         @endif
 
@@ -114,7 +113,7 @@
                                 <p>No options found.</p>
                             @endforelse
                         </div>
-                        @if($fromReportWriter)
+                        @if($initiatorUser->hasRole('ehr-report-writer'))
                             <h4>Validation Stats</h4>
                             Total records: {{$validationStats['total']}}<br>
 
@@ -128,7 +127,46 @@
                             0 phones: {{$validationStats['phones']}}<br>
 
                         @endif
+                        <script>
+                            function notifyReportWriter() {
+                                var x = document.getElementById("notify");
+                                if (x.style.display === "none") {
+                                    x.style.display = "block";
+                                } else {
+                                    x.style.display = "none";
+                                }
+                            }
+                        </script>
 
+                    </div>
+                </div>
+                <div  id="notify" class="panel panel-default col-md-6" style="display: none">
+                    <div class="container">
+                        <h4>Notify EHR Report Writer ({{$initiatorUser->getFullName()}})</h4>
+                        <form class="form" action="{{route('report-writer.notify')}}" method="POST">
+                            {{csrf_field()}}
+                            <div class="form-group">
+                                <br>
+                                {{--<input type="radio" name="status" value="valid" required> Data is valid<br>--}}
+                                {{--<input type="radio" name="status" value="invalid"> Data is invalid<br>--}}
+                                <input type="hidden" name="initiator_id" value="{{$initiatorUser->id}}">
+                                <input type="hidden" name="practice_name" value="{{$batch->practice->display_name}}">
+
+                            </div>
+                            <div class="form-group">
+                                <textarea rows="8" cols="70" maxlength="500" class="form-group" name="text" style="resize: none" required>Hi {{$initiatorUser->first_name}},
+
+This is to let you know that Circle Link Health was able to successfully process the patient data report you uploaded.
+
+Thanks for your hard work.
+
+                            </textarea>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-primary" value="Send E-mail">
+                            </div>
+
+                        </form>
                     </div>
                 </div>
             </div>
