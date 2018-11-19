@@ -30,6 +30,10 @@ return [
         'twiml-app-sid' => env('TWIML_APP_SID'),
     ],
 
+    'authy' => [
+        'api_key' => env('AUTHY_API_KEY'),
+    ],
+
     'ws' => [
         'server-url' => env('WS_SERVER_URL'),
         'url'        => env('WS_URL'),
