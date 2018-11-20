@@ -171,9 +171,9 @@ class EligibilityBatch extends BaseModel
                              });
     }
 
-    public function getInitiatorUser()
+    public function initiatorUser()
     {
-        return User::find($this->initiator_id);
+        return $this->hasOne(User::class, 'id', 'initiator_id');
     }
 
     public function getValidationStats()

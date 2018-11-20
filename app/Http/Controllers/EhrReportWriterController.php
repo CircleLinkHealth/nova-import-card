@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\EhrReportWriterInfo;
 use App\Jobs\GenerateEligibilityBatchesForReportWriter;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
 use App\Traits\ValidatesEligibility;
 use App\User;
 use Illuminate\Http\Request;
+use Seld\JsonLint\JsonParser;
 use Storage;
 
 class EhrReportWriterController extends Controller
 {
     use ValidatesEligibility;
 
+    /**
+     * @return $this
+     */
     public function index()
     {
         $messages  = [];
@@ -21,7 +26,7 @@ class EhrReportWriterController extends Controller
         $user      = auth()->user();
         $practices = $user->practices()->get();
         if ($user->hasRole('ehr-report-writer')) {
-            $files = $this->getFilesFromGoogleFolder($user);
+            $files = $this->getFilesFromGoogleFolder($user->ehrReportWriterInfo);
 
             if (is_null($files)) {
                 $messages['warnings'][] = 'No Google Drive folder found!';
@@ -32,10 +37,17 @@ class EhrReportWriterController extends Controller
         return view('ehrReportWriter.index', compact(['files', 'practices']))->withErrors($messages);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return $this
+     */
     public function validateJson(Request $request)
     {
 
         $messages = [];
+        $json = $request->get('json');
+
         if ( ! is_json($request->get('json'))) {
             $messages['errors'][] = "The text is not in a valid JSON format" . " - error: " . json_last_error_msg();
 
@@ -76,6 +88,12 @@ class EhrReportWriterController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param ProcessEligibilityService $service
+     *
+     * @return $this
+     */
     public function submitFile(Request $request, ProcessEligibilityService $service)
     {
         $messages   = [];
@@ -106,13 +124,30 @@ class EhrReportWriterController extends Controller
             }
         }
 
-        GenerateEligibilityBatchesForReportWriter::dispatch($user, $files, $practiceId, $filterProblems,
-            $filterInsurance, $filterLastEncounter)->onQueue('low');
+        foreach ($files as $file) {
+            if ($file['ext'] == 'csv') {
+                $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
+                    $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
+                    $filterProblems);
+            }
+            if ($file['ext'] == 'json') {
+                //add try?
+                $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
+                    $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
+                    $filterProblems);
+            }
+        }
+
         $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
 
         return redirect()->back()->withErrors($messages);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function notifyReportWriter(Request $request)
     {
         $reportWriterUser = User::find($request->get('initiator_id'));
@@ -128,11 +163,16 @@ class EhrReportWriterController extends Controller
         ]);
     }
 
-    private function getFilesFromGoogleFolder($user)
+    /**
+     * @param EhrReportWriterInfo $user
+     *
+     * @return null|static
+     */
+    private function getFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
         $contents = collect(Storage::drive('google')->listContents('/', false));
         $dir      = $contents->where('type', '=', 'dir')
-                             ->where('filename', '=', $user->ehrReportWriterInfo->google_drive_folder)
+                             ->where('filename', '=', $info->google_drive_folder)
                              ->first();
 
         if ( ! $dir) {

@@ -110,8 +110,8 @@ class EligibilityBatchController extends Controller
         $stats       = '';
 
         $batch->load('practice');
-        //pass initiator
-        $initiatorUser = $batch->getInitiatorUser();
+
+        $initiatorUser = $batch->initiatorUser;
         $validationStats = $batch->getValidationStats();
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {

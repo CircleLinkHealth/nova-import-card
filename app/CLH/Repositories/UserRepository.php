@@ -362,7 +362,7 @@ class UserRepository
                              ->where('filename', '=', $params->get('google_drive_folder'))
                              ->first();
 
-        $path = $dir !== null ? $dir['path'] : null;
+        $path = $path = $dir['path'] ?? null;
 
 
         EhrReportWriterInfo::updateOrCreate(

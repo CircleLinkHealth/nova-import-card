@@ -45,7 +45,7 @@
     <hr>
     <div class="container">
         <div class="col-md-12">
-            <h3>Submit file for CLH review (Under Construction)</h3>
+            <h3>Submit file for CLH review</h3>
             <p>Here's a list of files you've uploaded to your designated Google Drive location. Please select one to review by CLH.</p>
         </div>
         <div class="col-md-12">
