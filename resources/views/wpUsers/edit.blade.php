@@ -164,8 +164,6 @@
                                 <div class="form-group">
                                     <div class="col-xs-1">{!! Form::label('home_phone_number', 'Home Phone Number:') !!}</div>
                                     <div class="col-xs-3">{!! Form::text('home_phone_number', $patient->getHomePhoneNumber(), ['class' => 'form-control']) !!}</div>
-                                    <div class="col-xs-2">{!! Form::label('google_drive_folder', 'Google Drive Folder (report writers only):') !!}</div>
-                                    <div class="col-xs-4">{!! Form::text('google_drive_folder', optional($patient->ehrReportWriterInfo)->google_drive_folder, ['class' => 'form-control']) !!}</div>
                                 </div>
 
 

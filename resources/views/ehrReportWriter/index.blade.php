@@ -7,8 +7,13 @@
             <p>This tool will ensure that the data is in the appropriate format to be ingested by CLH.</p>
         </div>
         <div class="col-md-12">
+            <a class="btn btn-info" href="{{optional(auth()->user()->ehrReportWriterInfo)->getFolderUrl()}}">Show Google Drive Folder</a>
+        </div>
+
+        <div class="col-md-12" style="margin: 15px">
             @include('ehrReportWriter.messages')
         </div>
+
         <div class="col-md-12">
             <h2>Supported Templates</h2>
             <p>The date must be in one of the 3 formats below.</p>
@@ -18,8 +23,7 @@
                 Template</a>
             <a class="btn btn-info" href="{{route('download', 'Numbered_Fields-Sheet1.csv')}}">Download many fields CSV
                 Template</a>
-            <a class="btn btn-info" href="https://gist.github.com/michalisantoniou6/853740eff3ed58814a89d12c922840c3">Download
-                JSON Template</a>
+            <a class="btn btn-info" href="https://gist.github.com/michalisantoniou6/853740eff3ed58814a89d12c922840c3">JSON Template</a>
         </div>
 
         <div class="col-md-12">
@@ -32,9 +36,7 @@
                 {{csrf_field()}}
                 <div>
                     <textarea rows="15" cols="100" maxlength="5000" class="form-group" name="json" required
-                              placeholder="Paste json patient records for validation here...
-
-(Make sure each patient JSON row is inserted as such: [ row ,row , (etc)]"></textarea>
+                              placeholder="Paste json patient records for validation here..."></textarea>
                 </div>
                 <div>
                     <input class="btn btn-primary" type="submit">

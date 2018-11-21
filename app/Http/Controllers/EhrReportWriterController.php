@@ -3,18 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\EhrReportWriterInfo;
-use App\Jobs\GenerateEligibilityBatchesForReportWriter;
 use App\Notifications\EhrReportWriterNotification;
 use App\Services\CCD\ProcessEligibilityService;
+use App\Services\GoogleDrive;
 use App\Traits\ValidatesEligibility;
 use App\User;
 use Illuminate\Http\Request;
-use Seld\JsonLint\JsonParser;
 use Storage;
 
 class EhrReportWriterController extends Controller
 {
     use ValidatesEligibility;
+
+    private $googleDrive;
+
+    public function __construct(GoogleDrive $googleDrive)
+    {
+        $this->googleDrive = $googleDrive;
+    }
 
     /**
      * @return $this
@@ -25,7 +31,7 @@ class EhrReportWriterController extends Controller
         $files     = [];
         $user      = auth()->user();
         $practices = $user->practices()->get();
-        if ($user->hasRole('ehr-report-writer')) {
+        if ($user->hasRole('ehr-report-writer') && $user->ehrReportWriterInfo) {
             $files = $this->getFilesFromGoogleFolder($user->ehrReportWriterInfo);
 
             if (is_null($files)) {
@@ -48,22 +54,28 @@ class EhrReportWriterController extends Controller
         $messages = [];
         $json = $request->get('json');
 
-        if ( ! is_json($request->get('json'))) {
-            $messages['errors'][] = "The text is not in a valid JSON format" . " - error: " . json_last_error_msg();
+        $localDisk = Storage::disk('local');
+        $fileName   = "validate_json_for_ehr_report_writer";
+        $pathToFile = storage_path("app/$fileName");
+        $savedLocally = $localDisk->put($fileName, $json);
 
-            return redirect()->back()->withErrors($messages);
+        if ( ! $savedLocally) {
+            throw new \Exception("Failed saving $pathToFile");
         }
-
-        $data = json_decode($request['json'], true);
-
-
+        $parser = new \Seld\JsonLint\JsonParser;
+        $iterator = read_file_using_generator($pathToFile);
         $i = 1;
-        foreach ($data as $key => $value) {
-
-            if ( ! is_numeric($key)) {
-                $value = $data;
+        foreach ($iterator as $iteration) {
+            if ( ! $iteration) {
+                continue;
             }
-
+            try {
+                $parser->parse($iteration, \Seld\JsonLint\JsonParser::DETECT_KEY_CONFLICTS);
+            } catch (\Exception $e) {
+                $messages['errors'][] = $i . " - " . $e->getMessage();
+                continue;
+            }
+            $value = json_decode($iteration, true);
             $structureValidator = $this->validateJsonStructure($value);
             foreach ($structureValidator->errors()->messages() as $array) {
                 $messages['errors'][] = "Error for patient: " . $i . "-" . $array[0];
@@ -73,11 +85,8 @@ class EhrReportWriterController extends Controller
                 $messages['warnings'][] = "Warning for patient: " . $i . "-" . $array[0];
             }
             $i++;
-
-            if ( ! is_numeric($key)) {
-                break;
-            }
         }
+        $localDisk->delete($fileName);
 
 
         if (empty($messages)) {
@@ -99,6 +108,12 @@ class EhrReportWriterController extends Controller
         $messages   = [];
         $user       = auth()->user();
         $practiceId = $request->input('practice_id');
+
+        if (! $user->ehrReportWriterInfo){
+            $messages['errors'][] = "You need to be an EHR Report Writer to use this feature.";
+
+            return redirect()->back()->withErrors($messages);
+        }
 
         if ( ! $practiceId) {
             $messages['warnings'][] = "Please select a Practice!";
@@ -126,13 +141,12 @@ class EhrReportWriterController extends Controller
 
         foreach ($files as $file) {
             if ($file['ext'] == 'csv') {
-                $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
+                $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
                     $filterProblems);
             }
             if ($file['ext'] == 'json') {
-                //add try?
-                $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
+                $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
                     $filterProblems);
             }
@@ -164,24 +178,19 @@ class EhrReportWriterController extends Controller
     }
 
     /**
-     * @param EhrReportWriterInfo $user
+     * @param EhrReportWriterInfo $info
      *
-     * @return null|static
+     * @return \Illuminate\Support\Collection
      */
     private function getFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
-        $contents = collect(Storage::drive('google')->listContents('/', false));
-        $dir      = $contents->where('type', '=', 'dir')
-                             ->where('filename', '=', $info->google_drive_folder)
-                             ->first();
-
-        if ( ! $dir) {
+        try{
+            return $this->googleDrive->getContents($info->google_drive_folder_path);
+        }catch(\Exception $e){
             return null;
         }
-        $files = collect(Storage::disk('google')->listContents($dir['path'], false))
-            ->where('type', '=', 'file');
 
-        return $files;
+
     }
 
 }

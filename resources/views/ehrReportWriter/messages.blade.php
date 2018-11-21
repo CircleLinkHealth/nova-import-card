@@ -1,9 +1,12 @@
-
+<style>
+    li {
+        margin-left: 10px;
+    }
+</style>
 @if (session('errors'))
     @if (session('errors')->count() > 0)
-        <ul>
+        <ul class="list-group">
             @foreach (session('errors')->getMessages() as $key => $value)
-                <?php xdebug_break(); ?>
                 @if($key == 'warnings')
                     <div class="alert alert-warning">
                         @foreach ($value as $error)

@@ -48,6 +48,7 @@ use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Storage;
 
 /**
  * App\User
@@ -3195,5 +3196,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     public function carePlanAssessment()
     {
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
+    }
+
+    public function getEhrReportWritersFolderUrl(){
+
+        $clh = collect(Storage::drive('google')->listContents('/'));
+        //get path for ehr-data-from-report-writers
+        $reportWritersFolder      = $clh->where('type', '=', 'dir')
+                        ->where('filename', '=', "ehr-data-from-report-writers")
+                        ->first();
+        if (! $reportWritersFolder){
+            return null;
+        }
+
+        return Storage::drive('google')->url($reportWritersFolder['path']);
     }
 }
