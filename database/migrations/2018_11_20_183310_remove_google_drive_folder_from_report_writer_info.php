@@ -27,7 +27,7 @@ class RemoveGoogleDriveFolderFromReportWriterInfo extends Migration
     public function down()
     {
         Schema::table('ehr_report_writer_info', function (Blueprint $table) {
-            $table->string('google_drive_folder_path')->after('google_drive_folder')->nullable();
+            $table->string('google_drive_folder')->nullable();
         });
     }
 }
