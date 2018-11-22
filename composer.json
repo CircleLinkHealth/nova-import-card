@@ -41,7 +41,7 @@
     }
   ],
   "require": {
-    "php": ">=7.1.0",
+    "php": ">=7.2.0",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
@@ -87,7 +87,8 @@
     "yajra/laravel-datatables-oracle": "~8.0",
     "ext-dom": "*",
     "ext-libxml": "*",
-    "ext-json": "*"
+    "ext-json": "*",
+    "ext-xdebug": "*"
   },
   "require-dev": {
     "Xethron/Laravel-4-Generators": "*",

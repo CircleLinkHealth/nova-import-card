@@ -1,7 +1,7 @@
 <template>
     <div id="enrollment_calls">
 
-        <ul style="width:20%; margin-top:65px;" class="side-nav fixed">
+        <ul class="side-nav fixed">
 
             <div class="row">
                 <div class="col s6">
@@ -52,13 +52,11 @@
                     <div class="card">
                         <div class="card-content">
                             <ul>
-                                <li class="sidebar-demo-list"><span id="name"><b>Name:</b>{{name}}</span></li>
-                                <li class="sidebar-demo-list"><span id="name"><b>Language:</b> {{lang}}</span></li>
-                                <li class="sidebar-demo-list"><span
-                                        id="name"><b>Provider Name:</b>{{provider_name}}</span>
+                                <li class="sidebar-demo-list"><span><b>Name:</b>{{name}}</span></li>
+                                <li class="sidebar-demo-list"><span><b>Language:</b> {{lang}}</span></li>
+                                <li class="sidebar-demo-list"><span><b>Provider Name:</b>{{providerFullName}}</span>
                                 </li>
-                                <li class="sidebar-demo-list"><span
-                                        id="name"><b>Practice Name:</b>{{practice_name}}</span>
+                                <li class="sidebar-demo-list"><span><b>Practice Name:</b>{{practice_name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -131,24 +129,26 @@
                 <div class="col s12">
                     <div class="card">
                         <div class="card-content">
-                            <ul>
+                            <ul class="action-buttons">
                                 <li>
-                                    <a class="waves-effect waves-light btn" href="#consented">
+                                    <a class="waves-effect waves-light btn modal-trigger" href="#consented">
                                         Consented
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="waves-effect waves-light btn" href="#utc" style="background: #ecb70e">
+                                    <a class="waves-effect waves-light btn modal-trigger" href="#utc"
+                                       style="background: #ecb70e">
                                         No Answer
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="waves-effect waves-light btn" href="#rejected" style="background: red;">
+                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
+                                       style="background: red;">
                                         Hard Declined
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="waves-effect waves-light btn" href="#rejected"
+                                    <a class="waves-effect waves-light btn modal-trigger" href="#rejected"
                                        v-on:click="softReject()"
                                        style="background: #ff0000c2;">
                                         Soft Declined
@@ -179,16 +179,17 @@
                         <div v-if="lang === 'EN'">
                             <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is
                                 {{userFullName}} calling on behalf of
-                                <b>Dr. {{provider_name}}</b> at <b>{{practice_name}}</b>. I’m calling
+                                <b>Dr. {{providerFullName}}</b> at <b>{{practice_name}}</b>. I’m calling
                                 for {{name}}. Is this {{name}}?</p>
 
                             <p>How are you doing today?</p>
 
                             <p>
-                                The reason I’m calling is {{provider_name}} is starting to work with a new personalized
+                                The reason I’m calling is {{providerFullName}} is starting to work with a new
+                                personalized
                                 care program.
 
-                                {{provider_name}} thinks it might be helpful for you and wants you to enroll.
+                                {{providerFullName}} thinks it might be helpful for you and wants you to enroll.
                             </p>
 
                             <p>
@@ -196,7 +197,8 @@
                                 once or twice a month,
                                 whichever you prefer to check on how you’re doing, or to see if you’re having any new
                                 problems.
-                                And then the nurse would report back to {{provider_name}} so that s/he would have that
+                                And then the nurse would report back to {{providerFullName}} so that s/he would have
+                                that
                                 information in his/her records.
                                 This helps the doctor keep up a little better with how you’re doing in between visits
                                 and keeps them updated on your medications
@@ -276,7 +278,7 @@
 
                             <p>
                                 <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is
-                                {{userFullName}} calling on behalf of <b>Dr. {{provider_name}}</b>
+                                {{userFullName}} calling on behalf of <b>Dr. {{providerFullName}}</b>
                                 at <b>{{practice_name}}</b>. The doctor[s] have invited you to their new
                                 personalized care management program.
                                 Please give us a call at [number Ambassador calling from on page 2] to learn more.
@@ -287,13 +289,13 @@
                         </div>
                         <div v-else>
                             <p><b>Speak clearly and cheerfully</b>: Hola, {{ name }} estoy llamando en nombre de
-                                los doctores <b>Dr. {{provider_name}}</b> de la {{practice_name}}. Los médicos le han
+                                los doctores <b>Dr. {{providerFullName}}</b> de la {{practice_name}}. Los médicos le han
                                 invitado a su nuevo
                                 programa de
                                 gestión de atención personalizada y es posible que haya recibido una carta a este
                                 efecto.</p>
 
-                            <p><b>Dr. {{provider_name}}</b> piensan que este programa sería muy útil para usted y le
+                            <p><b>Dr. {{providerFullName}}</b> piensan que este programa sería muy útil para usted y le
                                 gustaría que se
                                 inscribiera.
                                 Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse
@@ -385,16 +387,17 @@
                         <div v-if="lang === 'EN'">
                             <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is
                                 {{userFullName}} calling on behalf of
-                                <b>Dr. {{provider_name}}</b> at <b>{{practice_name}}</b>. I’m calling
+                                <b>Dr. {{providerFullName}}</b> at <b>{{practice_name}}</b>. I’m calling
                                 for {{name}}. is this {{name}}?</p>
 
                             <p>How are you doing today?</p>
 
                             <p>
-                                The reason I’m calling is {{provider_name}} is starting to work with a new personalized
+                                The reason I’m calling is {{providerFullName}} is starting to work with a new
+                                personalized
                                 care program.
 
-                                {{provider_name}} thinks it might be helpful for you and wants you to enroll.
+                                {{providerFullName}} thinks it might be helpful for you and wants you to enroll.
                             </p>
 
                             <p>
@@ -402,7 +405,7 @@
                                 once or twice a month,
                                 whichever you prefer to check on how you’re doing, or to see if you’re having any new
                                 problems. And then the
-                                nurse would report back to {{provider_name}} so that s/he would have that information
+                                nurse would report back to {{providerFullName}} so that s/he would have that information
                                 in his/her records.
                                 This helps the doctor keep up a little better with how you’re doing in between visits
                                 and keeps them updated on your
@@ -482,7 +485,7 @@
 
                             <p>
                                 <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is
-                                {{userFullName}} calling on behalf of <b>Dr. {{provider_name}}</b>
+                                {{userFullName}} calling on behalf of <b>Dr. {{providerFullName}}</b>
                                 at <b>{{practice_name}}</b>. The doctor[s] have invited you to their new
                                 personalized care management program.
                                 Please give us a call at [number Ambassador calling from on page 2] to learn more.
@@ -494,7 +497,7 @@
                         <div v-else>
                             <p>
                                 <b>Speak clearly and cheerfully</b>: Hola, {{ name }} estoy llamando en nombre de
-                                los doctores Dr. {{provider_name}} de la {{practice_name}}. Cómo estás?
+                                los doctores Dr. {{providerFullName}} de la {{practice_name}}. Cómo estás?
                             </p>
 
                             <p>
@@ -503,7 +506,8 @@
                                 haya recibido una carta a este efecto.
                             </p>
 
-                            <p>Dr. {{provider_name}} piensan que este programa sería muy útil para usted y le gustaría
+                            <p>Dr. {{providerFullName}} piensan que este programa sería muy útil para usted y le
+                                gustaría
                                 que se inscribiera.
                                 Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse
                                 saludable?</p>
@@ -579,6 +583,8 @@
         <div id="consented" class="modal confirm modal-fixed-footer consented_modal">
             <form method="post" id="consented_form" :action="consentedUrl">
 
+                <input type="hidden" name="_token" :value="csrf">
+
                 <div class="modal-content">
                     <h4 style="color: #47beab">Awesome! Please confirm patient details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
@@ -645,7 +651,7 @@
                         </div>
                         <div class="col s12 m1 select-custom">
                             <label for="zip" class="label">Zip</label>
-                            <input class="input-field" name=zip" id="zip" v-model="zip"/>
+                            <input class="input-field" name="zip" id="zip" v-model="zip"/>
                         </div>
                         <div class="col s12 m3 select-custom">
                             <label for="email" class="label">Email</label>
@@ -662,7 +668,7 @@
                         <div class="col s12 m3">
                             <label for="days[]" class="label">Day</label>
                             <select name="days[]" id="days[]" multiple>
-                                <option disabled selected>Select Days</option>
+                                <option disabled selected>Days:</option>
                                 <option value="1">Monday</option>
                                 <option value="2">Tuesday</option>
                                 <option value="3">Wednesday</option>
@@ -673,16 +679,15 @@
                         <div class="col s12 m3">
                             <label for="times[]" class="label">Times</label>
                             <select name="times[]" id="times[]" multiple>
-                                <option disabled selected>Select Times</option>
+                                <option disabled selected>Times:</option>
                                 <option value="10:00-12:00">10AM - Noon</option>
                                 <option value="12:00-15:00">Noon - 3PM</option>
                                 <option value="15:00-18:00">3PM - 6PM</option>
                             </select>
                         </div>
                         <div class="col s12 m6 select-custom">
-                            <input class="materialize-textarea input-field" id="extra" name="extra"
-                                   placeholder="Optional additional information"
-                                   style="margin-bottom: 10px; padding-bottom: 18px;">
+                            <label for="extra" class="label">Optional additional information</label>
+                            <input class="input-field" name="extra" id="extra"/>
                         </div>
                     </div>
 
@@ -712,7 +717,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button id="submit" name="submit" type="submit"
+                    <button name="submit" type="submit"
                             :disabled="home_is_invalid || cell_is_invalid || other_is_invalid"
                             class="modal-action waves-effect waves-light btn">Confirm and call next patient
                     </button>
@@ -724,18 +729,18 @@
             </form>
         </div>
 
-
         <!-- Unable To Contact -->
         <div id="utc" class="modal confirm modal-fixed-footer">
-            <form method="post" id="utc_form" :action="utcUrl"
-                  class="">
+            <form method="post" id="utc_form" :action="utcUrl">
+
+                <input type="hidden" name="_token" :value="csrf">
 
                 <div class="modal-content">
                     <h4 style="color: #47beab">Please provide some details:</h4>
                     <blockquote style="border-left: 5px solid #26a69a;">
                         <b>If Caller Reaches Machine, Leave Voice Message: </b><br>
                         Hi this is {{userFullName}} calling on
-                        behalf of {{ provider_name }} at {{ practice_name }}. The doctor[s] have invited you to their
+                        behalf of {{ providerFullName }} at {{ practice_name }}. The doctor[s] have invited you to their
                         new
                         personalized care management program. Please give us a call at {{practice_phone}} to learn more.
                         Please note there is
@@ -745,8 +750,8 @@
 
                     <div class="row">
                         <div class="col s12 m12">
-                            <label for="reason" class="label">Reason:</label>
-                            <select name="reason" id="reason" required>
+                            <label for="utc-reason" class="label">Reason:</label>
+                            <select name="reason" id="utc-reason" required>
                                 <option value="voicemail">Left A Voicemail</option>
                                 <option value="disconnected">Disconnected Number</option>
                                 <option value="requested callback">Requested Call At Other Time</option>
@@ -755,8 +760,8 @@
                         </div>
 
                         <div class="col s6 m12 select-custom">
-                            <label for="reason_other" class="label">If you selected other, please specify:</label>
-                            <input class="input-field" name="reason_other" id="reason_other"/>
+                            <label for="utc_reason_other" class="label">If you selected other, please specify:</label>
+                            <input class="input-field" name="reason_other" id="utc_reason_other"/>
                         </div>
 
                     </div>
@@ -766,14 +771,14 @@
                     <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
-                    <div class="modal-footer" style="padding-right: 60px">
-                        <button id="submit" name="submit" type="submit"
-                                class="modal-action waves-effect waves-light btn">Call Next Patient
-                        </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button name="submit" type="submit"
+                            class="modal-action waves-effect waves-light btn">Call Next Patient
+                    </button>
+                    <div v-if="onCall === true" style="text-align: center">
+                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                     </div>
                 </div>
             </form>
@@ -781,8 +786,9 @@
 
         <!-- Rejected -->
         <div id="rejected" class="modal confirm modal-fixed-footer">
-            <form method="post" id="rejected_form" :action="rejectedUrl"
-                  class="">
+            <form method="post" id="rejected_form" :action="rejectedUrl">
+
+                <input type="hidden" name="_token" :value="csrf">
 
                 <div class="modal-content">
                     <h4 style="color: #47beab">Please provide some details:</h4>
@@ -799,14 +805,13 @@
                         </div>
 
                         <div class="col s6 m12 select-custom">
-                            <label for="reason_other" class="label">If you selected other, please specify:</label>
-                            <input class="input-field" name="reason_other" id="reason_other"/>
+                            <label for="rejected_reason_other" class="label">If you selected other, please specify:</label>
+                            <input class="input-field" name="reason_other" id="rejected_reason_other"/>
                         </div>
 
                         <div v-if="isSoftDecline" class="col s6 m12 select-custom">
                             <label for="soft_decline_callback" class="label">Patient Requests Callback On:</label>
                             <input type="date" name="soft_decline_callback" id="soft_decline_callback">
-                            <input class="input-field" name="reason_other" id="reason_other"/>
                             <input type="hidden" name="status" value="soft_rejected">
                         </div>
                         <div v-else>
@@ -820,41 +825,44 @@
                     <input type="hidden" name="total_time_in_system" v-bind:value="total_time_in_system">
                     <input type="hidden" name="time_elapsed" v-bind:value="time_elapsed">
 
-                    <div class="modal-footer" style="padding-right: 60px">
-                        <button id="submit" name="submit" type="submit"
-                                class="modal-action waves-effect waves-light btn">Call Next Patient
-                        </button>
-                        <div v-if="onCall === true" style="text-align: center">
-                            <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
-                                    class="material-icons left">call_end</i>Hang Up</a>
-                        </div>
+                </div>
+                <div class="modal-footer" style="padding-right: 60px">
+                    <button name="submit" type="submit"
+                            class="modal-action waves-effect waves-light btn">Call Next Patient
+                    </button>
+                    <div v-if="onCall === true" style="text-align: center">
+                        <a v-on:click="hangUp" class="waves-effect waves-light btn" style="background: red"><i
+                                class="material-icons left">call_end</i>Hang Up</a>
                     </div>
                 </div>
             </form>
         </div>
 
         <!-- Enrollment tips -->
-        <div v-if="hasTips" id="tips" class="modal confirm modal-fixed-footer">
+        <div id="tips" class="modal confirm modal-fixed-footer">
             <div class="modal-content">
                 <div class="row">
                     <div class="input-field col s12">
                         <h5>Tips</h5>
                         <br/>
-                        <template v-html="enrollmentTips"></template>
+                        <div v-html="enrollmentTips"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="row">
                     <div class="col s6">
-                        <div style="margin-top: 10px">
-                            <input id="do-not-show-tips-again"
-                                   name="do-not-show-tips-again"
-                                   type="checkbox" @click="doNotShowTipsAgain"/>
-                            <label for="do-not-show-tips-again">Do not show again</label>
+                        <div style="margin-top: 10px; text-align: left">
+                            <label for="do-not-show-tips-again">
+                                <input id="do-not-show-tips-again"
+                                       name="do-not-show-tips-again"
+                                       class="filled-in"
+                                       type="checkbox" @click="doNotShowTipsAgain"/>
+                                <span>Do not show again</span>
+                            </label>
                         </div>
                     </div>
-                    <div class="col s6 text-right">
+                    <div class="col s6">
                         <button type="button"
                                 data-dismiss="modal" aria-label="Got it!"
                                 class="modal-close waves-effect waves-light btn">
@@ -879,6 +887,7 @@
     const hasTips = window.hasTips;
     const enrollee = window.enrollee;
     const userFullName = window.userFullName;
+    const providerFullName = window.providerFullName;
     const report = window.report;
 
     export default {
@@ -902,52 +911,19 @@
                 return enrollee.has_copay;
             },
             name: function () {
-                return enrollee.first_name + enrollee.last_name;
+                return enrollee.first_name + ' ' + enrollee.last_name;
             },
             lang: function () {
                 return enrollee.lang;
-            },
-            provider_name: function () {
-                return enrollee.providerFullName;
             },
             practice_id: function () {
                 return enrollee.practice.id;
             },
             practice_name: function () {
-                return enrollee.practiceName;
+                return enrollee.practice.display_name;
             },
             practice_phone: function () {
                 return enrollee.practice.outgoing_phone_number;
-            },
-            home_phone: function () {
-                return enrollee.home_phone;
-            },
-            cell_phone: function () {
-                return enrollee.cell_phone;
-            },
-            other_phone: function () {
-                return enrollee.other_phone;
-            },
-            address: function () {
-                return enrollee.address ? enrollee.address : 'N/A';
-            },
-            address_2: function () {
-                return enrollee.address_2 ? enrollee.address_2 : 'N/A';
-            },
-            state: function () {
-                return enrollee.state ? enrollee.state : 'N/A';
-            },
-            city: function () {
-                return enrollee.city ? enrollee.city : 'N/A';
-            },
-            zip: function () {
-                return enrollee.zip ? enrollee.zip : 'N/A';
-            },
-            email: function () {
-                return enrollee.email ? enrollee.email : 'N/A';
-            },
-            dob: function () {
-                return enrollee.dob ? enrollee.dob : 'N/A';
             },
             total_time_in_system: function () {
                 return this.report.total_time_in_system;
@@ -1015,9 +991,23 @@
         },
         data: function () {
             return {
+                csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 userFullName: userFullName,
+                providerFullName: providerFullName,
                 hasTips: hasTips,
                 report: report,
+
+                home_phone: enrollee.home_phone,
+                cell_phone: enrollee.cell_phone,
+                other_phone: enrollee.other_phone,
+                address: enrollee.address ? enrollee.address : 'N/A',
+                address_2: enrollee.address_2 ? enrollee.address_2 : 'N/A',
+                state: enrollee.state ? enrollee.state : 'N/A',
+                city: enrollee.city ? enrollee.city : 'N/A',
+                zip: enrollee.zip ? enrollee.zip : 'N/A',
+                email: enrollee.email ? enrollee.email : 'N/A',
+                dob: enrollee.dob ? enrollee.dob : 'N/A',
+
                 disableHome: false,
                 disableCell: false,
                 disableOther: false,
@@ -1066,37 +1056,42 @@
                 self.$data.time_elapsed++;
             }, 1000);
 
-            const consented = document.getElementById('consented');
-            const utc = document.getElementById('utc');
-            const tips = document.getElementById('tips');
-            M.Modal.init([consented, utc, tips]);
+            $(document).ready(function () {
+                M.Modal.init($('#consented'));
+                M.Modal.init($('#utc'));
+                M.Modal.init($('#tips'));
 
-            const rejected = document.getElementById('rejected');
-            M.Modal.init([rejected], {
-                complete: function () {
-                    //always reset when modal is closed
-                    self.isSoftDecline = false;
-                }
-            });
+                M.Modal.init($('#rejected'), {
+                    onCloseEnd: function () {
+                        //always reset when modal is closed
+                        self.isSoftDecline = false;
+                    }
+                });
 
-            const selects = document.querySelectorAll('select');
-            M.FormSelect.init(selects);
+                M.FormSelect.init($('select'));
+                M.Dropdown.init($('.dropdown-trigger'), {
+                    alignment: 'right',
+                    coverTrigger: false
+                });
 
-            if (this.hasTips) {
-                let showTips = true;
-                const tipsSettings = this.getTipsSettings();
-                if (tipsSettings) {
-                    if (tipsSettings[this.practice_id] && !tipsSettings[this.practice_id].show) {
-                        showTips = false;
+                if (self.hasTips) {
+                    let showTips = true;
+                    const tipsSettings = self.getTipsSettings();
+                    if (tipsSettings) {
+                        if (tipsSettings[self.practice_id] && !tipsSettings[self.practice_id].show) {
+                            showTips = false;
+                        }
+                    }
+
+                    $('#do-not-show-tips-again').prop('checked', !showTips);
+                    if (showTips) {
+                        //show the modal here
+                        $('#tips-link')[0].click();
                     }
                 }
 
-                $('#do-not-show-tips-again').prop('checked', !showTips);
-                if (showTips) {
-                    //show the modal here
-                    $('#tips-link').click();
-                }
-            }
+            });
+
         },
         methods: {
 
@@ -1216,6 +1211,12 @@
     .card-subtitle {
     }
 
+    .side-nav.fixed {
+        width: 20%;
+        margin-top: 65px;
+        position: fixed;
+    }
+
     .side-nav a {
         height: 36px;
         line-height: 36px;
@@ -1236,6 +1237,18 @@
     .call-button {
         max-width: 100%;
         background: #4caf50;
+    }
+
+    .action-buttons {
+        text-align: center;
+    }
+
+    .action-buttons li {
+        margin-bottom: 4px;
+    }
+
+    .action-buttons li a {
+        width: 100%;
     }
 
 </style>
