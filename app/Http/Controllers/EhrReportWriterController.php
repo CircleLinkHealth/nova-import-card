@@ -198,12 +198,14 @@ class EhrReportWriterController extends Controller
     private function getFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
         try{
-            return $this->googleDrive->getContents($info->google_drive_folder_path);
+          return $this->googleDrive->getContents($info->google_drive_folder_path);
         }catch(\Exception $e){
-            return null;
+            //if folder not found throws 404
+            if ($e->getCode() == 404){
+                return null;
+            }
+            \Log::alert($e);
         }
-
-
     }
 
 }
