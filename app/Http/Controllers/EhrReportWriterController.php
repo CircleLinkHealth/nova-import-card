@@ -38,6 +38,13 @@ class EhrReportWriterController extends Controller
             if (is_null($files)) {
                 $messages['warnings'][] = 'No Google Drive folder found!';
                 $files                  = [];
+            } else{
+                foreach($files as $key => $value){
+                    if (starts_with($value['name'],'processed')){
+                        $files->forget($key);
+                    }
+
+                }
             }
         }
 
@@ -126,31 +133,36 @@ class EhrReportWriterController extends Controller
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
 
-        $files = [];
+        $googleDriveFiles = [];
 
         for ($i = 0; $i < 100; $i++) {
             if ($request->input($i)) {
                 if (array_key_exists('path', $request->input($i))) {
-                    $files[$i]['path'] = $request->input($i)['path'];
-                    $files[$i]['ext']  = $request->input($i)['ext'];
-                    $files[$i]['name'] = $request->input($i)['name'];
+                    $googleDriveFiles[$i]['path'] = $request->input($i)['path'];
+                    $googleDriveFiles[$i]['ext']  = $request->input($i)['ext'];
+                    $googleDriveFiles[$i]['name'] = $request->input($i)['name'];
                 }
             } else {
                 break;
             }
         }
 
-        foreach ($files as $file) {
+        foreach ($googleDriveFiles as $file) {
             if ($file['ext'] == 'csv') {
-                $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
+                $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
                     $filterProblems);
             }
             if ($file['ext'] == 'json') {
-                $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
+                $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
                     $filterProblems);
             }
+            if ($batch){
+                //even though it is still not processed, it is much easier to rename here. Let me know if we need to do it when when the batch has finished processing
+                Storage::drive('google')->move($file['path'], "{$user->ehrReportWriterInfo->google_drive_folder_path}/processed_{$file['name']}");
+            }
+
         }
 
         $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
