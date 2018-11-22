@@ -498,7 +498,7 @@ class UserRepository
 
     public function saveEhrReportWriterFolder($user){
 
-        $clh = collect(Storage::drive('google')->listContents('/'));
+        $clh = collect(Storage::drive('google')->listContents('/', true));
         //get path for ehr-data-from-report-writers
         $ehr      = $clh->where('type', '=', 'dir')
                         ->where('filename', '=', "ehr-data-from-report-writers")

@@ -66,12 +66,6 @@ trait ValidatesEligibility
         return $row;
     }
 
-    //to perform validation for the whole csv?
-    public function validateCsv()
-    {
-
-    }
-
     public function validateJsonStructure($row){
 
         $toValidate = [];

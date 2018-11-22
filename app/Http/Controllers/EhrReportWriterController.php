@@ -27,6 +27,7 @@ class EhrReportWriterController extends Controller
      */
     public function index()
     {
+
         $messages  = [];
         $files     = [];
         $user      = auth()->user();
