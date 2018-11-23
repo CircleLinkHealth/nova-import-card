@@ -38,7 +38,14 @@ class EligibilityBatch extends BaseModel
         'stats',
         'status',
         'initiator_id',
-        'validation_stats',
+        'invalid_data',
+        'invalid_structure',
+        'invalid_mrn',
+        'invalid_first_name',
+        'invalid_last_name',
+        'invalid_dob',
+        'invalid_problems',
+        'invalid_phones',
     ];
 
     protected $attributes = [
@@ -179,48 +186,16 @@ class EligibilityBatch extends BaseModel
     public function getValidationStats()
     {
         $validationStats = [
-            'total'             => 0,
-            'invalid_structure' => 0,
-            'invalid_data'      => 0,
-            'mrn'               => 0,
-            'name'              => 0,
-            'dob'               => 0,
-            'problems'          => 0,
-            'phones'            => 0,
+            'total'             => $this->eligibilityJobs()->count(),
+            'invalid_structure' => $this->invalid_structure,
+            'invalid_data'      => $this->invalid_data,
+            'mrn'               => $this->invalid_mrn,
+            'first_name'        => $this->invalid_first_name,
+            'last_name'         => $this->invalid_last_name,
+            'dob'               => $this->invalid_dob,
+            'problems'          => $this->invalid_problems,
+            'phones'            => $this->invalid_phones,
         ];
-
-        if ($this->type == EligibilityBatch::TYPE_ONE_CSV) {
-            $jobs = $this->eligibilityJobs;
-            $validationStats['total']             = $jobs->count();
-            if ($this->validation_stats !== null) {
-                $validationStats['invalid_structure'] = $this->validation_stats['invalid_structure'];
-                foreach ($jobs as $job) {
-                    $errors = $job->errors;
-                    if ($errors) {
-                        $validationStats['invalid_data'] += 1;
-                        if (array_key_exists('mrn', $errors)) {
-                            $validationStats['mrn'] += 1;
-                        }
-                        if (array_key_exists('first_name', $errors) || array_key_exists('last_name', $errors)) {
-                            $validationStats['name'] += 1;
-                        }
-                        if (array_key_exists('dob', $errors)) {
-                            $validationStats['dob'] += 1;
-                        }
-                        if (array_key_exists('problems', $errors)) {
-                            $validationStats['problems'] += 1;
-                        }
-                        if (array_key_exists('phones', $errors)) {
-                            $validationStats['phones'] += 1;
-                        }
-                    }
-                }
-            }
-            return $validationStats;
-        }
-        if ($this->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE) {
-            return $this->validation_stats ?: $validationStats;
-        }
 
         return $validationStats;
 

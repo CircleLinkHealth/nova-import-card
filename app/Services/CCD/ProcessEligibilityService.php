@@ -461,6 +461,8 @@ class ProcessEligibilityService
      * @param $filterInsurance
      * @param $filterProblems
      *
+     * @param null $filePath
+     *
      * @return ProcessEligibilityService|\Illuminate\Database\Eloquent\Model
      */
     public function createSingleCSVBatchFromGoogleDrive($folder,
@@ -468,11 +470,13 @@ class ProcessEligibilityService
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
-        $filterProblems
+        $filterProblems,
+        $filePath = null
     ) {
         return $this->createBatch(EligibilityBatch::TYPE_ONE_CSV, $practiceId, [
             'folder'              => $folder,
             'fileName'            => $fileName,
+            'filePath'            => $filePath,
             'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
@@ -488,6 +492,8 @@ class ProcessEligibilityService
      * @param $filterInsurance
      * @param $filterProblems
      *
+     * @param null $filePath
+     *
      * @return ProcessEligibilityService|\Illuminate\Database\Eloquent\Model
      */
     public function createClhMedicalRecordTemplateBatch(
@@ -496,11 +502,13 @@ class ProcessEligibilityService
         int $practiceId,
         $filterLastEncounter,
         $filterInsurance,
-        $filterProblems
+        $filterProblems,
+        $filePath = null
     ) {
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
             'folder'              => $folder,
             'fileName'            => $fileName,
+            'filePath'            => $filePath,
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
@@ -519,6 +527,7 @@ class ProcessEligibilityService
 
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
+        $driveFilePath = array_key_exists('filePath', $batch->options) ? $batch->options['filePath'] : null;
 
         $driveHandler = new GoogleDrive();
         $stream       = $driveHandler
@@ -603,16 +612,18 @@ class ProcessEligibilityService
 
 
             \Log::debug("memory_get_peak_usage: $mem");
-            $file = collect(Storage::disk('google')->listContents($driveFolder, false))
-                ->where('type', '=', 'file')
-            ->where('name', '=', $driveFileName)->first();
-
 
             $options                = $batch->options;
             $options['patientList'] = $data->toArray();
             $options['finishedReadingFile'] = true;
             $batch->options         = $options;
             $batch->save();
+
+            $initiator = $batch->initiatorUser()->first();
+            if($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo){
+                Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
+            }
+
 
             return $patientList;
 

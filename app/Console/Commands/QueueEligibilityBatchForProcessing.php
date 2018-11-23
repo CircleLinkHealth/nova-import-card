@@ -269,6 +269,7 @@ class QueueEligibilityBatchForProcessing extends Command
     {
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
+        $driveFilePath = array_key_exists('filePath', $batch->options) ? $batch->options['filePath'] : null;
 
         $driveHandler = new GoogleDrive();
         $stream       = $driveHandler
@@ -308,6 +309,11 @@ class QueueEligibilityBatchForProcessing extends Command
             $options['finishedReadingFile'] = true;
             $batch->options                 = $options;
             $batch->save();
+
+            $initiator = $batch->initiatorUser()->first();
+            if($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo){
+                Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
+            }
 
             return $batch;
         } catch (\Exception $e) {

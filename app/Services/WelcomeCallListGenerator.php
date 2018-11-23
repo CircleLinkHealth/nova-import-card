@@ -218,7 +218,7 @@ class WelcomeCallListGenerator
             throw new \Exception("Record has invalid structure.", 500);
         }
 
-        return true;
+        return $this;
 
     }
 

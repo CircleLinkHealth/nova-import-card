@@ -121,7 +121,8 @@
 
                             Total records with invalid data: {{$validationStats['invalid_data']}}<br>
                             Missing/invalid mrn: {{$validationStats['mrn']}}<br>
-                            Missing/invalid name: {{$validationStats['name']}}<br>
+                            Missing/invalid first name: {{$validationStats['first_name']}}<br>
+                            Missing/invalid last name: {{$validationStats['last_name']}}<br>
                             Invalid DOB: {{$validationStats['dob']}}<br>
                             0 problems: {{$validationStats['problems']}}<br>
                             0 phones: {{$validationStats['phones']}}<br>

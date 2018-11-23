@@ -33,20 +33,21 @@ class EhrReportWriterController extends Controller
         $user      = auth()->user();
         $practices = $user->practices()->get();
         if ($user->hasRole('ehr-report-writer') && $user->ehrReportWriterInfo) {
-            $files = $this->getFilesFromGoogleFolder($user->ehrReportWriterInfo);
+            $googleFiles = $this->getFilesFromGoogleFolder($user->ehrReportWriterInfo);
 
-            if (is_null($files)) {
+            if (is_null($googleFiles)) {
                 $messages['warnings'][] = 'No Google Drive folder found!';
-                $files                  = [];
-            } else{
-                foreach($files as $key => $value){
-                    if (starts_with($value['name'],'processed')){
-                        $files->forget($key);
+            } else {
+                foreach ($googleFiles as $file) {
+                    if (starts_with($file['name'], 'processed')) {
+                        continue;
                     }
+                    $files[] = $file;
 
                 }
             }
         }
+
 
         return view('ehrReportWriter.index', compact(['files', 'practices']))->withErrors($messages);
     }
@@ -60,19 +61,19 @@ class EhrReportWriterController extends Controller
     {
 
         $messages = [];
-        $json = $request->get('json');
+        $json     = $request->get('json');
 
-        $localDisk = Storage::disk('local');
-        $fileName   = "validate_json_for_ehr_report_writer";
-        $pathToFile = storage_path("app/$fileName");
+        $localDisk    = Storage::disk('local');
+        $fileName     = "validate_json_for_ehr_report_writer";
+        $pathToFile   = storage_path("app/$fileName");
         $savedLocally = $localDisk->put($fileName, $json);
 
         if ( ! $savedLocally) {
             throw new \Exception("Failed saving $pathToFile");
         }
-        $parser = new \Seld\JsonLint\JsonParser;
+        $parser   = new \Seld\JsonLint\JsonParser;
         $iterator = read_file_using_generator($pathToFile);
-        $i = 1;
+        $i        = 1;
         foreach ($iterator as $iteration) {
             if ( ! $iteration) {
                 continue;
@@ -83,7 +84,7 @@ class EhrReportWriterController extends Controller
                 $messages['errors'][] = $i . " - " . $e->getMessage();
                 continue;
             }
-            $value = json_decode($iteration, true);
+            $value              = json_decode($iteration, true);
             $structureValidator = $this->validateJsonStructure($value);
             foreach ($structureValidator->errors()->messages() as $array) {
                 $messages['errors'][] = "Error for patient: " . $i . "-" . $array[0];
@@ -117,7 +118,7 @@ class EhrReportWriterController extends Controller
         $user       = auth()->user();
         $practiceId = $request->input('practice_id');
 
-        if (! $user->ehrReportWriterInfo){
+        if ( ! $user->ehrReportWriterInfo) {
             $messages['errors'][] = "You need to be an EHR Report Writer to use this feature.";
 
             return redirect()->back()->withErrors($messages);
@@ -146,26 +147,31 @@ class EhrReportWriterController extends Controller
                 break;
             }
         }
+        if (empty($googleDriveFiles)) {
+            $messages['warnings'][] = "Please select one or more files to be reviewed by CLH!";
+
+            return redirect()->back()->withErrors($messages);
+        }
 
         foreach ($googleDriveFiles as $file) {
             if ($file['ext'] == 'csv') {
                 $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
-                    $filterProblems);
+                    $filterProblems, $file['path']);
             }
             if ($file['ext'] == 'json') {
                 $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
-                    $filterProblems);
+                    $filterProblems, $file['path']);
             }
-            if ($batch){
-                //even though it is still not processed, it is much easier to rename here. Let me know if we need to do it when when the batch has finished processing
-                Storage::drive('google')->move($file['path'], "{$user->ehrReportWriterInfo->google_drive_folder_path}/processed_{$file['name']}");
+            if ( ! $batch) {
+                $messages['warnings'][] = "Something went wrong with file: {$file['name']}.";
             }
 
         }
-
-        $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
+        if (empty($messages)) {
+            $messages['success'][] = "Thanks! CLH will review the file and get back to you. This may take a few business days.";
+        }
 
         return redirect()->back()->withErrors($messages);
     }
@@ -197,11 +203,11 @@ class EhrReportWriterController extends Controller
      */
     private function getFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
-        try{
-          return $this->googleDrive->getContents($info->google_drive_folder_path);
-        }catch(\Exception $e){
+        try {
+            return $this->googleDrive->getContents($info->google_drive_folder_path);
+        } catch (\Exception $e) {
             //if folder not found throws 404
-            if ($e->getCode() == 404){
+            if ($e->getCode() == 404) {
                 return null;
             }
             \Log::alert($e);

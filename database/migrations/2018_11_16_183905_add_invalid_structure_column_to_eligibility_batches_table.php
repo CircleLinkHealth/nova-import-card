@@ -14,7 +14,14 @@ class AddInvalidStructureColumnToEligibilityBatchesTable extends Migration
     public function up()
     {
         Schema::table('eligibility_batches', function (Blueprint $table) {
-            $table->json('validation_stats')->after('stats')->nullable();
+            $table->integer('invalid_data')->default(0);
+            $table->integer('invalid_structure')->default(0);
+            $table->integer('invalid_mrn')->default(0);
+            $table->integer('invalid_first_name')->default(0);
+            $table->integer('invalid_last_name')->default(0);
+            $table->integer('invalid_dob')->default(0);
+            $table->integer('invalid_problems')->default(0);
+            $table->integer('invalid_phones')->default(0);
         });
     }
 
@@ -26,7 +33,14 @@ class AddInvalidStructureColumnToEligibilityBatchesTable extends Migration
     public function down()
     {
         Schema::table('eligibility_batches', function (Blueprint $table) {
-            $table->dropColumn('validation_stats');
+            $table->dropColumn('invalid_data');
+            $table->dropColumn('invalid_structure');
+            $table->dropColumn('invalid_mrn');
+            $table->dropColumn('invalid_first_name');
+            $table->dropColumn('invalid_last_name');
+            $table->dropColumn('invalid_dob');
+            $table->dropColumn('invalid_problems');
+            $table->dropColumn('invalid_phones');
         });
     }
 }
