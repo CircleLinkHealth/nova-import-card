@@ -9,7 +9,7 @@
 
     <script>
         window['userFullName'] = @json(auth()->user()->getFullName());
-        window['hasTips'] = @json(($enrollee->practice->enrollmentTips() ?? collect())->count() > 0);
+        window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
         window['enrollee'] = @json($enrollee);
         window['providerFullName'] = @json($enrollee->providerFullName);
         window['report'] = @json($report);

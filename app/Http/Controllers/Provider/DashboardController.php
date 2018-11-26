@@ -322,61 +322,33 @@ class DashboardController extends Controller
 
     public function postStoreEnrollment(SafeRequest $request)
     {
-        //i.e look for function(), <script>, eval()
+        //Summernote is vulnerable to XSS, so we remove entirely the special chars
+        //Laravel already sanitizes suspicious characters and can result to something like this:
+        //<p>all good</p>&lt;script&rt;alert('hi')&lt;script&gt;
+        //Also, Laravel does not handle this: <a href="javascript:alert('hi')">Click me. I am safe!</a>
         $detail = $request->input('tips');
-
-        if (strpos($detail, "&lt;script&gt;") !== false ||
-            strpos($detail, "function(") !== false ||
-            strpos($detail, "eval(") !== false) {
-            return redirect()
-                ->back()
-                ->withErrors([
-                    'suspicious-input' => "You have entered invalid input.",
-                ]);
-        }
-
-        libxml_use_internal_errors(true);
-        $dom = new \domdocument();
-        $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-
-        /*
-         * in case we decide to support image upload
-        $images = $dom->getelementsbytagname('img');
-        foreach ($images as $k => $img) {
-            $data = $img->getattribute('src');
-
-            //proceed only if the image is in base64 encoding
-            if (strpos($data, 'data') === false || strpos($data, 'base64') === false) {
-                continue;
-            }
-
-            list($type, $data) = explode(';', $data);
-            list(, $data) = explode(',', $data);
-
-            $data       = base64_decode($data);
-            $image_name = time() . $k . '.png';
-            $path       = public_path() . '/' . $image_name;
-
-            //should save on cloud. not in source code
-            file_put_contents($path, $data);
-
-            $img->removeattribute('src');
-            $img->setattribute('src', '/' . $image_name);
-        }
-        */
-        $detail = $dom->savehtml();
-
-        $tips = $this->primaryPractice->enrollmentTips;
-        if ( ! $tips) {
-            $tips              = new PracticeEnrollmentTips();
-            $tips->practice_id = $this->primaryPractice->id;
-        }
-
-        $tips->content = $detail;
-        $tips->save();
+        $detail = $this->removeEncodedSpecialChars($detail);
+        $detail = $this->removeSuspiciousJsCode($detail);
+        PracticeEnrollmentTips::updateOrCreate([ 'practice_id' => $this->primaryPractice->id ],[ 'content' => $detail ]);
 
         return redirect()
             ->back()
             ->with('message', "Enrollment tips were saved successfully.");
+    }
+
+    private function removeEncodedSpecialChars($str) {
+        /**
+        & (ampersand) becomes &amp;
+        " (double quote) becomes &quot;
+        ' (single quote) becomes &#039;
+        < (less than) becomes &lt;
+        > (greater than) becomes &gt;
+         */
+        $pattern = ['/&amp;/', '/&quot;/', '/&#039;/', '/&lt;/', '/&gt;/'];
+        return preg_replace($pattern, '', $str);
+    }
+
+    private function removeSuspiciousJsCode($str) {
+        return preg_replace('/javascript:/', '', $str);
     }
 }
