@@ -178,15 +178,15 @@ class EligibilityBatch extends BaseModel
     public function getValidationStats()
     {
         $validationStats = [
-            'total'             => $this->eligibilityJobs()->count(),
-            'invalid_structure' => $this->invalid_structure,
-            'invalid_data'      => $this->invalid_data,
-            'mrn'               => $this->invalid_mrn,
-            'first_name'        => $this->invalid_first_name,
-            'last_name'         => $this->invalid_last_name,
-            'dob'               => $this->invalid_dob,
-            'problems'          => $this->invalid_problems,
-            'phones'            => $this->invalid_phones,
+            'total'             => 0,
+            'invalid_structure' => 0,
+            'invalid_data'      => 0,
+            'mrn'               => 0,
+            'first_name'        => 0,
+            'last_name'         => 0,
+            'dob'               => 0,
+            'problems'          => 0,
+            'phones'            => 0,
         ];
 
         return $validationStats;
