@@ -81,7 +81,7 @@ class WelcomeCallListGenerator
      */
     private $eligibilityJob;
 
-    protected $jsonInvalidStructure = false;
+    protected $invalidStructure = false;
 
     /**
      * WelcomeCallListGenerator constructor.
@@ -183,39 +183,33 @@ class WelcomeCallListGenerator
             $csvPatientList = new CsvPatientList(collect($this->patientList));
             $isValid        = $csvPatientList->guessValidator() ?? null;
 
-            $this->patientList->map(function ($patient) use ($isValid) {
-                $dataValidatorErrors = $this->validateRow($patient)->errors();
-                $errors              = json_decode(json_encode($dataValidatorErrors), true);
+            $this->patientList->each(function ($patient) use ($isValid) {
+                $errors = [];
                 if ( ! $isValid) {
-                    $errors['structure'] = 'Invalid Structure';
+                    $errors[] = 'structure';
+                    $this->invalidStructure = true;
                 }
-
-                $this->eligibilityJob->errors = $errors;
-                $this->eligibilityJob->save();
+                $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
+                $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
             });
         }
 
         if ($this->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE && $this->eligibilityJob) {
-            $this->patientList->map(function ($patient) {
-
-                $structureValidatorErrors = json_decode(json_encode($this->validateJsonStructure($patient)->errors()),
-                    true);
-                $dataValidatorErrors      = $this->validateRow($patient)->errors();
-                $errors                   = json_decode(json_encode($dataValidatorErrors), true);
-                if ( ! empty($structureValidatorErrors)) {
-                    $this->jsonInvalidStructure = true;
-                    $errors['structure']        = $structureValidatorErrors;
+            $this->patientList->each(function ($patient) {
+                $errors = [];
+                $structureErrors = $this->validateJsonStructure($patient)->errors();
+                if ($structureErrors->isNotEmpty()){
+                    $errors[] = 'structure';
+                    $this->invalidStructure = true;
                 }
-
-                $this->eligibilityJob->errors = $errors;
-                $this->eligibilityJob->save();
-
+                $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
+                $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
             });
 
         }
-        if ($this->jsonInvalidStructure) {
+        if ($this->invalidStructure) {
             //if there are structure errors we stop the process because create enrollees fails from missing arguements
-            throw new \Exception("Record has invalid structure.", 500);
+            throw new \Exception("Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.", 422);
         }
 
         return $this;

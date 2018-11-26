@@ -358,7 +358,7 @@ class UserRepository
     ) {
 
         $folderPath = $this->saveEhrReportWriterFolder($user);
-        
+
         EhrReportWriterInfo::updateOrCreate(
             ['user_id' => $user->id],
             [
@@ -496,25 +496,34 @@ class UserRepository
         ]);
     }
 
-    public function saveEhrReportWriterFolder($user){
+    public function saveEhrReportWriterFolder($user)
+    {
 
         $clh = collect(Storage::drive('google')->listContents('/', true));
         //get path for ehr-data-from-report-writers
-        $ehr      = $clh->where('type', '=', 'dir')
-                        ->where('filename', '=', "ehr-data-from-report-writers")
-                        ->first();
+        $ehr = $clh->where('type', '=', 'dir')
+                   ->where('filename', '=', "ehr-data-from-report-writers")
+                   ->first();
+
+        if ( ! $ehr) {
+            Storage::drive('google')->makeDirectory("ehr-data-from-report-writers");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        }
 
         $ehrContents = collect(Storage::drive('google')->listContents("{$ehr['path']}"));
         //find ehr report writer folder
         $writerFolder = $ehrContents->where('type', '=', 'dir')
-                                  ->where('filename', '=', "report-writer-{$user->id}")
-                                  ->first();
-        if (! $writerFolder){
-            Storage::drive('google')->makeDirectory($ehr['path']."/report-writer-{$user->id}");
+                                    ->where('filename', '=', "report-writer-{$user->id}")
+                                    ->first();
+        if ( ! $writerFolder) {
+            Storage::drive('google')->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
             $path = $this->saveEhrReportWriterFolder($user);
+
             return $path;
-        }else{
-            $service = Storage::drive('google')->getAdapter()->getService();
+        } else {
+            $service    = Storage::drive('google')->getAdapter()->getService();
             $permission = new \Google_Service_Drive_Permission();
             $permission->setRole('writer');
             $permission->setType('user');
@@ -522,9 +531,9 @@ class UserRepository
             $permission->setEmailAddress($user->email);
 
             $service->permissions->create($writerFolder['basename'], $permission);
+
             return $writerFolder['path'];
         }
-
 
 
     }

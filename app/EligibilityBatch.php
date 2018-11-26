@@ -38,14 +38,6 @@ class EligibilityBatch extends BaseModel
         'stats',
         'status',
         'initiator_id',
-        'invalid_data',
-        'invalid_structure',
-        'invalid_mrn',
-        'invalid_first_name',
-        'invalid_last_name',
-        'invalid_dob',
-        'invalid_problems',
-        'invalid_phones',
     ];
 
     protected $attributes = [

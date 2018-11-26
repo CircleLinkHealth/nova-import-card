@@ -33,18 +33,11 @@ class EhrReportWriterController extends Controller
         $user      = auth()->user();
         $practices = $user->practices()->get();
         if ($user->hasRole('ehr-report-writer') && $user->ehrReportWriterInfo) {
-            $googleFiles = $this->getFilesFromGoogleFolder($user->ehrReportWriterInfo);
-
+            $googleFiles = $this->getUnprocessedFilesFromGoogleFolder($user->ehrReportWriterInfo);
             if (is_null($googleFiles)) {
                 $messages['warnings'][] = 'No Google Drive folder found!';
             } else {
-                foreach ($googleFiles as $file) {
-                    if (starts_with($file['name'], 'processed')) {
-                        continue;
-                    }
-                    $files[] = $file;
-
-                }
+                $files = $googleFiles;
             }
         }
 
@@ -134,26 +127,20 @@ class EhrReportWriterController extends Controller
         $filterInsurance     = (boolean)$request->input('filterInsurance');
         $filterProblems      = (boolean)$request->input('filterProblems');
 
-        $googleDriveFiles = [];
 
-        for ($i = 0; $i < 100; $i++) {
-            if ($request->input($i)) {
-                if (array_key_exists('path', $request->input($i))) {
-                    $googleDriveFiles[$i]['path'] = $request->input($i)['path'];
-                    $googleDriveFiles[$i]['ext']  = $request->input($i)['ext'];
-                    $googleDriveFiles[$i]['name'] = $request->input($i)['name'];
-                }
-            } else {
-                break;
-            }
-        }
-        if (empty($googleDriveFiles)) {
+        $files = collect($request->input('googleDriveFiles', []))
+            ->filter(function ($file){
+                return array_key_exists('path', $file );}
+            )->values();
+
+
+        if ($files->isEmpty()) {
             $messages['warnings'][] = "Please select one or more files to be reviewed by CLH!";
 
             return redirect()->back()->withErrors($messages);
         }
 
-        foreach ($googleDriveFiles as $file) {
+        foreach ($files as $file) {
             if ($file['ext'] == 'csv') {
                 $batch = $service->createSingleCSVBatchFromGoogleDrive($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
@@ -201,10 +188,23 @@ class EhrReportWriterController extends Controller
      *
      * @return \Illuminate\Support\Collection
      */
-    private function getFilesFromGoogleFolder(EhrReportWriterInfo $info)
+    private function getUnprocessedFilesFromGoogleFolder(EhrReportWriterInfo $info)
     {
         try {
-            return $this->googleDrive->getContents($info->google_drive_folder_path);
+            $files    = [];
+            $contents = $this->googleDrive->getContents($info->google_drive_folder_path);
+
+            if ($contents->isEmpty()){
+                return null;
+            }
+            foreach ($contents as $file) {
+                if (starts_with($file['name'], 'processed')) {
+                    continue;
+                }
+                $files[] = $file;
+            }
+
+            return collect($files);
         } catch (\Exception $e) {
             //if folder not found throws 404
             if ($e->getCode() == 404) {

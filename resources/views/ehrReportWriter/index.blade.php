@@ -56,9 +56,9 @@
                 <div class="col-md-12">
                     <ul class="form-group">
                         @foreach($files as $key => $file)
-                            <input type="checkbox" name="{{$key}}[path]" value="{{$file['path']}}"> {{$file['name']}}
-                            <input type="hidden" name="{{$key}}[ext]" value="{{$file['extension']}}">
-                            <input type="hidden" name="{{$key}}[name]" value="{{$file['name']}}">
+                            <input type="checkbox" name="googleDriveFiles[{{$key}}][path]" value="{{$file['path']}}"> {{$file['name']}}
+                            <input type="hidden" name="googleDriveFiles[{{$key}}][ext]" value="{{$file['extension']}}">
+                            <input type="hidden" name="googleDriveFiles[{{$key}}][name]" value="{{$file['name']}}">
                             <br/>
                         @endforeach
                     </ul>

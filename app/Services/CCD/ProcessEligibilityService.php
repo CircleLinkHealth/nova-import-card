@@ -527,7 +527,7 @@ class ProcessEligibilityService
 
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
-        $driveFilePath = array_key_exists('filePath', $batch->options) ? $batch->options['filePath'] : null;
+        $driveFilePath = $batch->options['filePath'] ?? null;
 
         $driveHandler = new GoogleDrive();
         $stream       = $driveHandler
@@ -619,7 +619,7 @@ class ProcessEligibilityService
             $batch->options         = $options;
             $batch->save();
 
-            $initiator = $batch->initiatorUser()->first();
+            $initiator = $batch->initiatorUser()->firstOrFail();
             if($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo){
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
