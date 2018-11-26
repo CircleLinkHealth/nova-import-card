@@ -6,16 +6,28 @@ use App\Importer\Models\ItemLogs\InsuranceLog;
 use App\Importer\Models\ItemLogs\MedicationLog;
 use App\Importer\Models\ItemLogs\ProblemLog;
 use App\Importer\Models\ItemLogs\ProviderLog;
+use App\Models\MedicalRecords\TabularMedicalRecord;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartAllergy;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartInsurance;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartMedication;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartName;
 use App\Models\PatientData\PhoenixHeart\PhoenixHeartProblem;
+use App\Practice;
 use App\User;
 use Carbon\Carbon;
 
 class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 {
+    private $lastPhxImportDate;
+
+    public function __construct(TabularMedicalRecord $tmr, Practice $practice = null)
+    {
+        parent::__construct($tmr, $practice);
+
+        $this->lastPhxImportDate = PhoenixHeartProblem::orderBy('created_at', 'desc')
+                                                      ->firstOrFail()->created_at->toDateString();
+    }
+
     public function logDemographicsSection(): MedicalRecordLogger
     {
         if ( ! $this->medicalRecord->mrn) {
@@ -24,7 +36,10 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         }
 
         if ( ! $this->medicalRecord->gender && $this->medicalRecord->mrn) {
-            $phx                         = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)->first();
+            $phx = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)
+                                   ->where('created_at', $this->lastPhxImportDate)
+                                   ->first();
+
             $this->medicalRecord->gender = $phx
                 ? $phx->gender
                 : null;
@@ -43,6 +58,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         $row = PhoenixHeartName::where('patient_first_name', $firstName)
                                ->where('patient_last_name', $lastName)
                                ->where('dob', $dob)
+                               ->where('created_at', $this->lastPhxImportDate)
                                ->first();
 
         if ($row && $row->patient_id) {
@@ -58,7 +74,9 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
-        $allergies = PhoenixHeartAllergy::wherePatientId($this->medicalRecord->mrn)->get();
+        $allergies = PhoenixHeartAllergy::wherePatientId($this->medicalRecord->mrn)
+                                        ->where('created_at', $this->lastPhxImportDate)
+                                        ->get();
 
         foreach ($allergies as $allergy) {
             $allergyLog = AllergyLog::create(
@@ -78,6 +96,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logInsuranceSection(): MedicalRecordLogger
     {
         $insurances = PhoenixHeartInsurance::wherePatientId($this->medicalRecord->mrn)
+                                           ->where('created_at', $this->lastPhxImportDate)
                                            ->get()
                                            ->sortBy('order');
 
@@ -98,6 +117,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logMedicationsSection(): MedicalRecordLogger
     {
         $medications = PhoenixHeartMedication::wherePatientId($this->medicalRecord->mrn)
+                                             ->where('created_at', $this->lastPhxImportDate)
                                              ->get();
 
         foreach ($medications as $medication) {
@@ -142,6 +162,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
+                                       ->where('created_at', $this->lastPhxImportDate)
                                        ->orderBy('created_at', 'desc')
                                        ->get();
 
@@ -199,6 +220,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     public function logProvidersSection(): MedicalRecordLogger
     {
         $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
+                                ->where('created_at', $this->lastPhxImportDate)
                                 ->first();
 
         if ( ! $name) {
