@@ -772,7 +772,7 @@
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.connect({"phoneNumber": phone});
+                this.device.connect({"To": phone});
             },
             hangUp() {
                 this.onCall = false;
@@ -792,6 +792,7 @@
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');
                             self.log = 'Call ended.';
+                            self.onCall = false;
                         });
 
                         self.device.on('offline', () => {
