@@ -492,6 +492,7 @@ class ProcessEligibilityService
      * @param $filterInsurance
      * @param $filterProblems
      *
+     * @param bool $finishedReadingFile
      * @param null $filePath
      *
      * @return ProcessEligibilityService|\Illuminate\Database\Eloquent\Model
@@ -503,9 +504,8 @@ class ProcessEligibilityService
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems,
-        $filePath = null,
-        $filterProblems,
-        $finishedReadingFile = false
+        $finishedReadingFile = false,
+        $filePath = null
     ) {
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
             'folder'              => $folder,

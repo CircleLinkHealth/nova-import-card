@@ -149,7 +149,7 @@ class EhrReportWriterController extends Controller
             if ($file['ext'] == 'json') {
                 $batch = $service->createClhMedicalRecordTemplateBatch($user->ehrReportWriterInfo->google_drive_folder_path,
                     $file['name'], $practiceId, $filterLastEncounter, $filterInsurance,
-                    $filterProblems, $file['path']);
+                    $filterProblems, false, $file['path']);
             }
             if ( ! $batch) {
                 $messages['warnings'][] = "Something went wrong with file: {$file['name']}.";
