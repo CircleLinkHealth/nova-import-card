@@ -2676,6 +2676,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                              $q->whereHas('user', function ($q) {
                                  $q->whereHas('forwardAlertsTo', function ($q) {
                                      $q->where('contactable_id', $this->id)
+                                         //should this be whereIn instead? The logic here is to bring the patients where the logged in user has been sent an approval email.
+                                         // The id check above is then required.
                                        ->orWhereIn('name', [
                                            'forward_careplan_approval_emails_instead_of_provider',
                                            'forward_careplan_approval_emails_in_addition_to_provider',
