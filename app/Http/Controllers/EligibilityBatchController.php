@@ -111,7 +111,7 @@ class EligibilityBatchController extends Controller
 
         $batch->load('practice');
 
-        $initiatorUser = $batch->initiatorUser;
+        $initiatorUser   = $batch->initiatorUser;
         $validationStats = $batch->getValidationStats();
 
         if ($batch->type == EligibilityBatch::TYPE_GOOGLE_DRIVE_CCDS) {
@@ -141,7 +141,7 @@ class EligibilityBatchController extends Controller
             'ineligible',
             'duplicates',
             'initiatorUser',
-            'validationStats'
+            'validationStats',
         ]));
 
     }
@@ -384,7 +384,7 @@ class EligibilityBatchController extends Controller
                               'bhi_problem'         => $cpmProblemsMap[$job->bhi_problem_id] ?? '',
                               'primary_insurance'   => $job->primary_insurance,
                               'secondary_insurance' => $job->secondary_insurance,
-                              'tertiary_insurance'   => $job->tertiary_insurance,
+                              'tertiary_insurance'  => $job->tertiary_insurance,
                               'processing_status'   => $job->getStatus(),
                           ];
 

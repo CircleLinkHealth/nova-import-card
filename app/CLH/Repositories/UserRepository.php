@@ -498,32 +498,33 @@ class UserRepository
 
     public function saveEhrReportWriterFolder($user)
     {
+        $cloudDisk = Storage::drive('google');
 
-        $clh = collect(Storage::drive('google')->listContents('/', true));
+        $clh = collect($cloudDisk->listContents('/', true));
         //get path for ehr-data-from-report-writers
         $ehr = $clh->where('type', '=', 'dir')
                    ->where('filename', '=', "ehr-data-from-report-writers")
                    ->first();
 
         if ( ! $ehr) {
-            Storage::drive('google')->makeDirectory("ehr-data-from-report-writers");
+            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
             $path = $this->saveEhrReportWriterFolder($user);
 
             return $path;
         }
 
-        $ehrContents = collect(Storage::drive('google')->listContents("{$ehr['path']}"));
+        $ehrContents = collect($cloudDisk->listContents("{$ehr['path']}"));
         //find ehr report writer folder
         $writerFolder = $ehrContents->where('type', '=', 'dir')
                                     ->where('filename', '=', "report-writer-{$user->id}")
                                     ->first();
         if ( ! $writerFolder) {
-            Storage::drive('google')->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
             $path = $this->saveEhrReportWriterFolder($user);
 
             return $path;
         } else {
-            $service    = Storage::drive('google')->getAdapter()->getService();
+            $service    = $cloudDisk->getAdapter()->getService();
             $permission = new \Google_Service_Drive_Permission();
             $permission->setRole('writer');
             $permission->setType('user');

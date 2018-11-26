@@ -129,8 +129,9 @@ class EhrReportWriterController extends Controller
 
 
         $files = collect($request->input('googleDriveFiles', []))
-            ->filter(function ($file){
-                return array_key_exists('path', $file );}
+            ->filter(function ($file) {
+                return array_key_exists('path', $file);
+            }
             )->values();
 
 
@@ -194,7 +195,7 @@ class EhrReportWriterController extends Controller
             $files    = [];
             $contents = $this->googleDrive->getContents($info->google_drive_folder_path);
 
-            if ($contents->isEmpty()){
+            if ($contents->isEmpty()) {
                 return null;
             }
             foreach ($contents as $file) {
