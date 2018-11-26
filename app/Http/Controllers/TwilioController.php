@@ -31,6 +31,15 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
+    /**
+     *
+     * Should this be deprecated?
+     * See placeCall below
+     *
+     * @param Request $request
+     * @return Twiml
+     * @throws \Twilio\Exceptions\TwimlException
+     */
     public function newCall(Request $request)
     {
         $response = new Twiml();
@@ -61,7 +70,14 @@ class TwilioController extends Controller
     public function placeCall(Request $request)
     {
         $response       = new Twiml();
-        $callerIdNumber = config('services.twilio')['from'];
+
+        if ($request->has('From')) {
+            //could be the practice outgoing phone number (in case of enrollment)
+            $callerIdNumber = $request->input('From');
+        }
+        else {
+            $callerIdNumber = config('services.twilio')['from'];
+        }
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 

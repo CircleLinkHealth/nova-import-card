@@ -772,7 +772,7 @@
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.connect({"To": phone});
+                this.device.connect({"To": phone, "From": this.practice_phone ? this.practice_phone : undefined });
             },
             hangUp() {
                 this.onCall = false;
