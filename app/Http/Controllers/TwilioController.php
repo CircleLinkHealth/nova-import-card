@@ -31,15 +31,6 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
-    public function makeCall()
-    {
-        return view(
-            'partials.calls.make-twilio-call', [
-                'token' => $this->token,
-            ]
-        );
-    }
-
     public function newCall(Request $request)
     {
         $response = new Twiml();
@@ -65,8 +56,6 @@ class TwilioController extends Controller
         }
 
         throw new \Exception("Practice Outgoing Phone Number not found.", 500);
-
-
     }
 
     public function placeCall(Request $request)
