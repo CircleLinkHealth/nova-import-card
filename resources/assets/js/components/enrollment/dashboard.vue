@@ -654,34 +654,16 @@
                 consentedUrl: rootUrl('enrollment/consented'),
                 utcUrl: rootUrl('enrollment/utc'),
                 rejectedUrl: rootUrl('enrollment/rejected'),
+
+                //twilio
+                device: null
             };
         },
         mounted: function () {
 
             this.total_time_in_system_running = this.total_time_in_system;
-
-            this.$http
-                .post("/twilio/token", {
-                    forPage: window.location.pathname,
-                    practice: this.practice_id
-                })
-                .then(response => {
-
-                        console.log(response.data);
-
-                        this.callStatus = 'Caller Ready';
-                        M.toast({html: this.callStatus, displayLength: 5000});
-                        Twilio.Device.setup(response.data.token);
-                        Twilio.Device.error((err) => {
-                            this.callError = err.message;
-                        });
-                        Twilio.Device.disconnect(() => {
-                            this.onCall = false;
-                        });
-                    }
-                );
-
             let self = this;
+            self.initTwilio();
 
             //timer
             setInterval(function () {
@@ -790,13 +772,48 @@
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
-                Twilio.Device.connect({"phoneNumber": phone});
+                this.device.connect({"phoneNumber": phone});
             },
             hangUp() {
                 this.onCall = false;
                 this.callStatus = "Ended Call";
                 M.toast({html: this.callStatus, displayLength: 3000});
-                Twilio.Device.disconnectAll();
+                this.device.disconnectAll();
+            },
+            initTwilio: function () {
+                const self = this;
+                const url = rootUrl(`/twilio/token`);
+
+                self.$http.get(url)
+                    .then(response => {
+                        self.log = 'Initializing';
+                        self.device = new Twilio.Device(response.data.token);
+
+                        self.device.on('disconnect', () => {
+                            console.log('twilio device: disconnect');
+                            self.log = 'Call ended.';
+                        });
+
+                        self.device.on('offline', () => {
+                            console.log('twilio device: offline');
+                            self.log = 'Offline.';
+                        });
+
+                        self.device.on('error', (err) => {
+                            console.error('twilio device: error', err);
+                            self.callError = err.message;
+                        });
+
+                        self.device.on('ready', () => {
+                            console.log('twilio device: ready');
+                            self.log = 'Ready to make call';
+                            M.toast({html: self.log, displayLength: 5000});
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        self.log = 'Could not fetch token, see console.log';
+                    });
             }
         }
     }
