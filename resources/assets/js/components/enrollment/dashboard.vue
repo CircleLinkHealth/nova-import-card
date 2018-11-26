@@ -176,397 +176,20 @@
                 <div class="enrollment-script">
 
                     <template v-if="has_copay">
-                        <div v-if="lang === 'EN'">
-                            <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is
-                                {{userFullName}} calling on behalf of
-                                <b>Dr. {{providerFullName}}</b> at <b>{{practice_name}}</b>. I’m calling
-                                for {{name}}. Is this {{name}}?</p>
-
-                            <p>How are you doing today?</p>
-
-                            <p>
-                                The reason I’m calling is {{providerFullName}} is starting to work with a new
-                                personalized
-                                care program.
-
-                                {{providerFullName}} thinks it might be helpful for you and wants you to enroll.
-                            </p>
-
-                            <p>
-                                And so what the program is: there would be a registered nurse (RN), who can call you
-                                once or twice a month,
-                                whichever you prefer to check on how you’re doing, or to see if you’re having any new
-                                problems.
-                                And then the nurse would report back to {{providerFullName}} so that s/he would have
-                                that
-                                information in his/her records.
-                                This helps the doctor keep up a little better with how you’re doing in between visits
-                                and keeps them updated on your medications
-                                and vitals (such as blood pressures and blood sugars).
-                            </p>
-
-                            <p>
-                                The program is offered through Medicare and it’s no cost if you have supplemental
-                                insurance to cover a small ~$8 copay. So I was just calling
-                                today to check if you would be interested in trying this?
-
-                                <br><b>[patients then usually have questions...caller may have to reassure patient that
-                                they will still see the
-
-                                doctor regularly, RN calls are only a supplement to regular care - not a
-                                replacement.]</b>
-                            </p>
-
-                            <p>
-                                <b>[Note: if the patient is hesitant, then stress:]</b>
-                                <br>“It is easy to cancel if you just want to try it for a month or two and see how it
-                                goes.
-                                All you would have to do is just let the nurse know that you don’t want to continue and
-                                we will take your name back off of the list.”
-
-                            </p>
-
-                            <p>
-                                <b>[if no, “not for me”]:</b>
-
-                                <br>
-                                That’s perfectly fine, there’s no pressure to sign up.
-                                This is just a program to help the doctor keep up with you between visits.
-                                <b>[if the patient then becomes curious]</b>
-                                You’re welcome to give it a try and you can cancel at any time. Would you like to try it
-                                out for a month and see how it goes?
-                                This program is available long term, if you think you’d be interested at a later date -
-                                would you like us to call back and check in with you then?”
-                                <br>
-                                <b>[also - provide patient with phone number to call back if they’d like to enroll
-                                    later]
-                                    [mark patient “soft decline” if the patient might want to enroll in the future]
-                                    [mark patient “hard decline” if the patient isn’t interested now nor will they be
-                                    interested in the future]
-                                </b>
-                            </p>
-
-                            <p>
-                                <b>[if patient says yes:]</b>
-                                <br>
-                                The only thing is you can only be a part of one doctor’s care management program at a
-                                time. I just want
-                                to check and make sure that you’re not already signed up for this. If not, then we can
-                                go ahead and enroll you.
-                                Did you prefer that the nurse call you once or twice a month? Are you currently on
-                                dialysis? Are you receiving hospice services?
-
-                                <br>[then collect the rest of the information]:
-
-                                <br>[Enroller/Ambassador should fill out patient information in enrollment sheet /
-                                Confirm patient’s best
-                                contact #, preferred call times, e-mail and address. Also collect any specialist data
-                                from patient]
-                            </p>
-
-                            <p>
-                                <b>[at end of all info collected for “yes”]:</b>
-                                <br>
-                                “That’s all I need for now, The nurse will give you a call for the first time within the
-                                next week and she will
-                                introduce herself to you and give you the number where you can reach her anytime you
-                                need to. They’ll be
-                                calling from the same number I called you from today.”
-                            </p>
-
-                            <p>“Have a great day! Thanks!”</p>
-
-                            <p>
-                                <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is
-                                {{userFullName}} calling on behalf of <b>Dr. {{providerFullName}}</b>
-                                at <b>{{practice_name}}</b>. The doctor[s] have invited you to their new
-                                personalized care management program.
-                                Please give us a call at [number Ambassador calling from on page 2] to learn more.
-                                Please note there is
-                                nothing to worry about, this program just lets the Dr. take better care of you between
-                                visits. Again the
-                                number is [number Ambassador calling from]</p>
-                        </div>
-                        <div v-else>
-                            <p><b>Speak clearly and cheerfully</b>: Hola, {{ name }} estoy llamando en nombre de
-                                los doctores <b>Dr. {{providerFullName}}</b> de la {{practice_name}}. Los médicos le han
-                                invitado a su nuevo
-                                programa de
-                                gestión de atención personalizada y es posible que haya recibido una carta a este
-                                efecto.</p>
-
-                            <p><b>Dr. {{providerFullName}}</b> piensan que este programa sería muy útil para usted y le
-                                gustaría que se
-                                inscribiera.
-                                Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse
-                                saludable.</p>
-
-                            <p>
-                                <b>
-                                    [patients interested usually discuss their conditions here.. be sure to listen​] [if
-                                    patient asks where
-                                    calling
-                                    from, use the practice name in google sheet, e.g., CCN or Ferguson]
-                                </b>
-                            </p>
-
-                            <p>Este es un nuevo programa de atención preventiva de Medicare para ayudarlo a usted y a su
-                                médico a cuidar mejor
-                                de su
-                                salud. Medicare ha decidido que su enfoque de la medicina necesitaba mejoras. Antes,
-                                Medicare era reactivo, a
-                                menudo
-                                esperaba hasta que los pacientes terminaban en el hospital para
-                                proporcionarles atención médica, no era bueno para los pacientes y caro para Medicare.
-                                Ahora, Medicare está
-                                siendo
-                                proactivo: proporcionando atención entre las visitas al médico para asegurarse que sus
-                                afecciones están bajo
-                                control, está tomando sus medicamentos y no tiene ningún síntoma que pueda estar
-                                molestándolo.</p>
-
-                            <p>Ahora, Medicare está siendo proactivo: proporcionando atención entre las visitas al
-                                médico para
-                                asegurarse que sus afecciones están bajo control, está tomando sus medicamentos y no
-                                tiene ningún
-                                síntoma que pueda estar molestándolo.</p>
-
-                            <p>Es un programa gratuito si usted está en Medicaid o tiene un seguro suplementario.Si no,
-                                hay un copago de
-                                alrededor
-                                de $ 8 por mes. Recuerde, este servicio puede ahorrarle visitas a Atención de Urgencia o
-                                a la consulta del Dr.
-                                conectándole a una enfermera. El valor entregado está muy por encima de los $ 8 por
-                                mes.</p>
-
-                            <p>He aquí algunos detalles sobre el programa:</p>
-
-                            <p>
-                            <li>Un encargado de cuidado personal, una enfermera registrada, le hará una rápida llamada
-                                telefónica dos veces al
-                                mes,
-                                para brindarle apoyo, atención personalizada y para ver cómo está usted
-                            </li>
-
-                            <li> También puede dejarnos un mensaje las 24 horas los 7 días de la semana y uno de
-                                nuestros encargados de atención
-                                se
-                                pondrá en contacto con usted en un tiempo razonable
-                            </li>
-
-                            <li> Puede retirarse del programa en cualquier momento que desee. Solo llámenos.</li>
-
-                            <li> Solamente puedes ser parte de un programa de cuidados del Doctor a la vez</li>
-
-                            <p>¿Puede informarle a su doctor que usted aceptó inscribirse en este programa? (Recuerde
-                                que siempre
-                                puede retirarse si no le gusta) </p>
-
-                            <p>
-                                <b>[Si el paciente acepta]</b>
-                                ¡Estupendo!
-                                1-¿Quiere quele llamemos directamente o hay alguien más con el cual quiere que nos
-                                pongamos
-                                en contacto?
-                                2- [Confirme el mejor N° de contacto del paciente, los tiempos preferidos para llamarlo]
-                                3-Una enfermera registrada le llamará en breve del mismo desde el cual lo estoy llamando
-                                [number of practice]. Por favor, guárdelo para que acepte la llamada cuando suene el
-                                teléfono.
-                                ¡Me alegro de haberme conectado! ¡Que tenga un muy buen día!
-                            </p>
-
-                            <p><b>[Si el paciente no acepta, tenga en cuenta esto]:</b> Gracias por su tiempo y le
-                                informaremos a su
-                                médico</p>
-
-                            <p><i>[Ambassador: Please click the appropriate button based on patient’s
-                                answer and follow instructions in subsequent popup forms. Thank you!]</i></p>
-                        </div>
+                        <template v-if="lang === 'EN'">
+                            <copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></copay-en>
+                        </template>
+                        <template v-else>
+                            <copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></copay-es>
+                        </template>
                     </template>
                     <template v-else>
-                        <div v-if="lang === 'EN'">
-                            <p><b>ENGLISH [speak clearly and cheerfully]</b>: Hi this is
-                                {{userFullName}} calling on behalf of
-                                <b>Dr. {{providerFullName}}</b> at <b>{{practice_name}}</b>. I’m calling
-                                for {{name}}. is this {{name}}?</p>
-
-                            <p>How are you doing today?</p>
-
-                            <p>
-                                The reason I’m calling is {{providerFullName}} is starting to work with a new
-                                personalized
-                                care program.
-
-                                {{providerFullName}} thinks it might be helpful for you and wants you to enroll.
-                            </p>
-
-                            <p>
-                                And so what the program is: there would be a registered nurse (RN), who can call you
-                                once or twice a month,
-                                whichever you prefer to check on how you’re doing, or to see if you’re having any new
-                                problems. And then the
-                                nurse would report back to {{providerFullName}} so that s/he would have that information
-                                in his/her records.
-                                This helps the doctor keep up a little better with how you’re doing in between visits
-                                and keeps them updated on your
-                                medications and vitals (such as blood pressures and blood sugars).
-                            </p>
-
-                            <p>
-                                The program is offered through Medicare and it’s no cost if you have supplemental
-                                insurance to cover a small ~$8 copay.
-                                So I was just calling today to check if you would be interested in trying this?
-                                <br><b>[patients then usually have questions...caller may have to reassure patient that
-                                they will still see the
-                                doctor regularly, RN calls are only a supplement to regular care - not a replacement.
-                                ]</b>
-                            </p>
-
-
-                            <p>
-                                <b>[Note: if the patient is hesitant, then stress:]</b>
-                                <br>“It is easy to cancel if you just want to try it for a month or two and see how it
-                                goes. All you would have to do is
-                                just let the nurse know that you don’t want to continue and we will take your name back
-                                off of the list.”
-                            </p>
-
-                            <p>
-                                <b>[if no, “not for me”]:</b>
-
-
-                                <br>
-                                That’s perfectly fine, there’s no pressure to sign up.
-                                This is just a program to help the doctor keep up with you between visits.
-                                <b>[if the patient then becomes curious]</b>
-                                You’re welcome to give it a try and you can cancel at any time. Would you like to try it
-                                out for a month and see how it goes?
-                                This program is available long term, if you think you’d be interested at a later date -
-                                would you like us to call back and check in with you then?”
-                                <br>
-                                <b>[also - provide patient with phone number to call back if they’d like to enroll
-                                    later]
-                                    [mark patient “soft decline” if the patient might want to enroll in the future]
-                                    [mark patient “hard decline” if the patient isn’t interested now nor will they be
-                                    interested in the future]
-                                </b>
-                            </p>
-
-                            <p>
-                                <b>[if patient says yes:]</b>
-                                <br>
-                                The only thing is you can only be a part of one doctor’s care management program at a
-                                time. I just want
-                                to check and make sure that you’re not already signed up for this. If not, then we can
-                                go ahead and enroll you.
-                                Did you prefer that the nurse call you once or twice a month? Are you currently on
-                                dialysis? Are you receiving hospice services?
-
-                                <br>[then collect the rest of the information]:
-
-                                <br>[Enroller/Ambassador should fill out patient information in enrollment sheet /
-                                Confirm patient’s best
-                                contact #, preferred call times, e-mail and address. Also collect any specialist data
-                                from patient]
-                            </p>
-
-                            <p>
-                                <b>[at end of all info collected for “yes”]:</b>
-                                <br>
-                                “That’s all I need for now, The nurse will give you a call for the first time within the
-                                next week and she will
-                                introduce herself to you and give you the number where you can reach her anytime you
-                                need to. They’ll be
-                                calling from the same number I called you from today.”
-                            </p>
-
-                            <p>“Have a great day! Thanks!”</p>
-
-
-                            <p>
-                                <b>[If Caller Reaches Machine, Leave Voice Message:]</b>​ Hi this is
-                                {{userFullName}} calling on behalf of <b>Dr. {{providerFullName}}</b>
-                                at <b>{{practice_name}}</b>. The doctor[s] have invited you to their new
-                                personalized care management program.
-                                Please give us a call at [number Ambassador calling from on page 2] to learn more.
-                                Please note there is
-                                nothing to worry about, this program just lets the Dr. take better care of you between
-                                visits. Again the number is [number Ambassador calling from]
-                            </p>
-                        </div>
-                        <div v-else>
-                            <p>
-                                <b>Speak clearly and cheerfully</b>: Hola, {{ name }} estoy llamando en nombre de
-                                los doctores Dr. {{providerFullName}} de la {{practice_name}}. Cómo estás?
-                            </p>
-
-                            <p>
-                                Soy bien. Los médicos le han invitado a su nuevo programa de gestión de atención
-                                personalizada y es posible que
-                                haya recibido una carta a este efecto.
-                            </p>
-
-                            <p>Dr. {{providerFullName}} piensan que este programa sería muy útil para usted y le
-                                gustaría
-                                que se inscribiera.
-                                Permítame contarle algo sobre este programa y cómo puede ayudarle a mantenerse
-                                saludable?</p>
-
-                            <p>
-                                <b>
-                                    [patients interested usually discuss their conditions here.. be sure to listen​] [if
-                                    patient asks where
-                                    calling
-                                    from, use the practice name in google sheet, e.g., CCN or Ferguson]
-                                </b>
-                            </p>
-
-                            <p>Este es un nuevo programa de atención preventiva de Medicare para ayudarlo a usted y a su
-                                médico a
-                                cuidar mejor de su salud. Medicare ha decidido que su enfoque de la medicina necesitaba
-                                mejoras.
-                                Antes, Medicare era reactivo, a menudo esperaba hasta que los pacientes terminaban en el
-                                hospital
-                                para proporcionarles atención médica, no era bueno para los pacientes y caro para
-                                Medicare.</p>
-
-                            <p>Ahora, Medicare está siendo proactivo: proporcionando atención entre las visitas al
-                                médico para
-                                asegurarse que sus afecciones están bajo control, está tomando sus medicamentos y no
-                                tiene ningún
-                                síntoma que pueda estar molestándolo.</p>
-
-                            <p>He aquí algunos detalles sobre el programa:</p>
-
-                            <p>
-                            <li>Un encargado de cuidado personal, una enfermera registrada, le hará una rápida llamada
-                                telefónica dos veces al
-                                mes,
-                                para brindarle apoyo, atención personalizada y para ver cómo está usted
-                            </li>
-
-                            <li> También puede dejarnos un mensaje las 24 horas los 7 días de la semana y uno de
-                                nuestros encargados de atención
-                                se
-                                pondrá en contacto con usted en un tiempo razonable
-                            </li>
-
-                            <li> Puede retirarse del programa en cualquier momento que desee. Solo llámenos.</li>
-
-                            <li> Solamente puedes ser parte de un programa de cuidados del Doctor a la vez</li>
-
-                            <p>¿Puede informarle a su doctor que usted aceptó inscribirse en este programa? (Recuerde
-                                que siempre
-                                puede retirarse si no le gusta) </p>
-
-                            <p><b>[patients interested usually discuss their conditions here.. be sure to listen​] [if
-                                patient asks where
-                                calling
-                                from, use the practice name in google sheet, e.g., CCN or Ferguson]</b></p>
-
-                            <p><i>[Ambassador: Please click the appropriate button based on patient’s
-                                answer and follow instructions in subsequent popup forms. Thank you!]</i></p>
-                        </div>
+                        <template v-if="lang === 'EN'">
+                            <no-copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></no-copay-en>
+                        </template>
+                        <template v-else>
+                            <no-copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></no-copay-es>
+                        </template>
                     </template>
                 </div>
             </div>
@@ -805,7 +428,8 @@
                         </div>
 
                         <div class="col s6 m12 select-custom">
-                            <label for="rejected_reason_other" class="label">If you selected other, please specify:</label>
+                            <label for="rejected_reason_other" class="label">If you selected other, please
+                                specify:</label>
                             <input class="input-field" name="reason_other" id="rejected_reason_other"/>
                         </div>
 
@@ -880,6 +504,10 @@
 <script>
 
     import {rootUrl} from '../../app.config';
+    import CoPayEn from './call-scripts/copay-en';
+    import NoCoPayEn from './call-scripts/no-copay-en';
+    import CoPayEs from './call-scripts/copay-es';
+    import NoCoPayEs from './call-scripts/no-copay-es';
 
     //Vue.http.headers.common['X-CSRF-TOKEN'] = $('meta[name="csrf-token"]').attr('content');
 
@@ -893,7 +521,12 @@
     export default {
         name: 'enrollment-dashboard',
         props: [],
-        components: {},
+        components: {
+            'copay-en': CoPayEn,
+            'no-copay-en': NoCoPayEn,
+            'copay-es': CoPayEs,
+            'no-copay-es': NoCoPayEs,
+        },
         computed: {
             enrolleeId: function () {
                 return enrollee.id;
