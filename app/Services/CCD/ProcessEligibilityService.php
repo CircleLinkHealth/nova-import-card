@@ -503,7 +503,9 @@ class ProcessEligibilityService
         $filterLastEncounter,
         $filterInsurance,
         $filterProblems,
-        $filePath = null
+        $filePath = null,
+        $filterProblems,
+        $finishedReadingFile = false
     ) {
         return $this->createBatch(EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE, $practiceId, [
             'folder'              => $folder,
@@ -512,7 +514,7 @@ class ProcessEligibilityService
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
-            'finishedReadingFile' => false, //did the system read all lines from the file and create eligibility jobs?
+            'finishedReadingFile' => (boolean)$finishedReadingFile, //did the system read all lines from the file and create eligibility jobs?
         ]);
     }
 
