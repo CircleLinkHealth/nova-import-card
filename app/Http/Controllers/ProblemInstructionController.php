@@ -166,7 +166,7 @@ class ProblemInstructionController extends Controller
             }
         }
         catch (Exception $ex) {
-            return $this->error($x);
+            return $this->error($ex);
         }
     }
     
@@ -189,7 +189,7 @@ class ProblemInstructionController extends Controller
             }
         }
         catch (Exception $ex) {
-            return $this->error($x);
+            return $this->error($ex);
         }
     }
 }

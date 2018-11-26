@@ -1034,6 +1034,23 @@ if ( ! function_exists('read_file_using_generator')) {
         fclose($handle);
     }
 }
+if ( ! function_exists('getEhrReportWritersFolderUrl')) {
+
+    function getEhrReportWritersFolderUrl(){
+
+        $clh = collect(Storage::drive('google')->listContents('/', true));
+        //get path for ehr-data-from-report-writers
+        $reportWritersFolder      = $clh->where('type', '=', 'dir')
+                                        ->where('filename', '=', "ehr-data-from-report-writers")
+                                        ->first();
+        if (! $reportWritersFolder){
+            return null;
+        }
+
+        return Storage::drive('google')->url($reportWritersFolder['path']);
+    }
+}
+
 
 if ( ! function_exists('format_bytes')) {
     function format_bytes($bytes, $precision = 2)

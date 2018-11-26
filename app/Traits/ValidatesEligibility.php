@@ -9,8 +9,10 @@
 namespace App\Traits;
 
 
+use App\EligibilityJob;
 use App\Rules\EligibilityPhones;
 use App\Rules\EligibilityProblems;
+use Illuminate\Support\Collection;
 use Validator;
 
 trait ValidatesEligibility
@@ -64,12 +66,6 @@ trait ValidatesEligibility
         ];
 
         return $row;
-    }
-
-    //to perform validation for the whole csv?
-    public function validateCsv()
-    {
-
     }
 
     public function validateJsonStructure($row){
@@ -126,6 +122,25 @@ trait ValidatesEligibility
             "medications",
             "allergies",
         ];
+    }
+
+    public function saveErrorsOnEligibilityJob(EligibilityJob $job, Collection $errors){
+        //check keys and update job
+
+        if ($errors->isNotEmpty() && ! ($errors->count() == 1 && $errors->first() == 'structure')){
+            $job->invalid_data = true ;
+        }
+        //check for invalid data
+        $job->invalid_structure = $errors->contains('structure') ?? false;
+        $job->invalid_mrn = $errors->contains('mrn') ?? false;
+        $job->invalid_first_name = $errors->contains('first_name') ?? false;
+        $job->invalid_last_name = $errors->contains('last_name') ?? false;
+        $job->invalid_dob = $errors->contains('dob') ?? false;
+        $job->invalid_problems = $errors->contains('problems') ?? false;
+        $job->invalid_phones = $errors->contains('phones') ?? false;
+
+        $job->save();
+
     }
 
 

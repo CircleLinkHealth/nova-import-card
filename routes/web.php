@@ -94,6 +94,17 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'EhrReportWriterController@validateJson',
             'as'   => 'report-writer.validate'
         ]);
+
+        Route::post('submit', [
+            'uses' => 'EhrReportWriterController@submitFile',
+            'as'   => 'report-writer.submit'
+        ]);
+
+        Route::post('notify', [
+            'uses' => 'EhrReportWriterController@notifyReportWriter',
+            'as'   => 'report-writer.notify'
+        ]);
+
     });
 
     /**
