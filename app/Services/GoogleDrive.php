@@ -16,8 +16,8 @@ class GoogleDrive
     /**
      * Get file read stream handle
      *
-     * @param $fileName
-     * @param $folder
+     * @param $fileName | The filename with extention as it appears on Google Drive. eg. `CLH.json`
+     * @param $folder | The Google Drive folder ID. Get it from the url eg https://drive.google.com/drive/folders/{folder id}
      *
      * @return false|resource
      * @throws \League\Flysystem\FileNotFoundException

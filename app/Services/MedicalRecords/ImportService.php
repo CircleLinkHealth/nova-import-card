@@ -71,10 +71,10 @@ class ImportService
         $imr = $ccda->import();
 
         $update = Ccda::whereId($ccdaId)
-            ->update([
-                'status'   => Ccda::QA,
-                'imported' => true,
-            ]);
+                      ->update([
+                          'status'   => Ccda::QA,
+                          'imported' => true,
+                      ]);
 
         $response->success = true;
         $response->message = "CCDA successfully imported.";
@@ -198,11 +198,25 @@ class ImportService
         return null;
     }
 
+    /**
+     * @param Enrollee $enrollee
+     *
+     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
+     * @throws \Exception
+     */
     public function importPHXEnrollee(Enrollee $enrollee)
     {
         $phx     = Practice::whereName('phoenix-heart')->firstOrFail();
         $patient = $enrollee->toArray();
 
-        $this->createTabularMedicalRecordAndImport($patient, $phx);
+        $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
+
+        if ( ! $imr) {
+            return null;
+        }
+
+        $enrollee->medical_record_type = $imr->medical_record_type;
+        $enrollee->medical_record_id   = $imr->medical_record_id;
+        $enrollee->save();
     }
 }
