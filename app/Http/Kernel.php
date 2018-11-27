@@ -2,7 +2,7 @@
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
-use App\Http\Middleware\AuthyMiddleware;
+use App\Http\Middleware\HasPassed2FA;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
@@ -47,7 +47,7 @@ class Kernel extends HttpKernel
             SubstituteBindings::class,
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
-            AuthyMiddleware::class,
+            HasPassed2FA::class,
         ],
         'sessions' => [
             StartSession::class,
