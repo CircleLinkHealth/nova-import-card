@@ -13,8 +13,8 @@ class AddApproveOwnCareplansToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('approve_own_care_plans')->after('is_auto_generated')->default(0);
+        Schema::table('provider_info', function (Blueprint $table) {
+            $table->boolean('approve_own_care_plans')->after('specialty')->default(0);
         });
     }
 
@@ -25,7 +25,7 @@ class AddApproveOwnCareplansToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('provider_info', function (Blueprint $table) {
             $table->dropColumn('approve_own_care_plans');
         });
     }

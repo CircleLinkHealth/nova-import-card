@@ -2662,18 +2662,22 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
     public function patientsPendingApproval()
     {
+
+        $approveOwnCarePlans = $this->providerInfo ? $this->providerInfo->approve_own_care_plans : 0;
+
+
         return User::intersectPracticesWith($this)
                    ->ofType('participant')
                    ->whereHas('patientInfo')
                    ->whereHas('carePlan', function ($q) {
                        $q->whereIn('status', [CarePlan::QA_APPROVED]);
                    })
-                   ->whereHas('careTeamMembers', function ($q) {
+                   ->whereHas('careTeamMembers', function ($q)use ($approveOwnCarePlans) {
                        $q->where([
                            ['type', '=', CarePerson::BILLING_PROVIDER],
                            ['member_user_id', '=', $this->id],
                        ])
-                         ->when($this->approve_own_care_plans == 0, function($q){
+                         ->when( ! $approveOwnCarePlans, function($q) use ($approveOwnCarePlans){
                          $q->orWhere(function ($q) {
                              $q->whereHas('user', function ($q) {
                                  $q->whereHas('forwardAlertsTo', function ($q) {
