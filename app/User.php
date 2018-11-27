@@ -329,6 +329,12 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'remember_token',
         'last_login',
         'is_online',
+        'country_code',
+        'phone_number',
+        'authy_status',
+        'authy_id',
+        'authy_method',
+        'is_authy_enabled',
     ];
 
     protected $hidden = [
@@ -733,7 +739,8 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         $this->display_name             = $this->getFullName();
     }
 
-    public function getFirstName(){
+    public function getFirstName()
+    {
         return ucfirst(strtolower($this->first_name));
     }
 
@@ -1902,19 +1909,19 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
 
         //dd($randomUserInfo);
         // set random data
-        $user                    = $this;
+        $user = $this;
         $user->setFirstName($faker->firstName);
         $user->setLastName('Z-' . $faker->lastName);
-        $user->username          = $faker->userName;
-        $user->password          = $faker->password;
-        $user->email             = $faker->freeEmail;
+        $user->username = $faker->userName;
+        $user->password = $faker->password;
+        $user->email    = $faker->freeEmail;
         $user->setMRN(rand());
         $user->setGender('M');
-        $user->address           = $faker->address;
-        $user->address2          = $faker->secondaryAddress;
-        $user->city              = $faker->city;
-        $user->state             = $faker->stateAbbr;
-        $user->zip               = $faker->postcode;
+        $user->address  = $faker->address;
+        $user->address2 = $faker->secondaryAddress;
+        $user->city     = $faker->city;
+        $user->state    = $faker->stateAbbr;
+        $user->zip      = $faker->postcode;
         $user->setPhone('111-234-5678');
         $user->setWorkPhoneNumber('222-234-5678');
         $user->setMobilePhoneNumber('333-234-5678');
@@ -2195,10 +2202,10 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                         //$query -> Practice Model
                         return $query->whereHas('patients', function ($innerQuery) {
                             //$innerQuery -> User Model
-                           return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
-                               //$innerInnerQuery -> Patient model
-                               return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
-                           });
+                            return $innerQuery->whereHas('patientInfo', function ($innerInnerQuery) {
+                                //$innerInnerQuery -> Patient model
+                                return $innerInnerQuery->where('ccm_status', '=', 'enrolled');
+                            });
                         });
                     })
                     ->withTimestamps();
