@@ -18,9 +18,9 @@ class AuthyController extends Controller
         $this->service = $service;
     }
 
-    public function index()
+    public function showVerificationTokenForm()
     {
-
+        return view('auth.authy');
     }
 
     /**

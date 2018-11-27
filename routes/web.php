@@ -128,7 +128,7 @@ Route::group(['middleware' => 'auth'], function () {
                     'as'   => 'user.2fa.approval-request.create',
                 ]);
 
-                Route::post('checkStatus', [
+                Route::post('check-status', [
                     'uses' => 'AuthyController@checkApprovalRequestStatus',
                     'as'   => 'user.2fa.approval-request.check',
                 ]);
