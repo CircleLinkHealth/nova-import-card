@@ -48,6 +48,7 @@ use Laravel\Passport\HasApiTokens;
 use Michalisantoniou6\Cerberus\Traits\CerberusSiteUserTrait;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Storage;
 
 /**
  * App\User
@@ -3196,4 +3197,5 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
     {
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
+
 }

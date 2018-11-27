@@ -273,6 +273,7 @@
                             </a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ route('eligibility.batches.index') }}">Eligibility</a></li>
+                                <li><a href="{{ getEhrReportWritersFolderUrl() }}">EHR Report Writers Google Folder</a></li>
                             </ul>
                         </li>
                     </ul>

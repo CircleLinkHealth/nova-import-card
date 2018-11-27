@@ -26,8 +26,9 @@ class EligibilityBatch extends BaseModel
      * @var array
      */
     protected $casts = [
-        'options' => 'array',
-        'stats'   => 'array',
+        'options'          => 'array',
+        'stats'            => 'array',
+        'validation_stats' => 'array',
     ];
 
     protected $fillable = [
@@ -167,5 +168,28 @@ class EligibilityBatch extends BaseModel
                                          : $result['outcome'] => $result['total'],
                                  ];
                              });
+    }
+
+    public function initiatorUser()
+    {
+        return $this->hasOne(User::class, 'id', 'initiator_id');
+    }
+
+    public function getValidationStats()
+    {
+        $validationStats = [
+            'total'             => 0,
+            'invalid_structure' => 0,
+            'invalid_data'      => 0,
+            'mrn'               => 0,
+            'first_name'        => 0,
+            'last_name'         => 0,
+            'dob'               => 0,
+            'problems'          => 0,
+            'phones'            => 0,
+        ];
+
+        return $validationStats;
+
     }
 }
