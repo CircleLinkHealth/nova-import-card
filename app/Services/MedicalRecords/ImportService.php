@@ -211,6 +211,10 @@ class ImportService
 
         $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
 
+        if ( ! $imr) {
+            return null;
+        }
+
         $enrollee->medical_record_type = $imr->medical_record_type;
         $enrollee->medical_record_id   = $imr->medical_record_id;
         $enrollee->save();

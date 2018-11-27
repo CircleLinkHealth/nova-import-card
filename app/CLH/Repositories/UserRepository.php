@@ -2,6 +2,7 @@
 
 use App\CareAmbassador;
 use App\CarePlan;
+use App\EhrReportWriterInfo;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -13,6 +14,7 @@ use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
@@ -61,6 +63,11 @@ class UserRepository
         // care ambassador info
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
+        }
+
+        // ehr report writer info
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
         //Add Email Notification
@@ -172,6 +179,13 @@ class UserRepository
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
+        }
+
+        if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
+            $ehrReportWriterInfo          = new EhrReportWriterInfo;
+            $ehrReportWriterInfo->user_id = $user->id;
+            $ehrReportWriterInfo->save();
+            $user->load('ehrReportWriterInfo');
         }
     }
 
@@ -327,21 +341,31 @@ class UserRepository
         ParameterBag $params
     ) {
 
-        if ($user->careAmbassador != null) {
-            $user->careAmbassador->hourly_rate    = $params->get('hourly_rate');
-            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
-                ? 1
-                : 0;
-            $user->careAmbassador->save();
-        } else {
-            $ambassador = CareAmbassador::create([
-                'user_id' => $user->id,
+        CareAmbassador::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'hourly_rate'    => $params->get('hourly_rate')
+                    ?: null,
+                'speaks_spanish' => $params->get('speaks_spanish') == 'on'
+                    ? 1
+                    : 0,
             ]);
+    }
 
-            $ambassador->save();
+    public function saveOrUpdateEhrReportWriterInfo(
+        User $user,
+        ParameterBag $params
+    ) {
 
-            $user->careAmbassador()->save($ambassador);
-        }
+        $folderPath = $this->saveEhrReportWriterFolder($user);
+
+        EhrReportWriterInfo::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'google_drive_folder_path' => $folderPath,
+            ]
+        );
+
     }
 
     /**
@@ -445,6 +469,10 @@ class UserRepository
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
         return $user;
     }
 
@@ -466,5 +494,47 @@ class UserRepository
             'patient_id' => $user->id,
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
+    }
+
+    public function saveEhrReportWriterFolder($user)
+    {
+
+        $clh = collect(Storage::drive('google')->listContents('/', true));
+        //get path for ehr-data-from-report-writers
+        $ehr = $clh->where('type', '=', 'dir')
+                   ->where('filename', '=', "ehr-data-from-report-writers")
+                   ->first();
+
+        if ( ! $ehr) {
+            Storage::drive('google')->makeDirectory("ehr-data-from-report-writers");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        }
+
+        $ehrContents = collect(Storage::drive('google')->listContents("{$ehr['path']}"));
+        //find ehr report writer folder
+        $writerFolder = $ehrContents->where('type', '=', 'dir')
+                                    ->where('filename', '=', "report-writer-{$user->id}")
+                                    ->first();
+        if ( ! $writerFolder) {
+            Storage::drive('google')->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        } else {
+            $service    = Storage::drive('google')->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+//        $permission->setAllowFileDiscovery(false);
+            $permission->setEmailAddress($user->email);
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            return $writerFolder['path'];
+        }
+
+
     }
 }
