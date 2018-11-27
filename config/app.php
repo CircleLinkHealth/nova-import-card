@@ -5,7 +5,7 @@ use App\Providers\EmailArrayValidatorServiceProvider;
 use App\Providers\FaxServiceProvider;
 use App\Providers\GoogleDriveServiceProvider;
 use App\Providers\ObserversServiceProvider;
-use App\Providers\TwoFactorAuthenticationServiceProvider;
+use App\Providers\AuthyServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 use App\View\Composers\ProviderUITimerComposer;
 use App\View\Composers\SAAS\Admin\ManageInternalUser;
@@ -234,7 +234,7 @@ return [
         GoogleDriveServiceProvider::class,
         ManageInternalUser::class,
         LynX39\LaraPdfMerger\PdfMergerServiceProvider::class,
-        TwoFactorAuthenticationServiceProvider::class,
+        AuthyServiceProvider::class,
     ],
 
     /*

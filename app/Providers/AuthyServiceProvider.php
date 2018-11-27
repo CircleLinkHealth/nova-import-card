@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use App\Contracts\TwoFactorAuthenticationApi;
 use Authy\AuthyApi;
 use Illuminate\Support\ServiceProvider;
 
-class TwoFactorAuthenticationServiceProvider extends ServiceProvider
+class AuthyServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -25,7 +24,7 @@ class TwoFactorAuthenticationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(TwoFactorAuthenticationApi::class, function() {
+        $this->app->bind(AuthyApi::class, function () {
             return new AuthyApi(config('services.authy.api_key'));
         });
     }
