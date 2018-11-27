@@ -71,6 +71,7 @@ const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker"
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
+const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
 import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
@@ -113,6 +114,7 @@ Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
 Vue.component('add-task-modal', AddTaskModalComponent);
 Vue.component('user-account-settings', UserAccountSettings);
+Vue.component('authy-perform-2fa', AuthyPerform2FA);
 
 const App = new Vue({
     el: '#app',
