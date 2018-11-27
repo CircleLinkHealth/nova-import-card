@@ -37,7 +37,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
+        'web'      => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -47,7 +47,10 @@ class Kernel extends HttpKernel
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
         ],
-        'api' => [
+        'sessions' => [
+            StartSession::class,
+        ],
+        'api'      => [
             'throttle:60,1',
             'bindings',
         ],
