@@ -149,6 +149,12 @@ if (isset($patient)) {
                             </li>
                         @endif
 
+                        <li>
+                            <a href="{{ route('user.settings.manage') }}">
+                                Account Settings
+                            </a>
+                        </li>
+
                         <li><a href="{{ url('/auth/logout') }}">
                                 Logout
                             </a>
