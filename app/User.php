@@ -325,6 +325,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'zip',
         'timezone',
         'is_auto_generated',
+        'approve_own_care_plans',
         'program_id',
         'remember_token',
         'last_login',
@@ -2672,19 +2673,18 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
                            ['type', '=', CarePerson::BILLING_PROVIDER],
                            ['member_user_id', '=', $this->id],
                        ])
-                         ->orWhere(function ($q) {
+                         ->when($this->approve_own_care_plans == 0, function($q){
+                         $q->orWhere(function ($q) {
                              $q->whereHas('user', function ($q) {
                                  $q->whereHas('forwardAlertsTo', function ($q) {
                                      $q->where('contactable_id', $this->id)
-                                         //should this be whereIn instead? The logic here is to bring the patients where the logged in user has been sent an approval email.
-                                         // The id check above is then required.
                                        ->orWhereIn('name', [
                                            'forward_careplan_approval_emails_instead_of_provider',
                                            'forward_careplan_approval_emails_in_addition_to_provider',
                                        ]);
                                  });
                              });
-                         });
+                         });});
                    })
                    ->with('primaryPractice')
                    ->with([
