@@ -7,6 +7,18 @@ use Closure;
 class AuthyMiddleware
 {
     /**
+     * This middleware will be applied to all routes, except the ones below
+     *
+     * @var array
+     */
+    protected $except = [
+        'user.2fa.show.token.form',
+        'user.logout',
+        'user.2fa.approval-request.create',
+        'user.2fa.approval-request.check',
+    ];
+
+    /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request $request
@@ -21,7 +33,8 @@ class AuthyMiddleware
 //            return $next($request);
 //        }
 
-        if (\Route::currentRouteName() !== 'user.2fa.show.token.form' && optional(auth()->user())->is_authy_enabled && ! \Session::has('authy_verified')) {
+        if ( ! in_array(\Route::currentRouteName(),
+                $this->except) && optional(auth()->user())->is_authy_enabled && ! \Session::has('authy_verified')) {
             return redirect()->route('user.2fa.show.token.form');
         }
 

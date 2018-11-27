@@ -50,7 +50,10 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
     ], function () {
         Auth::routes();
 
-        Route::get('logout', 'Auth\LoginController@logout');
+        Route::get('logout', [
+            'uses' => 'Auth\LoginController@logout',
+            'as'   => 'user.logout',
+        ]);
         Route::get('inactivity-logout', 'Auth\LoginController@inactivityLogout');
     });
 });
@@ -84,7 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.file.download',
     ]);
 
-    Route::group(['prefix' => 'ehr-report-writer'], function(){
+    Route::group(['prefix' => 'ehr-report-writer'], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
             'as'   => 'report-writer.dashboard',
@@ -92,43 +95,52 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('validate', [
             'uses' => 'EhrReportWriterController@validateJson',
-            'as'   => 'report-writer.validate'
+            'as'   => 'report-writer.validate',
         ]);
 
         Route::post('submit', [
             'uses' => 'EhrReportWriterController@submitFile',
-            'as'   => 'report-writer.submit'
+            'as'   => 'report-writer.submit',
         ]);
 
         Route::post('notify', [
             'uses' => 'EhrReportWriterController@notifyReportWriter',
-            'as'   => 'report-writer.notify'
+            'as'   => 'report-writer.notify',
         ]);
 
+    });
+
+    Route::group(['prefix' => '2fa'], function () {
+        Route::get('', [
+            'uses' => 'AuthyController@showVerificationTokenForm',
+            'as'   => 'user.2fa.show.token.form',
+        ]);
     });
 
     /**
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => '2fa'], function () {
+            Route::group(['prefix' => 'approval-request'], function () {
+                Route::post('create', [
+                    'uses' => 'AuthyController@createApprovalRequest',
+                    'as'   => 'user.2fa.approval-request.create',
+                ]);
+
+                Route::post('checkStatus', [
+                    'uses' => 'AuthyController@checkApprovalRequestStatus',
+                    'as'   => 'user.2fa.approval-request.check',
+                ]);
+            });
+        });
+
         Route::group(['prefix' => 'account-settings'], function () {
             Route::group(['prefix' => '2fa'], function () {
                 Route::post('', [
                     'uses' => 'AuthyController@store',
                     'as'   => 'user.2fa.store',
                 ]);
-
-                Route::group(['prefix' => 'approval-request'], function () {
-                    Route::post('create', [
-                        'uses' => 'AuthyController@createApprovalRequest',
-                        'as'   => 'user.2fa.onetouch.create',
-                    ]);
-
-                    Route::post('checkStatus', [
-                        'uses' => 'AuthyController@checkApprovalRequestStatus',
-                        'as'   => 'user.2fa.onetouch.check',
-                    ]);
-                });
             });
         });
 
