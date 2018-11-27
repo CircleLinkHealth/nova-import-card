@@ -1,0 +1,141 @@
+<template>
+    <div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Two Factor Authentication
+                    <span class="loader-right">
+                    <loader v-show="is_loading"></loader>
+                </span>
+                </h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-4 col-sm-4 col-md-4">
+                        <div class="form-group">
+                            <select v-model="country_code" id="country_code" class="form-control input-sm"
+                                    :disabled="is_loading">
+                                <option value="1" selected>USA (+1)</option>
+                                <option value="357">Cyprus (+357)</option>
+                                <option value="33">France (+33)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-sm-8 col-md-8">
+                        <div class="form-group">
+                            <input type="tel" v-model="phone_number" class="form-control input-sm"
+                                   :disabled="is_loading"
+                                   placeholder="Phone Number">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="method">Authenticate using</label>
+
+                            <span class="info minimum-padding"
+                                  data-tooltip="Everytime you log in, a password will be sent to you using the method you select below. We recommend using Authy App, which you can download from the AppStore or PlayStore.">
+                                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                        </span>
+
+
+                            <select v-model="method" id="method" class="form-control input-sm" :disabled="is_loading">
+                                <option value="app" selected>Authy App</option>
+                                <option value="sms">SMS</option>
+                                <option value="phone">Phone Call</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="is_2fa_enabled">Enable 2FA</label>
+                            <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled" :disabled="is_loading"
+                                   class="form-control input-sm" style="display: inline-block;">
+                        </div>
+                    </div>
+                </div>
+
+                <div @click="submitForm" :disabled="is_loading" class="btn btn-info btn-block">
+                    Save
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import LoaderComponent from './loader';
+    import {rootUrl} from "../app.config";
+    import {addNotification} from '../store/actions'
+    import {mapActions} from 'vuex'
+
+    export default {
+        name: 'settings-2fa',
+        props: [
+            'user',
+        ],
+        components: {
+            'loader': LoaderComponent,
+        },
+        data() {
+            return {
+                country_code: this.user.country_code ? this.user.country_code : '1',
+                phone_number: this.user.phone_number ? this.user.phone_number : '',
+                method: this.user.authy_method ? this.user.authy_method : 'app',
+                is_2fa_enabled: !!this.user.is_authy_enabled,
+                is_loading: false,
+            }
+        },
+        methods: Object.assign(mapActions(['addNotification']), {
+            submitForm() {
+                this.is_loading = true;
+
+                return this.axios.post(rootUrl('api/account-settings/2fa'), {
+                    country_code: this.country_code,
+                    phone_number: this.phone_number,
+                    method: this.method,
+                    is_2fa_enabled: this.is_2fa_enabled,
+                })
+                    .then((response, status) => {
+                        if (response) {
+                            this.is_loading = false;
+
+                            console.log(response)
+
+                            this.addNotification({
+                                title: "All done!",
+                                text: "2FA Settings updated successfully",
+                                type: "success",
+                                timeout: true
+                            })
+                        }
+                    }).catch(err => {
+                        this.is_loading = false;
+
+                        console.log(err)
+
+                        this.addNotification({
+                            title: 'Error!',
+                            text: 'Improve this error message before release.',
+                            type: "danger",
+                            timeout: false
+                        })
+                    });
+            }
+        }),
+        mounted() {
+
+        }
+    }
+</script>
+<style>
+    .loader-right {
+        margin-top: -4px;
+        float: right;
+    }
+</style>
