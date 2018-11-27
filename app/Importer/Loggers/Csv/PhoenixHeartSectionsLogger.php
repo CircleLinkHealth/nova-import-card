@@ -24,8 +24,7 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
     {
         parent::__construct($tmr, $practice);
 
-        $this->lastPhxImportDate = PhoenixHeartProblem::orderBy('created_at', 'desc')
-                                                      ->firstOrFail()->created_at->toDateString();
+        $this->lastPhxImportDate = PhoenixHeartProblem::orderBy('created_at', 'desc')->firstOrFail()->created_at->toDateTimeString();
     }
 
     public function logDemographicsSection(): MedicalRecordLogger
