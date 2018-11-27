@@ -111,6 +111,27 @@ Route::group(['middleware' => 'auth'], function () {
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => 'account-settings'], function () {
+            Route::group(['prefix' => '2fa'], function () {
+                Route::post('', [
+                    'uses' => 'AuthyController@store',
+                    'as'   => 'user.2fa.store',
+                ]);
+
+                Route::group(['prefix' => 'approval-request'], function () {
+                    Route::post('create', [
+                        'uses' => 'AuthyController@createApprovalRequest',
+                        'as'   => 'user.2fa.onetouch.create',
+                    ]);
+
+                    Route::post('checkStatus', [
+                        'uses' => 'AuthyController@checkApprovalRequestStatus',
+                        'as'   => 'user.2fa.onetouch.check',
+                    ]);
+                });
+            });
+        });
+
         Route::group(['prefix' => 'admin'], function () {
 
             //the new calls route that uses calls-view table
@@ -631,6 +652,13 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
             'as'   => 'patient.demographics.store',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
+
+        Route::group(['prefix' => 'settings'], function () {
+            Route::get('', [
+                'uses' => 'UserSettingsController@show',
+                'as'   => 'user.settings.manage',
+            ]);
+        });
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
