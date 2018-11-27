@@ -500,11 +500,7 @@ class UserRepository
     {
         $cloudDisk = Storage::drive('google');
 
-        $clh = collect($cloudDisk->listContents('/', true));
-        //get path for ehr-data-from-report-writers
-        $ehr = $clh->where('type', '=', 'dir')
-                   ->where('filename', '=', "ehr-data-from-report-writers")
-                   ->first();
+        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
         if ( ! $ehr) {
             $cloudDisk->makeDirectory("ehr-data-from-report-writers");
@@ -513,11 +509,8 @@ class UserRepository
             return $path;
         }
 
-        $ehrContents = collect($cloudDisk->listContents("{$ehr['path']}"));
-        //find ehr report writer folder
-        $writerFolder = $ehrContents->where('type', '=', 'dir')
-                                    ->where('filename', '=', "report-writer-{$user->id}")
-                                    ->first();
+        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+
         if ( ! $writerFolder) {
             $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
             $path = $this->saveEhrReportWriterFolder($user);

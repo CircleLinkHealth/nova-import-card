@@ -1051,6 +1051,23 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     }
 }
 
+if ( ! function_exists('getGoogleDirectoryByName')) {
+
+    function getGoogleDirectoryByName($name){
+
+        $clh = collect(Storage::drive('google')->listContents('/', true));
+
+        $directory      = $clh->where('type', '=', 'dir')
+                                        ->where('filename', '=', $name)
+                                        ->first();
+        if (! $directory){
+            return null;
+        }
+
+        return $directory;
+    }
+}
+
 
 if ( ! function_exists('format_bytes')) {
     function format_bytes($bytes, $precision = 2)

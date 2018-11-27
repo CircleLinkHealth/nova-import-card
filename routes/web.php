@@ -90,6 +90,12 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'report-writer.dashboard',
         ]);
 
+        Route::get('download-template/{name}', [
+            'uses' => 'EhrReportWriterController@downloadCsvTemplate',
+            'as'   => 'report-writer.download-template',
+        ]);
+
+
         Route::post('validate', [
             'uses' => 'EhrReportWriterController@validateJson',
             'as'   => 'report-writer.validate'

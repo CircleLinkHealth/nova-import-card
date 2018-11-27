@@ -19,9 +19,9 @@
             <p>The date must be in one of the 3 formats below.</p>
         </div>
         <div class="col-md-12">
-            <a class="btn btn-info" href="{{route('download', 'Single_Fields-Sheet1.csv')}}">Download single field CSV
+            <a class="btn btn-info" href="{{route('report-writer.download-template', ['name' => 'Single Fields'])}}">Download single field CSV
                 Template</a>
-            <a class="btn btn-info" href="{{route('download', 'Numbered_Fields-Sheet1.csv')}}">Download many fields CSV
+            <a class="btn btn-info" href="{{route('report-writer.download-template', ['name' => 'Numbered Fields'])}}">Download many fields CSV
                 Template</a>
             <a class="btn btn-info" href="https://gist.github.com/michalisantoniou6/853740eff3ed58814a89d12c922840c3">JSON Template</a>
         </div>
