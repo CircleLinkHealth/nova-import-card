@@ -28,6 +28,11 @@ class UpdateUserLoginInfo
     {
         $event->user->last_login = Carbon::now()->toDateTimeString();
         $event->user->is_online  = true;
+
+        if (isAllowedToSee2FA($event->user) && $event->user->authy_id && ! $event->user->is_authy_enabled) {
+            $event->user->is_authy_enabled = true;
+        }
+
         $event->user->save();
     }
 }
