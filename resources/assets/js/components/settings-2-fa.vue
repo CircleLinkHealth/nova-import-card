@@ -49,7 +49,7 @@
 
 
                             <select v-model="method" id="method" class="form-control input-sm" :disabled="is_loading">
-                                <option value="app" selected>Authy App</option>
+                                <option value="app" selected>Authy App (recommended)</option>
                                 <option value="sms">SMS</option>
                                 <option value="phone">Phone Call</option>
                             </select>
