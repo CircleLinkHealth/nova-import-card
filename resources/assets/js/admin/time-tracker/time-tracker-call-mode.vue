@@ -1,24 +1,27 @@
 <template>
-    <!--<span class="call-mode" v-if="!noDisplay">-->
-    <!--<button class="btn btn-primary" type="button"-->
-    <!--@click="enterCallMode" v-if="Number(patientId) && (callMode === false)">-->
-    <!--<span>Start Call Mode</span>-->
-    <!--</button>-->
-    <!--<button class="btn btn-danger" type="button"-->
-    <!--@click="exitCallMode" v-if="Number(patientId) && (callMode === true)">-->
-    <!--<span>End Call Mode</span>-->
-    <!--</button>-->
-    <!--<loader v-if="(callMode === null) || loaders.callMode"></loader>-->
-    <!--</span>-->
-    <span class="call-mode">
-        <button class="btn" :class="buttonClass" type="button"
-                @click="callButtonClick">
-            <span>{{buttonText}}</span>
-        </button>
-    </span>
+    <div>
+        <span v-if="twilioEnabled" class="call-mode">
+            <button class="btn" :class="buttonClass" type="button"
+                    @click="callButtonClick">
+                <span>{{buttonText}}</span>
+            </button>
+        </span>
+        <span v-else class="call-mode">
+            <button class="btn btn-primary" type="button"
+                    @click="enterCallMode" v-if="Number(patientId) && (callMode === false)">
+                <span>Start Call Mode</span>
+            </button>
+            <button class="btn btn-danger" type="button"
+                    @click="exitCallMode" v-if="Number(patientId) && (callMode === true)">
+                <span>End Call Mode</span>
+            </button>
+            <loader v-if="(callMode === null) || loaders.callMode"></loader>
+        </span>
+    </div>
 </template>
 
 <script>
+    import EventBus from './comps/event-bus'
     import LoaderComponent from '../../components/loader'
     import {rootUrl} from "../../app.config";
     import {sendRequest, registerHandler} from "../../components/bc-job-manager";
@@ -27,7 +30,7 @@
 
     export default {
         props: {
-            noDisplay: Boolean,
+            twilioEnabled: Boolean,
             patientId: Number
         },
         computed: {},
@@ -133,16 +136,41 @@
                     self.checkForCallStatus();
                     return Promise.resolve({});
                 });
+            },
+            //for web socket call mode
+            enterCallMode(e) {
+                if (e) {
+                    e.preventDefault()
+                }
+                this.loaders.callMode = true
+                EventBus.$emit('tracker:call-mode:enter')
+            },
+            //for web socket call mode
+            exitCallMode(e) {
+                if (e) {
+                    e.preventDefault()
+                }
+                this.loaders.callMode = true
+                EventBus.$emit('tracker:call-mode:exit')
             }
         },
         created() {
-          self = this;
+            self = this;
         },
         mounted() {
             self.registerBroadcastChannelHandlers();
 
             //handle case when patient page is refreshed
             self.checkForCallStatus();
+
+            //if twilio is enabled, web socket server is notified through
+            //the call-number widget (which also makes the calls)
+            if (!this.twilioEnabled) {
+                EventBus.$on('server:call-mode', (callMode) => {
+                    this.callMode = callMode
+                    this.loaders.callMode = false
+                })
+            }
         }
     }
 </script>

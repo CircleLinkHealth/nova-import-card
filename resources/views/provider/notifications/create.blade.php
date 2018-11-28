@@ -46,6 +46,17 @@
             </div>
 
             <div class="row">
+                <div class="input-field col s12"><h6>Twilio</h6></div>
+
+                <div class="input-field col s6">
+                    <input name="settings[twilio_enabled]" type="checkbox"
+                           id="twilio_enabled"
+                           value="1" @if($practiceSettings->twilio_enabled){{'checked'}}@endif>
+                    <label for="twilio_enabled">Use Twilio for Calls</label>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="input-field col s12"><h6>Direct Mail Notifications</h6></div>
 
                 <div class="input-field col s6">
