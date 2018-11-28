@@ -17,13 +17,13 @@
                     <div class="col-md-12">
                         <div v-if="isApp && checkPollHandler">
                             Please use OneTouch in the app to complete the login process.
-                            <a href="https://authy.com/download/" target="_blank">Don't have the app? Click here</a>
+                            <br><a href="https://authy.com/download/" target="_blank">Don't have the app? Click here</a>
                         </div>
                         <div v-else>
                             <input type="text" v-model="token" id="token" class="form-control input-sm"
                                    placeholder="Enter verification token.">
 
-                            <div style="padding-top: 10%;">
+                            <div class="margin-top-10">
                                 <div @click="verifyToken" :disabled="isLoading" class="btn btn-info btn-block">
                                     Verify Token
                                 </div>
@@ -34,14 +34,14 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div v-if="!showOtherMethods" @click="showOtherMethods = true" class="btn btn-default" style="margin-top: 6%;">Try other Methods</div>
+                        <div v-if="!showOtherMethods" @click="showOtherMethods = true" class="btn btn-default margin-top-10">Try other Methods</div>
 
-                        <div v-if="!authyMethod || showOtherMethods" style="padding-top: 3%;">
-                            <a class="block" href="https://authy.com/download/" target="_blank">Don't have the app? Click here to get it.</a>
-                            <a class="block" @click="sendSms">
+                        <div v-if="!authyMethod || showOtherMethods" class="margin-top-10">
+                            <a class="block" href="https://authy.com/download/" target="_blank">Download the app (recommended)</a>
+                            <br><a class="block" @click="sendSms">
                                 Send SMS token
                             </a>
-                            <a class="block" @click="voiceCall">
+                            <br><a class="block" @click="voiceCall">
                                 Receive a call and listen to the token.
                             </a>
                         </div>
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12" style="padding-top: 15%;">
+                    <div class="col-md-12 margin-top-15">
                         <div v-if="isSms && showSendAgain" class="btn btn-submit btn-block" @click="sendSms">
                             Re-send SMS
                         </div>
@@ -300,9 +300,15 @@
         }
     }
 </script>
-<style>
+<style scoped>
     .loader-right {
         margin-top: -4px;
         float: right;
+    }
+    .margin-top-10 {
+        margin-top: 10%;
+    }
+    .margin-top-15 {
+        margin-top: 10%;
     }
 </style>
