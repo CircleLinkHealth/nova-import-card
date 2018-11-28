@@ -40,8 +40,9 @@ class TwilioController extends Controller
     {
         $input      = $request->all();
         $validation = \Validator::make($input, [
-            'From'             => '',
-            'To'               => 'required',
+            'To'               => 'required|phone:AUTO,US',
+            //could be the practice outgoing phone number (in case of enrollment)
+            'From'             => 'nullable|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
             'IsUnlistedNumber' => '',
@@ -54,8 +55,6 @@ class TwilioController extends Controller
         $response = new Twiml();
 
         if ($request->has('From')) {
-            //could be the practice outgoing phone number (in case of enrollment)
-            //should we validate this number? or just let it fail if not accepted by Twilio?
             $callerIdNumber = $request->input('From');
         } else {
             $callerIdNumber = config('services.twilio')['from'];
@@ -157,12 +156,12 @@ class TwilioController extends Controller
             TwilioCall::updateOrCreate(
                 ['call_sid' => $callSid],
                 [
-                    'call_sid' => $callSid,
-                    'call_status' => $callStatus,
-                    'from' => '',
-                    'to' => '',
-                    'inbound_user_id' => '',
-                    'outbound_user_id' => ''
+                    'call_sid'         => $callSid,
+                    'call_status'      => $callStatus,
+                    'from'             => '',
+                    'to'               => '',
+                    'inbound_user_id'  => '',
+                    'outbound_user_id' => '',
                 ]
             );
 
