@@ -178,81 +178,48 @@ class EligibilityBatch extends BaseModel
     public function getValidationStats()
     {
 
-        $structure = EligibilityJob::selectRaw('count(*) as total, invalid_structure')
-                                   ->where('batch_id', $this->id)
-                                   ->groupBy('invalid_structure')
-                                   ->get()
-                                   ->mapWithKeys(function ($result) {
-                                       return [$result['invalid_structure'] => $result['total']];
-                                   });
+        $structure = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_structure', 1)
+                                   ->count();
 
-        $data = EligibilityJob::selectRaw('count(*) as total, invalid_data')
-                              ->where('batch_id', $this->id)
-                              ->groupBy('invalid_data')
-                              ->get()
-                              ->mapWithKeys(function ($result) {
-                                  return [$result['invalid_data'] => $result['total']];
-                              });
+        $data = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_data', 1)
+                                   ->count();
 
-        $mrn = EligibilityJob::selectRaw('count(*) as total, invalid_mrn')
-                             ->where('batch_id', $this->id)
-                             ->groupBy('invalid_mrn')
-                             ->get()
-                             ->mapWithKeys(function ($result) {
-                                 return [$result['invalid_mrn'] => $result['total']];
-                             });
+        $mrn = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_mrn', 1)
+                                   ->count();
 
-        $firstName = EligibilityJob::selectRaw('count(*) as total, invalid_first_name')
-                                   ->where('batch_id', $this->id)
-                                   ->groupBy('invalid_first_name')
-                                   ->get()
-                                   ->mapWithKeys(function ($result) {
-                                       return [$result['invalid_first_name'] => $result['total']];
-                                   });
+        $firstName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_first_name', 1)
+                                   ->count();
 
-        $lastName = EligibilityJob::selectRaw('count(*) as total, invalid_last_name')
-                                  ->where('batch_id', $this->id)
-                                  ->groupBy('invalid_last_name')
-                                  ->get()
-                                  ->mapWithKeys(function ($result) {
-                                      return [$result['invalid_last_name'] => $result['total']];
-                                  });
+        $lastName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_last_name', 1)
+                                   ->count();
 
+        $dob = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_dob', 1)
+                                   ->count();
 
-        $dob = EligibilityJob::selectRaw('count(*) as total, invalid_dob')
-                             ->where('batch_id', $this->id)
-                             ->groupBy('invalid_dob')
-                             ->get()
-                             ->mapWithKeys(function ($result) {
-                                 return [$result['invalid_dob'] => $result['total']];
-                             });
+        $problems = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_problems', 1)
+                                   ->count();
 
-        $problems = EligibilityJob::selectRaw('count(*) as total, invalid_problems')
-                                  ->where('batch_id', $this->id)
-                                  ->groupBy('invalid_problems')
-                                  ->get()
-                                  ->mapWithKeys(function ($result) {
-                                      return [$result['problems'] => $result['total']];
-                                  });
-
-        $phones = EligibilityJob::selectRaw('count(*) as total, invalid_phones')
-                                ->where('batch_id', $this->id)
-                                ->groupBy('invalid_phones')
-                                ->get()
-                                ->mapWithKeys(function ($result) {
-                                    return [$result['phones'] => $result['total']];
-                                });
+        $phones = EligibilityJob::where('batch_id', $this->id)
+                                  ->where('invalid_phones', 1)
+                                  ->count();
 
         return [
             'total'             => $this->eligibilityJobs()->count(),
-            'invalid_structure' => $structure->get(1) ?? 0,
-            'invalid_data'      => $data->get(1) ?? 0,
-            'mrn'               => $mrn->get(1) ?? 0,
-            'first_name'        => $firstName->get(1) ?? 0,
-            'last_name'         => $lastName->get(1) ?? 0,
-            'dob'               => $dob->get(1) ?? 0,
-            'problems'          => $problems->get(1) ?? 0,
-            'phones'            => $phones->get(1) ?? 0,
+            'invalid_structure' => $structure,
+            'invalid_data'      => $data,
+            'mrn'               => $mrn,
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'dob'               => $dob,
+            'problems'          => $problems,
+            'phones'            => $phones,
         ];
 
     }
