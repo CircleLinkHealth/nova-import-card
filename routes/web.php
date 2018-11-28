@@ -122,15 +122,31 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::group(['prefix' => 'api'], function () {
         Route::group(['prefix' => '2fa'], function () {
-            Route::group(['prefix' => 'approval-request'], function () {
+            Route::group(['prefix' => 'token'], function () {
+                Route::post('sms', [
+                    'uses' => 'AuthyController@sendTokenViaSms',
+                    'as'   => 'user.2fa.token.sms',
+                ]);
+
+                Route::post('voice', [
+                    'uses' => 'AuthyController@sendTokenViaVoice',
+                    'as'   => 'user.2fa.token.voice',
+                ]);
+
+                Route::post('verify', [
+                    'uses' => 'AuthyController@verifyToken',
+                    'as'   => 'user.2fa.token.verify',
+                ]);
+            });
+            Route::group(['prefix' => 'one-touch-request'], function () {
                 Route::post('create', [
-                    'uses' => 'AuthyController@createApprovalRequest',
-                    'as'   => 'user.2fa.approval-request.create',
+                    'uses' => 'AuthyController@createOneTouchRequest',
+                    'as'   => 'user.2fa.one-touch-request.create',
                 ]);
 
                 Route::post('check-status', [
-                    'uses' => 'AuthyController@checkApprovalRequestStatus',
-                    'as'   => 'user.2fa.approval-request.check',
+                    'uses' => 'AuthyController@checkOneTouchRequestStatus',
+                    'as'   => 'user.2fa.one-touch-request.check',
                 ]);
             });
         });

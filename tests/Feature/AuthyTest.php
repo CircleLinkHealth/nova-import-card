@@ -73,7 +73,7 @@ class AuthyTest extends TestCase
 
         $response->assertStatus(201);
 
-        $response = $this->json('POST', route('user.2fa.approval-request.create'));
+        $response = $this->json('POST', route('user.2fa.one-touch-request.create'));
 
         $response->assertStatus(200);
     }

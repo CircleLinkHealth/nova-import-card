@@ -14,8 +14,11 @@ class HasPassed2FA
     protected $except = [
         'user.2fa.show.token.form',
         'user.logout',
-        'user.2fa.approval-request.create',
-        'user.2fa.approval-request.check',
+        'user.2fa.one-touch-request.create',
+        'user.2fa.one-touch-request.check',
+        'user.2fa.token.sms',
+        'user.2fa.token.voice',
+        'user.2fa.token.verify',
     ];
 
     /**
