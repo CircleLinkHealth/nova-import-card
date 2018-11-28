@@ -37,22 +37,25 @@ class AuthyMiddleware
         if ( ! ! ! config('auth.two_fa_enabled')) {
             \Session::put('authy_status', 'approved');
 
+            if (\Route::is('user.2fa.show.token.form')) {
+                return redirect()->back();
+            }
+
             return $next($request);
         }
 
-        $user         = optional(auth()->user());
-        $currentRoute = \Route::currentRouteName();
+        $user = optional(auth()->user());
 
         if (in_array(\Route::currentRouteName(), $this->except)) {
             return $next($request);
         }
 
-        if ($user->isAdmin() && ! $user->is_authy_enabled && $currentRoute != 'user.settings.manage') {
+        if ($user->isAdmin() && ! $user->is_authy_enabled && ! \Route::is('user.settings.manage')) {
             return redirect()->route('user.settings.manage');
         }
 
         if ( ! isAllowedToSee2FA() || ! $user->is_authy_enabled) {
-            if ($currentRoute == 'user.2fa.show.token.form') {
+            if (\Route::is('user.2fa.show.token.form')) {
                 return redirect()->back();
             }
 
@@ -63,7 +66,7 @@ class AuthyMiddleware
             return redirect()->route('user.2fa.show.token.form');
         }
 
-        if ($this->hasPassed2FA() && \Route::currentRouteName() == 'user.2fa.show.token.form') {
+        if ($this->hasPassed2FA() && \Route::is('user.2fa.show.token.form')) {
             return redirect()->back();
         }
 
