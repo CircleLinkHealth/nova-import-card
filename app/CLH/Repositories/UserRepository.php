@@ -70,7 +70,7 @@ class UserRepository
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
-        if ($user->hasRole('administrator')) {
+        if ($user->isAdmin()) {
             $this->enable2fa($user);
         }
 

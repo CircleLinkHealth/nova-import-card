@@ -45,7 +45,7 @@ class AuthyMiddleware
             return $next($request);
         }
 
-        if ($user->hasRole('administrator') && ! $user->is_authy_enabled && $currentRoute != 'user.settings.manage') {
+        if ($user->isAdmin() && ! $user->is_authy_enabled && $currentRoute != 'user.settings.manage') {
             return redirect()->route('user.settings.manage');
         }
 

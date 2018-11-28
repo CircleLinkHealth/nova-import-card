@@ -44,7 +44,7 @@ class WelcomeController extends Controller
             throw new \Exception("Log in for User with id {$user->id} failed. User has no assigned Roles.");
         }
 
-        if ($user->hasRole('administrator')) {
+        if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard', []);
         }
 

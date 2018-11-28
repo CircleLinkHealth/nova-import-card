@@ -2,7 +2,7 @@
     <div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Enter 2FA Token
+                <h3 class="panel-title">We need you to complete 2FA
                     <span class="loader-right">
                     <loader v-show="isLoading"></loader>
                 </span>
@@ -12,26 +12,48 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="text" v-model="token" id="token" class="form-control input-sm"
-                               placeholder="Token via App, Chrome Extension, SMS, or Voice.">
+                        <div v-if="isApp && checkPollHandler">
+                            <h5>We've send you a push notification on your phone!</h5>
+                            Please use OneTouch in the app to complete the login process.
+                            <a href="https://authy.com/download/" target="_blank">Don't have the app? Click here</a>
+                        </div>
+                        <div v-else>
+                                <input type="text" v-model="token" id="token" class="form-control input-sm"
+                                       placeholder="Enter verification token.">
+
+                            <div style="padding-top: 3%;">
+                                <a href="https://authy.com/download/" target="_blank">Don't have the app? Click here to get
+                                    it.</a>
+                            </div>
+
+                            <div style="padding: 6% 0;">
+                                <div @click="verifyToken" :disabled="isLoading" class="btn btn-info btn-block">
+                                    Verify Token
+                                </div>
+                            </div>
+
+                            <a>
+                                <small @click="sendSms">receive the token via sms</small>
+                            </a>
+                            |
+                            <a>
+                                <small @click="voiceCall">receive a call and listen to the token.</small>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <input type="submit" value="SMS" @click="sendSms" class="btn btn-info btn-block">
+                    <div v-if="isSms && showSendAgain" class="col-xs-12 col-sm-12 col-md-12" @click="sendSms">
+                        Sms
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <input type="submit" value="Voice" @click="voiceCall" class="btn btn-info btn-block">
+                    <div v-if="isVoice && showSendAgain" class="col-xs-12 col-sm-12 col-md-12" @click="voiceCall">
+                        Voice
                     </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12">
-                        <input type="submit" value="Push Notification" @click="sendOneTouchRequest"
-                               class="btn btn-primary btn-block">
+                    <div v-if="isApp && showSendAgain" class="col-xs-12 col-sm-12 col-md-12"
+                         @click="sendOneTouchRequest">
+                        Send One Touch Request
                     </div>
-                </div>
-
-                <div @click="verifyToken" :disabled="isLoading" class="btn btn-info btn-block">
-                    Verify Token
                 </div>
 
             </div>
@@ -52,12 +74,26 @@
         components: {
             'loader': LoaderComponent,
         },
+        computed: {
+            isSms() {
+                return this.authyMethod === 'sms'
+            },
+            isVoice() {
+                return this.authyMethod === 'phone'
+            },
+            isApp() {
+                return this.authyMethod === 'app'
+            }
+        },
         data() {
             return {
-                authyMethod: this.user.authy_method ? this.user.authy_method : 'app',
+                authyMethod: this.user.authy_method,
+                authyId: this.user.authy_id,
+                isAuthyEnabled: this.user.is_authy_enabled,
                 isLoading: false,
                 checkPollHandler: null,
                 token: null,
+                showSendAgain: false,
             }
         },
         methods: Object.assign(mapActions(['addNotification']), {
@@ -186,7 +222,6 @@
                         this.stopLoader();
 
                         console.error("CheckOneTouchRequest error: ", err);
-                        alert("Problem Checking Approval Request status");
                     });
             },
             success() {
@@ -196,7 +231,32 @@
             }
         }),
         mounted() {
+            //if user has a preference, send the token
+            if (this.isAuthyEnabled && this.authyId && this.authyMethod) {
+                if (this.isApp) {
+                    let self = this;
+                    this.sendOneTouchRequest();
+                }
 
+                if (this.isVoice()) {
+                    let self = this;
+                    this.voiceCall();
+                }
+
+                if (this.isSms()) {
+                    let self = this;
+                    this.sendSms();
+                }
+
+                setTimeout(function () {
+                    self.showSendAgain = true;
+                }, 30000);
+            }
+
+            //otherwise default to app
+            if (!this.authyMethod) {
+                this.authyMethod = 'app';
+            }
         }
     }
 </script>

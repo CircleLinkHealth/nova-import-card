@@ -1102,6 +1102,6 @@ if ( ! function_exists('is_falsey')) {
 if ( ! function_exists('isAllowedToSee2FA')) {
     function isAllowedToSee2FA(User $user = null)
     {
-        return optional($user ?? auth()->user())->hasRole('administrator');
+        return optional($user ?? auth()->user())->isAdmin();
     }
 }
