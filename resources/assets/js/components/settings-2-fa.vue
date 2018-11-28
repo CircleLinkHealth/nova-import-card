@@ -100,6 +100,11 @@
         components: {
             'loader': LoaderComponent,
         },
+        computed: {
+            bannerClass() {
+                return 'alert alert-' + this.bannerType;
+            }
+        },
         data() {
             return {
                 country_code: this.authyUser.country_code,
@@ -115,9 +120,10 @@
         },
         methods: {
             submitForm() {
-                this.is_loading = true;
+                let self = this;
+                self.is_loading = true;
 
-                return this.axios.post(rootUrl('api/account-settings/2fa'), {
+                return self.axios.post(rootUrl('api/account-settings/2fa'), {
                     country_code: this.country_code,
                     phone_number: this.phone_number,
                     method: this.method,
@@ -125,7 +131,9 @@
                 })
                     .then((response, status) => {
                         if (response) {
-                            self.bannerText = '2FA settigns successfully saved!';
+                            self.errors.clear()
+
+                            self.bannerText = '2FA settings successfully saved!';
                             self.bannerType = 'success';
                             self.showBanner = true;
 
