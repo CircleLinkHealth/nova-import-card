@@ -789,7 +789,9 @@
                 self.$http.get(url)
                     .then(response => {
                         self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token);
+                        self.device = new Twilio.Device(response.data.token, {
+                            closeProtection: true
+                        });
 
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');

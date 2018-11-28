@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Twilio;
 
-use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
-use App\Practice;
+use App\Http\Controllers\Controller;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
 use Twilio\Rest\Client;
@@ -19,7 +17,7 @@ class TwilioController extends Controller
     private $capability;
     private $token;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
         $this->capability = new ClientToken(config('services.twilio.sid'), config('services.twilio.token'));
         $this->capability->allowClientOutgoing(config('services.twilio.twiml-app-sid'));
@@ -31,22 +29,41 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     * @throws \Twilio\Exceptions\TwimlException
+     * @throws \Exception
+     */
     public function placeCall(Request $request)
     {
-        $response       = new Twiml();
+        $input      = $request->all();
+        $validation = \Validator::make($input, [
+            'From'             => '',
+            'To'               => 'required',
+            'InboundUserId'    => 'required',
+            'OutboundUserId'   => 'required',
+            'IsUnlistedNumber' => '',
+        ]);
+
+        if ($validation->fails()) {
+            throw new \Exception("Invalid request");
+        }
+
+        $response = new Twiml();
 
         if ($request->has('From')) {
             //could be the practice outgoing phone number (in case of enrollment)
             //should we validate this number? or just let it fail if not accepted by Twilio?
             $callerIdNumber = $request->input('From');
-        }
-        else {
+        } else {
             $callerIdNumber = config('services.twilio')['from'];
         }
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 
-        $phoneNumberToDial = $request->input('To');
+        $phoneNumberToDial = $input['To'];
 
         if ($phoneNumberToDial) {
             $dial->number($phoneNumberToDial);
@@ -114,6 +131,43 @@ class TwilioController extends Controller
                     ]
                 );
             }
+        }
+    }
+
+    /**
+     * This function is called from Twilio (status callback)
+     * - It inserts a record in our DB for raw logs (for debugging)
+     * - It inspects the status request from Twilio and creates or updates any existing calls (using call sid)
+     *
+     * @param Request $request
+     */
+    public function callStatusCallback(Request $request)
+    {
+        try {
+            $requestBody = $request->all();
+
+            $callStatus = $requestBody['CallStatus'];
+            TwilioRawLog::create([
+                'call_status' => $callStatus,
+                'log'         => json_encode($requestBody),
+            ]);
+
+            $callSid = $requestBody['CallSid'];
+
+            TwilioCall::updateOrCreate(
+                ['call_sid' => $callSid],
+                [
+                    'call_sid' => $callSid,
+                    'call_status' => $callStatus,
+                    'from' => '',
+                    'to' => '',
+                    'inbound_user_id' => '',
+                    'outbound_user_id' => ''
+                ]
+            );
+
+        } catch (\Throwable $e) {
+            \Log::critical("Exception while storing twilio raw log: " . $e->getMessage());
         }
     }
 }

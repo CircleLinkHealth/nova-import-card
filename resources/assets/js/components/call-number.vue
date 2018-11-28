@@ -151,7 +151,9 @@
                 self.axios.get(url)
                     .then(response => {
                         this.log = 'Ready';
-                        self.device = new Twilio.Device(response.data.token);
+                        self.device = new Twilio.Device(response.data.token, {
+                            closeProtection: true //show warning when closing the page with active call
+                        });
 
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');

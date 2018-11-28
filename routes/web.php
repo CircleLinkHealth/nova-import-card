@@ -2150,16 +2150,21 @@ Route::group([
     'middleware' => 'auth',
 ], function () {
     Route::get('/token', [
-        'uses' => 'TwilioController@obtainToken',
+        'uses' => 'Twilio\TwilioController@obtainToken',
         'as'   => 'twilio.token',
     ]);
 });
 
+//fixme: why is this not using auth middleware?
 Route::group([
     'prefix' => 'twilio',
 ], function () {
+    Route::post('/call/status', [
+        'uses' => 'Twilio\TwilioController@callStatusCallback',
+        'as'   => 'twilio.call.status',
+    ]);
     Route::post('/call/place', [
-        'uses' => 'TwilioController@placeCall',
+        'uses' => 'Twilio\TwilioController@placeCall',
         'as'   => 'twilio.call.place',
     ]);
 });
