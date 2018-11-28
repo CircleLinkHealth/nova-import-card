@@ -9,6 +9,11 @@
                 </h3>
             </div>
             <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div v-if="showBanner" :class="bannerClass">{{bannerText}}</div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-xs-4 col-sm-4 col-md-4">
@@ -103,6 +108,9 @@
                 is_2fa_enabled: !!this.authyUser.is_authy_enabled,
                 is_loading: false,
                 errors: new Errors(),
+                showBanner: false,
+                bannerText: '',
+                bannerType: 'info',
             }
         },
         methods: {
@@ -117,16 +125,13 @@
                 })
                     .then((response, status) => {
                         if (response) {
+                            self.bannerText = '2FA settigns successfully saved!';
+                            self.bannerType = 'success';
+                            self.showBanner = true;
+
                             this.is_loading = false;
 
                             console.log(response)
-
-                            this.addNotification({
-                                title: "All done!",
-                                text: "2FA Settings updated successfully",
-                                type: "success",
-                                timeout: true
-                            })
                         }
                     }).catch(err => {
                         this.is_loading = false;
