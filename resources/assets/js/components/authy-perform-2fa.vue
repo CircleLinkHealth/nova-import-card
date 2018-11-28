@@ -23,7 +23,7 @@
                         <div class="form-group margin-top-10" :class="{'has-error':errors.has('token')}"
                              :disabled="isLoading">
                             <input type="text" v-model="token" id="token" class="form-control input-sm"
-                                   placeholder="Enter verification token.">
+                                   placeholder="Token via App, Chrome Extension, SMS, or Voice.">
                             <span class="help-block">{{errors.get('token')}}</span>
                         </div>
 
