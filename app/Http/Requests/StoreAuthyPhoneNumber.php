@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CreateSaasAccount extends FormRequest
+class StoreAuthyPhoneNumber extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,7 +14,7 @@ class CreateSaasAccount extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->isAdmin();
+        return auth()->check();
     }
 
     /**
@@ -25,12 +25,19 @@ class CreateSaasAccount extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
+            'country_code'   => [
                 'required',
-                'filled',
-                Rule::unique('saas_accounts', 'name')->ignore($this->input('name')),
+                Rule::in([1, 357, 33]),
             ],
-            'admin_emails' => 'required|email_array'
+            'phone_number'   => [
+                'required',
+                Rule::phone()->country(['US', 'CY', 'FR']),
+            ],
+            'method'         => [
+                'required',
+                Rule::in(['app', 'sms', 'phone',]),
+            ],
+            'is_2fa_enabled' => 'boolean',
         ];
     }
 }

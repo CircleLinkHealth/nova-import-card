@@ -30,6 +30,9 @@ class UserLoggedOut
     {
         $user = $event->user;
         if ($user) {
+            $user->is_online  = false;
+            $user->save();
+
             $activity = new PageTimer();
             $activity->duration = 0;
             $activity->billable_duration = 0;

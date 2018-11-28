@@ -1036,14 +1036,15 @@ if ( ! function_exists('read_file_using_generator')) {
 }
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
-    function getEhrReportWritersFolderUrl(){
+    function getEhrReportWritersFolderUrl()
+    {
 
         $clh = collect(Storage::drive('google')->listContents('/', true));
         //get path for ehr-data-from-report-writers
-        $reportWritersFolder      = $clh->where('type', '=', 'dir')
-                                        ->where('filename', '=', "ehr-data-from-report-writers")
-                                        ->first();
-        if (! $reportWritersFolder){
+        $reportWritersFolder = $clh->where('type', '=', 'dir')
+                                   ->where('filename', '=', "ehr-data-from-report-writers")
+                                   ->first();
+        if ( ! $reportWritersFolder) {
             return null;
         }
 
@@ -1070,9 +1071,24 @@ if ( ! function_exists('format_bytes')) {
 }
 
 if ( ! function_exists('array_keys_exist')) {
-    function array_keys_exist(array $keys, array $arr)
+    /**
+     * Returns TRUE if the given keys are all set in the array. Each key can be any value possible for an array index.
+     *
+     * @see array_key_exists()
+     *
+     * @param string[] $keys Keys to check.
+     * @param array $array An array with keys to check.
+     * @param mixed $missing Reference to a variable that that contains the missing keys.
+     *
+     * @return bool true if all given keys exist in the given array, false if not
+     */
+    function array_keys_exist(array $keys, array $array, &$missing = null)
     {
-        return ! array_diff_key(array_flip($keys), $arr);
+        $missing = array_diff($keys, array_keys($array));
+
+        return array_reduce($keys, function ($carry, $key) use ($array) {
+            return $carry && array_key_exists($key, $array);
+        }, true);
     }
 }
 
@@ -1080,5 +1096,12 @@ if ( ! function_exists('is_falsey')) {
     function is_falsey($value)
     {
         return is_null($value) || empty($value) || strcasecmp($value, 'null') === 0;
+    }
+}
+
+if ( ! function_exists('isAllowedToSee2FA')) {
+    function isAllowedToSee2FA(User $user = null)
+    {
+        return ! ! config('auth.two_fa_enabled') && optional($user ?? auth()->user())->isAdmin();
     }
 }

@@ -495,7 +495,7 @@ class WebixFormatter implements ReportFormatter
         $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->hasRole('care-center');
-        $isAdmin               = $auth->hasRole('administrator');
+        $isAdmin               = $auth->isAdmin();
         $isProvider            = $auth->hasRole('provider');
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 
@@ -632,7 +632,7 @@ class WebixFormatter implements ReportFormatter
         $canApproveCarePlans   = $auth->canApproveCareplans();
         $canQAApproveCarePlans = $auth->canQAApproveCarePlans();
         $isCareCenter          = $auth->hasRole('care-center');
-        $isAdmin               = $auth->hasRole('administrator');
+        $isAdmin               = $auth->isAdmin();
         $isProvider            = $auth->hasRole('provider');
         $isPracticeStaff       = $auth->hasRole(['office_admin', 'med_assistant']);
 

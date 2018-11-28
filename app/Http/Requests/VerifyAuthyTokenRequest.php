@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AssignCallsToUser extends FormRequest
+class VerifyAuthyTokenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,10 @@ class AssignCallsToUser extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->isAdmin();
+        $user      = optional(auth()->user());
+        $authyUser = optional($user->authyUser);
+
+        return auth()->check() && $authyUser->authy_id && $authyUser->is_authy_enabled;
     }
 
     /**
@@ -24,7 +27,7 @@ class AssignCallsToUser extends FormRequest
     public function rules()
     {
         return [
-            'callIds' => 'required',
+            'token' => 'required|digits:7|numeric',
         ];
     }
 }
