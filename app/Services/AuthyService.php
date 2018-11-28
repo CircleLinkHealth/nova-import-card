@@ -11,7 +11,8 @@ namespace App\Services;
 
 use App\Contracts\AuthyApiable;
 use App\User;
-use Authy\AuthyUser;
+use Authy\AuthyUser as AuthyApiUser;
+use App\AuthyUser;
 
 class AuthyService
 {
@@ -33,36 +34,38 @@ class AuthyService
     /**
      * Register a User with Authy
      *
+     * @param AuthyUser $authyUser
      * @param User $user
      *
-     * @return AuthyUser
+     * @return AuthyApiUser
      */
-    public function register(User $user)
+    public function register(AuthyUser $authyUser, User $user)
     {
-        $authyUser = $this->api
-            ->registerUser($user->email, $user->phone_number, $user->country_code);
+        $response = $this->api
+            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code);
 
-        if ($authyUser->ok()) {
-            $user->authy_id = $authyUser->id();
-            $user->save();
+        if ($response->ok()) {
+            $authyUser->authy_id = $response->id();
+            $authyUser->save();
         }
 
-        return $authyUser;
+        return $response;
     }
 
     /**
      * Create approval request.
      *
+     * @param AuthyUser $authyUser
      * @param User $user
      *
      * @return \Authy\AuthyResponse
      */
-    public function createOneTouchRequest(User $user)
+    public function createOneTouchRequest(AuthyUser $authyUser, User $user)
     {
         $response = $this
             ->api
             ->createApprovalRequest(
-                $user->authy_id,
+                $authyUser->authy_id,
                 'Login to CarePlan Manager.',
                 [
                     'seconds_to_expire' => 120,

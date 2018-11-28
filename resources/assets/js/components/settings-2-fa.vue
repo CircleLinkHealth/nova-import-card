@@ -76,21 +76,33 @@
 
     export default {
         name: 'settings-2fa',
-        props: [
-            'user',
-        ],
-        components: {
-            'loader': LoaderComponent,
-        },
-        data() {
-            return {
-                country_code: this.user.country_code ? this.user.country_code : '1',
-                phone_number: this.user.phone_number ? this.user.phone_number : '',
-                method: this.user.authy_method ? this.user.authy_method : 'app',
-                is_2fa_enabled: !!this.user.is_authy_enabled,
-                is_loading: false,
+        props: {
+            authyUser: {
+                type: Object,
+                default: () => {
+                    return {
+                        country_code: 1,
+                        phone_number: '',
+                        authy_method: 'app',
+                        is_authy_enabled: false
+                    }
+                }
             }
         },
+        components: {
+            'loader': LoaderComponent,
+        }
+        ,
+        data() {
+            return {
+                country_code: this.authyUser.country_code,
+                phone_number: this.authyUser.phone_number,
+                method: this.authyUser.authy_method,
+                is_2fa_enabled: !!this.authyUser.is_authy_enabled,
+                is_loading: false,
+            }
+        }
+        ,
         methods: Object.assign(mapActions(['addNotification']), {
             submitForm() {
                 this.is_loading = true;

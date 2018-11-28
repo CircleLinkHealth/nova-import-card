@@ -13,9 +13,10 @@ class VerifyAuthyTokenRequest extends FormRequest
      */
     public function authorize()
     {
-        $user = optional(auth()->user());
+        $user      = optional(auth()->user());
+        $authyUser = optional($user->authyUser);
 
-        return auth()->check() && $user->authy_id && $user->is_authy_enabled;
+        return auth()->check() && $authyUser->authy_id && $authyUser->is_authy_enabled;
     }
 
     /**

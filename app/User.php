@@ -330,11 +330,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'remember_token',
         'last_login',
         'is_online',
-        'country_code',
-        'phone_number',
-        'authy_id',
-        'authy_method',
-        'is_authy_enabled',
     ];
 
     protected $hidden = [
@@ -3204,4 +3199,7 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         return $this->hasOne(CareplanAssessment::class, 'careplan_id');
     }
 
+    public function authyUser() {
+        return $this->hasOne(AuthyUser::class);
+    }
 }

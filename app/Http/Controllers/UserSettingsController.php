@@ -8,6 +8,10 @@ class UserSettingsController extends Controller
 {
     public function show()
     {
-        return view('user-settings');
+        $user = auth()->user()
+                      ->load(['authyUser']);
+
+        return view('user-settings')
+            ->with('user', $user);
     }
 }

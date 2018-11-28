@@ -544,10 +544,10 @@ class UserRepository
 
     private function enable2fa(User $user, $method = 'app')
     {
-        $user->is_authy_enabled = true;
+        $user->authy->enabled = true;
 
-        if ( ! $user->authy_method) {
-            $user->authy_method = $method;
+        if ( ! $user->authy->method) {
+            $user->authy->method = $method;
         }
 
         $user->save();

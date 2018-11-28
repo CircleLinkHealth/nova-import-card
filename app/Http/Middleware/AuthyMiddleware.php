@@ -44,17 +44,18 @@ class AuthyMiddleware
             return $next($request);
         }
 
-        $user = optional(auth()->user());
-
         if (in_array(\Route::currentRouteName(), $this->except)) {
             return $next($request);
         }
 
-        if ($user->isAdmin() && ! $user->is_authy_enabled && ! \Route::is('user.settings.manage')) {
+        $user = optional(auth()->user());
+        $authyUser = optional($user->authyUser);
+
+        if ($user->isAdmin() && ! $authyUser->is_authy_enabled && ! \Route::is('user.settings.manage')) {
             return redirect()->route('user.settings.manage');
         }
 
-        if ( ! isAllowedToSee2FA() || ! $user->is_authy_enabled) {
+        if ( ! isAllowedToSee2FA() || ! $authyUser->is_authy_enabled) {
             if (\Route::is('user.2fa.show.token.form')) {
                 return redirect()->back();
             }

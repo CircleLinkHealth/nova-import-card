@@ -2,27 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Contracts\TwoFactorAuthenticationApi;
+use App\Services\AuthyService;
+use App\User;
 use Authy\AuthyApi;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthyTest extends TestCase
 {
-    /**
-     * @var AuthyService
-     */
-    private $service;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->api     = $this->app->make(AuthyApi::class);
-        $this->service = $this->app->make(AuthyService::class);
-    }
-
     public function test_it_registers_a_user()
     {
         $user = factory(User::class)->create();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AuthyUser;
 use App\Http\Requests\StoreAuthyPhoneNumber;
 use App\Http\Requests\VerifyAuthyTokenRequest;
 use App\Services\AuthyService;
@@ -33,16 +34,17 @@ class AuthyController extends Controller
      */
     public function store(StoreAuthyPhoneNumber $request)
     {
-        $user = auth()->user();
+        $user      = auth()->user();
+        $authyUser = $user->authyUser()->firstOrNew([]);
 
-        $user->phone_number     = $request->input('phone_number');
-        $user->country_code     = $request->input('country_code');
-        $user->authy_method     = $request->input('method');
-        $user->is_authy_enabled = $request->input('is_2fa_enabled');
-        $user->save();
+        $authyUser->phone_number     = $request->input('phone_number');
+        $authyUser->country_code     = $request->input('country_code');
+        $authyUser->authy_method     = $request->input('method');
+        $authyUser->is_authy_enabled = $request->input('is_2fa_enabled');
+        $authyUser->save();
 
         $authyUser = $this->service
-            ->register($user);
+            ->register($authyUser, $user);
 
         if ( ! $authyUser->ok()) {
             return response()
@@ -87,10 +89,11 @@ class AuthyController extends Controller
      */
     public function createOneTouchRequest()
     {
-        $user = auth()->user();
+        $user      = auth()->user();
+        $authyUser = $user->authyUser()->firstOrFail();
 
         $response = $this->service
-            ->createOneTouchRequest($user);
+            ->createOneTouchRequest($authyUser, $user);
 
         if ( ! $response->ok()) {
             return response()
@@ -108,7 +111,7 @@ class AuthyController extends Controller
     {
         $data    = $request->all();
         $token   = $data['token'];
-        $authyId = auth()->user()->authy_id;
+        $authyId = auth()->user()->authyUser->authy_id;
 
         $response = $this->service->verifyToken($authyId, $token);
 
@@ -121,8 +124,10 @@ class AuthyController extends Controller
 
     public function sendTokenViaSms()
     {
+        $authyUser = auth()->user()->authyUser()->firstOrFail();
+
         $response = $this->service
-            ->sendTokenViaSms(auth()->user()->authy_id);
+            ->sendTokenViaSms($authyUser->authy_id);
 
         if ($response->ok()) {
             return $this->ok(['message' => 'Verification Code sent via SMS succesfully.']);
@@ -135,8 +140,10 @@ class AuthyController extends Controller
 
     public function sendTokenViaVoice()
     {
+        $authyUser = auth()->user()->authyUser()->firstOrFail();
+
         $response = $this->service
-            ->sendTokenViaVoice(auth()->user()->authy_id);
+            ->sendTokenViaVoice($authyUser->authy_id);
 
         if ($response->ok()) {
             return $this->ok(['message' => 'Verification Code sent via Voice Call succesfully.']);

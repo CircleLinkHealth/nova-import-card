@@ -75,7 +75,7 @@
     export default {
         name: 'authy-perform-2fa',
         props: [
-            'user',
+            'authyUser',
         ],
         components: {
             'loader': LoaderComponent,
@@ -96,9 +96,9 @@
         },
         data() {
             return {
-                authyMethod: this.user.authy_method,
-                authyId: this.user.authy_id,
-                isAuthyEnabled: this.user.is_authy_enabled,
+                authyMethod: this.authyUser.authy_method,
+                authyId: this.authyUser.authy_id,
+                isAuthyEnabled: this.authyUser.is_authy_enabled,
                 isLoading: false,
                 checkPollHandler: null,
                 token: null,
@@ -272,7 +272,7 @@
             }
         }),
         mounted() {
-            //if user has a preference, send the token
+            //if authyUser has a preference, send the token
             if (this.isAuthyEnabled && this.authyId && this.authyMethod) {
                 let self = this;
 
