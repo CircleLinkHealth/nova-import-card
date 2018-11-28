@@ -149,11 +149,13 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        <li>
-                            <a href="{{ route('user.settings.manage') }}">
-                                Account Settings
-                            </a>
-                        </li>
+                        @if(isAllowedToSee2FA())
+                            <li>
+                                <a href="{{ route('user.settings.manage') }}">
+                                    Account Settings
+                                </a>
+                            </li>
+                        @endif
 
                         <li><a href="{{ url('/auth/logout') }}">
                                 Logout

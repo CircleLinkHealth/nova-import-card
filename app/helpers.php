@@ -1036,14 +1036,15 @@ if ( ! function_exists('read_file_using_generator')) {
 }
 if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
-    function getEhrReportWritersFolderUrl(){
+    function getEhrReportWritersFolderUrl()
+    {
 
         $clh = collect(Storage::drive('google')->listContents('/', true));
         //get path for ehr-data-from-report-writers
-        $reportWritersFolder      = $clh->where('type', '=', 'dir')
-                                        ->where('filename', '=', "ehr-data-from-report-writers")
-                                        ->first();
-        if (! $reportWritersFolder){
+        $reportWritersFolder = $clh->where('type', '=', 'dir')
+                                   ->where('filename', '=', "ehr-data-from-report-writers")
+                                   ->first();
+        if ( ! $reportWritersFolder) {
             return null;
         }
 
@@ -1095,5 +1096,12 @@ if ( ! function_exists('is_falsey')) {
     function is_falsey($value)
     {
         return is_null($value) || empty($value) || strcasecmp($value, 'null') === 0;
+    }
+}
+
+if ( ! function_exists('isAllowedToSee2FA')) {
+    function isAllowedToSee2FA()
+    {
+        return optional(auth()->user())->hasRole('administrator');
     }
 }

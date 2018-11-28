@@ -31,6 +31,9 @@ class HasPassed2FA
      */
     public function handle($request, Closure $next)
     {
+        if ( ! isAllowedToSee2FA()) {
+            return $next($request);
+        }
 //        if (app()->environment(['local'])) {
 //            \Session::put('authy_verified', true);
 //            return $next($request);
