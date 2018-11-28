@@ -70,6 +70,10 @@ class UserRepository
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
+        if ($user->hasRole('administrator')) {
+            $this->enable2fa($user);
+        }
+
         //Add Email Notification
         $sendTo = ['patientsupport@circlelinkhealth.com'];
         if (app()->environment('production')) {
@@ -536,5 +540,16 @@ class UserRepository
         }
 
 
+    }
+
+    private function enable2fa(User $user, $method = 'app')
+    {
+        $user->is_authy_enabled = true;
+
+        if ( ! $user->authy_method) {
+            $user->authy_method = $method;
+        }
+
+        $user->save();
     }
 }
