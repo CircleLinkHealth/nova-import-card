@@ -128,7 +128,9 @@ class AuthyController extends Controller
             return $this->ok(['message' => 'Verification Code sent via SMS succesfully.']);
         }
 
-        return response()->json($response->errors(), 500);
+        return response()->json([
+            'errors' => $response->errors(),
+        ], 500);
     }
 
     public function sendTokenViaVoice()

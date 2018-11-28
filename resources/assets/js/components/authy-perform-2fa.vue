@@ -2,60 +2,66 @@
     <div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">We need you to complete 2FA
+                <h3 class="panel-title">Two Factor Authentication
                     <span class="loader-right">
                     <loader v-show="isLoading"></loader>
                 </span>
                 </h3>
             </div>
             <div class="panel-body">
-
                 <div class="row">
                     <div class="col-md-12">
+                        <div v-if="showBanner" :class="bannerClass">{{bannerText}}</div>
+                    </div>
+
+                    <div class="col-md-12">
                         <div v-if="isApp && checkPollHandler">
-                            <h5>We've send you a push notification on your phone!</h5>
                             Please use OneTouch in the app to complete the login process.
                             <a href="https://authy.com/download/" target="_blank">Don't have the app? Click here</a>
                         </div>
                         <div v-else>
-                                <input type="text" v-model="token" id="token" class="form-control input-sm"
-                                       placeholder="Enter verification token.">
+                            <input type="text" v-model="token" id="token" class="form-control input-sm"
+                                   placeholder="Enter verification token.">
 
-                            <div style="padding-top: 3%;">
-                                <a href="https://authy.com/download/" target="_blank">Don't have the app? Click here to get
-                                    it.</a>
-                            </div>
-
-                            <div style="padding: 6% 0;">
+                            <div style="padding-top: 10%;">
                                 <div @click="verifyToken" :disabled="isLoading" class="btn btn-info btn-block">
                                     Verify Token
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <a>
-                                <small @click="sendSms">receive the token via sms</small>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div v-if="!showOtherMethods" @click="showOtherMethods = true" class="btn btn-default" style="margin-top: 6%;">Try other Methods</div>
+
+                        <div v-if="!authyMethod || showOtherMethods" style="padding-top: 3%;">
+                            <a class="block" href="https://authy.com/download/" target="_blank">Don't have the app? Click here to get it.</a>
+                            <a class="block" @click="sendSms">
+                                Send SMS token
                             </a>
-                            |
-                            <a>
-                                <small @click="voiceCall">receive a call and listen to the token.</small>
+                            <a class="block" @click="voiceCall">
+                                Receive a call and listen to the token.
                             </a>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div v-if="isSms && showSendAgain" class="col-xs-12 col-sm-12 col-md-12" @click="sendSms">
-                        Sms
-                    </div>
-                    <div v-if="isVoice && showSendAgain" class="col-xs-12 col-sm-12 col-md-12" @click="voiceCall">
-                        Voice
-                    </div>
-                    <div v-if="isApp && showSendAgain" class="col-xs-12 col-sm-12 col-md-12"
-                         @click="sendOneTouchRequest">
-                        Send One Touch Request
+                    <div class="col-md-12" style="padding-top: 15%;">
+                        <div v-if="isSms && showSendAgain" class="btn btn-submit btn-block" @click="sendSms">
+                            Re-send SMS
+                        </div>
+                        <div v-if="isVoice && showSendAgain" class="btn btn-submit btn-block" @click="voiceCall">
+                            Call Again
+                        </div>
+                        <div v-if="isApp && showSendAgain" class="btn btn-submit btn-block"
+                             @click="sendOneTouchRequest">
+                            Re-send OneTouch Request
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -83,6 +89,9 @@
             },
             isApp() {
                 return this.authyMethod === 'app'
+            },
+            bannerClass() {
+                return 'alert alert-' + this.bannerType;
             }
         },
         data() {
@@ -94,6 +103,10 @@
                 checkPollHandler: null,
                 token: null,
                 showSendAgain: false,
+                showBanner: false,
+                showOtherMethods: false,
+                bannerText: '',
+                bannerType: 'info',
             }
         },
         methods: Object.assign(mapActions(['addNotification']), {
@@ -134,13 +147,22 @@
 
                             console.log(response);
 
-                            alert("Sms sent!");
+                            self.bannerText = 'An SMS with your token is on its way!';
+                            self.bannerType = 'info';
+                            self.showBanner = true;
                         }
                     }).catch(err => {
                         this.stopLoader();
 
                         console.error("Sms error: ", err);
-                        alert("Problem sending sms");
+
+                        let message = err.response.data.errors.message ? err.response.data.errors.message : '';
+                        message += 'Please try another method.';
+
+                        self.bannerText = 'Could not send SMS. ' + message;
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
+                        self.showSendAgain = true
                     });
             },
             voiceCall() {
@@ -154,13 +176,19 @@
 
                             console.log(response)
 
-                            alert("We are calling you in the next few moments.");
+                            self.bannerText = 'We are calling you to tell you your token!!';
+                            self.bannerType = 'info';
+                            self.showBanner = true;
                         }
                     }).catch(err => {
                         this.stopLoader();
 
-                        console.error("Sms error: ", err);
-                        alert("Problem sending sms");
+                        console.error("Voice error: ", err);
+
+                        self.bannerText = 'Could not start call';
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
+                        self.showSendAgain = true
                     });
             },
             setIntervalX(callback, delay, repetitions) {
@@ -190,12 +218,20 @@
                             self.setIntervalX(() => {
                                 self.checkOneTouchRequestStatus()
                             }, 3000, 40)
+
+                            self.bannerText = 'We sent a push notification to your phone!';
+                            self.bannerType = 'info';
+                            self.showBanner = true;
                         }
                     }).catch(err => {
                         this.stopLoader();
 
                         console.error("SendOneTouchRequest error: ", err);
-                        alert("Problem creating Approval Request");
+
+                        self.bannerText = 'Could not send One Touch request.';
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
+                        self.showSendAgain = true
                     });
             },
             checkOneTouchRequestStatus() {
@@ -227,30 +263,34 @@
             success() {
                 this.startLoader();
                 console.log("2FA Successful. Redirecting to home.");
+
+                self.bannerText = '2FA Successful. Redirecting to home.';
+                self.bannerType = 'success';
+                self.showBanner = true;
+
                 window.location.href = '/';
             }
         }),
         mounted() {
             //if user has a preference, send the token
             if (this.isAuthyEnabled && this.authyId && this.authyMethod) {
-                if (this.isApp) {
-                    let self = this;
-                    this.sendOneTouchRequest();
+                let self = this;
+
+                if (self.isApp) {
+                    self.sendOneTouchRequest();
                 }
 
-                if (this.isVoice()) {
-                    let self = this;
-                    this.voiceCall();
+                if (self.isVoice) {
+                    self.voiceCall();
                 }
 
-                if (this.isSms()) {
-                    let self = this;
-                    this.sendSms();
+                if (self.isSms) {
+                    self.sendSms();
                 }
 
                 setTimeout(function () {
                     self.showSendAgain = true;
-                }, 30000);
+                }, 10000);
             }
 
             //otherwise default to app
