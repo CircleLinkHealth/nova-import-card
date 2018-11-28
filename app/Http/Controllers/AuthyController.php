@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAuthyPhoneNumber;
+use App\Http\Requests\VerifyAuthyTokenRequest;
 use App\Services\AuthyService;
 use Illuminate\Http\Request;
 
@@ -59,11 +60,13 @@ class AuthyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function checkApprovalRequestStatus()
+    public function checkOneTouchRequestStatus()
     {
         $user = auth()->user();
 
-        $response = $this->service->checkApprovalRequestStatus(session('approval_request_uuid'));
+        if ($uuid = session('approval_request_uuid')) {
+            $response = $this->service->checkOneTouchRequestStatus($uuid);
+        }
 
         if ( ! $response->ok()) {
             return response()
@@ -72,7 +75,9 @@ class AuthyController extends Controller
                 ], 400);
         }
 
-        return $this->ok();
+        return $this->ok([
+            'approval_request_status' => session('authy_status'),
+        ]);
     }
 
     /**
@@ -80,12 +85,12 @@ class AuthyController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createApprovalRequest()
+    public function createOneTouchRequest()
     {
         $user = auth()->user();
 
         $response = $this->service
-            ->createApprovalRequest($user);
+            ->createOneTouchRequest($user);
 
         if ( ! $response->ok()) {
             return response()
@@ -94,6 +99,47 @@ class AuthyController extends Controller
                 ], 400);
         }
 
-        return $this->ok();
+        return $this->ok([
+            'approval_request_uuid' => session('approval_request_uuid'),
+        ]);
+    }
+
+    public function verifyToken(VerifyAuthyTokenRequest $request)
+    {
+        $data    = $request->all();
+        $token   = $data['token'];
+        $authyId = auth()->user()->authy_id;
+
+        $response = $this->service->verifyToken($authyId, $token);
+
+        if ($response->ok()) {
+            return $this->ok(['message' => 'Token verified successfully.']);
+        }
+
+        return response()->json($response->errors(), 500);
+    }
+
+    public function sendTokenViaSms()
+    {
+        $response = $this->service
+            ->sendTokenViaSms(auth()->user()->authy_id);
+
+        if ($response->ok()) {
+            return $this->ok(['message' => 'Verification Code sent via SMS succesfully.']);
+        }
+
+        return response()->json($response->errors(), 500);
+    }
+
+    public function sendTokenViaVoice()
+    {
+        $response = $this->service
+            ->sendTokenViaVoice(auth()->user()->authy_id);
+
+        if ($response->ok()) {
+            return $this->ok(['message' => 'Verification Code sent via Voice Call succesfully.']);
+        }
+
+        return response()->json($response->errors(), 500);
     }
 }

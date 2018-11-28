@@ -9,22 +9,23 @@
 namespace App\Services;
 
 
-use App\Contracts\TwoFactorAuthenticationApi;
+use App\Contracts\AuthyApiable;
 use App\User;
-use Auth;
-use Authy\AuthyApi;
 use Authy\AuthyUser;
-use Illuminate\Support\Facades\Session;
-use Request;
 
 class AuthyService
 {
     /**
-     * @var AuthyApi
+     * @var AuthyApiable
      */
     private $api;
 
-    public function __construct(AuthyApi $authyApi)
+    /**
+     * AuthyService constructor.
+     *
+     * @param AuthyApiable $authyApi
+     */
+    public function __construct(AuthyApiable $authyApi)
     {
         $this->api = $authyApi;
     }
@@ -56,7 +57,7 @@ class AuthyService
      *
      * @return \Authy\AuthyResponse
      */
-    public function createApprovalRequest(User $user)
+    public function createOneTouchRequest(User $user)
     {
         $response = $this
             ->api
@@ -88,16 +89,45 @@ class AuthyService
      *
      * @return \Authy\AuthyResponse
      */
-    public function checkApprovalRequestStatus($approvalRequestUuid)
+    public function checkOneTouchRequestStatus($approvalRequestUuid)
     {
         $response = $this->api
             ->getApprovalRequest($approvalRequestUuid);
 
         if ($response->ok()) {
             $approval_request = (array)$response->bodyvar('approval_request');
-            session(['authy_status' => $approval_request['status']]);
+            $this->on2FASuccess($approval_request['status']);
         }
 
         return $response;
+    }
+
+    public function sendTokenViaSms($authyId)
+    {
+        return $this->api
+            ->requestSms($authyId, ['force' => 'true']);
+    }
+
+    public function sendTokenViaVoice($authyId)
+    {
+        return $this->api
+            ->phoneCall($authyId, ['force' => 'true']);
+    }
+
+    public function verifyToken($authyId, $token)
+    {
+        $response = $this->api
+            ->verifyToken($authyId, $token);
+
+        if ($response->ok()) {
+            $this->on2FASuccess();
+        }
+
+        return $response;
+    }
+
+    private function on2FASuccess($authyStatus = 'approved')
+    {
+        session(['authy_status' => $authyStatus]);
     }
 }
