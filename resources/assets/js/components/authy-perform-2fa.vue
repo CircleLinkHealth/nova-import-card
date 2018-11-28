@@ -16,34 +16,39 @@
 
                     <div class="col-md-12">
                         <div v-if="isApp && checkPollHandler">
-                            Please use OneTouch in the app to complete the login process.
-                            <br><a href="https://authy.com/download/" target="_blank">Don't have the app? Click here</a>
+                            You may use OneTouch in <a href="https://authy.com/download/" target="_blank"><u>the app</u></a>,
+                            or enter a token in the textbox below to complete the login process.
                         </div>
-                        <div v-else>
-                            <input type="text" v-model="token" id="token" class="form-control input-sm"
-                                   placeholder="Enter verification token.">
 
-                            <div class="margin-top-10">
-                                <div @click="verifyToken" :disabled="isLoading" class="btn btn-info btn-block">
-                                    Verify Token
-                                </div>
+                        <input type="text" v-model="token" id="token" class="form-control input-sm margin-top-10"
+                               placeholder="Enter verification token.">
+
+                        <div class="margin-top-10">
+                            <div @click="verifyToken" :disabled="isLoading"
+                                 class="btn btn-info btn-block margin-top-10">
+                                Verify Token
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div v-if="!showOtherMethods" @click="showOtherMethods = true" class="btn btn-default margin-top-10">Try other Methods</div>
+                        <div v-if="!showOtherMethods" @click="showOtherMethods = true"
+                             class="btn btn-default margin-top-10">Try other Methods
+                        </div>
 
                         <div v-if="!authyMethod || showOtherMethods" class="margin-top-10">
-                            <a class="block" href="https://authy.com/download/" target="_blank">Download the app (recommended)</a>
-                            <br><a class="block" @click="sendSms">
-                                Send SMS token
-                            </a>
-                            <br><a class="block" @click="voiceCall">
-                                Receive a call and listen to the token.
-                            </a>
+                            <a v-if="!isApp" class="block clickable" href="https://authy.com/download/" target="_blank">Download
+                                the app
+                                (recommended)</a>
+                            <br><a class="block clickable" @click="sendSms">
+                            Send SMS token
+                        </a>
+                            <br><a class="block clickable" @click="voiceCall">
+                            Receive a call and listen to the token.
+                        </a>
                         </div>
                     </div>
                 </div>
@@ -193,12 +198,13 @@
             },
             setIntervalX(callback, delay, repetitions) {
                 let x = 0;
-                this.checkPollHandler = window.setInterval(function () {
+
+                this.checkPollHandler = window.setInterval(() => {
 
                     callback();
 
                     if (++x === repetitions) {
-                        window.clearInterval(intervalID);
+                        window.clearInterval(this.checkPollHandler);
                     }
                 }, delay);
             },
@@ -236,7 +242,6 @@
             },
             checkOneTouchRequestStatus() {
                 let self = this;
-                this.startLoader();
 
                 console.log('check status')
 
@@ -244,8 +249,6 @@
                     .then((response, status) => {
                         if (response) {
                             console.log("OneTouchRequest Status: ", response);
-
-                            this.stopLoader();
 
                             if (response.data.approval_request_status === "approved") {
                                 clearInterval(self.checkPollHandler)
@@ -255,13 +258,13 @@
                             }
                         }
                     }).catch(err => {
-                        this.stopLoader();
-
                         console.error("CheckOneTouchRequest error: ", err);
                     });
             },
             success() {
-                this.startLoader();
+                let self = this;
+                self.startLoader();
+
                 console.log("2FA Successful. Redirecting to home.");
 
                 self.bannerText = '2FA Successful. Redirecting to home.';
@@ -305,10 +308,16 @@
         margin-top: -4px;
         float: right;
     }
+
     .margin-top-10 {
         margin-top: 10%;
     }
+
     .margin-top-15 {
         margin-top: 10%;
+    }
+
+    .clickable {
+        cursor: pointer;
     }
 </style>

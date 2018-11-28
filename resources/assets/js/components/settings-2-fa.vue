@@ -2,7 +2,7 @@
     <div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Two Factor Authentication
+                <h3 class="panel-title">Authy Settings (2FA)
                     <span class="loader-right">
                     <loader v-show="is_loading"></loader>
                 </span>
