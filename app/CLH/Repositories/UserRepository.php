@@ -1,5 +1,6 @@
 <?php namespace App\CLH\Repositories;
 
+use App\AuthyUser;
 use App\CareAmbassador;
 use App\CarePlan;
 use App\EhrReportWriterInfo;
@@ -70,8 +71,8 @@ class UserRepository
             $this->saveOrUpdateEhrReportWriterInfo($user, $params);
         }
 
-        if ($user->isAdmin()) {
-            $this->enable2fa($user);
+        if ($user->isAdmin() && $user->authyUser) {
+            $this->forceEnable2fa($user->authyUser);
         }
 
         //Add Email Notification
@@ -542,14 +543,16 @@ class UserRepository
 
     }
 
-    private function enable2fa(User $user, $method = 'app')
+    private function forceEnable2fa(AuthyUser $authyUser)
     {
-        $user->authy->enabled = true;
+        if ($authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+            $authyUser->is_authy_enabled = true;
 
-        if ( ! $user->authy->method) {
-            $user->authy->method = $method;
+            if ( ! $authyUser->authy_method) {
+                $authyUser->authy_method = 'app';
+            }
+
+            $authyUser->save();
         }
-
-        $user->save();
     }
 }

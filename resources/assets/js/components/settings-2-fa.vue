@@ -106,17 +106,26 @@
             }
         },
         data() {
-            return {
-                country_code: this.authyUser.country_code,
-                phone_number: this.authyUser.phone_number,
-                method: this.authyUser.authy_method,
-                is_2fa_enabled: !!this.authyUser.is_authy_enabled,
+            let data = {
+                country_code: 1,
+                phone_number: null,
+                method: 'app',
+                is_2fa_enabled: null,
                 is_loading: false,
                 errors: new Errors(),
                 showBanner: false,
                 bannerText: '',
                 bannerType: 'info',
+            };
+
+            if (this.authyUser) {
+                data.country_code = this.authyUser.country_code;
+                data.phone_number = this.authyUser.phone_number;
+                data.method = this.authyUser.authy_method;
+                data.is_2fa_enabled = !!this.authyUser.is_authy_enabled;
             }
+
+            return data;
         },
         methods: {
             submitForm() {
