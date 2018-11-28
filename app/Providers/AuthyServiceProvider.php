@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\AuthyApiable;
+use App\Decorators\AuthyResponseLogger;
 use Authy\AuthyApi;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,8 +26,8 @@ class AuthyServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(AuthyApi::class, function () {
-            return new AuthyApi(config('services.authy.api_key'));
+        $this->app->bind(AuthyApiable::class, function () {
+            return new AuthyResponseLogger(new AuthyApi(config('services.authy.api_key')));
         });
     }
 }
