@@ -31,48 +31,13 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
-    /**
-     *
-     * Should this be deprecated?
-     * See placeCall below
-     *
-     * @param Request $request
-     * @return Twiml
-     * @throws \Twilio\Exceptions\TwimlException
-     */
-    public function newCall(Request $request)
-    {
-        $response = new Twiml();
-
-        $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
-
-        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial) {
-            $q->where('cell_phone', $phoneNumberToDial)
-              ->orWhere('home_phone', $phoneNumberToDial)
-              ->orWhere('other_phone', $phoneNumberToDial);
-        })->first();
-
-        $practiceId = $enrollee['practice_id'];
-
-        $callerIdNumber = optional(Practice::find($practiceId))->outgoing_phone_number;
-
-        if ($callerIdNumber) {
-            $dial = $response->dial(['callerId' => $callerIdNumber]);
-
-            $dial->number($phoneNumberToDial);
-
-            return $response;
-        }
-
-        throw new \Exception("Practice Outgoing Phone Number not found.", 500);
-    }
-
     public function placeCall(Request $request)
     {
         $response       = new Twiml();
 
         if ($request->has('From')) {
             //could be the practice outgoing phone number (in case of enrollment)
+            //should we validate this number? or just let it fail if not accepted by Twilio?
             $callerIdNumber = $request->input('From');
         }
         else {

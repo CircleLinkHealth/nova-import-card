@@ -4,10 +4,6 @@
 @section('activity', 'Call Patient Page')
 
 @section('app')
-    @push('scripts')
-        <script src="https://media.twiliocdn.com/sdk/js/client/v1.6/twilio.min.js"></script>
-    @endpush
-
     <div class="container">
         <div class="row">
             <div class="main-form-container col-lg-4 col-lg-offset-4">

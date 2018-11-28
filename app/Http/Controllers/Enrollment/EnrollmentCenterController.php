@@ -196,7 +196,7 @@ class EnrollmentCenterController extends Controller
         $careAmbassador = auth()->user()->careAmbassador;
 
         //soft_rejected or rejected
-        $status = $request->input('status') ?? 'rejected';
+        $status = $request->input('status', 'rejected');
 
         //update report for care ambassador:
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);

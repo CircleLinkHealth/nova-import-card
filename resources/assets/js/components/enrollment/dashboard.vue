@@ -503,6 +503,8 @@
 
 <script>
 
+    import Twilio from 'twilio-client';
+
     import {rootUrl} from '../../app.config';
     import CoPayEn from './call-scripts/copay-en';
     import NoCoPayEn from './call-scripts/no-copay-en';
@@ -559,7 +561,7 @@
                 return enrollee.practice.outgoing_phone_number;
             },
             total_time_in_system: function () {
-                return this.report.total_time_in_system;
+                return this.report && this.report.total_time_in_system ? this.report.total_time_in_system : 0;
             },
             formatted_total_time_in_system: function () {
                 return new Date(1000 * this.total_time_in_system_running).toISOString().substr(11, 8);

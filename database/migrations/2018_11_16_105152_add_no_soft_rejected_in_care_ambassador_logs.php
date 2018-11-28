@@ -14,7 +14,9 @@ class AddNoSoftRejectedInCareAmbassadorLogs extends Migration
     public function up()
     {
         Schema::table('care_ambassador_logs', function (Blueprint $table) {
-            $table->integer('no_soft_rejected');
+            $table->integer('no_soft_rejected')
+                ->default(0)
+                ->after('no_rejected');
         });
     }
 

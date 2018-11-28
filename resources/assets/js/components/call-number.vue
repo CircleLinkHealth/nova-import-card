@@ -47,7 +47,7 @@
     import LoaderComponent from '../components/loader';
     import {registerHandler, sendRequest} from "./bc-job-manager";
 
-    let Twilio;
+    import Twilio from 'twilio-client';
     let self;
 
     export default {
@@ -145,18 +145,6 @@
                 self.onPhone = false;
                 self.muted = false;
             },
-            setTwilio: function (onDone) {
-                self.waiting = true;
-                if (window.Twilio) {
-                    self.waiting = false;
-                    Twilio = window.Twilio;
-                    onDone();
-                    return;
-                }
-                setTimeout(() => {
-                    self.setTwilio(onDone);
-                }, 100);
-            },
             initTwilio: function () {
                 const url = rootUrl(`/twilio/token`);
 
@@ -192,7 +180,7 @@
                     })
                     .catch(error => {
                         console.log(error);
-                        self.log = 'Could not fetch token, see console.log';
+                        self.log = 'There was an error. Please refresh the page. If the issue persists please let CLH know via slack.';
                     });
             },
             registerBroadcastChannelHandlers: function () {
@@ -272,9 +260,7 @@
                 });
         },
         mounted() {
-            self.setTwilio(() => {
-                self.initTwilio();
-            });
+            self.initTwilio();
         }
     }
 </script>

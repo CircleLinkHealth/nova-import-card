@@ -5,8 +5,6 @@
 
 @section('content')
 
-    <script src="//static.twilio.com/libs/twiliojs/1.3/twilio.min.js"></script>
-
     <script>
         window['userFullName'] = @json(auth()->user()->getFullName());
         window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
