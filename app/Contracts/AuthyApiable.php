@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use Authy\AuthyResponse;
+use Authy\AuthyUser;
 
 interface AuthyApiable
 {
@@ -12,6 +13,8 @@ interface AuthyApiable
      * @param  string $email New user's email
      * @param  string $cellphone New user's cellphone
      * @param  int $country_code New user's country code. defaults to USA(1)
+     *
+     * @param bool $send_install_link
      *
      * @return AuthyUser the new registered user
      */
@@ -97,7 +100,7 @@ interface AuthyApiable
     public function phoneVerificationCheck($phone_number, $country_code, $verification_code): AuthyResponse;
 
     /**
-     * Phone information. (Checks whether the token entered by the user is valid or not).
+     * Phone information. Gather additional information about user's phone.
      *
      * @param string $phone_number User's phone_number stored in your database
      * @param string $country_code User's phone country code stored in your database
