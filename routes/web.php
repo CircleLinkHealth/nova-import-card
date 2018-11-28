@@ -84,7 +84,7 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.file.download',
     ]);
 
-    Route::group(['prefix' => 'ehr-report-writer'], function(){
+    Route::group(['prefix' => 'ehr-report-writer'], function () {
         Route::get('index', [
             'uses' => 'EhrReportWriterController@index',
             'as'   => 'report-writer.dashboard',
@@ -92,7 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
 
         Route::post('validate', [
             'uses' => 'EhrReportWriterController@validateJson',
-            'as'   => 'report-writer.validate'
+            'as'   => 'report-writer.validate',
         ]);
     });
 
@@ -702,6 +702,10 @@ Route::group(['middleware' => 'auth'], function () {
         ])->middleware('permission:legacy-bhi-consent-decision.create');
     });
 
+    Route::get('update-approve-own-care-plans', [
+        'uses' => 'ProviderController@updateApproveOwnCarePlan',
+        'as'   => 'provider.update-approve-own',
+    ])->middleware('permission:care-plan-approve');
     // **** PATIENTS (/manage-patients/{patientId}/)
     Route::group([
         'prefix'     => 'manage-patients/{patientId}',
@@ -729,6 +733,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patient.careplan.print',
         ])->middleware('permission:careplan.read');
 
+
         Route::get('view-careplan/assessment', [
             'uses' => 'ReportsController@makeAssessment',
             'as'   => 'patient.careplan.assessment',
@@ -753,6 +758,7 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'ProviderController@removePatient',
             'as'   => 'patient.careplan.not.eligible',
         ])->middleware('permission:care-plan-approve');
+
 
         Route::get('view-careplan/pdf', [
             'uses' => 'ReportsController@viewPdfCarePlan',

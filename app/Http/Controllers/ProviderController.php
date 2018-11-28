@@ -99,18 +99,21 @@ class ProviderController extends Controller
         return redirect()->to('/');
     }
 
-    public function updateApproveOwnCarePlan(Request $request){
+    public function updateApproveOwnCarePlan(Request $request)
+    {
 
         $user = auth()->user();
-        if (! $user->providerInfo){
-            //with warning
-            return redirect()->back();
+        if ( ! $user->providerInfo) {
+            return redirect()->back()->withErrors(['errors' => 'Please log in as a Provider.']);
         }
-        //get value
-        $user->providerInfo->approve_own_care_plans = 1;
+
+        $own = $user->providerInfo->approve_own_care_plans;
+
+        $user->providerInfo->approve_own_care_plans = $own
+            ? 0
+            : 1;
         $user->providerInfo->save();
 
-        //change to route, dashboard maybe
-        return redirect()->back();
+        return redirect()->route('patients.dashboard');
     }
 }

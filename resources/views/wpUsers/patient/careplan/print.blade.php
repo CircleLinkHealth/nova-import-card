@@ -149,6 +149,11 @@ if (isset($patient) && ! empty($patient)) {
                                                             }
                                                         </script>
                                                     </form>
+
+                                                    <a class="btn btn-sm btn-default" aria-label="..."
+                                                       role="button"
+                                                       href="{{route('provider.update-approve-own')}}">@if(optional(auth()->user()->providerInfo)->approve_own_care_plans)Approve all practice patients @else Approve my patients only @endif</a>
+
                                                 @endif
                                             @endif
 
