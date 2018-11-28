@@ -54,7 +54,11 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
             'uses' => 'Auth\LoginController@logout',
             'as'   => 'user.logout',
         ]);
-        Route::get('inactivity-logout', 'Auth\LoginController@inactivityLogout');
+        Route::get('inactivity-logout', [
+            'uses' => 'Auth\LoginController@inactivityLogout',
+            'as'   => 'user.inactivity-logout',
+
+        ]);
     });
 });
 

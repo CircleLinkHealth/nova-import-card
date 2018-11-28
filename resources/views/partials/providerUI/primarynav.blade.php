@@ -157,7 +157,7 @@ if (isset($patient)) {
                             </li>
                         @endif
 
-                        <li><a href="{{ url('/auth/logout') }}">
+                        <li><a href="{{ route('user.logout') }}">
                                 Logout
                             </a>
                         </li>
