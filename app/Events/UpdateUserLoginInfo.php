@@ -29,7 +29,7 @@ class UpdateUserLoginInfo
         $event->user->last_login = Carbon::now()->toDateTimeString();
         $event->user->is_online  = true;
 
-        if ($event->user->isAdmin() && $event->user->authy_id && ! $event->user->is_authy_enabled) {
+        if ($event->user->isAdmin() && ! ! config('auth.two_fa_enabled') && $event->user->authy_id && ! $event->user->is_authy_enabled) {
             $event->user->is_authy_enabled = true;
         }
 
