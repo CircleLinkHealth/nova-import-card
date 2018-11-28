@@ -8,6 +8,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use LERN;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -25,6 +26,10 @@ class Handler extends ExceptionHandler
         ModelNotFoundException::class,
         TokenMismatchException::class,
         ValidationException::class,
+    ];
+
+    protected $recordButNotNotify = [
+        SuspiciousOperationException::class,
     ];
 
     /**
@@ -80,7 +85,12 @@ class Handler extends ExceptionHandler
                     )
                 );
 
-                app()->make("lern")->handle($e); //Record and Notify the Exception
+                if ($this->shouldRecordOnly($e)) {
+                    app()->make("lern")->record($e);
+                } else {
+                    app()->make("lern")->handle($e); //Record and Notify the Exception
+                }
+
 
                 /*
                 OR...
@@ -135,5 +145,10 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest('login');
+    }
+
+    private function shouldRecordOnly($e)
+    {
+        return in_array(get_class($e), $this->recordButNotNotify);
     }
 }
