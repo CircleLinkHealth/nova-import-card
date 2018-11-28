@@ -34,10 +34,11 @@ class AuthyMiddleware
      */
     public function handle($request, Closure $next)
     {
-//        if (app()->environment(['local'])) {
-//            \Session::put('authy_status', 'approved');
-//            return $next($request);
-//        }
+        if ( ! ! ! config('auth.two_fa_enabled')) {
+            \Session::put('authy_status', 'approved');
+
+            return $next($request);
+        }
 
         $user         = optional(auth()->user());
         $currentRoute = \Route::currentRouteName();
