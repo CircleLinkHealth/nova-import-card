@@ -332,7 +332,6 @@ class User extends BaseModel implements AuthenticatableContract, CanResetPasswor
         'is_online',
         'country_code',
         'phone_number',
-        'authy_status',
         'authy_id',
         'authy_method',
         'is_authy_enabled',
