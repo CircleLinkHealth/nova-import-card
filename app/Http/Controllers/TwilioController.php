@@ -31,16 +31,31 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     * @throws \Twilio\Exceptions\TwimlException
+     * @throws \Exception
+     */
     public function placeCall(Request $request)
     {
-        $response       = new Twiml();
+
+        $validation = \Validator::make($request->all(), [
+            'To'   => 'required|phone:AUTO,US',
+            'From' => 'nullable|phone:AUTO,US', //could be the practice outgoing phone number (in case of enrollment)
+        ]);
+
+        if ($validation->fails()) {
+            //twilio will just respond with 'An application error has occurred'
+            throw new \Exception('Invalid phone number');
+        }
+
+        $response = new Twiml();
 
         if ($request->has('From')) {
-            //could be the practice outgoing phone number (in case of enrollment)
-            //should we validate this number? or just let it fail if not accepted by Twilio?
             $callerIdNumber = $request->input('From');
-        }
-        else {
+        } else {
             $callerIdNumber = config('services.twilio')['from'];
         }
 
