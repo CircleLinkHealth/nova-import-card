@@ -12,27 +12,29 @@
 
                 <div class="row">
                     <div class="col-xs-4 col-sm-4 col-md-4">
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error':errors.has('country_code')}">
                             <select v-model="country_code" id="country_code" class="form-control input-sm"
                                     :disabled="is_loading">
                                 <option value="1" selected>USA (+1)</option>
                                 <option value="357">Cyprus (+357)</option>
                                 <option value="33">France (+33)</option>
                             </select>
+                            <span class="help-block">{{errors.get('country_code')}}</span>
                         </div>
                     </div>
                     <div class="col-xs-8 col-sm-8 col-md-8">
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error':errors.has('phone_number')}">
                             <input type="tel" v-model="phone_number" class="form-control input-sm"
                                    :disabled="is_loading"
                                    placeholder="Phone Number">
+                            <span class="help-block">{{errors.get('phone_number')}}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error':errors.has('method')}">
                             <label for="method">Authenticate using</label>
 
                             <span class="info minimum-padding"
@@ -46,16 +48,18 @@
                                 <option value="sms">SMS</option>
                                 <option value="phone">Phone Call</option>
                             </select>
+                            <span class="help-block">{{errors.get('method')}}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-12 col-sm-12 col-md-12">
-                        <div class="form-group">
+                        <div class="form-group" :class="{'has-error':errors.has('is_2fa_enabled')}">
                             <label for="is_2fa_enabled">Enable 2FA</label>
                             <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled" :disabled="is_loading"
                                    class="form-control input-sm" style="display: inline-block;">
+                            <span class="help-block">{{errors.get('is_2fa_enabled')}}</span>
                         </div>
                     </div>
                 </div>
@@ -71,8 +75,7 @@
 <script>
     import LoaderComponent from './loader';
     import {rootUrl} from "../app.config";
-    import {addNotification} from '../store/actions'
-    import {mapActions} from 'vuex'
+    import Errors from "./src/Errors";
 
     export default {
         name: 'settings-2fa',
@@ -91,8 +94,7 @@
         },
         components: {
             'loader': LoaderComponent,
-        }
-        ,
+        },
         data() {
             return {
                 country_code: this.authyUser.country_code,
@@ -100,10 +102,10 @@
                 method: this.authyUser.authy_method,
                 is_2fa_enabled: !!this.authyUser.is_authy_enabled,
                 is_loading: false,
+                errors: new Errors(),
             }
-        }
-        ,
-        methods: Object.assign(mapActions(['addNotification']), {
+        },
+        methods: {
             submitForm() {
                 this.is_loading = true;
 
@@ -131,21 +133,14 @@
 
                         console.log(err)
 
-                        this.addNotification({
-                            title: 'Error!',
-                            text: 'Improve this error message before release.',
-                            type: "danger",
-                            timeout: false
-                        })
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+                        this.errors.setErrors(errors);
                     });
             }
-        }),
-        mounted() {
-
-        }
+        },
     }
 </script>
-<style>
+<style scoped>
     .loader-right {
         margin-top: -4px;
         float: right;

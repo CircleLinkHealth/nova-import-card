@@ -20,8 +20,12 @@
                             or enter a token in the textbox below to complete the login process.
                         </div>
 
-                        <input type="text" v-model="token" id="token" class="form-control input-sm margin-top-10"
-                               placeholder="Enter verification token.">
+                        <div class="form-group margin-top-10" :class="{'has-error':errors.has('token')}"
+                             :disabled="isLoading">
+                            <input type="text" v-model="token" id="token" class="form-control input-sm"
+                                   placeholder="Enter verification token.">
+                            <span class="help-block">{{errors.get('token')}}</span>
+                        </div>
 
                         <div class="margin-top-10">
                             <div @click="verifyToken" :disabled="isLoading"
@@ -74,8 +78,7 @@
 <script>
     import LoaderComponent from './loader';
     import {rootUrl} from "../app.config";
-    import {addNotification} from '../store/actions'
-    import {mapActions} from 'vuex'
+    import Errors from "./src/Errors";
 
     export default {
         name: 'authy-perform-2fa',
@@ -112,9 +115,10 @@
                 showOtherMethods: false,
                 bannerText: '',
                 bannerType: 'info',
+                errors: new Errors()
             }
         },
-        methods: Object.assign(mapActions(['addNotification']), {
+        methods: {
             verifyToken() {
                 let self = this;
                 this.startLoader();
@@ -132,7 +136,14 @@
                         this.stopLoader();
 
                         console.error("VerifyToken error: ", err);
-                        alert(err.data.message);
+
+                        let errors = err.response.data.errors ? err.response.data.errors : [];
+
+                        this.errors.setErrors(errors);
+
+                        self.bannerText = err.response.data.message;
+                        self.bannerType = 'danger';
+                        self.showBanner = true;
                     });
             },
             startLoader() {
@@ -250,9 +261,14 @@
                         if (response) {
                             console.log("OneTouchRequest Status: ", response);
 
-                            if (response.data.approval_request_status === "approved") {
+                            let status = response.data.approval_request_status;
+
+                            if (status === "approved") {
                                 clearInterval(self.checkPollHandler)
                                 this.success()
+                            } else if (status === "denied") {
+                                clearInterval(self.checkPollHandler)
+                                this.denied()
                             } else {
                                 console.log("Approval Request not yet approved");
                             }
@@ -263,18 +279,29 @@
             },
             success() {
                 let self = this;
+
+                self.errors.clear();
                 self.startLoader();
 
-                console.log("2FA Successful. Redirecting to home.");
+                console.log("2FA successful! Redirecting to homepage.");
 
-                self.bannerText = '2FA Successful. Redirecting to home.';
+                self.bannerText = '2FA successful! Redirecting to homepage.';
                 self.bannerType = 'success';
                 self.showBanner = true;
 
                 window.location.href = '/';
+            },
+            denied() {
+                let self = this;
+
+                console.log("Request denied by User.");
+
+                self.bannerText = 'Login request denied by User.';
+                self.bannerType = 'warning';
+                self.showBanner = true;
             }
-        }),
-        mounted() {
+        },
+        created() {
             //if authyUser has a preference, send the token
             if (this.isAuthyEnabled && this.authyId && this.authyMethod) {
                 let self = this;
