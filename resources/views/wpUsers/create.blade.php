@@ -98,8 +98,6 @@
                                                 <div class="row">
                                                     <div class="col-xs-2">{!! Form::label('user_status', 'User Status:') !!}</div>
                                                     <div class="col-xs-4">{!! Form::select('user_status', array('0' => '0', '1' => '1'), 1, ['class' => 'form-control select-picker', 'style' => 'width:40%;']) !!}</div>
-                                                    <div class="col-xs-2"></div>
-                                                    <div class="col-xs-4"></div>
                                                 </div>
                                             </div>
 

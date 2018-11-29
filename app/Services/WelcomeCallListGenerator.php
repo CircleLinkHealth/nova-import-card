@@ -16,7 +16,9 @@ use App\Enrollee;
 use App\Models\CPM\CpmProblem;
 use App\Practice;
 use App\Services\Eligibility\Adapters\JsonMedicalRecordInsurancePlansAdapter;
+use App\Services\Eligibility\Csv\CsvPatientList;
 use App\Services\Eligibility\Entities\Problem;
+use App\Traits\ValidatesEligibility;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -28,6 +30,7 @@ use Validator;
  */
 class WelcomeCallListGenerator
 {
+    use ValidatesEligibility;
     /**
      * An array representation of the Patient List. This will normally be uploaded as a csv file.
      *
@@ -77,6 +80,8 @@ class WelcomeCallListGenerator
      * @var EligibilityJob
      */
     private $eligibilityJob;
+
+    protected $invalidStructure = false;
 
     /**
      * WelcomeCallListGenerator constructor.
@@ -165,10 +170,51 @@ class WelcomeCallListGenerator
 
     protected function filterPatientList()
     {
-        $this
-            ->byNumberOfProblems()
-            ->byLastEncounter()
-            ->byInsurance();
+        $this->validateStructureAndData()
+             ->byNumberOfProblems()
+             ->byLastEncounter()
+             ->byInsurance();
+
+    }
+
+    protected function validateStructureAndData()
+    {
+        if ($this->batch->type == EligibilityBatch::TYPE_ONE_CSV && $this->eligibilityJob) {
+            $csvPatientList = new CsvPatientList(collect($this->patientList));
+            $isValid        = $csvPatientList->guessValidator() ?? null;
+
+            $this->patientList->each(function ($patient) use ($isValid) {
+                $errors = [];
+                if ( ! $isValid) {
+                    $errors[]               = 'structure';
+                    $this->invalidStructure = true;
+                }
+                $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
+                $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            });
+        }
+
+        if ($this->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE && $this->eligibilityJob) {
+            $this->patientList->each(function ($patient) {
+                $errors          = [];
+                $structureErrors = $this->validateJsonStructure($patient)->errors();
+                if ($structureErrors->isNotEmpty()) {
+                    $errors[]               = 'structure';
+                    $this->invalidStructure = true;
+                }
+                $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
+                $this->saveErrorsOnEligibilityJob($this->eligibilityJob, collect($errors));
+            });
+
+        }
+        if ($this->invalidStructure) {
+            //if there are structure errors we stop the process because create enrollees fails from missing arguements
+            throw new \Exception("Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.",
+                422);
+        }
+
+        return $this;
+
     }
 
     protected function byNumberOfProblems(): WelcomeCallListGenerator
@@ -539,7 +585,7 @@ class WelcomeCallListGenerator
         if ($this->eligibilityJob) {
             $this->eligibilityJob->primary_insurance   = $primary;
             $this->eligibilityJob->secondary_insurance = $secondary;
-            $this->eligibilityJob->tertiary_insurance   = $tertiary;
+            $this->eligibilityJob->tertiary_insurance  = $tertiary;
         }
 
         if (count($eligibleInsurances) < 1) {

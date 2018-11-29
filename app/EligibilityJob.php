@@ -39,6 +39,7 @@ class EligibilityJob extends BaseModel
     protected $casts = [
         'data'     => 'array',
         'messages' => 'array',
+        'errors'   => 'array',
     ];
 
     protected $fillable = [
@@ -46,6 +47,7 @@ class EligibilityJob extends BaseModel
         'hash',
         'data',
         'messages',
+        'errors',
         'outcome',
         'reason',
         'status',
@@ -56,6 +58,14 @@ class EligibilityJob extends BaseModel
         'secondary_insurance',
         'primary_insurance',
         'last_encounter',
+        'invalid_data',
+        'invalid_structure',
+        'invalid_mrn',
+        'invalid_first_name',
+        'invalid_last_name',
+        'invalid_dob',
+        'invalid_problems',
+        'invalid_phones',
     ];
 
     protected $attributes = [

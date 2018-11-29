@@ -25,6 +25,10 @@ class DownloadController extends Controller
         }
 
         if ( ! file_exists($path)) {
+            $path = storage_path("eligibility-templates/$filePath");
+        }
+
+        if ( ! file_exists($path)) {
             $downloadMedia = $this->mediaFileExists($filePath);
 
             if ($downloadMedia) {
@@ -87,6 +91,6 @@ class DownloadController extends Controller
 
         $practiceId = $media->model_id;
 
-        return auth()->user()->practice((int)$practiceId) || auth()->user()->hasRole('administrator');
+        return auth()->user()->practice((int)$practiceId) || auth()->user()->isAdmin();
     }
 }

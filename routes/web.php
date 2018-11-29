@@ -50,8 +50,15 @@ Route::group(['middleware' => 'disable-debugbar'], function () {
     ], function () {
         Auth::routes();
 
-        Route::get('logout', 'Auth\LoginController@logout');
-        Route::get('inactivity-logout', 'Auth\LoginController@inactivityLogout');
+        Route::get('logout', [
+            'uses' => 'Auth\LoginController@logout',
+            'as'   => 'user.logout',
+        ]);
+        Route::get('inactivity-logout', [
+            'uses' => 'Auth\LoginController@inactivityLogout',
+            'as'   => 'user.inactivity-logout',
+
+        ]);
     });
 });
 
@@ -84,10 +91,85 @@ Route::group(['middleware' => 'auth'], function () {
         'as'   => 'post.file.download',
     ]);
 
+    Route::group(['prefix' => 'ehr-report-writer'], function () {
+        Route::get('index', [
+            'uses' => 'EhrReportWriterController@index',
+            'as'   => 'report-writer.dashboard',
+        ]);
+
+        Route::get('download-template/{name}', [
+            'uses' => 'EhrReportWriterController@downloadCsvTemplate',
+            'as'   => 'report-writer.download-template',
+        ]);
+
+
+        Route::post('validate', [
+            'uses' => 'EhrReportWriterController@validateJson',
+            'as'   => 'report-writer.validate',
+        ]);
+
+        Route::post('submit', [
+            'uses' => 'EhrReportWriterController@submitFile',
+            'as'   => 'report-writer.submit',
+        ]);
+
+        Route::post('notify', [
+            'uses' => 'EhrReportWriterController@notifyReportWriter',
+            'as'   => 'report-writer.notify',
+        ]);
+
+    });
+
+    Route::group(['prefix' => '2fa'], function () {
+        Route::get('', [
+            'uses' => 'AuthyController@showVerificationTokenForm',
+            'as'   => 'user.2fa.show.token.form',
+        ]);
+    });
+
     /**
      * API
      */
     Route::group(['prefix' => 'api'], function () {
+        Route::group(['prefix' => '2fa'], function () {
+            Route::group(['prefix' => 'token'], function () {
+                Route::post('sms', [
+                    'uses' => 'AuthyController@sendTokenViaSms',
+                    'as'   => 'user.2fa.token.sms',
+                ]);
+
+                Route::post('voice', [
+                    'uses' => 'AuthyController@sendTokenViaVoice',
+                    'as'   => 'user.2fa.token.voice',
+                ]);
+
+                Route::post('verify', [
+                    'uses' => 'AuthyController@verifyToken',
+                    'as'   => 'user.2fa.token.verify',
+                ]);
+            });
+            Route::group(['prefix' => 'one-touch-request'], function () {
+                Route::post('create', [
+                    'uses' => 'AuthyController@createOneTouchRequest',
+                    'as'   => 'user.2fa.one-touch-request.create',
+                ]);
+
+                Route::post('check-status', [
+                    'uses' => 'AuthyController@checkOneTouchRequestStatus',
+                    'as'   => 'user.2fa.one-touch-request.check',
+                ]);
+            });
+        });
+
+        Route::group(['prefix' => 'account-settings'], function () {
+            Route::group(['prefix' => '2fa'], function () {
+                Route::post('', [
+                    'uses' => 'AuthyController@store',
+                    'as'   => 'user.2fa.store',
+                ]);
+            });
+        });
+
         Route::group(['prefix' => 'admin'], function () {
 
             //the new calls route that uses calls-view table
@@ -608,6 +690,13 @@ Route::group(['middleware' => 'auth'], function () {
             'uses' => 'Patient\PatientCareplanController@storePatientDemographics',
             'as'   => 'patient.demographics.store',
         ])->middleware('permission:patient.create,patient.update,careplan.update');
+
+        Route::group(['prefix' => 'settings'], function () {
+            Route::get('', [
+                'uses' => 'UserSettingsController@show',
+                'as'   => 'user.settings.manage',
+            ]);
+        });
 
         Route::get('dashboard', [
             'uses' => 'Patient\PatientController@showDashboard',
