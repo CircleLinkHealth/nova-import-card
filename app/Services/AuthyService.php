@@ -42,7 +42,7 @@ class AuthyService
     public function register(AuthyUser $authyUser, User $user)
     {
         $response = $this->api
-            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code);
+            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code, $authyUser->authy_method == 'app');
 
         if ($response->ok()) {
             $authyUser->authy_id = $response->id();
