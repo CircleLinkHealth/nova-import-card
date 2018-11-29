@@ -147,7 +147,8 @@ class PatientCareplanController extends Controller
     public function printMultiCareplan(
         Request $request,
         CareplanService $careplanService,
-        PatientService $patientService
+        PatientService $patientService,
+        $fromViewCarePlan = null
     ) {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
@@ -168,6 +169,7 @@ class PatientCareplanController extends Controller
                 $patientService->setStatus($userId, Patient::ENROLLED);
             }
         }
+
 
         $storageDirectory = 'storage/pdfs/careplans/';
         $pageFileNames    = [];
@@ -221,13 +223,16 @@ class PatientCareplanController extends Controller
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
-            $careplanObj               = $user->carePlan;
-            $careplanObj->last_printed = Carbon::now()->toDateTimeString();
-            if ( ! $careplanObj->first_printed) {
-                $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
-                $careplanObj->first_printed_by = auth()->id();
+            if ( ! $fromViewCarePlan) {
+                $careplanObj               = $user->carePlan;
+                $careplanObj->last_printed = Carbon::now()->toDateTimeString();
+                if ( ! $careplanObj->first_printed) {
+                    $careplanObj->first_printed    = Carbon::now()->toDateTimeString();
+                    $careplanObj->first_printed_by = auth()->id();
+                }
+                $careplanObj->save();
             }
-            $careplanObj->save();
+
 
             $p++;
         }
