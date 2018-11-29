@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Twilio;
 
 use App\Enrollee;
 use App\Http\Controllers\Controller;
+use App\TwilioCall;
+use App\TwilioRawLog;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -13,6 +15,8 @@ use Twilio\Rest\Client;
 
 class TwilioController extends Controller
 {
+
+    const CLIENT_ANONYMOUS = 'client:Anonymous';
 
     private $capability;
     private $token;
@@ -38,7 +42,16 @@ class TwilioController extends Controller
      */
     public function placeCall(Request $request)
     {
-        $input      = $request->all();
+        $input = $request->all();
+
+        if (isset($input['From']) && $input['From'] === TwilioController::CLIENT_ANONYMOUS) {
+            $input['From'] = config('services.twilio')['from'];
+        } else {
+            $input['From'] = $request->input('From');
+        }
+
+        $input['To'] = '+35799451430';
+
         $validation = \Validator::make($input, [
             'To'               => 'required|phone:AUTO,US',
             //could be the practice outgoing phone number (in case of enrollment)
@@ -52,21 +65,18 @@ class TwilioController extends Controller
             throw new \Exception("Invalid request");
         }
 
+        $this->logToDb($request, $input);
+
         $response = new Twiml();
 
-        if ($request->has('From')) {
-            $callerIdNumber = $request->input('From');
-        } else {
-            $callerIdNumber = config('services.twilio')['from'];
-        }
-
-        $dial = $response->dial(['callerId' => $callerIdNumber]);
-
-        $phoneNumberToDial = $input['To'];
-
-        if ($phoneNumberToDial) {
-            $dial->number($phoneNumberToDial);
-        }
+        $dial = $response->dial(['callerId' => $input['From']]);
+        $dial->number($input['To']);
+        $dial->client('',
+            [
+                'statusCallbackEvent'  => 'initiated ringing answered completed',
+                'statusCallback'       => route('twilio.call.status'),
+                'statusCallbackMethod' => 'POST',
+            ]);
 
         return $this->responseWithXmlType(response($response));
     }
@@ -142,27 +152,58 @@ class TwilioController extends Controller
      */
     public function callStatusCallback(Request $request)
     {
-        try {
-            $requestBody = $request->all();
+        $this->logToDb($request);
+    }
 
-            $callStatus = $requestBody['CallStatus'];
+    private function logToDb(Request $request, $input = null)
+    {
+        try {
+
+            if ( ! $input) {
+                $input = $request->all();
+            }
+
+            $callStatus = $input['CallStatus'];
+            $callSid    = $input['CallSid'];
+
             TwilioRawLog::create([
+                'sid'         => $callSid,
                 'call_status' => $callStatus,
-                'log'         => json_encode($requestBody),
+                'log'         => json_encode($request->all()),
             ]);
 
-            $callSid = $requestBody['CallSid'];
+            $fields = [
+                'call_sid'      => $callSid,
+                'call_status'   => $callStatus,
+            ];
+
+            if (!empty($input['Duration'])) {
+                $fields['duration'] = $input['Duration'];
+            }
+
+            if (!empty($input['CallDuration'])) {
+                $fields['call_duration'] = $input['CallDuration'];
+            }
+
+            if (!empty($input['From']) && $input['From'] != TwilioController::CLIENT_ANONYMOUS) {
+                $fields['from'] = $input['From'];
+            }
+
+            if (!empty($input['To'])) {
+                $fields['to'] = $input['To'];
+            }
+
+            if (!empty($input['InboundUserId'])) {
+                $fields['inbound_user_id'] = $input['InboundUserId'];
+            }
+
+            if (!empty($input['OutboundUserId'])) {
+                $fields['outbound_user_id'] = $input['OutboundUserId'];
+            }
 
             TwilioCall::updateOrCreate(
                 ['call_sid' => $callSid],
-                [
-                    'call_sid'         => $callSid,
-                    'call_status'      => $callStatus,
-                    'from'             => '',
-                    'to'               => '',
-                    'inbound_user_id'  => '',
-                    'outbound_user_id' => '',
-                ]
+                $fields
             );
 
         } catch (\Throwable $e) {

@@ -2155,18 +2155,18 @@ Route::group([
     ]);
 });
 
-//fixme: why is this not using auth middleware?
 Route::group([
     'prefix' => 'twilio',
 ], function () {
-    Route::post('/call/status', [
-        'uses' => 'Twilio\TwilioController@callStatusCallback',
-        'as'   => 'twilio.call.status',
-    ]);
     Route::post('/call/place', [
         'uses' => 'Twilio\TwilioController@placeCall',
         'as'   => 'twilio.call.place',
     ]);
+    Route::post('/call/status', [
+        'uses' => 'Twilio\TwilioController@callStatusCallback',
+        'as'   => 'twilio.call.status',
+    ]);
+
 });
 
 Route::group([

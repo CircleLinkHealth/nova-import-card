@@ -50,6 +50,8 @@
                             <div class="col-sm-12">
                                 @if($phoneNumbers->isNotEmpty())
                                     <call-number
+                                            :inbound-user-id="{{$patient->id}}"
+                                            :outbound-user-id="{{auth()->id()}}"
                                             :numbers="{{$phoneNumbers}}">
 
                                     </call-number>
