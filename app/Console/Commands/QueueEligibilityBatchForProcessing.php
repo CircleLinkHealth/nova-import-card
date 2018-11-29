@@ -272,8 +272,15 @@ class QueueEligibilityBatchForProcessing extends Command
         $driveFilePath = $batch->options['filePath'] ?? null;
 
         $driveHandler = new GoogleDrive();
-        $stream       = $driveHandler
-            ->getFileStream($driveFileName, $driveFolder);
+        try {
+            $stream = $driveHandler
+                ->getFileStream($driveFileName, $driveFolder);
+        } catch (\Exception $e) {
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            $batch->status = 2;
+            $batch->save();
+        }
+
 
         $localDisk = Storage::disk('local');
 
@@ -311,7 +318,7 @@ class QueueEligibilityBatchForProcessing extends Command
             $batch->save();
 
             $initiator = $batch->initiatorUser()->firstOrFail();
-            if($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo){
+            if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
 
