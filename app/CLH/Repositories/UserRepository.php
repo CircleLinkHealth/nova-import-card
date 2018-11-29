@@ -525,13 +525,26 @@ class UserRepository
 
             $service->permissions->create($writerFolder['basename'], $permission);
 
-            $service    = $cloudDisk->getAdapter()->getService();
             $permission = new \Google_Service_Drive_Permission();
             $permission->setRole('writer');
             $permission->setType('user');
             $permission->setEmailAddress("joe@circlelinkhealth.com");
 
             $service->permissions->create($writerFolder['basename'], $permission);
+
+            if (! app()->environment(['production', 'worker'])){
+                $adminEmails = User::ofType('administrator')
+                         ->pluck('email');
+
+                foreach ($adminEmails as $email){
+                    $permission = new \Google_Service_Drive_Permission();
+                    $permission->setRole('writer');
+                    $permission->setType('user');
+                    $permission->setEmailAddress($email);
+
+                    $service->permissions->create($writerFolder['basename'], $permission);
+                }
+            }
 
             return $writerFolder['path'];
         }
