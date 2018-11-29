@@ -279,6 +279,7 @@ class QueueEligibilityBatchForProcessing extends Command
             \Log::debug("EXCEPTION `{$e->getMessage()}`");
             $batch->status = 2;
             $batch->save();
+            return null;
         }
 
 
