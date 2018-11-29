@@ -521,8 +521,15 @@ class UserRepository
             $permission = new \Google_Service_Drive_Permission();
             $permission->setRole('writer');
             $permission->setType('user');
-//        $permission->setAllowFileDiscovery(false);
             $permission->setEmailAddress($user->email);
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            $service    = $cloudDisk->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress("joe@circlelinkhealth.com");
 
             $service->permissions->create($writerFolder['basename'], $permission);
 
