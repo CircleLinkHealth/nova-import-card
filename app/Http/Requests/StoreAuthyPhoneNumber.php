@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\AuthyUser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,6 +33,7 @@ class StoreAuthyPhoneNumber extends FormRequest
             'phone_number'   => [
                 'required',
                 Rule::phone()->country(['US', 'CY', 'FR']),
+                Rule::unique((new AuthyUser())->getTable(), 'phone_number'),
             ],
             'method'         => [
                 'required',
