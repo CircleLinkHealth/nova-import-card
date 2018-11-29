@@ -167,6 +167,12 @@
                             self.bannerType = 'success';
                             self.showBanner = true;
 
+                            //if it's the first time the user is settign up 2FA, redirect them to home
+                            //so that the 2FA box will show and they'll complete the process
+                            if (_.isNull(this.authyUser)) {
+                                window.location.href = '/';
+                            }
+
                             this.is_loading = false;
 
                             console.log(response)
