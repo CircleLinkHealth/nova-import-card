@@ -177,19 +177,50 @@ class EligibilityBatch extends BaseModel
 
     public function getValidationStats()
     {
-        $validationStats = [
-            'total'             => 0,
-            'invalid_structure' => 0,
-            'invalid_data'      => 0,
-            'mrn'               => 0,
-            'first_name'        => 0,
-            'last_name'         => 0,
-            'dob'               => 0,
-            'problems'          => 0,
-            'phones'            => 0,
-        ];
 
-        return $validationStats;
+        $structure = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_structure', 1)
+                                   ->count();
+
+        $data = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_data', 1)
+                                   ->count();
+
+        $mrn = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_mrn', 1)
+                                   ->count();
+
+        $firstName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_first_name', 1)
+                                   ->count();
+
+        $lastName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_last_name', 1)
+                                   ->count();
+
+        $dob = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_dob', 1)
+                                   ->count();
+
+        $problems = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_problems', 1)
+                                   ->count();
+
+        $phones = EligibilityJob::where('batch_id', $this->id)
+                                  ->where('invalid_phones', 1)
+                                  ->count();
+
+        return [
+            'total'             => $this->eligibilityJobs()->count(),
+            'invalid_structure' => $structure,
+            'invalid_data'      => $data,
+            'mrn'               => $mrn,
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'dob'               => $dob,
+            'problems'          => $problems,
+            'phones'            => $phones,
+        ];
 
     }
 }

@@ -344,10 +344,10 @@ class ProcessEligibilityService
     public function createBatch($type, int $practiceId, $options = [])
     {
         return EligibilityBatch::create([
-            'type'              => $type,
-            'practice_id'       => $practiceId,
-            'status'            => EligibilityBatch::STATUSES['not_started'],
-            'options'           => $options,
+            'type'        => $type,
+            'practice_id' => $practiceId,
+            'status'      => EligibilityBatch::STATUSES['not_started'],
+            'options'     => $options,
         ]);
     }
 
@@ -465,7 +465,8 @@ class ProcessEligibilityService
      *
      * @return ProcessEligibilityService|\Illuminate\Database\Eloquent\Model
      */
-    public function createSingleCSVBatchFromGoogleDrive($folder,
+    public function createSingleCSVBatchFromGoogleDrive(
+        $folder,
         $fileName,
         int $practiceId,
         $filterLastEncounter,
@@ -514,7 +515,8 @@ class ProcessEligibilityService
             'filterLastEncounter' => (boolean)$filterLastEncounter,
             'filterInsurance'     => (boolean)$filterInsurance,
             'filterProblems'      => (boolean)$filterProblems,
-            'finishedReadingFile' => (boolean)$finishedReadingFile, //did the system read all lines from the file and create eligibility jobs?
+            'finishedReadingFile' => (boolean)$finishedReadingFile,
+            //did the system read all lines from the file and create eligibility jobs?
         ]);
     }
 
@@ -525,7 +527,8 @@ class ProcessEligibilityService
      * @throws \Exception
      * @throws \League\Flysystem\FileNotFoundException
      */
-    public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch){
+    public function processGoogleDriveCsvForEligibility(EligibilityBatch $batch)
+    {
 
         $driveFolder   = $batch->options['folder'];
         $driveFileName = $batch->options['fileName'];
@@ -554,14 +557,14 @@ class ProcessEligibilityService
             $iterator = read_file_using_generator($pathToFile);
 
             $headers = [];
-            $data = [];
+            $data    = [];
 
             $i = 1;
             foreach ($iterator as $iteration) {
                 if ( ! $iteration) {
                     continue;
                 }
-                if ($i == 1){
+                if ($i == 1) {
                     $headers = str_getcsv($iteration, ',');
                     $i++;
                     continue;
@@ -575,7 +578,7 @@ class ProcessEligibilityService
             }
 
             $patientList = [];
-            $data = collect($data);
+            $data        = collect($data);
             for ($i = 1; $i <= 1000; $i++) {
                 $patient = $data->shift();
 
@@ -615,14 +618,14 @@ class ProcessEligibilityService
 
             \Log::debug("memory_get_peak_usage: $mem");
 
-            $options                = $batch->options;
-            $options['patientList'] = $data->toArray();
+            $options                        = $batch->options;
+            $options['patientList']         = $data->toArray();
             $options['finishedReadingFile'] = true;
-            $batch->options         = $options;
+            $batch->options                 = $options;
             $batch->save();
 
             $initiator = $batch->initiatorUser()->firstOrFail();
-            if($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo){
+            if ($initiator->hasRole('ehr-report-writer') && $initiator->ehrReportWriterInfo) {
                 Storage::drive('google')->move($driveFilePath, "{$driveFolder}/processed_{$driveFileName}");
             }
 

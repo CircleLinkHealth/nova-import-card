@@ -74,7 +74,8 @@
                         @endif
                         @if($initiatorUser->hasRole('ehr-report-writer'))
                             <div class="pull-right" style="padding-left: 2%;">
-                                <button class="btn btn-primary" onclick="notifyReportWriter()">Notify Report Writer</button>
+                                <button class="btn btn-primary" onclick="notifyReportWriter()">Notify Report Writer
+                                </button>
                             </div>
                         @endif
 
@@ -105,6 +106,9 @@
                             <h4>Processing Options</h4>
 
                             @forelse($batch->options as $k => $option)
+                                {{--file paths are too long and mess up the view--}}
+                                @if($k == "filePath") @continue
+                                @endif
                                 @if(!is_array($option))
                                     <b>{{snakeToSentenceCase(snake_case($k))}}</b>
                                     : @if(is_bool($option)) {{!!$option ? 'Yes' : 'No'}} @else {{$option}} @endif<br>
@@ -141,7 +145,7 @@
 
                     </div>
                 </div>
-                <div  id="notify" class="panel panel-default col-md-6" style="display: none">
+                <div id="notify" class="panel panel-default col-md-6" style="display: none">
                     <div class="container">
                         <h4>Notify EHR Report Writer ({{$initiatorUser->getFullName()}})</h4>
                         <form class="form" action="{{route('report-writer.notify')}}" method="POST">
@@ -155,7 +159,8 @@
 
                             </div>
                             <div class="form-group">
-                                <textarea rows="8" cols="70" maxlength="500" class="form-group" name="text" style="resize: none" required>Hi {{$initiatorUser->first_name}},
+                                <textarea rows="8" cols="70" maxlength="500" class="form-group" name="text"
+                                          style="resize: none" required>Hi {{$initiatorUser->first_name}},
 
 This is to let you know that Circle Link Health was able to successfully process the patient data report you uploaded.
 

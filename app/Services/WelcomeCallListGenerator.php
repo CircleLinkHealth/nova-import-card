@@ -186,7 +186,7 @@ class WelcomeCallListGenerator
             $this->patientList->each(function ($patient) use ($isValid) {
                 $errors = [];
                 if ( ! $isValid) {
-                    $errors[] = 'structure';
+                    $errors[]               = 'structure';
                     $this->invalidStructure = true;
                 }
                 $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
@@ -196,10 +196,10 @@ class WelcomeCallListGenerator
 
         if ($this->batch->type == EligibilityBatch::CLH_MEDICAL_RECORD_TEMPLATE && $this->eligibilityJob) {
             $this->patientList->each(function ($patient) {
-                $errors = [];
+                $errors          = [];
                 $structureErrors = $this->validateJsonStructure($patient)->errors();
-                if ($structureErrors->isNotEmpty()){
-                    $errors[] = 'structure';
+                if ($structureErrors->isNotEmpty()) {
+                    $errors[]               = 'structure';
                     $this->invalidStructure = true;
                 }
                 $errors = array_merge($this->validateRow($patient)->errors()->keys(), $errors);
@@ -209,7 +209,8 @@ class WelcomeCallListGenerator
         }
         if ($this->invalidStructure) {
             //if there are structure errors we stop the process because create enrollees fails from missing arguements
-            throw new \Exception("Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.", 422);
+            throw new \Exception("Record with eligibility job id: {$this->eligibilityJob->id} has invalid structure.",
+                422);
         }
 
         return $this;

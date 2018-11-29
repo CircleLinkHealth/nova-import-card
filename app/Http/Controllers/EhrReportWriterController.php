@@ -99,6 +99,25 @@ class EhrReportWriterController extends Controller
 
     }
 
+    public function downloadCsvTemplate($name){
+
+        $cloudDisk = Storage::drive('google');
+        $filename = $name;
+
+        $directory = getGoogleDirectoryByName("EligibilityTemplates");
+        $contents = collect($cloudDisk->listContents($directory['path'], true));
+        $file = $contents
+            ->where('type', '=', 'file')
+            ->where('filename', '=', $filename)
+            ->first();
+
+        $service = $cloudDisk->getAdapter()->getService();
+        $mimeType = 'text/csv';
+        $export = $service->files->export($file['basename'], $mimeType);
+        return response($export->getBody(), 200, $export->getHeaders());
+
+    }
+
     /**
      * @param Request $request
      * @param ProcessEligibilityService $service
@@ -129,8 +148,9 @@ class EhrReportWriterController extends Controller
 
 
         $files = collect($request->input('googleDriveFiles', []))
-            ->filter(function ($file){
-                return array_key_exists('path', $file );}
+            ->filter(function ($file) {
+                return array_key_exists('path', $file);
+            }
             )->values();
 
 
@@ -194,7 +214,7 @@ class EhrReportWriterController extends Controller
             $files    = [];
             $contents = $this->googleDrive->getContents($info->google_drive_folder_path);
 
-            if ($contents->isEmpty()){
+            if ($contents->isEmpty()) {
                 return null;
             }
             foreach ($contents as $file) {
