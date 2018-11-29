@@ -1,6 +1,6 @@
 <template>
     <div>
-        <two-fa :authy-user="user.authy_user"></two-fa>
+        <two-fa :authy-user="user.authy_user" :global-role="user.global_role"></two-fa>
     </div>
 </template>
 <script>

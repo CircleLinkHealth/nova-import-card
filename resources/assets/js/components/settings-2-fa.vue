@@ -62,7 +62,13 @@
                     <div class="col-xs-12 col-sm-12 col-md-12">
                         <div class="form-group" :class="{'has-error':errors.has('is_2fa_enabled')}">
                             <label for="is_2fa_enabled">Enable 2FA</label>
-                            <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled" :disabled="is_loading"
+
+                            <span v-if="isAdmin" class="info minimum-padding"
+                                  data-tooltip="Administrators are required have 2FA enabled.">
+                                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                        </span>
+
+                            <input type="checkbox" v-model="is_2fa_enabled" id="is_2fa_enabled" :disabled="is_loading || isAdmin"
                                    class="form-control input-sm" style="display: inline-block;">
                             <span class="help-block">{{errors.get('is_2fa_enabled')}}</span>
                         </div>
@@ -88,11 +94,23 @@
             authyUser: {
                 type: Object,
                 default: () => {
+                    //setting defaults like this does not always work. @todo: investigate at some point
                     return {
                         country_code: 1,
                         phone_number: '',
                         authy_method: 'app',
                         is_authy_enabled: false
+                    }
+                }
+            },
+            globalRole: {
+                type: Object,
+                default: () => {
+                    //setting defaults like this does not always work. @todo: investigate at some point
+                    return {
+                        id: null,
+                        name: null,
+                        display_name: null,
                     }
                 }
             }
@@ -103,6 +121,9 @@
         computed: {
             bannerClass() {
                 return 'alert alert-' + this.bannerType;
+            },
+            isAdmin() {
+                return this.globalRole.name === 'administrator';
             }
         },
         data() {
@@ -160,6 +181,11 @@
                     });
             }
         },
+        mounted() {
+            if (this.isAdmin) {
+                this.is_2fa_enabled = true;
+            }
+        }
     }
 </script>
 <style scoped>
