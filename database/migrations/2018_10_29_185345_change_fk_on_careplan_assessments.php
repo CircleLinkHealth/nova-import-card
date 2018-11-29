@@ -14,7 +14,7 @@ class ChangeFkOnCareplanAssessments extends Migration
     public function up()
     {
         Schema::table('careplan_assessments', function (Blueprint $table) {
-//            $table->dropForeign('careplan_assessments_careplan_id_foreign');
+            $table->dropForeign('careplan_assessments_careplan_id_foreign');
 
             $table->foreign('careplan_id')
                   ->references('id')

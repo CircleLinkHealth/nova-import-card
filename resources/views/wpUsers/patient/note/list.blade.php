@@ -48,7 +48,7 @@
                         @if(isset($admin_filter) && $admin_filter == true)
                             {{'checked'}}
                                 @endif>
-                        @if(auth()->user()->hasRole('administrator') || auth()->user()->hasRole('care-center') )
+                        @if(auth()->user()->isAdmin() || auth()->user()->hasRole('care-center') )
                             <label for="admin_filter"><span> </span>All Forwarded Notes for All Programs<br /></label>
                         @endif
                     </li>
@@ -76,11 +76,11 @@
                         </select>
                         <button type="submit" id="find" class="btn btn-primary">Go</button><br>
                         <select name="provider" id="provider" class="provider" data-width="200px"
-                            data-size="10" style="display: none;" @if(auth()->user()->hasRole('administrator') == false  &&
+                            data-size="10" style="display: none;" @if(auth()->user()->isAdmin() == false  &&
                                                           auth()->user()->hasRole('care-center') == false)
                             required
                             @endif>
-                        <option value="" {{auth()->user()->hasRole('administrator') ? 'selected' : ''}}>Select Provider</option>
+                        <option value="" {{auth()->user()->isAdmin() ? 'selected' : ''}}>Select Provider</option>
                         @foreach($providers_for_blog as $key => $value)
                             @if(isset($selected_provider) && $selected_provider->id == $key)
                                 <?php $selected = $selected_provider->display_name ?>

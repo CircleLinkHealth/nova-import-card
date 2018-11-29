@@ -439,7 +439,7 @@ class OpsDashboardService
 
         $avg = $sum / count($allPatients);
 
-        $avgMinA = round($avg / 60, 2);
+        $avgMinA = $avg / 60;
 
         $hoursBehind = ($avgMinT - $avgMinA) * $totActPt / 60;
 

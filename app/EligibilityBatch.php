@@ -26,8 +26,9 @@ class EligibilityBatch extends BaseModel
      * @var array
      */
     protected $casts = [
-        'options' => 'array',
-        'stats'   => 'array',
+        'options'          => 'array',
+        'stats'            => 'array',
+        'validation_stats' => 'array',
     ];
 
     protected $fillable = [
@@ -167,5 +168,59 @@ class EligibilityBatch extends BaseModel
                                          : $result['outcome'] => $result['total'],
                                  ];
                              });
+    }
+
+    public function initiatorUser()
+    {
+        return $this->hasOne(User::class, 'id', 'initiator_id');
+    }
+
+    public function getValidationStats()
+    {
+
+        $structure = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_structure', 1)
+                                   ->count();
+
+        $data = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_data', 1)
+                                   ->count();
+
+        $mrn = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_mrn', 1)
+                                   ->count();
+
+        $firstName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_first_name', 1)
+                                   ->count();
+
+        $lastName = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_last_name', 1)
+                                   ->count();
+
+        $dob = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_dob', 1)
+                                   ->count();
+
+        $problems = EligibilityJob::where('batch_id', $this->id)
+                                   ->where('invalid_problems', 1)
+                                   ->count();
+
+        $phones = EligibilityJob::where('batch_id', $this->id)
+                                  ->where('invalid_phones', 1)
+                                  ->count();
+
+        return [
+            'total'             => $this->eligibilityJobs()->count(),
+            'invalid_structure' => $structure,
+            'invalid_data'      => $data,
+            'mrn'               => $mrn,
+            'first_name'        => $firstName,
+            'last_name'         => $lastName,
+            'dob'               => $dob,
+            'problems'          => $problems,
+            'phones'            => $phones,
+        ];
+
     }
 }

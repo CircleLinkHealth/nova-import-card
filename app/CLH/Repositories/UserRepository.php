@@ -1,7 +1,9 @@
 <?php namespace App\CLH\Repositories;
 
+use App\AuthyUser;
 use App\CareAmbassador;
 use App\CarePlan;
+use App\EhrReportWriterInfo;
 use App\Nurse;
 use App\Patient;
 use App\PatientMonthlySummary;
@@ -13,6 +15,7 @@ use App\UserPasswordsHistory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Storage;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UserRepository
@@ -61,6 +64,15 @@ class UserRepository
         // care ambassador info
         if ($user->hasRole('care-ambassador') || $user->hasRole('care-ambassador-view-only')) {
             $this->saveOrUpdateCareAmbassadorInfo($user, $params);
+        }
+
+        // ehr report writer info
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
+        if ($user->isAdmin() && $user->authyUser) {
+            $this->forceEnable2fa($user->authyUser);
         }
 
         //Add Email Notification
@@ -172,6 +184,13 @@ class UserRepository
             $nurseInfo->user_id = $user->id;
             $nurseInfo->save();
             $user->load('nurseInfo');
+        }
+
+        if ($user->hasRole('ehr-report-writer') && ! $user->ehrReportWriterInfo) {
+            $ehrReportWriterInfo          = new EhrReportWriterInfo;
+            $ehrReportWriterInfo->user_id = $user->id;
+            $ehrReportWriterInfo->save();
+            $user->load('ehrReportWriterInfo');
         }
     }
 
@@ -327,21 +346,31 @@ class UserRepository
         ParameterBag $params
     ) {
 
-        if ($user->careAmbassador != null) {
-            $user->careAmbassador->hourly_rate    = $params->get('hourly_rate');
-            $user->careAmbassador->speaks_spanish = $params->get('speaks_spanish') == 'on'
-                ? 1
-                : 0;
-            $user->careAmbassador->save();
-        } else {
-            $ambassador = CareAmbassador::create([
-                'user_id' => $user->id,
+        CareAmbassador::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'hourly_rate'    => $params->get('hourly_rate')
+                    ?: null,
+                'speaks_spanish' => $params->get('speaks_spanish') == 'on'
+                    ? 1
+                    : 0,
             ]);
+    }
 
-            $ambassador->save();
+    public function saveOrUpdateEhrReportWriterInfo(
+        User $user,
+        ParameterBag $params
+    ) {
 
-            $user->careAmbassador()->save($ambassador);
-        }
+        $folderPath = $this->saveEhrReportWriterFolder($user);
+
+        EhrReportWriterInfo::updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'google_drive_folder_path' => $folderPath,
+            ]
+        );
+
     }
 
     /**
@@ -445,6 +474,10 @@ class UserRepository
             $this->saveOrUpdateNurseInfo($user, $params);
         }
 
+        if ($user->hasRole('ehr-report-writer')) {
+            $this->saveOrUpdateEhrReportWriterInfo($user, $params);
+        }
+
         return $user;
     }
 
@@ -466,5 +499,61 @@ class UserRepository
             'patient_id' => $user->id,
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
+    }
+
+    public function saveEhrReportWriterFolder($user)
+    {
+        $cloudDisk = Storage::drive('google');
+
+        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+
+        if ( ! $ehr) {
+            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        }
+
+        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+
+        if ( ! $writerFolder) {
+            $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $path = $this->saveEhrReportWriterFolder($user);
+
+            return $path;
+        } else {
+            $service    = $cloudDisk->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress($user->email);
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            $service    = $cloudDisk->getAdapter()->getService();
+            $permission = new \Google_Service_Drive_Permission();
+            $permission->setRole('writer');
+            $permission->setType('user');
+            $permission->setEmailAddress("joe@circlelinkhealth.com");
+
+            $service->permissions->create($writerFolder['basename'], $permission);
+
+            return $writerFolder['path'];
+        }
+
+
+    }
+
+    private function forceEnable2fa(AuthyUser $authyUser)
+    {
+        if ($authyUser->authy_id && ! $authyUser->is_authy_enabled) {
+            $authyUser->is_authy_enabled = true;
+
+            if ( ! $authyUser->authy_method) {
+                $authyUser->authy_method = 'app';
+            }
+
+            $authyUser->save();
+        }
     }
 }

@@ -14,7 +14,7 @@ class CreateSaasAccount extends FormRequest
      */
     public function authorize()
     {
-        return $this->user()->hasRole('administrator');
+        return $this->user()->isAdmin();
     }
 
     /**

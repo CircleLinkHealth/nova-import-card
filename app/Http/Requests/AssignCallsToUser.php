@@ -13,7 +13,7 @@ class AssignCallsToUser extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasRole('administrator');
+        return auth()->user()->isAdmin();
     }
 
     /**

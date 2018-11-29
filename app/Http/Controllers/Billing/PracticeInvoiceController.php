@@ -540,7 +540,7 @@ class PracticeInvoiceController extends Controller
         $practice,
         $name
     ) {
-        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->hasRole('administrator')) {
+        if ( ! auth()->user()->practice((int)$practice) && ! auth()->user()->isAdmin()) {
             return abort(403, 'Unauthorized action.');
         }
 
