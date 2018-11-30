@@ -532,7 +532,7 @@ class UserRepository
 
             $service->permissions->create($writerFolder['basename'], $permission);
 
-            if (! app()->environment(['production', 'worker'])){
+            if (! app()->environment(['production', 'worker', 'local'])){
                 $adminEmails = User::ofType('administrator')
                          ->pluck('email');
 
