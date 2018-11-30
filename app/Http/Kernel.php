@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\ACL\ProviderDashboardACL;
 use App\Http\Middleware\AprimaCcdApiAuthAdapter;
+use App\Http\Middleware\AuthyMiddleware;
 use App\Http\Middleware\CheckCarePlanMode;
 use App\Http\Middleware\CheckOnboardingInvite;
 use App\Http\Middleware\CheckWebSocketServer;
@@ -37,7 +38,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
+        'web'      => [
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
@@ -46,8 +47,12 @@ class Kernel extends HttpKernel
             SubstituteBindings::class,
             LogoutIfAccessDisabled::class,
             CreateFreshApiToken::class,
+            AuthyMiddleware::class,
         ],
-        'api' => [
+        'sessions' => [
+            StartSession::class,
+        ],
+        'api'      => [
             'throttle:60,1',
             'bindings',
         ],

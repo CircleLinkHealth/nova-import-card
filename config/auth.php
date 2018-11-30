@@ -106,4 +106,14 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enable 2 Factor Authentication (2FA)
+    |--------------------------------------------------------------------------
+    |
+    | Set this to true if you want 2FA enabled.
+    |
+    */
+
+    'two_fa_enabled' => env('TWO_FA_ENABLED', false),
 ];

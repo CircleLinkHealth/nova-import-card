@@ -282,7 +282,7 @@ class DashboardController extends Controller
             $update['user_id'] = $request->input('lead_id');
         }
 
-        if (auth()->user()->hasRole('administrator')) {
+        if (auth()->user()->isAdmin()) {
             $update['bill_to_name'] = $request->input('bill_to_name');
             $update['clh_pppm']     = $request->input('clh_pppm');
             $update['term_days']    = $request->input('term_days');

@@ -9,8 +9,10 @@
 namespace App\Traits;
 
 
+use App\EligibilityJob;
 use App\Rules\EligibilityPhones;
 use App\Rules\EligibilityProblems;
+use Illuminate\Support\Collection;
 use Validator;
 
 trait ValidatesEligibility
@@ -20,13 +22,13 @@ trait ValidatesEligibility
         if (array_key_exists('patient_id', $row)) {
             $row['mrn'] = $row['patient_id'];
         }
-        if (array_key_exists('date_of_birth', $row)){
+        if (array_key_exists('date_of_birth', $row)) {
             $row['dob'] = $row['date_of_birth'];
         }
         $row = $this->transformProblems($row);
         $row = $this->transformPhones($row);
 
-        return $this->validate($row);
+        return $this->validatePatient($row);
     }
 
     private function transformProblems(Array $row)
@@ -66,13 +68,25 @@ trait ValidatesEligibility
         return $row;
     }
 
-    //to perform validation for the whole csv?
-    public function validateCsv()
+    public function validateJsonStructure($row)
     {
+
+        $toValidate = [];
+        $rules      = [];
+
+        foreach (array_keys($row) as $key) {
+            $toValidate[$key] = $key;
+        }
+
+        foreach ($this->validJsonKeys() as $name) {
+            $rules[$name] = 'required|filled|same:' . $name;
+        }
+
+        return Validator::make($toValidate, $rules);
 
     }
 
-    private function validate(Array $array)
+    public function validatePatient(Array $array)
     {
         return Validator::make($array, [
             'mrn'        => 'required',
@@ -82,6 +96,53 @@ trait ValidatesEligibility
             'problems'   => ['required', new EligibilityProblems()],
             'phones'     => ['required', new EligibilityPhones()],
         ]);
+    }
+
+    public function validJsonKeys(): array
+    {
+        return [
+            "email",
+            "language",
+            "gender",
+            "patient_id",
+            "last_name",
+            "first_name",
+            "middle_name",
+            "date_of_birth",
+            "address_line_1",
+            "address_line_2",
+            "city",
+            "state",
+            "postal_code",
+            "primary_phone",
+            "cell_phone",
+            "preferred_provider",
+            "last_visit",
+            "insurance_plans",
+            "problems",
+            "medications",
+            "allergies",
+        ];
+    }
+
+    public function saveErrorsOnEligibilityJob(EligibilityJob $job, Collection $errors)
+    {
+        //check keys and update job
+
+        if ($errors->isNotEmpty() && ! ($errors->count() == 1 && $errors->first() == 'structure')) {
+            $job->invalid_data = true;
+        }
+        //check for invalid data
+        $job->invalid_structure  = $errors->contains('structure');
+        $job->invalid_mrn        = $errors->contains('mrn');
+        $job->invalid_first_name = $errors->contains('first_name');
+        $job->invalid_last_name  = $errors->contains('last_name');
+        $job->invalid_dob        = $errors->contains('dob');
+        $job->invalid_problems   = $errors->contains('problems');
+        $job->invalid_phones     = $errors->contains('phones');
+
+        $job->save();
+
     }
 
 

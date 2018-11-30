@@ -15,7 +15,7 @@ class UserManagementService
     {
         $rolesChoices = ['saas-admin', 'care-center'];
 
-        if (auth()->user()->hasRole('administrator')) {
+        if (auth()->user()->isAdmin()) {
             $rolesChoices[] = 'administrator';
         }
 

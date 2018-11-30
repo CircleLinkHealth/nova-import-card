@@ -45,6 +45,7 @@
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
+    "authy/php": "^3.0",
     "barryvdh/laravel-debugbar": "*",
     "barryvdh/laravel-snappy": "0.4.1",
     "blackfire/php-sdk": "^1.17",

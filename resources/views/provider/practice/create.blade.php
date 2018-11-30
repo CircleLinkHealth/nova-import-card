@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        @if (auth()->user()->hasRole('administrator'))
+        @if (auth()->user()->isAdmin())
             <div class="row">
                 <div class="input-field col s6">
                     <input id="bill_to_name" name="bill_to_name" type="text" class="validate"

@@ -130,8 +130,10 @@ class JsonMedicalRecordAdapter
             return false;
         }
 
-        $this->isValid = $this->validateRow($coll->all())->passes();
-
+        // We need the validation to pass at the moment because we need the eligibility job to be created.
+        // The validation will run at welcomeCallListGenerator and store the errors on the eligibility job.
+//        $this->isValid = $this->validateRow($coll->all())->passes();
+        $this->isValid = true;
         if ($this->isValid) {
             $this->validatedData = $coll;
         }

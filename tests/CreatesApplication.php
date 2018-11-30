@@ -24,6 +24,8 @@ trait CreatesApplication
     {
         parent::setUp();
 
+        Artisan::call('migrate:refresh');
+
         Artisan::call('db:seed');
         Artisan::call('db:seed', [
             '--class' => 'SnomedToIcd9TestMapTableSeeder'
