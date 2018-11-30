@@ -8,7 +8,9 @@ use App\TwilioCall;
 use App\TwilioRawLog;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use SimpleXMLElement;
 use Twilio\Jwt\ClientToken;
 use Twilio\Twiml;
 use Twilio\Rest\Client;
@@ -38,7 +40,6 @@ class TwilioController extends Controller
      *
      * @return mixed
      * @throws \Twilio\Exceptions\TwimlException
-     * @throws \Exception
      */
     public function placeCall(Request $request)
     {
@@ -64,7 +65,7 @@ class TwilioController extends Controller
         ]);
 
         if ($validation->fails()) {
-            throw new \Exception("Invalid request");
+            return $this->responseWithXmlData($validation->errors()->all(), 400);
         }
 
         $this->logToDb($request, $input);
@@ -79,9 +80,34 @@ class TwilioController extends Controller
         return $this->responseWithXmlType(response($response));
     }
 
-    private function responseWithXmlType($response)
+    private function responseWithXmlType(ResponseFactory $response)
     {
         return $response->header('Content-Type', 'application/xml');
+    }
+
+    private function responseWithXmlData(array $vars, $status = 200, array $header = [], $rootElement = 'response', $xml = null) {
+        if (is_null($xml)) {
+            $xml = new SimpleXMLElement('<'.$rootElement.'/>');
+        }
+
+        foreach ($vars as $key => $value) {
+            if (is_array($value)) {
+                $this->responseWithXmlData($value, $status, $header, $rootElement, $xml->addChild($key));
+            } else {
+                if( preg_match('/^@.+/', $key) ) {
+                    $attributeName = preg_replace('/^@/', '', $key);
+                    $xml->addAttribute($attributeName, $value);
+                } else {
+                    $xml->addChild($key, $value);
+                }
+            }
+        }
+
+        if (empty($header)) {
+            $header['Content-Type'] = 'application/xml';
+        }
+
+        return \Response::make($xml->asXML(), $status, $header);
     }
 
     public function sendTestSMS()
