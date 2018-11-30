@@ -21,8 +21,12 @@ class CallSchedulerTest extends TestCase
         $now           = Carbon::now();
         $dateTimeArray = (new PatientContactWindow())->getEarliestWindowForPatientFromDate($patient, $now);
 
+        do {
+            $now->addDay();
+        } while ( ! $now->isWeekday());
+
         $this->assertEquals([
-            'day'          => $now->addDay()->toDateTimeString(),
+            'day'          => $now->toDateTimeString(),
             'window_start' => Carbon::parse('09:00:00')->format('H:i'),
             'window_end'   => Carbon::parse('17:00:00')->format('H:i'),
         ], $dateTimeArray);
