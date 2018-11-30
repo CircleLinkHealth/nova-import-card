@@ -105,11 +105,19 @@ class EhrReportWriterController extends Controller
         $filename = $name;
 
         $directory = getGoogleDirectoryByName("EligibilityTemplates");
-        $contents = collect($cloudDisk->listContents($directory['path'], true));
+        if (is_null($directory)){
+            $messages['warnings'][] = 'Folder Eligibility Templates not found!';
+            return redirect()->back()->withErrors($messages);
+        }
+        $contents = collect($cloudDisk->listContents($directory['path']));
         $file = $contents
             ->where('type', '=', 'file')
             ->where('filename', '=', $filename)
             ->first();
+        if (is_null($file)){
+            $messages['warnings'][] = 'File not found!';
+            return redirect()->back()->withErrors($messages);
+        }
 
         $service = $cloudDisk->getAdapter()->getService();
         $mimeType = 'text/csv';

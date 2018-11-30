@@ -535,9 +535,16 @@ class ProcessEligibilityService
         $driveFilePath = $batch->options['filePath'] ?? null;
 
         $driveHandler = new GoogleDrive();
-        $stream       = $driveHandler
-            ->getFileStream($driveFileName, $driveFolder);
 
+        try {
+            $stream = $driveHandler
+                ->getFileStream($driveFileName, $driveFolder);
+        } catch (\Exception $e) {
+            \Log::debug("EXCEPTION `{$e->getMessage()}`");
+            $batch->status = 2;
+            $batch->save();
+            return null;
+        }
         $localDisk = Storage::disk('local');
 
 
