@@ -1038,30 +1038,35 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
     function getEhrReportWritersFolderUrl()
     {
+        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+            $cloudStorage = Storage::drive('google');
 
-        $clh = collect(Storage::drive('google')->listContents('/', true));
-        //get path for ehr-data-from-report-writers
-        $reportWritersFolder = $clh->where('type', '=', 'dir')
-                                   ->where('filename', '=', "ehr-data-from-report-writers")
-                                   ->first();
-        if ( ! $reportWritersFolder) {
-            return null;
-        }
+            $clh = collect($cloudStorage->listContents('/', true));
 
-        return Storage::drive('google')->url($reportWritersFolder['path']);
+            $reportWritersFolder = $clh->where('type', '=', 'dir')
+                                       ->where('filename', '=', "ehr-data-from-report-writers")
+                                       ->first();
+
+            if ( ! $reportWritersFolder) {
+                return null;
+            }
+
+            return $cloudStorage->url($reportWritersFolder['path']);
+        });
     }
 }
 
 if ( ! function_exists('getGoogleDirectoryByName')) {
 
-    function getGoogleDirectoryByName($name){
+    function getGoogleDirectoryByName($name)
+    {
 
         $clh = collect(Storage::drive('google')->listContents('/', true));
 
-        $directory      = $clh->where('type', '=', 'dir')
-                                        ->where('filename', '=', $name)
-                                        ->first();
-        if (! $directory){
+        $directory = $clh->where('type', '=', 'dir')
+                         ->where('filename', '=', $name)
+                         ->first();
+        if ( ! $directory) {
             return null;
         }
 
