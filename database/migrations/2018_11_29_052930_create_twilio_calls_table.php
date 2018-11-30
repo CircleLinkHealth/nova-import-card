@@ -16,13 +16,20 @@ class CreateTwilioCallsTable extends Migration
         Schema::create('twilio_calls', function (Blueprint $table) {
             $table->increments('id');
             $table->string('call_sid')->nullable();
+            $table->string('application_sid')->nullable();
+            $table->string('account_sid')->nullable();
             $table->string('call_status')->nullable();
+            $table->string('direction')->nullable();
             $table->string('from')->nullable();
             $table->string('to')->nullable();
+            $table->boolean('is_unlisted_number')->default(false);
             $table->integer('inbound_user_id')->nullable();
             $table->integer('outbound_user_id')->nullable();
-            $table->integer('duration')->default(0);
             $table->integer('call_duration')->default(0);
+            $table->string('recording_sid')->nullable();
+            $table->integer('recording_duration')->default(0);
+            $table->string('recording_url')->nullable();
+            $table->integer('sequence_number')->nullable();
             $table->timestamps();
         });
     }

@@ -15,7 +15,9 @@ class CreateTwilioRawLogsTable extends Migration
     {
         Schema::create('twilio_raw_logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('sid')->nullable();
+            $table->string('call_sid')->nullable();
+            $table->string('application_sid')->nullable();
+            $table->string('account_sid')->nullable();
             $table->string('call_status')->nullable();
             $table->json('log')->nullable();
             $table->timestamps();

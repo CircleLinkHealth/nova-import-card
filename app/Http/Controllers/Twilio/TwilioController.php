@@ -42,6 +42,8 @@ class TwilioController extends Controller
      */
     public function placeCall(Request $request)
     {
+        $this->logRawToDb($request);
+
         $input = $request->all();
 
         if (isset($input['From']) && $input['From'] === TwilioController::CLIENT_ANONYMOUS) {
@@ -50,7 +52,7 @@ class TwilioController extends Controller
             $input['From'] = $request->input('From');
         }
 
-        $input['To'] = '+35799451430';
+//        $input['To'] = '+35799451430';
 
         $validation = \Validator::make($input, [
             'To'               => 'required|phone:AUTO,US',
@@ -58,7 +60,7 @@ class TwilioController extends Controller
             'From'             => 'nullable|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
-            'IsUnlistedNumber' => '',
+            'IsUnlistedNumber' => ''
         ]);
 
         if ($validation->fails()) {
@@ -69,14 +71,13 @@ class TwilioController extends Controller
 
         $response = new Twiml();
 
-        $dial = $response->dial(['callerId' => $input['From']]);
+        $dial = $response->dial('', [
+            'callerId'             => $input['From'],
+            'statusCallbackEvent'  => 'queued ringing in-progress completed busy failed no-answer',
+            'statusCallback'       => route('twilio.call.status'),
+            'statusCallbackMethod' => 'POST',
+        ]);
         $dial->number($input['To']);
-        $dial->client('',
-            [
-                'statusCallbackEvent'  => 'initiated ringing answered completed',
-                'statusCallback'       => route('twilio.call.status'),
-                'statusCallbackMethod' => 'POST',
-            ]);
 
         return $this->responseWithXmlType(response($response));
     }
@@ -152,6 +153,7 @@ class TwilioController extends Controller
      */
     public function callStatusCallback(Request $request)
     {
+        $this->logRawToDb($request);
         $this->logToDb($request);
     }
 
@@ -166,39 +168,62 @@ class TwilioController extends Controller
             $callStatus = $input['CallStatus'];
             $callSid    = $input['CallSid'];
 
-            TwilioRawLog::create([
-                'sid'         => $callSid,
-                'call_status' => $callStatus,
-                'log'         => json_encode($request->all()),
-            ]);
-
             $fields = [
-                'call_sid'      => $callSid,
-                'call_status'   => $callStatus,
+                'call_sid'    => $callSid,
+                'call_status' => $callStatus,
             ];
 
-            if (!empty($input['Duration'])) {
-                $fields['duration'] = $input['Duration'];
+            if ( ! empty($input['ApplicationSid'])) {
+                $fields['application_sid'] = $input['ApplicationSid'];
             }
 
-            if (!empty($input['CallDuration'])) {
+            if ( ! empty($input['AccountSid'])) {
+                $fields['account_sid'] = $input['AccountSid'];
+            }
+
+            if ( ! empty($input['Direction'])) {
+                $fields['direction'] = $input['Direction'];
+            }
+
+            //only present in 'completed' status event
+            if ( ! empty($input['CallDuration'])) {
                 $fields['call_duration'] = $input['CallDuration'];
             }
 
-            if (!empty($input['From']) && $input['From'] != TwilioController::CLIENT_ANONYMOUS) {
+            if ( ! empty($input['From']) && $input['From'] != TwilioController::CLIENT_ANONYMOUS) {
                 $fields['from'] = $input['From'];
             }
 
-            if (!empty($input['To'])) {
+            if ( ! empty($input['To'])) {
                 $fields['to'] = $input['To'];
             }
 
-            if (!empty($input['InboundUserId'])) {
+            if ( ! empty($input['InboundUserId'])) {
                 $fields['inbound_user_id'] = $input['InboundUserId'];
             }
 
-            if (!empty($input['OutboundUserId'])) {
+            if ( ! empty($input['OutboundUserId'])) {
                 $fields['outbound_user_id'] = $input['OutboundUserId'];
+            }
+
+            if ( ! empty($input['IsUnlistedNumber'])) {
+                $fields['is_unlisted_number'] = $input['IsUnlistedNumber'];
+            }
+
+            if ( ! empty($input['RecordingSid'])) {
+                $fields['recording_sid'] = $input['RecordingSid'];
+            }
+
+            if ( ! empty($input['RecordingDuration'])) {
+                $fields['recording_duration'] = $input['RecordingDuration'];
+            }
+
+            if ( ! empty($input['RecordingUrl'])) {
+                $fields['recording_url'] = $input['RecordingUrl'];
+            }
+
+            if ( ! empty($input['SequenceNumber'])) {
+                $fields['sequence_number'] = $input['SequenceNumber'];
             }
 
             TwilioCall::updateOrCreate(
@@ -207,7 +232,24 @@ class TwilioController extends Controller
             );
 
         } catch (\Throwable $e) {
+            \Log::critical("Exception while storing twilio log: " . $e->getMessage());
+        }
+    }
+
+    private function logRawToDb(Request $request)
+    {
+        try {
+            TwilioRawLog::create([
+                'call_sid'        => $request->get('CallSid'),
+                'application_sid' => $request->get('ApplicationSid'),
+                'account_sid'     => $request->get('AccountSid'),
+                'call_status'     => $request->get('CallStatus'),
+                'log'             => json_encode($request->all()),
+            ]);
+        } catch (\Throwable $e) {
             \Log::critical("Exception while storing twilio raw log: " . $e->getMessage());
         }
+
+
     }
 }

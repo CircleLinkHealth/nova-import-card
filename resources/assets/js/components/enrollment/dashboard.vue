@@ -787,6 +787,7 @@
                 this.device.connect({
                     To: phone,
                     From: this.practice_phone ? this.practice_phone : undefined,
+                    IsUnlistedNumber: false,
                     InboundUserId: this.enrolleeUserId,
                     OutboundUserId: userId
                 });
