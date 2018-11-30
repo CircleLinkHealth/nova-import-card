@@ -1047,19 +1047,13 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
     function getEhrReportWritersFolderUrl()
     {
         return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
-            $cloudStorage = Storage::drive('google');
+            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
-            $clh = collect($cloudStorage->listContents('/', true));
-
-            $reportWritersFolder = $clh->where('type', '=', 'dir')
-                                       ->where('filename', '=', "ehr-data-from-report-writers")
-                                       ->first();
-
-            if ( ! $reportWritersFolder) {
+            if ( ! $dir) {
                 return null;
             }
 
-            return $cloudStorage->url($reportWritersFolder['path']);
+            return Storage::drive('google')->url($dir['path']);
         });
     }
 }
