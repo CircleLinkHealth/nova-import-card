@@ -534,16 +534,14 @@ class UserRepository
 
             if (! app()->environment(['production', 'worker', 'local'])){
                 $adminEmails = User::ofType('administrator')
-                         ->pluck('email');
-
-                foreach ($adminEmails as $email){
-                    $permission = new \Google_Service_Drive_Permission();
-                    $permission->setRole('writer');
-                    $permission->setType('user');
-                    $permission->setEmailAddress($email);
-
-                    $service->permissions->create($writerFolder['basename'], $permission);
-                }
+                                   ->pluck('email')
+                                   ->each(function($email) use ($service, $writerFolder){
+                                       $permission = new \Google_Service_Drive_Permission();
+                                       $permission->setRole('writer');
+                                       $permission->setType('user');
+                                       $permission->setEmailAddress($email);
+                                       $service->permissions->create($writerFolder['basename'], $permission);
+                                   });
             }
 
             return $writerFolder['path'];

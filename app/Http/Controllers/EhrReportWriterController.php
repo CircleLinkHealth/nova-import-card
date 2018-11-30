@@ -101,15 +101,23 @@ class EhrReportWriterController extends Controller
 
     public function downloadCsvTemplate($name){
 
-        $cloudDisk = Storage::drive('google');
         $filename = $name;
 
-        $directory = getGoogleDirectoryByName("EligibilityTemplates");
-        if (is_null($directory)){
+        try {
+            $contents = $this->googleDrive->getContents('1zpiBkegqjTioZGzdoPqZQAqWvXkaKEgB');
+
+        } catch (\Exception $e) {
+            \Log::alert($e);
             $messages['warnings'][] = 'Folder Eligibility Templates not found!';
             return redirect()->back()->withErrors($messages);
         }
-        $contents = collect($cloudDisk->listContents($directory['path']));
+
+        if ($contents->isEmpty()){
+            $messages['warnings'][] = 'Folder Eligibility Templates not found!';
+            return redirect()->back()->withErrors($messages);
+        }
+
+
         $file = $contents
             ->where('type', '=', 'file')
             ->where('filename', '=', $filename)
@@ -119,7 +127,7 @@ class EhrReportWriterController extends Controller
             return redirect()->back()->withErrors($messages);
         }
 
-        $service = $cloudDisk->getAdapter()->getService();
+        $service = Storage::drive('google')->getAdapter()->getService();
         $mimeType = 'text/csv';
         $export = $service->files->export($file['basename'], $mimeType);
         return response($export->getBody(), 200, $export->getHeaders());
