@@ -1046,15 +1046,18 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
     function getEhrReportWritersFolderUrl()
     {
-        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
-            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-            if ( ! $dir) {
-                return null;
-            }
-
-            return Storage::drive('google')->url($dir['path']);
-        });
+        //Causes timeouts on prod
+//        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+//            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//            if ( ! $dir) {
+//                return null;
+//            }
+//
+//            return Storage::drive('google')->url($dir['path']);
+//        });
     }
 }
 
