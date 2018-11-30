@@ -1046,21 +1046,18 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
     function getEhrReportWritersFolderUrl()
     {
-        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
-            $cloudStorage = Storage::drive('google');
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-            $clh = collect($cloudStorage->listContents('/', true));
-
-            $reportWritersFolder = $clh->where('type', '=', 'dir')
-                                       ->where('filename', '=', "ehr-data-from-report-writers")
-                                       ->first();
-
-            if ( ! $reportWritersFolder) {
-                return null;
-            }
-
-            return $cloudStorage->url($reportWritersFolder['path']);
-        });
+        //Causes timeouts on prod
+//        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+//            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//            if ( ! $dir) {
+//                return null;
+//            }
+//
+//            return Storage::drive('google')->url($dir['path']);
+//        });
     }
 }
 
