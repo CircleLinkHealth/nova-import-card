@@ -202,6 +202,9 @@ if ( ! function_exists('parseCsvToArray')) {
      *
      * @param $file
      *
+     * @param int $length
+     * @param null $delimiter
+     *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
