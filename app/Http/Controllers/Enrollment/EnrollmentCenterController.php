@@ -29,6 +29,7 @@ class EnrollmentCenterController extends Controller
                 ::toCall()
                 ->where('lang', 'ES')
                 ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
                 ->first();
 
             //if no spanish, get a EN user.
@@ -36,6 +37,7 @@ class EnrollmentCenterController extends Controller
                 $enrollee = Enrollee
                     ::toCall()
                     ->orderBy('attempt_count')
+                    ->with('practice.enrollmentTips')
                     ->first();
             }
         } else { // auth ambassador doesn't speak ES, get a regular user.
@@ -43,6 +45,7 @@ class EnrollmentCenterController extends Controller
             $enrollee = Enrollee
                 ::toCall()
                 ->orderBy('attempt_count')
+                ->with('practice.enrollmentTips')
                 ->first();
         }
 
@@ -51,6 +54,7 @@ class EnrollmentCenterController extends Controller
             'care_ambassador_id' => $careAmbassador->id,
         ])
             ->orderBy('attempt_count')
+            ->with('practice.enrollmentTips')
             ->first();
 
         if ($engagedEnrollee) {
@@ -180,15 +184,30 @@ class EnrollmentCenterController extends Controller
         return redirect()->action('Enrollment\EnrollmentCenterController@dashboard');
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function rejected(Request $request)
     {
 
         $enrollee = Enrollee::find($request->input('enrollee_id'));
         $careAmbassador = auth()->user()->careAmbassador;
 
+        //soft_rejected or rejected
+        $status = $request->input('status', 'rejected');
+
         //update report for care ambassador:
         $report = CareAmbassadorLog::createOrGetLogs($careAmbassador->id);
-        $report->no_rejected = $report->no_rejected + 1;
+
+        if ($status === 'rejected') {
+            $report->no_rejected = $report->no_rejected + 1;
+        }
+        else {
+            $report->no_soft_rejected = $report->no_soft_rejected + 1;
+        }
+
         $report->total_calls = $report->total_calls + 1;
         $report->total_time_in_system = $request->input('total_time_in_system');
         $report->save();
@@ -202,7 +221,11 @@ class EnrollmentCenterController extends Controller
 
         $enrollee->care_ambassador_id = $careAmbassador->id;
 
-        $enrollee->status = 'rejected';
+        $enrollee->status = $status;
+        if ($request->has('soft_decline_callback')) {
+            $enrollee->soft_rejected_callback = $request->input('soft_decline_callback');
+        }
+
         $enrollee->attempt_count = $enrollee->attempt_count + 1;
         $enrollee->last_attempt_at = Carbon::now()->toDateTimeString();
         $enrollee->total_time_spent = $enrollee->total_time_spent + $request->input('time_elapsed');

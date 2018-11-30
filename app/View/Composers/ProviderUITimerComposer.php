@@ -83,7 +83,7 @@ class ProviderUITimerComposer extends ServiceProvider
         });
 
 
-        View::composer(['partials.userheader', 'wpUsers.patient.careplan.print'], function ($view) {
+        View::composer(['partials.userheader', 'wpUsers.patient.careplan.print', 'wpUsers.patient.calls.index'], function ($view) {
             // calculate display, fix bug where gmdate('i:s') doesnt work for > 24hrs
             $patient = $view->patient;
 

@@ -179,6 +179,13 @@ class Practice extends BaseModel implements HasMedia
         return $this->hasMany('App\CarePlanTemplate', 'patient_id');
     }
 
+    /**
+     * @return \App\PracticeEnrollmentTips|\Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function enrollmentTips() {
+        return $this->hasOne('App\PracticeEnrollmentTips', 'practice_id');
+    }
+
     public function careAmbassadorLogs()
     {
         return $this->belongsToMany(CareAmbassadorLog::class);

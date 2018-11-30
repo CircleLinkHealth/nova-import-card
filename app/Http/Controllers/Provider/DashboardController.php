@@ -12,6 +12,8 @@ use App\Http\Requests\UpdatePracticeSettingsAndNotifications;
 use App\Http\Resources\SAAS\PracticeChargeableServices;
 use App\Location;
 use App\Practice;
+use App\PracticeEnrollmentTips;
+use App\SafeRequest;
 use App\Services\OnboardingService;
 use App\Settings;
 use App\User;
@@ -128,6 +130,16 @@ class DashboardController extends Controller
         $practiceSlug = $this->practiceSlug;
 
         return view('provider.user.create-staff', compact('invite', 'practiceSlug', 'practice'));
+    }
+
+    public function getCreateEnrollment()
+    {
+        return view('provider.enrollment.create', array_merge([
+            'practice'         => $this->primaryPractice,
+            'practiceSlug'     => $this->practiceSlug,
+            'practiceSettings' => $this->primaryPractice->cpmSettings(),
+            'tips'             => optional($this->primaryPractice->enrollmentTips)->content,
+        ], $this->returnWithAll));
     }
 
     public function getIndex()
@@ -306,5 +318,37 @@ class DashboardController extends Controller
         return redirect()
             ->back()
             ->with('message', "The practice has been updated successfully.");
+    }
+
+    public function postStoreEnrollment(SafeRequest $request)
+    {
+        //Summernote is vulnerable to XSS, so we remove entirely the special chars
+        //Laravel already sanitizes suspicious characters and can result to something like this:
+        //<p>all good</p>&lt;script&rt;alert('hi')&lt;script&gt;
+        //Also, Laravel does not handle this: <a href="javascript:alert('hi')">Click me. I am safe!</a>
+        $detail = $request->input('tips');
+        $detail = $this->removeEncodedSpecialChars($detail);
+        $detail = $this->removeSuspiciousJsCode($detail);
+        PracticeEnrollmentTips::updateOrCreate([ 'practice_id' => $this->primaryPractice->id ],[ 'content' => $detail ]);
+
+        return redirect()
+            ->back()
+            ->with('message', "Enrollment tips were saved successfully.");
+    }
+
+    private function removeEncodedSpecialChars($str) {
+        /**
+        & (ampersand) becomes &amp;
+        " (double quote) becomes &quot;
+        ' (single quote) becomes &#039;
+        < (less than) becomes &lt;
+        > (greater than) becomes &gt;
+         */
+        $pattern = ['/&amp;/', '/&quot;/', '/&#039;/', '/&lt;/', '/&gt;/'];
+        return preg_replace($pattern, '', $str);
+    }
+
+    private function removeSuspiciousJsCode($str) {
+        return preg_replace('/javascript:/', '', $str);
     }
 }

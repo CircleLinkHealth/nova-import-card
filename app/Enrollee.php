@@ -44,6 +44,7 @@ use Carbon\Carbon;
  * @property string|null $invite_opened_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $soft_rejected_callback
  * @property string $primary_insurance
  * @property string $secondary_insurance
  * @property string $tertiary_insurance
@@ -200,6 +201,8 @@ class Enrollee extends \App\BaseModel
         'problems',
         'cpm_problem_1',
         'cpm_problem_2',
+
+        'soft_rejected_callback',
     ];
 
     protected $dates = [
@@ -209,6 +212,7 @@ class Enrollee extends \App\BaseModel
         'invite_sent_at',
         'last_attempt_at',
         'last_encounter',
+        'soft_rejected_callback',
     ];
 
     public function user()
@@ -360,7 +364,11 @@ class Enrollee extends \App\BaseModel
     {
         //@todo add check for where phones are not all null
 
-        return $query->where('status', self::TO_CALL);
+        return $query->where('status', self::TO_CALL)
+                     ->orWhere(function ($q) {
+                         $q->where('status', '=', 'soft_rejected')
+                           ->where('soft_rejected_callback', '<=', Carbon::now()->toDateString());
+                     });
     }
 
     /**
