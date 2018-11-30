@@ -73,9 +73,6 @@ class TwilioController extends Controller
 
         $dial = $response->dial('', [
             'callerId'             => $input['From'],
-            'statusCallbackEvent'  => 'queued ringing in-progress completed busy failed no-answer',
-            'statusCallback'       => route('twilio.call.status'),
-            'statusCallbackMethod' => 'POST',
         ]);
         $dial->number($input['To']);
 
