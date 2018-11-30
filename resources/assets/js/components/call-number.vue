@@ -56,11 +56,18 @@
         components: {
             loader: LoaderComponent
         },
-        props: [
-            'inboundUserId',
-            'outboundUserId',
-            'numbers',
-        ],
+        props: {
+            inboundUserId: String,
+            outboundUserId: String,
+            patientNumbers: {
+                type: Array,
+                default: []
+            },
+            otherNumbers: {
+                type: Array,
+                default: []
+            }
+        },
         data() {
             return {
                 waiting: false,
@@ -129,7 +136,8 @@
                         To: number,
                         IsUnlistedNumber: isUnlisted,
                         InboundUserId: this.inboundUserId,
-                        OutboundUserId: this.outboundUserId
+                        OutboundUserId: this.outboundUserId,
+                        ConferenceName: '' // userId_patientUserId
                     });
                     this.log = 'Calling ' + number;
                     EventBus.$emit('tracker:call-mode:enter');

@@ -36,6 +36,16 @@ class TwilioController extends Controller
     }
 
     /**
+     *
+     * This handler is the Twilio Voice URL. This is set in Twilio Console, as a Twiml App.
+     * The custom parameters are:
+     * To,
+     * From,
+     * InboundUserId - the target user we are calling (a patient or a practice)
+     * OutboundUserId - the user making the call (i.e nurse)
+     * ConferenceName - the conference to join/create (usually userId_patientUserId)
+     * IsUnlistedNumber - has value if the number we are calling is manually inserted from the client side
+     *
      * @param Request $request
      *
      * @return mixed
@@ -58,6 +68,7 @@ class TwilioController extends Controller
             'From'             => 'nullable|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
+            'ConferenceName'   => '',
             'IsUnlistedNumber' => '',
         ]);
 
@@ -73,6 +84,16 @@ class TwilioController extends Controller
             'callerId' => $input['From'],
         ]);
         $dial->number($input['To']);
+
+        if ( ! empty($input['ConferenceName'])) {
+            $dial->conference($input['ConferenceName']);
+            /*
+             * not sure if we need this
+            $dial->conference($input['ConferenceName'], [
+                'endConferenceOnExit' => true
+            ]);
+            */
+        }
 
         return $this->responseWithXmlType(response($response));
     }

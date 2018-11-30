@@ -52,7 +52,8 @@
                                     <call-number
                                             inbound-user-id="{{$patient->id}}"
                                             outbound-user-id="{{auth()->id()}}"
-                                            :numbers="{{$phoneNumbers}}">
+                                            :other-numbers="{{$otherNumbers}}"
+                                            :patient-numbers="{{$phoneNumbers}}">
 
                                     </call-number>
                                 @else
