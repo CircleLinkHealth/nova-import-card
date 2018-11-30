@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Twilio;
 
 use App\Enrollee;
 use App\Http\Controllers\Controller;
+use App\Practice;
 use App\TwilioCall;
 use App\TwilioRawLog;
 use App\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use SimpleXMLElement;
 use Twilio\Jwt\ClientToken;
@@ -47,21 +47,18 @@ class TwilioController extends Controller
 
         $input = $request->all();
 
-        if (isset($input['From']) && $input['From'] === TwilioController::CLIENT_ANONYMOUS) {
+        if (empty($input['From']) || $input['From'] === TwilioController::CLIENT_ANONYMOUS) {
             $input['From'] = config('services.twilio')['from'];
-        } else {
-            $input['From'] = $request->input('From');
         }
 
 //        $input['To'] = '+35799451430';
-
         $validation = \Validator::make($input, [
             'To'               => 'required|phone:AUTO,US',
             //could be the practice outgoing phone number (in case of enrollment)
             'From'             => 'nullable|phone:AUTO,US',
             'InboundUserId'    => 'required',
             'OutboundUserId'   => 'required',
-            'IsUnlistedNumber' => ''
+            'IsUnlistedNumber' => '',
         ]);
 
         if ($validation->fails()) {
@@ -73,28 +70,34 @@ class TwilioController extends Controller
         $response = new Twiml();
 
         $dial = $response->dial('', [
-            'callerId'             => $input['From'],
+            'callerId' => $input['From'],
         ]);
         $dial->number($input['To']);
 
         return $this->responseWithXmlType(response($response));
     }
 
-    private function responseWithXmlType(ResponseFactory $response)
+    private function responseWithXmlType($response)
     {
         return $response->header('Content-Type', 'application/xml');
     }
 
-    private function responseWithXmlData(array $vars, $status = 200, array $header = [], $rootElement = 'response', $xml = null) {
+    private function responseWithXmlData(
+        array $vars,
+        $status = 200,
+        array $header = [],
+        $rootElement = 'response',
+        $xml = null
+    ) {
         if (is_null($xml)) {
-            $xml = new SimpleXMLElement('<'.$rootElement.'/>');
+            $xml = new SimpleXMLElement('<' . $rootElement . '/>');
         }
 
         foreach ($vars as $key => $value) {
             if (is_array($value)) {
                 $this->responseWithXmlData($value, $status, $header, $rootElement, $xml->addChild($key));
             } else {
-                if( preg_match('/^@.+/', $key) ) {
+                if (preg_match('/^@.+/', $key)) {
                     $attributeName = preg_replace('/^@/', '', $key);
                     $xml->addAttribute($attributeName, $value);
                 } else {
