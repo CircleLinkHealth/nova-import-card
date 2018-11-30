@@ -34,6 +34,7 @@ class SuccessfulCallHandlerTest extends TestCase
 
         $patient->patientSummaries()->updateOrCreate([
             'month_year' => $called->startOfMonth(),
+        ], [
             'bhi_time'               => 0,
             'ccm_time'               => 1300,
             'total_time'             => 1300,
