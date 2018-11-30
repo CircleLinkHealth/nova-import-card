@@ -11,15 +11,12 @@ namespace App\Services\Eligibility\Adapters;
 
 use App\EligibilityBatch;
 use App\EligibilityJob;
-use App\Rules\JsonEligibilityPhones;
-use App\Rules\JsonEligibilityProblems;
 use App\Services\Eligibility\Entities\MedicalRecord;
 use App\Traits\ValidatesEligibility;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\MessageBag;
 use Seld\JsonLint\JsonParser;
-use Validator;
 
 class JsonMedicalRecordAdapter
 {
@@ -144,7 +141,7 @@ class JsonMedicalRecordAdapter
     /**
      * @return Collection
      */
-    private function decode()
+    public function decode()
     {
         $isJson = is_json($this->source);
 
