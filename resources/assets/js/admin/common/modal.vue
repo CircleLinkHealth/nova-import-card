@@ -45,8 +45,6 @@
      */
     import {Event} from 'vue-tables-2'
 
-    let self;
-
     export default {
         name: 'modal',
         props: {
@@ -107,24 +105,22 @@
             },
             listenOnEscKey(e) {
                 if (e.key === 'Escape') {
-                    self.cancel();
+                    this.cancel();
                 }
             }
         },
         mounted() {
 
-            self = this;
-
-            if (self.closeOnEsc) {
-                $(document).bind('keyup.modal', self.listenOnEscKey);
+            if (this.closeOnEsc) {
+                $(document).bind('keyup.modal', this.listenOnEscKey);
             }
 
-            Event.$on(`modal${self.name ? '-' + self.name : ''}:show`, (opts) => {
-                self.show(opts);
+            Event.$on(`modal${this.name ? '-' + this.name : ''}:show`, (opts) => {
+                this.show(opts);
             });
 
-            Event.$on(`modal${self.name ? '-' + self.name : ''}:hide`, () => {
-                self.close();
+            Event.$on(`modal${this.name ? '-' + this.name : ''}:hide`, () => {
+                this.close();
             });
 
         },
