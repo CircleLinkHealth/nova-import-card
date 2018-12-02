@@ -28,6 +28,10 @@ class Handler extends ExceptionHandler
         ValidationException::class,
     ];
 
+    /**
+     * A list of the exception types that should be recorded, but no notification should be sent.
+     * @var array
+     */
     protected $recordButNotNotify = [
         SuspiciousOperationException::class,
     ];

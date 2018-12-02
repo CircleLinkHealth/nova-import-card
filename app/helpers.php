@@ -171,23 +171,28 @@ if ( ! function_exists('extractNumbers')) {
 }
 
 if ( ! function_exists('detectDelimiter')) {
-    function detectDelimiter($fileHandle, $length)
+    /**
+     * @param bool|resource $csvFileHandle The handle of a file opened with fopen
+     * @param int $length
+     *
+     * @return false|int|string
+     */
+    function detectDelimiter($csvFileHandle, $length = 4096)
     {
-        $delimiters = ["\t", ";", "|", ","];
-        $data_1     = $data_2 = $delimiter = null;
+        $delimiters = [
+            ','  => 0,
+            "\t" => 0,
+            ';'  => 0,
+            "|"  => 0,
+        ];
 
-        foreach ($delimiters as $d) {
-            $data_1 = fgetcsv($fileHandle, $length, $d);
-            if (sizeof($data_1) > sizeof($data_2)) {
-                $delimiter = sizeof($data_1) > sizeof($data_2)
-                    ? $d
-                    : $delimiter;
-                $data_2    = $data_1;
-            }
-            rewind($fileHandle);
+        foreach ($delimiters as $delimiter => &$count) {
+            $firstLine = fgetcsv($csvFileHandle, $length, $delimiter);
+            $count     = count($firstLine);
+            rewind($csvFileHandle);
         }
 
-        return $delimiter;
+        return array_search(max($delimiters), $delimiters);
     }
 }
 
@@ -197,6 +202,9 @@ if ( ! function_exists('parseCsvToArray')) {
      *
      * @param $file
      *
+     * @param int $length
+     * @param null $delimiter
+     *
      * @return array
      */
     function parseCsvToArray($file, $length = 0, $delimiter = null)
@@ -204,7 +212,7 @@ if ( ! function_exists('parseCsvToArray')) {
         $csvArray  = $fields = [];
         $i         = 0;
         $handle    = @fopen($file, "r");
-        $delimiter = $delimiter ?? detectDelimiter($handle, $length = 0);
+        $delimiter = $delimiter ?? detectDelimiter($handle);
 
         if ($handle) {
             while (($row = fgetcsv($handle, $length, $delimiter)) !== false) {
@@ -1038,30 +1046,32 @@ if ( ! function_exists('getEhrReportWritersFolderUrl')) {
 
     function getEhrReportWritersFolderUrl()
     {
+        return 'https://drive.google.com/drive/folders/1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-        $clh = collect(Storage::drive('google')->listContents('/', true));
-        //get path for ehr-data-from-report-writers
-        $reportWritersFolder = $clh->where('type', '=', 'dir')
-                                   ->where('filename', '=', "ehr-data-from-report-writers")
-                                   ->first();
-        if ( ! $reportWritersFolder) {
-            return null;
-        }
-
-        return Storage::drive('google')->url($reportWritersFolder['path']);
+        //Causes timeouts on prod
+//        return Cache::rememberForever('url_for_ehr_data_from_report_writers', function () {
+//            $dir = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//            if ( ! $dir) {
+//                return null;
+//            }
+//
+//            return Storage::drive('google')->url($dir['path']);
+//        });
     }
 }
 
 if ( ! function_exists('getGoogleDirectoryByName')) {
 
-    function getGoogleDirectoryByName($name){
+    function getGoogleDirectoryByName($name)
+    {
 
         $clh = collect(Storage::drive('google')->listContents('/', true));
 
-        $directory      = $clh->where('type', '=', 'dir')
-                                        ->where('filename', '=', $name)
-                                        ->first();
-        if (! $directory){
+        $directory = $clh->where('type', '=', 'dir')
+                         ->where('filename', '=', $name)
+                         ->first();
+        if ( ! $directory) {
             return null;
         }
 

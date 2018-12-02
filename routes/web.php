@@ -784,6 +784,10 @@ Route::group(['middleware' => 'auth'], function () {
         'prefix'     => 'manage-patients/{patientId}',
         'middleware' => ['patientProgramSecurity', 'checkWebSocketServer'],
     ], function () {
+        Route::get('call', [
+            'uses' => 'Patient\PatientController@showCallPatientPage',
+            'as'   => 'patient.show.call.page',
+        ])->middleware('permission:patient.read');
         Route::get('summary', [
             'uses' => 'Patient\PatientController@showPatientSummary',
             'as'   => 'patient.summary',
@@ -2083,6 +2087,16 @@ Route::group([
         'uses' => 'Provider\DashboardController@getCreateLocation',
         'as'   => 'provider.dashboard.manage.locations',
     ])->middleware('permission:practiceSetting.read');
+
+    Route::get('enrollment', [
+        'uses' => 'Provider\DashboardController@getCreateEnrollment',
+        'as'   => 'provider.dashboard.manage.enrollment',
+    ])->middleware('permission:practiceSetting.read');
+
+    Route::post('enrollment', [
+        'uses' => 'Provider\DashboardController@postStoreEnrollment',
+        'as'   => 'provider.dashboard.store.enrollment',
+    ])->middleware('permission:practiceSetting.update');
 });
 
 /*
@@ -2224,14 +2238,9 @@ Route::group([
     'prefix'     => 'twilio',
     'middleware' => 'auth',
 ], function () {
-    Route::post('/token', [
+    Route::get('/token', [
         'uses' => 'TwilioController@obtainToken',
         'as'   => 'twilio.token',
-    ]);
-
-    Route::post('/call/make', [
-        'uses' => 'TwilioController@newCall',
-        'as'   => 'twilio.call',
     ]);
 });
 
@@ -2242,8 +2251,6 @@ Route::group([
         'uses' => 'TwilioController@placeCall',
         'as'   => 'twilio.call.place',
     ]);
-
-    Route::get('/call', 'TwilioController@makeCall');
 });
 
 Route::group([

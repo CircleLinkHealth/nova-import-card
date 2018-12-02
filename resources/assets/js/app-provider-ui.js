@@ -8,7 +8,7 @@ import axios from './bootstrap-axios'
 import VueAxios from 'vue-axios'
 import VueForm from "vue-form";
 import store from "./store";
-import { ClientTable } from 'vue-tables-2'
+import {ClientTable} from 'vue-tables-2'
 
 Vue.use(ClientTable, {}, false)
 
@@ -70,11 +70,12 @@ const PatientList = () => import(/* webpackChunkName: "chunk-patient-listing" */
 const DatepickerComponent = () => import(/* webpackChunkName: "chunk-datepicker" */ 'vuejs-datepicker')
 const ImporterTrainerComponent = () => import(/* webpackChunkName: "chunk-importer-trainer" */ './components/Importer/trainer')
 const PatientNextCallComponent = () => import(/* webpackChunkName: "chunk-patient-next-call" */ './components/patient-next-call');
+const CallNumberComponent = () => import(/* webpackChunkName: "chunk-call-number" */ './components/call-number');
 const UserAccountSettings = () => import(/* webpackChunkName: "chunk-user-account-settings" */ './components/user-account-settings');
 const AuthyPerform2FA = () => import(/* webpackChunkName: "chunk-authy-perform-2fa" */ './components/authy-perform-2fa');
 
 import EventBus from './admin/time-tracker/comps/event-bus'
-import { BindWindowFocusChange, BindWindowVisibilityChange } from './admin/time-tracker/events/window.event'
+import {BindWindowFocusChange, BindWindowVisibilityChange} from './admin/time-tracker/events/window.event'
 
 Vue.component('billing-report', BillingComponent);
 Vue.component('component-proxy', ComponentProxy);
@@ -113,6 +114,7 @@ Vue.component('v-datepicker', DatepickerComponent);
 Vue.component('importer-trainer', ImporterTrainerComponent);
 Vue.component('patient-next-call', PatientNextCallComponent);
 Vue.component('add-task-modal', AddTaskModalComponent);
+Vue.component('call-number', CallNumberComponent);
 Vue.component('user-account-settings', UserAccountSettings);
 Vue.component('authy-perform-2fa', AuthyPerform2FA);
 

@@ -35,6 +35,12 @@
         Chargeable Services
     </a>
 </li>
+<li>
+    <a class="" href="{{ route('provider.dashboard.manage.enrollment', ['practiceSlug' => $practiceSlug]) }}">
+        <i class=" material-icons">assignment</i>
+        Enrollment
+    </a>
+</li>
 
 
 {{--<li>--}}

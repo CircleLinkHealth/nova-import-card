@@ -31,48 +31,33 @@ class TwilioController extends Controller
         return response()->json(['token' => $this->token]);
     }
 
-    public function makeCall()
-    {
-        return view(
-            'partials.calls.make-twilio-call', [
-                'token' => $this->token,
-            ]
-        );
-    }
-
-    public function newCall(Request $request)
-    {
-        $response = new Twiml();
-
-        $phoneNumberToDial = (new StringManipulation())->formatPhoneNumberE164($request->input('phoneNumber'));
-
-        $enrollee = Enrollee::where(function ($q) use ($phoneNumberToDial) {
-            $q->where('cell_phone', $phoneNumberToDial)
-              ->orWhere('home_phone', $phoneNumberToDial)
-              ->orWhere('other_phone', $phoneNumberToDial);
-        })->first();
-
-        $practiceId = $enrollee['practice_id'];
-
-        $callerIdNumber = optional(Practice::find($practiceId))->outgoing_phone_number;
-
-        if ($callerIdNumber) {
-            $dial = $response->dial(['callerId' => $callerIdNumber]);
-
-            $dial->number($phoneNumberToDial);
-
-            return $response;
-        }
-
-        throw new \Exception("Practice Outgoing Phone Number not found.", 500);
-
-
-    }
-
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     * @throws \Twilio\Exceptions\TwimlException
+     * @throws \Exception
+     */
     public function placeCall(Request $request)
     {
-        $response       = new Twiml();
-        $callerIdNumber = config('services.twilio')['from'];
+
+        $validation = \Validator::make($request->all(), [
+            'To'   => 'required|phone:AUTO,US',
+            'From' => 'nullable|phone:AUTO,US', //could be the practice outgoing phone number (in case of enrollment)
+        ]);
+
+        if ($validation->fails()) {
+            //twilio will just respond with 'An application error has occurred'
+            throw new \Exception('Invalid phone number');
+        }
+
+        $response = new Twiml();
+
+        if ($request->has('From')) {
+            $callerIdNumber = $request->input('From');
+        } else {
+            $callerIdNumber = config('services.twilio')['from'];
+        }
 
         $dial = $response->dial(['callerId' => $callerIdNumber]);
 
