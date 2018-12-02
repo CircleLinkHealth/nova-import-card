@@ -7,7 +7,7 @@
             <p>This tool will ensure that the data is in the appropriate format to be ingested by CLH.</p>
         </div>
         <div class="col-md-12">
-            <a class="btn btn-info" href="{{optional(auth()->user()->ehrReportWriterInfo)->getFolderUrl()}}">Show Google Drive Folder</a>
+            <a class="btn btn-info" href="{{optional(auth()->user()->ehrReportWriterInfo)->getFolderUrl()}}" target="_blank">Show Google Drive Folder</a>
         </div>
 
         <div class="col-md-12" style="margin: 15px">

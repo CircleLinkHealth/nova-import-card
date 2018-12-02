@@ -10,6 +10,7 @@ use App\PatientMonthlySummary;
 use App\PhoneNumber;
 use App\Practice;
 use App\ProviderInfo;
+use App\Services\GoogleDrive;
 use App\User;
 use App\UserPasswordsHistory;
 use Carbon\Carbon;
@@ -503,21 +504,30 @@ class UserRepository
 
     public function saveEhrReportWriterFolder($user)
     {
+        $googleDrive = new GoogleDrive();
         $cloudDisk = Storage::drive('google');
+        $ehrPath = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
-        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
-        if ( ! $ehr) {
-            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
-            $path = $this->saveEhrReportWriterFolder($user);
+        $ehr = $googleDrive->getContents($ehrPath);
 
-            return $path;
-        }
+        //this will cause a time-out, and folder exists for the time being
+//        $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
+//
+//        if ( ! $ehr) {
+//            $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+//            $path = $this->saveEhrReportWriterFolder($user);
+//
+//            return $path;
+//        }
 
-        $writerFolder = getGoogleDirectoryByName("report-writer-{$user->id}");
+        $writerFolder = $ehr->where('type', '=', 'dir')
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
+
 
         if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehr['path'] . "/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
             $path = $this->saveEhrReportWriterFolder($user);
 
             return $path;
@@ -537,16 +547,22 @@ class UserRepository
 
             $service->permissions->create($writerFolder['basename'], $permission);
 
-            if (! app()->environment(['production', 'worker', 'local'])){
-                $adminEmails = User::ofType('administrator')
-                                   ->pluck('email')
-                                   ->each(function($email) use ($service, $writerFolder){
-                                       $permission = new \Google_Service_Drive_Permission();
-                                       $permission->setRole('writer');
-                                       $permission->setType('user');
-                                       $permission->setEmailAddress($email);
-                                       $service->permissions->create($writerFolder['basename'], $permission);
-                                   });
+            if (app()->environment('staging')){
+                //only staging, so we can have the ability to test, but not get access to PHI
+                $devEmails = collect([
+                    'constantinos@circlelinkhealth.com',
+                    'mAntoniou@circlelinkhealth.com',
+                    'antonis@circlelinkhealth.com',
+                    'pangratios@circlelinkhealth.com'
+                ]);
+
+                foreach ($devEmails as $email){
+                    $permission = new \Google_Service_Drive_Permission();
+                    $permission->setRole('writer');
+                    $permission->setType('user');
+                    $permission->setEmailAddress($email);
+                    $service->permissions->create($writerFolder['basename'], $permission);
+                }
             }
 
             return $writerFolder['path'];
