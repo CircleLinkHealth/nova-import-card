@@ -154,7 +154,7 @@ if (isset($patient) && ! empty($patient)) {
 
                                             <a class="btn btn-info btn-sm inline-block" aria-label="..."
                                                role="button"
-                                               href="{{ route('patients.careplan.multi', ['fromViewCarePlan' => true]) }}?users={{ $patient->id }}">Print
+                                               href="{{ route('patients.careplan.multi') }}?users={{ $patient->id }}">Print
                                                 This Page</a>
 
                                             <form class="lang" action="#" method="POST" id="form">

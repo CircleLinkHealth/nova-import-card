@@ -147,8 +147,7 @@ class PatientCareplanController extends Controller
     public function printMultiCareplan(
         Request $request,
         CareplanService $careplanService,
-        PatientService $patientService,
-        $fromViewCarePlan = null
+        PatientService $patientService
     ) {
         if ( ! $request['users']) {
             return response()->json("Something went wrong..");
@@ -223,7 +222,7 @@ class PatientCareplanController extends Controller
             // add to array
             $pageFileNames[] = $fileNameWithPath;
 
-            if ( ! $fromViewCarePlan) {
+            if (auth()->user()->isAdmin() && $letter == true) {
                 $careplanObj               = $user->carePlan;
                 $careplanObj->last_printed = Carbon::now()->toDateTimeString();
                 if ( ! $careplanObj->first_printed) {

@@ -723,7 +723,7 @@ Route::group(['middleware' => 'auth'], function () {
             'as'   => 'patients.listing.pdf',
         ])->middleware('permission:careplan-pdf.create');
 
-        Route::get('careplan-print-multi/{fromViewCarePlan?}', [
+        Route::get('careplan-print-multi', [
             'uses' => 'Patient\PatientCareplanController@printMultiCareplan',
             'as'   => 'patients.careplan.multi',
         ])->middleware('permission:careplan.read,careplan.update,care-plan-approve');

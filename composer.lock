@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9e1db59badd1fec7792b6073605e3fb",
+    "content-hash": "c1e7e916ba0b6c854510884e0ce48cbe",
     "packages": [
         {
             "name": "amnuts/opcache-gui",
@@ -262,16 +262,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.80.0",
+            "version": "3.80.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "1783f1f861c94eef24d968eba3e5becf9b4a339b"
+                "reference": "16819253927a18f96c9bbd85cb1b47419e5bc371"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/1783f1f861c94eef24d968eba3e5becf9b4a339b",
-                "reference": "1783f1f861c94eef24d968eba3e5becf9b4a339b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/16819253927a18f96c9bbd85cb1b47419e5bc371",
+                "reference": "16819253927a18f96c9bbd85cb1b47419e5bc371",
                 "shasum": ""
             },
             "require": {
@@ -341,7 +341,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-11-29T18:42:56+00:00"
+            "time": "2018-11-30T00:01:18+00:00"
         },
         {
             "name": "barryvdh/laravel-debugbar",
@@ -474,16 +474,16 @@
         },
         {
             "name": "blackfire/php-sdk",
-            "version": "v1.17.2",
+            "version": "v1.17.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blackfireio/php-sdk.git",
-                "reference": "78fee1aa2d30655059bc528af23e4b01367cc95f"
+                "reference": "e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/78fee1aa2d30655059bc528af23e4b01367cc95f",
-                "reference": "78fee1aa2d30655059bc528af23e4b01367cc95f",
+                "url": "https://api.github.com/repos/blackfireio/php-sdk/zipball/e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d",
+                "reference": "e9b945d8566e7eeb71d6d371e6d2bd5960e8e31d",
                 "shasum": ""
             },
             "require": {
@@ -525,7 +525,7 @@
                 "uprofiler",
                 "xhprof"
             ],
-            "time": "2018-10-22T13:57:29+00:00"
+            "time": "2018-11-29T15:38:47+00:00"
         },
         {
             "name": "cakephp/chronos",
@@ -1286,16 +1286,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.74",
+            "version": "v0.75",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "1582b1a96fdbe7fdee910477bb6e86fd3110b5ee"
+                "reference": "7e369227076b1016ccf298ee681e021381c49294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/1582b1a96fdbe7fdee910477bb6e86fd3110b5ee",
-                "reference": "1582b1a96fdbe7fdee910477bb6e86fd3110b5ee",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/7e369227076b1016ccf298ee681e021381c49294",
+                "reference": "7e369227076b1016ccf298ee681e021381c49294",
                 "shasum": ""
             },
             "require": {
@@ -1319,7 +1319,7 @@
             "keywords": [
                 "google"
             ],
-            "time": "2018-10-29T00:22:47+00:00"
+            "time": "2018-11-30T00:22:56+00:00"
         },
         {
             "name": "google/auth",
@@ -5611,6 +5611,74 @@
             "time": "2018-11-26T12:48:07+00:00"
         },
         {
+            "name": "symfony/contracts",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/contracts.git",
+                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/contracts/zipball/3edf0ab943d1985a356721952cba36ff31bd6e5f",
+                "reference": "3edf0ab943d1985a356721952cba36ff31bd6e5f",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "psr/cache": "^1.0",
+                "psr/container": "^1.0"
+            },
+            "suggest": {
+                "psr/cache": "When using the Cache contracts",
+                "psr/container": "When using the Service contracts",
+                "symfony/cache-contracts-implementation": "",
+                "symfony/service-contracts-implementation": "",
+                "symfony/translation-contracts-implementation": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Contracts\\": ""
+                },
+                "exclude-from-classmap": [
+                    "**/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "A set of abstractions extracted out of the Symfony components",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "abstractions",
+                "contracts",
+                "decoupling",
+                "interfaces",
+                "interoperability",
+                "standards"
+            ],
+            "time": "2018-11-24T09:35:08+00:00"
+        },
+        {
             "name": "symfony/css-selector",
             "version": "v3.1.10",
             "source": {
@@ -6447,26 +6515,30 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v4.1.8",
+            "version": "v4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "615e3cf75d00a7d6788316d9631957991ba9c26a"
+                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/615e3cf75d00a7d6788316d9631957991ba9c26a",
-                "reference": "615e3cf75d00a7d6788316d9631957991ba9c26a",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
+                "reference": "ff9a878c9b8f8bcd4d9138e2d32f508c942773d9",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1.3",
+                "symfony/contracts": "^1.0",
                 "symfony/polyfill-mbstring": "~1.0"
             },
             "conflict": {
                 "symfony/config": "<3.4",
                 "symfony/dependency-injection": "<3.4",
                 "symfony/yaml": "<3.4"
+            },
+            "provide": {
+                "symfony/translation-contracts-implementation": "1.0"
             },
             "require-dev": {
                 "psr/log": "~1.0",
@@ -6485,7 +6557,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -6512,7 +6584,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-26T10:26:29+00:00"
+            "time": "2018-11-27T07:20:32+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -10169,16 +10241,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v4.1.8",
+            "version": "v4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "71cc7693940bdad4dac4b038acd46b4f1ae7d2ca"
+                "reference": "2f4c8b999b3b7cadb2a69390b01af70886753710"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/71cc7693940bdad4dac4b038acd46b4f1ae7d2ca",
-                "reference": "71cc7693940bdad4dac4b038acd46b4f1ae7d2ca",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/2f4c8b999b3b7cadb2a69390b01af70886753710",
+                "reference": "2f4c8b999b3b7cadb2a69390b01af70886753710",
                 "shasum": ""
             },
             "require": {
@@ -10188,7 +10260,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.1-dev"
+                    "dev-master": "4.2-dev"
                 }
             },
             "autoload": {
@@ -10215,7 +10287,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2018-11-11T19:51:29+00:00"
+            "time": "2018-11-11T19:52:12+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -10543,7 +10615,11 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1.0"
+        "php": ">=7.2.0",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-json": "*",
+        "ext-xdebug": "*"
     },
     "platform-dev": []
 }
