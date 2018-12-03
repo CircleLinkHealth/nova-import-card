@@ -33,6 +33,14 @@
       "url": "git@github.com:CircleLinkHealth/laravel-cerberus.git"
     },
     {
+      "type": "git",
+      "url": "https://github.com/silasrm/wkhtmltoimage-amd64.git"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/silasrm/wkhtmltopdf-amd64.git"
+    },
+    {
       "type": "composer",
       "url": "https://packagist.org"
     },
@@ -52,8 +60,8 @@
     "fideloper/proxy": "~3.3",
     "genealabs/laravel-caffeine": "^0.5.0",
     "guzzlehttp/guzzle": "~5.3|~6.0",
-    "h4cc/wkhtmltoimage-amd64": "*",
-    "h4cc/wkhtmltopdf-amd64": "*",
+    "h4cc/wkhtmltoimage-amd64": "^0.12.5",
+    "h4cc/wkhtmltopdf-amd64": "^0.12.5",
     "jenssegers/agent": "^2.5",
     "jeremykenedy/slack-laravel": "^2.2",
     "lab404/laravel-impersonate": "^1.2",
