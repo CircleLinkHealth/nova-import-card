@@ -42,6 +42,9 @@
   ],
   "require": {
     "php": ">=7.2.0",
+    "ext-dom": "*",
+    "ext-json": "*",
+    "ext-libxml": "*",
     "amnuts/opcache-gui": "dev-master",
     "appstract/laravel-opcache": "^2.0",
     "arcturial/clickatell": "*",
@@ -68,6 +71,7 @@
     "michalisantoniou6/laravel-cerberus": "dev-master",
     "nao-pon/flysystem-google-drive": "~1.1",
     "phaxio/phaxio": "^1.0",
+    "pragmarx/health": "^0.9.16",
     "predis/predis": "^1.1",
     "prettus/l5-repository": "dev-master",
     "prettus/laravel-validation": "*",
@@ -83,10 +87,7 @@
     "tymon/jwt-auth": "0.5.*",
     "venturecraft/revisionable": "dev-master",
     "waavi/url-shortener": "dev-master",
-    "yajra/laravel-datatables-oracle": "~8.0",
-    "ext-dom": "*",
-    "ext-libxml": "*",
-    "ext-json": "*"
+    "yajra/laravel-datatables-oracle": "~8.0"
   },
   "require-dev": {
     "Xethron/Laravel-4-Generators": "*",
