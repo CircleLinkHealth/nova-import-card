@@ -54,11 +54,10 @@ class Handler extends ExceptionHandler
      * @param  \Exception $e
      *
      * @return void
+     * @throws Exception
      */
     public function report(Exception $e)
     {
-        parent::report($e);
-
         if ($e instanceof \Illuminate\Database\QueryException) {
             $errorCode = $e->errorInfo[1];
             if ($errorCode == 1062) {
@@ -73,6 +72,7 @@ class Handler extends ExceptionHandler
                 'local',
                 'development',
                 'dev',
+                'testing',
             ])
         ) {
             //Check to see if LERN is installed otherwise you will not get an exception.
@@ -103,6 +103,8 @@ class Handler extends ExceptionHandler
                 */
             }
         }
+
+        return parent::report($e);
     }
 
     /**
