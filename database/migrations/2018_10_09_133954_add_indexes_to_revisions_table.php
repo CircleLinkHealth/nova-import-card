@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -14,7 +15,7 @@ class AddIndexesToRevisionsTable extends Migration
     public function up()
     {
         Schema::table('revisions', function (Blueprint $table) {
-            $table->index(['revisionable_id', 'revisionable_type','key','created_at'], 'ops_dashboard_query');
+            $table->index(['revisionable_id', 'revisionable_type', 'key', 'created_at'], 'ops_dashboard_query');
         });
     }
 
@@ -26,7 +27,17 @@ class AddIndexesToRevisionsTable extends Migration
     public function down()
     {
         Schema::table('revisions', function (Blueprint $table) {
-            $table->dropIndex(['ops_dashboard_query']);
+            try {
+                $key = 'ops_dashboard_query';
+
+                $table->dropIndex($key);
+
+            } catch (QueryException $e) {
+                $errorCode = $e->errorInfo[1];
+                if ($errorCode == 1091) {
+                    Log::debug("Key `$key` does not exist. Nothing to delete." . __FILE__);
+                }
+            }
         });
     }
 }
