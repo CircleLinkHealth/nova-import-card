@@ -29,7 +29,7 @@ class AddNoSoftRejectedInCareAmbassadorLogs extends Migration
     {
 
         if (Schema::hasColumn('care_ambassador_logs', 'no_soft_rejected')) {
-            Schema::table('enrollees', function (Blueprint $table) {
+            Schema::table('care_ambassador_logs', function (Blueprint $table) {
                 $table->dropColumn('no_soft_rejected');
             });
         }
