@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateCarePlanTemplatesCpmMiscsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('care_plan_templates_cpm_miscs');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -22,18 +31,7 @@ class CreateCarePlanTemplatesCpmMiscsTable extends Migration
             $table->integer('care_plan_template_id')->unsigned();
             $table->integer('cpm_misc_id')->unsigned()->index('care_plan_templates_cpm_miscs_cpm_misc_id_foreign');
             $table->timestamps();
-            $table->index(['care_plan_template_id','cpm_misc_id'], 'cpt_id_cpm_misc_id_index');
+            $table->index(['care_plan_template_id', 'cpm_misc_id'], 'cpt_id_cpm_misc_id_index');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('care_plan_templates_cpm_miscs');
     }
 }

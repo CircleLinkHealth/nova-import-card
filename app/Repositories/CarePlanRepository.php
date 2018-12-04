@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\CarePlan;
@@ -8,29 +12,28 @@ use Carbon\Carbon;
 
 class CareplanRepository
 {
+    private $G0506             = 'g0506';
+    private $PATIENT_REJECTED  = 'patient_rejected';
     private $PROVIDER_APPROVED = 'provider_approved';
-    private $PATIENT_REJECTED = 'patient_rejected';
-    private $G0506 = 'g0506';
-
-    public function model()
-    {
-        return app(CarePlan::class);
-    }
 
     public function approve($userId, $providerApproverId)
     {
         $carePlans = $this->model()->where(['user_id' => $userId]);
 
         if ($carePlans->first()) {
-            $carePlans->update(['status'               => $this->PROVIDER_APPROVED,
-                                'provider_approver_id' => $providerApproverId,
-                                'provider_date'        => Carbon::now(),
+            $carePlans->update(['status' => $this->PROVIDER_APPROVED,
+                'provider_approver_id'   => $providerApproverId,
+                'provider_date'          => Carbon::now(),
             ]);
 
             return $carePlans->first();
-        } else {
-            throw new Exception('careplans with user_id "' . $userId . '" not found');
         }
+        throw new Exception('careplans with user_id "'.$userId.'" not found');
+    }
+
+    public function model()
+    {
+        return app(CarePlan::class);
     }
 
     public function reject($userId, $providerApproverId = null)
@@ -45,8 +48,7 @@ class CareplanRepository
             }
 
             return $carePlans->first();
-        } else {
-            throw new Exception('careplans with user_id "' . $userId . '" not found');
         }
+        throw new Exception('careplans with user_id "'.$userId.'" not found');
     }
 }

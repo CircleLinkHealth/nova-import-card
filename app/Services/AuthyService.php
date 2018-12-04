@@ -1,17 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/16/18
- * Time: 3:09 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
 
+use App\AuthyUser;
 use App\Contracts\AuthyApiable;
 use App\User;
 use Authy\AuthyUser as AuthyApiUser;
-use App\AuthyUser;
 
 class AuthyService
 {
@@ -31,21 +29,20 @@ class AuthyService
     }
 
     /**
-     * Register a User with Authy
+     * Check approval request Status.
      *
-     * @param AuthyUser $authyUser
-     * @param User $user
+     * @param $approvalRequestUuid
      *
-     * @return AuthyApiUser
+     * @return \Authy\AuthyResponse
      */
-    public function register(AuthyUser $authyUser, User $user)
+    public function checkOneTouchRequestStatus($approvalRequestUuid)
     {
         $response = $this->api
-            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code, $authyUser->authy_method == 'app');
+            ->getApprovalRequest($approvalRequestUuid);
 
         if ($response->ok()) {
-            $authyUser->authy_id = $response->id();
-            $authyUser->save();
+            $approval_request = (array) $response->bodyvar('approval_request');
+            $this->on2FASuccess($approval_request['status']);
         }
 
         return $response;
@@ -55,7 +52,7 @@ class AuthyService
      * Create approval request.
      *
      * @param AuthyUser $authyUser
-     * @param User $user
+     * @param User      $user
      *
      * @return \Authy\AuthyResponse
      */
@@ -72,12 +69,11 @@ class AuthyService
                         'Username' => $user->username,
                         'Site'     => config('opcache.url'),
                     ],
-
                 ]
             );
 
         if ($response->ok()) {
-            $approval_request = (array)$response->bodyvar('approval_request');
+            $approval_request = (array) $response->bodyvar('approval_request');
             session(['approval_request_uuid' => $approval_request['uuid']]);
         }
 
@@ -85,20 +81,21 @@ class AuthyService
     }
 
     /**
-     * Check approval request Status.
+     * Register a User with Authy.
      *
-     * @param $approvalRequestUuid
+     * @param AuthyUser $authyUser
+     * @param User      $user
      *
-     * @return \Authy\AuthyResponse
+     * @return AuthyApiUser
      */
-    public function checkOneTouchRequestStatus($approvalRequestUuid)
+    public function register(AuthyUser $authyUser, User $user)
     {
         $response = $this->api
-            ->getApprovalRequest($approvalRequestUuid);
+            ->registerUser($user->email, $authyUser->phone_number, $authyUser->country_code, 'app' == $authyUser->authy_method);
 
         if ($response->ok()) {
-            $approval_request = (array)$response->bodyvar('approval_request');
-            $this->on2FASuccess($approval_request['status']);
+            $authyUser->authy_id = $response->id();
+            $authyUser->save();
         }
 
         return $response;

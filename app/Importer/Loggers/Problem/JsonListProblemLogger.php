@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/12/18
- * Time: 6:28 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Problem;
@@ -48,6 +46,6 @@ class JsonListProblemLogger implements Logger
 //            throw new \Exception("The string contains invalid json. String: `$problemsString`");
 //        }
 
-        return (boolean)$check;
+        return (bool) $check;
     }
 }

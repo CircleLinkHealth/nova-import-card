@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateCcdasTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('ccdas');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -29,20 +38,9 @@ class CreateCcdasTable extends Migration
             $table->boolean('imported');
             $table->text('xml');
             $table->text('json')->nullable();
-            $table->enum('status', array('determine_enrollement_eligibility','eligible','ineligible','patient_consented','patient_declined','import','qa','careplan_created'))->nullable();
+            $table->enum('status', ['determine_enrollement_eligibility', 'eligible', 'ineligible', 'patient_consented', 'patient_declined', 'import', 'qa', 'careplan_created'])->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('ccdas');
     }
 }

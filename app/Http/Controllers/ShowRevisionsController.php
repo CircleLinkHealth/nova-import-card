@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Patient;
@@ -58,18 +62,18 @@ class ShowRevisionsController extends Controller
         $revisions = collect();
         if ($errors->isEmpty()) {
             $revisions = Revision::where('updated_at', '>=', $startDate->toDateTimeString())
-                                 ->where('updated_at', '<=', $endDate->toDateTimeString())
-                                 ->when($phiOnly, function ($q) use ($revisionableType) {
-                                     $q->where('is_phi', '=', true);
-                                 })
-                                 ->when(! ! $revisionableType, function ($q) use ($revisionableType) {
-                                     $q->where('revisionable_type', '=', $revisionableType);
-                                 })
-                                 ->when(! ! $revisionableId, function ($q) use ($revisionableId) {
-                                     $q->where('revisionable_id', '=', $revisionableId);
-                                 })
-                                 ->orderBy('updated_at', 'desc')
-                                 ->paginate(20);
+                ->where('updated_at', '<=', $endDate->toDateTimeString())
+                ->when($phiOnly, function ($q) use ($revisionableType) {
+                    $q->where('is_phi', '=', true);
+                })
+                ->when((bool) $revisionableType, function ($q) use ($revisionableType) {
+                    $q->where('revisionable_type', '=', $revisionableType);
+                })
+                ->when((bool) $revisionableId, function ($q) use ($revisionableId) {
+                    $q->where('revisionable_id', '=', $revisionableId);
+                })
+                ->orderBy('updated_at', 'desc')
+                ->paginate(20);
         }
 
         return view('admin.allActivity.index', compact([
@@ -81,7 +85,7 @@ class ShowRevisionsController extends Controller
     }
 
     /**
-     * Show all PHI related revisions for a patient
+     * Show all PHI related revisions for a patient.
      *
      * @param Request $request
      * @param $userId
@@ -102,26 +106,26 @@ class ShowRevisionsController extends Controller
 
         $patientInfoId = optional(Patient::whereUserId($userId)->first())->id;
         $user          = User::withTrashed()
-                             ->find($userId);
+            ->find($userId);
 
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59);
 
         $revisions = Revision::where('updated_at', '>=', $startDate->toDateTimeString())
-                             ->where('updated_at', '<=', $endDate->toDateTimeString())
-                             ->where(function ($q) use ($userId, $patientInfoId) {
-                                 $q->where(function ($q) use ($patientInfoId) {
-                                     $q->where('revisionable_type', Patient::class)
-                                       ->where('revisionable_id', $patientInfoId)
-                                       ->whereIn('key', (new Patient())->phi);
-                                 })->orWhere(function ($q) use ($userId) {
-                                     $q->where('revisionable_type', User::class)
-                                       ->where('revisionable_id', $userId)
-                                       ->whereIn('key', (new User())->phi);
-                                 });
-                             })
-                             ->orderBy('updated_at', 'desc')
-                             ->paginate(20);
+            ->where('updated_at', '<=', $endDate->toDateTimeString())
+            ->where(function ($q) use ($userId, $patientInfoId) {
+                $q->where(function ($q) use ($patientInfoId) {
+                    $q->where('revisionable_type', Patient::class)
+                                         ->where('revisionable_id', $patientInfoId)
+                                         ->whereIn('key', (new Patient())->phi);
+                })->orWhere(function ($q) use ($userId) {
+                    $q->where('revisionable_type', User::class)
+                                         ->where('revisionable_id', $userId)
+                                         ->whereIn('key', (new User())->phi);
+                });
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(20);
 
         $submitUrl = route('revisions.patient.phi', $userId);
 

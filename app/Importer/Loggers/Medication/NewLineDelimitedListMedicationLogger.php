@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/12/18
- * Time: 6:27 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Medication;
@@ -34,7 +32,7 @@ class NewLineDelimitedListMedicationLogger implements Logger
                     'Taking',
                     'Continue',
                 ], '', $explodedMed[0])),
-                'reference_sig'   => $sig,
+                'reference_sig' => $sig,
             ];
         }
 
@@ -46,6 +44,6 @@ class NewLineDelimitedListMedicationLogger implements Logger
         return str_contains(
             optional($medicalRecord)->medications_string,
                 "\n"
-        ) && ! starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
+        ) && !starts_with(optional($medicalRecord)->medications_string, ['[', '{']);
     }
 }

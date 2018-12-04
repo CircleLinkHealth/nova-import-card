@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateEhrsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('ehrs');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -19,16 +28,5 @@ class CreateEhrsTable extends Migration
             $table->string('pdf_report_handler');
             $table->timestamps();
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('ehrs');
     }
 }

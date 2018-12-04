@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreatePracticesTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('practices');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -37,16 +46,5 @@ class CreatePracticesTable extends Migration
             $table->softDeletes();
             $table->string('sms_marketing_number')->nullable();
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('practices');
     }
 }

@@ -1,4 +1,10 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use App\Models\CPM\CpmBiometric;
 use App\Models\CPM\CpmLifestyle;
@@ -6,24 +12,24 @@ use App\Models\CPM\CpmMedicationGroup;
 use App\Models\CPM\CpmMisc;
 use App\Models\CPM\CpmProblem;
 use App\Models\CPM\CpmSymptom;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\CarePlanTemplate
+ * App\CarePlanTemplate.
  *
- * @property int $id
- * @property string $display_name
- * @property int|null $program_id
- * @property string $type
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmBiometric[] $cpmBiometrics
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmLifestyle[] $cpmLifestyles
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMedicationGroup[] $cpmMedicationGroups
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmMisc[] $cpmMiscs
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmProblem[] $cpmProblems
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CPM\CpmSymptom[] $cpmSymptoms
- * @property-read \App\Practice|null $program
+ * @property int                                                                           $id
+ * @property string                                                                        $display_name
+ * @property int|null                                                                      $program_id
+ * @property string                                                                        $type
+ * @property \Carbon\Carbon                                                                $created_at
+ * @property \Carbon\Carbon                                                                $updated_at
+ * @property \App\Models\CPM\CpmBiometric[]|\Illuminate\Database\Eloquent\Collection       $cpmBiometrics
+ * @property \App\Models\CPM\CpmLifestyle[]|\Illuminate\Database\Eloquent\Collection       $cpmLifestyles
+ * @property \App\Models\CPM\CpmMedicationGroup[]|\Illuminate\Database\Eloquent\Collection $cpmMedicationGroups
+ * @property \App\Models\CPM\CpmMisc[]|\Illuminate\Database\Eloquent\Collection            $cpmMiscs
+ * @property \App\Models\CPM\CpmProblem[]|\Illuminate\Database\Eloquent\Collection         $cpmProblems
+ * @property \App\Models\CPM\CpmSymptom[]|\Illuminate\Database\Eloquent\Collection         $cpmSymptoms
+ * @property \App\Practice|null                                                            $program
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereDisplayName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CarePlanTemplate whereId($value)
@@ -36,11 +42,7 @@ class CarePlanTemplate extends \App\BaseModel
 {
     protected $fillable = ['program_id', 'display_name', 'type'];
 
-    /*
-     *
-     * CPM Entities
-     *
-     */
+    // CPM Entities
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -121,15 +123,9 @@ class CarePlanTemplate extends \App\BaseModel
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function program()
-    {
-        return $this->belongsTo(Practice::class, 'program_id');
-    }
-
-    /**
-     * Get a cpm***** relationship with it's related instructions, ordered using db field ui_config
+     * Get a cpm***** relationship with it's related instructions, ordered using db field ui_config.
+     *
+     * @param mixed $relationship
      *
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
@@ -139,12 +135,12 @@ class CarePlanTemplate extends \App\BaseModel
             return false;
         }
         if (!is_array($relationship)) {
-            $relationship = (array)$relationship;
+            $relationship = (array) $relationship;
         }
 
         foreach ($relationship as $rel) {
             if (!method_exists($this, $rel)) {
-                throw new \Exception("Relationship `$rel` does not exist.");
+                throw new \Exception("Relationship `${rel}` does not exist.");
             }
 
             $attributes[$rel] = function ($query) use ($rel) {
@@ -154,5 +150,13 @@ class CarePlanTemplate extends \App\BaseModel
         }
 
         return $this->load($attributes);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function program()
+    {
+        return $this->belongsTo(Practice::class, 'program_id');
     }
 }

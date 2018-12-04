@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateRevisionsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('revisions');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -24,18 +33,7 @@ class CreateRevisionsTable extends Migration
             $table->string('ip')->nullable();
             $table->boolean('is_phi')->default(false);
             $table->timestamps();
-            $table->index(['revisionable_id','revisionable_type']);
+            $table->index(['revisionable_id', 'revisionable_type']);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('revisions');
     }
 }

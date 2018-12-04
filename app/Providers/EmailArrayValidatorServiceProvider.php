@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
@@ -9,8 +13,6 @@ class EmailArrayValidatorServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -27,19 +29,16 @@ class EmailArrayValidatorServiceProvider extends ServiceProvider
             $validator = Validator::make($email_to_validate, $rules, $messages);
             if ($validator->passes()) {
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         });
     }
 
     /**
      * Register the application services.
-     *
-     * @return void
      */
     public function register()
     {
-        //
     }
 }

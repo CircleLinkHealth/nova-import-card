@@ -1,8 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Importer\Loggers\Ccda;
 
-use App\CLH\Repositories\CCDImporterRepository;
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
 use App\Importer\Models\ItemLogs\DemographicsLog;
@@ -17,20 +20,19 @@ use App\Models\MedicalRecords\Ccda;
 class CcdaSectionsLogger implements MedicalRecordLogger
 {
     protected $ccd;
-    protected $vendorId;
-
-    protected $transformer;
+    protected $ccdaId;
 
     protected $foreignKeys = [];
-    protected $ccdaId;
-    private $problemLogs;
 
+    protected $transformer;
+    protected $vendorId;
+    private $problemLogs;
 
     public function __construct(Ccda $ccd)
     {
         $this->ccd = $ccd->bluebuttonJson();
 
-        $this->ccdaId = $ccd->id;
+        $this->ccdaId   = $ccd->id;
         $this->vendorId = $ccd->vendor_id;
 
         $this->foreignKeys = [
@@ -43,7 +45,40 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     }
 
     /**
+     * Transform the Allergies Section into Log models..
+     *
+     * @return MedicalRecordLogger
+     */
+    public function logAllergiesSection(): MedicalRecordLogger
+    {
+        $allergies = $this->ccd->allergies;
+
+        foreach ($allergies as $allergy) {
+            $saved = AllergyLog::create(
+                array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Log all Sections.
+     */
+    public function logAllSections()
+    {
+        $this->logAllergiesSection()
+            ->logDemographicsSection()
+            ->logDocumentSection()
+            ->logInsuranceSection()
+            ->logMedicationsSection()
+            ->logProblemsSection()
+            ->logProvidersSection();
+    }
+
+    /**
      * Transform the Demographics Section into Log models..
+     *
      * @return MedicalRecordLogger
      */
     public function logDemographicsSection(): MedicalRecordLogger
@@ -59,6 +94,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Document Section into Log models..
+     *
      * @return MedicalRecordLogger
      */
     public function logDocumentSection(): MedicalRecordLogger
@@ -75,7 +111,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             return $this;
         }
 
-
         $saved = DocumentLog::create(
             array_merge($data, $this->foreignKeys)
         );
@@ -84,7 +119,33 @@ class CcdaSectionsLogger implements MedicalRecordLogger
     }
 
     /**
+     * Log Insurance Section.
+     *
+     * @return MedicalRecordLogger
+     */
+    public function logInsuranceSection(): MedicalRecordLogger
+    {
+        if (!empty($this->ccd->payers)) {
+            foreach ($this->ccd->payers as $payer) {
+                if (empty($payer->insurance)) {
+                    continue;
+                }
+
+                $insurance = InsuranceLog::create(array_merge($this->transformer->insurance($payer), [
+                    'medical_record_id'   => $this->ccdaId,
+                    'medical_record_type' => Ccda::class,
+                    'approved'            => false,
+                    'import'              => true,
+                ]));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Transform the Medications Section into Log models..
+     *
      * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
@@ -102,6 +163,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Problems Section into Log models..
+     *
      * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
@@ -132,6 +194,7 @@ class CcdaSectionsLogger implements MedicalRecordLogger
 
     /**
      * Transform the Providers Section into Log models..
+     *
      * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
@@ -165,61 +228,6 @@ class CcdaSectionsLogger implements MedicalRecordLogger
             $saved = ProviderLog::create(
                 array_merge($data, $this->foreignKeys)
             );
-        }
-
-        return $this;
-    }
-
-    /**
-     * Log all Sections.
-     */
-    public function logAllSections()
-    {
-        $this->logAllergiesSection()
-            ->logDemographicsSection()
-            ->logDocumentSection()
-            ->logInsuranceSection()
-            ->logMedicationsSection()
-            ->logProblemsSection()
-            ->logProvidersSection();
-    }
-
-    /**
-     * Transform the Allergies Section into Log models..
-     * @return MedicalRecordLogger
-     */
-    public function logAllergiesSection(): MedicalRecordLogger
-    {
-        $allergies = $this->ccd->allergies;
-
-        foreach ($allergies as $allergy) {
-            $saved = AllergyLog::create(
-                array_merge($this->transformer->allergy($allergy), $this->foreignKeys)
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * Log Insurance Section.
-     * @return MedicalRecordLogger
-     */
-    public function logInsuranceSection(): MedicalRecordLogger
-    {
-        if (!empty($this->ccd->payers)) {
-            foreach ($this->ccd->payers as $payer) {
-                if (empty($payer->insurance)) {
-                    continue;
-                }
-
-                $insurance = InsuranceLog::create(array_merge($this->transformer->insurance($payer), [
-                    'medical_record_id'   => $this->ccdaId,
-                    'medical_record_type' => Ccda::class,
-                    'approved'            => false,
-                    'import'              => true,
-                ]));
-            }
         }
 
         return $this;

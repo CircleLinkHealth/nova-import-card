@@ -1,10 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\CCD\Importer\StorageStrategies\Problems;
 
 use App\CLH\CCD\Importer\StorageStrategies\BaseStorageStrategy;
 use App\CLH\Contracts\CCD\StorageStrategy;
-use App\Models\CPM\CpmProblem;
 
 class ProblemsToMonitor extends BaseStorageStrategy implements StorageStrategy
 {

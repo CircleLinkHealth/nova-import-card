@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\EligibilityBatch;
@@ -36,22 +40,21 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      *
      * @param UserNotificationList $userNotificationListService
      *
-     * @return void
      * @throws \Exception
      */
     public function handle()
     {
         $names = PhoenixHeartName::where('processed', '=', false)
-                                 ->take(30)
-                                 ->get()
-                                 ->keyBy('patient_id');
+            ->take(30)
+            ->get()
+            ->keyBy('patient_id');
 
         $phxPractice = Practice::whereName('phoenix-heart')->firstOrFail();
 
         $patientList = $names->map(function ($patient) {
             //format problems list
             $problems = PhoenixHeartProblem::where('patient_id', '=', $patient->patient_id)->get();
-            $patient  = collect($patient->toArray());
+            $patient = collect($patient->toArray());
             $patient->put('problems', collect());
             $patient->put('street', $patient['address_1']);
             $patient->put('street2', $patient['address_2']);
@@ -69,21 +72,21 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
             $patient->put(
                 'referring_provider_name',
-                $patient['provider_last_name'] . ' ' . $patient['provider_first_name']
+                $patient['provider_last_name'].' '.$patient['provider_first_name']
             );
 
             foreach ($problems as $problem) {
                 if (str_contains($problem->code, ['-'])) {
-                    $pos         = strpos($problem->code, '-') + 1;
+                    $pos = strpos($problem->code, '-') + 1;
                     $problemCode = mb_substr($problem->code, $pos);
                 } elseif (str_contains($problem->code, ['ICD'])) {
-                    $pos         = strpos($problem, 'ICD') + 3;
+                    $pos = strpos($problem, 'ICD') + 3;
                     $problemCode = mb_substr($problem->code, $pos);
                 } else {
                     $problemCode = $problem->code;
                 }
 
-                if (! $problemCode && ! $problem->description) {
+                if (!$problemCode && !$problem->description) {
                     continue;
                 }
 
@@ -97,24 +100,24 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
 
             //format insurances
             $insurances = PhoenixHeartInsurance::where('patient_id', '=', $patient->get('patient_id'))
-                                               ->get()
-                                               ->transform(function ($i) {
-                                                   $i->name = trim($i->name);
+                ->get()
+                ->transform(function ($i) {
+                    $i->name = trim($i->name);
 
-                                                   return $i;
-                                               })
-                                               ->unique('name')
-                                               ->sortBy('order')
-                                               ->pluck('name')
-                                               ->map(function ($ins) {
-                                                   if (! $ins) {
-                                                       return null;
-                                                   }
+                    return $i;
+                })
+                ->unique('name')
+                ->sortBy('order')
+                ->pluck('name')
+                ->map(function ($ins) {
+                    if (!$ins) {
+                        return null;
+                    }
 
-                                                   return ['type' => $ins];
-                                               })
-                                               ->filter()
-                                               ->values();
+                    return ['type' => $ins];
+                })
+                ->filter()
+                ->values();
 
             $patient->put('insurances', $insurances);
 
@@ -148,7 +151,7 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
             }
 
             return PhoenixHeartName::where('patient_id', '=', $p['patient_id'])
-                                   ->update($attr);
+                ->update($attr);
         });
     }
 
@@ -160,14 +163,12 @@ class MakePhoenixHeartWelcomeCallList implements ShouldQueue
      */
     private function createEligibilityJob($p, $phxPractice)
     {
-        $hash = $phxPractice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['zip'];
+        $hash = $phxPractice->name.$p['first_name'].$p['last_name'].$p['mrn'].$p['city'].$p['state'].$p['zip'];
 
-        $job = EligibilityJob::create([
+        return EligibilityJob::create([
             'batch_id' => $this->batch->id,
             'hash'     => $hash,
             'data'     => $p,
         ]);
-
-        return $job;
     }
 }

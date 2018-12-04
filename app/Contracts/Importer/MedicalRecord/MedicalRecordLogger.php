@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 07/01/2017
- * Time: 2:23 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Contracts\Importer\MedicalRecord;
@@ -11,50 +9,56 @@ namespace App\Contracts\Importer\MedicalRecord;
 interface MedicalRecordLogger
 {
     /**
+     * Log Allergies Section.
+     *
+     * @return MedicalRecordLogger
+     */
+    public function logAllergiesSection(): MedicalRecordLogger;
+
+    /**
      * Log all Sections.
      */
     public function logAllSections();
 
     /**
-     * Log Allergies Section.
-     * @return MedicalRecordLogger
-     */
-    public function logAllergiesSection() : MedicalRecordLogger;
-
-    /**
      * Log Demographics Section.
+     *
      * @return MedicalRecordLogger
      */
-    public function logDemographicsSection() : MedicalRecordLogger;
-
-    /**
-     * Log Insurance Section.
-     * @return MedicalRecordLogger
-     */
-    public function logInsuranceSection() : MedicalRecordLogger;
-
+    public function logDemographicsSection(): MedicalRecordLogger;
 
     /**
      * Log Document Section.
+     *
      * @return MedicalRecordLogger
      */
-    public function logDocumentSection() : MedicalRecordLogger;
+    public function logDocumentSection(): MedicalRecordLogger;
+
+    /**
+     * Log Insurance Section.
+     *
+     * @return MedicalRecordLogger
+     */
+    public function logInsuranceSection(): MedicalRecordLogger;
 
     /**
      * Log Medications Section.
+     *
      * @return MedicalRecordLogger
      */
-    public function logMedicationsSection() : MedicalRecordLogger;
+    public function logMedicationsSection(): MedicalRecordLogger;
 
     /**
      * Log Problems Section.
+     *
      * @return MedicalRecordLogger
      */
-    public function logProblemsSection() : MedicalRecordLogger;
+    public function logProblemsSection(): MedicalRecordLogger;
 
     /**
      * Log Providers Section.
+     *
      * @return MedicalRecordLogger
      */
-    public function logProvidersSection() : MedicalRecordLogger;
+    public function logProvidersSection(): MedicalRecordLogger;
 }

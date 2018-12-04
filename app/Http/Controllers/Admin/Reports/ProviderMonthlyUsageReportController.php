@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers\Admin\Reports;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\Admin\Reports;
 
 use App\Http\Controllers\Controller;
 use App\PageTimer;
@@ -9,7 +15,6 @@ use Illuminate\Http\Request;
 
 class ProviderMonthlyUsageReportController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +23,7 @@ class ProviderMonthlyUsageReportController extends Controller
     public function index(Request $request)
     {
         $startDate = '2016-01-01 00:00:01';
-        $endDate = '2016-10-31 23:59:59';
+        $endDate   = '2016-10-31 23:59:59';
         // months array
         $monthDates = [
             '2016-01-01' => '2016-01-31',
@@ -35,7 +40,6 @@ class ProviderMonthlyUsageReportController extends Controller
             '2016-12-01' => '2016-12-31',
         ];
 
-        //
         $programStats = [];
 
         $program = 'nestor';
@@ -48,10 +52,10 @@ class ProviderMonthlyUsageReportController extends Controller
 
         // get stats for each program
         foreach ($programs as $programId => $programName) {
-            $programStats[$programName] = [];
+            $programStats[$programName]          = [];
             $programStats[$programName]['dates'] = []; // array of dates
 
-            /***** OFFICE USERS *******/
+            // OFFICE USERS
             // get users
             $officeUserIds = User::
             whereHas('practices', function ($q) use (
@@ -62,7 +66,7 @@ class ProviderMonthlyUsageReportController extends Controller
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
                         'provider',
-                        'med_assistant'
+                        'med_assistant',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -78,29 +82,28 @@ class ProviderMonthlyUsageReportController extends Controller
             })
                 ->whereBetween('start_time', [
                     $startDate,
-                    $endDate
+                    $endDate,
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
             foreach ($monthDates as $monthDateStart => $monthDateEnd) {
-                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd] = [];
-                $pagetimesForDate = 0;
+                $programStats[$programName]['dates'][$monthDateStart.'-'.$monthDateEnd] = [];
+                $pagetimesForDate                                                       = 0;
                 if ($pagetimes->count() > 0) {
                     $pagetimesForDate = $pagetimes->filter(function ($item) use (
                         $monthDateStart,
                         $monthDateEnd
                     ) {
-                        return (data_get($item, 'start_time') > $monthDateStart . ' 00:00:01') && (data_get(
+                        return (data_get($item, 'start_time') > $monthDateStart.' 00:00:01') && (data_get(
                             $item,
                             'start_time'
-                        ) < $monthDateEnd . ' 23:59:59');
+                        ) < $monthDateEnd.' 23:59:59');
                     })->count();
                 }
-                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd]['pageviews'] = $pagetimesForDate;
+                $programStats[$programName]['dates'][$monthDateStart.'-'.$monthDateEnd]['pageviews'] = $pagetimesForDate;
             }
 
-
-            /***** CARE CENTER USERS *******/
+            // CARE CENTER USERS
             // get users
             $nurseUserIds = User::
             whereHas('practices', function ($q) use (
@@ -110,7 +113,7 @@ class ProviderMonthlyUsageReportController extends Controller
             })
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
-                        'care-center'
+                        'care-center',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -126,7 +129,7 @@ class ProviderMonthlyUsageReportController extends Controller
             })
                 ->whereHas('roles', function ($q) {
                     $q->whereIn('name', [
-                        'participant'
+                        'participant',
                     ]);
                 })
                 ->pluck('id')->toArray();
@@ -147,7 +150,7 @@ class ProviderMonthlyUsageReportController extends Controller
                 })
                 ->whereBetween('start_time', [
                     $startDate,
-                    $endDate
+                    $endDate,
                 ])
                 //->limit(10)
                 ->get(); // ->sum('duration')
@@ -158,42 +161,39 @@ class ProviderMonthlyUsageReportController extends Controller
                         $monthDateStart,
                         $monthDateEnd
                     ) {
-                        return (data_get($item, 'start_time') > $monthDateStart . ' 00:00:01') && (data_get(
+                        return (data_get($item, 'start_time') > $monthDateStart.' 00:00:01') && (data_get(
                             $item,
                             'start_time'
-                        ) < $monthDateEnd . ' 23:59:59');
+                        ) < $monthDateEnd.' 23:59:59');
                     })->count();
                 }
-                $programStats[$programName]['dates'][$monthDateStart . '-' . $monthDateEnd]['nurse_pageviews'] = $pagetimesForDate;
+                $programStats[$programName]['dates'][$monthDateStart.'-'.$monthDateEnd]['nurse_pageviews'] = $pagetimesForDate;
             }
-
 
             //$programStats[$programName]['number_of_pageviews'] = $pagetimes->count();
         }
 
         $worksheets = $programStats;
 
-
-        Excel::create('CLH-Provider-Usage-Report-2016-' . $program, function ($excel) use (
+        Excel::create('CLH-Provider-Usage-Report-2016-'.$program, function ($excel) use (
             $worksheets,
             $program
         ) {
-
             // Set the title
-            $excel->setTitle('CLH Provider Monthly Usage Report-  2016 - ' . $program);
+            $excel->setTitle('CLH Provider Monthly Usage Report-  2016 - '.$program);
 
             // Chain the setters
             $excel->setCreator('CLH System')
                 ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('CLH Provider Monthly Usage Report - 2016 - ' . $program);
+            $excel->setDescription('CLH Provider Monthly Usage Report - 2016 - '.$program);
 
             // headers
             $headers = [
                 'Date Range',
                 'Office Pageviews',
-                'Nurse Pageviews'
+                'Nurse Pageviews',
             ];
 
             // sheet for each program
@@ -207,7 +207,7 @@ class ProviderMonthlyUsageReportController extends Controller
                         $sheet->appendRow([
                             $date,
                             $dateData['pageviews'],
-                            $dateData['nurse_pageviews']
+                            $dateData['nurse_pageviews'],
                         ]);
                     }
                 });

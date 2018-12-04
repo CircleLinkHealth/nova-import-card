@@ -1,28 +1,30 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models;
 
-use App\ProblemCodeSystem;
 use App\Models\CCD\Problem;
-use App\Scopes\Imported;
-use App\Scopes\WithNonImported;
-use Illuminate\Database\Eloquent\Model;
+use App\ProblemCodeSystem;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\Models\ProblemCode
+ * App\Models\ProblemCode.
  *
- * @property int $id
- * @property int $problem_id
- * @property string $code_system_name
- * @property string|null $code_system_oid
- * @property string $code
- * @property string|null $name
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string|null $deleted_at
- * @property-read \App\Models\CCD\Problem $problem
- * @property-read \App\ProblemCodeSystem $system
+ * @property int                     $id
+ * @property int                     $problem_id
+ * @property string                  $code_system_name
+ * @property string|null             $code_system_oid
+ * @property string                  $code
+ * @property string|null             $name
+ * @property \Carbon\Carbon|null     $created_at
+ * @property \Carbon\Carbon|null     $updated_at
+ * @property string|null             $deleted_at
+ * @property \App\Models\CCD\Problem $problem
+ * @property \App\ProblemCodeSystem  $system
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\ProblemCode onlyTrashed()
  * @method static bool|null restore()
@@ -50,19 +52,32 @@ class ProblemCode extends \App\BaseModel
         'code_system_oid',
         'code',
     ];
+    public $ICD10_CODE = '2.16.840.1.113883.6.3';
+    public $ICD9_CODE  = '2.16.840.1.113883.6.103';
 
     public $SNOMED_CODE = '2.16.840.1.113883.6.96';
-    public $ICD9_CODE = '2.16.840.1.113883.6.103';
-    public $ICD10_CODE = '2.16.840.1.113883.6.3';
+
+    public function isIcd10()
+    {
+        return '2.16.840.1.113883.6.3' == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['10']);
+    }
+
+    public function isIcd9()
+    {
+        return '2.16.840.1.113883.6.103' == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['9']);
+    }
+
+    public function isSnomed()
+    {
+        return '2.16.840.1.113883.6.96' == $this->code_system_oid
+            || str_contains(strtolower($this->code_system_name), ['snomed']);
+    }
 
     public function problem()
     {
         return $this->belongsTo(Problem::class, 'problem_id');
-    }
-
-    public function system()
-    {
-        return $this->belongsTo(ProblemCodeSystem::class, 'problem_code_system_id');
     }
 
     public function resolve()
@@ -74,24 +89,12 @@ class ProblemCode extends \App\BaseModel
         } elseif ($this->isIcd10()) {
             $this->code_system_oid = $this->ICD10_CODE;
         }
+
         return $this;
     }
 
-    public function isSnomed()
+    public function system()
     {
-        return $this->code_system_oid == '2.16.840.1.113883.6.96'
-            || str_contains(strtolower($this->code_system_name), ['snomed']);
-    }
-
-    public function isIcd9()
-    {
-        return $this->code_system_oid == '2.16.840.1.113883.6.103'
-            || str_contains(strtolower($this->code_system_name), ['9']);
-    }
-
-    public function isIcd10()
-    {
-        return $this->code_system_oid == '2.16.840.1.113883.6.3'
-            || str_contains(strtolower($this->code_system_name), ['10']);
+        return $this->belongsTo(ProblemCodeSystem::class, 'problem_code_system_id');
     }
 }

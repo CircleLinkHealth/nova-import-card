@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Services\Calls\SchedulerService;
@@ -8,18 +12,17 @@ use Illuminate\Console\Command;
 class TuneScheduledCalls extends Command
 {
     /**
- * The name and signature of the console command.
- *
- * @var string
- */
-    protected $signature = 'calls:tune';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Tune scheduled calls according to updated ccm time.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'calls:tune';
     private $schedulerService;
 
     /**

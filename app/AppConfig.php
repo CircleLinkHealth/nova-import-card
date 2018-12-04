@@ -1,15 +1,20 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\AppConfig
+ * App\AppConfig.
  *
- * @property int $id
- * @property string $config_key
- * @property string $config_value
+ * @property int            $id
+ * @property string         $config_key
+ * @property string         $config_value
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereConfigKey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereConfigValue($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\AppConfig whereCreatedAt($value)
@@ -22,11 +27,11 @@ class AppConfig extends \App\BaseModel
     public $timestamps = true;
 
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'app_config';
+    protected $fillable = ['config_key', 'config_value'];
 
     /**
      * The primary key for the model.
@@ -36,9 +41,9 @@ class AppConfig extends \App\BaseModel
     protected $primaryKey = 'id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['config_key', 'config_value'];
+    protected $table = 'app_config';
 }

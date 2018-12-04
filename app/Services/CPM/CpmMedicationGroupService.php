@@ -1,21 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:20 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use App\User;
 use App\Repositories\CpmMedicationGroupRepository;
+use App\User;
 
 class CpmMedicationGroupService implements CpmModel
 {
     private $medicationGroupRepo;
-    
+
     public function __construct(CpmMedicationGroupRepository $medicationGroupRepo)
     {
         $this->medicationGroupRepo = $medicationGroupRepo;

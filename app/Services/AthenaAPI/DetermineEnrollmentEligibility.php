@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services\AthenaAPI;
 
 use App\TargetPatient;
@@ -17,6 +21,10 @@ class DetermineEnrollmentEligibility
         $this->api = $api;
     }
 
+    public function getDemographics($patientId, $practiceId)
+    {
+        return $this->api->getDemographics($patientId, $practiceId);
+    }
 
     public function getPatientIdFromAppointments(
         $ehrPracticeId,
@@ -35,8 +43,8 @@ class DetermineEnrollmentEligibility
 
             if ($offset) {
                 $offsetBy = TargetPatient::where('ehr_practice_id', $ehrPracticeId)
-                                       ->where('ehr_department_id', $department['departmentid'])
-                                       ->count();
+                    ->where('ehr_department_id', $department['departmentid'])
+                    ->count();
             }
 
             $response = $this->api->getBookedAppointments(
@@ -47,11 +55,11 @@ class DetermineEnrollmentEligibility
                 $offsetBy
             );
 
-            if (! isset($response['appointments'])) {
+            if (!isset($response['appointments'])) {
                 return;
             }
 
-            if (count($response['appointments']) == 0) {
+            if (0 == count($response['appointments'])) {
                 return;
             }
 
@@ -59,7 +67,7 @@ class DetermineEnrollmentEligibility
                 $ehrPatientId = $bookedAppointment['patientid'];
                 $departmentId = $bookedAppointment['departmentid'];
 
-                if (! $ehrPatientId) {
+                if (!$ehrPatientId) {
                     continue;
                 }
 
@@ -70,11 +78,11 @@ class DetermineEnrollmentEligibility
                     'ehr_department_id' => $departmentId,
                 ]);
 
-                if ($batchId !== null) {
+                if (null !== $batchId) {
                     $target->batch_id = $batchId;
                 }
 
-                if (! $target->status) {
+                if (!$target->status) {
                     $target->status = 'to_process';
                     $target->save();
                 }
@@ -99,10 +107,5 @@ class DetermineEnrollmentEligibility
         $problemsAndInsurance->setInsurances($insurancesResponse['insurances']);
 
         return $problemsAndInsurance;
-    }
-
-    public function getDemographics($patientId, $practiceId)
-    {
-        return $this->api->getDemographics($patientId, $practiceId);
     }
 }

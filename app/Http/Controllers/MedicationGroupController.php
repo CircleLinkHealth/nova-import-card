@@ -1,13 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use App\AppConfig;
-use App\Services\CPM\CpmMedicationService;
 use App\Services\CPM\CpmMedicationGroupService;
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class MedicationGroupController extends Controller
 {
@@ -15,7 +14,6 @@ class MedicationGroupController extends Controller
 
     /**
      * MedicationController constructor.
-     *
      */
     public function __construct(CpmMedicationGroupService $medicationGroupService)
     {
@@ -23,7 +21,7 @@ class MedicationGroupController extends Controller
     }
 
     /**
-     * returns a list of paginated Medication in the system
+     * returns a list of paginated Medication in the system.
      */
     public function index()
     {
@@ -35,8 +33,8 @@ class MedicationGroupController extends Controller
         $group = $this->medicationGroupService->repo()->group($id);
         if ($group) {
             return response()->json($this->medicationGroupService->repo()->group($id));
-        } else {
-            return $this->notFound('group with id "' . $id . '" not found');
         }
+
+        return $this->notFound('group with id "'.$id.'" not found');
     }
 }

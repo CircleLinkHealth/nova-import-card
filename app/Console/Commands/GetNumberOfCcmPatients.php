@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\User;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class GetNumberOfCcmPatients extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Returns the number ccm patients';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class GetNumberOfCcmPatients extends Command
     protected $signature = 'debug:GetNumberOfCcmPatients';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Returns the number ccm patients';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -40,11 +41,11 @@ class GetNumberOfCcmPatients extends Command
     {
         $count = User::whereHas('ccdProblems', function ($q) {
             $q->where('is_monitored', 1)
-                           ->whereHas('cpmProblem', function ($cpm) {
-                               return $cpm->where('is_behavioral', 0);
-                           });
+                ->whereHas('cpmProblem', function ($cpm) {
+                    return $cpm->where('is_behavioral', 0);
+                });
         })->count();
 
-        $this->info("$count");
+        $this->info("${count}");
     }
 }

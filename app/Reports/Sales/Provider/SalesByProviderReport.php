@@ -1,10 +1,7 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: RohanM
- * Date: 12/12/16
- * Time: 1:08 PM
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Reports\Sales\Provider;
@@ -20,16 +17,14 @@ use Carbon\Carbon;
 class SalesByProviderReport extends SalesReport
 {
     const SECTIONS = [
-
         'Overall Summary'       => RangeSummary::class,
         'Enrollment Summary'    => EnrollmentSummary::class,
         'Financial Performance' => FinancialSummary::class,
         'Practice Demographics' => PracticeDemographics::class,
-
     ];
+    private $providerInfo;
 
     private $user;
-    private $providerInfo;
 
     public function __construct(
         User $provider,
@@ -39,9 +34,20 @@ class SalesByProviderReport extends SalesReport
     ) {
         parent::__construct($provider, $sections, $start, $end);
         $this->providerInfo = $provider->providerInfo;
-        $this->user = $provider;
-        $this->start = $start;
-        $this->end = $end;
+        $this->user         = $provider;
+        $this->start        = $start;
+        $this->end          = $end;
+    }
+
+    public function data($defaultSections = false)
+    {
+        if ($defaultSections) {
+            $this->requestedSections = self::SECTIONS;
+
+            return parent::data();
+        }
+
+        return parent::data(false);
     }
 
     public function renderPDF(
@@ -51,16 +57,6 @@ class SalesByProviderReport extends SalesReport
         $this->data();
 
         return parent::renderPDF($name, $view);
-    }
-
-    public function data($defaultSections = false)
-    {
-        if ($defaultSections) {
-            $this->requestedSections = self::SECTIONS;
-            return parent::data();
-        } else {
-            return parent::data(false);
-        }
     }
 
     public function renderView($view = 'sales.by-provider.create')

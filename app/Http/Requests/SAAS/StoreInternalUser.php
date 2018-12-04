@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests\SAAS;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,7 +30,7 @@ class StoreInternalUser extends FormRequest
     {
         return [
             'user.username'   => ['required', 'filled', Rule::unique('users', 'username')->ignore($this->input('user.id'))],
-            'user.email'      => ['required', 'filled','email', Rule::unique('users', 'email')->ignore($this->input('user.id'))],
+            'user.email'      => ['required', 'filled', 'email', Rule::unique('users', 'email')->ignore($this->input('user.id'))],
             'user.id'         => 'present',
             'user.first_name' => 'required|filled',
             'user.last_name'  => 'required|filled',

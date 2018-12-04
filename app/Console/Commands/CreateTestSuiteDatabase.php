@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -9,6 +13,12 @@ use PDOException;
 class CreateTestSuiteDatabase extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Create a mysql database for the test suite.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class CreateTestSuiteDatabase extends Command
     protected $signature = 'db:test';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a mysql database for the test suite.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -41,7 +42,7 @@ class CreateTestSuiteDatabase extends Command
     {
         $database = config('database.connections.test_suite.database');
 
-        if (! $database) {
+        if (!$database) {
             $this->info('Skipping creation of database as env(TEST_SUITE_DB_DATABASE) is empty');
 
             return;
@@ -69,10 +70,10 @@ class CreateTestSuiteDatabase extends Command
     }
 
     /**
-     * @param  string $host
-     * @param  integer $port
-     * @param  string $username
-     * @param  string $password
+     * @param string $host
+     * @param int    $port
+     * @param string $username
+     * @param string $password
      *
      * @return PDO
      */

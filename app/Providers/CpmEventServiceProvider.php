@@ -1,4 +1,10 @@
-<?php namespace App\Providers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Providers;
 
 use App\Events\CarePlanWasApproved;
 use App\Events\PdfableCreated;
@@ -13,41 +19,35 @@ use Illuminate\Mail\Events\MessageSending;
 
 class CpmEventServiceProvider extends ServiceProvider
 {
-
     /**
      * The event handler mappings for the application.
      *
      * @var array
      */
     protected $listen = [
-        Login::class               => [
+        Login::class => [
             UpdateUserLoginInfo::class,
         ],
         CarePlanWasApproved::class => [
             UpdateCarePlanStatus::class,
         ],
-        PdfableCreated::class      => [
+        PdfableCreated::class => [
             CreateAndHandlePdfReport::class,
         ],
-        Logout::class              => [
-            UserLoggedOut::class
+        Logout::class => [
+            UserLoggedOut::class,
         ],
-        MessageSending::class      => [
-
+        MessageSending::class => [
         ],
     ];
 
     /**
      * Register any other events for your application.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher $events
-     *
-     * @return void
+     * @param \Illuminate\Contracts\Events\Dispatcher $events
      */
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

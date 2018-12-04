@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -10,8 +14,9 @@ class CheckWebSocketServer
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -19,12 +24,12 @@ class CheckWebSocketServer
         if (!cache()->get('ws:server:working')) {
             try {
                 $client = new Client();
-                $url    = config('services.ws.server-url') . '/';
+                $url    = config('services.ws.server-url').'/';
                 $res    = $client->get($url);
 
                 $status = $res->getStatusCode();
-                $body = $res->getBody();
-                if ($status == 200) {
+                $body   = $res->getBody();
+                if (200 == $status) {
                     cache()->put('ws:server:working', true, 5);
                 } else {
                     cache()->forget('ws:server:working');
@@ -35,6 +40,7 @@ class CheckWebSocketServer
         }
 
         view()->share('useOldTimeTracker', $request->has('useOldTimeTracker') ?? !cache()->get('ws:server:working'));
+
         return $next($request);
     }
 }

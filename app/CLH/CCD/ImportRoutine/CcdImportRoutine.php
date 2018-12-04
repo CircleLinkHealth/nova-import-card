@@ -1,18 +1,24 @@
-<?php namespace App\CLH\CCD\ImportRoutine;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\CCD\ImportRoutine;
 
 use App\Models\CCD\CcdVendor;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\CLH\CCD\ImportRoutine\CcdImportRoutine
+ * App\CLH\CCD\ImportRoutine\CcdImportRoutine.
  *
- * @property int $id
- * @property string $name
- * @property string $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CLH\CCD\ImportRoutine\CcdImportStrategies[] $strategies
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\CCD\CcdVendor[] $vendors
+ * @property int                                                                                       $id
+ * @property string                                                                                    $name
+ * @property string                                                                                    $description
+ * @property \Carbon\Carbon                                                                            $created_at
+ * @property \Carbon\Carbon                                                                            $updated_at
+ * @property \App\CLH\CCD\ImportRoutine\CcdImportStrategies[]|\Illuminate\Database\Eloquent\Collection $strategies
+ * @property \App\Models\CCD\CcdVendor[]|\Illuminate\Database\Eloquent\Collection                      $vendors
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportRoutine whereId($value)

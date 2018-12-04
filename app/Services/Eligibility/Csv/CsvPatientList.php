@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/30/18
- * Time: 1:28 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Csv;
@@ -16,44 +14,22 @@ use Illuminate\Support\Collection;
 class CsvPatientList
 {
     /**
+     * @var array
+     */
+    private $columnNames = [];
+    /**
      * @var Collection
      */
     private $patientList;
 
     /**
-     * @var array
-     */
-    private $columnNames = [];
-
-    /**
-     * @var PatientListValidator $validator
+     * @var PatientListValidator
      */
     private $validator;
-
 
     public function __construct(Collection $patientList)
     {
         $this->patientList = $patientList;
-    }
-
-    public function isValid()
-    {
-        return $this->validate() === true;
-    }
-
-    private function validate()
-    {
-        if (! $this->validator) {
-            return null;
-        }
-
-        $this->validator->setColumnNames($this->getColumnNames());
-
-        if ($this->validator->isValid()) {
-            return true;
-        }
-
-        return false;
     }
 
     public function getColumnNames()
@@ -69,13 +45,6 @@ class CsvPatientList
         return $this->columnNames;
     }
 
-    public function validationErrors()
-    {
-        return $this->validator->isValid()
-            ? null
-            : $this->validator->errors();
-    }
-
     public function guessValidator()
     {
         $validators = [
@@ -85,9 +54,9 @@ class CsvPatientList
 
         foreach ($validators as $v) {
             $result = $this->setValidator($v)
-                           ->validate();
+                ->validate();
 
-            if ($result === true) {
+            if (true === $result) {
                 return true;
             }
 
@@ -95,6 +64,11 @@ class CsvPatientList
         }
 
         return null;
+    }
+
+    public function isValid()
+    {
+        return true === $this->validate();
     }
 
     /**
@@ -107,5 +81,27 @@ class CsvPatientList
         $this->validator = $validator;
 
         return $this;
+    }
+
+    public function validationErrors()
+    {
+        return $this->validator->isValid()
+            ? null
+            : $this->validator->errors();
+    }
+
+    private function validate()
+    {
+        if (!$this->validator) {
+            return null;
+        }
+
+        $this->validator->setColumnNames($this->getColumnNames());
+
+        if ($this->validator->isValid()) {
+            return true;
+        }
+
+        return false;
     }
 }

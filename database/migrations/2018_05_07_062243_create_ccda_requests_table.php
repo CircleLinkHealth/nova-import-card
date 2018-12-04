@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateCcdaRequestsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('ccda_requests');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -23,18 +32,7 @@ class CreateCcdaRequestsTable extends Migration
             $table->boolean('successful_call')->nullable();
             $table->integer('document_id')->unsigned()->nullable();
             $table->timestamps();
-            $table->unique(['vendor','patient_id']);
+            $table->unique(['vendor', 'patient_id']);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('ccda_requests');
     }
 }

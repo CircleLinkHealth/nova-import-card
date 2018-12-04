@@ -1,4 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\Http\Resources\ApprovableBillablePatient;
 use App\Repositories\BillablePatientsEloquentRepository;
@@ -16,6 +22,17 @@ class ApproveBillablePatientsService
     ) {
         $this->approvePatientsRepo = $approvePatientsRepo;
         $this->patientSummaryRepo  = $patientSummaryRepo;
+    }
+
+    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false)
+    {
+        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
+    }
+
+    public function billablePatientSummaries($practiceId, Carbon $month)
+    {
+        return $this->approvePatientsRepo
+            ->billablePatientSummaries($practiceId, $month);
     }
 
     public function counts($practiceId, Carbon $month)
@@ -39,6 +56,48 @@ class ApproveBillablePatientsService
             ->count();
 
         return $count;
+    }
+
+    public function detachDefaultChargeableService($summary, $defaultCodeId)
+    {
+        return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
+    }
+
+    /**
+     * Returns a collection containing information about billable patients for a practice for a month.
+     *
+     * The elements of the collection are:
+     *  summaries LengthAwarePaginator
+     *  is_closed Boolean
+     *
+     * @param $practiceId
+     * @param Carbon $date
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getBillablePatientsForMonth($practiceId, Carbon $date)
+    {
+        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
+
+        $summaries->getCollection()->transform(function ($summary) {
+            if (!$summary->actor_id) {
+                $summary = $this->patientSummaryRepo->attachChargeableServices($summary);
+                $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
+            }
+
+            $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($summary);
+
+            return ApprovableBillablePatient::make($summary);
+        });
+
+        $isClosed = (bool) $summaries->getCollection()->every(function ($summary) {
+            return (bool) $summary->actor_id;
+        });
+
+        return collect([
+            'summaries' => $summaries,
+            'is_closed' => $isClosed,
+        ]);
     }
 
     public function patientsToApprove($practiceId, Carbon $month)
@@ -65,58 +124,5 @@ class ApproveBillablePatientsService
         });
 
         return $summaries;
-    }
-
-    public function billablePatientSummaries($practiceId, Carbon $month)
-    {
-        return $this->approvePatientsRepo
-            ->billablePatientSummaries($practiceId, $month);
-    }
-
-    public function attachDefaultChargeableService($summary, $defaultCodeId = null, $detach = false)
-    {
-        return $this->patientSummaryRepo->attachChargeableService($summary, $defaultCodeId, $detach);
-    }
-    
-    public function detachDefaultChargeableService($summary, $defaultCodeId)
-    {
-        return $this->patientSummaryRepo->detachChargeableService($summary, $defaultCodeId);
-    }
-
-    /**
-     * Returns a collection containing information about billable patients for a practice for a month.
-     *
-     * The elements of the collection are:
-     *  summaries LengthAwarePaginator
-     *  is_closed Boolean
-     *
-     * @param $practiceId
-     * @param Carbon $date
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    public function getBillablePatientsForMonth($practiceId, Carbon $date)
-    {
-        $summaries = $this->billablePatientSummaries($practiceId, $date)->paginate(100);
-
-        $summaries->getCollection()->transform(function ($summary) {
-            if (! $summary->actor_id) {
-                $summary = $this->patientSummaryRepo->attachChargeableServices($summary);
-                $summary = $this->patientSummaryRepo->attachBillableProblems($summary->patient, $summary);
-            }
-
-            $summary = $this->patientSummaryRepo->setApprovalStatusAndNeedsQA($summary);
-
-            return ApprovableBillablePatient::make($summary);
-        });
-
-        $isClosed = ! ! $summaries->getCollection()->every(function ($summary) {
-            return ! ! $summary->actor_id;
-        });
-
-        return collect([
-            'summaries' => $summaries,
-            'is_closed' => $isClosed,
-        ]);
     }
 }

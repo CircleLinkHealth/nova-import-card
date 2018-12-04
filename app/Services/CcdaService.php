@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Services;
 
 use App\Models\MedicalRecords\Ccda;
@@ -14,11 +18,6 @@ class CcdaService
         $this->ccdaRepo = $ccdaRepo;
     }
 
-    public function repo()
-    {
-        return $this->ccdaRepo;
-    }
-
     public function ccda($id = null)
     {
         return $this->repo()->ccda($id);
@@ -27,11 +26,16 @@ class CcdaService
     public function create(Ccda $ccda, $xml)
     {
         $ccda->vendor_id = 1;
-        $ccda->source = Ccda::IMPORTER;
+        $ccda->source    = Ccda::IMPORTER;
         $ccda->save();
         $ccda = $ccda->storeCcd($xml);
         $ccda->import();
 
         return $ccda;
+    }
+
+    public function repo()
+    {
+        return $this->ccdaRepo;
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:19 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
@@ -20,13 +18,16 @@ class CpmLifestyleService implements CpmModel
 
     public function __construct(CpmLifestyleRepository $lifestyleRepo, CpmLifestyleUserRepository $lifestyleUserRepo)
     {
-        $this->lifestyleRepo = $lifestyleRepo;
+        $this->lifestyleRepo     = $lifestyleRepo;
         $this->lifestyleUserRepo = $lifestyleUserRepo;
     }
 
-    public function repo()
+    public function addLifestyleToPatient($lifestyleId, $userId)
     {
-        return $this->lifestyleRepo;
+        if ($this->repo()->exists($lifestyleId)) {
+            return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
+        }
+        throw new Exception('lifestyle with id "'.$lifestyleId.'" does not exist');
     }
 
     public function lifestylePatients($lifestyleId)
@@ -39,18 +40,14 @@ class CpmLifestyleService implements CpmModel
         return $this->lifestyleUserRepo->patientLifestyles($userId);
     }
 
-    public function addLifestyleToPatient($lifestyleId, $userId)
-    {
-        if ($this->repo()->exists($lifestyleId)) {
-            return $this->lifestyleUserRepo->addLifestyleToPatient($lifestyleId, $userId);
-        } else {
-            throw new Exception('lifestyle with id "' . $lifestyleId . '" does not exist');
-        }
-    }
-
     public function removeLifestyleFromPatient($lifestyleId, $userId)
     {
         return $this->lifestyleUserRepo->removeLifestyleFromPatient($lifestyleId, $userId);
+    }
+
+    public function repo()
+    {
+        return $this->lifestyleRepo;
     }
 
     public function syncWithUser(User $user, array $ids = [], $page = null, array $instructions)

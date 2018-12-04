@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateLvObservationmetaTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('lv_observationmeta');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -23,18 +32,7 @@ class CreateLvObservationmetaTable extends Migration
             $table->integer('program_id')->unsigned();
             $table->integer('legacy_meta_id')->unsigned();
             $table->timestamps();
-            $table->index(['obs_id','meta_key'], 'lv_observationmeta_obs_id_meta_key');
+            $table->index(['obs_id', 'meta_key'], 'lv_observationmeta_obs_id_meta_key');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('lv_observationmeta');
     }
 }

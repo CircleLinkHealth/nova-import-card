@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\Models\CCD\Problem;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
@@ -8,8 +12,6 @@ class NGDCIcd10CodeCorrections extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run()
     {
@@ -108,19 +110,19 @@ class NGDCIcd10CodeCorrections extends Seeder
 
         foreach ($corrections as $c) {
             //problem 1
-            if ($c[1] == 'Diabetes') {
+            if ('Diabetes' == $c[1]) {
                 Problem::where('name', 'like', '%diabetes%')
                     ->whereHas('patient.patientInfo', function ($q) use ($c) {
                         $q->where('mrn_number', '=', $c[0]);
                     })->update([
-                        'icd_10_code' => $c[3]
+                        'icd_10_code' => $c[3],
                     ]);
             } else {
                 Problem::where('cpm_problem_id', '=', $cpmProblems[$c[1]]->id)
                     ->whereHas('patient.patientInfo', function ($q) use ($c) {
                         $q->where('mrn_number', '=', $c[0]);
                     })->update([
-                        'icd_10_code' => $c[3]
+                        'icd_10_code' => $c[3],
                     ]);
             }
 
@@ -129,7 +131,7 @@ class NGDCIcd10CodeCorrections extends Seeder
                 ->whereHas('patient.patientInfo', function ($q) use ($c) {
                     $q->where('mrn_number', '=', $c[0]);
                 })->update([
-                    'icd_10_code' => $c[4]
+                    'icd_10_code' => $c[4],
                 ]);
         }
     }

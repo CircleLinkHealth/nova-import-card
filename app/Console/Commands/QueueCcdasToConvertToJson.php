@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\ConvertCcdaToJson;
@@ -9,6 +13,12 @@ use Illuminate\Console\Command;
 class QueueCcdasToConvertToJson extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Find CCDAs that have not yet been convert to json and convert them.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class QueueCcdasToConvertToJson extends Command
     protected $signature = 'ccda:toJson';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Find CCDAs that have not yet been convert to json and convert them.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

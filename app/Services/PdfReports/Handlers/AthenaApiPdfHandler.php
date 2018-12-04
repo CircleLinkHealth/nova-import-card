@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 19/12/2016
- * Time: 4:27 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\PdfReports\Handlers;
@@ -53,10 +51,9 @@ class AthenaApiPdfHandler implements PdfReportHandler
 
             $decodedResponse = json_decode($response, true);
 
-
             if (!is_array($decodedResponse)) {
-                $line = __METHOD__ . __LINE__;
-                throw new \Exception("Athena Response is not an array on: $line");
+                $line = __METHOD__.__LINE__;
+                throw new \Exception("Athena Response is not an array on: ${line}");
             }
         } catch (\Exception $e) {
             \Log::error($e);

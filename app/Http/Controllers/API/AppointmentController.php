@@ -1,19 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\API;
 
-use App\Services\PatientService;
 use App\Services\AppointmentService;
-use Illuminate\Http\Request;
+use App\Services\PatientService;
 
 class AppointmentController extends ApiController
 {
-    private $patientService;
     private $appointmentService;
+    private $patientService;
 
     public function __construct(PatientService $patientService, AppointmentService $appointmentService)
     {
-        $this->patientService = $patientService;
+        $this->patientService     = $patientService;
         $this->appointmentService = $appointmentService;
     }
 

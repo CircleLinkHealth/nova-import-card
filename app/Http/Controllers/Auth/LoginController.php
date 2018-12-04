@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -28,14 +32,14 @@ class LoginController extends Controller
         login as traitLogin;
     }
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
+    const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
 
-    protected $username = 'email';
+    /**
+     * Throttle logon for this many minutes after $maxAttempts failed login attempts.
+     *
+     * @var int
+     */
+    protected $decayMinutes = 5;
 
     /**
      * Throttle login on this many unsuccessful attempts.
@@ -45,12 +49,13 @@ class LoginController extends Controller
     protected $maxAttempts = 4;
 
     /**
-     * Throttle logon for this many minutes after $maxAttempts failed login attempts.
+     * Where to redirect users after login.
      *
-     * @var int
+     * @var string
      */
-    protected $decayMinutes = 5;
+    protected $redirectTo = '/home';
 
+    protected $username = 'email';
 
     /**
      * Create a new controller instance.
@@ -63,160 +68,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Get the login username to be used by the controller.
-     *
-     * @return string
-     */
-    public function username()
-    {
-        return $this->username;
-    }
-
-
-    /**
-     * Overrides laravel method
-     *
-     * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function showLoginForm()
-    {
-        $agent = new Agent();
-
-        if (! $this->validateBrowserVersion($agent) && ! optional(session('errors'))->has('invalid-browser-force-switch')) {
-            $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
-
-            return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
-        }
-
-        return view('auth.login');
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
-     * @throws ValidationException
-     */
-    public function login(Request $request)
-    {
-        $this->usernameOrEmail($request);
-        $loginResponse = $this->traitLogin($request);
-
-        $agent = new Agent();
-
-        $isClh = auth()->user()->hasRole(['care-center', 'administrator']);
-
-        if (! $this->validateBrowserCompatibility($agent, $isClh)) {
-            $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
-        }
-
-        if (! $this->validatePasswordAge()) {
-            auth()->logout();
-            $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
-
-            return redirect('auth/password/reset')
-                ->withErrors(['old-password' => "You password has not been changed for the last $days days. Please reset it to continue."]);
-        }
-
-        return $loginResponse;
-    }
-
-    /**
-     * Determine whether log in input is email or username, and do the needful to authenticate
-     *
-     * @param Request $request
-     *
-     * @return bool
-     */
-    protected function usernameOrEmail(Request $request)
-    {
-        if (! $request->filled('email')) {
-            return false;
-        }
-
-        $request->merge(array_map('trim', $request->input()));
-
-        if (! str_contains($request->input('email'), '@')) {
-            $this->username = 'username';
-
-            $request->merge([
-                'username' => $request->input('email'),
-            ]);
-        }
-    }
-
-    /**
-     * Check whether the user is using a supported browser.
-     *
-     * @return bool
-     */
-    protected function validateBrowserCompatibility(Agent $agent, $isCLH = false)
-    {
-        if (auth()->check() && auth()->user()->skip_browser_checks) {
-            return true;
-        }
-
-        if ($agent->isIE()) {
-            return false;
-        }
-
-        return $this->validateBrowserVersion($agent, $isCLH);
-    }
-
-    /**
-     * @param $browser
-     * @param bool $isCLH
-     *
-     * @return void
-     * @throws ValidationException
-     */
-    protected function sendInvalidBrowserResponse($browser, $isCLH = false)
-    {
-        $messages = [];
-        if ($browser == 'IE') {
-            $messages = [
-                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
-            Please use Chrome browser instead. 
-            <br>If you must use IE, please use IE11 or later.
-            <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
-            ];
-        }
-
-        if ($isCLH) {
-            auth()->logout();
-
-            if ($browser == 'Chrome') {
-                $messages = [
-                    'invalid-browser-force-switch' => 'Care Coaches and Administrators are required to use a version of Chrome that is less than 6 months old. Please update to a newer version of Chrome and try logging in again.',
-                ];
-            } else {
-                $messages = [
-                    'invalid-browser-force-switch' => 'Care Coaches and Administrators are required to use a version of Chrome that is less than 6 months old. Please switch to Chrome and try logging in again.',
-                ];
-            }
-        }
-
-        throw ValidationException::withMessages($messages);
-    }
-
-    /**
-     * @param Request $request
-     */
-    protected function storeBrowserCompatibilityCheckPreference(Request $request)
-    {
-        if (! auth()->check() || auth()->user()->hasRole('care-center')) {
-            return;
-        }
-
-        auth()->user()->update([
-            'skip_browser_checks' => $request->input('doNotShowAgain', false),
-        ]);
-
-        return response()->redirectTo($this->redirectPath());
-    }
-
-    /**
-     * Logout due to inactivity
+     * Logout due to inactivity.
      *
      * @param Request $request
      *
@@ -237,7 +89,228 @@ class LoginController extends Controller
             ]);
     }
 
-    const MIN_PASSWORD_CHANGE_IN_DAYS = 180;
+    /**
+     * @param Request $request
+     *
+     * @throws ValidationException
+     *
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response
+     */
+    public function login(Request $request)
+    {
+        $this->usernameOrEmail($request);
+        $loginResponse = $this->traitLogin($request);
+
+        $agent = new Agent();
+
+        $isClh = auth()->user()->hasRole(['care-center', 'administrator']);
+
+        if (!$this->validateBrowserCompatibility($agent, $isClh)) {
+            $this->sendInvalidBrowserResponse($agent->browser(), $isClh);
+        }
+
+        if (!$this->validatePasswordAge()) {
+            auth()->logout();
+            $days = LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
+
+            return redirect('auth/password/reset')
+                ->withErrors(['old-password' => "You password has not been changed for the last ${days} days. Please reset it to continue."]);
+        }
+
+        return $loginResponse;
+    }
+
+    /**
+     * Overrides laravel method.
+     *
+     * @return $this|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showLoginForm()
+    {
+        $agent = new Agent();
+
+        if (!$this->validateBrowserVersion($agent) && !optional(session('errors'))->has('invalid-browser-force-switch')) {
+            $message = "You are using an outdated version of {$agent->browser()}. Please update to a newer version.";
+
+            return view('auth.login')->withErrors(['outdated-browser' => [$message]]);
+        }
+
+        return view('auth.login');
+    }
+
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param array $agentVersion
+     * @param array $browserVersion
+     *
+     * @return bool
+     */
+    protected function checkVersion(array $agentVersion, array $browserVersion)
+    {
+        for ($x = 0; $x <= 4; ++$x) {
+            if (array_key_exists($x, $agentVersion) && array_key_exists($x, $browserVersion)) {
+                if ((int) $agentVersion[$x] > (int) $browserVersion[$x]) {
+                    return true;
+                }
+                if ((int) $agentVersion[$x] < (int) $browserVersion[$x]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function getBrowsers(): Collection
+    {
+        return DB::table('browsers')->get();
+    }
+
+    /**
+     * @param $browser
+     * @param bool $isCLH
+     *
+     * @throws ValidationException
+     */
+    protected function sendInvalidBrowserResponse($browser, $isCLH = false)
+    {
+        $messages = [];
+        if ('IE' == $browser) {
+            $messages = [
+                'invalid-browser' => "I'm sorry, you may be using a version of Internet Explorer (IE) that we don't support. 
+            Please use Chrome browser instead. 
+            <br>If you must use IE, please use IE11 or later.
+            <br>If you must use IE v10 or earlier, please e-mail <a href='mailto:contact@circlelinkhealth.com'>contact@circlelinkhealth.com</a>",
+            ];
+        }
+
+        if ($isCLH) {
+            auth()->logout();
+
+            if ('Chrome' == $browser) {
+                $messages = [
+                    'invalid-browser-force-switch' => 'Care Coaches and Administrators are required to use a version of Chrome that is less than 6 months old. Please update to a newer version of Chrome and try logging in again.',
+                ];
+            } else {
+                $messages = [
+                    'invalid-browser-force-switch' => 'Care Coaches and Administrators are required to use a version of Chrome that is less than 6 months old. Please switch to Chrome and try logging in again.',
+                ];
+            }
+        }
+
+        throw ValidationException::withMessages($messages);
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function storeBrowserCompatibilityCheckPreference(Request $request)
+    {
+        if (!auth()->check() || auth()->user()->hasRole('care-center')) {
+            return;
+        }
+
+        auth()->user()->update([
+            'skip_browser_checks' => $request->input('doNotShowAgain', false),
+        ]);
+
+        return response()->redirectTo($this->redirectPath());
+    }
+
+    /**
+     * Determine whether log in input is email or username, and do the needful to authenticate.
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    protected function usernameOrEmail(Request $request)
+    {
+        if (!$request->filled('email')) {
+            return false;
+        }
+
+        $request->merge(array_map('trim', $request->input()));
+
+        if (!str_contains($request->input('email'), '@')) {
+            $this->username = 'username';
+
+            $request->merge([
+                'username' => $request->input('email'),
+            ]);
+        }
+    }
+
+    /**
+     * Check whether the user is using a supported browser.
+     *
+     * @param mixed $isCLH
+     *
+     * @return bool
+     */
+    protected function validateBrowserCompatibility(Agent $agent, $isCLH = false)
+    {
+        if (auth()->check() && auth()->user()->skip_browser_checks) {
+            return true;
+        }
+
+        if ($agent->isIE()) {
+            return false;
+        }
+
+        return $this->validateBrowserVersion($agent, $isCLH);
+    }
+
+    /**
+     * @param Agent $agent
+     * @param bool  $isCLH
+     *
+     * @return bool
+     */
+    protected function validateBrowserVersion(Agent $agent, $isCLH = false)
+    {
+        //$request->cookie('skip_outdated_browser_check') -> returns null for some reason
+        if (isset($_COOKIE['skip_outdated_browser_check'])) {
+            return true;
+        }
+
+        $browsers = $this->getBrowsers();
+
+        $browser = $browsers->where('name', $agent->browser())->first();
+
+        if ($browser) {
+            //if the User is CLH staff, only perform the check if the browser is Chrome, otherwise fail.
+            //required_version is 6 months old
+            if ($isCLH) {
+                if ('Chrome' == $browser->name) {
+                    $browserVersionString = $browser->required_version;
+                } else {
+                    return false;
+                }
+            } else {
+                $browserVersionString = $browser->warning_version;
+            }
+
+            $browserVersion = explode('.', $browserVersionString);
+            $agentVersion   = explode('.', $agent->version($agent->browser()));
+
+            return $this->checkVersion($agentVersion, $browserVersion);
+        }
+
+        return false;
+    }
 
     /**
      * Checks the last time the password was changed.
@@ -251,7 +324,7 @@ class LoginController extends Controller
         $user = auth()->user();
 
         //nothing to validate if not auth
-        if (! $user) {
+        if (!$user) {
             return true;
         }
 
@@ -262,76 +335,5 @@ class LoginController extends Controller
         }
 
         return $diffInDays < LoginController::MIN_PASSWORD_CHANGE_IN_DAYS;
-    }
-
-    /**
-     * @param Agent $agent
-     * @param bool $isCLH
-     *
-     * @return bool
-     */
-    protected function validateBrowserVersion(Agent $agent, $isCLH = false)
-    {
-
-        //$request->cookie('skip_outdated_browser_check') -> returns null for some reason
-        if (isset($_COOKIE['skip_outdated_browser_check'])) {
-            return true;
-        }
-
-        $browsers = $this->getBrowsers();
-
-        $browser = $browsers->where('name', $agent->browser())->first();
-
-        if ($browser) {
-
-            //if the User is CLH staff, only perform the check if the browser is Chrome, otherwise fail.
-            //required_version is 6 months old
-            if ($isCLH) {
-                if ($browser->name == 'Chrome') {
-                    $browserVersionString = $browser->required_version;
-                } else {
-                    return false;
-                }
-            } else {
-                $browserVersionString = $browser->warning_version;
-            }
-
-            $browserVersion = explode(".", $browserVersionString);
-            $agentVersion = explode(".", $agent->version($agent->browser()));
-
-            return $this->checkVersion($agentVersion, $browserVersion);
-        }
-
-        return false;
-    }
-
-    /**
-     * @param array $agentVersion
-     * @param array $browserVersion
-     *
-     * @return bool
-     */
-    protected function checkVersion(array $agentVersion, array $browserVersion)
-    {
-        for ($x = 0; $x <= 4; $x++) {
-            if (array_key_exists($x, $agentVersion) && array_key_exists($x, $browserVersion)) {
-                if ((int)$agentVersion[$x] > (int)$browserVersion[$x]) {
-                    return true;
-                } elseif ((int)$agentVersion[$x] < (int)$browserVersion[$x]) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-
-    /**
-     * @return Collection
-     */
-    protected function getBrowsers(): Collection
-    {
-        return DB::table('browsers')->get();
     }
 }

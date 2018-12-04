@@ -1,45 +1,48 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use App\User;
-use App\Patient;
 use App\Models\CPM\CpmMisc;
 
 class CpmMiscRepository
 {
-    public function model()
-    {
-        return app(CpmMisc::class);
-    }
-
     public function count()
     {
         return $this->model()->count();
     }
-    
-    public function setupMisc($misc)
+
+    public function exists($id)
     {
-        $misc['patients'] = $misc->users()->count();
-        return $misc;
+        return (bool) $this->model()->find($id);
     }
-    
+
     public function misc($id = null)
     {
         if ($id) {
             $misc = $this->model()->with('carePlanTemplates')->find($id);
             if ($misc) {
                 return $this->setupMisc($misc);
-            } else {
-                return null;
             }
-        } else {
-            return $this->model()->get()->map([$this, 'setupMisc']);
+
+            return null;
         }
+
+        return $this->model()->get()->map([$this, 'setupMisc']);
     }
 
-    public function exists($id)
+    public function model()
     {
-        return !!$this->model()->find($id);
+        return app(CpmMisc::class);
+    }
+
+    public function setupMisc($misc)
+    {
+        $misc['patients'] = $misc->users()->count();
+
+        return $misc;
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use App\AppConfig;
 use App\Services\CPM\CpmMedicationService;
-use App\Services\CPM\CpmMedicationGroupService;
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class MedicationController extends Controller
@@ -15,7 +15,6 @@ class MedicationController extends Controller
 
     /**
      * MedicationController constructor.
-     *
      */
     public function __construct(CpmMedicationService $medicationService)
     {
@@ -23,21 +22,22 @@ class MedicationController extends Controller
     }
 
     /**
-     * returns a list of paginated Medication in the system
+     * returns a list of paginated Medication in the system.
      */
     public function index()
     {
         return response()->json($this->medicationService->medications());
     }
-    
+
     public function search(Request $request)
     {
         $term = $request->input('term');
         if ($term) {
             $terms = explode(',', $term);
+
             return response()->json($this->medicationService->search($terms));
-        } else {
-            return $this->badRequest('missing parameter: "term"');
         }
+
+        return $this->badRequest('missing parameter: "term"');
     }
 }

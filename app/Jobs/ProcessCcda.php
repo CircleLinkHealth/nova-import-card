@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Importer\Loggers\Ccda\CcdToLogTranformer;
@@ -32,8 +36,6 @@ class ProcessCcda implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
     public function handle()
     {
@@ -41,8 +43,8 @@ class ProcessCcda implements ShouldQueue
 
         $json = $ccda->bluebuttonJson();
 
-        if (! $json) {
-            throw new \Exception("No response from ccd parser.");
+        if (!$json) {
+            throw new \Exception('No response from ccd parser.');
         }
 
         $ccda->mrn = $json->demographics->mrn_number;
@@ -67,19 +69,19 @@ class ProcessCcda implements ShouldQueue
     public function handleDuplicateCcdas(Ccda $ccda)
     {
         $duplicates = Ccda::withTrashed()
-                          ->where([
-                              ['mrn', '=', $ccda->mrn],
-                              ['practice_id', '=', $ccda->practice_id],
-                          ])
-                          ->get(['id', 'date'])
-                          ->sortByDesc(function ($ccda) {
-                              return $ccda->date;
-                          })->values();
+            ->where([
+                ['mrn', '=', $ccda->mrn],
+                ['practice_id', '=', $ccda->practice_id],
+            ])
+            ->get(['id', 'date'])
+            ->sortByDesc(function ($ccda) {
+                return $ccda->date;
+            })->values();
 
         $keep = $duplicates->first();
 
         foreach ($duplicates as $dup) {
-            if ($dup->status && $dup->status != Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY) {
+            if ($dup->status && Ccda::DETERMINE_ENROLLEMENT_ELIGIBILITY != $dup->status) {
                 $status = $dup->status;
             }
 

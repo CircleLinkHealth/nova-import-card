@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateChargeablesTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('chargeables');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -19,18 +28,7 @@ class CreateChargeablesTable extends Migration
             $table->string('chargeable_type');
             $table->decimal('amount')->nullable();
             $table->timestamps();
-            $table->unique(['chargeable_service_id','chargeable_id','chargeable_type'], 'cs_id_c_id_ct_id');
+            $table->unique(['chargeable_service_id', 'chargeable_id', 'chargeable_type'], 'cs_id_c_id_ct_id');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('chargeables');
     }
 }

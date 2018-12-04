@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreatePatientMonthlySummariesTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('patient_monthly_summaries');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -32,19 +41,8 @@ class CreatePatientMonthlySummariesTable extends Migration
             $table->boolean('needs_qa')->nullable();
             $table->integer('actor_id')->unsigned()->nullable()->index('patient_monthly_summaries_actor_id_foreign');
             $table->timestamps();
-            $table->unique(['patient_id','month_year']);
-            $table->index(['patient_id','month_year','ccm_time']);
+            $table->unique(['patient_id', 'month_year']);
+            $table->index(['patient_id', 'month_year', 'ccm_time']);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('patient_monthly_summaries');
     }
 }

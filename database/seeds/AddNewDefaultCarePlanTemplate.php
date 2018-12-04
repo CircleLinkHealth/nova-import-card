@@ -1,91 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use App\CarePlanTemplate;
+use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 use App\Models\CPM\CpmInstruction;
 use App\Models\CPM\CpmProblem;
 use Illuminate\Database\Seeder;
-use App\CLH\CCD\Importer\SnomedToCpmIcdMap;
 
 class AddNewDefaultCarePlanTemplate extends Seeder
 {
     /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        //this means the seeder has already run
-        //we don't wanna run twice
-        if (CarePlanTemplate::whereDisplayName('Old CLH Default (Deprecated)')->exists()) {
-            return;
-        }
-
-        $newCpt = CarePlanTemplate::create([
-            'display_name' => str_random(),
-            'type'         => str_random(),
-        ]);
-
-        $default = CarePlanTemplate::whereType('CLH Default')
-                                   ->update([
-                                       'display_name' => 'Old CLH Default (Deprecated)',
-                                       'type'         => 'Old CLH Default (Deprecated)',
-                                   ]);
-
-        $newCpt->display_name = 'CLH Default';
-        $newCpt->type         = 'CLH Default';
-        $newCpt->save();
-
-        $this->setupCpmProblems();
-
-        foreach ($this->problems() as $problemName => $data) {
-            if ($data['instructions']) {
-                $instruction = CpmInstruction::create([
-                    'is_default' => true,
-                    'name'       => $data['instructions'],
-                ]);
-
-                $cpmProblem = CpmProblem::whereName($problemName)->first();
-
-                $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
-                    'has_instruction'    => true,
-                    'cpm_instruction_id' => $instruction->id,
-                ]);
-
-                $newCpt->save();
-            }
-        }
-
-
-        setAppConfig('default_care_plan_template_id', $newCpt->id);
-    }
-
-    public function setupCpmProblems()
-    {
-        $defaultCarePlan = getDefaultCarePlanTemplate();
-
-        CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
-            if (! in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
-                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
-                    'has_instruction' => true,
-                    'page'            => 1,
-                ]);
-            }
-
-            SnomedToCpmIcdMap::updateOrCreate([
-                'icd_10_code' => $cpmProblem->default_icd_10_code,
-            ], [
-                'cpm_problem_id' => $cpmProblem->id,
-                'icd_10_name'    => $cpmProblem->name,
-                'snomed_code'    => 0,
-            ]);
-
-            $this->command->info("$cpmProblem->name has been added");
-        });
-    }
-
-    /**
-     * The array of instructions to be added
+     * The array of instructions to be added.
      *
      * @return array
      */
@@ -336,5 +264,78 @@ class AddNewDefaultCarePlanTemplate extends Seeder
         ];
 
         return $problems;
+    }
+
+    /**
+     * Run the database seeds.
+     */
+    public function run()
+    {
+        //this means the seeder has already run
+        //we don't wanna run twice
+        if (CarePlanTemplate::whereDisplayName('Old CLH Default (Deprecated)')->exists()) {
+            return;
+        }
+
+        $newCpt = CarePlanTemplate::create([
+            'display_name' => str_random(),
+            'type'         => str_random(),
+        ]);
+
+        $default = CarePlanTemplate::whereType('CLH Default')
+            ->update([
+                'display_name' => 'Old CLH Default (Deprecated)',
+                'type'         => 'Old CLH Default (Deprecated)',
+            ]);
+
+        $newCpt->display_name = 'CLH Default';
+        $newCpt->type         = 'CLH Default';
+        $newCpt->save();
+
+        $this->setupCpmProblems();
+
+        foreach ($this->problems() as $problemName => $data) {
+            if ($data['instructions']) {
+                $instruction = CpmInstruction::create([
+                    'is_default' => true,
+                    'name'       => $data['instructions'],
+                ]);
+
+                $cpmProblem = CpmProblem::whereName($problemName)->first();
+
+                $rel = $newCpt->cpmProblems()->updateExistingPivot($cpmProblem->id, [
+                    'has_instruction'    => true,
+                    'cpm_instruction_id' => $instruction->id,
+                ]);
+
+                $newCpt->save();
+            }
+        }
+
+        setAppConfig('default_care_plan_template_id', $newCpt->id);
+    }
+
+    public function setupCpmProblems()
+    {
+        $defaultCarePlan = getDefaultCarePlanTemplate();
+
+        CpmProblem::get()->map(function ($cpmProblem) use ($defaultCarePlan) {
+            if (!in_array($cpmProblem->id, $defaultCarePlan->cpmProblems->pluck('id')->all())) {
+                $defaultCarePlan->cpmProblems()->attach($cpmProblem, [
+                    'has_instruction' => true,
+                    'page'            => 1,
+                ]);
+            }
+
+            SnomedToCpmIcdMap::updateOrCreate([
+                'icd_10_code' => $cpmProblem->default_icd_10_code,
+            ], [
+                'cpm_problem_id' => $cpmProblem->id,
+                'icd_10_name'    => $cpmProblem->name,
+                'snomed_code'    => 0,
+            ]);
+
+            $this->command->info("{$cpmProblem->name} has been added");
+        });
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Events;
 
 use App\Contracts\PdfReport;
@@ -12,7 +16,7 @@ class PdfableCreated extends Event
     use SerializesModels;
 
     /**
-     * An entity implementing App\Contracts\PdfReport
+     * An entity implementing App\Contracts\PdfReport.
      *
      * @var PdfReport
      */
@@ -21,15 +25,16 @@ class PdfableCreated extends Event
     /**
      * Create a new event instance.
      *
-     * @param User $patient
-     * @param User $sender
-     * @param Note $note
+     * @param User  $patient
+     * @param User  $sender
+     * @param Note  $note
+     * @param mixed $notifyPractice
      */
     public function __construct(
         PdfReport $pdfable,
         $notifyPractice = false
     ) {
-        $this->pdfReport = $pdfable;
+        $this->pdfReport      = $pdfable;
         $this->notifyPractice = $notifyPractice;
     }
 

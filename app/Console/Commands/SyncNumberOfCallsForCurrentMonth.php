@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\PatientMonthlySummary;
@@ -10,18 +14,17 @@ use Illuminate\Console\Command;
 class SyncNumberOfCallsForCurrentMonth extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'patientSummaries:syncCalls';
-
-    /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Save the most updated sum of calls and sum of successful calls to all PatientMonthlySummaries of the current month.';
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'patientSummaries:syncCalls';
     /**
      * @var PatientSummaryEloquentRepository
      */

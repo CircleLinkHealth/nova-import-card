@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
 use App\Practice;
@@ -7,37 +11,36 @@ use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SalesPracticeReport extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * @var User
-     */
-    protected $practice;
-
-
-    /**
-     * The data passed to the view
+     * The data passed to the view.
      *
      * For an example @see: SalesReportsController, method makePracticeReport
+     *
      * @var array
      */
     protected $data;
+
+    /**
+     * @var User
+     */
+    protected $practice;
 
     protected $recipientEmail;
 
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param mixed $recipientEmail
      */
     public function __construct(Practice $practice, array $data, $recipientEmail)
     {
-        $this->practice = $practice;
-        $this->data = $data;
+        $this->practice       = $practice;
+        $this->data           = $data;
         $this->recipientEmail = $recipientEmail;
     }
 
@@ -52,6 +55,6 @@ class SalesPracticeReport extends Mailable
             ->with(['data' => $this->data])
             ->to($this->recipientEmail)
             ->from('notifications@careplanmanager.com', 'CircleLink Health')
-            ->subject($this->practice->display_name . '\'s CCM Weekly Summary');
+            ->subject($this->practice->display_name.'\'s CCM Weekly Summary');
     }
 }

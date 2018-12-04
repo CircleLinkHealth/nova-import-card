@@ -1,15 +1,25 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePracticeEnrollmentTipsTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('practice_enrollment_tips');
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -20,20 +30,10 @@ class CreatePracticeEnrollmentTipsTable extends Migration
             $table->timestamps();
 
             $table->foreign('practice_id')
-                  ->references('id')
-                  ->on('practices')
-                  ->onUpdate('CASCADE')
-                  ->onDelete('CASCADE');
+                ->references('id')
+                ->on('practices')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('practice_enrollment_tips');
     }
 }

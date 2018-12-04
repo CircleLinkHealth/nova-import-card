@@ -1,4 +1,10 @@
-<?php namespace App\Reports;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Reports;
 
 use App\Activity;
 use App\Note;
@@ -12,48 +18,18 @@ use Illuminate\Support\Facades\DB;
  * Created by PhpStorm.
  * User: RohanM
  * Date: 1/6/17
- * Time: 10:10 AM
+ * Time: 10:10 AM.
  */
 class PatientDailyAuditReport
 {
-    protected $patient;
-    protected $day;
-
     protected $data = [];
+    protected $day;
+    protected $patient;
 
     public function __construct(Patient $patient, Carbon $forMonth)
     {
         $this->patient  = $patient;
         $this->forMonth = $forMonth;
-    }
-
-    public function renderPDF()
-    {
-        $name = $this->patient->user->last_name . '-' . Carbon::now()->timestamp;
-
-        $this->renderData();
-
-        $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
-
-        $path = storage_path("download/$name.pdf");
-
-        $pdf->save($path, true);
-
-        $collName = 'audit_report_' . $this->data['month'];
-
-        $this->patient->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
-
-        return "/$name.pdf";
-    }
-
-    private function formatMonthlyTime($seconds)
-    {
-        $H           = floor($seconds / 3600);
-        $i           = ($seconds / 60) % 60;
-        $s           = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
-
-        return $monthlyTime;
     }
 
     public function renderData(): array
@@ -62,8 +38,8 @@ class PatientDailyAuditReport
             $this->forMonth->startOfMonth()->toDateTimeString(),
             $this->forMonth->endOfMonth()->toDateTimeString(),
         ])
-                        ->where('patient_id', $this->patient->user_id)
-                        ->sum('duration');
+            ->where('patient_id', $this->patient->user_id)
+            ->sum('duration');
 
         $this->data['name']     = $this->patient->user->getFullName();
         $this->data['month']    = $this->forMonth->format('F, Y');
@@ -71,14 +47,14 @@ class PatientDailyAuditReport
         $this->data['totalCCM'] = $this->formatMonthlyTime($time);
 
         $activities = DB::table('lv_activities')
-                        ->select(DB::raw('DATE(performed_at) as day, type, duration'))
-                        ->whereBetween('created_at', [
-                            $this->forMonth->startOfMonth()->toDateTimeString(),
-                            $this->forMonth->endOfMonth()->toDateTimeString(),
-                        ])
-                        ->where('patient_id', $this->patient->user_id)
-                        ->orderBy('created_at', 'desc')
-                        ->get();
+            ->select(DB::raw('DATE(performed_at) as day, type, duration'))
+            ->whereBetween('created_at', [
+                $this->forMonth->startOfMonth()->toDateTimeString(),
+                $this->forMonth->endOfMonth()->toDateTimeString(),
+            ])
+            ->where('patient_id', $this->patient->user_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $activities          = $activities->groupBy('day');
         $this->data['daily'] = [];
@@ -92,16 +68,16 @@ class PatientDailyAuditReport
 
             $notes = Note
                 ::wherePatientId($this->patient->user_id)
-                ->whereBetween('created_at', [
-                    Carbon::parse($date)->startOfDay()->toDateTimeString(),
-                    Carbon::parse($date)->endOfDay()->toDateTimeString(),
-                ])
-                ->get();
+                    ->whereBetween('created_at', [
+                        Carbon::parse($date)->startOfDay()->toDateTimeString(),
+                        Carbon::parse($date)->endOfDay()->toDateTimeString(),
+                    ])
+                    ->get();
 
             $this->data['daily'][$date]['notes'] = [];
 
             foreach ($notes as $note) {
-                $time                                                        = Carbon::parse($note->created_at)->format("g:i:s A");
+                $time                                                        = Carbon::parse($note->created_at)->format('g:i:s A');
                 $performer                                                   = User::withTrashed()->find($note->author_id)->getFullName() ?? '';
                 $this->data['daily'][$date]['notes'][$note->id]['performer'] = $performer;
                 $this->data['daily'][$date]['notes'][$note->id]['time']      = $time;
@@ -110,5 +86,33 @@ class PatientDailyAuditReport
         }
 
         return $this->data;
+    }
+
+    public function renderPDF()
+    {
+        $name = $this->patient->user->last_name.'-'.Carbon::now()->timestamp;
+
+        $this->renderData();
+
+        $pdf = PDF::loadView('wpUsers.patient.audit', ['data' => $this->data]);
+
+        $path = storage_path("download/${name}.pdf");
+
+        $pdf->save($path, true);
+
+        $collName = 'audit_report_'.$this->data['month'];
+
+        $this->patient->user->addMedia($path)->preservingOriginal()->toMediaCollection($collName);
+
+        return "/${name}.pdf";
+    }
+
+    private function formatMonthlyTime($seconds)
+    {
+        $H = floor($seconds / 3600);
+        $i = ($seconds / 60) % 60;
+        $s = $seconds % 60;
+
+        return sprintf('%02d:%02d:%02d', $H, $i, $s);
     }
 }

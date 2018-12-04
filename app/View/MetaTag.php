@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/22/2017
- * Time: 10:50 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\View;
@@ -17,8 +15,8 @@ class MetaTag
     public function __construct($severity, $title, $tooltip = null)
     {
         $this->severity = $severity;
-        $this->title = $title;
-        $this->tooltip = $tooltip;
+        $this->title    = $title;
+        $this->tooltip  = $tooltip;
     }
 
     /**

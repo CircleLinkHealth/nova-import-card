@@ -1,6 +1,11 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
+
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
@@ -13,15 +18,15 @@ use Prettus\Repository\Traits\TransformableTrait;
  *
  * Class ForeignId
  *
- * @package App
- * @property int $id
- * @property int $user_id
- * @property int|null $location_id
- * @property string $foreign_id
- * @property string $system
+ * @property int            $id
+ * @property int            $user_id
+ * @property int|null       $location_id
+ * @property string         $foreign_id
+ * @property string         $system
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\User $user
+ * @property \App\User      $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereForeignId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ForeignId whereId($value)
@@ -35,11 +40,11 @@ class ForeignId extends \App\BaseModel implements Transformable
 {
     use TransformableTrait;
 
-    protected $guarded = [];
-
     //Define systems here
     const APRIMA = 'aprima';
     const ATHENA = 'athena';
+
+    protected $guarded = [];
 
     public function user()
     {

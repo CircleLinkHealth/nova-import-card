@@ -1,4 +1,10 @@
-<?php namespace App\Models\MedicalRecords;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Models\MedicalRecords;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Entities\CcdaRequest;
@@ -14,38 +20,39 @@ use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 
 /**
- * App\Models\MedicalRecords\Ccda
+ * App\Models\MedicalRecords\Ccda.
  *
- * @property int $id
- * @property \Carbon\Carbon|null $date
- * @property string|null $mrn
- * @property string|null $referring_provider_name
- * @property int|null $location_id
- * @property int|null $practice_id
- * @property int|null $billing_provider_id
- * @property int|null $user_id
- * @property int|null $patient_id
- * @property int $vendor_id
- * @property string $source
- * @property int $imported
- * @property string $xml
- * @property string|null $json
- * @property string|null $status
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\AllergyLog[] $allergies
- * @property-read \App\Entities\CcdaRequest $ccdaRequest
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DemographicsLog[]
+ * @property int                                                                                 $id
+ * @property \Carbon\Carbon|null                                                                 $date
+ * @property string|null                                                                         $mrn
+ * @property string|null                                                                         $referring_provider_name
+ * @property int|null                                                                            $location_id
+ * @property int|null                                                                            $practice_id
+ * @property int|null                                                                            $billing_provider_id
+ * @property int|null                                                                            $user_id
+ * @property int|null                                                                            $patient_id
+ * @property int                                                                                 $vendor_id
+ * @property string                                                                              $source
+ * @property int                                                                                 $imported
+ * @property string                                                                              $xml
+ * @property string|null                                                                         $json
+ * @property string|null                                                                         $status
+ * @property \Carbon\Carbon                                                                      $created_at
+ * @property \Carbon\Carbon                                                                      $updated_at
+ * @property string|null                                                                         $deleted_at
+ * @property \App\Importer\Models\ItemLogs\AllergyLog[]|\Illuminate\Database\Eloquent\Collection $allergies
+ * @property \App\Entities\CcdaRequest                                                           $ccdaRequest
+ * @property \App\Importer\Models\ItemLogs\DemographicsLog[]|\Illuminate\Database\Eloquent\Collection
  *     $demographics
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ImportedItems\DemographicsImport[]
+ * @property \App\Importer\Models\ImportedItems\DemographicsImport[]|\Illuminate\Database\Eloquent\Collection
  *     $demographicsImports
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\DocumentLog[] $document
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\MedicationLog[] $medications
- * @property-read \App\User|null $patient
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\ProblemLog[] $problems
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Importer\Models\ItemLogs\ProviderLog[] $providers
- * @property-read \App\Models\MedicalRecords\ImportedMedicalRecord $qaSummary
+ * @property \App\Importer\Models\ItemLogs\DocumentLog[]|\Illuminate\Database\Eloquent\Collection   $document
+ * @property \App\Importer\Models\ItemLogs\MedicationLog[]|\Illuminate\Database\Eloquent\Collection $medications
+ * @property \App\User|null                                                                         $patient
+ * @property \App\Importer\Models\ItemLogs\ProblemLog[]|\Illuminate\Database\Eloquent\Collection    $problems
+ * @property \App\Importer\Models\ItemLogs\ProviderLog[]|\Illuminate\Database\Eloquent\Collection   $providers
+ * @property \App\Models\MedicalRecords\ImportedMedicalRecord                                       $qaSummary
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Models\MedicalRecords\Ccda onlyTrashed()
  * @method static bool|null restore()
@@ -78,15 +85,10 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         HasMediaTrait,
         TransformableTrait,
         SoftDeletes;
+    const API = 'api';
 
     //define sources here
     const ATHENA_API = 'athena_api';
-    const API = 'api';
-    const EMR_DIRECT = 'emr_direct';
-    const IMPORTER = 'importer';
-    const SFTP_DROPBOX = 'sftp_dropbox';
-    const UPLOADED = 'uploaded';
-    const GOOGLE_DRIVE = 'google_drive';
 
     const EMAIL_DOMAIN_TO_VENDOR_MAP = [
         //Carolina Medical Associates
@@ -95,6 +97,11 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         '@direct.welltrackone.com'        => 14,
         '@treatrelease.direct.aprima.com' => 1,
     ];
+    const EMR_DIRECT   = 'emr_direct';
+    const GOOGLE_DRIVE = 'google_drive';
+    const IMPORTER     = 'importer';
+    const SFTP_DROPBOX = 'sftp_dropbox';
+    const UPLOADED     = 'uploaded';
 
     protected $dates = [
         'date',
@@ -118,9 +125,33 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         'status',
     ];
 
+    public function bluebuttonJson()
+    {
+        if ($this->json) {
+            return json_decode($this->json);
+        }
+
+        if (!$this->id || !$this->hasMedia('ccd')) {
+            return false;
+        }
+
+        if (!$this->json) {
+            $xml        = $this->getMedia('ccd')->first()->getFile();
+            $this->json = $this->parseToJson($xml);
+            $this->save();
+        }
+
+        return json_decode($this->json);
+    }
+
+    public function ccdaRequest()
+    {
+        return $this->hasOne(CcdaRequest::class);
+    }
+
     public static function create($attributes = [])
     {
-        if (! array_key_exists('xml', $attributes)) {
+        if (!array_key_exists('xml', $attributes)) {
             return static::query()->create($attributes);
         }
 
@@ -135,32 +166,20 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         return $ccda;
     }
 
-    public function qaSummary()
+    /**
+     * @return string
+     */
+    public function getDocumentCustodian(): string
     {
-        return $this->hasOne(ImportedMedicalRecord::class);
-    }
+        if ($this->document->first()) {
+            return $this->document->first()->custodian;
+        }
 
-    public function ccdaRequest()
-    {
-        return $this->hasOne(CcdaRequest::class);
-    }
-
-    public function importedMedicalRecord()
-    {
-        return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
-                                    ->where('medical_record_id', '=', $this->id)
-                                    ->first();
-    }
-
-    public function scopeExclude($query, $value = [])
-    {
-        $defaultColumns = ['id', 'created_at', 'updated_at'];
-
-        return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array)$value));
+        return '';
     }
 
     /**
-     * Get the Logger
+     * Get the Logger.
      *
      * @return MedicalRecordLogger
      */
@@ -179,35 +198,35 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
         return $this->patient;
     }
 
-    /**
-     * @return string
-     */
-    public function getDocumentCustodian(): string
+    public function importedMedicalRecord()
     {
-        if ($this->document->first()) {
-            return $this->document->first()->custodian;
-        }
-
-        return '';
+        return ImportedMedicalRecord::where('medical_record_type', '=', Ccda::class)
+            ->where('medical_record_id', '=', $this->id)
+            ->first();
     }
 
-    public function bluebuttonJson()
+    public function qaSummary()
     {
-        if ($this->json) {
-            return json_decode($this->json);
+        return $this->hasOne(ImportedMedicalRecord::class);
+    }
+
+    public function scopeExclude($query, $value = [])
+    {
+        $defaultColumns = ['id', 'created_at', 'updated_at'];
+
+        return $query->select(array_diff(array_merge($defaultColumns, $this->fillable), (array) $value));
+    }
+
+    public function storeCcd($xml)
+    {
+        if (!$this->id) {
+            throw new \Exception('CCD does not have an id.');
         }
 
-        if (! $this->id || ! $this->hasMedia('ccd')) {
-            return false;
-        }
+        \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
+        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
 
-        if (! $this->json) {
-            $xml        = $this->getMedia('ccd')->first()->getFile();
-            $this->json = $this->parseToJson($xml);
-            $this->save();
-        }
-
-        return json_decode($this->json);
+        return $this;
     }
 
     protected function parseToJson($xml)
@@ -221,9 +240,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
             'body'    => $xml,
         ]);
 
-        $responseBody = (string)$response->getBody();
+        $responseBody = (string) $response->getBody();
 
-        if (! in_array($response->getStatusCode(), [200, 201])) {
+        if (!in_array($response->getStatusCode(), [200, 201])) {
             $id = $this->id ?? '';
 
             $data = json_encode([
@@ -231,21 +250,9 @@ class Ccda extends MedicalRecordEloquent implements HasMedia, Transformable
                 $response->getReasonPhrase(),
             ]);
 
-            throw new \Exception("Could not process ccd $id. Data: $data");
+            throw new \Exception("Could not process ccd ${id}. Data: ${data}");
         }
 
         return $responseBody;
-    }
-
-    public function storeCcd($xml)
-    {
-        if (! $this->id) {
-            throw new \Exception('CCD does not have an id.');
-        }
-
-        \Storage::disk('storage')->put("ccda-{$this->id}.xml", $xml);
-        $this->addMedia(storage_path("ccda-{$this->id}.xml"))->toMediaCollection('ccd');
-
-        return $this;
     }
 }

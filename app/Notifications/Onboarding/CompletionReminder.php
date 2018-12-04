@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Notifications\Onboarding;
 
 use Illuminate\Bus\Queueable;
@@ -26,7 +30,7 @@ class CompletionReminder extends Notification
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param mixed $url
      */
     public function __construct(
         $url
@@ -35,44 +39,46 @@ class CompletionReminder extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
-    public function via($notifiable)
+    public function toArray($notifiable)
     {
-        return ['mail'];
+        return [
+        ];
     }
 
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         $program_name = $notifiable->primaryPractice->display_name;
 
-        return (new MailMessage)
-            ->subject("Let’s Finish Your".$notifiable->saasAccountName()." Profile!")
+        return (new MailMessage())
+            ->subject('Let’s Finish Your'.$notifiable->saasAccountName().' Profile!')
             ->greeting("Hi {$notifiable->getFullName()}:")
-            ->line("We’re excited to start providing best-in-class chronic care management at $program_name but we need you to finish your profile!")
-            ->line("Thanks and welcome aboard!")
+            ->line("We’re excited to start providing best-in-class chronic care management at ${program_name} but we need you to finish your profile!")
+            ->line('Thanks and welcome aboard!')
             ->action('Complete Profile', $this->link);
     }
 
     /**
-     * Get the array representation of the notification.
+     * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
-    public function toArray($notifiable)
+    public function via($notifiable)
     {
-        return [
-            //
-        ];
+        return ['mail'];
     }
 }

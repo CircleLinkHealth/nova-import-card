@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -7,7 +11,7 @@ use Closure;
 class AuthyMiddleware
 {
     /**
-     * This middleware will be applied to all routes, except the ones below
+     * This middleware will be applied to all routes, except the ones below.
      *
      * @var array
      */
@@ -27,14 +31,14 @@ class AuthyMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if (! ! ! config('auth.two_fa_enabled')) {
+        if (!(bool) config('auth.two_fa_enabled')) {
             \Session::put('authy_status', 'approved');
 
             if (\Route::is('user.2fa.show.token.form')) {
@@ -48,14 +52,14 @@ class AuthyMiddleware
             return $next($request);
         }
 
-        $user = optional(auth()->user());
+        $user      = optional(auth()->user());
         $authyUser = optional($user->authyUser);
 
-        if ($user->isAdmin() && ! $authyUser->is_authy_enabled && ! \Route::is('user.settings.manage')) {
+        if ($user->isAdmin() && !$authyUser->is_authy_enabled && !\Route::is('user.settings.manage')) {
             return redirect()->route('user.settings.manage');
         }
 
-        if (! isAllowedToSee2FA() || ! $authyUser->is_authy_enabled) {
+        if (!isAllowedToSee2FA() || !$authyUser->is_authy_enabled) {
             if (\Route::is('user.2fa.show.token.form')) {
                 return redirect()->back();
             }
@@ -63,7 +67,7 @@ class AuthyMiddleware
             return $next($request);
         }
 
-        if (session('authy_status') != 'approved') {
+        if ('approved' != session('authy_status')) {
             return redirect()->route('user.2fa.show.token.form');
         }
 
@@ -76,6 +80,6 @@ class AuthyMiddleware
 
     private function hasPassed2FA()
     {
-        return session('authy_status') == 'approved';
+        return 'approved' == session('authy_status');
     }
 }

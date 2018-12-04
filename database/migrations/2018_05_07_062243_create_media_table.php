@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateMediaTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('media');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -27,18 +36,7 @@ class CreateMediaTable extends Migration
             $table->text('custom_properties');
             $table->integer('order_column')->unsigned()->nullable();
             $table->timestamps();
-            $table->index(['model_id','model_type']);
+            $table->index(['model_id', 'model_type']);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('media');
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/26/2017
- * Time: 3:15 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Adapters\EligibilityCheck;
@@ -15,10 +13,10 @@ use App\ValueObjects\Athena\ProblemsAndInsurances;
 
 class AthenaAPIAdapter
 {
-    private $problemsAndInsurances;
-    private $eligiblePatientList;
-    private $eligibilityJob;
     private $eligibilityBatch;
+    private $eligibilityJob;
+    private $eligiblePatientList;
+    private $problemsAndInsurances;
 
     public function __construct(
         ProblemsAndInsurances $problemsAndInsurances,
@@ -28,6 +26,19 @@ class AthenaAPIAdapter
         $this->problemsAndInsurances = $problemsAndInsurances;
         $this->eligibilityJob        = $job;
         $this->eligibilityBatch      = $batch;
+    }
+
+    public function getEligibilityJob()
+    {
+        return $this->eligibilityJob;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEligiblePatientList()
+    {
+        return $this->eligiblePatientList;
     }
 
     public function isEligible()
@@ -58,18 +69,5 @@ class AthenaAPIAdapter
         $this->eligiblePatientList = $check->getPatientList();
 
         return $this->eligiblePatientList->count() > 0;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEligiblePatientList()
-    {
-        return $this->eligiblePatientList;
-    }
-
-    public function getEligibilityJob()
-    {
-        return $this->eligibilityJob;
     }
 }

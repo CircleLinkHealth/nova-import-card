@@ -1,18 +1,23 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CPRulesPCP
+ * App\CPRulesPCP.
  *
- * @property int $pcp_id
- * @property int|null $prov_id
- * @property string|null $section_text
- * @property string|null $status
- * @property int|null $cpset_id
- * @property string|null $pcp_type
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItem[] $items
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Practice[] $program
+ * @property int                                                         $pcp_id
+ * @property int|null                                                    $prov_id
+ * @property string|null                                                 $section_text
+ * @property string|null                                                 $status
+ * @property int|null                                                    $cpset_id
+ * @property string|null                                                 $pcp_type
+ * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection $items
+ * @property \App\Practice[]|\Illuminate\Database\Eloquent\Collection    $program
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP whereCpsetId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesPCP wherePcpType($value)
@@ -23,15 +28,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesPCP extends \App\BaseModel
 {
-
-
-
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_pcp';
+    protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
 
     /**
      * The primary key for the model.
@@ -41,12 +43,16 @@ class CPRulesPCP extends \App\BaseModel
     protected $primaryKey = 'pcp_id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['pcp_id', 'prov_id', 'section_text', 'status', 'cpset_id', 'pcp_type'];
+    protected $table = 'rules_pcp';
 
+    public function getCPRulesPCPForProv($provId)
+    {
+        return CPRulesPCP::where('prov_id', '=', $provId)->get();
+    }
 
     public function items()
     {
@@ -56,12 +62,5 @@ class CPRulesPCP extends \App\BaseModel
     public function program()
     {
         return $this->hasMany(Practice::class, 'id', 'prov_id');
-    }
-
-    public function getCPRulesPCPForProv($provId)
-    {
-        $CPrulesPCP = CPRulesPCP::where('prov_id', '=', $provId)->get();
-
-        return $CPrulesPCP;
     }
 }

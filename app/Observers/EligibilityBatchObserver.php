@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/19/18
- * Time: 8:03 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Observers;
@@ -24,10 +22,9 @@ class EligibilityBatchObserver
 
     public function saved(EligibilityBatch $eligibilityBatch)
     {
-        if ($eligibilityBatch->isDirty('status') && $eligibilityBatch->getStatus() == 3) {
+        if ($eligibilityBatch->isDirty('status') && 3 == $eligibilityBatch->getStatus()) {
             $practice = Practice::findOrFail($eligibilityBatch->practice_id);
             $link     = route('eligibility.batch.show', [$eligibilityBatch->id]);
-
 
             User::whereIn('email', ['mantoniou@circlelinkhealth.com', 'joe@circlelinkhealth.com'])
                 ->get()
@@ -35,7 +32,7 @@ class EligibilityBatchObserver
                     $u->notify(new EligibilityBatchProcessed($eligibilityBatch));
                 });
 
-            sendSlackMessage('#implementations', "Howdy! {$practice->display_name} list processing completed. $link");
+            sendSlackMessage('#implementations', "Howdy! {$practice->display_name} list processing completed. ${link}");
         }
     }
 }

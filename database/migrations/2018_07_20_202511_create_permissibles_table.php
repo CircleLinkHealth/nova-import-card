@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -7,9 +11,15 @@ use Illuminate\Support\Facades\Schema;
 class CreatePermissiblesTable extends Migration
 {
     /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('permissibles');
+    }
+
+    /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -23,15 +33,5 @@ class CreatePermissiblesTable extends Migration
 
             $table->unique(['permission_id', 'permissible_id', 'permissible_type'], 'p_id_pble_id_pt_id');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('permissibles');
     }
 }

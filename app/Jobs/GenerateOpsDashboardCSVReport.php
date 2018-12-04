@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\Practice;
@@ -20,14 +24,11 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
     protected $service;
     protected $user;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(User $user)
     {
@@ -35,10 +36,25 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $this->service = new OpsDashboardService(new OpsDashboardPatientEloquentRepository());
     }
 
+    public function calculateDailyTotalRow($rows)
+    {
+        $totalCounts = [];
+
+        foreach ($rows as $row) {
+            foreach ($row as $key => $value) {
+                $totalCounts[$key][] = $value;
+            }
+        }
+        foreach ($totalCounts as $key => $value) {
+            $totalCounts[$key] = array_sum($value);
+        }
+
+        return $totalCounts;
+    }
+
     /**
      * Execute the job.
      *
-     * @return void
      * @throws \Exception
      */
     public function handle()
@@ -48,34 +64,33 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         ini_set('memory_limit', '512M');
 
         $practices = Practice::select(['id', 'display_name'])
-                             ->activeBillable()
-                             ->with([
-                                 'patients' => function ($p) use ($date) {
-                                     $p->with([
-                                         'patientSummaries'            => function ($s) use ($date) {
-                                             $s->where('month_year', $date->copy()->startOfMonth());
-                                         },
-                                         'patientInfo.revisionHistory' => function ($r) use ($date) {
-                                             $r->where('key', 'ccm_status')
-                                               ->where(
-                                                   'created_at',
-                                                   '>=',
-                                                   $date->copy()->subDay()->setTimeFromTimeString('23:30')
-                                               );
-                                         },
-                                     ]);
-                                 },
-                             ])
-                             ->whereHas('patients.patientInfo')
-                             ->get()
-                             ->sortBy('display_name');
-
+            ->activeBillable()
+            ->with([
+                'patients' => function ($p) use ($date) {
+                    $p->with([
+                        'patientSummaries' => function ($s) use ($date) {
+                            $s->where('month_year', $date->copy()->startOfMonth());
+                        },
+                        'patientInfo.revisionHistory' => function ($r) use ($date) {
+                            $r->where('key', 'ccm_status')
+                                ->where(
+                                  'created_at',
+                                  '>=',
+                                  $date->copy()->subDay()->setTimeFromTimeString('23:30')
+                              );
+                        },
+                    ]);
+                },
+            ])
+            ->whereHas('patients.patientInfo')
+            ->get()
+            ->sortBy('display_name');
 
         $hoursBehind = $this->service->calculateHoursBehind($date, $practices);
 
         foreach ($practices as $practice) {
             $row = $this->service->dailyReportRow($practice->patients->unique('id'), $date);
-            if ($row != null) {
+            if (null != $row) {
                 $rows[$practice->display_name] = $row;
             }
         }
@@ -94,7 +109,7 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
+                ->setCompany('CircleLink Health');
 
             // Call them separately
             $excel->setDescription('CLH Ops Daily Report');
@@ -113,7 +128,6 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                     // manipulate the cell
                     $cell->setValue("HoursBehind: {$hoursBehind}");
                 });
-
 
                 $sheet->appendRow([
                     'Active Accounts',
@@ -144,9 +158,9 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
                         $value['Total'],
                         $value['Prior Day totals'],
                         $value['Added'],
-                        '-' . $value['Unreachable'],
-                        '-' . $value['Paused'],
-                        '-' . $value['Withdrawn'],
+                        '-'.$value['Unreachable'],
+                        '-'.$value['Paused'],
+                        '-'.$value['Withdrawn'],
                         $value['Delta'],
                         $value['G0506 To Enroll'],
                     ]);
@@ -171,12 +185,10 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
         $file['name']       = "{$fileName}.xls";
         $file['collection'] = "CLH-Ops-CSV-Reports-{$date->toDateString()}";
 
-
         $viewHashKey = (new View())->storeViewInCache('admin.opsDashboard.csv', [
             'file' => $file,
             'date' => $date,
         ]);
-
 
         $userNotification = new UserNotificationList($this->user);
 
@@ -186,21 +198,5 @@ class GenerateOpsDashboardCSVReport implements ShouldQueue
             linkToCachedView($viewHashKey),
             'Go to page'
         );
-    }
-
-    public function calculateDailyTotalRow($rows)
-    {
-        $totalCounts = [];
-
-        foreach ($rows as $row) {
-            foreach ($row as $key => $value) {
-                $totalCounts[$key][] = $value;
-            }
-        }
-        foreach ($totalCounts as $key => $value) {
-            $totalCounts[$key] = array_sum($value);
-        }
-
-        return $totalCounts;
     }
 }

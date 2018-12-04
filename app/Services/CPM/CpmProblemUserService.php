@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:19 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
@@ -22,36 +20,21 @@ class CpmProblemUserService
     public function __construct(CpmProblemUserRepository $cpmProblemUserRepo, UserRepositoryEloquent $userRepo, CpmProblemService $cpmProblemService)
     {
         $this->cpmProblemUserRepo = $cpmProblemUserRepo;
-        $this->userRepo = $userRepo;
-        $this->cpmProblemService = $cpmProblemService;
-    }
-
-    public function repo()
-    {
-        return $this->cpmProblemUserRepo;
+        $this->userRepo           = $userRepo;
+        $this->cpmProblemService  = $cpmProblemService;
     }
 
     public function addInstructionToProblem($patientId, $cpmProblemId, $instructionId)
     {
         $cpmProblemUser = $this->repo()->where([
-            'patient_id' => $patientId,
-            'cpm_problem_id' => $cpmProblemId,
-            'cpm_instruction_id' => $instructionId
+            'patient_id'         => $patientId,
+            'cpm_problem_id'     => $cpmProblemId,
+            'cpm_instruction_id' => $instructionId,
         ])->first();
         if (!$cpmProblemUser) {
             return $this->repo()->create($patientId, $cpmProblemId, $instructionId);
-        } else {
-            throw new Exception('a similar instruction->problem relationship already exists');
         }
-    }
-
-    public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId)
-    {
-        $this->repo()->where([
-            'patient_id' => $patientId,
-            'cpm_problem_id' => $cpmProblemId,
-            'cpm_instruction_id' => $instructionId
-        ])->delete();
+        throw new Exception('a similar instruction->problem relationship already exists');
     }
 
     public function addProblemToPatient($patientId, $cpmProblemId)
@@ -59,14 +42,9 @@ class CpmProblemUserService
         $problemUser = $this->repo()->create($patientId, $cpmProblemId, null);
         if ($problemUser) {
             return $this->cpmProblemService->setupProblem($problemUser->problems()->first());
-        } else {
-            return $problemUser;
         }
-    }
 
-    public function removeProblemFromPatient($patientId, $cpmProblemId)
-    {
-        return $this->repo()->remove($patientId, $cpmProblemId);
+        return $problemUser;
     }
 
     public function getPatientProblems($userId)
@@ -86,5 +64,24 @@ class CpmProblemUserService
                     'instruction' => CpmInstruction::find($p->pivot->cpm_instruction_id),
                 ];
             });
+    }
+
+    public function removeInstructionFromProblem($patientId, $cpmProblemId, $instructionId)
+    {
+        $this->repo()->where([
+            'patient_id'         => $patientId,
+            'cpm_problem_id'     => $cpmProblemId,
+            'cpm_instruction_id' => $instructionId,
+        ])->delete();
+    }
+
+    public function removeProblemFromPatient($patientId, $cpmProblemId)
+    {
+        return $this->repo()->remove($patientId, $cpmProblemId);
+    }
+
+    public function repo()
+    {
+        return $this->cpmProblemUserRepo;
     }
 }

@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateTargetPatientsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('target_patients');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -22,20 +31,9 @@ class CreateTargetPatientsTable extends Migration
             $table->integer('ehr_patient_id')->unsigned();
             $table->integer('practice_id')->unsigned();
             $table->integer('department_id')->unsigned();
-            $table->enum('status', array('to_process','eligible','ineligible','consented','enrolled','error'))->nullable();
+            $table->enum('status', ['to_process', 'eligible', 'ineligible', 'consented', 'enrolled', 'error'])->nullable();
             $table->timestamps();
             $table->string('description');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('target_patients');
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotification
@@ -17,7 +21,7 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     }
 
     /**
-     * Scope notifications by a specific attachment type
+     * Scope notifications by a specific attachment type.
      *
      * @param $builder
      * @param $type | Fully qualified class name (eg. User::class)
@@ -30,7 +34,7 @@ class DatabaseNotification extends \Illuminate\Notifications\DatabaseNotificatio
     }
 
     /**
-     * Scope notifications by a specific notifiable type
+     * Scope notifications by a specific notifiable type.
      *
      * @param $builder
      * @param $type | Fully qualified class name (eg. User::class)

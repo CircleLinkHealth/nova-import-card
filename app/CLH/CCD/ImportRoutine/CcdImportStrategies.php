@@ -1,18 +1,23 @@
-<?php namespace App\CLH\CCD\ImportRoutine;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\CCD\ImportRoutine;
 
 /**
- * App\CLH\CCD\ImportRoutine\CcdImportStrategies
+ * App\CLH\CCD\ImportRoutine\CcdImportStrategies.
  *
- * @property int $id
- * @property int $ccd_import_routine_id
- * @property int $importer_section_id
- * @property int $validator_id
- * @property int $parser_id
- * @property int $storage_id
+ * @property int            $id
+ * @property int            $ccd_import_routine_id
+ * @property int            $importer_section_id
+ * @property int            $validator_id
+ * @property int            $parser_id
+ * @property int            $storage_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportStrategies whereCcdImportRoutineId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportStrategies whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CLH\CCD\ImportRoutine\CcdImportStrategies whereId($value)
@@ -25,7 +30,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CcdImportStrategies extends \App\BaseModel
 {
-    protected $table = 'ccd_import_routines_strategies';
-
     protected $guarded = [];
+    protected $table   = 'ccd_import_routines_strategies';
 }

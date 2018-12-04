@@ -1,15 +1,16 @@
 <?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories\Criteria;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
 
 /**
- * Class VaseCriteria
- * @package App\Repositories\Criteria
+ * Class VaseCriteria.
  */
 class CriteriaFactory implements CriteriaInterface
 {
@@ -22,7 +23,6 @@ class CriteriaFactory implements CriteriaInterface
 
     public function apply($model, RepositoryInterface $repository)
     {
-        $model = call_user_func($this->handler, $model);
-        return $model;
+        return call_user_func($this->handler, $model);
     }
 }

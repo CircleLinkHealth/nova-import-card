@@ -1,16 +1,20 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use App\User;
-use App\Patient;
 use App\Models\CCD\Medication;
 
 class CpmMedicationRepository
 {
-    public function model()
+    public function addMedicationToPatient(Medication $medication)
     {
-        return app(Medication::class);
+        $medication->save();
+
+        return $medication;
     }
 
     public function count()
@@ -18,23 +22,29 @@ class CpmMedicationRepository
         return $this->model()->count();
     }
 
-    public function search($terms)
+    public function editPatientMedication(Medication $medication)
     {
-        $query = $this->model();
-        if (is_array($terms)) {
-            $i = 0;
-            foreach ($terms as $term) {
-                if ($i == 0) {
-                    $query = $query->where('name', 'LIKE', '%' . $term . '%');
-                } else {
-                    $query = $query->orWhere('name', 'LIKE', '%' . $term . '%');
-                }
-                $i++;
-            }
-        } else {
-            $query = $query->orWhere('name', 'LIKE', '%' . $terms . '%');
+        if (!$medication->id) {
+            throw new Exception('"id" is important');
         }
-        return $query->groupBy('name')->get();
+        $medications = $this->model()->where(['id' => $medication->id]);
+        $medications->update([
+            'name'                => $medication->name,
+            'sig'                 => $medication->sig,
+            'medication_group_id' => $medication->medication_group_id,
+        ]);
+
+        return $medications->first();
+    }
+
+    public function exists($id)
+    {
+        return (bool) $this->model()->find($id);
+    }
+
+    public function model()
+    {
+        return app(Medication::class);
     }
 
     public function patientMedication($userId)
@@ -55,17 +65,6 @@ class CpmMedicationRepository
             ->get();
     }
 
-    public function exists($id)
-    {
-        return ! ! $this->model()->find($id);
-    }
-
-    public function addMedicationToPatient(Medication $medication)
-    {
-        $medication->save();
-        return $medication;
-    }
-
     public function removeMedicationFromPatient($medicationId, $userId)
     {
         $this->model()->where([
@@ -78,18 +77,23 @@ class CpmMedicationRepository
         ];
     }
 
-    public function editPatientMedication(Medication $medication)
+    public function search($terms)
     {
-        if (! $medication->id) {
-            throw new Exception('"id" is important');
+        $query = $this->model();
+        if (is_array($terms)) {
+            $i = 0;
+            foreach ($terms as $term) {
+                if (0 == $i) {
+                    $query = $query->where('name', 'LIKE', '%'.$term.'%');
+                } else {
+                    $query = $query->orWhere('name', 'LIKE', '%'.$term.'%');
+                }
+                ++$i;
+            }
         } else {
-            $medications = $this->model()->where(['id' => $medication->id]);
-            $medications->update([
-                'name'                => $medication->name,
-                'sig'                 => $medication->sig,
-                'medication_group_id' => $medication->medication_group_id,
-            ]);
-            return $medications->first();
+            $query = $query->orWhere('name', 'LIKE', '%'.$terms.'%');
         }
+
+        return $query->groupBy('name')->get();
     }
 }

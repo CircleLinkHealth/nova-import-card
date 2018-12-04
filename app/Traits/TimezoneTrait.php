@@ -1,15 +1,19 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Traits;
 
 use Carbon\Carbon;
 
 /**
- * App\Traits\TimezoneTrait
+ * App\Traits\TimezoneTrait.
  *
- * @property-read mixed $timezone_abbr
- * @property-read mixed $timezone_offset
- * @property-read mixed $timezone_offset_hours
+ * @property mixed $timezone_abbr
+ * @property mixed $timezone_offset
+ * @property mixed $timezone_offset_hours
  */
 trait TimezoneTrait
 {

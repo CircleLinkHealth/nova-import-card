@@ -1,26 +1,33 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\ProviderInfo
+ * App\ProviderInfo.
  *
- * @property int $id
- * @property int|null $is_clinical
- * @property int $user_id
+ * @property int         $id
+ * @property int|null    $is_clinical
+ * @property int         $user_id
  * @property string|null $prefix
  * @property string|null $npi_number
  * @property string|null $specialty
- * @property string $created_at
- * @property string $updated_at
+ * @property string      $created_at
+ * @property string      $updated_at
  * @property string|null $deleted_at
- * @property mixed $address
- * @property mixed $city
- * @property mixed $first_name
- * @property mixed $last_name
- * @property mixed $state
- * @property mixed $zip
- * @property-read \App\User $user
+ * @property mixed       $address
+ * @property mixed       $city
+ * @property mixed       $first_name
+ * @property mixed       $last_name
+ * @property mixed       $state
+ * @property mixed       $zip
+ * @property \App\User   $user
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\ProviderInfo onlyTrashed()
  * @method static bool|null restore()
@@ -40,19 +47,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProviderInfo extends \App\BaseModel
 {
     use SoftDeletes;
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'provider_info';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
@@ -65,17 +59,33 @@ class ProviderInfo extends \App\BaseModel
         'npi_number',
         'specialty',
     ];
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
 
-    // START RELATIONSHIPS
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'provider_info';
 
-    // user
-
-    public function user()
+    // address
+    public function getAddressAttribute()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->user->address;
     }
-    // END RELATIONSHIPS
 
+    // city
+    public function getCityAttribute()
+    {
+        return $this->user->city;
+    }
+
+    // END RELATIONSHIPS
 
     // START ATTRIBUTES
 
@@ -85,32 +95,22 @@ class ProviderInfo extends \App\BaseModel
         return $this->user->getFirstName();
     }
 
-    public function setFirstNameAttribute($value)
-    {
-        $this->user->setFirstName($value);
-        $this->user->save();
-
-        return true;
-    }
-
     // last_name
     public function getLastNameAttribute()
     {
         return $this->user->getLastName();
     }
 
-    public function setLastNameAttribute($value)
+    // state
+    public function getStateAttribute()
     {
-        $this->user->setLastName($value);
-        $this->user->save();
-
-        return true;
+        return $this->user->state;
     }
 
-    // address
-    public function getAddressAttribute()
+    // zip
+    public function getZipAttribute()
     {
-        return $this->user->address;
+        return $this->user->zip;
     }
 
     public function setAddressAttribute($value)
@@ -121,12 +121,6 @@ class ProviderInfo extends \App\BaseModel
         return true;
     }
 
-    // city
-    public function getCityAttribute()
-    {
-        return $this->user->city;
-    }
-
     public function setCityAttribute($value)
     {
         $this->user->city = $value;
@@ -135,10 +129,20 @@ class ProviderInfo extends \App\BaseModel
         return true;
     }
 
-    // state
-    public function getStateAttribute()
+    public function setFirstNameAttribute($value)
     {
-        return $this->user->state;
+        $this->user->setFirstName($value);
+        $this->user->save();
+
+        return true;
+    }
+
+    public function setLastNameAttribute($value)
+    {
+        $this->user->setLastName($value);
+        $this->user->save();
+
+        return true;
     }
 
     public function setStateAttribute($value)
@@ -149,18 +153,21 @@ class ProviderInfo extends \App\BaseModel
         return true;
     }
 
-    // zip
-    public function getZipAttribute()
-    {
-        return $this->user->zip;
-    }
-
     public function setZipAttribute($value)
     {
         $this->user->zip = $value;
         $this->user->save();
 
         return true;
+    }
+
+    // START RELATIONSHIPS
+
+    // user
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     // END ATTRIBUTES

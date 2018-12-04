@@ -1,23 +1,29 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use App\Services\MsgUI;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\CPRulesQuestions
+ * App\CPRulesQuestions.
  *
- * @property int $qid
- * @property string $msg_id
- * @property string|null $qtype
- * @property string|null $obs_key
- * @property string|null $description
- * @property string $icon
- * @property string $category
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $careItems
- * @property-read mixed $msg_id_and_obs_key
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Observation[] $observations
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesQuestionSets[] $questionSets
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CPRulesItem[] $rulesItems
+ * @property int                                                                 $qid
+ * @property string                                                              $msg_id
+ * @property string|null                                                         $qtype
+ * @property string|null                                                         $obs_key
+ * @property string|null                                                         $description
+ * @property string                                                              $icon
+ * @property string                                                              $category
+ * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection            $careItems
+ * @property mixed                                                               $msg_id_and_obs_key
+ * @property \App\Observation[]|\Illuminate\Database\Eloquent\Collection         $observations
+ * @property \App\CPRulesQuestionSets[]|\Illuminate\Database\Eloquent\Collection $questionSets
+ * @property \App\CPRulesItem[]|\Illuminate\Database\Eloquent\Collection         $rulesItems
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereCategory($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CPRulesQuestions whereIcon($value)
@@ -29,15 +35,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CPRulesQuestions extends \App\BaseModel
 {
-
-
+    public $timestamps = false;
 
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'rules_questions';
+    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description', 'icon', 'category'];
 
     /**
      * The primary key for the model.
@@ -47,28 +52,37 @@ class CPRulesQuestions extends \App\BaseModel
     protected $primaryKey = 'qid';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['qid', 'msg_id', 'qtype', 'obs_key', 'description', 'icon', 'category'];
-
-    public $timestamps = false;
-
-
-    public function rulesItems() // rules prefix because ->items is a protect class var on parent
-    {
-        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
-    }
+    protected $table = 'rules_questions';
 
     public function careItems()
     {
         return $this->hasMany('App\CareItem', 'qid', 'qid');
     }
 
-    public function questionSets()
+    // ATTRIBUTES
+
+    public function getMsgIdAndObsKeyAttribute()
     {
-        return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');
+        $msgId  = $this->msg_id;
+        $obsKey = $this->obs_key;
+
+        return $msgId.' ['.$obsKey.']';
+    }
+
+    public function iconHtml()
+    {
+        $html    = '';
+        $msgUI   = new MsgUI();
+        $msgIcon = $msgUI->getMsgIcon($this->icon);
+        if (!empty($msgIcon)) {
+            $html = "<i style='color:".$msgIcon['color']."' class='fa fa-2x fa-".$msgIcon['icon']."'></i>";
+        }
+
+        return $html;
     }
 
     public function observations()
@@ -76,26 +90,13 @@ class CPRulesQuestions extends \App\BaseModel
         return $this->hasMany('App\Observation', 'msg_id', 'obs_message_id');
     }
 
-
-    public function iconHtml()
+    public function questionSets()
     {
-        $html = '';
-        $msgUI = new MsgUI;
-        $msgIcon = $msgUI->getMsgIcon($this->icon);
-        if (!empty($msgIcon)) {
-            $html = "<i style='color:" . $msgIcon['color'] . "' class='fa fa-2x fa-" . $msgIcon['icon'] . "'></i>";
-        }
-        return $html;
+        return $this->hasMany('App\CPRulesQuestionSets', 'qid', 'qid');
     }
 
-
-
-    // ATTRIBUTES
-
-    public function getMsgIdAndObsKeyAttribute()
+    public function rulesItems() // rules prefix because ->items is a protect class var on parent
     {
-        $msgId = $this->msg_id;
-        $obsKey = $this->obs_key;
-        return $msgId . ' [' . $obsKey . ']';
+        return $this->hasMany('App\CPRulesItem', 'qid', 'qid');
     }
 }

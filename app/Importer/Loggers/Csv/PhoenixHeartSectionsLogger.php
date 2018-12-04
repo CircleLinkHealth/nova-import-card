@@ -1,4 +1,10 @@
-<?php namespace App\Importer\Loggers\Csv;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Loggers\Csv;
 
 use App\Contracts\Importer\MedicalRecord\MedicalRecordLogger;
 use App\Importer\Models\ItemLogs\AllergyLog;
@@ -27,58 +33,16 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         $this->lastPhxImportDate = PhoenixHeartProblem::orderBy('created_at', 'desc')->firstOrFail()->created_at->toDateTimeString();
     }
 
-    public function logDemographicsSection(): MedicalRecordLogger
-    {
-        if (! $this->medicalRecord->mrn) {
-            $this->medicalRecord->mrn = $this->lookupMrn(
-                $this->medicalRecord->first_name,
-                $this->medicalRecord->last_name,
-                $this->medicalRecord->dob
-            );
-        }
-
-        if (! $this->medicalRecord->gender && $this->medicalRecord->mrn) {
-            $phx = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)
-                                   ->where('created_at', $this->lastPhxImportDate)
-                                   ->first();
-
-            $this->medicalRecord->gender = $phx
-                ? $phx->gender
-                : null;
-        }
-
-        $this->medicalRecord->save();
-
-
-        return parent::logDemographicsSection();
-    }
-
-    public function lookupMrn($firstName, $lastName, $dob)
-    {
-        $dob = Carbon::parse($dob)->toDateString();
-
-        $row = PhoenixHeartName::where('patient_first_name', $firstName)
-                               ->where('patient_last_name', $lastName)
-                               ->where('dob', $dob)
-                               ->where('created_at', $this->lastPhxImportDate)
-                               ->first();
-
-        if ($row && $row->patient_id) {
-            return $row->patient_id;
-        }
-
-        return null;
-    }
-
     /**
      * Log Allergies Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logAllergiesSection(): MedicalRecordLogger
     {
         $allergies = PhoenixHeartAllergy::wherePatientId($this->medicalRecord->mrn)
-                                        ->where('created_at', $this->lastPhxImportDate)
-                                        ->get();
+            ->where('created_at', $this->lastPhxImportDate)
+            ->get();
 
         foreach ($allergies as $allergy) {
             $allergyLog = AllergyLog::create(
@@ -91,16 +55,42 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         return $this;
     }
 
+    public function logDemographicsSection(): MedicalRecordLogger
+    {
+        if (!$this->medicalRecord->mrn) {
+            $this->medicalRecord->mrn = $this->lookupMrn(
+                $this->medicalRecord->first_name,
+                $this->medicalRecord->last_name,
+                $this->medicalRecord->dob
+            );
+        }
+
+        if (!$this->medicalRecord->gender && $this->medicalRecord->mrn) {
+            $phx = PhoenixHeartName::where('patient_id', $this->medicalRecord->mrn)
+                ->where('created_at', $this->lastPhxImportDate)
+                ->first();
+
+            $this->medicalRecord->gender = $phx
+                ? $phx->gender
+                : null;
+        }
+
+        $this->medicalRecord->save();
+
+        return parent::logDemographicsSection();
+    }
+
     /**
      * Log Insurance Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logInsuranceSection(): MedicalRecordLogger
     {
         $insurances = PhoenixHeartInsurance::wherePatientId($this->medicalRecord->mrn)
-                                           ->where('created_at', $this->lastPhxImportDate)
-                                           ->get()
-                                           ->sortBy('order');
+            ->where('created_at', $this->lastPhxImportDate)
+            ->get()
+            ->sortBy('order');
 
         foreach ($insurances as $insurance) {
             $insurance = InsuranceLog::create(array_merge([
@@ -114,13 +104,14 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Medications Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logMedicationsSection(): MedicalRecordLogger
     {
         $medications = PhoenixHeartMedication::wherePatientId($this->medicalRecord->mrn)
-                                             ->where('created_at', $this->lastPhxImportDate)
-                                             ->get();
+            ->where('created_at', $this->lastPhxImportDate)
+            ->get();
 
         foreach ($medications as $medication) {
             $endDate   = null;
@@ -159,14 +150,15 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Problems Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProblemsSection(): MedicalRecordLogger
     {
         $problems = PhoenixHeartProblem::wherePatientId($this->medicalRecord->mrn)
-                                       ->where('created_at', $this->lastPhxImportDate)
-                                       ->orderBy('created_at', 'desc')
-                                       ->get();
+            ->where('created_at', $this->lastPhxImportDate)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $latestDate = optional($problems->first())
             ->created_at;
@@ -217,22 +209,23 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
 
     /**
      * Log Providers Section.
+     *
      * @return MedicalRecordLogger
      */
     public function logProvidersSection(): MedicalRecordLogger
     {
         $name = PhoenixHeartName::wherePatientId($this->medicalRecord->mrn)
-                                ->where('created_at', $this->lastPhxImportDate)
-                                ->first();
+            ->where('created_at', $this->lastPhxImportDate)
+            ->first();
 
-        if (! $name) {
+        if (!$name) {
             return $this;
         }
 
         $user = User::ofType('provider')
-                    ->whereFirstName($name->provider_first_name)
-                    ->whereLastName(explode(' ', $name->provider_last_name)[0])
-                    ->first();
+            ->whereFirstName($name->provider_first_name)
+            ->whereLastName(explode(' ', $name->provider_last_name)[0])
+            ->first();
 
         if ($user) {
             $provider = ProviderLog::create(array_merge([
@@ -253,5 +246,22 @@ class PhoenixHeartSectionsLogger extends TabularMedicalRecordSectionsLogger
         ], $this->foreignKeys));
 
         return $this;
+    }
+
+    public function lookupMrn($firstName, $lastName, $dob)
+    {
+        $dob = Carbon::parse($dob)->toDateString();
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+            ->where('patient_last_name', $lastName)
+            ->where('dob', $dob)
+            ->where('created_at', $this->lastPhxImportDate)
+            ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
     }
 }

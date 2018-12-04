@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 02/03/2018
- * Time: 5:08 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Traits;
@@ -12,9 +10,9 @@ use App\SaasAccount;
 
 trait SaasAccountable
 {
-    public function saasAccount()
+    public function isNotSaas()
     {
-        return $this->belongsTo(SaasAccount::class);
+        return !$this->isSaas();
     }
 
     public function isSaas()
@@ -22,9 +20,9 @@ trait SaasAccountable
         return $this->saas_account_id > 1;
     }
 
-    public function isNotSaas()
+    public function saasAccount()
     {
-        return !$this->isSaas();
+        return $this->belongsTo(SaasAccount::class);
     }
 
     public function saasAccountName()

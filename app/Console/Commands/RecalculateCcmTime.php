@@ -1,9 +1,11 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
-use App\Activity;
-use App\Patient;
 use App\Services\ActivityService;
 use App\User;
 use Carbon\Carbon;
@@ -12,13 +14,6 @@ use Illuminate\Console\Command;
 class RecalculateCcmTime extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for in format YYYY-MM-DD} {userIds? : comma separated. leave empty to recalculate for all}';
-
-    /**
      * The console command description.
      *
      * @var string
@@ -26,11 +21,17 @@ class RecalculateCcmTime extends Command
     protected $description = 'Goes through activities for this month and recalculates CCM Time.';
 
     /**
-     * Activity Service Instance
+     * Activity Service Instance.
      *
      * @var ActivityService
      */
     protected $service;
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'ccm_time:recalculate {dateString? : the month we are recalculating for in format YYYY-MM-DD} {userIds? : comma separated. leave empty to recalculate for all}';
 
     /**
      * Create a new command instance.
@@ -52,15 +53,15 @@ class RecalculateCcmTime extends Command
     public function handle()
     {
         $userIds = $this->argument('userIds') ?? null;
-        if ($userIds != null) {
+        if (null != $userIds) {
             $userIds = explode(',', $userIds);
         } else {
             $userIds = User::ofType('participant')
-                           ->pluck('id')
-                           ->all();
+                ->pluck('id')
+                ->all();
         }
 
-        $this->comment(count($userIds) . ' Users to recalculate time.');
+        $this->comment(count($userIds).' Users to recalculate time.');
 
         $date = $this->argument('dateString') ?? null;
 

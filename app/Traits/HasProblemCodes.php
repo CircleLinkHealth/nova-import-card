@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 10/24/2017
- * Time: 12:02 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Traits;
@@ -12,25 +10,6 @@ use App\Constants;
 
 trait HasProblemCodes
 {
-    public function icd9Codes()
-    {
-        return $this->codes()
-            ->where('problem_code_system_id', '=', '1');
-    }
-
-    public function icd10Codes()
-    {
-        return $this->codes()
-            ->where('problem_code_system_id', '=', '2');
-    }
-
-    public function snomedCodes()
-    {
-        return $this->codes()
-            ->where('problem_code_system_id', '=', '3');
-        ;
-    }
-
     public function codeMap()
     {
         $map = collect();
@@ -51,5 +30,23 @@ trait HasProblemCodes
         }
 
         return $map;
+    }
+
+    public function icd10Codes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', '2');
+    }
+
+    public function icd9Codes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', '1');
+    }
+
+    public function snomedCodes()
+    {
+        return $this->codes()
+            ->where('problem_code_system_id', '=', '3');
     }
 }

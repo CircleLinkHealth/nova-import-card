@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\CLH\Repositories\CCDImporterRepository;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
@@ -28,9 +34,9 @@ class MedicalRecordImportController extends Controller
             if ($imr) {
                 $medicalRecord = $imr->medicalRecord();
                 $medicalRecord->update([
-                    'imported' => false
+                    'imported' => false,
                 ]);
-    
+
                 $imr->delete();
             } else {
                 array_push($recordsNotFound, $id);
@@ -38,14 +44,56 @@ class MedicalRecordImportController extends Controller
             }
         }
 
-        return response()->json([ 'deleted' => $recordsToDelete, 'not_found' => $recordsNotFound ], 200);
+        return response()->json(['deleted' => $recordsToDelete, 'not_found' => $recordsNotFound], 200);
+    }
+
+    public function import(Request $request)
+    {
+        $recordsToImport = $request->all();
+
+        if (is_array($recordsToImport)) {
+            $importedRecords = [];
+            foreach ($recordsToImport as $record) {
+                if ($record) {
+                    $id  = $record['id'];
+                    $imr = ImportedMedicalRecord::find($id);
+                    if (empty($imr)) {
+                        continue;
+                    }
+                    try {
+                        $imr['location_id']         = $record['Location'];
+                        $imr['practice_id']         = $record['Practice'];
+                        $imr['billing_provider_id'] = $record['Billing Provider'];
+                        $carePlan                   = $imr->createCarePlan();
+                        array_push($importedRecords, [
+                            'id'        => $id,
+                            'completed' => true,
+                            'patient'   => $carePlan->patient()->first(),
+                        ]);
+                    } catch (\Exception $ex) {
+                        //throwing Exceptions to help debug importing issues
+                        throw $ex;
+//                            array_push($importedRecords, [
+//                                'id' => $id,
+//                                'completed' => false,
+//                                'error' => $ex->getMessage()
+//                            ]);
+                    }
+                }
+            }
+
+            return response()->json($importedRecords, 200);
+        }
+
+        return response()->json([
+            'message' => 'no records provided',
+        ], 400);
     }
 
     public function importDEPRECATED(Request $request)
     {
         $import = $request->input('medicalRecordsToImport');
         $delete = $request->input('medicalRecordsToDelete');
-
 
         if (!empty($import)) {
             foreach ($import as $id) {
@@ -64,7 +112,6 @@ class MedicalRecordImportController extends Controller
             }
         }
 
-
         if (!empty($delete)) {
             $deleted = [];
 
@@ -77,7 +124,7 @@ class MedicalRecordImportController extends Controller
 
                 $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
                 $medicalRecord->update([
-                    'imported' => false
+                    'imported' => false,
                 ]);
 
                 $imr->delete();
@@ -89,54 +136,10 @@ class MedicalRecordImportController extends Controller
         return response()->json(compact('imported', 'deleted'), 200);
     }
 
-    public function import(Request $request)
-    {
-        $recordsToImport = $request->all();
-
-        if (is_array($recordsToImport)) {
-            $importedRecords = [];
-            foreach ($recordsToImport as $record) {
-                if ($record) {
-                    $id = $record['id'];
-                    $imr = ImportedMedicalRecord::find($id);
-                    if (empty($imr)) {
-                        continue;
-                    } else {
-                        try {
-                            $imr['location_id'] = $record['Location'];
-                            $imr['practice_id'] = $record['Practice'];
-                            $imr['billing_provider_id'] = $record['Billing Provider'];
-                            $carePlan = $imr->createCarePlan();
-                            array_push($importedRecords, [
-                                'id' => $id,
-                                'completed' => true,
-                                'patient' => $carePlan->patient()->first()
-                            ]);
-                        } catch (\Exception $ex) {
-                            //throwing Exceptions to help debug importing issues
-                            throw $ex;
-//                            array_push($importedRecords, [
-//                                'id' => $id,
-//                                'completed' => false,
-//                                'error' => $ex->getMessage()
-//                            ]);
-                        }
-                    }
-                }
-            }
-            return response()->json($importedRecords, 200);
-        } else {
-            return response()->json([
-                'message' => 'no records provided'
-            ], 400);
-        }
-    }
-
     public function importOld(Request $request)
     {
         $import = $request->input('medicalRecordsToImport');
         $delete = $request->input('medicalRecordsToDelete');
-
 
         if (!empty($import)) {
             foreach ($import as $id) {
@@ -155,7 +158,6 @@ class MedicalRecordImportController extends Controller
             }
         }
 
-
         if (!empty($delete)) {
             $deleted = [];
 
@@ -168,7 +170,7 @@ class MedicalRecordImportController extends Controller
 
                 $medicalRecord = app($imr->medical_record_type)->find($imr->medical_record_id);
                 $medicalRecord->update([
-                    'imported' => false
+                    'imported' => false,
                 ]);
 
                 $imr->delete();

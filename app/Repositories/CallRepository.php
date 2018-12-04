@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/11/2017
- * Time: 2:58 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Repositories;
@@ -14,9 +12,9 @@ use Carbon\Carbon;
 
 class CallRepository
 {
-    public function model()
+    public function call($id)
     {
-        return app(Call::class);
+        return $this->model()->findOrFail($id);
     }
 
     public function count()
@@ -24,13 +22,13 @@ class CallRepository
         return $this->model()->select('id', DB::raw('count(*) as total'))->count();
     }
 
-    public function call($id)
+    public function model()
     {
-        return $this->model()->findOrFail($id);
+        return app(Call::class);
     }
 
     /**
-     * Get the number of calls for a patient for a month
+     * Get the number of calls for a patient for a month.
      *
      * @param $patientUserId
      * @param Carbon|null $monthYear
@@ -39,21 +37,21 @@ class CallRepository
      */
     public function numberOfCalls($patientUserId, Carbon $monthYear = null)
     {
-        if (! $monthYear) {
+        if (!$monthYear) {
             $monthYear = Carbon::now();
         }
 
         return $this->model()
-                    ->where([
-                        ['inbound_cpm_id', '=', $patientUserId],
-                        ['status', '!=', 'scheduled'],
-                    ])
-                    ->ofMonth($monthYear)
-                    ->count();
+            ->where([
+                ['inbound_cpm_id', '=', $patientUserId],
+                ['status', '!=', 'scheduled'],
+            ])
+            ->ofMonth($monthYear)
+            ->count();
     }
 
     /**
-     * Get the number of successful calls for a patient for a month
+     * Get the number of successful calls for a patient for a month.
      *
      * @param $patientUserId
      * @param Carbon|null $monthYear
@@ -62,17 +60,30 @@ class CallRepository
      */
     public function numberOfSuccessfulCalls($patientUserId, Carbon $monthYear = null)
     {
-        if (! $monthYear) {
+        if (!$monthYear) {
             $monthYear = Carbon::now();
         }
 
         return $this->model()
-                    ->where([
-                        ['inbound_cpm_id', '=', $patientUserId],
-                    ])
-                    ->ofStatus('reached')
-                    ->ofMonth($monthYear)
-                    ->count();
+            ->where([
+                ['inbound_cpm_id', '=', $patientUserId],
+            ])
+            ->ofStatus('reached')
+            ->ofMonth($monthYear)
+            ->count();
+    }
+
+    public function patientsWithoutAnyInboundCalls($practiceId)
+    {
+        $users = User::ofType('participant')
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            });
+        if ($practiceId) {
+            $users = $users->ofPractice($practiceId);
+        }
+
+        return $users->whereDoesntHave('inboundCalls');
     }
 
     public function patientsWithoutScheduledCalls($practiceId, Carbon $afterDate = null)
@@ -83,26 +94,14 @@ class CallRepository
         }
 
         return $users->with('carePlan')
-                     ->whereHas('patientInfo', function ($q) {
-                         $q->enrolled();
-                     })
-                     ->whereDoesntHave('inboundScheduledCalls');
+            ->whereHas('patientInfo', function ($q) {
+                $q->enrolled();
+            })
+            ->whereDoesntHave('inboundScheduledCalls');
     }
 
     public function scheduledCalls()
     {
         return $this->model()->scheduled();
-    }
-
-    public function patientsWithoutAnyInboundCalls($practiceId)
-    {
-        $users = User::ofType('participant')
-                   ->whereHas('patientInfo', function ($q) {
-                       $q->enrolled();
-                   });
-        if ($practiceId) {
-            $users = $users->ofPractice($practiceId);
-        }
-        return $users->whereDoesntHave('inboundCalls');
     }
 }

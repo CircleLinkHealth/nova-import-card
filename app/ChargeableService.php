@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 class ChargeableService extends \App\BaseModel
@@ -23,26 +27,26 @@ class ChargeableService extends \App\BaseModel
         'amount',
     ];
 
-    public function practices()
+    public static function defaultServices()
     {
-        return $this->morphedByMany(Practice::class, 'chargeable')
-                    ->withTimestamps();
-    }
-
-    public function providers()
-    {
-        return $this->morphedByMany(User::class, 'chargeable')
-                    ->withTimestamps();
+        return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
     }
 
     public function patientSummaries()
     {
         return $this->morphedByMany(PatientMonthlySummary::class, 'chargeable')
-                    ->withTimestamps();
+            ->withTimestamps();
     }
 
-    public static function defaultServices()
+    public function practices()
     {
-        return self::whereIn('code', self::DEFAULT_CHARGEABLE_SERVICE_CODES)->get();
+        return $this->morphedByMany(Practice::class, 'chargeable')
+            ->withTimestamps();
+    }
+
+    public function providers()
+    {
+        return $this->morphedByMany(User::class, 'chargeable')
+            ->withTimestamps();
     }
 }

@@ -1,17 +1,18 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use App\CLH\Helpers\StringManipulation;
 use App\Enrollee;
-use App\Practice;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Twilio\Jwt\ClientToken;
-use Twilio\Twiml;
 use Twilio\Rest\Client;
+use Twilio\Twiml;
 
 class TwilioController extends Controller
 {
@@ -33,9 +34,10 @@ class TwilioController extends Controller
     /**
      * @param Request $request
      *
-     * @return mixed
      * @throws \Twilio\Exceptions\TwimlException
      * @throws \Exception
+     *
+     * @return mixed
      */
     public function placeCall(Request $request)
     {
@@ -68,11 +70,6 @@ class TwilioController extends Controller
         return $this->responseWithXmlType(response($response));
     }
 
-    private function responseWithXmlType($response)
-    {
-        return $response->header('Content-Type', 'application/xml');
-    }
-
     public function sendTestSMS()
     {
         $client = new Client($_ENV['TWILIO_SID'], $_ENV['TWILIO_TOKEN']);
@@ -82,24 +79,22 @@ class TwilioController extends Controller
         foreach ($smsQueue as $recipient) {
             $provider_name = User::find($recipient->provider_id)->getFullName();
 
-            if ($recipient->invite_sent_at == null) {
+            if (null == $recipient->invite_sent_at) {
                 //first go, make invite code:
 
-                $recipient->invite_code     = rand(183, 982) . substr(uniqid(), -3);
-                $link                       = url("join/$recipient->invite_code");
+                $recipient->invite_code     = rand(183, 982).substr(uniqid(), -3);
+                $link                       = url("join/{$recipient->invite_code}");
                 $recipient->invite_sent_at  = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
                 $recipient->attempt_count   = 1;
                 $recipient->save();
 
-                $message = "Dr. $provider_name has invited you to their new wellness program! Please enroll here: $link";
+                $message = "Dr. ${provider_name} has invited you to their new wellness program! Please enroll here: ${link}";
 
                 $client->account->messages->create(
-
                 // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
-
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
                     ]
@@ -107,25 +102,28 @@ class TwilioController extends Controller
             } else {
                 $sad_face_emoji = "\u{1F648}";
 
-                $link                       = url("join/$recipient->invite_code");
+                $link                       = url("join/{$recipient->invite_code}");
                 $recipient->invite_sent_at  = Carbon::now()->toDateTimeString();
                 $recipient->last_attempt_at = Carbon::now()->toDateTimeString();
                 $recipient->attempt_count   = 2;
                 $recipient->save();
 
-                $message = "Dr. $provider_name hasn’t heard from you regarding their new wellness program. $sad_face_emoji Please enroll here: $link";
+                $message = "Dr. ${provider_name} hasn’t heard from you regarding their new wellness program. ${sad_face_emoji} Please enroll here: ${link}";
 
                 $client->account->messages->create(
-
                 // the number we are sending to - Any phone number
                     $recipient->cell_phone,
                     [
-
                         'from' => $recipient->practice->outgoing_phone_number,
                         'body' => $message,
                     ]
                 );
             }
         }
+    }
+
+    private function responseWithXmlType($response)
+    {
+        return $response->header('Content-Type', 'application/xml');
     }
 }

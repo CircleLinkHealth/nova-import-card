@@ -1,11 +1,13 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\ProblemCode;
 use App\Services\ProblemCodeService;
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProblemCodeController extends Controller
@@ -14,7 +16,6 @@ class ProblemCodeController extends Controller
 
     /**
      * MedicationController constructor.
-     *
      */
     public function __construct(ProblemCodeService $problemCodeService)
     {
@@ -22,11 +23,16 @@ class ProblemCodeController extends Controller
     }
 
     /**
-     * returns a list of code-systems
+     * returns a list of code-systems.
      */
     public function index()
     {
         return response()->json($this->problemCodeService->systems());
+    }
+
+    public function remove($id)
+    {
+        return response()->json($this->problemCodeService->repo()->remove($id));
     }
 
     public function show($id)
@@ -36,15 +42,11 @@ class ProblemCodeController extends Controller
 
     public function store(Request $request)
     {
-        $problemCode = new ProblemCode();
-        $problemCode->problem_id = $request->input('problem_id');
+        $problemCode                         = new ProblemCode();
+        $problemCode->problem_id             = $request->input('problem_id');
         $problemCode->problem_code_system_id = $request->input('problem_code_system_id');
-        $problemCode->code = $request->code;
-        return response()->json($this->problemCodeService->add($problemCode));
-    }
+        $problemCode->code                   = $request->code;
 
-    public function remove($id)
-    {
-        return response()->json($this->problemCodeService->repo()->remove($id));
+        return response()->json($this->problemCodeService->add($problemCode));
     }
 }

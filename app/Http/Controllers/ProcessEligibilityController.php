@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Practice;
@@ -29,7 +33,7 @@ class ProcessEligibilityController extends Controller
                     $request['filterInsurance'],
                     $request['filterProblems']
                 );
-        } elseif (! ! $request->get('file')) {
+        } elseif ((bool) $request->get('file')) {
             $practice = Practice::whereName($request['practiceName'])->firstOrFail();
 
             $batch = $this->processEligibilityService

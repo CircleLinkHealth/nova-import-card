@@ -1,18 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/28/2018
- * Time: 10:54 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\ValueObjects\SAAS\Admin;
 
 class InternalUser
 {
-    private $user;
     private $practices;
     private $role;
+    private $user;
 
     public function __construct($user, $practiceIds, $roleId)
     {
@@ -26,35 +24,11 @@ class InternalUser
      */
     public function getPractices()
     {
-        if (! is_array($this->practices)) {
+        if (!is_array($this->practices)) {
             return [$this->practices];
         }
 
         return $this->practices;
-    }
-
-    /**
-     * @param mixed $practices
-     */
-    public function setPractices($practices): void
-    {
-        $this->practices = $practices;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
-
-    /**
-     * @param mixed $user
-     */
-    public function setUser($user): void
-    {
-        $this->user = $user;
     }
 
     /**
@@ -66,10 +40,34 @@ class InternalUser
     }
 
     /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $practices
+     */
+    public function setPractices($practices): void
+    {
+        $this->practices = $practices;
+    }
+
+    /**
      * @param mixed $role
      */
     public function setRole($role): void
     {
         $this->role = $role;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user): void
+    {
+        $this->user = $user;
     }
 }

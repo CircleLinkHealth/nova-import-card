@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use App\CarePlan;
@@ -10,8 +14,8 @@ class CheckCarePlanMode
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      *
      * @return mixed
      */
@@ -22,7 +26,7 @@ class CheckCarePlanMode
         $cp = CarePlan::where('user_id', '=', $patientId)
             ->first();
 
-        if ($cp && $cp->mode == CarePlan::WEB) {
+        if ($cp && CarePlan::WEB == $cp->mode) {
             return $next($request);
         }
 

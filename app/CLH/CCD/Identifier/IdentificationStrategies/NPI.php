@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\CLH\CCD\Identifier\IdentificationStrategies;
 
 use App\Models\CCD\CcdVendor;
@@ -12,7 +16,7 @@ class NPI extends BaseIdentificationStrategy
             return false;
         }
 
-        $providers = (array)$this->ccd->document->documentation_of;
+        $providers = (array) $this->ccd->document->documentation_of;
 
         $vendorNpis = CcdVendor::pluck('doctor_oid')->all();
 

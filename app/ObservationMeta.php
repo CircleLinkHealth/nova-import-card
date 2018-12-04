@@ -1,21 +1,26 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\ObservationMeta
+ * App\ObservationMeta.
  *
- * @property int $id
- * @property int $obs_id
- * @property int $comment_id
- * @property string $message_id
- * @property string $meta_key
- * @property string $meta_value
- * @property int $program_id
- * @property int $legacy_meta_id
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Observation $observationMeta
+ * @property int              $id
+ * @property int              $obs_id
+ * @property int              $comment_id
+ * @property string           $message_id
+ * @property string           $meta_key
+ * @property string           $meta_value
+ * @property int              $program_id
+ * @property int              $legacy_meta_id
+ * @property \Carbon\Carbon   $created_at
+ * @property \Carbon\Carbon   $updated_at
+ * @property \App\Observation $observationMeta
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCommentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ObservationMeta whereId($value)
@@ -30,15 +35,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ObservationMeta extends \App\BaseModel
 {
-
-
-
     /**
-     * The database table used by the model.
+     * The attributes that are mass assignable.
      *
-     * @var string
+     * @var array
      */
-    protected $table = 'lv_observationmeta';
+    protected $fillable = ['id', 'obs_id', 'comment_id', 'message_id', 'legacy_meta_id', 'meta_key', 'meta_value'];
 
     /**
      * The primary key for the model.
@@ -48,17 +50,16 @@ class ObservationMeta extends \App\BaseModel
     protected $primaryKey = 'id';
 
     /**
-     * The attributes that are mass assignable.
+     * The database table used by the model.
      *
-     * @var array
+     * @var string
      */
-    protected $fillable = ['id', 'obs_id', 'comment_id', 'message_id', 'legacy_meta_id', 'meta_key', 'meta_value'];
+    protected $table = 'lv_observationmeta';
 
     public function observationMeta()
     {
         return $this->belongsTo('App\Observation', 'obs_id');
     }
-
 
     public function save(array $params = [])
     {
@@ -66,8 +67,8 @@ class ObservationMeta extends \App\BaseModel
             return false;
         }
         $observation = Observation::find($this->obs_id);
-        $comment = Comment::find($observation->comment_id);
-        $wpUser = User::find($observation->user_id);
+        $comment     = Comment::find($observation->comment_id);
+        $wpUser      = User::find($observation->user_id);
 
         if (!$wpUser || !$observation) {
             return false;

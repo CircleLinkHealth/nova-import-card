@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Observers;
 
 use App\User;
@@ -8,55 +12,27 @@ use Illuminate\Database\QueryException;
 class UserObserver
 {
     /**
-     * Listen to the User saving event.
-     *
-     * @param  User $user
-     *
-     * @return void
-     */
-    public function saving(User $user)
-    {
-        if (! $user->saas_account_id) {
-            $practice = $user->practices->first();
-
-            if ($practice) {
-                $user->saas_account_id = $practice->saas_account_id;
-            } elseif (auth()->check()) {
-                $user->saas_account_id = auth()->user()->saas_account_id;
-            }
-        }
-    }
-
-    /**
      * Listen to the User creating event.
      *
-     * @param  User $user
-     *
-     * @return void
+     * @param User $user
      */
     public function creating(User $user)
     {
-        //
     }
 
     /**
      * Listen to the User deleting event.
      *
-     * @param  User $user
-     *
-     * @return void
+     * @param User $user
      */
     public function deleting(User $user)
     {
-        //
     }
 
     /**
      * Listen to the User saved event.
      *
-     * @param  User $user
-     *
-     * @return void
+     * @param User $user
      */
     public function saved(User $user)
     {
@@ -78,7 +54,7 @@ class UserObserver
                         //check if this is a mysql exception for unique key constraint
                         if ($e instanceof QueryException) {
                             $errorCode = $e->errorInfo[1];
-                            if ($errorCode == 1062) {
+                            if (1062 == $errorCode) {
                                 return false;
                             }
                         }
@@ -86,6 +62,24 @@ class UserObserver
                         throw $e;
                     }
                 });
+        }
+    }
+
+    /**
+     * Listen to the User saving event.
+     *
+     * @param User $user
+     */
+    public function saving(User $user)
+    {
+        if (!$user->saas_account_id) {
+            $practice = $user->practices->first();
+
+            if ($practice) {
+                $user->saas_account_id = $practice->saas_account_id;
+            } elseif (auth()->check()) {
+                $user->saas_account_id = auth()->user()->saas_account_id;
+            }
         }
     }
 }

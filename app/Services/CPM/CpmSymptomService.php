@@ -1,16 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/3/16
- * Time: 2:21 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
 
 use App\Contracts\Services\CpmModel;
-use App\User;
 use App\Repositories\CpmSymptomRepository;
+use App\User;
 
 class CpmSymptomService implements CpmModel
 {

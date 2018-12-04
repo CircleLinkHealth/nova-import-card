@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreatePracticeRoleUserTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('practice_role_user');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -19,18 +28,7 @@ class CreatePracticeRoleUserTable extends Migration
             $table->integer('role_id')->unsigned()->nullable()->index('practice_user_role_id_foreign');
             $table->boolean('has_admin_rights')->default(false);
             $table->boolean('send_billing_reports')->default(false);
-            $table->unique(['user_id','role_id','program_id'], 'practice_user_user_id_role_id_program_id_unique');
+            $table->unique(['user_id', 'role_id', 'program_id'], 'practice_user_user_id_role_id_program_id_unique');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('practice_role_user');
     }
 }

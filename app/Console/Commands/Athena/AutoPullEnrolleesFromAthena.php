@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands\Athena;
 
 use App\EligibilityBatch;
@@ -11,7 +15,14 @@ use Illuminate\Support\Facades\Artisan;
 
 class AutoPullEnrolleesFromAthena extends Command
 {
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Pull eligible patients from Athena API.';
     protected $options;
+    protected $service;
 
     /**
      * The name and signature of the console command.
@@ -22,13 +33,6 @@ class AutoPullEnrolleesFromAthena extends Command
                                                                         {from? : From date yyyy-mm-dd}
                                                                         {to? : To date yyyy-mm-dd}
                                                                         {offset? : Offset results from athena api using number of target patients in the table}';
-    protected $service;
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Pull eligible patients from Athena API.';
 
     /**
      * Create a new command instance.
@@ -43,8 +47,8 @@ class AutoPullEnrolleesFromAthena extends Command
 
         $this->options = [
             'filterProblems'      => true,
-            "filterInsurance"     => true,
-            "filterLastEncounter" => true,
+            'filterInsurance'     => true,
+            'filterLastEncounter' => true,
         ];
     }
 
@@ -57,7 +61,7 @@ class AutoPullEnrolleesFromAthena extends Command
     {
         $to   = Carbon::now()->format('y-m-d');
         $from = Carbon::now()->subMonth()->format('y-m-d');
-        ;
+
         $offset = true;
 
         if ($this->argument('offset')) {
@@ -76,19 +80,19 @@ class AutoPullEnrolleesFromAthena extends Command
             $practices = Practice::whereHas('ehr', function ($ehr) {
                 $ehr->where('name', 'Athena');
             })
-                                 ->where('external_id', $this->argument('athenaPracticeId'))
-                                 ->get();
+                ->where('external_id', $this->argument('athenaPracticeId'))
+                ->get();
         } else {
             $practices = Practice::whereHas('ehr', function ($ehr) {
                 $ehr->where('name', 'Athena');
             })
-                                 ->whereHas('settings', function ($settings) {
-                                     $settings->where('api_auto_pull', 1);
-                                 })
-                                 ->get();
+                ->whereHas('settings', function ($settings) {
+                    $settings->where('api_auto_pull', 1);
+                })
+                ->get();
         }
 
-        if ($practices->count() == 0) {
+        if (0 == $practices->count()) {
             if (app()->environment('worker')) {
                 sendSlackMessage(
                     ' #parse_enroll_import',

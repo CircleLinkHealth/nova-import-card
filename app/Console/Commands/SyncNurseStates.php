@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Nurse;
@@ -9,6 +13,12 @@ use Illuminate\Console\Command;
 class SyncNurseStates extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Add states to all nurses, according to the practices they have access to.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -16,16 +26,7 @@ class SyncNurseStates extends Command
     protected $signature = 'nurses:syncStates';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Add states to all nurses, according to the practices they have access to.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -40,26 +41,26 @@ class SyncNurseStates extends Command
     public function handle()
     {
         $states = State::get()
-                       ->pluck('id', 'code')
-                       ->all();
+            ->pluck('id', 'code')
+            ->all();
 
         Nurse::with('user.practices.locations')
-             ->get()
-             ->each(function ($n) use ($states) {
-                 $user = $n->user;
+            ->get()
+            ->each(function ($n) use ($states) {
+                $user = $n->user;
 
-                 if (! $user) {
-                     return false;
-                 }
+                if (!$user) {
+                    return false;
+                }
 
-                 $practices = $user
+                $practices = $user
                      ->practices;
 
-                 if (! $practices) {
-                     return false;
-                 }
+                if (!$practices) {
+                    return false;
+                }
 
-                 $stateIDs = $practices
+                $stateIDs = $practices
                      ->map(function ($p) use ($states) {
                          return $p->locations
                              ->map(function ($l) use ($states) {
@@ -70,8 +71,8 @@ class SyncNurseStates extends Command
                      ->unique()
                      ->all();
 
-                 $n->states()
-                   ->syncWithoutDetaching($stateIDs);
-             });
+                $n->states()
+                     ->syncWithoutDetaching($stateIDs);
+            });
     }
 }

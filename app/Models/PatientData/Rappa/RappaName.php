@@ -1,13 +1,15 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Models\PatientData\Rappa;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Models\PatientData\Rappa\RappaName
+ * App\Models\PatientData\Rappa\RappaName.
  *
- * @property int|null $patient_id
+ * @property int|null    $patient_id
  * @property string|null $email
  * @property string|null $first_name
  * @property string|null $last_name
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $city
  * @property string|null $state
  * @property string|null $zip
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereAddress1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereAddress2($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\PatientData\Rappa\RappaName whereCity($value)

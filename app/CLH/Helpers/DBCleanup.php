@@ -1,7 +1,12 @@
-<?php namespace App\CLH\Helpers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\CLH\Helpers;
 
 use App\CPRulesItem;
-use App\CPRulesPCP;
 
 class DBCleanup
 {

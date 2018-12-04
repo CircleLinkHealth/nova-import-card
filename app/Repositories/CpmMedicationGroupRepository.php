@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
 use App\Models\CCD\Medication;
@@ -7,28 +11,19 @@ use App\Models\CPM\CpmMedicationGroup;
 
 class CpmMedicationGroupRepository
 {
-    public function model()
-    {
-        return app(CpmMedicationGroup::class);
-    }
-
     public function count()
     {
         return $this->model()->count();
     }
 
-    public function setupGroupMedicationCount($group)
+    public function group($id)
     {
-        $group['medications'] = $group->medications()->count();
+        $group = $this->model()->find($id);
+        if ($group) {
+            return $this->setupGroupMedication($group);
+        }
 
-        return $group;
-    }
-
-    public function setupGroupMedication($group)
-    {
-        $group['medications'] = $group->medications()->paginate();
-
-        return $group;
+        return null;
     }
 
     public function groups()
@@ -38,14 +33,9 @@ class CpmMedicationGroupRepository
         return $groups->getCollection()->transform([$this, 'setupGroupMedicationCount']);
     }
 
-    public function group($id)
+    public function model()
     {
-        $group = $this->model()->find($id);
-        if ($group) {
-            return $this->setupGroupMedication($group);
-        } else {
-            return null;
-        }
+        return app(CpmMedicationGroup::class);
     }
 
     public function patientGroups($userId)
@@ -55,5 +45,19 @@ class CpmMedicationGroupRepository
         ])->groupBy('medication_group_id')->with(['cpmMedicationGroup'])->get()->map(function ($m) {
             return $m->cpmMedicationGroup;
         })->filter()->toArray());
+    }
+
+    public function setupGroupMedication($group)
+    {
+        $group['medications'] = $group->medications()->paginate();
+
+        return $group;
+    }
+
+    public function setupGroupMedicationCount($group)
+    {
+        $group['medications'] = $group->medications()->count();
+
+        return $group;
     }
 }

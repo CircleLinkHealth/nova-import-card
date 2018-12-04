@@ -1,12 +1,12 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
-use App\AppConfig;
 use App\Services\CPM\CpmBiometricService;
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class BiometricController extends Controller
 {
@@ -14,7 +14,6 @@ class BiometricController extends Controller
 
     /**
      * BiometricController constructor.
-     *
      */
     public function __construct(CpmBiometricService $biometricService)
     {
@@ -25,14 +24,14 @@ class BiometricController extends Controller
     {
         return response()->json($this->biometricService->biometrics());
     }
-    
-    public function show($biometricId)
-    {
-        return response()->json($this->biometricService->biometric($biometricId));
-    }
-    
+
     public function patients($biometricId)
     {
         return response()->json($this->biometricService->biometricPatients($biometricId));
+    }
+
+    public function show($biometricId)
+    {
+        return response()->json($this->biometricService->biometric($biometricId));
     }
 }

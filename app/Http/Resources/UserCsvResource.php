@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
@@ -11,44 +15,45 @@ class UserCsvResource extends Resource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request
+     * @param mixed $request
      *
      * @return array
      */
     public function toArray($request)
     {
-        $practice = $this->primaryPractice;
-        $patient  = $this->patientInfo;
-        $careplan = $this->carePlan;
+        $practice      = $this->primaryPractice;
+        $patient       = $this->patientInfo;
+        $careplan      = $this->carePlan;
         $ccmStatusDate = '';
-        if ($patient->ccm_status == 'paused') {
+        if ('paused' == $patient->ccm_status) {
             $ccmStatusDate = $patient->date_paused;
         }
-        if ($patient->ccm_status == 'withdrawn') {
+        if ('withdrawn' == $patient->ccm_status) {
             $ccmStatusDate = $patient->date_withdrawn;
         }
-        if ($patient->ccm_status == 'unreachable') {
+        if ('unreachable' == $patient->ccm_status) {
             $ccmStatusDate = $patient->date_unreachable;
         }
 
-        return ('"' . $this->display_name ?? $this->name()) . '",' .
-               '"' . $this->getBillingProviderName() . '",' .
-               '"' . $practice->display_name . '",' .
-               '"' . $patient->ccm_status . '",' .
-               '"' . $careplan->status . '",' .
-               '"' . $patient->birth_date . '",' .
-               '"' . $this->getPhone() . '",' .
-               '"' . ($patient->birth_date
+        return ('"'.$this->display_name ?? $this->name()).'",'.
+               '"'.$this->getBillingProviderName().'",'.
+               '"'.$practice->display_name.'",'.
+               '"'.$patient->ccm_status.'",'.
+               '"'.$careplan->status.'",'.
+               '"'.$patient->birth_date.'",'.
+               '"'.$this->getPhone().'",'.
+               '"'.($patient->birth_date
                 ? Carbon::parse($patient->birth_date)->age
-                : 0) . '",' .
-               '"' . $this->created_at . '",' .
-               '"' . $this->getTimeInDecimals($this->getCcmTime()) . '",' .
-               '"' . $ccmStatusDate . '"' ;
+                : 0).'",'.
+               '"'.$this->created_at.'",'.
+               '"'.$this->getTimeInDecimals($this->getCcmTime()).'",'.
+               '"'.$ccmStatusDate.'"';
     }
 
     /**
      * Get CCM time in minutes (decimal form) from seconds.
      *
-     * @param String|null $ccmTime in seconds
+     * @param string|null $ccmTime in seconds
      *
      * @return string CCM minutes in decimal
      */
@@ -57,6 +62,7 @@ class UserCsvResource extends Resource
         if (!$ccmTime) {
             return '0.00';
         }
-        return number_format($ccmTime / 60, 2, '.', '') ;
+
+        return number_format($ccmTime / 60, 2, '.', '');
     }
 }

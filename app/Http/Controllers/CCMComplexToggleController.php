@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Algorithms\Invoicing\AlternativeCareTimePayableCalculator;
@@ -19,12 +23,12 @@ class CCMComplexToggleController extends Controller
         $date = Carbon::now()->startOfMonth()->toDateString();
 
         $patient = User::where('id', $patientId)
-                       ->with([
-                           'patientSummaries' => function ($q) use ($date) {
-                               $q->where('month_year', $date);
-                           },
-                       ])
-                       ->first();
+            ->with([
+                'patientSummaries' => function ($q) use ($date) {
+                    $q->where('month_year', $date);
+                },
+            ])
+            ->first();
 
         $patientRecord = $patient
             ->patientSummaries

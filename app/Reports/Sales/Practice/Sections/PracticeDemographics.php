@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Reports\Sales\Practice\Sections;
 
 use App\Practice;
@@ -22,34 +26,33 @@ class PracticeDemographics extends SalesReportSection
 
     public function render()
     {
-        $lead = optional($this->practice->lead)->getFullName() ?? 'N/A';
+        $lead      = optional($this->practice->lead)->getFullName() ?? 'N/A';
         $providers = $this->practice->getCountOfUserTypeAtPractice('provider');
-        $mas = $this->practice->getCountOfUserTypeAtPractice('med_assistant');
-        $oa = $this->practice->getCountOfUserTypeAtPractice('office_admin');
+        $mas       = $this->practice->getCountOfUserTypeAtPractice('med_assistant');
+        $oa        = $this->practice->getCountOfUserTypeAtPractice('office_admin');
 
         $disabled_users = User::whereProgramId($this->practice->id)
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'provider')
-                ->orWhere('name', 'med_assistant')
-                ->orWhere('name', 'office_admin');
+                    ->orWhere('name', 'med_assistant')
+                    ->orWhere('name', 'office_admin');
             })
             ->where('user_status', 0)
             ->get();
 
         foreach ($disabled_users as $user) {
-            if ($user->roles[0]->name == 'provider') {
-                $providers--;
+            if ('provider' == $user->roles[0]->name) {
+                --$providers;
             }
 
-            if ($user->roles[0]->name == 'med_assistant') {
-                $mas--;
+            if ('med_assistant' == $user->roles[0]->name) {
+                --$mas;
             }
 
-            if ($user->roles[0]->name == 'office_admin') {
-                $oa--;
+            if ('office_admin' == $user->roles[0]->name) {
+                --$oa;
             }
         }
-
 
         $total = $providers + $mas + $oa;
 
@@ -59,7 +62,6 @@ class PracticeDemographics extends SalesReportSection
         }
 
         return [
-
             'lead'      => $lead,
             'providers' => $providers,
             'rns'       => $mas,
@@ -67,7 +69,6 @@ class PracticeDemographics extends SalesReportSection
             'disabled'  => count($disabled_users),
 
             'total' => $total,
-
         ];
     }
 }

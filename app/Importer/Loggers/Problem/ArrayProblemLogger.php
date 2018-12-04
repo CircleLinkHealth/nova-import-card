@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 9/11/18
- * Time: 10:35 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Problem;
@@ -29,12 +27,12 @@ class ArrayProblemLogger implements Logger
 
     public function shouldHandle($problems)
     {
-        if (! is_array($problems)) {
+        if (!is_array($problems)) {
             return false;
         }
 
         foreach ($problems as $prob) {
-            if (! array_keys_exist([
+            if (!array_keys_exist([
                 'code',
                 'name',
                 'code_type',

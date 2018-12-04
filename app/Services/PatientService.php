@@ -1,8 +1,14 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\Filters\PatientFilters;
-use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserAutocompleteResource;
+use App\Http\Resources\UserCsvResource;
 use App\Http\Resources\UserSafeResource;
 use App\Patient;
 use App\Practice;
@@ -15,67 +21,24 @@ use Excel;
 
 class PatientService
 {
-    private $patientRepo;
-    private $userRepo;
     private $allergyRepo;
     private $patientReadRepo;
+    private $patientRepo;
+    private $userRepo;
 
     public function __construct(PatientWriteRepository $patientRepo, PatientReadRepository $patientReadRepo, CcdAllergyService $allergyService, UserRepositoryEloquent $userRepo)
     {
-        $this->patientRepo = $patientRepo;
-        $this->userRepo = $userRepo;
-        $this->allergyService = $allergyService;
+        $this->patientRepo     = $patientRepo;
+        $this->userRepo        = $userRepo;
+        $this->allergyService  = $allergyService;
         $this->patientReadRepo = $patientReadRepo;
-    }
-
-    public function repo()
-    {
-        return $this->patientRepo;
-    }
-    
-    public function readRepo()
-    {
-        return $this->patientReadRepo;
-    }
-
-    public function getPatientByUserId($userId)
-    {
-        return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
-    }
-
-    public function getCcdAllergies($userId)
-    {
-        return $this->allergyService->patientAllergies($userId);
-    }
-
-    public function setStatus($userId, $status)
-    {
-        $this->repo()->setStatus($userId, Patient::ENROLLED);
-    }
-
-    public function patients(PatientFilters $filters)
-    {
-        $users = $this->readRepo()->patients($filters);
-
-        if ($filters->isAutocomplete()) {
-            return UserAutocompleteResource::collection($users);
-        }
-
-        if ($filters->isCsv()) {
-            return UserCsvResource::collection($users);
-        }
-
-        if ($filters->isExcel()) {
-            return $this->excelReport($users);
-        }
-
-        return UserSafeResource::collection($users);
     }
 
     public function excelReport($users)
     {
         $date = date('Y-m-d H:i:s');
-        return Excel::create('CLH-Patients-' . $date, function ($excel) use ($date, $users) {
+
+        return Excel::create('CLH-Patients-'.$date, function ($excel) use ($date, $users) {
             $excel->setTitle('CLH Patients List');
             $excel->setCreator('CLH System')->setCompany('CircleLink Health');
             $excel->setDescription('CLH Patients List');
@@ -97,7 +60,7 @@ class PatientService
                     'phone',
                     'age',
                     'registeredOn',
-                    'ccm'
+                    'ccm',
                 ]);
                 foreach ($users as $user) {
                     if ($i > 2000000) {
@@ -118,12 +81,56 @@ class PatientService
                             $user['phone'],
                             $patient ? ($patient['birth_date'] ? Carbon::parse($patient['birth_date'])->age : 0) : null,
                             $user['created_at'] ? Carbon::parse($user['created_at'])->format('Y-m-d') : null,
-                            $patient ? gmdate('H:i:s', $user['ccm_time']) : null
+                            $patient ? gmdate('H:i:s', $user['ccm_time']) : null,
                         ]);
-                        $i++;
+                        ++$i;
                     }
                 }
             });
         })->export('xls');
+    }
+
+    public function getCcdAllergies($userId)
+    {
+        return $this->allergyService->patientAllergies($userId);
+    }
+
+    public function getPatientByUserId($userId)
+    {
+        return optional($this->userRepo->model()->with(['patientInfo'])->find($userId))->patientInfo;
+    }
+
+    public function patients(PatientFilters $filters)
+    {
+        $users = $this->readRepo()->patients($filters);
+
+        if ($filters->isAutocomplete()) {
+            return UserAutocompleteResource::collection($users);
+        }
+
+        if ($filters->isCsv()) {
+            return UserCsvResource::collection($users);
+        }
+
+        if ($filters->isExcel()) {
+            return $this->excelReport($users);
+        }
+
+        return UserSafeResource::collection($users);
+    }
+
+    public function readRepo()
+    {
+        return $this->patientReadRepo;
+    }
+
+    public function repo()
+    {
+        return $this->patientRepo;
+    }
+
+    public function setStatus($userId, $status)
+    {
+        $this->repo()->setStatus($userId, Patient::ENROLLED);
     }
 }

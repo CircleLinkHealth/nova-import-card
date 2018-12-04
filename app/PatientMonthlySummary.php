@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
 use App\Models\CCD\Problem;
@@ -7,28 +11,29 @@ use App\Traits\HasChargeableServices;
 use Carbon\Carbon;
 
 /**
- * App\PatientMonthlySummary
+ * App\PatientMonthlySummary.
  *
- * @property int $id
- * @property int $patient_id
- * @property int $ccm_time
- * @property int $bhi_time
- * @property \Carbon\Carbon $month_year
- * @property int $no_of_calls
- * @property int $no_of_successful_calls
- * @property string $billable_problem1
- * @property string $billable_problem1_code
- * @property string $billable_problem2
- * @property string $billable_problem2_code
- * @property int $is_ccm_complex
- * @property int $approved
- * @property int $rejected
- * @property int|null $actor_id
+ * @property int                 $id
+ * @property int                 $patient_id
+ * @property int                 $ccm_time
+ * @property int                 $bhi_time
+ * @property \Carbon\Carbon      $month_year
+ * @property int                 $no_of_calls
+ * @property int                 $no_of_successful_calls
+ * @property string              $billable_problem1
+ * @property string              $billable_problem1_code
+ * @property string              $billable_problem2
+ * @property string              $billable_problem2_code
+ * @property int                 $is_ccm_complex
+ * @property int                 $approved
+ * @property int                 $rejected
+ * @property int|null            $actor_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property int $total_time
- * @property-read \App\User $actor
- * @property-read \App\Patient $patient_info
+ * @property int                 $total_time
+ * @property \App\User           $actor
+ * @property \App\Patient        $patient_info
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getCurrent()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary getForMonth(\Carbon\Carbon $month)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PatientMonthlySummary whereActorId($value)
@@ -78,64 +83,68 @@ class PatientMonthlySummary extends BaseModel
         'billable_problem2_code', //@todo: Deprecate in favor of billableProblems()
     ];
 
-    //updates Call info for patient
-
-    public static function updateCCMInfoForPatient(
-        $userId,
-        $ccmTime
-    ) {
-        $dayStart = Carbon::now()->startOfMonth()->toDateString();
-
-        $record = PatientMonthlySummary::updateOrCreate([
-            'patient_id' => $userId,
-            'month_year' => $dayStart,
-        ], [
-            'ccm_time' => $ccmTime,
-        ]);
-
-        return $record;
-    }
-
-    public function patient()
-    {
-        return $this->belongsTo(User::class, 'patient_id');
-    }
-
     public function actor()
     {
         return $this->hasOne(User::class, 'actor_id');
     }
 
-    public function scopeGetCurrent($q)
+    public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
     {
-        return $q->whereMonthYear(Carbon::now()->firstOfMonth()->toDateString());
+        return $this->billableProblems()
+            ->attach($problemId, [
+                'type'        => $type,
+                'name'        => $name,
+                'icd_10_code' => $icd10Code,
+            ]);
     }
 
-    public function scopeGetForMonth($q, Carbon $month)
+    public function billableBhiProblems()
     {
-        return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
+        return $this->billableProblems()->where('type', '=', 'bhi');
     }
 
-    //Run at beginning of month
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function billableProblem1()
+    {
+        return $this->belongsTo(Problem::class, 'problem_1');
+    }
 
-    public function getPatientsOver20MinsForPracticeForMonth(
-        Practice $practice,
-        Carbon $month
-    ) {
-        $patients = User::where('program_id', $practice->id)
-                        ->whereHas('roles', function ($q) {
-                            $q->where('name', '=', 'participant');
-                        })->get();
+    /**
+     * @todo: Deprecate in favor of billableProblems()
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function billableProblem2()
+    {
+        return $this->belongsTo(Problem::class, 'problem_2');
+    }
 
-        $count = 0;
+    public function billableProblems()
+    {
+        return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
+            ->withPivot('name', 'icd_10_code', 'type')
+            ->withTimestamps();
+    }
 
-        foreach ($patients as $p) {
-            if (Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) > 1199) {
-                $count++;
-            }
-        }
+    public function createCallReportsForCurrentMonth()
+    {
+        $monthYear = Carbon::now()->startOfMonth()->toDateString();
 
-        return $count;
+        $patients = User::select('id')->ofType('participant')
+            ->get()
+            ->map(function ($patient) use ($monthYear) {
+                PatientMonthlySummary::create([
+                    'patient_id'             => $patient->id,
+                    'ccm_time'               => 0,
+                    'month_year'             => $monthYear,
+                    'no_of_calls'            => 0,
+                    'no_of_successful_calls' => 0,
+                ]);
+            });
     }
 
     public static function getPatientQACountForPracticeForMonth(
@@ -143,9 +152,9 @@ class PatientMonthlySummary extends BaseModel
         Carbon $month
     ) {
         $patients = User::where('program_id', $practice->id)
-                        ->whereHas('roles', function ($q) {
-                            $q->where('name', '=', 'participant');
-                        })->get();
+            ->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get();
 
         $count['approved'] = 0;
         $count['toQA']     = 0;
@@ -159,99 +168,93 @@ class PatientMonthlySummary extends BaseModel
             }
 
             $report = PatientMonthlySummary::where('month_year', $month->firstOfMonth()->toDateString())
-                                           ->where('patient_id', $p->id)->first();
+                ->where('patient_id', $p->id)->first();
 
-
-            if (! $report) {
+            if (!$report) {
                 continue;
             }
 
-            $emptyProblemOrCode =
-                ($report->billable_problem1_code == '')
-                || ($report->billable_problem2_code == '')
-                || ($report->billable_problem2 == '')
-                || ($report->billable_problem1 == '');
+            $emptyProblemOrCode = ('' == $report->billable_problem1_code)
+                || ('' == $report->billable_problem2_code)
+                || ('' == $report->billable_problem2)
+                || ('' == $report->billable_problem1);
 
-            if (($report->rejected == 0 && $report->approved == 0) || $emptyProblemOrCode) {
-                $count['toQA'] += 1;
-            } elseif ($report->rejected == 1) {
-                $count['rejected'] += 1;
-            } elseif ($report->approved == 1) {
-                $count['approved'] += 1;
+            if ((0 == $report->rejected && 0 == $report->approved) || $emptyProblemOrCode) {
+                ++$count['toQA'];
+            } elseif (1 == $report->rejected) {
+                ++$count['rejected'];
+            } elseif (1 == $report->approved) {
+                ++$count['approved'];
             }
         }
 
         return $count;
     }
 
-    public function createCallReportsForCurrentMonth()
-    {
-        $monthYear = Carbon::now()->startOfMonth()->toDateString();
+    //Run at beginning of month
 
-        $patients = User::select('id')->ofType('participant')
-                        ->get()
-                        ->map(function ($patient) use ($monthYear) {
-                            PatientMonthlySummary::create([
-                                'patient_id'             => $patient->id,
-                                'ccm_time'               => 0,
-                                'month_year'             => $monthYear,
-                                'no_of_calls'            => 0,
-                                'no_of_successful_calls' => 0,
-                            ]);
-                        });
-    }
+    public function getPatientsOver20MinsForPracticeForMonth(
+        Practice $practice,
+        Carbon $month
+    ) {
+        $patients = User::where('program_id', $practice->id)
+            ->whereHas('roles', function ($q) {
+                $q->where('name', '=', 'participant');
+            })->get();
 
-    /**
-     * @todo: Deprecate in favor of billableProblems()
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function billableProblem1()
-    {
-        return $this->belongsTo(Problem::class, 'problem_1');
-    }
+        $count = 0;
 
-    /**
-     * @todo: Deprecate in favor of billableProblems()
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function billableProblem2()
-    {
-        return $this->belongsTo(Problem::class, 'problem_2');
-    }
+        foreach ($patients as $p) {
+            if (Activity::totalTimeForPatientForMonth($p->patientInfo, $month, false) > 1199) {
+                ++$count;
+            }
+        }
 
-    public function billableProblems()
-    {
-        return $this->belongsToMany(Problem::class, 'patient_summary_problems', 'patient_summary_id')
-                    ->withPivot('name', 'icd_10_code', 'type')
-                    ->withTimestamps();
-    }
-
-    public function billableBhiProblems()
-    {
-        return $this->billableProblems()->where('type', '=', 'bhi');
+        return $count;
     }
 
     public function hasAtLeastOneBhiProblem()
     {
         return $this->billableProblems()
-                    ->where('type', '=', 'bhi')
-                    ->exists();
+            ->where('type', '=', 'bhi')
+            ->exists();
     }
 
     public function hasAtLeastTwoCcmProblems()
     {
         return $this->billableProblems()
-                    ->where('type', '=', 'ccm')
-                    ->count() >= 2;
+            ->where('type', '=', 'ccm')
+            ->count() >= 2;
     }
 
-    public function attachBillableProblem($problemId, $name, $icd10Code, $type = 'ccm')
+    public function patient()
     {
-        return $this->billableProblems()
-                    ->attach($problemId, [
-                        'type'        => $type,
-                        'name'        => $name,
-                        'icd_10_code' => $icd10Code,
-                    ]);
+        return $this->belongsTo(User::class, 'patient_id');
+    }
+
+    public function scopeGetCurrent($q)
+    {
+        return $q->whereMonthYear(Carbon::now()->firstOfMonth()->toDateString());
+    }
+
+    public function scopeGetForMonth($q, Carbon $month)
+    {
+        return $q->whereMonthYear(Carbon::parse($month)->firstOfMonth()->toDateString());
+    }
+
+    //updates Call info for patient
+
+    public static function updateCCMInfoForPatient(
+        $userId,
+        $ccmTime
+    ) {
+        $dayStart = Carbon::now()->startOfMonth()->toDateString();
+
+        return PatientMonthlySummary::updateOrCreate([
+            'patient_id' => $userId,
+            'month_year' => $dayStart,
+        ], [
+            'ccm_time' => $ccmTime,
+        ]);
     }
 }

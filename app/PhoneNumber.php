@@ -1,21 +1,28 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use App\CLH\Helpers\StringManipulation;
 
 /**
- * App\PhoneNumber
+ * App\PhoneNumber.
  *
- * @property int $id
- * @property int $user_id
- * @property int $location_id
+ * @property int         $id
+ * @property int         $user_id
+ * @property int         $location_id
  * @property string|null $number
  * @property string|null $extension
  * @property string|null $type
- * @property int $is_primary
- * @property string $created_at
- * @property string $updated_at
+ * @property int         $is_primary
+ * @property string      $created_at
+ * @property string      $updated_at
  * @property string|null $deleted_at
- * @property-read \App\User $user
+ * @property \App\User   $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PhoneNumber whereExtension($value)
@@ -31,25 +38,11 @@ use App\CLH\Helpers\StringManipulation;
 class PhoneNumber extends \App\BaseModel
 {
     //types
-    const HOME = 'home';
+    const HOME   = 'home';
     const MOBILE = 'mobile';
-    const WORK = 'work';
+    const WORK   = 'work';
 
     public $timestamps = false;
-
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'phone_numbers';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
     /**
      * The attributes that are mass assignable.
      *
@@ -63,23 +56,22 @@ class PhoneNumber extends \App\BaseModel
         'is_primary',
         'extension',
     ];
-
-    public static function getTypes() : array
-    {
-        return [
-            1 => PhoneNumber::HOME,
-            2 => PhoneNumber::MOBILE,
-            3 => PhoneNumber::WORK,
-        ];
-    }
-
-    public function user()
-    {
-        return $this->belongsTo('App\User', 'id', 'user_id');
-    }
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
 
     /**
-     * Get phone number in this format xxx-xxx-xxxx
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'phone_numbers';
+
+    /**
+     * Get phone number in this format xxx-xxx-xxxx.
      *
      * @return string
      */
@@ -88,14 +80,27 @@ class PhoneNumber extends \App\BaseModel
         return (new StringManipulation())->formatPhoneNumber($this->number);
     }
 
+    public static function getTypes(): array
+    {
+        return [
+            1 => PhoneNumber::HOME,
+            2 => PhoneNumber::MOBILE,
+            3 => PhoneNumber::WORK,
+        ];
+    }
+
     /**
      * Set the phone number.
      *
      * @param $value
-     * @return void
      */
     public function setNumberAttribute($value)
     {
         $this->attributes['number'] = (new StringManipulation())->formatPhoneNumberE164($value);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'id', 'user_id');
     }
 }

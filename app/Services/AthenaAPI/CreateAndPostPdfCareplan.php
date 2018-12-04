@@ -1,20 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 26/08/16
- * Time: 1:16 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\AthenaAPI;
 
-use App\CLH\CCD\Importer\QAImportManager;
 use App\Contracts\Repositories\CcdaRepository;
 use App\Contracts\Repositories\CcdaRequestRepository;
 use App\Models\CCD\CcdVendor;
 use App\Models\MedicalRecords\Ccda;
 use Carbon\Carbon;
-use Maknz\Slack\Facades\Slack;
 
 class CreateAndPostPdfCareplan
 {
@@ -49,13 +45,63 @@ class CreateAndPostPdfCareplan
         }
     }
 
+    public function getCcdsFromRequestQueue($number = 5)
+    {
+        $ccdaRequests = $this->ccdaRequests
+            ->skipPresenter()
+            ->findWhere([
+                'successful_call' => null,
+            ])->take($number);
+
+        $imported = $ccdaRequests->map(function ($ccdaRequest) {
+            $xmlCcda = $this->api->getCcd(
+                $ccdaRequest->patient_id,
+                $ccdaRequest->practice_id,
+                $ccdaRequest->department_id
+            );
+
+            if (!isset($xmlCcda[0]['ccda'])) {
+                return false;
+            }
+
+            $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
+
+            if (!$vendor) {
+                return false;
+            }
+
+            $ccda = $this->ccdas->create([
+                'xml'       => $xmlCcda[0]['ccda'],
+                'vendor_id' => $vendor->id,
+                'source'    => Ccda::ATHENA_API,
+            ]);
+
+            $ccdaRequest->ccda_id = $ccda->id;
+            $ccdaRequest->successful_call = true;
+            $ccdaRequest->save();
+
+            $ccda->import();
+
+            if (app()->environment('worker')) {
+                $link = route('import.ccd.remix');
+
+                sendSlackMessage(
+                    '#ccd-file-status',
+                    "We received a CCD from Athena. \n Please visit {$link} to import."
+                );
+            }
+
+            return $ccda;
+        });
+    }
+
     public function logPatientIdsFromAppointments($response, $practiceId)
     {
-        if (! isset($response['appointments'])) {
+        if (!isset($response['appointments'])) {
             return;
         }
 
-        if (count($response['appointments']) == 0) {
+        if (0 == count($response['appointments'])) {
             return;
         }
 
@@ -63,12 +109,12 @@ class CreateAndPostPdfCareplan
 
         //Get 'CCM Enabled' custom field id from the practice's custom fields
         foreach ($practiceCustomFields as $customField) {
-            if (strtolower($customField['name']) == 'ccm enabled') {
+            if ('ccm enabled' == strtolower($customField['name'])) {
                 $ccmEnabledFieldId = $customField['customfieldid'];
             }
         }
 
-        if (! isset($ccmEnabledFieldId)) {
+        if (!isset($ccmEnabledFieldId)) {
             return;
         }
 
@@ -96,56 +142,6 @@ class CreateAndPostPdfCareplan
         if (isset($response['next'])) {
             $this->logPatientIdsFromAppointments($this->api->getNextPage($response['next']), $practiceId);
         }
-    }
-
-    public function getCcdsFromRequestQueue($number = 5)
-    {
-        $ccdaRequests = $this->ccdaRequests
-            ->skipPresenter()
-            ->findWhere([
-                'successful_call' => null,
-            ])->take($number);
-
-        $imported = $ccdaRequests->map(function ($ccdaRequest) {
-            $xmlCcda = $this->api->getCcd(
-                $ccdaRequest->patient_id,
-                $ccdaRequest->practice_id,
-                $ccdaRequest->department_id
-            );
-
-            if (! isset($xmlCcda[0]['ccda'])) {
-                return false;
-            }
-
-            $vendor = CcdVendor::wherePracticeId($ccdaRequest->practice_id)->first();
-
-            if (! $vendor) {
-                return false;
-            }
-
-            $ccda = $this->ccdas->create([
-                'xml'       => $xmlCcda[0]['ccda'],
-                'vendor_id' => $vendor->id,
-                'source'    => Ccda::ATHENA_API,
-            ]);
-
-            $ccdaRequest->ccda_id         = $ccda->id;
-            $ccdaRequest->successful_call = true;
-            $ccdaRequest->save();
-
-            $ccda->import();
-
-            if (app()->environment('worker')) {
-                $link = route('import.ccd.remix');
-
-                sendSlackMessage(
-                    '#ccd-file-status',
-                    "We received a CCD from Athena. \n Please visit {$link} to import."
-                );
-            }
-
-            return $ccda;
-        });
     }
 
     public function postPatientDocument($patientId, $practiceId, $attachmentContentPath, $departmentId)

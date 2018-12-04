@@ -1,17 +1,26 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use App\User;
-use App\Patient;
 use App\Models\CPM\CpmSymptom;
 use App\Models\CPM\CpmSymptomUser;
 
 class CpmSymptomRepository
 {
-    public function model()
+    public function addSymptomToPatient($symptomId, $userId)
     {
-        return app(CpmSymptom::class);
+        if (!$this->patientHasSymptom($userId, $symptomId)) {
+            $symptomUser                 = new CpmSymptomUser();
+            $symptomUser->cpm_symptom_id = $symptomId;
+            $symptomUser->patient_id     = $userId;
+            $symptomUser->save();
+
+            return $symptomUser;
+        }
     }
 
     public function count()
@@ -19,48 +28,44 @@ class CpmSymptomRepository
         return $this->model()->count();
     }
 
-    public function symptoms()
+    public function model()
     {
-        return $this->model()->paginate();
+        return app(CpmSymptom::class);
     }
 
     public function patientHasSymptom($userId, $symptomId)
     {
-        return !!CpmSymptomUser::where([
-            'patient_id' => $userId,
-            'cpm_symptom_id' => $symptomId
-         ])->first();
-    }
-
-    public function addSymptomToPatient($symptomId, $userId)
-    {
-        if (!$this->patientHasSymptom($userId, $symptomId)) {
-            $symptomUser = new CpmSymptomUser();
-            $symptomUser->cpm_symptom_id = $symptomId;
-            $symptomUser->patient_id = $userId;
-            $symptomUser->save();
-            return $symptomUser;
-        }
-    }
-    
-    public function removeSymptomFromPatient($symptomId, $userId)
-    {
-        if ($this->patientHasSymptom($userId, $symptomId)) {
-            CpmSymptomUser::where([
-                'patient_id' => $userId,
-                'cpm_symptom_id' => $symptomId
-             ])->delete();
-            return [
-                 'message' => 'successful'
-             ];
-        }
-        return null;
+        return (bool) CpmSymptomUser::where([
+            'patient_id'     => $userId,
+            'cpm_symptom_id' => $symptomId,
+        ])->first();
     }
 
     public function patientSymptoms($userId)
     {
-        return CpmSymptomUser::where([ 'patient_id' => $userId ])->with('cpmSymptom')->get()->map(function ($u) {
+        return CpmSymptomUser::where(['patient_id' => $userId])->with('cpmSymptom')->get()->map(function ($u) {
             return $u->cpmSymptom;
         });
+    }
+
+    public function removeSymptomFromPatient($symptomId, $userId)
+    {
+        if ($this->patientHasSymptom($userId, $symptomId)) {
+            CpmSymptomUser::where([
+                'patient_id'     => $userId,
+                'cpm_symptom_id' => $symptomId,
+            ])->delete();
+
+            return [
+                'message' => 'successful',
+            ];
+        }
+
+        return null;
+    }
+
+    public function symptoms()
+    {
+        return $this->model()->paginate();
     }
 }

@@ -1,39 +1,47 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/12/16
- * Time: 3:13 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\CPM;
 
-use App\User;
 use App\Models\CPM\CpmInstruction;
 use App\Repositories\CpmInstructionRepository;
 use App\Repositories\UserRepositoryEloquent;
+use App\User;
 
 class CpmInstructionService
 {
     private $instructionsRepo;
     private $userRepo;
-    
+
     public function __construct(CpmInstructionRepository $instructionsRepo, UserRepositoryEloquent $userRepo)
     {
         $this->instructionsRepo = $instructionsRepo;
-        $this->userRepo = $userRepo;
+        $this->userRepo         = $userRepo;
     }
 
-    public function repo()
+    public function create($name)
     {
-        return $this->instructionsRepo;
+        if ($name) {
+            $instruction             = new CpmInstruction();
+            $instruction->name       = $name;
+            $instruction->is_default = 0;
+            $instruction->save();
+
+            return $instruction;
+        }
     }
 
-    public function instructions()
+    public function edit($id, $text)
     {
-        $instructions = $this->repo()->model()->paginate(15);
-        $instructions->getCollection()->transform([$this, 'setupInstruction']);
-        return $instructions;
+        if ($id && $text) {
+            $query = CpmInstruction::where('id', $id);
+            $query->update(['name' => $text]);
+
+            return $query->first();
+        }
     }
 
     public function instruction($id)
@@ -41,29 +49,22 @@ class CpmInstructionService
         $instruction = $this->repo()->model()->find($id);
         if ($instruction) {
             return $this->setupInstruction($instruction);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
-    public function create($name)
+    public function instructions()
     {
-        if ($name) {
-            $instruction = new CpmInstruction();
-            $instruction->name = $name;
-            $instruction->is_default = 0;
-            $instruction->save();
-            return $instruction;
-        }
+        $instructions = $this->repo()->model()->paginate(15);
+        $instructions->getCollection()->transform([$this, 'setupInstruction']);
+
+        return $instructions;
     }
-    
-    public function edit($id, $text)
+
+    public function repo()
     {
-        if ($id && $text) {
-            $query = CpmInstruction::where('id', $id);
-            $query->update(['name' => $text ]);
-            return $query->first();
-        }
+        return $this->instructionsRepo;
     }
 
     public function setupInstruction($value)
@@ -71,6 +72,7 @@ class CpmInstructionService
         $value->problems = $value->cpmProblems()->get(['cpm_problems.id'])->map(function ($p) {
             return $p->id;
         });
+
         return $value;
     }
 
@@ -79,7 +81,7 @@ class CpmInstructionService
         if (!method_exists($user, $relationship)) {
             throw new \Exception('Relationship does not exist', 500);
         }
-        
+
         $pivotTableName = snake_case($relationship).'_users';
 
         $userRel = $user->{$relationship}()
@@ -96,7 +98,7 @@ class CpmInstructionService
                 return;
             }
 
-            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) {
+            if (preg_replace("/\r|\n/", '', trim($oldInstruction->name)) == preg_replace("/\r|\n/", '', trim($instructionInput))) {
                 return;
             }
 
@@ -123,7 +125,6 @@ class CpmInstructionService
             return;
         }
 
-
         $template = $user->service()
             ->firstOrDefaultCarePlan($user)
             ->carePlanTemplate()
@@ -142,10 +143,11 @@ class CpmInstructionService
             //If the user does not have that instruction id,
             //but the care plan does, and they are the same
             //then just attach the instr_id to the user-cpmentity relationship
-            if (preg_replace("/\r|\n/", "", trim($oldInstruction->name)) == preg_replace("/\r|\n/", "", trim($instructionInput))) {
+            if (preg_replace("/\r|\n/", '', trim($oldInstruction->name)) == preg_replace("/\r|\n/", '', trim($instructionInput))) {
                 $user->{$relationship}()->updateExistingPivot($entityId, [
                     'cpm_instruction_id' => $oldInstruction->id,
                 ]);
+
                 return;
             }
 

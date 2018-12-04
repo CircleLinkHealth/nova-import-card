@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Jobs;
 
 use App\PatientMonthlySummary;
@@ -29,8 +33,6 @@ class AttachBillableProblemsToSummary implements ShouldQueue
      * Execute the job.
      *
      * @param PatientSummaryEloquentRepository $repo
-     *
-     * @return void
      */
     public function handle(PatientSummaryEloquentRepository $repo)
     {

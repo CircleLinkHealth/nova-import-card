@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kakoushias
- * Date: 14/01/2018
- * Time: 8:04 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\ValueObjects;
@@ -14,20 +12,19 @@ namespace App\ValueObjects;
  */
 class QuickBooksRow
 {
-    protected $refNumber;
-    protected $customer;
-    protected $txnDate;
     protected $allowOnlineACHPayment;
-    protected $salesTerm;
-    protected $toBePrinted;
-    protected $toBeEmailed;
-    protected $ptBillingReport;
+    protected $customer;
+    protected $lineDesc;
     protected $lineItem;
     protected $lineQty;
-    protected $lineDesc;
     protected $lineUnitPrice;
     protected $msg;
-
+    protected $ptBillingReport;
+    protected $refNumber;
+    protected $salesTerm;
+    protected $toBeEmailed;
+    protected $toBePrinted;
+    protected $txnDate;
 
     /**
      * QuickBooksRow constructor.
@@ -51,6 +48,214 @@ class QuickBooksRow
         $this->msg                   = $array['Msg'];
     }
 
+    /**
+     * @return mixed
+     */
+    public function getAllowOnlineACHPayment()
+    {
+        return $this->allowOnlineACHPayment;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLineDesc()
+    {
+        return $this->lineDesc;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLineItem()
+    {
+        return $this->lineItem;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLineQty()
+    {
+        return $this->lineQty;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLineUnitPrice()
+    {
+        return $this->lineUnitPrice;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMsg()
+    {
+        return $this->msg;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPtBillingReport()
+    {
+        return $this->ptBillingReport;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRefNumber()
+    {
+        return $this->refNumber;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSalesTerm()
+    {
+        return $this->salesTerm;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getToBeEmailed()
+    {
+        return $this->toBeEmailed;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getToBePrinted()
+    {
+        return $this->toBePrinted;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTxnDate()
+    {
+        return $this->txnDate;
+    }
+
+    /**
+     * @param mixed $allowOnlineACHPayment
+     */
+    public function setAllowOnlineACHPayment($allowOnlineACHPayment)
+    {
+        $this->allowOnlineACHPayment = $allowOnlineACHPayment;
+    }
+
+    /**
+     * @param mixed $customer
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+    }
+
+    /**
+     * @param mixed $lineDesc
+     */
+    public function setLineDesc($lineDesc)
+    {
+        $this->lineDesc = $lineDesc;
+    }
+
+    /**
+     * @param mixed $lineItem
+     */
+    public function setLineItem($lineItem)
+    {
+        $this->lineItem = $lineItem;
+    }
+
+    /**
+     * @param mixed $lineQty
+     */
+    public function setLineQty($lineQty)
+    {
+        $this->lineQty = $lineQty;
+    }
+
+    /**
+     * @param mixed $lineUnitPrice
+     */
+    public function setLineUnitPrice($lineUnitPrice)
+    {
+        $this->lineUnitPrice = $lineUnitPrice;
+    }
+
+    /**
+     * @param mixed $msg
+     */
+    public function setMsg($msg)
+    {
+        $this->msg = $msg;
+    }
+
+    /**
+     * @param mixed $ptBillingReport
+     */
+    public function setPtBillingReport($ptBillingReport)
+    {
+        $this->ptBillingReport = $ptBillingReport;
+    }
+
+    /**
+     * @param mixed $refNumber
+     */
+    public function setRefNumber($refNumber)
+    {
+        $this->refNumber = $refNumber;
+    }
+
+    /**
+     * @param mixed $salesTerm
+     */
+    public function setSalesTerm($salesTerm)
+    {
+        $this->salesTerm = $salesTerm;
+    }
+
+    /**
+     * @param mixed $toBeEmailed
+     */
+    public function setToBeEmailed($toBeEmailed)
+    {
+        $this->toBeEmailed = $toBeEmailed;
+    }
+
+    /**
+     * @param mixed $toBePrinted
+     */
+    public function setToBePrinted($toBePrinted)
+    {
+        $this->toBePrinted = $toBePrinted;
+    }
+
+    /**
+     * @param mixed $txnDate
+     */
+    public function setTxnDate($txnDate)
+    {
+        $this->txnDate = $txnDate;
+    }
+
     public function toArray()
     {
         return [
@@ -68,214 +273,5 @@ class QuickBooksRow
             'LineUnitPrice'         => $this->lineUnitPrice,
             'Msg'                   => $this->msg,
         ];
-    }
-
-
-    /**
-     * @return mixed
-     */
-    public function getRefNumber()
-    {
-        return $this->refNumber;
-    }
-
-    /**
-     * @param mixed $refNumber
-     */
-    public function setRefNumber($refNumber)
-    {
-        $this->refNumber = $refNumber;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * @param mixed $customer
-     */
-    public function setCustomer($customer)
-    {
-        $this->customer = $customer;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTxnDate()
-    {
-        return $this->txnDate;
-    }
-
-    /**
-     * @param mixed $txnDate
-     */
-    public function setTxnDate($txnDate)
-    {
-        $this->txnDate = $txnDate;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAllowOnlineACHPayment()
-    {
-        return $this->allowOnlineACHPayment;
-    }
-
-    /**
-     * @param mixed $allowOnlineACHPayment
-     */
-    public function setAllowOnlineACHPayment($allowOnlineACHPayment)
-    {
-        $this->allowOnlineACHPayment = $allowOnlineACHPayment;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSalesTerm()
-    {
-        return $this->salesTerm;
-    }
-
-    /**
-     * @param mixed $salesTerm
-     */
-    public function setSalesTerm($salesTerm)
-    {
-        $this->salesTerm = $salesTerm;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getToBePrinted()
-    {
-        return $this->toBePrinted;
-    }
-
-    /**
-     * @param mixed $toBePrinted
-     */
-    public function setToBePrinted($toBePrinted)
-    {
-        $this->toBePrinted = $toBePrinted;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getToBeEmailed()
-    {
-        return $this->toBeEmailed;
-    }
-
-    /**
-     * @param mixed $toBeEmailed
-     */
-    public function setToBeEmailed($toBeEmailed)
-    {
-        $this->toBeEmailed = $toBeEmailed;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getPtBillingReport()
-    {
-        return $this->ptBillingReport;
-    }
-
-    /**
-     * @param mixed $ptBillingReport
-     */
-    public function setPtBillingReport($ptBillingReport)
-    {
-        $this->ptBillingReport = $ptBillingReport;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLineItem()
-    {
-        return $this->lineItem;
-    }
-
-    /**
-     * @param mixed $lineItem
-     */
-    public function setLineItem($lineItem)
-    {
-        $this->lineItem = $lineItem;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLineQty()
-    {
-        return $this->lineQty;
-    }
-
-    /**
-     * @param mixed $lineQty
-     */
-    public function setLineQty($lineQty)
-    {
-        $this->lineQty = $lineQty;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLineDesc()
-    {
-        return $this->lineDesc;
-    }
-
-    /**
-     * @param mixed $lineDesc
-     */
-    public function setLineDesc($lineDesc)
-    {
-        $this->lineDesc = $lineDesc;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLineUnitPrice()
-    {
-        return $this->lineUnitPrice;
-    }
-
-    /**
-     * @param mixed $lineUnitPrice
-     */
-    public function setLineUnitPrice($lineUnitPrice)
-    {
-        $this->lineUnitPrice = $lineUnitPrice;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getMsg()
-    {
-        return $this->msg;
-    }
-
-    /**
-     * @param mixed $msg
-     */
-    public function setMsg($msg)
-    {
-        $this->msg = $msg;
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
@@ -19,6 +23,6 @@ class VerifyCsrfToken extends Middleware
         '/admin/reports/monthly-billing/v2/data',
         '/admin/reports/monthly-billing/v2/storeProblem',
         '/admin/reports/monthly-billing/v2/counts',
-        'api/v2.1/pagetimer'
+        'api/v2.1/pagetimer',
     ];
 }

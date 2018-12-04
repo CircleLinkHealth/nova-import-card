@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 5/10/18
- * Time: 10:11 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\MedicalRecords;
@@ -19,86 +17,18 @@ use Carbon\Carbon;
 class ImportService
 {
     /**
-     * Import a Patient whose CCDA we have already.
-     *
-     * @param $ccdaId
-     *
-     * @return \stdClass
-     */
-    public function importExistingCcda($ccdaId)
-    {
-        $response = new \stdClass();
-
-        $ccda = Ccda::withTrashed()
-                    ->with('patient.patientInfo')
-                    ->find($ccdaId);
-
-        if (! $ccda) {
-            $response->success = false;
-            $response->message = "We could not locate CCDA with id $ccdaId";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->imported) {
-            if ($ccda->patient) {
-            }
-            $response->success = false;
-            $response->message = "CCDA with id $ccdaId has already been imported.";
-            $response->imr     = null;
-
-            return $response;
-        }
-
-        if ($ccda->mrn && $ccda->practice_id) {
-            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
-                $q->where('mrn_number', $ccda->mrn);
-            })->whereProgramId($ccda->practice_id)
-                          ->first();
-
-            if ($exists) {
-                $response->success = false;
-                $response->message = "CCDA with id $ccdaId has already been imported.";
-                $response->imr     = null;
-
-                return $response;
-            }
-        }
-
-        $imr = $ccda->import();
-
-        $update = Ccda::whereId($ccdaId)
-                      ->update([
-                          'status'   => Ccda::QA,
-                          'imported' => true,
-                      ]);
-
-        $response->success = true;
-        $response->message = "CCDA successfully imported.";
-        $response->imr     = $imr;
-
-        return $response;
-    }
-
-    public function isCcda($medicalRecordType)
-    {
-        return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
-    }
-
-    /**
      * Create a TabularMedicalRecord for each row, and import it.
      *
      * @param $row
-     *
      * @param Practice $practice
      *
-     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
      * @throws \Exception
+     *
+     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
      */
     public function createTabularMedicalRecordAndImport($row, Practice $practice)
     {
-        $row['dob']         = $row['dob']
+        $row['dob'] = $row['dob']
             ? Carbon::parse($row['dob'])->toDateString()
             : null;
         $row['practice_id'] = $practice->id;
@@ -116,11 +46,11 @@ class ImportService
             $row['address2'] = $row['street_2'];
         }
 
-        if (array_key_exists('problems', $row) & ! array_key_exists('problems_string', $row)) {
+        if (array_key_exists('problems', $row) & !array_key_exists('problems_string', $row)) {
             $row['problems_string'] = $row['problems'];
         }
 
-        if (array_key_exists('referring_provider_name', $row) & ! array_key_exists('provider_name', $row)) {
+        if (array_key_exists('referring_provider_name', $row) & !array_key_exists('provider_name', $row)) {
             $row['provider_name'] = $row['referring_provider_name'];
         }
 
@@ -158,11 +88,11 @@ class ImportService
             $exists->delete();
         }
 
-        if ($practice->id == 139) {
+        if (139 == $practice->id) {
             $mrn = $this->lookupPHXmrn($row['first_name'], $row['last_name'], $row['dob'], $row['mrn']);
 
-            if (! $mrn) {
-                throw new \Exception("Phoenix Heart Patient not found");
+            if (!$mrn) {
+                throw new \Exception('Phoenix Heart Patient not found');
             }
 
             $row['mrn'] = $mrn;
@@ -173,34 +103,75 @@ class ImportService
         return $mr->import();
     }
 
-    private function lookupPHXmrn($firstName, $lastName, $dob, $mrn)
+    /**
+     * Import a Patient whose CCDA we have already.
+     *
+     * @param $ccdaId
+     *
+     * @return \stdClass
+     */
+    public function importExistingCcda($ccdaId)
     {
-        $dob = Carbon::parse($dob)->format('n/j/Y');
+        $response = new \stdClass();
 
-        $row = PhoenixHeartName::where('patient_first_name', $firstName)
-                               ->where('patient_last_name', $lastName)
-                               ->where('dob', $dob)
-                               ->first();
+        $ccda = Ccda::withTrashed()
+            ->with('patient.patientInfo')
+            ->find($ccdaId);
 
-        if ($row && $row->patient_id && empty($mrn)) {
-            return $row->patient_id;
+        if (!$ccda) {
+            $response->success = false;
+            $response->message = "We could not locate CCDA with id ${ccdaId}";
+            $response->imr     = null;
+
+            return $response;
         }
 
-        $row = PhoenixHeartName::where('patient_id', $mrn)
-                               ->first();
+        if ($ccda->imported) {
+            if ($ccda->patient) {
+            }
+            $response->success = false;
+            $response->message = "CCDA with id ${ccdaId} has already been imported.";
+            $response->imr     = null;
 
-        if ($row && $row->patient_id) {
-            return $row->patient_id;
+            return $response;
         }
 
-        return null;
+        if ($ccda->mrn && $ccda->practice_id) {
+            $exists = User::whereHas('patientInfo', function ($q) use ($ccda) {
+                $q->where('mrn_number', $ccda->mrn);
+            })->whereProgramId($ccda->practice_id)
+                ->first();
+
+            if ($exists) {
+                $response->success = false;
+                $response->message = "CCDA with id ${ccdaId} has already been imported.";
+                $response->imr     = null;
+
+                return $response;
+            }
+        }
+
+        $imr = $ccda->import();
+
+        $update = Ccda::whereId($ccdaId)
+            ->update([
+                'status'   => Ccda::QA,
+                'imported' => true,
+            ]);
+
+        $response->success = true;
+        $response->message = 'CCDA successfully imported.';
+        $response->imr     = $imr;
+
+        return $response;
     }
 
     /**
      * @param Enrollee $enrollee
      *
-     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
      * @throws \Exception
+     *
+     * @return \App\Models\MedicalRecords\ImportedMedicalRecord
      */
     public function importPHXEnrollee(Enrollee $enrollee)
     {
@@ -209,12 +180,40 @@ class ImportService
 
         $imr = $this->createTabularMedicalRecordAndImport($patient, $phx);
 
-        if (! $imr) {
+        if (!$imr) {
             return null;
         }
 
         $enrollee->medical_record_type = $imr->medical_record_type;
         $enrollee->medical_record_id   = $imr->medical_record_id;
         $enrollee->save();
+    }
+
+    public function isCcda($medicalRecordType)
+    {
+        return stripcslashes($medicalRecordType) == stripcslashes(Ccda::class);
+    }
+
+    private function lookupPHXmrn($firstName, $lastName, $dob, $mrn)
+    {
+        $dob = Carbon::parse($dob)->format('n/j/Y');
+
+        $row = PhoenixHeartName::where('patient_first_name', $firstName)
+            ->where('patient_last_name', $lastName)
+            ->where('dob', $dob)
+            ->first();
+
+        if ($row && $row->patient_id && empty($mrn)) {
+            return $row->patient_id;
+        }
+
+        $row = PhoenixHeartName::where('patient_id', $mrn)
+            ->first();
+
+        if ($row && $row->patient_id) {
+            return $row->patient_id;
+        }
+
+        return null;
     }
 }

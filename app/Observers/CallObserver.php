@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kakoushias
- * Date: 02/05/2018
- * Time: 4:05 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Observers;
@@ -30,9 +28,9 @@ class CallObserver
     {
         if ($call->isDirty('status')) {
             $patient = User::ofType('participant')
-                           ->where('id', $call->inbound_cpm_id)
-                           ->orWhere('id', $call->outbound_cpm_id)
-                           ->first();
+                ->where('id', $call->inbound_cpm_id)
+                ->orWhere('id', $call->outbound_cpm_id)
+                ->first();
 
             $date = Carbon::parse($call->updated_at);
 
@@ -43,26 +41,26 @@ class CallObserver
 
             $no_of_calls = Call::where(function ($q) {
                 $q->whereNull('type')
-                  ->orWhere('type', '=', 'call')
-                  ->orWhere('sub_type', '=', 'Call Back');
+                    ->orWhere('type', '=', 'call')
+                    ->orWhere('sub_type', '=', 'Call Back');
             })
-                               ->where(function ($q) use ($patient) {
-                                   $q->where('outbound_cpm_id', $patient->id)
-                                     ->orWhere('inbound_cpm_id', $patient->id);
-                               })
-                               ->where('called_date', '>=', $start)
-                               ->where('called_date', '<=', $end)
-                               ->whereIn('status', ['reached', 'not reached'])
-                               ->get();
+                ->where(function ($q) use ($patient) {
+                    $q->where('outbound_cpm_id', $patient->id)
+                                       ->orWhere('inbound_cpm_id', $patient->id);
+                })
+                ->where('called_date', '>=', $start)
+                ->where('called_date', '<=', $end)
+                ->whereIn('status', ['reached', 'not reached'])
+                ->get();
 
             $no_of_successful_calls = $no_of_calls->where('status', 'reached')->count();
 
             $summary = PatientMonthlySummary::where('patient_id', $patient->id)
-                                            ->where('month_year', $date->startOfMonth())
-                                            ->update([
-                                                'no_of_calls'            => $no_of_calls->count(),
-                                                'no_of_successful_calls' => $no_of_successful_calls,
-                                            ]);
+                ->where('month_year', $date->startOfMonth())
+                ->update([
+                    'no_of_calls'            => $no_of_calls->count(),
+                    'no_of_successful_calls' => $no_of_successful_calls,
+                ]);
         }
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 17/01/2017
- * Time: 1:05 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Predictors;
@@ -38,35 +36,6 @@ abstract class BaseHistoricPredictor
         $this->providerLogs = $providerLogs;
     }
 
-    protected function makePrediction(
-        $label,
-        $addressesPredictions,
-        $custodianPredictions,
-        $providersPredictions
-    ) {
-        $merged = $custodianPredictions->merge($providersPredictions)
-            ->merge($addressesPredictions)
-            ->groupBy("$label")
-            ->map(function (
-                $item,
-                $key
-            ) use (
-                $label
-            ) {
-                $collection = new Collection($item);
-
-                return [
-                    $label        => $key,
-                    'total_count' => $collection->sum('total_count'),
-                ];
-            })
-            ->values()
-            ->sortByDesc('total_count');
-
-
-        return $merged->first()[$label] ?? null;
-    }
-
     protected function addressesLookup(
         $label,
         $weightMultiplier = 1
@@ -76,8 +45,8 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $results = ProviderLog::select(DB::raw("*, count('$label') as total_count"))
-            ->whereNotNull("$label")
+        $results = ProviderLog::select(DB::raw("*, count('${label}') as total_count"))
+            ->whereNotNull("${label}")
             ->where('ml_ignore', '=', false)
             ->whereNull('first_name')
             ->whereNull('last_name')
@@ -90,7 +59,7 @@ abstract class BaseHistoricPredictor
                     ->orWhereIn('home_phone', $this->providerLogs->pluck('home_phone'))
                     ->orWhereIn('work_phone', $this->providerLogs->pluck('work_phone'));
             })
-            ->groupBy("$label")
+            ->groupBy("${label}")
             ->get();
 
         $collection = $results->map(function (
@@ -101,9 +70,9 @@ abstract class BaseHistoricPredictor
             $label
         ) {
             return [
-                    $label        => $item->{$label},
-                    'total_count' => $item->total_count * $weightMultiplier,
-                ];
+                $label        => $item->{$label},
+                'total_count' => $item->total_count * $weightMultiplier,
+            ];
         })
             ->reject(function ($item) use (
                 $label
@@ -127,12 +96,12 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $results = DocumentLog::select(DB::raw("*, count('$label') as total_count"))
+        $results = DocumentLog::select(DB::raw("*, count('${label}') as total_count"))
             ->where('ml_ignore', '=', false)
             ->where('custodian', '=', $this->custodian)
-            ->whereNotNull("$label")
+            ->whereNotNull("${label}")
             ->orderBy('total_count', 'desc')
-            ->groupBy("$label")
+            ->groupBy("${label}")
             ->get();
 
         $collection = $results->map(function (
@@ -159,6 +128,34 @@ abstract class BaseHistoricPredictor
         return $collection;
     }
 
+    protected function makePrediction(
+        $label,
+        $addressesPredictions,
+        $custodianPredictions,
+        $providersPredictions
+    ) {
+        $merged = $custodianPredictions->merge($providersPredictions)
+            ->merge($addressesPredictions)
+            ->groupBy("${label}")
+            ->map(function (
+                $item,
+                $key
+            ) use (
+                $label
+            ) {
+                $collection = new Collection($item);
+
+                return [
+                    $label        => $key,
+                    'total_count' => $collection->sum('total_count'),
+                ];
+            })
+            ->values()
+            ->sortByDesc('total_count');
+
+        return $merged->first()[$label] ?? null;
+    }
+
     protected function providersLookup(
         $label,
         $weightMultiplier = 1
@@ -168,13 +165,13 @@ abstract class BaseHistoricPredictor
             return new Collection();
         }
 
-        $results = ProviderLog::select(DB::raw("*, count('$label') as total_count"))
+        $results = ProviderLog::select(DB::raw("*, count('${label}') as total_count"))
             ->where('ml_ignore', '=', false)
             ->whereIn('first_name', $this->providerLogs->pluck('first_name'))
             ->whereIn('last_name', $this->providerLogs->pluck('last_name'))
-            ->whereNotNull("$label")
+            ->whereNotNull("${label}")
             ->orderBy('total_count', 'desc')
-            ->groupBy("$label")
+            ->groupBy("${label}")
             ->get();
 
         $collection = $results->map(function ($item) use (

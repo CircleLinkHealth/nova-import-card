@@ -1,8 +1,13 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 class WelcomeController extends Controller
 {
-
     /*
     |--------------------------------------------------------------------------
     | Welcome Controller
@@ -16,8 +21,6 @@ class WelcomeController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -27,14 +30,15 @@ class WelcomeController extends Controller
     /**
      * Show the application welcome screen to the user.
      *
-     * @return Response
      * @throws \Exception
+     *
+     * @return Response
      */
     public function index()
     {
         $user = auth()->user();
 
-        if (! $user) {
+        if (!$user) {
             return redirect()->route('login', []);
         }
 
@@ -57,10 +61,11 @@ class WelcomeController extends Controller
         }
 
         if ($user->hasRole('ehr-report-writer')) {
-            if (! app()->environment('production')) {
+            if (!app()->environment('production')) {
                 return redirect()->route('report-writer.dashboard');
             }
-            return redirect()->route('login')->with(['messages' => ["message" => "Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net"]]);
+
+            return redirect()->route('login')->with(['messages' => ['message' => 'Ehr Report Writers can only login in the Worker. Please visit: https://circlelink-worker.medstack.net']]);
         }
 
         return redirect()->route('patients.dashboard', []);

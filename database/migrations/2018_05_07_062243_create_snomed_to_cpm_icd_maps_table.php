@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateSnomedToCpmIcdMapsTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('snomed_to_cpm_icd_maps');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -26,16 +35,5 @@ class CreateSnomedToCpmIcdMapsTable extends Migration
             $table->boolean('icd_9_is_nec')->nullable();
             $table->integer('cpm_problem_id')->unsigned()->nullable()->index('snomed_to_cpm_icd_maps_cpm_problem_id_foreign');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('snomed_to_cpm_icd_maps');
     }
 }

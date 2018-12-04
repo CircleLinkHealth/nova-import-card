@@ -1,26 +1,29 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\Message
+ * App\Message.
  *
- * @property int $id
- * @property string|null $sender_email
- * @property string|null $receiver_email
- * @property string $body
- * @property string $subject
- * @property string $type
- * @property int $sender_cpm_id
- * @property int $receiver_cpm_id
+ * @property int            $id
+ * @property string|null    $sender_email
+ * @property string|null    $receiver_email
+ * @property string         $body
+ * @property string         $subject
+ * @property string         $type
+ * @property int            $sender_cpm_id
+ * @property int            $receiver_cpm_id
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property int|null $note_id
- * @property string|null $seen_on
- * @property-read \App\User $recipient
- * @property-read \App\User $sender
+ * @property int|null       $note_id
+ * @property string|null    $seen_on
+ * @property \App\User      $recipient
+ * @property \App\User      $sender
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereBody($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Message whereId($value)

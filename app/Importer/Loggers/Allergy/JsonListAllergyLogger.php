@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/12/18
- * Time: 5:46 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Allergy;
@@ -39,6 +37,6 @@ class JsonListAllergyLogger implements Logger
 //            throw new \Exception("The string contains invalid json. String: `$allergiesString`");
 //        }
 
-        return (boolean)$check;
+        return (bool) $check;
     }
 }

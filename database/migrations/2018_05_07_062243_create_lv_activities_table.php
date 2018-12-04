@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateLvActivitiesTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('lv_activities');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -30,18 +39,7 @@ class CreateLvActivitiesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->integer('page_timer_id')->unsigned()->nullable();
-            $table->index(['patient_id','logged_from','provider_id','performed_at','type'], 'pat_lgFrm_prov_perfAt_type');
+            $table->index(['patient_id', 'logged_from', 'provider_id', 'performed_at', 'type'], 'pat_lgFrm_prov_perfAt_type');
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('lv_activities');
     }
 }

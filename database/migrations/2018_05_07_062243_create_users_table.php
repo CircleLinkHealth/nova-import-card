@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateUsersTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('users');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -37,7 +46,7 @@ class CreateUsersTable extends Migration
             $table->string('timezone')->nullable()->default('America/New_York');
             $table->string('status')->nullable();
             $table->boolean('access_disabled')->default(false);
-            ;
+
             $table->boolean('is_auto_generated')->default(false);
             $table->string('remember_token', 100)->nullable();
             $table->timestamps();
@@ -45,16 +54,5 @@ class CreateUsersTable extends Migration
             $table->dateTime('last_login')->nullable();
             $table->boolean('is_online')->default(0);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('users');
     }
 }

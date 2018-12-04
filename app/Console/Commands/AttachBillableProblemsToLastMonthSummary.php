@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\Jobs\AttachBillableProblemsToSummary;
@@ -10,6 +14,14 @@ use Illuminate\Console\Command;
 
 class AttachBillableProblemsToLastMonthSummary extends Command
 {
+    protected $billablePatientsRepo;
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Attach 2 billable problems to each of last month\'s summaries';
     /**
      * The name and signature of the console command.
      *
@@ -18,18 +30,7 @@ class AttachBillableProblemsToLastMonthSummary extends Command
     protected $signature = 'summaries:attach-problems-to-last-month';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Attach 2 billable problems to each of last month\'s summaries';
-
-    protected $billablePatientsRepo;
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct(BillablePatientsEloquentRepository $billablePatientsRepo)
     {
@@ -45,16 +46,16 @@ class AttachBillableProblemsToLastMonthSummary extends Command
     public function handle()
     {
         $month = Carbon::now()
-                       ->subMonth();
+            ->subMonth();
 
         Practice::active()
-                ->get()
-                ->map(function ($practice) use ($month) {
-                    $this->billablePatientsRepo->billablePatients($practice->id, $month)
-                                               ->get()
-                                               ->map(function ($u) {
-                                                   AttachBillableProblemsToSummary::dispatch($u->patientSummaries->first());
-                                               });
-                });
+            ->get()
+            ->map(function ($practice) use ($month) {
+                $this->billablePatientsRepo->billablePatients($practice->id, $month)
+                        ->get()
+                        ->map(function ($u) {
+                            AttachBillableProblemsToSummary::dispatch($u->patientSummaries->first());
+                        });
+            });
     }
 }

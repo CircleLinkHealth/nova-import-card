@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\ProcessedFile;
@@ -8,6 +12,12 @@ use Illuminate\Console\Command;
 class DeleteProcessedFiles extends Command
 {
     /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Deletes all files that were processed by the application.';
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -15,16 +25,7 @@ class DeleteProcessedFiles extends Command
     protected $signature = 'delete:processed-files';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Deletes all files that were processed by the application.';
-
-    /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {

@@ -1,23 +1,29 @@
-<?php namespace App\Importer\Models\ImportedItems;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Importer\Models\ImportedItems;
 
 use App\Importer\Models\ItemLogs\AllergyLog;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Importer\Models\ImportedItems\AllergyImport
+ * App\Importer\Models\ImportedItems\AllergyImport.
  *
- * @property int $id
- * @property string|null $medical_record_type
- * @property int|null $medical_record_id
- * @property int $imported_medical_record_id
- * @property int|null $vendor_id
- * @property int $ccd_allergy_log_id
- * @property string|null $allergen_name
- * @property int|null $substitute_id
- * @property string|null $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \App\Importer\Models\ItemLogs\AllergyLog $ccdLog
+ * @property int                                      $id
+ * @property string|null                              $medical_record_type
+ * @property int|null                                 $medical_record_id
+ * @property int                                      $imported_medical_record_id
+ * @property int|null                                 $vendor_id
+ * @property int                                      $ccd_allergy_log_id
+ * @property string|null                              $allergen_name
+ * @property int|null                                 $substitute_id
+ * @property string|null                              $deleted_at
+ * @property \Carbon\Carbon                           $created_at
+ * @property \Carbon\Carbon                           $updated_at
+ * @property \App\Importer\Models\ItemLogs\AllergyLog $ccdLog
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereAllergenName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereCcdAllergyLogId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Importer\Models\ImportedItems\AllergyImport whereCreatedAt($value)

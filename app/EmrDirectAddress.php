@@ -1,19 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * App\EmrDirectAddress
+ * App\EmrDirectAddress.
  *
- * @property int $id
- * @property string $emrDirectable_type
- * @property int $emrDirectable_id
- * @property string $address
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $emrDirectable
+ * @property int                                           $id
+ * @property string                                        $emrDirectable_type
+ * @property int                                           $emrDirectable_id
+ * @property string                                        $address
+ * @property \Carbon\Carbon|null                           $created_at
+ * @property \Carbon\Carbon|null                           $updated_at
+ * @property \Eloquent|\Illuminate\Database\Eloquent\Model $emrDirectable
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\EmrDirectAddress whereEmrDirectableId($value)

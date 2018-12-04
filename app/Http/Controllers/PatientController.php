@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Filters\PatientFilters;
@@ -42,24 +46,23 @@ class PatientController extends Controller
         LifestyleTraits,
         NoteTraits,
         MiscTraits;
-
-    private $patientService;
-    private $appointmentService;
-    private $providerService;
     private $allergyService;
+    private $appointmentService;
+    private $biometricUserService;
     private $ccdProblemService;
     private $cpmProblemUserService;
-    private $biometricUserService;
-    private $medicationService;
-    private $medicationGroupService;
-    private $symptomService;
     private $lifestyleService;
+    private $medicationGroupService;
+    private $medicationService;
     private $miscService;
     private $noteService;
 
+    private $patientService;
+    private $providerService;
+    private $symptomService;
+
     /**
      * CpmProblemController constructor.
-     *
      */
     public function __construct(
         PatientService $patientService,
@@ -91,16 +94,16 @@ class PatientController extends Controller
         $this->noteService            = $noteService;
     }
 
+    public function getPatient($userId)
+    {
+        return response()->json($this->patientService->getPatientByUserId($userId));
+    }
+
     /**
-     * returns a list of CPM Problems in the system
+     * returns a list of CPM Problems in the system.
      */
     public function index(Request $request, PatientFilters $filters)
     {
         return $this->patientService->patients($filters);
-    }
-
-    public function getPatient($userId)
-    {
-        return response()->json($this->patientService->getPatientByUserId($userId));
     }
 }

@@ -1,22 +1,22 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Seeder;
 
 class CpmProblemsTableSeeder extends Seeder
 {
-
     /**
-     * Auto generated seed file
-     *
-     * @return void
+     * Auto generated seed file.
      */
     public function run()
     {
         \DB::table('cpm_problems')->delete();
 
-        \DB::table('cpm_problems')->insert(array(
-            0  =>
-            array(
+        \DB::table('cpm_problems')->insert([
+            0 => [
                 'id'                  => 1,
                 'default_icd_10_code' => null,
                 'name'                => 'Diabetes',
@@ -29,9 +29,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            1  =>
-            array(
+            ],
+            1 => [
                 'id'                  => 2,
                 'default_icd_10_code' => 'I10',
                 'name'                => 'Hypertension',
@@ -44,9 +43,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            2  =>
-            array(
+            ],
+            2 => [
                 'id'                  => 3,
                 'default_icd_10_code' => 'I48.91',
                 'name'                => 'Afib',
@@ -59,9 +57,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            3  =>
-            array(
+            ],
+            3 => [
                 'id'                  => 4,
                 'default_icd_10_code' => 'I25.9',
                 'name'                => 'CAD/IHD',
@@ -74,9 +71,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            4  =>
-            array(
+            ],
+            4 => [
                 'id'                  => 5,
                 'default_icd_10_code' => 'F33.9',
                 'name'                => 'Depression',
@@ -89,9 +85,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2018-06-08 15:29:50',
-            ),
-            5  =>
-            array(
+            ],
+            5 => [
                 'id'                  => 6,
                 'default_icd_10_code' => 'I50.9',
                 'name'                => 'CHF',
@@ -104,9 +99,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            6  =>
-            array(
+            ],
+            6 => [
                 'id'                  => 7,
                 'default_icd_10_code' => 'E78.5',
                 'name'                => 'High Cholesterol',
@@ -119,9 +113,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            7  =>
-            array(
+            ],
+            7 => [
                 'id'                  => 8,
                 'default_icd_10_code' => 'N18.9',
                 'name'                => 'Kidney Disease',
@@ -134,9 +127,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            8  =>
-            array(
+            ],
+            8 => [
                 'id'                  => 9,
                 'default_icd_10_code' => 'F03',
                 'name'                => 'Dementia',
@@ -149,9 +141,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2018-06-08 15:32:01',
-            ),
-            9  =>
-            array(
+            ],
+            9 => [
                 'id'                  => 11,
                 'default_icd_10_code' => 'J45.901',
                 'name'                => 'Asthma',
@@ -164,9 +155,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2016-01-27 14:11:24',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            10 =>
-            array(
+            ],
+            10 => [
                 'id'                  => 14,
                 'default_icd_10_code' => 'F17.299',
                 'name'                => 'Smoking',
@@ -179,9 +169,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '0000-00-00 00:00:00',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            11 =>
-            array(
+            ],
+            11 => [
                 'id'                  => 15,
                 'default_icd_10_code' => 'E03.9',
                 'name'                => 'Acquired Hypothyroidism',
@@ -194,9 +183,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:43',
                 'updated_at'          => '2018-06-26 09:05:02',
-            ),
-            12 =>
-            array(
+            ],
+            12 => [
                 'id'                  => 16,
                 'default_icd_10_code' => 'I21.9',
                 'name'                => 'Myocardial Infarction',
@@ -209,9 +197,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:44',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            13 =>
-            array(
+            ],
+            13 => [
                 'id'                  => 17,
                 'default_icd_10_code' => 'G30.9',
                 'name'                => 'Alzheimer\'s Disease',
@@ -224,9 +211,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:44',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            14 =>
-            array(
+            ],
+            14 => [
                 'id'                  => 18,
                 'default_icd_10_code' => 'D64.9',
                 'name'                => 'Anemia',
@@ -239,9 +225,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:44',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            15 =>
-            array(
+            ],
+            15 => [
                 'id'                  => 19,
                 'default_icd_10_code' => 'N40.1',
                 'name'                => 'BPH',
@@ -254,9 +239,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:46',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            16 =>
-            array(
+            ],
+            16 => [
                 'id'                  => 20,
                 'default_icd_10_code' => 'H25.9',
                 'name'                => 'Cataract',
@@ -269,9 +253,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:46',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            17 =>
-            array(
+            ],
+            17 => [
                 'id'                  => 21,
                 'default_icd_10_code' => 'J44.9',
                 'name'                => 'COPD',
@@ -284,9 +267,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:51',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            18 =>
-            array(
+            ],
+            18 => [
                 'id'                  => 22,
                 'default_icd_10_code' => 'H40.9',
                 'name'                => 'Glaucoma',
@@ -299,9 +281,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:54',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            19 =>
-            array(
+            ],
+            19 => [
                 'id'                  => 23,
                 'default_icd_10_code' => 'S32.9XXA',
                 'name'                => 'Hip/Pelvic Fracture',
@@ -314,9 +295,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:44:57',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            20 =>
-            array(
+            ],
+            20 => [
                 'id'                  => 24,
                 'default_icd_10_code' => 'M81.0',
                 'name'                => 'Osteoporosis',
@@ -329,9 +309,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:04',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            21 =>
-            array(
+            ],
+            21 => [
                 'id'                  => 25,
                 'default_icd_10_code' => 'M19.90',
                 'name'                => 'Arthritis',
@@ -344,9 +323,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:04',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            22 =>
-            array(
+            ],
+            22 => [
                 'id'                  => 26,
                 'default_icd_10_code' => 'I63.9',
                 'name'                => 'Stroke',
@@ -359,9 +337,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:11',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            23 =>
-            array(
+            ],
+            23 => [
                 'id'                  => 27,
                 'default_icd_10_code' => 'C50.919',
                 'name'                => 'Breast Cancer',
@@ -374,9 +351,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:13',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            24 =>
-            array(
+            ],
+            24 => [
                 'id'                  => 28,
                 'default_icd_10_code' => 'C18.9',
                 'name'                => 'Colorectal Cancer',
@@ -389,9 +365,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:13',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            25 =>
-            array(
+            ],
+            25 => [
                 'id'                  => 29,
                 'default_icd_10_code' => 'Z85.46',
                 'name'                => 'Prostate Cancer',
@@ -404,9 +379,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:14',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            26 =>
-            array(
+            ],
+            26 => [
                 'id'                  => 30,
                 'default_icd_10_code' => 'C34.90',
                 'name'                => 'Lung Cancer',
@@ -419,9 +393,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:14',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            27 =>
-            array(
+            ],
+            27 => [
                 'id'                  => 31,
                 'default_icd_10_code' => 'C54.1',
                 'name'                => 'Endometrial Cancer',
@@ -434,9 +407,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-03-06 05:45:14',
                 'updated_at'          => '2017-10-17 10:39:42',
-            ),
-            28 =>
-            array(
+            ],
+            28 => [
                 'id'                  => 32,
                 'default_icd_10_code' => 'E10.8',
                 'name'                => 'Diabetes Type 1',
@@ -449,9 +421,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-10-17 10:39:41',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            29 =>
-            array(
+            ],
+            29 => [
                 'id'                  => 33,
                 'default_icd_10_code' => 'E11.8',
                 'name'                => 'Diabetes Type 2',
@@ -464,9 +435,8 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2017-10-17 10:39:41',
                 'updated_at'          => '2017-10-17 10:39:41',
-            ),
-            30 =>
-            array(
+            ],
+            30 => [
                 'id'                  => 595,
                 'default_icd_10_code' => '',
                 'name'                => 'Substance Abuse (ex-Alcoholism)',
@@ -479,83 +449,78 @@ class CpmProblemsTableSeeder extends Seeder
                 'weight'              => 1,
                 'created_at'          => '2018-06-08 15:18:01',
                 'updated_at'          => '2018-06-08 15:19:39',
-            ),
-            31 =>
-                array(
-                    'id'                  => 596,
-                    'default_icd_10_code' => 'F41.1',
-                    'name'                => 'Anxiety and Stress',
-                    'icd10from'           => '',
-                    'icd10to'             => '',
-                    'icd9from'            => 0.0,
-                    'icd9to'              => 0.0,
-                    'contains'            => 'anxiety,stress,some,keywrd',
-                    'is_behavioral'       => 1,
-                    'weight'              => 1,
-                    'created_at'          => '2018-06-08 15:29:15',
-                    'updated_at'          => '2018-06-26 09:04:46',
-            ),
-            32 =>
-                array(
-                    'id'                  => 597,
-                    'default_icd_10_code' => 'F10.20',
-                    'name'                => 'Alcoholism',
-                    'icd10from'           => '',
-                    'icd10to'             => '',
-                    'icd9from'            => 0.0,
-                    'icd9to'              => 0.0,
-                    'contains'            => '',
-                    'is_behavioral'       => 1,
-                    'weight'              => 1,
-                    'created_at'          => '2018-06-08 15:30:32',
-                    'updated_at'          => '2018-06-08 15:30:32',
-                ),
-            33 =>
-                array(
-                    'id'                  => 598,
-                    'default_icd_10_code' => 'F31.9',
-                    'name'                => 'Bipolar',
-                    'icd10from'           => '',
-                    'icd10to'             => '',
-                    'icd9from'            => 0.0,
-                    'icd9to'              => 0.0,
-                    'contains'            => '',
-                    'is_behavioral'       => 1,
-                    'weight'              => 1,
-                    'created_at'          => '2018-06-08 15:32:22',
-                    'updated_at'          => '2018-06-08 15:32:22',
-                ),
-            34 =>
-                array(
-                    'id'                  => 599,
-                    'default_icd_10_code' => '',
-                    'name'                => 'Psychosis & Schizophrenia',
-                    'icd10from'           => '',
-                    'icd10to'             => '',
-                    'icd9from'            => 0.0,
-                    'icd9to'              => 0.0,
-                    'contains'            => '',
-                    'is_behavioral'       => 1,
-                    'weight'              => 1,
-                    'created_at'          => '2018-06-08 15:33:34',
-                    'updated_at'          => '2018-06-08 15:33:34',
-                ),
-            35 =>
-                array(
-                    'id'                  => 600,
-                    'default_icd_10_code' => 'F43.10',
-                    'name'                => 'Post-traumatic stress',
-                    'icd10from'           => '',
-                    'icd10to'             => '',
-                    'icd9from'            => 0.0,
-                    'icd9to'              => 0.0,
-                    'contains'            => '',
-                    'is_behavioral'       => 1,
-                    'weight'              => 1,
-                    'created_at'          => '2018-06-08 15:34:22',
-                    'updated_at'          => '2018-06-08 15:34:22',
-                ),
-        ));
+            ],
+            31 => [
+                'id'                  => 596,
+                'default_icd_10_code' => 'F41.1',
+                'name'                => 'Anxiety and Stress',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => 'anxiety,stress,some,keywrd',
+                'is_behavioral'       => 1,
+                'weight'              => 1,
+                'created_at'          => '2018-06-08 15:29:15',
+                'updated_at'          => '2018-06-26 09:04:46',
+            ],
+            32 => [
+                'id'                  => 597,
+                'default_icd_10_code' => 'F10.20',
+                'name'                => 'Alcoholism',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => '',
+                'is_behavioral'       => 1,
+                'weight'              => 1,
+                'created_at'          => '2018-06-08 15:30:32',
+                'updated_at'          => '2018-06-08 15:30:32',
+            ],
+            33 => [
+                'id'                  => 598,
+                'default_icd_10_code' => 'F31.9',
+                'name'                => 'Bipolar',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => '',
+                'is_behavioral'       => 1,
+                'weight'              => 1,
+                'created_at'          => '2018-06-08 15:32:22',
+                'updated_at'          => '2018-06-08 15:32:22',
+            ],
+            34 => [
+                'id'                  => 599,
+                'default_icd_10_code' => '',
+                'name'                => 'Psychosis & Schizophrenia',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => '',
+                'is_behavioral'       => 1,
+                'weight'              => 1,
+                'created_at'          => '2018-06-08 15:33:34',
+                'updated_at'          => '2018-06-08 15:33:34',
+            ],
+            35 => [
+                'id'                  => 600,
+                'default_icd_10_code' => 'F43.10',
+                'name'                => 'Post-traumatic stress',
+                'icd10from'           => '',
+                'icd10to'             => '',
+                'icd9from'            => 0.0,
+                'icd9to'              => 0.0,
+                'contains'            => '',
+                'is_behavioral'       => 1,
+                'weight'              => 1,
+                'created_at'          => '2018-06-08 15:34:22',
+                'updated_at'          => '2018-06-08 15:34:22',
+            ],
+        ]);
 
         $this->command->info('cpm problems seeded');
     }

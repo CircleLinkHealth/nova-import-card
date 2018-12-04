@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Requests;
 
 use App\Rules\PasswordCharacters;
@@ -26,7 +30,7 @@ class CreateInvitedUserAccount extends FormRequest
     public function rules()
     {
         return [
-            'email'      => [
+            'email' => [
                 'required',
                 'filled',
                 'email',
@@ -38,9 +42,9 @@ class CreateInvitedUserAccount extends FormRequest
                 'required',
                 'filled',
                 'min:8',
-                new PasswordCharacters,
+                new PasswordCharacters(),
             ],
-            'code'       => 'required|filled',
+            'code' => 'required|filled',
         ];
     }
 }

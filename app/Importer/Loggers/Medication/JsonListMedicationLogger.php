@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 3/12/18
- * Time: 6:26 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Importer\Loggers\Medication;
@@ -26,7 +24,7 @@ class JsonListMedicationLogger implements Logger
                             'Taking',
                             'Continue',
                         ], '', $medication['Name'] ?? '')),
-                        'reference_sig'   => $medication['Sig'] ?? '',
+                        'reference_sig' => $medication['Sig'] ?? '',
                     ];
                 })
                 ->filter()
@@ -45,6 +43,6 @@ class JsonListMedicationLogger implements Logger
 //            throw new \Exception("The string contains invalid json. String: `$medicationsString`");
 //        }
 
-        return (boolean)$check;
+        return (bool) $check;
     }
 }

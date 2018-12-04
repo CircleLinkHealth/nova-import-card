@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Console\Commands;
 
 use App\EligibilityJob;
@@ -11,11 +15,12 @@ use Illuminate\Console\Command;
 
 class ImportWT1Csv extends Command
 {
-
     /**
-     * @var ProcessEligibilityService
+     * The console command description.
+     *
+     * @var string
      */
-    private $processEligibilityService;
+    protected $description = 'Import WT1 CSV from /cryptdata/var/sftp/sftp1/files/';
 
     /**
      * The name and signature of the console command.
@@ -25,11 +30,9 @@ class ImportWT1Csv extends Command
     protected $signature = 'wt1:importCsv';
 
     /**
-     * The console command description.
-     *
-     * @var string
+     * @var ProcessEligibilityService
      */
-    protected $description = 'Import WT1 CSV from /cryptdata/var/sftp/sftp1/files/';
+    private $processEligibilityService;
 
     /**
      * Create a new command instance.
@@ -44,7 +47,7 @@ class ImportWT1Csv extends Command
 
     /**
      * Execute the console command.
-     * TODO
+     * TODO.
      *
      * @return mixed
      */
@@ -53,16 +56,16 @@ class ImportWT1Csv extends Command
         $count = 0;
 
         foreach (\Storage::disk('ccdas')->files() as $fileName) {
-            if (stripos($fileName, 'clh_') === false) {
+            if (false === stripos($fileName, 'clh_')) {
                 continue;
             }
 
-            $path = config('filesystems.disks.ccdas.root') . '/' . $fileName;
+            $path = config('filesystems.disks.ccdas.root').'/'.$fileName;
 
             $exists = ProcessedFile::wherePath($path)->first();
 
             if ($exists) {
-                \Log::info("Already processed $path");
+                \Log::info("Already processed ${path}");
 
                 continue;
             }
@@ -71,17 +74,16 @@ class ImportWT1Csv extends Command
             $parser->parseFile($path);
             $patients = $parser->toArray();
 
-            if (count($patients) == 0) {
-                $this->info("Could not get any patients from $path");
+            if (0 == count($patients)) {
+                $this->info("Could not get any patients from ${path}");
                 continue;
             }
 
             //todo: Practice id for WT1
-            $practice = new Practice();
-            $practice->name = 'wt1 test';
+            $practice         = new Practice();
+            $practice->name   = 'wt1 test';
             $practice->active = 1;
             $practice->save();
-            //
 
             $batch = $this->processEligibilityService->createClhMedicalRecordTemplateBatch(
                 'ccdas',
@@ -97,11 +99,11 @@ class ImportWT1Csv extends Command
                 $this->createEligibilityJob($p, $practice, $batch->id);
             }
 
-            $this->info("Create Medical Record Template Batch for: $path");
+            $this->info("Create Medical Record Template Batch for: ${path}");
 
-            $count++;
+            ++$count;
 
-            if ($count == 4) {
+            if (4 == $count) {
                 break;
             }
         }
@@ -109,11 +111,11 @@ class ImportWT1Csv extends Command
 
     private function createEligibilityJob($p, $practice, $batchId)
     {
-        $hash = $practice->name . $p['first_name'] . $p['last_name'] . $p['mrn'] . $p['city'] . $p['state'] . $p['postal_code'];
+        $hash = $practice->name.$p['first_name'].$p['last_name'].$p['mrn'].$p['city'].$p['state'].$p['postal_code'];
 
         $job = EligibilityJob::whereHash($hash)->first();
 
-        if (! $job) {
+        if (!$job) {
             $job = EligibilityJob::create([
                 'batch_id' => $batchId,
                 'hash'     => $hash,

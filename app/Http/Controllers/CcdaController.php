@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Http\Controllers;
 
 use App\Models\MedicalRecords\Ccda;
@@ -34,8 +38,8 @@ class CcdaController extends Controller
         $ccda->user_id     = auth()->user()->id;
         if ($ccda->user_id && ($xml || $ccda->json)) {
             return $this->ccdaService->create($ccda, $xml);
-        } else {
-            return $this->badRequest('"user_id" and one of "xml" and "json" are compulsory fields');
         }
+
+        return $this->badRequest('"user_id" and one of "xml" and "json" are compulsory fields');
     }
 }

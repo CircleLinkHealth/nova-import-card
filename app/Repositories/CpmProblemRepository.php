@@ -1,27 +1,23 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 12/07/2017
- * Time: 12:32 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Repositories;
 
-use App\User;
-use App\Patient;
 use App\Models\CPM\CpmProblem;
 
 class CpmProblemRepository
 {
-    public function model()
-    {
-        return app(CpmProblem::class);
-    }
-
     public function count()
     {
         return $this->model()->count();
+    }
+
+    public function model()
+    {
+        return app(CpmProblem::class);
     }
 
     public function noDiabetesFilter()

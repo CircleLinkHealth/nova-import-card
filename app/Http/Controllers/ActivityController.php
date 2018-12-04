@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Activity;
 use App\ActivityMeta;
@@ -14,8 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Log;
 
 /**
- * Class ActivityController
- * @package App\Http\Controllers
+ * Class ActivityController.
  */
 class ActivityController extends Controller
 {
@@ -24,6 +29,65 @@ class ActivityController extends Controller
     public function __construct(ActivityService $activityService)
     {
         $this->activityService = $activityService;
+    }
+
+    public function create(
+        Request $request,
+        $patientId
+    ) {
+        if (auth()->user()->hasRole('care-center') && !in_array(app()->environment(), ['local', 'staging'])) {
+            return abort(403);
+        }
+
+        if (!$patientId) {
+            return abort(404);
+        }
+
+        $patient = User::find($patientId);
+
+        if (!$patient) {
+            return response('User not found', 401);
+        }
+
+        $patient_name = $patient->getFullName();
+
+        $userTimeZone = $patient->timeZone;
+
+        if (empty($userTimeZone)) {
+            $userTimeZone = 'America/New_York';
+        }
+
+        $provider_info = User::ofType(['care-center', 'provider'])
+            ->intersectPracticesWith($patient)
+            ->orderBy('first_name')
+            ->get()
+            ->mapWithKeys(function ($user) {
+                return [$user->id => $user->getFullName()];
+            })
+            ->all();
+
+        $view_data = [
+            'program_id'     => $patient->program_id,
+            'patient'        => $patient,
+            'patient_name'   => $patient_name,
+            'activity_types' => Activity::input_activity_types(),
+            'provider_info'  => $provider_info,
+            'userTimeZone'   => $userTimeZone,
+        ];
+
+        return view('wpUsers.patient.activity.create', $view_data);
+    }
+
+    public function destroy($id)
+    {
+    }
+
+    public function index(Request $request)
+    {
+        // display view
+        $activities = Activity::orderBy('id', 'desc')->paginate(10);
+
+        return view('activities.index', ['activities' => $activities]);
     }
 
     public function providerUIIndex(
@@ -54,28 +118,24 @@ class ActivityController extends Controller
 
         //downloads patient audit
         if ($request->ajax()) {
-            $data = (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
-
-            return $data;
+            return (new PatientDailyAuditReport($patient->patientInfo, Carbon::parse($start)))->renderPDF();
         }
 
         $acts = DB::table('lv_activities')
-                  ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
-                  ->where('performed_at', '>=', $start)
-                  ->where('performed_at', '<=', $end)
-                  ->where('patient_id', $patientId)
-                  ->where(function ($q) {
-                      $q->where('logged_from', 'activity')
-                        ->Orwhere('logged_from', 'manual_input')
-                        ->Orwhere('logged_from', 'pagetimer');
-                  })
-                  ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
-                  ->orderBy('created_at', 'desc')
-                  ->get();
-
+            ->select(DB::raw('id,provider_id,logged_from,DATE(performed_at)as performed_at, type, SUM(duration) as duration'))
+            ->where('performed_at', '>=', $start)
+            ->where('performed_at', '<=', $end)
+            ->where('patient_id', $patientId)
+            ->where(function ($q) {
+                $q->where('logged_from', 'activity')
+                          ->Orwhere('logged_from', 'manual_input')
+                          ->Orwhere('logged_from', 'pagetimer');
+            })
+            ->groupBy(DB::raw('provider_id, DATE(performed_at),type'))
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         $acts = json_decode(json_encode($acts), true);            //debug($acts);
-
 
         foreach ($acts as $key => $value) {
             $provider = User::find($acts[$key]['provider_id']);
@@ -90,10 +150,10 @@ class ActivityController extends Controller
             $data = false;
         }
 
-        $reportData = "data:" . json_encode($acts) . "";
+        $reportData = 'data:'.json_encode($acts).'';
 
         $years = [];
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; ++$i) {
             $years[] = Carbon::now()->subYear($i)->year;
         }
 
@@ -129,59 +189,51 @@ class ActivityController extends Controller
         );
     }
 
-    public function index(Request $request)
-    {
-        // display view
-        $activities = Activity::orderBy('id', 'desc')->paginate(10);
-
-        return view('activities.index', ['activities' => $activities]);
-    }
-
-    public function create(
-        Request $request,
-        $patientId
+    public function show(
+        Request $input,
+        $patientId,
+        $actId
     ) {
-        if (auth()->user()->hasRole('care-center') && ! in_array(app()->environment(), ['local', 'staging'])) {
-            return abort(403);
-        }
-
-        if (! $patientId) {
-            return abort(404);
-        }
-
         $patient = User::find($patientId);
+        $act     = Activity::find($actId);
+        //Set up note pack for view
+        $activity                  = [];
+        $messages                  = \Session::get('messages');
+        $activity['type']          = $act->type;
+        $activity['performed_at']  = $act->performed_at;
+        $activity['provider_name'] = User::find($act->provider_id)
+            ? (User::find($act->provider_id)->getFullName())
+            : '';
+        $activity['duration'] = intval($act->duration) / 60;
 
-        if (! $patient) {
-            return response("User not found", 401);
+        $careteam_info = [];
+        $careteam_ids  = $patient->getCareTeam();
+        if ((false !== @unserialize($careteam_ids))) {
+            $careteam_ids = unserialize($careteam_ids);
+        }
+        if (!empty($careteam_ids) && is_array($careteam_ids)) {
+            foreach ($careteam_ids as $id) {
+                $careteam_info[$id] = User::find($id)->getFullName();
+            }
         }
 
-        $patient_name = $patient->getFullName();
-
-        $userTimeZone = $patient->timeZone;
-
-        if (empty($userTimeZone)) {
-            $userTimeZone = 'America/New_York';
+        $comment = $act->getActivityCommentFromMeta($actId);
+        if ($comment) {
+            $activity['comment'] = $comment;
+        } else {
+            $activity['comment'] = '';
         }
-
-        $provider_info = User::ofType(['care-center', 'provider'])
-                             ->intersectPracticesWith($patient)
-                             ->orderBy('first_name')
-                             ->get()
-                             ->mapWithKeys(function ($user) {
-                                 return [$user->id => $user->getFullName()];
-                             })
-                             ->all();
 
         $view_data = [
-            'program_id'     => $patient->program_id,
-            'patient'        => $patient,
-            'patient_name'   => $patient_name,
-            'activity_types' => Activity::input_activity_types(),
-            'provider_info'  => $provider_info,
-            'userTimeZone'   => $userTimeZone,
+            'activity'      => $activity,
+            'userTimeZone'  => $patient->timeZone,
+            'careteam_info' => $careteam_info,
+            'patient'       => $patient,
+            'program_id'    => $patient->program_id,
+            'messages'      => $messages,
         ];
 
-        return view('wpUsers.patient.activity.create', $view_data);
+        return view('wpUsers.patient.activity.view', $view_data);
     }
 
     public function store(
@@ -194,7 +246,7 @@ class ActivityController extends Controller
             if ($request->isJson()) {
                 $input = $request->input();
             } else {
-                return response("Unauthorized", 401);
+                return response('Unauthorized', 401);
             }
         }//debug($request->all());
 
@@ -206,7 +258,7 @@ class ActivityController extends Controller
 
             $nurseId   = $input['provider_id'];
             $patientId = $input['patient_id'];
-            $duration  = (int)$input['duration'];
+            $duration  = (int) $input['duration'];
 
             $patient = User::find($patientId);
 
@@ -214,8 +266,8 @@ class ActivityController extends Controller
                 $isCcm        = $patient->isCcm();
                 $isBehavioral = $patient->isBhi();
                 if ($isCcm && $isBehavioral) {
-                    $is_bhi                 = isset($input['is_behavioral'])
-                        ? ($input['is_behavioral'] != 'true'
+                    $is_bhi = isset($input['is_behavioral'])
+                        ? ('true' != $input['is_behavioral']
                             ? false
                             : true)
                         : false;
@@ -224,28 +276,25 @@ class ActivityController extends Controller
                     $input['is_behavioral'] = $isBehavioral;
                 }
             } else {
-                throw new \Exception('patient_id ' . $patientId . ' does not correspond to any patient');
+                throw new \Exception('patient_id '.$patientId.' does not correspond to any patient');
             }
 
-
-            /**
-             * Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
-             */
+            // Send a request to the time-tracking server to increment the start-time by the duration of the offline-time activity (in seconds)
             if ($nurseId && $patientId && $duration) {
-                $url = config('services.ws.server-url') . '/' . $nurseId . '/' . $patientId;
+                $url = config('services.ws.server-url').'/'.$nurseId.'/'.$patientId;
                 try {
                     $timeParam = $is_bhi
                         ? 'bhiTime'
                         : 'ccmTime';
-                    $res       = $client->put($url, [
+                    $res = $client->put($url, [
                         'form_params' => [
                             'startTime' => $duration,
                             $timeParam  => $duration,
                         ],
                     ]);
-                    $status    = $res->getStatusCode();
-                    $body      = $res->getBody();
-                    if ($status == 200) {
+                    $status = $res->getStatusCode();
+                    $body   = $res->getBody();
+                    if (200 == $status) {
                         Log::info($body);
                     } else {
                         Log::critical($body);
@@ -276,7 +325,7 @@ class ActivityController extends Controller
             foreach ($meta as $actMeta) {
                 $metaArray[$i] = new ActivityMeta($actMeta);
 
-                $i++;
+                ++$i;
             }
 
             $activity->meta()->saveMany($metaArray);
@@ -300,65 +349,17 @@ class ActivityController extends Controller
         );
     }
 
-    public function show(
-        Request $input,
-        $patientId,
-        $actId
-    ) {
-        $patient = User::find($patientId);
-        $act     = Activity::find($actId);
-        //Set up note pack for view
-        $activity                  = [];
-        $messages                  = \Session::get('messages');
-        $activity['type']          = $act->type;
-        $activity['performed_at']  = $act->performed_at;
-        $activity['provider_name'] = User::find($act->provider_id)
-            ? (User::find($act->provider_id)->getFullName())
-            : '';
-        $activity['duration']      = intval($act->duration) / 60;
-
-        $careteam_info = [];
-        $careteam_ids  = $patient->getCareTeam();
-        if ((@unserialize($careteam_ids) !== false)) {
-            $careteam_ids = unserialize($careteam_ids);
-        }
-        if (! empty($careteam_ids) && is_array($careteam_ids)) {
-            foreach ($careteam_ids as $id) {
-                $careteam_info[$id] = User::find($id)->getFullName();
-                ;
-            }
-        }
-
-        $comment = $act->getActivityCommentFromMeta($actId);
-        if ($comment) {
-            $activity['comment'] = $comment;
-        } else {
-            $activity['comment'] = '';
-        }
-
-        $view_data = [
-            'activity'      => $activity,
-            'userTimeZone'  => $patient->timeZone,
-            'careteam_info' => $careteam_info,
-            'patient'       => $patient,
-            'program_id'    => $patient->program_id,
-            'messages'      => $messages,
-        ];
-
-        return view('wpUsers.patient.activity.view', $view_data);
-    }
-
     public function update(Request $request)
     {
         if ($request->isJson()) {
             $input = $request->input();
         } else {
             if ($request->isMethod('POST')) {
-                if ($request->header('Client') == 'ui') { // WP Site
+                if ('ui' == $request->header('Client')) { // WP Site
                     $input = json_decode(Crypt::decrypt($request->input('data')), true);
                 }
             } else {
-                return response("Unauthorized", 401);
+                return response('Unauthorized', 401);
             }
         }
 
@@ -377,11 +378,6 @@ class ActivityController extends Controller
 
         $this->activityService->processMonthlyActivityTime([$input['patient_id']]);
 
-        return response("Activity Updated", 201);
-    }
-
-    public function destroy($id)
-    {
-        //
+        return response('Activity Updated', 201);
     }
 }

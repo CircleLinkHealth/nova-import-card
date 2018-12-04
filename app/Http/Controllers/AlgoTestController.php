@@ -1,48 +1,46 @@
 <?php
 
-namespace App\Http\Controllers;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
 
-use Illuminate\Http\Request;
+namespace App\Http\Controllers;
 
 class AlgoTestController extends Controller
 {
-    public function algoFamily()
-    {
-        if (app()->environment() == 'production') {
-            return 'Sorry, this cannot be run on the production environment.';
-        }
-
-        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
-    }
-
-
-
     public function algoCleaner()
     {
-        if (app()->environment() == 'production') {
+        if ('production' == app()->environment()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
         return (new \App\Services\Calls\SchedulerService())->removeScheduledCallsForWithdrawnAndPausedPatients();
     }
 
-
-    public function algoTuner()
+    public function algoFamily()
     {
-        if (app()->environment() == 'production') {
+        if ('production' == app()->environment()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
-        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
+        return (new \App\Services\Calls\SchedulerService())->syncFamilialCalls();
     }
-
 
     public function algoRescheduler()
     {
-        if (app()->environment() == 'production') {
+        if ('production' == app()->environment()) {
             return 'Sorry, this cannot be run on the production environment.';
         }
 
         return (new \App\Algorithms\Calls\ReschedulerHandler())->handle();
+    }
+
+    public function algoTuner()
+    {
+        if ('production' == app()->environment()) {
+            return 'Sorry, this cannot be run on the production environment.';
+        }
+
+        return (new \App\Services\Calls\SchedulerService())->tuneScheduledCallsWithUpdatedCCMTime();
     }
 }

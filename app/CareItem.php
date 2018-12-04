@@ -1,28 +1,33 @@
-<?php namespace App;
+<?php
 
-use Illuminate\Database\Eloquent\Model;
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 /**
- * App\CareItem
+ * App\CareItem.
  *
- * @property int $id
- * @property string|null $model_field_name
- * @property int|null $type_id
- * @property string|null $type
- * @property string $relationship_fn_name
- * @property int $parent_id
- * @property int $qid
- * @property string $obs_key
- * @property string $name
- * @property string $display_name
- * @property string $description
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CarePlan[] $carePlans
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\CareItem[] $children
- * @property-read mixed $meta_key
- * @property-read \App\CareItem $parents
- * @property-read \App\CPRulesQuestions $question
+ * @property int                                                      $id
+ * @property string|null                                              $model_field_name
+ * @property int|null                                                 $type_id
+ * @property string|null                                              $type
+ * @property string                                                   $relationship_fn_name
+ * @property int                                                      $parent_id
+ * @property int                                                      $qid
+ * @property string                                                   $obs_key
+ * @property string                                                   $name
+ * @property string                                                   $display_name
+ * @property string                                                   $description
+ * @property \Carbon\Carbon                                           $created_at
+ * @property \Carbon\Carbon                                           $updated_at
+ * @property \App\CarePlan[]|\Illuminate\Database\Eloquent\Collection $carePlans
+ * @property \App\CareItem[]|\Illuminate\Database\Eloquent\Collection $children
+ * @property mixed                                                    $meta_key
+ * @property \App\CareItem                                            $parents
+ * @property \App\CPRulesQuestions                                    $question
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CareItem whereDisplayName($value)
@@ -41,20 +46,6 @@ use Illuminate\Database\Eloquent\Model;
 class CareItem extends \App\BaseModel
 {
     /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'care_items';
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -66,13 +57,24 @@ class CareItem extends \App\BaseModel
         'description',
     ];
 
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id';
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'care_items';
+
     public static function boot()
     {
         parent::boot();
 
-        /**
-         * Automatically delete and item's meta when the item is deleted
-         */
+        // Automatically delete and item's meta when the item is deleted
         /*
         CPRulesItem::deleting(function($CPRulesItem){
             $CPRulesItem->meta()->delete();
@@ -84,17 +86,6 @@ class CareItem extends \App\BaseModel
     {
         return $this->belongsToMany('App\CarePlan', 'care_plan_care_item', 'item_id', 'plan_id')->withPivot('id');
     }
-
-    public function question() // rules prefix because ->items is a protect class var on parent
-    {
-        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
-    }
-
-    public function parents()
-    {
-        return $this->belongsTo('App\CareItem', 'parent_id');
-    }
-
 
     // START ATTRIBUTES
 
@@ -108,5 +99,15 @@ class CareItem extends \App\BaseModel
     public function getMetaKeyAttribute()
     {
         return $this->pivot->meta_key;
+    }
+
+    public function parents()
+    {
+        return $this->belongsTo('App\CareItem', 'parent_id');
+    }
+
+    public function question() // rules prefix because ->items is a protect class var on parent
+    {
+        return $this->belongsTo('App\CPRulesQuestions', 'qid', 'qid');
     }
 }

@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 11/03/2017
- * Time: 3:38 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Reports;
@@ -20,8 +18,8 @@ class NurseDailyReport
         $date = $forDate ?? Carbon::now();
 
         $nurse_users = User::ofType('care-center')
-                           ->where('access_disabled', 0)
-                           ->get();
+            ->where('access_disabled', 0)
+            ->get();
 
         $nurses = [];
 
@@ -29,11 +27,11 @@ class NurseDailyReport
 
         foreach ($nurse_users as $nurse) {
             $mostRecentPageTimer = PageTimer::select('end_time')
-                                            ->where('provider_id', $nurse->id)
-                                            ->orderBy('end_time', 'desc')
-                                            ->first();
+                ->where('provider_id', $nurse->id)
+                ->orderBy('end_time', 'desc')
+                ->first();
 
-            if (! optional($mostRecentPageTimer)->end_time) {
+            if (!optional($mostRecentPageTimer)->end_time) {
                 continue;
             }
 
@@ -45,17 +43,17 @@ class NurseDailyReport
             $nurses[$i]['# Successful Calls Today'] = $nurse->countSuccessfulCallsFor($date);
 
             $activity_time = Activity::where('provider_id', $nurse->id)
-                                     ->createdOn($date)
-                                     ->sum('duration');
+                ->createdOn($date)
+                ->sum('duration');
 
             $H1                      = floor($activity_time / 3600);
             $m1                      = ($activity_time / 60) % 60;
             $s1                      = $activity_time % 60;
-            $activity_time_formatted = sprintf("%02d:%02d:%02d", $H1, $m1, $s1);
+            $activity_time_formatted = sprintf('%02d:%02d:%02d', $H1, $m1, $s1);
 
             $system_time = PageTimer::where('provider_id', $nurse->id)
-                                    ->createdOn($date, 'updated_at')
-                                    ->sum('billable_duration');
+                ->createdOn($date, 'updated_at')
+                ->sum('billable_duration');
 
             $system_time_formatted = secondsToHMS($system_time);
 
@@ -75,7 +73,7 @@ class NurseDailyReport
                 $nurses[$i]['lessThan20MinsAgo'] = true;
             }
 
-            $i++;
+            ++$i;
         }
 
         $nurses = collect($nurses);

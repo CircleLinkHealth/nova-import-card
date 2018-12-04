@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers\Admin\Reports;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers\Admin\Reports;
 
 use App\Call;
 use App\CallView;
@@ -11,29 +17,17 @@ use Illuminate\Http\Request;
 
 class CallReportController extends Controller
 {
-
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
+     * export xls.
      */
-    public function index(Request $request)
-    {
-        //
-    }
-
-    /**
-     * export xls
-     */
-
     public function exportxls(Request $request, CallFilters $filters)
     {
         $date = Carbon::now()->startOfMonth();
 
         $calls = Call::filter($filters)->with('inboundUser')
-                     ->with('outboundUser')
-                     ->with('note')
-                     ->select(
+            ->with('outboundUser')
+            ->with('note')
+            ->select(
                          [
                              \DB::raw('coalesce(nurse.display_name, "unassigned") as nurse_name'),
                              'calls.id AS call_id',
@@ -65,46 +59,45 @@ class CallReportController extends Controller
                              'billing_provider.display_name AS billing_provider',
                          ]
                      )
-                     ->where('calls.status', '=', 'scheduled')
-                     ->leftJoin('notes', 'calls.note_id', '=', 'notes.id')
-                     ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
-                     ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
-                     ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
-                     ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
-                     ->leftJoin('patient_monthly_summaries', function ($join) use ($date) {
-                         $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
-                         $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
-                     })
-                     ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
-                     ->leftJoin('patient_care_team_members', function ($join) {
-                         $join->on('patient.id', '=', 'patient_care_team_members.user_id');
-                         $join->where('patient_care_team_members.type', '=', "billing_provider");
-                     })
-                     ->leftJoin(
+            ->where('calls.status', '=', 'scheduled')
+            ->leftJoin('notes', 'calls.note_id', '=', 'notes.id')
+            ->leftJoin('users AS nurse', 'calls.outbound_cpm_id', '=', 'nurse.id')
+            ->leftJoin('users AS patient', 'calls.inbound_cpm_id', '=', 'patient.id')
+            ->leftJoin('users AS scheduler_user', 'calls.scheduler', '=', 'scheduler_user.id')
+            ->leftJoin('patient_info', 'calls.inbound_cpm_id', '=', 'patient_info.user_id')
+            ->leftJoin('patient_monthly_summaries', function ($join) use ($date) {
+                $join->on('patient_monthly_summaries.patient_id', '=', 'patient.id');
+                $join->where('patient_monthly_summaries.month_year', '=', $date->format('Y-m-d'));
+            })
+            ->leftJoin('practices AS program', 'patient.program_id', '=', 'program.id')
+            ->leftJoin('patient_care_team_members', function ($join) {
+                $join->on('patient.id', '=', 'patient_care_team_members.user_id');
+                $join->where('patient_care_team_members.type', '=', 'billing_provider');
+            })
+            ->leftJoin(
                          'users AS billing_provider',
                          'patient_care_team_members.member_user_id',
                          '=',
                          'billing_provider.id'
                      )
-                     ->groupBy('call_id')
-                     ->get();
+            ->groupBy('call_id')
+            ->get();
 
         if ($request->has('json')) {
-            /* interrupt request and return json */
+            // interrupt request and return json
             return response()->json($calls);
         }
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $calls) {
-
+        Excel::create('CLH-Report-'.$date, function ($excel) use ($date, $calls) {
             // Set the title
-            $excel->setTitle('CLH Call Report - ' . $date);
+            $excel->setTitle('CLH Call Report - '.$date);
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
+                ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('CLH Call Report - ' . $date);
+            $excel->setDescription('CLH Call Report - '.$date);
 
             // Our first sheet
             $excel->sheet('Sheet 1', function ($sheet) use ($calls) {
@@ -141,13 +134,13 @@ class CallReportController extends Controller
                         if (is_null($call->inboundUser->patientInfo->no_call_attempts_since_last_success)) {
                             $noAttmpts = 'n/a';
                         } elseif ($call->inboundUser->patientInfo->no_call_attempts_since_last_success > 0) {
-                            $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success . 'x Attempts';
+                            $noAttmpts = $call->inboundUser->patientInfo->no_call_attempts_since_last_success.'x Attempts';
                         } else {
                             $noAttmpts = 'Success';
                         }
                     }
                     // call days
-                    $days              = [
+                    $days = [
                         1 => 'M',
                         2 => 'Tu',
                         3 => 'W',
@@ -159,12 +152,12 @@ class CallReportController extends Controller
                     $preferredCallDays = 'n/a';
                     if ($call->inboundUser && $call->inboundUser->patientInfo) {
                         $windowText = '';
-                        $windows    = $call->inboundUser->patientInfo->contactWindows()->get();
+                        $windows = $call->inboundUser->patientInfo->contactWindows()->get();
                         if ($windows) {
                             foreach ($days as $key => $val) {
                                 foreach ($windows as $window) {
                                     if ($window->day_of_week == $key) {
-                                        $windowText .= $days[$window->day_of_week] . ',';
+                                        $windowText .= $days[$window->day_of_week].',';
                                     }
                                 }
                             }
@@ -202,24 +195,23 @@ class CallReportController extends Controller
         $date = Carbon::now()->startOfMonth();
 
         $calls = CallView::filter($filters)
-                         ->get();
+            ->get();
 
         if ($request->has('json')) {
-            /* interrupt request and return json */
+            // interrupt request and return json
             return response()->json($calls);
         }
 
-        Excel::create('CLH-Report-' . $date, function ($excel) use ($date, $calls) {
-
+        Excel::create('CLH-Report-'.$date, function ($excel) use ($date, $calls) {
             // Set the title
-            $excel->setTitle('CLH Call Report - ' . $date);
+            $excel->setTitle('CLH Call Report - '.$date);
 
             // Chain the setters
             $excel->setCreator('CLH System')
-                  ->setCompany('CircleLink Health');
+                ->setCompany('CircleLink Health');
 
             // Call them separately
-            $excel->setDescription('CLH Call Report - ' . $date);
+            $excel->setDescription('CLH Call Report - '.$date);
 
             // Our first sheet
             $excel->sheet('Sheet 1', function ($sheet) use ($calls) {
@@ -268,14 +260,22 @@ class CallReportController extends Controller
         })->export('xls');
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+    }
+
     private function formatTime($time)
     {
-        $seconds     = $time;
-        $H           = floor($seconds / 3600);
-        $i           = ($seconds / 60) % 60;
-        $s           = $seconds % 60;
-        $monthlyTime = sprintf("%02d:%02d:%02d", $H, $i, $s);
+        $seconds = $time;
+        $H       = floor($seconds / 3600);
+        $i       = ($seconds / 60) % 60;
+        $s       = $seconds % 60;
 
-        return $monthlyTime;
+        return sprintf('%02d:%02d:%02d', $H, $i, $s);
     }
 }

@@ -1,4 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Http\Controllers;
 
 use App\Location;
 use App\Models\MedicalRecords\ImportedMedicalRecord;
@@ -16,9 +22,9 @@ class ImportedMedicalRecordController extends Controller
         $imr = ImportedMedicalRecord::find($importedMedicalRecordId);
 
         $demographics = $imr->demographics;
-        $allergies = $imr->allergies->all();
-        $medications = $imr->medications->all();
-        $problems = $imr->problems->all();
+        $allergies    = $imr->allergies->all();
+        $medications  = $imr->medications->all();
+        $problems     = $imr->problems->all();
 
         $practiceId = $imr->practice_id;
 
@@ -53,7 +59,7 @@ class ImportedMedicalRecordController extends Controller
             ];
         } else {
             $locations = Location::all();
-            $practice = Practice::all();
+            $practice  = Practice::all();
             $providers = User::ofType('provider')->get();
         }
 

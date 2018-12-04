@@ -1,33 +1,16 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class AddForeignKeysToEnrolleesTable extends Migration
 {
-
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::table('enrollees', function (Blueprint $table) {
-            $table->foreign('batch_id')->references('id')->on('eligibility_batches')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('care_ambassador_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('cpm_problem_1')->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('RESTRICT');
-            $table->foreign('cpm_problem_2')->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('RESTRICT');
-            $table->foreign('provider_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
-        });
-    }
-
-
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {
@@ -38,6 +21,21 @@ class AddForeignKeysToEnrolleesTable extends Migration
             $table->dropForeign('enrollees_cpm_problem_2_foreign');
             $table->dropForeign('enrollees_provider_id_foreign');
             $table->dropForeign('enrollees_user_id_foreign');
+        });
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::table('enrollees', function (Blueprint $table) {
+            $table->foreign('batch_id')->references('id')->on('eligibility_batches')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('care_ambassador_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('cpm_problem_1')->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('RESTRICT');
+            $table->foreign('cpm_problem_2')->references('id')->on('cpm_problems')->onUpdate('CASCADE')->onDelete('RESTRICT');
+            $table->foreign('provider_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 }

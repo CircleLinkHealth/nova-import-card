@@ -1,42 +1,47 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Repositories;
 
-use App\User;
 use App\Models\CPM\CpmLifestyle;
 
 class CpmLifestyleRepository
 {
-    public function model()
-    {
-        return app(CpmLifestyle::class);
-    }
-
     public function count()
     {
         return $this->model()->count();
     }
 
-    public function setupLifestyle($lifestyle)
+    public function exists($id)
     {
-        $lifestyle['patients'] = $lifestyle->users()->count();
-        return $lifestyle;
+        return (bool) $this->model()->find($id);
     }
-    
-    public function lifestyles()
-    {
-        $lifestyles = $this->model()->paginate();
-        $lifestyles->getCollection()->transform([$this, 'setupLifestyle']);
-        return $lifestyles;
-    }
-    
+
     public function lifestyle($id)
     {
         return $this->setupLifestyle($this->model()->with(['carePlanTemplates'])->find($id));
     }
 
-    public function exists($id)
+    public function lifestyles()
     {
-        return !!$this->model()->find($id);
+        $lifestyles = $this->model()->paginate();
+        $lifestyles->getCollection()->transform([$this, 'setupLifestyle']);
+
+        return $lifestyles;
+    }
+
+    public function model()
+    {
+        return app(CpmLifestyle::class);
+    }
+
+    public function setupLifestyle($lifestyle)
+    {
+        $lifestyle['patients'] = $lifestyle->users()->count();
+
+        return $lifestyle;
     }
 }

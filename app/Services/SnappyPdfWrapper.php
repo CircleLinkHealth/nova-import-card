@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 01/11/2018
- * Time: 12:23 AM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services;
@@ -13,9 +11,8 @@ use Barryvdh\Snappy\PdfWrapper;
 
 class SnappyPdfWrapper extends PdfWrapper implements HtmlToPdfService
 {
-
     /**
-     * Return a handler for the pdf service
+     * Return a handler for the pdf service.
      *
      * @return mixed
      */

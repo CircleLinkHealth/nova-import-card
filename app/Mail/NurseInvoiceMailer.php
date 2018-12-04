@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
@@ -11,8 +15,8 @@ class NurseInvoiceMailer extends Mailable
     use Queueable, SerializesModels;
 
     protected $link;
-    protected $recipientName;
     protected $month;
+    protected $recipientName;
 
     public function __construct($recipientName, $link, $month)
     {
@@ -29,11 +33,11 @@ class NurseInvoiceMailer extends Mailable
     public function build()
     {
         return $this->view('emails.nurseInvoice')
-                    ->with(['name' => $this->recipientName])
-                    ->subject("$this->month Time and Fees Report")
-                    ->attach(storage_path("download/$this->link"), [
-                        'as'   => 'invoice.pdf',
-                        'mime' => 'application/pdf',
-                    ]);
+            ->with(['name' => $this->recipientName])
+            ->subject("{$this->month} Time and Fees Report")
+            ->attach(storage_path("download/{$this->link}"), [
+                'as'   => 'invoice.pdf',
+                'mime' => 'application/pdf',
+            ]);
     }
 }

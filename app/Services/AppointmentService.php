@@ -1,4 +1,10 @@
-<?php namespace App\Services;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App\Services;
 
 use App\Repositories\AppointmentRepository;
 
@@ -11,11 +17,6 @@ class AppointmentService
         $this->appointmentRepo = $appointmentRepo;
     }
 
-    public function repo()
-    {
-        return $this->appointmentRepo;
-    }
-
     public function appointments()
     {
         return $this->repo()->appointments();
@@ -25,8 +26,12 @@ class AppointmentService
     {
         if ($this->repo()->belongsToUser($id, $userId)) {
             return $this->repo()->remove($id);
-        } else {
-            throw new \Exception('user with id "' . $userId . '" does not own appointment with id "' . $id . '"');
         }
+        throw new \Exception('user with id "'.$userId.'" does not own appointment with id "'.$id.'"');
+    }
+
+    public function repo()
+    {
+        return $this->appointmentRepo;
     }
 }

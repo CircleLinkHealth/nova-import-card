@@ -1,15 +1,24 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
 class CreateCpmSymptomsUsersTable extends Migration
 {
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::drop('cpm_symptoms_users');
+    }
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
@@ -19,18 +28,7 @@ class CreateCpmSymptomsUsersTable extends Migration
             $table->integer('patient_id')->unsigned();
             $table->integer('cpm_symptom_id')->unsigned()->index('cpm_symptoms_users_cpm_symptom_id_foreign');
             $table->timestamps();
-            $table->index(['patient_id','cpm_symptom_id']);
+            $table->index(['patient_id', 'cpm_symptom_id']);
         });
-    }
-
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('cpm_symptoms_users');
     }
 }

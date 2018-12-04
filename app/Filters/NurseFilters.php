@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
 namespace App\Filters;
 
 use App\User;
@@ -16,14 +20,6 @@ class NurseFilters extends QueryFilters
         parent::__construct($request);
     }
 
-    public function globalFilters(): array
-    {
-        return [
-            'status' => 'active',
-            'user'   => true,
-        ];
-    }
-
     /**
      * Scope for active nurses.
      *
@@ -34,6 +30,131 @@ class NurseFilters extends QueryFilters
     public function active($status = 'active')
     {
         return $this->status($status);
+    }
+
+    /**
+     * Get the calls for each nurse.
+     *
+     * @param mixed|null $callBack
+     *
+     * @return Builder
+     */
+    public function calls($callBack = null)
+    {
+        if ($callBack) {
+            $this->builder->whereHas('user.outboundCalls', $callBack);
+        }
+
+        return $this->builder->with('user.outboundCalls');
+    }
+
+    /**
+     * Check whether a nurse can call a patient.
+     * checks licenced states, schedule, and nurse holidays.
+     *
+     * @param $patientUserId
+     */
+    public function canCallPatient($patientUserId)
+    {
+        $user = User::with('patientInfo.contactWindows')
+            ->where('id', $patientUserId)
+            ->first();
+
+        return $this->builder->whereHas('user', function ($q) use ($user) {
+            return $q->ofPractice($user->program_id);
+        });
+    }
+
+    public function globalFilters(): array
+    {
+        return [
+            'status' => 'active',
+            'user'   => true,
+        ];
+    }
+
+    /**
+     * Get the holidays for each nurse.
+     *
+     * @param mixed|null $callBack
+     *
+     * @return Builder
+     */
+    public function holidays($callBack = null)
+    {
+        if ($callBack) {
+            $this->builder->whereHas('holidays', $callBack);
+        }
+
+        return $this->builder->with('holidays');
+    }
+
+    /**
+     * Search for a Nurse by full name.
+     *
+     * @param $term
+     *
+     * @return $this
+     */
+    public function search($term)
+    {
+        return $this->builder
+            ->whereHas('user', function ($q) use ($term) {
+                $q->where('display_name', 'like', "%${term}%");
+            });
+    }
+
+    /**
+     * Get the states the nurse is licenced in.
+     * By default the and operator is selected, which means that only nurses that include all states will be included.
+     *
+     * @param string $states   Comma delimited State Codes. Example: 'NJ, NY, GA'
+     * @param string $operator Can 'and' or 'or'
+     *
+     * @return Builder
+     */
+    public function states($states = null, $operator = 'and')
+    {
+        if (!$states) {
+            return $this->builder->with('states');
+        }
+
+        if (str_contains($states, ',')) {
+            $states = explode(',', $states);
+        }
+
+        if (!is_array($states)) {
+            $states = [$states];
+        }
+
+        if ('and' == $operator) {
+            foreach ($states as $state) {
+                $this->builder->whereHas('states', function ($q) use ($state) {
+                    $q->where('code', $state);
+                });
+            }
+        }
+
+        if ('or' == $operator) {
+            $this->builder->whereHas('states', function ($q) use ($states) {
+                $q->whereIn('code', $states);
+            });
+        }
+
+        return $this->builder->with('states');
+    }
+
+    /**
+     * Get nurses that are licenced in any of the states provided.
+     *
+     * @param string $states   Comma delimited State Codes. Example: 'NJ, NY, GA'
+     * @param string $operator Can 'and' or 'or'
+     *
+     * @return Builder
+     */
+    public function statesOr($states = null, $operator = 'or')
+    {
+        return $this->states($states, $operator);
     }
 
     /**
@@ -49,77 +170,27 @@ class NurseFilters extends QueryFilters
     }
 
     /**
-     * Get nurses that are licenced in any of the states provided.
-     *
-     * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
-     * @param string $operator Can 'and' or 'or'
+     * Get the user model for a nurse.
      *
      * @return Builder
      */
-    public function statesOr($states = null, $operator = 'or')
+    public function user()
     {
-        return $this->states($states, $operator);
+        if ($this->request->has('compressed')) {
+            return $this->builder->select(['id', 'user_id', 'status'])->with(['user' => function ($q) {
+                return $q->select(['id', 'display_name', 'program_id']);
+            }])->with(['states' => function ($q) {
+                return $q->select(['code']);
+            }]);
+        }
+
+        return $this->builder->with('user');
     }
 
     /**
-     * Get the states the nurse is licenced in.
-     * By default the and operator is selected, which means that only nurses that include all states will be included.
+     * Get the windows for each nurse.
      *
-     * @param string $states Comma delimited State Codes. Example: 'NJ, NY, GA'
-     * @param string $operator Can 'and' or 'or'
-     *
-     * @return Builder
-     */
-    public function states($states = null, $operator = 'and')
-    {
-        if (! $states) {
-            return $this->builder->with('states');
-        }
-
-        if (str_contains($states, ',')) {
-            $states = explode(',', $states);
-        }
-
-        if (! is_array($states)) {
-            $states = [$states];
-        }
-
-        if ($operator == 'and') {
-            foreach ($states as $state) {
-                $this->builder->whereHas('states', function ($q) use ($state) {
-                    $q->where('code', $state);
-                });
-            }
-        }
-
-        if ($operator == 'or') {
-            $this->builder->whereHas('states', function ($q) use ($states) {
-                $q->whereIn('code', $states);
-            });
-        }
-
-        return $this->builder->with('states');
-    }
-
-    /**
-     * Check whether a nurse can call a patient.
-     * checks licenced states, schedule, and nurse holidays.
-     *
-     * @param $patientUserId
-     */
-    public function canCallPatient($patientUserId)
-    {
-        $user = User::with('patientInfo.contactWindows')
-                       ->where('id', $patientUserId)
-                       ->first();
-
-        return $this->builder->whereHas('user', function ($q) use ($user) {
-            return $q->ofPractice($user->program_id);
-        });
-    }
-
-    /**
-     * Get the windows for each nurse
+     * @param mixed|null $callBack
      *
      * @return Builder
      */
@@ -130,66 +201,5 @@ class NurseFilters extends QueryFilters
         }
 
         return $this->builder->with('windows');
-    }
-
-    /**
-     * Get the holidays for each nurse
-     *
-     * @return Builder
-     */
-    public function holidays($callBack = null)
-    {
-        if ($callBack) {
-            $this->builder->whereHas('holidays', $callBack);
-        }
-
-        return $this->builder->with('holidays');
-    }
-
-    /**
-     * Get the calls for each nurse
-     *
-     * @return Builder
-     */
-    public function calls($callBack = null)
-    {
-        if ($callBack) {
-            $this->builder->whereHas('user.outboundCalls', $callBack);
-        }
-
-        return $this->builder->with('user.outboundCalls');
-    }
-
-    /**
-     * Get the user model for a nurse
-     *
-     * @return Builder
-     */
-    public function user()
-    {
-        if ($this->request->has('compressed')) {
-            return $this->builder->select([ 'id', 'user_id', 'status' ])->with(['user' => function ($q) {
-                return $q->select([ 'id', 'display_name', 'program_id' ]);
-            }])->with(['states' => function ($q) {
-                return $q->select(['code']);
-            }]);
-        }
-        return $this->builder->with('user');
-    }
-
-
-    /**
-     * Search for a Nurse by full name.
-     *
-     * @param $term
-     *
-     * @return $this
-     */
-    public function search($term)
-    {
-        return $this->builder
-            ->whereHas('user', function ($q) use ($term) {
-                $q->where('display_name', 'like', "%$term%");
-            });
     }
 }

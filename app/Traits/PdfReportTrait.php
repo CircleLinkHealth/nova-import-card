@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 28/12/2016
- * Time: 9:49 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Traits;
@@ -13,24 +11,7 @@ use App\Contracts\PdfReportHandler;
 trait PdfReportTrait
 {
     /**
-     * Dispatch the PDF report.
-     *
-     * @return mixed
-     */
-    public function pdfHandleCreated()
-    {
-        // Check if we have a designated report handler for this EHR, for example an API.
-        if (! $this->hasPdfHandler()) {
-            return false;
-        }
-
-        //And if we do, then handle the PDF accordingly
-        $this->pdfReportHandler()
-             ->pdfHandle($this);
-    }
-
-    /**
-     * Check whether this PDFable has a pdf handler
+     * Check whether this PDFable has a pdf handler.
      *
      * @return bool
      */
@@ -39,15 +20,32 @@ trait PdfReportTrait
         $practice = $this->patient
             ->primaryPractice;
 
-        if (! $practice->ehr) {
+        if (!$practice->ehr) {
             return false;
         }
 
-        if (! $practice->ehr->pdf_report_handler) {
+        if (!$practice->ehr->pdf_report_handler) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Dispatch the PDF report.
+     *
+     * @return mixed
+     */
+    public function pdfHandleCreated()
+    {
+        // Check if we have a designated report handler for this EHR, for example an API.
+        if (!$this->hasPdfHandler()) {
+            return false;
+        }
+
+        //And if we do, then handle the PDF accordingly
+        $this->pdfReportHandler()
+            ->pdfHandle($this);
     }
 
     /**

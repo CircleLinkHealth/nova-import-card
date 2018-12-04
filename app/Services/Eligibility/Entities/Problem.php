@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: michalis
- * Date: 4/10/18
- * Time: 1:37 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\Services\Eligibility\Entities;
@@ -12,12 +10,12 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class Problem implements Arrayable
 {
-    private $name;
     private $code;
     private $code_system_name;
+    private $end;
+    private $name;
     private $problem_code_system_id;
     private $start;
-    private $end;
     private $status;
 
     public static function create($attributes = [])
@@ -34,21 +32,20 @@ class Problem implements Arrayable
     /**
      * @return mixed
      */
-    public function getStatus()
+    public function getCode()
     {
-        return $this->status;
+        //return name if code is empty, just in case code was put into name field
+        return empty($this->code)
+            ? $this->name
+            : $this->code;
     }
 
     /**
-     * @param mixed $status
-     *
-     * @return Problem
+     * @return mixed
      */
-    public function setStatus($status)
+    public function getCodeSystemName()
     {
-        $this->status = $status;
-
-        return $this;
+        return $this->code_system_name;
     }
 
     /**
@@ -60,35 +57,11 @@ class Problem implements Arrayable
     }
 
     /**
-     * @param mixed $end
-     *
-     * @return Problem
-     */
-    public function setEnd($end)
-    {
-        $this->end = $end;
-
-        return $this;
-    }
-
-    /**
      * @return mixed
      */
-    public function getStart()
+    public function getName()
     {
-        return $this->start;
-    }
-
-    /**
-     * @param mixed $start
-     *
-     * @return Problem
-     */
-    public function setStart($start)
-    {
-        $this->start = $start;
-
-        return $this;
+        return $this->name;
     }
 
     /**
@@ -100,46 +73,19 @@ class Problem implements Arrayable
     }
 
     /**
-     * @param mixed $problem_code_system_id
-     *
-     * @return Problem
+     * @return mixed
      */
-    public function setProblemCodeSystemId($problem_code_system_id)
+    public function getStart()
     {
-        $this->problem_code_system_id = $problem_code_system_id;
-
-        return $this;
+        return $this->start;
     }
 
     /**
      * @return mixed
      */
-    public function getName()
+    public function getStatus()
     {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $name
-     *
-     * @return Problem
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCode()
-    {
-        //return name if code is empty, just in case code was put into name field
-        return empty($this->code)
-            ? $this->name
-            : $this->code;
+        return $this->status;
     }
 
     /**
@@ -155,14 +101,6 @@ class Problem implements Arrayable
     }
 
     /**
-     * @return mixed
-     */
-    public function getCodeSystemName()
-    {
-        return $this->code_system_name;
-    }
-
-    /**
      * @param mixed $code_system_name
      *
      * @return Problem
@@ -170,6 +108,66 @@ class Problem implements Arrayable
     public function setCodeSystemName($code_system_name)
     {
         $this->code_system_name = $code_system_name;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $end
+     *
+     * @return Problem
+     */
+    public function setEnd($end)
+    {
+        $this->end = $end;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $name
+     *
+     * @return Problem
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $problem_code_system_id
+     *
+     * @return Problem
+     */
+    public function setProblemCodeSystemId($problem_code_system_id)
+    {
+        $this->problem_code_system_id = $problem_code_system_id;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $start
+     *
+     * @return Problem
+     */
+    public function setStart($start)
+    {
+        $this->start = $start;
+
+        return $this;
+    }
+
+    /**
+     * @param mixed $status
+     *
+     * @return Problem
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

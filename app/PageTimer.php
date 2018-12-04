@@ -1,39 +1,45 @@
-<?php namespace App;
+<?php
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
+ */
+
+namespace App;
 
 use App\Scopes\Universal\DateScopesTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * App\PageTimer
+ * App\PageTimer.
  *
- * @property int $id
- * @property int $billable_duration
- * @property int $duration
- * @property string|null $duration_unit
- * @property int $patient_id
- * @property int $provider_id
- * @property string $start_time
- * @property string $end_time
- * @property string|null $redirect_to
- * @property string|null $url_full
- * @property string|null $url_short
- * @property string $activity_type
- * @property string $title
- * @property string $query_string
- * @property int $program_id
- * @property string|null $ip_addr
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property string|null $processed
- * @property string|null $rule_params
- * @property int|null $rule_id
- * @property \Carbon\Carbon|null $deleted_at
- * @property string|null $user_agent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Activity[] $activities
- * @property-read \App\User $logger
- * @property-read \App\User $patient
+ * @property int                                                      $id
+ * @property int                                                      $billable_duration
+ * @property int                                                      $duration
+ * @property string|null                                              $duration_unit
+ * @property int                                                      $patient_id
+ * @property int                                                      $provider_id
+ * @property string                                                   $start_time
+ * @property string                                                   $end_time
+ * @property string|null                                              $redirect_to
+ * @property string|null                                              $url_full
+ * @property string|null                                              $url_short
+ * @property string                                                   $activity_type
+ * @property string                                                   $title
+ * @property string                                                   $query_string
+ * @property int                                                      $program_id
+ * @property string|null                                              $ip_addr
+ * @property \Carbon\Carbon                                           $created_at
+ * @property \Carbon\Carbon                                           $updated_at
+ * @property string|null                                              $processed
+ * @property string|null                                              $rule_params
+ * @property int|null                                                 $rule_id
+ * @property \Carbon\Carbon|null                                      $deleted_at
+ * @property string|null                                              $user_agent
+ * @property \App\Activity[]|\Illuminate\Database\Eloquent\Collection $activities
+ * @property \App\User                                                $logger
+ * @property \App\User                                                $patient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdThisMonth($field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdOn(Carbon $date, $field = 'created_at')
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PageTimer createdToday($field = 'created_at')
@@ -74,14 +80,7 @@ class PageTimer extends \App\BaseModel
 {
     use DateScopesTrait, SoftDeletes;
 
-
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'lv_page_timer';
+    protected $dates = ['deleted_at', 'start_time', 'end_time'];
 
     /**
      * The attributes that are mass assignable.
@@ -104,7 +103,22 @@ class PageTimer extends \App\BaseModel
         'user_agent',
     ];
 
-    protected $dates = ['deleted_at', 'start_time', 'end_time'];
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'lv_page_timer';
+
+    public function activities()
+    {
+        return $this->hasMany('App\Activity', 'page_timer_id');
+    }
+
+    public function activity()
+    {
+        return $this->belongsTo('App\Activity', 'id', 'page_timer_id');
+    }
 
     public function logger()
     {
@@ -114,15 +128,5 @@ class PageTimer extends \App\BaseModel
     public function patient()
     {
         return $this->belongsTo('App\User', 'patient_id', 'id');
-    }
-
-    public function activity()
-    {
-        return $this->belongsTo('App\Activity', 'id', 'page_timer_id');
-    }
-
-    public function activities()
-    {
-        return $this->hasMany('App\Activity', 'page_timer_id');
     }
 }

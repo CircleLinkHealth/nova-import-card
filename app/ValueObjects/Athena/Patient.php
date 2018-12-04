@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: kakoushias
- * Date: 20/12/2017
- * Time: 5:45 PM
+
+/*
+ * This file is part of CarePlan Manager by CircleLink Health.
  */
 
 namespace App\ValueObjects\Athena;
@@ -12,7 +10,11 @@ use Carbon\Carbon;
 
 class Patient
 {
-    protected $practiceId;
+    protected $address1;
+
+    protected $address2;
+
+    protected $city;
 
     protected $departmentId;
 
@@ -20,51 +22,41 @@ class Patient
 
     protected $doNotCall = false;
 
+    protected $email;
+
     protected $firstName;
-
-    protected $lastName;
-
-    protected $address1 = null;
-
-    protected $address2 = null;
-
-    protected $city = null;
-
-    protected $email = null;
 
     protected $gender;
 
-    protected $homePhone = null;
+    protected $homePhone;
 
-    protected $mobilePhone = null;
+    protected $lastName;
 
-    protected $state = null;
+    protected $mobilePhone;
+    protected $practiceId;
 
-    protected $zip = null;
+    protected $state;
 
+    protected $zip;
 
     public function __construct()
     {
     }
 
-
-    /**
-     * @return mixed
-     */
-    public function getPracticeId()
+    public function getAddress1()
     {
-        return $this->practiceId;
+        return $this->address1;
     }
 
-    /**
-     * @param mixed $practiceId
-     */
-    public function setPracticeId($practiceId)
+    public function getAddress2()
     {
-        $this->practiceId = $practiceId;
+        return $this->address2;
     }
 
-
+    public function getCity()
+    {
+        return $this->city;
+    }
 
     /**
      * @return mixed
@@ -72,14 +64,6 @@ class Patient
     public function getDepartmentId()
     {
         return $this->departmentId;
-    }
-
-    /**
-     * @param mixed $departmentId
-     */
-    public function setDepartmentId($departmentId)
-    {
-        $this->departmentId = $departmentId;
     }
 
     /**
@@ -93,11 +77,16 @@ class Patient
     }
 
     /**
-     * @param mixed $dob
+     * @return mixed
      */
-    public function setDob(Carbon $dob)
+    public function getDoNotCall()
     {
-        $this->dob = $dob;
+        return $this->doNotCall;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
@@ -109,11 +98,16 @@ class Patient
     }
 
     /**
-     * @param mixed $firstName
+     * @return mixed
      */
-    public function setFirstName($firstName)
+    public function getGender()
     {
-        $this->firstName = $firstName;
+        return $this->gender;
+    }
+
+    public function getHomePhone()
+    {
+        return $this->homePhone;
     }
 
     /**
@@ -124,116 +118,27 @@ class Patient
         return $this->lastName;
     }
 
-    /**
-     * @param mixed $lastName
-     */
-    public function setLastName($lastName)
-    {
-        $this->lastName = $lastName;
-    }
-
-    /**
-     * @return null
-     */
     public function getMobilePhone()
     {
         return $this->mobilePhone;
     }
 
     /**
-     * @param null $mobilePhone
+     * @return mixed
      */
-    public function setMobilePhone($mobilePhone)
+    public function getPracticeId()
     {
-        $this->mobilePhone = $mobilePhone;
+        return $this->practiceId;
     }
 
-    /**
-     * @return null
-     */
-    public function getCity()
-    {
-        return $this->city;
-    }
-
-    /**
-     * @param null $city
-     */
-    public function setCity($city)
-    {
-        $this->city = $city;
-    }
-
-    /**
-     * @return null
-     */
-    public function getHomePhone()
-    {
-        return $this->homePhone;
-    }
-
-    /**
-     * @param null $homePhone
-     */
-    public function setHomePhone($homePhone)
-    {
-        $this->homePhone = $homePhone;
-    }
-
-    /**
-     * @return null
-     */
     public function getState()
     {
         return $this->state;
     }
 
-    /**
-     * @param null $state
-     */
-    public function setState($state)
-    {
-        $this->state = $state;
-    }
-
-    /**
-     * @return null
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param null $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return null
-     */
     public function getZip()
     {
         return $this->zip;
-    }
-
-    /**
-     * @param null $zip
-     */
-    public function setZip($zip)
-    {
-        $this->zip = $zip;
-    }
-
-    /**
-     * @return null
-     */
-    public function getAddress1()
-    {
-        return $this->address1;
     }
 
     /**
@@ -245,14 +150,6 @@ class Patient
     }
 
     /**
-     * @return null
-     */
-    public function getAddress2()
-    {
-        return $this->address2;
-    }
-
-    /**
      * @param null $address2
      */
     public function setAddress2($address2)
@@ -261,11 +158,27 @@ class Patient
     }
 
     /**
-     * @return mixed
+     * @param null $city
      */
-    public function getDoNotCall()
+    public function setCity($city)
     {
-        return $this->doNotCall;
+        $this->city = $city;
+    }
+
+    /**
+     * @param mixed $departmentId
+     */
+    public function setDepartmentId($departmentId)
+    {
+        $this->departmentId = $departmentId;
+    }
+
+    /**
+     * @param mixed $dob
+     */
+    public function setDob(Carbon $dob)
+    {
+        $this->dob = $dob;
     }
 
     /**
@@ -277,11 +190,19 @@ class Patient
     }
 
     /**
-     * @return mixed
+     * @param null $email
      */
-    public function getGender()
+    public function setEmail($email)
     {
-        return $this->gender;
+        $this->email = $email;
+    }
+
+    /**
+     * @param mixed $firstName
+     */
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
     }
 
     /**
@@ -290,5 +211,53 @@ class Patient
     public function setGender($gender)
     {
         $this->gender = $gender;
+    }
+
+    /**
+     * @param null $homePhone
+     */
+    public function setHomePhone($homePhone)
+    {
+        $this->homePhone = $homePhone;
+    }
+
+    /**
+     * @param mixed $lastName
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * @param null $mobilePhone
+     */
+    public function setMobilePhone($mobilePhone)
+    {
+        $this->mobilePhone = $mobilePhone;
+    }
+
+    /**
+     * @param mixed $practiceId
+     */
+    public function setPracticeId($practiceId)
+    {
+        $this->practiceId = $practiceId;
+    }
+
+    /**
+     * @param null $state
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+    }
+
+    /**
+     * @param null $zip
+     */
+    public function setZip($zip)
+    {
+        $this->zip = $zip;
     }
 }
