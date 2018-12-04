@@ -2299,7 +2299,6 @@ Route::group([
         'uses' => 'Twilio\TwilioController@dialStatusCallback',
         'as'   => 'twilio.call.dial.status',
     ]);
-
 });
 
 Route::group([

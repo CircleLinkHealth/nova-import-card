@@ -47,7 +47,7 @@ class UserRepository
         }
 
         $program_name  = $program->display_name;
-        $email_subject = '[' . $program_name . '] New User Registration!';
+        $email_subject = '['.$program_name.'] New User Registration!';
         $data          = [
             'patient_name'  => $user->getFullName(),
             'patient_id'    => $user->id,
@@ -197,31 +197,26 @@ class UserRepository
         $googleDrive = new GoogleDrive();
         $cloudDisk   = Storage::drive('google');
 
-
         if (app()->environment(['staging', 'local'])) {
-
             $ehr = getGoogleDirectoryByName('ehr-data-from-report-writers');
 
             if ( ! $ehr) {
-                $cloudDisk->makeDirectory("ehr-data-from-report-writers");
+                $cloudDisk->makeDirectory('ehr-data-from-report-writers');
 
                 return $this->saveEhrReportWriterFolder($user);
             }
-
         } else {
-
             $ehrPath = '1NMMNIZKKicOVDNEUjXf6ayAjRbBbFAgh';
 
             $ehr = $googleDrive->getContents($ehrPath);
         }
 
-
         $writerFolder = $ehr->where('type', '=', 'dir')
-                            ->where('filename', '=', "report-writer-{$user->id}")
-                            ->first();
+            ->where('filename', '=', "report-writer-{$user->id}")
+            ->first();
 
         if ( ! $writerFolder) {
-            $cloudDisk->makeDirectory($ehrPath . "/report-writer-{$user->id}");
+            $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
         }
@@ -270,7 +265,7 @@ class UserRepository
         CareAmbassador::updateOrCreate(
             ['user_id' => $user->id],
             [
-                'hourly_rate'    => $params->get('hourly_rate')
+                'hourly_rate' => $params->get('hourly_rate')
                     ?: null,
                 'speaks_spanish' => 'on' == $params->get('speaks_spanish')
                     ? 1
@@ -315,7 +310,7 @@ class UserRepository
      * to also populate password history.
      * https://www.5balloons.info/setting-up-change-password-with-laravel-authentication/.
      *
-     * @param User $user
+     * @param User         $user
      * @param ParameterBag $params
      */
     public function saveOrUpdatePasswordsHistory(
@@ -352,7 +347,7 @@ class UserRepository
             for ($i = 0; $i < count($contactDays); ++$i) {
                 $contactDaysDelmited .= (count($contactDays) == $i + 1)
                     ? $contactDays[$i]
-                    : $contactDays[$i] . ', ';
+                    : $contactDays[$i].', ';
             }
             $params->add(['preferred_cc_contact_days' => $contactDaysDelmited]);
         }
@@ -479,9 +474,9 @@ class UserRepository
         }
 
         DB::table('practice_role_user')
-          ->where('user_id', $user->id)
-          ->whereNotIn('program_id', $practices)
-          ->delete();
+            ->where('user_id', $user->id)
+            ->whereNotIn('program_id', $practices)
+            ->delete();
 
         // add patient info
         if ($user->hasRole('participant') && ! $user->patientInfo) {
