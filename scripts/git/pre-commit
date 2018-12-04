@@ -3,7 +3,7 @@
 # Redirect output to stderr.
 exec 1>&2
 
-CHANGED_FILES=$(git diff --name-only)
+CHANGED_FILES=$(git status --porcelain | cut -c 4-)
 EXTRA_ARGS="--path-mode=override"
 
 while read -r line; do
@@ -14,7 +14,7 @@ while read -r line; do
         echo "running: php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs.dist ${EXTRA_ARGS}" >&2
         php ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix ${line} --config=.php_cs.dist ${EXTRA_ARGS}
     else
-        echo "No action with `${line}`"
+        echo "No action with ${line}"
     fi
 done <<< "$CHANGED_FILES"
 
