@@ -127,7 +127,7 @@
   },
   "scripts": {
     "php-lint": [
-      "php -d memory_limit=2000M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv"
+      "php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --show-progress=dots --diff -vvv"
     ],
     "post-root-package-install": [
       "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
