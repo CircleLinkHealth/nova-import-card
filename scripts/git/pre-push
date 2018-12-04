@@ -5,7 +5,7 @@
 JSCS_EC=$?
 
 echo 'Checking PHP code style...'
-php -d memory_limit=2048M ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix
+composer php-lint
 
 #composer test
 #COMPOSER_TEST_EC=$?
