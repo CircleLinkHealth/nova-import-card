@@ -6,6 +6,7 @@
 @section('content')
 
     <script>
+        window['userId'] = @json(auth()->id());
         window['userFullName'] = @json(auth()->user()->getFullName());
         window['hasTips'] = @json((!!$enrollee->practice->enrollmentTips));
         window['enrollee'] = @json($enrollee);
