@@ -48,6 +48,7 @@
     import {registerHandler, sendRequest} from "./bc-job-manager";
 
     import Twilio from 'twilio-client';
+
     let self;
 
     export default {
@@ -56,6 +57,8 @@
             loader: LoaderComponent
         },
         props: [
+            'inboundUserId',
+            'outboundUserId',
             'numbers',
         ],
         data() {
@@ -122,7 +125,12 @@
                     this.onPhone = true;
                     const isUnlisted = this.dropdownNumber === 'other';
                     // make outbound call with current number
-                    this.connection = this.device.connect({To: number, IsUnlistedNumber: isUnlisted});
+                    this.connection = this.device.connect({
+                        To: number,
+                        IsUnlistedNumber: isUnlisted,
+                        InboundUserId: this.inboundUserId,
+                        OutboundUserId: this.outboundUserId
+                    });
                     this.log = 'Calling ' + number;
                     EventBus.$emit('tracker:call-mode:enter');
                 } else {
@@ -151,7 +159,12 @@
                 self.axios.get(url)
                     .then(response => {
                         this.log = 'Ready';
-                        self.device = new Twilio.Device(response.data.token);
+                        self.device = new Twilio.Device(response.data.token, {
+                            closeProtection: true, //show warning when closing the page with active call
+                            statusCallbackMethod: "POST",
+                            statusCallback: 'https://bf220bc0.ngrok.io/twilio/call/status',
+                            statusCallbackEvent: ["initiated", "ringing", "answered", "completed"]
+                        });
 
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');

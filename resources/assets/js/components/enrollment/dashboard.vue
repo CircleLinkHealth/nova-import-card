@@ -177,18 +177,24 @@
 
                     <template v-if="has_copay">
                         <template v-if="lang === 'EN'">
-                            <copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></copay-en>
+                            <copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
+                                      :practice-name="practice_name"></copay-en>
                         </template>
                         <template v-else>
-                            <copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></copay-es>
+                            <copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName"
+                                      :practice-name="practice_name"></copay-es>
                         </template>
                     </template>
                     <template v-else>
                         <template v-if="lang === 'EN'">
-                            <no-copay-en :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></no-copay-en>
+                            <no-copay-en :name="name" :user-full-name="userFullName"
+                                         :provider-full-name="providerFullName"
+                                         :practice-name="practice_name"></no-copay-en>
                         </template>
                         <template v-else>
-                            <no-copay-es :name="name" :user-full-name="userFullName" :provider-full-name="providerFullName" :practice-name="practice_name"></no-copay-es>
+                            <no-copay-es :name="name" :user-full-name="userFullName"
+                                         :provider-full-name="providerFullName"
+                                         :practice-name="practice_name"></no-copay-es>
                         </template>
                     </template>
                 </div>
@@ -516,6 +522,7 @@
     //for some reason i could not pass these as props from blade.php
     const hasTips = window.hasTips;
     const enrollee = window.enrollee;
+    const userId = window.userId;
     const userFullName = window.userFullName;
     const providerFullName = window.providerFullName;
     const report = window.report;
@@ -532,6 +539,9 @@
         computed: {
             enrolleeId: function () {
                 return enrollee.id;
+            },
+            enrolleeUserId: function () {
+                return enrollee.user ? enrollee.user.id : null;
             },
             enrollmentTips: function () {
                 return enrollee.practice && enrollee.practice.enrollment_tips ? enrollee.practice.enrollment_tips.content : '';
@@ -774,7 +784,13 @@
                 this.onCall = true;
                 this.callStatus = "Calling " + type + "..." + phone;
                 M.toast({html: this.callStatus, displayLength: 3000});
-                this.device.connect({"To": phone, "From": this.practice_phone ? this.practice_phone : undefined });
+                this.device.connect({
+                    To: phone,
+                    From: this.practice_phone ? this.practice_phone : undefined,
+                    IsUnlistedNumber: false,
+                    InboundUserId: this.enrolleeUserId,
+                    OutboundUserId: userId
+                });
             },
             hangUp() {
                 this.onCall = false;
@@ -789,7 +805,9 @@
                 self.$http.get(url)
                     .then(response => {
                         self.log = 'Initializing';
-                        self.device = new Twilio.Device(response.data.token);
+                        self.device = new Twilio.Device(response.data.token, {
+                            closeProtection: true
+                        });
 
                         self.device.on('disconnect', () => {
                             console.log('twilio device: disconnect');
