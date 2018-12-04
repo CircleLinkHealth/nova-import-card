@@ -211,10 +211,10 @@ class UserRepository
 //        }
 
         $writerFolder = $ehr->where('type', '=', 'dir')
-            ->where('filename', '=', "report-writer-{$user->id}")
-            ->first();
+                            ->where('filename', '=', "report-writer-{$user->id}")
+                            ->first();
 
-        if (!$writerFolder) {
+        if ( ! $writerFolder) {
             $cloudDisk->makeDirectory($ehrPath."/report-writer-{$user->id}");
 
             return $this->saveEhrReportWriterFolder($user);
@@ -236,12 +236,14 @@ class UserRepository
 
         if (app()->environment('staging')) {
             //only staging, so we can have the ability to test, but not get access to PHI
-            $devEmails = collect([
-                'constantinos@circlelinkhealth.com',
-                'mAntoniou@circlelinkhealth.com',
-                'antonis@circlelinkhealth.com',
-                'pangratios@circlelinkhealth.com',
-            ]);
+            $devEmails = collect(
+                [
+                    'constantinos@circlelinkhealth.com',
+                    'mAntoniou@circlelinkhealth.com',
+                    'antonis@circlelinkhealth.com',
+                    'pangratios@circlelinkhealth.com',
+                ]
+            );
 
             foreach ($devEmails as $email) {
                 $permission = new \Google_Service_Drive_Permission();
@@ -253,28 +255,6 @@ class UserRepository
         }
 
         return $writerFolder['path'];
-        if ($params->get('suffix')) {
-            $user->suffix = $params->get('suffix');
-        }
-        if ($params->get('address')) {
-            $user->address = $params->get('address');
-        }
-        if ($params->get('address2')) {
-            $user->address2 = $params->get('address2');
-        }
-        if ($params->get('city')) {
-            $user->city = $params->get('city');
-        }
-        if ($params->get('state')) {
-            $user->state = $params->get('state');
-        }
-        if ($params->get('zip')) {
-            $user->zip = $params->get('zip');
-        }
-        if ($params->get('timezone')) {
-            $user->timezone = $params->get('timezone');
-        }
-        $user->save();
     }
 
     public function saveOrUpdateCareAmbassadorInfo(
@@ -404,15 +384,6 @@ class UserRepository
             'month_year' => Carbon::now()->startOfMonth()->toDateString(),
         ]);
     }
-
-    public function saveOrUpdatePatientMonthlySummary($user)
-    {
-        return PatientMonthlySummary::updateOrCreate([
-            'patient_id' => $user->id,
-            'month_year' => Carbon::now()->startOfMonth()->toDateString(),
-        ]);
-    }
-
     public function saveOrUpdatePhoneNumbers(
         User $user,
         ParameterBag $params
@@ -549,7 +520,41 @@ class UserRepository
             $user->email = $params->get('email');
         }
 
-        return $user;
+        if ($params->get('access_disabled')) {
+            $user->access_disabled = $params->get('access_disabled');
+        } else {
+            $user->access_disabled = 0; // 0 = good, 1 = disabled
+        }
+
+        $user->auto_attach_programs = $params->get('auto_attach_programs');
+        if ($params->get('first_name')) {
+            $user->setFirstName($params->get('first_name'));
+        }
+        if ($params->get('last_name')) {
+            $user->setLastName($params->get('last_name'));
+        }
+        if ($params->get('suffix')) {
+            $user->suffix = $params->get('suffix');
+        }
+        if ($params->get('address')) {
+            $user->address = $params->get('address');
+        }
+        if ($params->get('address2')) {
+            $user->address2 = $params->get('address2');
+        }
+        if ($params->get('city')) {
+            $user->city = $params->get('city');
+        }
+        if ($params->get('state')) {
+            $user->state = $params->get('state');
+        }
+        if ($params->get('zip')) {
+            $user->zip = $params->get('zip');
+        }
+        if ($params->get('timezone')) {
+            $user->timezone = $params->get('timezone');
+        }
+        $user->save();
     }
 
     private function forceEnable2fa(AuthyUser $authyUser)
