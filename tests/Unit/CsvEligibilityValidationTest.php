@@ -25,7 +25,7 @@ class CsvEligibilityValidationTest extends TestCase
      */
     public function testNumberedFieldsPasses()
     {
-        $csv = getcwd() . '/Tests/Feature/EligibleCsvFormat/Numbered_Fields_1.csv';
+        $csv = base_path('tests/Feature/EligibleCsvFormat/Numbered_Fields_1.csv');
 
         $this->assertFileExists($csv);
 
@@ -74,7 +74,7 @@ class CsvEligibilityValidationTest extends TestCase
 
     public function testSingleFieldsPasses()
     {
-        $csv = getcwd() . '/Tests/Feature/EligibleCsvFormat/Single_Fields_1.csv';
+        $csv = base_path('tests/Feature/EligibleCsvFormat/Single_Fields_1.csv');
 
         $this->assertFileExists($csv);
 
